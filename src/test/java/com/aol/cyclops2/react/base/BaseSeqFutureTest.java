@@ -33,7 +33,7 @@ public abstract class BaseSeqFutureTest {
 	}
 	@Test
 	public void testMax(){
-		assertThat(of(1,2,3,4,5).foldFuture(s->s.max((t1,t2) -> t1-t2)).get(),is(Optional.of(5)));
+		assertThat(of(1,2,3,4,5).foldFuture(s->s.max((t1,t2) -> t1-t2)).orElse(Optional.empty()),is(Optional.of(5)));
 	}
 
 }

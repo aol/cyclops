@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.*;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.Witness;
 import cyclops.companion.Streams;
@@ -38,14 +39,14 @@ import com.aol.cyclops2.types.mixins.Printable;
 
 public class FutureTTest implements Printable {
 
-	FutureT<Witness.optional,Integer> just;
-	FutureT<Witness.optional,Integer> none;
-	FutureT<Witness.optional,Integer> one;
+	FutureT<optional,Integer> just;
+	FutureT<optional,Integer> none;
+	FutureT<optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 
 
-		just = Future.ofResult(10).liftM(Witness.optional.INSTANCE);
+		just = Future.ofResult(10).liftM(optional.INSTANCE);
 		none = FutureT.of(AnyM.ofNullable(null));
 		one = FutureT.of(AnyM.ofNullable(Future.ofResult(1)));
 	}
@@ -135,7 +136,7 @@ public class FutureTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
 
         assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -393,7 +394,7 @@ public class FutureTTest implements Printable {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(65));
+		assertThat(just.trampoline(n ->sum(10,n)).orElse(-10),equalTo(65));
 	}
 
 	

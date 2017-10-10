@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -38,9 +39,7 @@ import static cyclops.function.Predicates.greaterThan;
 import static cyclops.function.Predicates.hasItems;
 import static cyclops.function.Predicates.in;
 import static cyclops.function.Predicates.not;
-import static cyclops.stream.ReactiveSeq.mapDoubles;
-import static cyclops.stream.ReactiveSeq.mapInts;
-import static cyclops.stream.ReactiveSeq.mapLongs;
+import static cyclops.stream.ReactiveSeq.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.collections.tuple.Tuple.tuple;
@@ -59,22 +58,84 @@ public class ReactiveSeqTest {
         ReactiveSeq.enums(Days.class)
                    .printOut();
     }
+    BiPredicate TRUE = (t, u) -> true;
+    @Test
+    public void testCrossJoin() {
+
+
+
+        // {A} x {B}
+        // ---------------------------------------------------------------------
+        assertEquals(asList(),
+                of().crossJoin(of()).toList());
+        assertEquals(asList(),
+                of().crossJoin(of(1)).toList());
+        assertEquals(asList(),
+                of().crossJoin(of(1, 2)).toList());
+
+        assertEquals(asList(),
+                of("A").crossJoin(of()).toList());
+        assertEquals(asList(
+                tuple("A", 1)),
+                of("A").crossJoin(of(1)).toList());
+        assertEquals(asList(
+                tuple("A", 1),
+                tuple("A", 2)),
+                of("A").crossJoin(of(1, 2)).toList());
+
+        assertEquals(asList(),
+                of("A", "B").crossJoin(of()).toList());
+        assertEquals(asList(
+                tuple("A", 1),
+                tuple("B", 1)),
+                of("A", "B").crossJoin(of(1)).toList());
+        assertEquals(asList(
+                tuple("A", 1),
+                tuple("A", 2),
+                tuple("B", 1),
+                tuple("B", 2)),
+                of("A", "B").crossJoin(of(1, 2)).toList());
+
+        assertEquals(asList(),
+                of("A", "B", "C").crossJoin(of()).toList());
+        assertEquals(asList(
+                tuple("A", 1),
+                tuple("B", 1),
+                tuple("C", 1)),
+                of("A", "B", "C").crossJoin(of(1)).toList());
+        assertEquals(asList(
+                tuple("A", 1),
+                tuple("A", 2),
+                tuple("B", 1),
+                tuple("B", 2),
+                tuple("C", 1),
+                tuple("C", 2)),
+                of("A", "B", "C").crossJoin(of(1, 2)).toList());
+
+
+
+
+
+
+
+    }
+
     @Test
     public void takeOne(){
 
 
-        assertThat(ReactiveSeq.of()
+        assertThat(of()
                         .takeOne().isPresent(),equalTo(false));
-        assertThat(ReactiveSeq.of(1,2,3)
+        assertThat(of(1,2,3)
                               .takeOne().toOptional().get(),equalTo(1));
         assertThat(ListX.of(1,2,3)
                               .takeOne().toOptional().get(),equalTo(1));
 
-        assertThat(ReactiveSeq.of(1,2,3)
+        assertThat(of(1,2,3)
                               .get(0).toOptional().get(),equalTo(1));
         assertThat(ListX.of(1,2,3)
                               .get(0l).toOptional().get(),equalTo(1));
-        assertThat(ReactiveSeq.of(1,2,3)
+        assertThat(of(1,2,3)
                 .get(1).toOptional().get(),equalTo(2));
         assertThat(ListX.of(1,2,3)
                         .get(1l).toOptional().get(),equalTo(2));
@@ -82,7 +143,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void cycleWhile(){
-        ReactiveSeq.of(1).toListX();
+        of(1).toListX();
         count =0;
         ListX<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
                 .cycleUntil(next->count++==6).toListX();
@@ -92,7 +153,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void combineNoOrderMonoid(){
-        assertThat(ReactiveSeq.of(1,2,3)
+        assertThat(of(1,2,3)
                 .combine(Monoids.intSum,(a, b)->a.equals(b))
                 .toListX(),equalTo(ListX.of(1,2,3)));
 
@@ -100,7 +161,7 @@ public class ReactiveSeqTest {
     @Test
     public void testCombineMonoid(){
 
-        assertThat(ReactiveSeq.of(1,1,2,3)
+        assertThat(of(1,1,2,3)
                 .combine(Monoids.intMult,(a, b)->a.equals(b))
                 .findFirst().get()
                , equalTo(1));
@@ -108,15 +169,15 @@ public class ReactiveSeqTest {
     @Test
     public void testCombineMonoidTwo(){
 
-        assertThat(ReactiveSeq.of(1,1,2,3)
+        assertThat(of(1,1,2,3)
                         .combine((a, b)->a.equals(b),Monoids.intMult)
                         .findFirst().get()
                 , equalTo(1));
     }
     @Test
     public void crossJoinTest(){
-        assertThat(ReactiveSeq.of(1, 2)
-                   .crossJoin(ReactiveSeq.of('a', 'b'))
+        assertThat(of(1, 2)
+                   .crossJoin(of('a', 'b'))
                    .toList(),equalTo(ListX.of(tuple(1,'a'),
                                               tuple(1,'b'),
                                               tuple(2,'a'),
@@ -135,7 +196,7 @@ public class ReactiveSeqTest {
         System.out.println("Streamable took " + streamTime);
         timer = new SimpleTimer();
 
-            ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+            of(1, 2, 3, 4, 5, 6)
                     .combinations(3)
                     .forEach(s -> System.out.println(s.join(",")));
 
@@ -233,11 +294,11 @@ public class ReactiveSeqTest {
 
         long stream = System.currentTimeMillis()-time;
         for(int i=0;i<10;i++)
-            count += ReactiveSeq.of(1,2,3)
+            count += of(1,2,3)
                              .findFirst().get();
         long time2 = System.currentTimeMillis();
         for(int k=0;k<50000;k++)
-            count += ReactiveSeq.of(1,2,3)
+            count += of(1,2,3)
                                  .findFirst().get();
         long rs = System.currentTimeMillis()-time2;
         System.out.println("Stream " + stream + " rs " + rs + " count " + count);
@@ -475,7 +536,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void arrayConcat(){
-        assertThat(ReactiveSeq.concat(ReactiveSeq.of(1,2,3),ReactiveSeq.of(100,200,300))
+        assertThat(ReactiveSeq.concat(of(1,2,3), of(100,200,300))
                    .map(i->i*1000).toListX(),equalTo(ListX.of(1000,
                 2000,
                 3000,
@@ -486,7 +547,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void lastOneBug(){
-        assertThat(ReactiveSeq.of(1, 2, 3, 4)
+        assertThat(of(1, 2, 3, 4)
                 .takeRight(1)
                 .single()
                 .orElse(-1),equalTo(4));
@@ -526,7 +587,7 @@ public class ReactiveSeqTest {
     @Test
     public void rangeLong(){
         ReactiveSeq.rangeLong(0,5).reverse().reverse().reverse().printOut();
-        ReactiveSeq.of('a').zipS(ReactiveSeq.rangeLong(0,100)).printOut();
+        of('a').zipS(ReactiveSeq.rangeLong(0,100)).printOut();
     }
     @Test
     public void testParallel(){
@@ -571,7 +632,7 @@ public class ReactiveSeqTest {
         System.out.println(f1.count().block());
         System.out.println(f2.count().block());
 
-        ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
+        ReactiveSeq<String> stream = of("hello","world");
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
         stream.forEach(System.out::println);
         stream1.forEach(System.out::println);
@@ -586,7 +647,7 @@ public class ReactiveSeqTest {
     @Test
     public void replayStream(){
 
-        ReactiveSeq<String> stream = ReactiveSeq.of("hello","world");
+        ReactiveSeq<String> stream = of("hello","world");
         ReactiveSeq<String> stream1 = stream.map(str->"hello world " + str);
         Spliterator<String> sp = stream1.spliterator();
 
@@ -613,20 +674,20 @@ public class ReactiveSeqTest {
     }
     @Test
     public void skip(){
-        assertThat(ReactiveSeq.of(1,2,3).skip(1).count(),equalTo(2l));
-        ReactiveSeq.of(10,1,10,2,10,3).skip(1).printOut();
-        ReactiveSeq.of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
+        assertThat(of(1,2,3).skip(1).count(),equalTo(2l));
+        of(10,1,10,2,10,3).skip(1).printOut();
+        of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
     }
     @Test
     public void limit(){
-        assertThat(ReactiveSeq.of(1,2,3).limit(2).count(),equalTo(2l));
-        ReactiveSeq.of(10,1,10,2,10,3).skip(1).printOut();
-        ReactiveSeq.of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
+        assertThat(of(1,2,3).limit(2).count(),equalTo(2l));
+        of(10,1,10,2,10,3).skip(1).printOut();
+        of(1,2,3).flatMap(i->Stream.of(10,i)).skip(1).printOut();
     }
     @Test
     public void multipaths() {
 
-        ReactiveSeq<Integer> list = ReactiveSeq.of(1, 2, 3);
+        ReactiveSeq<Integer> list = of(1, 2, 3);
         ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
         ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
         ReactiveSeq<Integer> by10Plus2 = by10.map(i -> i + 2);
@@ -725,14 +786,14 @@ public class ReactiveSeqTest {
 
     @Test
     public void combineNoOrder(){
-        assertThat(ReactiveSeq.of(1,2,3)
+        assertThat(of(1,2,3)
                 .combine((a, b)->a.equals(b), Semigroups.intSum)
                 .toListX(),equalTo(ListX.of(1,2,3)));
 
     }
     @Test
     public void anyMIteration(){
-        Iterator<Integer> it = AnyM.fromStream(ReactiveSeq.of(1,2,3))
+        Iterator<Integer> it = AnyM.fromStream(of(1,2,3))
                                   .combine((a, b)->a.equals(b), Semigroups.intSum)
                                     .iterator();
         List<Integer> list = new ArrayList<>();
@@ -748,7 +809,7 @@ public class ReactiveSeqTest {
 
 
 
-        assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3))
+        assertThat(AnyM.fromStream(of(1,2,3))
                         .combine((a, b)->a.equals(b), Semigroups.intSum)
                         .toListX(),equalTo(ListX.of(1,2,3)));
 
@@ -772,7 +833,7 @@ public class ReactiveSeqTest {
     @Test
     public void testIteratorPull(){
 
-        ReactiveSeq<String> stream = ReactiveSeq.of("hello");
+        ReactiveSeq<String> stream = of("hello");
 
 
         Iterator<Integer> it = stream.map(s->s.length())
@@ -889,7 +950,7 @@ public class ReactiveSeqTest {
 
     @Test
     public void ofTestObj(){
-        assertThat(ReactiveSeq.of("a")
+        assertThat(of("a")
                              .singleUnsafe(),equalTo("a"));
     }
     @Test
@@ -900,29 +961,29 @@ public class ReactiveSeqTest {
     @Test
     public void coflatMap(){
 
-       assertThat(ReactiveSeq.of(1,2,3)
+       assertThat(of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleUnsafe(),equalTo(6));
 
     }
     @Test
     public void test1() {
-        ReactiveSeq.of(1, 2, 3).filter(anyOf(not(in(2, 3, 4)), in(1, 10, 20)));
+        of(1, 2, 3).filter(anyOf(not(in(2, 3, 4)), in(1, 10, 20)));
     }
 
     @Test
     public void test2() {
-        ReactiveSeq.of(1, 2, 3).filter(anyOf(not(in(2, 3, 4)), greaterThan(10)));
+        of(1, 2, 3).filter(anyOf(not(in(2, 3, 4)), greaterThan(10)));
     }
 
     @Test
     public void test3() {
-        ReactiveSeq.of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(hasItems(Arrays.asList(2, 3)));
+        of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(hasItems(Arrays.asList(2, 3)));
     }
 
     @Test
     public void test4() {
-        ReactiveSeq.of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(not(hasItems(Arrays.asList(2, 3))));
+        of(Arrays.asList(1, 2, 3), Arrays.asList(2, 3, 4), Arrays.asList(3, 4, 5)).filter(not(hasItems(Arrays.asList(2, 3))));
     }
 
     @Test
@@ -930,15 +991,15 @@ public class ReactiveSeqTest {
 
         Predicate<? super Integer> inOne = in(2.4,3,4);
         Predicate<? super Integer> inTwo = in(1,10,20);
-        ReactiveSeq.of(1,2,3).filter(anyOf(not(inOne),inTwo));
-        ReactiveSeq.of(1,2,3).filter(anyOf(not(in(2.4,3,4)),in(1,10,20)));
+        of(1,2,3).filter(anyOf(not(inOne),inTwo));
+        of(1,2,3).filter(anyOf(not(in(2.4,3,4)),in(1,10,20)));
     }
 
     @Test
     public void retryShouldNotThrowNPEIfRetryIsZero() {
         Function<Integer, Integer> fn = i -> 2 * i;
 
-        int result = ReactiveSeq.of(1)
+        int result = of(1)
                                 .retry(fn, 0, 1, TimeUnit.SECONDS)
                                 .firstValue();
 
@@ -949,7 +1010,7 @@ public class ReactiveSeqTest {
     public void retryShouldExecuteFnEvenIfRetryIsZero() {
         Function<Integer, Integer> fn = i -> i / 0;
 
-        ReactiveSeq.of(1)
+        of(1)
                    .retry(fn, 0, 1, TimeUnit.SECONDS)
                    .firstValue();
 
@@ -964,7 +1025,7 @@ public class ReactiveSeqTest {
             return 2 * i;
         };
 
-        ReactiveSeq.of(1)
+        of(1)
                    .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
                    .firstValue();
 

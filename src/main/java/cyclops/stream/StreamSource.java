@@ -385,7 +385,7 @@ public class StreamSource {
     public static StreamSource of(final int backPressureAfter) {
         if (backPressureAfter < 1)
             throw new IllegalArgumentException(
-                                               "Can't applyHKT back pressure after less than 1 event");
+                                               "Can't apply back pressure after less than 1 event");
         return new StreamSource(
                                 backPressureAfter, true);
     }

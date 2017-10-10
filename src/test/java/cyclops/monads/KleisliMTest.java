@@ -1,6 +1,7 @@
 package cyclops.monads;
 
 import cyclops.collections.mutable.ListX;
+import cyclops.control.Option;
 import cyclops.control.Xor;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.reactiveSeq;
@@ -35,13 +36,13 @@ public class KleisliMTest {
     @Test
     public void leftK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
-        assertThat(ListX.of(10),
+        assertThat(ListX.of(Option.some(10)),
                 equalTo(k1.leftK(stream.INSTANCE).apply(Xor.secondary(10)).reactiveSeq().map(Xor::secondaryGet).toList()));
     }
     @Test
     public void rightK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
-        assertThat(ListX.of(10),
+        assertThat(ListX.of(Option.some(10)),
                 equalTo(k1.rightK(stream.INSTANCE).apply(Xor.primary(10)).reactiveSeq().map(Xor::get).toList()));
     }
     @Test

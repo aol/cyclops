@@ -1097,6 +1097,16 @@ public class BaseSequentialTest {
         assertEquals(asList(1, 2, 3), s.get().limitWhile(i -> i < 4).toList());
         assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhile(i -> true).toList());
     }
+    @Test
+    public void testLimitWhileClosed() {
+        Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
+
+        assertEquals(asList(1), s.get().limitWhileClosed(i -> false).toList());
+        assertEquals(asList(1, 2, 3), s.get().limitWhileClosed(i -> i % 3 != 0).toList());
+        assertEquals(asList(1, 2,3), s.get().limitWhileClosed(i -> i < 3).toList());
+        assertEquals(asList(1, 2, 3,4), s.get().limitWhileClosed(i -> i < 4).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhileClosed(i -> true).toList());
+    }
 
 
     @Test
@@ -1113,8 +1123,8 @@ public class BaseSequentialTest {
 
     @Test
     public void testLimitUntilClosed() {
-        assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntilClosed(i -> false).toList());
-        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
+      //  assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntilClosed(i -> false).toList());
+        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
         assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
         assertEquals(asList(1, 2, 3,4), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
         assertEquals(asList(1), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());

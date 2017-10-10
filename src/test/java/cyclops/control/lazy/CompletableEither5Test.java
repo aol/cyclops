@@ -39,7 +39,7 @@ public class CompletableEither5Test {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.get(),equalTo(11));
+        assertThat(mapped.orElse(-100),equalTo(11));
 
 
     }
@@ -53,7 +53,7 @@ public class CompletableEither5Test {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.swap1().orElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
@@ -66,7 +66,7 @@ public class CompletableEither5Test {
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.swap1().get(),instanceOf(IllegalStateException.class));
+        assertThat(mapped.swap1().orElse(null),instanceOf(IllegalStateException.class));
 
     }
     boolean lazy = true;
@@ -87,7 +87,7 @@ public class CompletableEither5Test {
         assertThat(right(10)
                .map(i->i*2)
                .flatMap(i->right(i*4))
-               .get(),equalTo(80));
+               .orElse(null),equalTo(80));
     }
     static class Base{ }
     static class One extends Base{ }
@@ -325,11 +325,7 @@ public class CompletableEither5Test {
     public void testGet() {
         assertThat(just.get(),equalTo(Option.some(10)));
     }
-    @Test(expected=NoSuchElementException.class)
-    public void testGetNone() {
-        none.get();
-        
-    }
+
 
     @Test
     public void testFilter() {

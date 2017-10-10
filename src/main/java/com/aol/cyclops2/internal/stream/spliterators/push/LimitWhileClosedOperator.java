@@ -27,7 +27,8 @@ public class LimitWhileClosedOperator<T,R> extends BaseOperator<T,T> {
         StreamSubscription sub[] = {null};
         sub[0] = source.subscribe(e-> {
                     try {
-                        onNext.accept(e);
+                        if(!closed[0])
+                         onNext.accept(e);
                         if(closed[0]){
                             sub[0].cancel();
                             onComplete.run();

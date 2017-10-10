@@ -28,6 +28,7 @@ import cyclops.async.adapters.Queue.QueueTimeoutException;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.tuple.Tuple;
 import cyclops.companion.Streams;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -396,7 +397,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         
     }
 
- 
+    @Override
+    default <U1> FutureStream<Tuple2<U, U1>> crossJoin(ReactiveSeq<? extends U1> other) {
+        Streamable<? extends U1> s = Streamable.fromStream(other);
+        return fromStream(stream().forEach2(a->ReactiveSeq.fromIterable(s), Tuple::tuple));
+    }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
      */
@@ -983,23 +988,25 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return LazyStream.super.collect(supplier, accumulator, combiner);
     }
 
+
+
     /*
-     * Execute subsequent stages on the completing thread (until async called)
-     * 10X faster than async execution.
-     * Use async for blocking IO or distributing work across threads or cores.
-     * Switch to sync for non-blocking tasks when desired thread utlisation reached
-     * <pre>
-     * {@code
-     *      new LazyReact().of(1,2,3)
-                            .sync() //synchronous mode
-                            .flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
-                            .block()
-     *
-     * }
-     * </pre>
-     *	@return Version of FutureStream that will use sync CompletableFuture methods
-     * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#sync()
-     */
+         * Execute subsequent stages on the completing thread (until async called)
+         * 10X faster than async execution.
+         * Use async for blocking IO or distributing work across threads or cores.
+         * Switch to sync for non-blocking tasks when desired thread utlisation reached
+         * <pre>
+         * {@code
+         *      new LazyReact().of(1,2,3)
+                                .sync() //synchronous mode
+                                .flatMapToCompletableFuture(i->CompletableFuture.completedFuture(i))
+                                .block()
+         *
+         * }
+         * </pre>
+         *	@return Version of FutureStream that will use sync CompletableFuture methods
+         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#sync()
+         */
     @Override
     default FutureStream<U> sync() {
         return this.withAsync(false);

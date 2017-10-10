@@ -2,6 +2,7 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.LimitWhileClosedSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
+import cyclops.collections.tuple.Tuple;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
@@ -37,6 +38,12 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
             return this;
         }
         return createSeq(Streams.reverse(this), reversible);
+    }
+
+    @Override
+    public <U> ReactiveSeq<Tuple2<T, U>> crossJoin(ReactiveSeq<? extends U> other) {
+        Streamable<? extends U> s = Streamable.fromStream(other);
+        return forEach2(a->ReactiveSeq.fromIterable(s), Tuple::tuple);
     }
 
     @Override

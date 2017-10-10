@@ -43,7 +43,7 @@ public class KleisliTest {
                                                                             (id, name) -> updateName(id, name),
                                                                             (id, name, success) -> logIfFail(id, name, success));
 
-        assertThat(findUpdate.apply(new DAO(){}).convert(Future::narrowK).get(),equalTo(true));
+        assertThat(findUpdate.apply(new DAO(){}).convert(Future::narrowK).orElse(false),equalTo(true));
 
     }
 }

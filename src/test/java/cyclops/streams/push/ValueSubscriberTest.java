@@ -129,7 +129,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Xor<Throwable,Integer> xor = sub.toXor();
-        assertThat(xor.swap().get(),instanceOf(NoSuchElementException.class));
+        assertThat(xor.swap().orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
     public void xorSecondryPublisherTest(){
@@ -138,7 +138,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Xor<Integer,Throwable> maybe = sub.toXor().swap();
-        assertThat(maybe.swap().get(),equalTo(1));
+        assertThat(maybe.swap().orElse(null),equalTo(1));
     }
     @Test
     public void xorSecondaryPublisherErrorTest(){
@@ -147,7 +147,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Xor<Integer,Throwable> xor = sub.toXor().swap();
-        assertThat(xor.get(),instanceOf(NoSuchElementException.class));
+        assertThat(xor.orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
     public void iorPublisherTest(){
@@ -165,7 +165,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Ior<Throwable,Integer> xor = sub.toIor();
-        assertThat(xor.swap().get(),instanceOf(NoSuchElementException.class));
+        assertThat(xor.swap().orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
     public void iorSecondryPublisherTest(){
@@ -174,7 +174,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Ior<Integer,Throwable> maybe = sub.toIor().swap();
-        assertThat(maybe.swap().get(),equalTo(1));
+        assertThat(maybe.swap().orElse(null),equalTo(1));
     }
     @Test
     public void iorSecondaryPublisherErrorTest(){
@@ -183,7 +183,7 @@ public class ValueSubscriberTest {
              .subscribe(sub);
         
         Ior<Integer,Throwable> xor = sub.toIor().swap();
-        assertThat(xor.get(),instanceOf(NoSuchElementException.class));
+        assertThat(xor.orElse(null),instanceOf(NoSuchElementException.class));
     }
     
 }
