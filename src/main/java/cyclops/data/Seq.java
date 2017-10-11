@@ -103,12 +103,16 @@ public interface Seq<T> extends ImmutableList<T>,
         return fromStream(ReactiveSeq.iterate(seed,pred,f));
 
     }
+    static <T> Seq<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
+        return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
+
+    }
 
     static <T, U> Tuple2<Seq<T>, Seq<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
         return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
     }
     static <T> Seq<T> generate(Supplier<T> s, int max){
-        return fromStream(ReactiveSeq.generate(s));
+        return fromStream(ReactiveSeq.generate(s).limit(max));
     }
     static <T> Seq<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));

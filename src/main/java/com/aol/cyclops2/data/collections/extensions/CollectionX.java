@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions;
 
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface CollectionX<T> extends FoldableTraversable<T>,
+public interface CollectionX<T> extends IterableX<T>,
                                         Collection<T> ,
                                         Unwrapable,
                                         Unit<T> {
@@ -343,10 +343,14 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
+    @Override
+    Object[] toArray();
+    @Override
+    int size();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
-     */
+         * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+         */
     @Override
     CollectionX<T> filter(Predicate<? super T> pred);
 
@@ -426,7 +430,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
      */
     @Override
     default CollectionX<T> peek(final Consumer<? super T> c) {
-        return (CollectionX<T>) FoldableTraversable.super.peek(c);
+        return (CollectionX<T>) IterableX.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -889,7 +893,7 @@ public interface CollectionX<T> extends FoldableTraversable<T>,
     @Override
     default <U> CollectionX<U> cast(final Class<? extends U> type) {
 
-        return (CollectionX<U>) FoldableTraversable.super.cast(type);
+        return (CollectionX<U>) IterableX.super.cast(type);
     }
 
 

@@ -992,6 +992,7 @@ public interface Traversable<T> extends Publisher<T>,
     /**
      * @return This Traversable converted to a Stream and type narrowed to Traversable
      */
+    //@TODO remove
     default Traversable<T> traversable() {
         return stream();
     }
@@ -1014,6 +1015,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            to Prepend
      * @return ReactiveSeq with Stream prepended
      */
+    //@TODO - make sure equivalent append operators
     default Traversable<T> prependS(Stream<? extends T> stream){
         return traversable().prependS(stream);
     }

@@ -1,17 +1,61 @@
 package cyclops.data;
 
+import cyclops.collections.tuple.Tuple2;
 import cyclops.control.Option;
+import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
-public class VectorTest {
+public class VectorTest extends BaseImmutableListTest {
+    @Override
+    protected <T> Vector<T> fromStream(Stream<T> s) {
+        return Vector.fromStream(s);
+    }
 
+    @Override
+    public <T> Vector<T> empty() {
+        return Vector.empty();
+    }
+
+    @Override
+    public <T> Vector<T> of(T... values) {
+        return Vector.of(values);
+    }
+
+    @Override
+    public Vector<Integer> range(int start, int end) {
+        return Vector.range(start,end);
+    }
+
+    @Override
+    public Vector<Long> rangeLong(long start, long end) {
+        return Vector.rangeLong(start,end);
+    }
+
+    @Override
+    public <T> ImmutableList<T> iterate(int times, T seed, UnaryOperator<T> fn) {
+        return Vector.iterate(seed,fn,times);
+    }
+
+    @Override
+    public <T> Vector<T> generate(int times, Supplier<T> fn) {
+        return Vector.generate(fn,times);
+    }
+
+    @Override
+    public <U, T> Seq<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+        return Seq.unfold(seed,unfolder);
+    }
     @Test
     public void testVector(){
         Vector<Integer> ints = Vector.<Integer>empty().plus(1);

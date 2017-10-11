@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
@@ -35,13 +35,8 @@ import java.util.stream.Stream;
 
 
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
-                                            Folds<T>,
-                                            Filters<T>,
-                                            Transformable<T>,
-                                            OnEmptySwitch<ImmutableQueue<T>,
-                                            ImmutableQueue<T>>,
-                                            Iterable<T>,
-                                            FoldableTraversable<T>,
+                                            OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
+                                            IterableX<T>,
                                             To<ImmutableQueue<T>> {
 
     <R> ImmutableQueue<R> unitStream(Stream<R> stream);
@@ -152,17 +147,17 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default <U> ImmutableQueue<U> ofType(Class<? extends U> type) {
-        return (ImmutableQueue<U>)FoldableTraversable.super.ofType(type);
+        return (ImmutableQueue<U>)IterableX.super.ofType(type);
     }
 
     @Override
     default ImmutableQueue<T> filterNot(Predicate<? super T> predicate) {
-        return (ImmutableQueue<T>)FoldableTraversable.super.filterNot(predicate);
+        return (ImmutableQueue<T>)IterableX.super.filterNot(predicate);
     }
 
     @Override
     default ImmutableQueue<T> notNull() {
-        return (ImmutableQueue<T>)FoldableTraversable.super.notNull();
+        return (ImmutableQueue<T>)IterableX.super.notNull();
     }
 
     @Override
@@ -182,22 +177,22 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default ImmutableQueue<T> peek(Consumer<? super T> c) {
-        return (ImmutableQueue<T>)FoldableTraversable.super.peek(c);
+        return (ImmutableQueue<T>)IterableX.super.peek(c);
     }
 
     @Override
     default <R> ImmutableQueue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableQueue<R>)FoldableTraversable.super.trampoline(mapper);
+        return (ImmutableQueue<R>)IterableX.super.trampoline(mapper);
     }
 
     @Override
     default <R> ImmutableQueue<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableQueue<R>)FoldableTraversable.super.retry(fn);
+        return (ImmutableQueue<R>)IterableX.super.retry(fn);
     }
 
     @Override
     default <R> ImmutableQueue<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableQueue<R>)FoldableTraversable.super.retry(fn,retries,delay,timeUnit);
+        return (ImmutableQueue<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
     }
 
     <R> ImmutableQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
@@ -384,7 +379,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default Filters<T> retainAll(T... values) {
+    default ImmutableQueue<T> retainAll(T... values) {
         return unitStream(stream().retainAll(values));
     }
 

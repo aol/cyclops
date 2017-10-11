@@ -26,7 +26,7 @@ import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.stream.*;
 import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.reactive.QueueBasedSubscriber.Counter;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.companion.Streams;
 import cyclops.async.*;
@@ -119,7 +119,7 @@ import java.util.stream.*;
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
                                         OnEmptySwitch<T, Stream<T>>,
-                                        FoldableTraversable<T>,
+        IterableX<T>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 
@@ -1776,7 +1776,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.combine(op,predicate);
+        return (ReactiveSeq<T>)IterableX.super.combine(op,predicate);
     }
 
     /**
@@ -1809,7 +1809,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.takeWhile(p);
+        return (ReactiveSeq<T>) IterableX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
@@ -1834,7 +1834,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.dropWhile(p);
+        return (ReactiveSeq<T>) IterableX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -1843,7 +1843,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.takeUntil(p);
+        return (ReactiveSeq<T>) IterableX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -1852,7 +1852,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.dropUntil(p);
+        return (ReactiveSeq<T>) IterableX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
@@ -1861,7 +1861,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.dropRight(num);
+        return (ReactiveSeq<T>) IterableX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -1870,7 +1870,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> takeRight(final int num) {
 
-        return (ReactiveSeq<T>) FoldableTraversable.super.takeRight(num);
+        return (ReactiveSeq<T>) IterableX.super.takeRight(num);
     }
 
     /**
@@ -2722,7 +2722,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     @SuppressWarnings("unchecked")
     default <U> ReactiveSeq<U> ofType(Class<? extends U> type){
-        return (ReactiveSeq<U>)FoldableTraversable.super.ofType(type);
+        return (ReactiveSeq<U>)IterableX.super.ofType(type);
     }
 
     /**
@@ -2735,7 +2735,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default <U> ReactiveSeq<U> cast(Class<? extends U> type){
-        return (ReactiveSeq<U>)FoldableTraversable.super.cast(type);
+        return (ReactiveSeq<U>)IterableX.super.cast(type);
     }
 
 
@@ -3985,7 +3985,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ReactiveSeq) FoldableTraversable.super.retry(fn, retries, delay, timeUnit);
+        return (ReactiveSeq) IterableX.super.retry(fn, retries, delay, timeUnit);
     }
 
     /**
@@ -4599,42 +4599,42 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> removeAllS(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllS(stream);
+        return (ReactiveSeq<T>)IterableX.super.removeAllS(stream);
     }
 
     @Override
     default ReactiveSeq<T> removeAllI(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAllI(it);
+        return (ReactiveSeq<T>)IterableX.super.removeAllI(it);
     }
 
     @Override
     default ReactiveSeq<T> removeAll(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.removeAll(values);
+        return (ReactiveSeq<T>)IterableX.super.removeAll(values);
     }
 
     @Override
     default ReactiveSeq<T> retainAllI(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllI(it);
+        return (ReactiveSeq<T>)IterableX.super.retainAllI(it);
     }
 
     @Override
     default ReactiveSeq<T> retainAllS(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAllS(stream);
+        return (ReactiveSeq<T>)IterableX.super.retainAllS(stream);
     }
 
     @Override
     default ReactiveSeq<T> retainAll(final T... values) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.retainAll(values);
+        return (ReactiveSeq<T>)IterableX.super.retainAll(values);
     }
 
     @Override
     default ReactiveSeq<T> filterNot(final Predicate<? super T> predicate) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.filterNot(predicate);
+        return (ReactiveSeq<T>)IterableX.super.filterNot(predicate);
     }
 
     @Override
     default ReactiveSeq<T> notNull() {
-        return (ReactiveSeq<T>)FoldableTraversable.super.notNull();
+        return (ReactiveSeq<T>)IterableX.super.notNull();
     }
 
 
@@ -4645,37 +4645,37 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (ReactiveSeq<T>)FoldableTraversable.super.zip(combiner,app);
+        return (ReactiveSeq<T>)IterableX.super.zip(combiner,app);
     }
 
     @Override
     default <R> ReactiveSeq<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)FoldableTraversable.super.zipWith(fn);
+        return (ReactiveSeq<R>)IterableX.super.zipWith(fn);
     }
 
     @Override
     default <R> ReactiveSeq<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)FoldableTraversable.super.zipWithS(fn);
+        return (ReactiveSeq<R>)IterableX.super.zipWithS(fn);
     }
 
     @Override
     default <R> ReactiveSeq<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)FoldableTraversable.super.zipWithP(fn);
+        return (ReactiveSeq<R>)IterableX.super.zipWithP(fn);
     }
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (ReactiveSeq)FoldableTraversable.super.zipP(other, Tuple::tuple);
+        return (ReactiveSeq)IterableX.super.zipP(other, Tuple::tuple);
     }
 
     @Override
     default <S, U, R> ReactiveSeq<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (ReactiveSeq<R>)FoldableTraversable.super.zip3(second,third,fn3);
+        return (ReactiveSeq<R>)IterableX.super.zip3(second,third,fn3);
     }
 
     @Override
     default <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (ReactiveSeq<R>)FoldableTraversable.super.zip4(second,third,fourth,fn);
+        return (ReactiveSeq<R>)IterableX.super.zip4(second,third,fourth,fn);
     }
     /**
      A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers

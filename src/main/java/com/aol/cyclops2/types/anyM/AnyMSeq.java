@@ -1,7 +1,5 @@
 package com.aol.cyclops2.types.anyM;
 
-import static com.aol.cyclops2.internal.Utils.firstOrNull;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
@@ -18,7 +16,7 @@ import com.aol.cyclops2.types.*;
 
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collections.mutable.*;
@@ -48,7 +46,7 @@ import cyclops.function.Function3;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
-public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, FoldableTraversable<T>, Publisher<T> {
+public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, IterableX<T>, Publisher<T> {
 
 
     default <R> AnyMSeq<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
@@ -325,7 +323,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> limit(final long num) {
 
-        return fromIterable(FoldableTraversable.super.limit(num));
+        return fromIterable(IterableX.super.limit(num));
     }
 
     /* (non-Javadoc)
@@ -334,7 +332,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> limitWhile(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.limitWhile(p));
+        return fromIterable(IterableX.super.limitWhile(p));
     }
 
     /* (non-Javadoc)
@@ -343,7 +341,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> limitUntil(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.limitUntil(p));
+        return fromIterable(IterableX.super.limitUntil(p));
     }
 
     /* (non-Javadoc)
@@ -352,7 +350,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> limitLast(final int num) {
 
-        return fromIterable(FoldableTraversable.super.limitLast(num));
+        return fromIterable(IterableX.super.limitLast(num));
     }
 
     /* (non-Javadoc)
@@ -360,7 +358,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
      */
     @Override
     default AnyMSeq<W,T> onEmpty(final T value) {
-        return fromIterable(FoldableTraversable.super.onEmpty(value));
+        return fromIterable(IterableX.super.onEmpty(value));
     }
 
     /* (non-Javadoc)
@@ -369,7 +367,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
 
-        return fromIterable(FoldableTraversable.super.onEmptyGet(supplier));
+        return fromIterable(IterableX.super.onEmptyGet(supplier));
     }
     FunctionalAdapter<W> adapter();
     /* (non-Javadoc)
@@ -378,7 +376,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <X extends Throwable> AnyMSeq<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return fromIterable(FoldableTraversable.super.onEmptyThrow(supplier));
+        return fromIterable(IterableX.super.onEmptyThrow(supplier));
     }
 
     
@@ -423,7 +421,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> cycle(final long times) {
 
-        return fromIterable(FoldableTraversable.super.cycle(times));
+        return fromIterable(IterableX.super.cycle(times));
     }
 
     /* (non-Javadoc)
@@ -432,7 +430,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> cycle(final Monoid<T> m, final long times) {
 
-        return fromIterable(FoldableTraversable.super.cycle(m, times));
+        return fromIterable(IterableX.super.cycle(m, times));
     }
 
     /* (non-Javadoc)
@@ -441,7 +439,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> cycleWhile(final Predicate<? super T> predicate) {
         
-        return fromIterable(FoldableTraversable.super.cycleWhile(predicate));
+        return fromIterable(IterableX.super.cycleWhile(predicate));
     }
     @Override
     default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
@@ -464,7 +462,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> cycleUntil(final Predicate<? super T> predicate) {
 
-        return fromIterable(FoldableTraversable.super.cycleUntil(predicate));
+        return fromIterable(IterableX.super.cycleUntil(predicate));
     }
 
     /* (non-Javadoc)
@@ -473,7 +471,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U, R> AnyMSeq<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return fromIterable(FoldableTraversable.super.zip(other, zipper));
+        return fromIterable(IterableX.super.zip(other, zipper));
     }
 
     /* (non-Javadoc)
@@ -482,7 +480,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U, R> AnyMSeq<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return fromIterable(FoldableTraversable.super.zipS(other, zipper));
+        return fromIterable(IterableX.super.zipS(other, zipper));
     }
 
 
@@ -493,7 +491,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return fromIterable(FoldableTraversable.super.zipS(other));
+        return fromIterable(IterableX.super.zipS(other));
     }
 
     /* (non-Javadoc)
@@ -502,7 +500,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return fromIterable(FoldableTraversable.super.zip(other));
+        return fromIterable(IterableX.super.zip(other));
     }
 
 
@@ -513,7 +511,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return fromIterable(FoldableTraversable.super.zip3(second, third));
+        return fromIterable(IterableX.super.zip3(second, third));
     }
 
     /* (non-Javadoc)
@@ -523,7 +521,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
 
-        return fromIterable(FoldableTraversable.super.zip4(second, third, fourth));
+        return fromIterable(IterableX.super.zip4(second, third, fourth));
     }
 
     /* (non-Javadoc)
@@ -532,7 +530,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,Tuple2<T, Long>> zipWithIndex() {
 
-        return fromIterable(FoldableTraversable.super.zipWithIndex());
+        return fromIterable(IterableX.super.zipWithIndex());
     }
 
     /* (non-Javadoc)
@@ -541,7 +539,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,VectorX<T>> sliding(final int windowSize) {
 
-        return fromIterable(FoldableTraversable.super.sliding(windowSize));
+        return fromIterable(IterableX.super.sliding(windowSize));
     }
 
     /* (non-Javadoc)
@@ -550,7 +548,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return fromIterable(FoldableTraversable.super.sliding(windowSize, increment));
+        return fromIterable(IterableX.super.sliding(windowSize, increment));
     }
 
     /* (non-Javadoc)
@@ -559,7 +557,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <C extends Collection<? super T>> AnyMSeq<W,C> grouped(final int size, final Supplier<C> supplier) {
 
-        return fromIterable(FoldableTraversable.super.grouped(size, supplier));
+        return fromIterable(IterableX.super.grouped(size, supplier));
     }
 
     /* (non-Javadoc)
@@ -568,7 +566,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return fromIterable(FoldableTraversable.super.groupedUntil(predicate));
+        return fromIterable(IterableX.super.groupedUntil(predicate));
     }
 
     /* (non-Javadoc)
@@ -577,7 +575,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return fromIterable(FoldableTraversable.super.groupedStatefullyUntil(predicate));
+        return fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
     }
 
     /* (non-Javadoc)
@@ -586,11 +584,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
-        return fromIterable(FoldableTraversable.super.combine(predicate, op));
+        return fromIterable(IterableX.super.combine(predicate, op));
     }
     @Override
     default AnyMSeq<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return fromIterable(FoldableTraversable.super.combine(op,predicate));
+        return fromIterable(IterableX.super.combine(op,predicate));
     }
 
     /* (non-Javadoc)
@@ -599,7 +597,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return fromIterable(FoldableTraversable.super.groupedWhile(predicate));
+        return fromIterable(IterableX.super.groupedWhile(predicate));
     }
 
     /* (non-Javadoc)
@@ -608,7 +606,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <C extends Collection<? super T>> AnyMSeq<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return fromIterable(FoldableTraversable.super.groupedWhile(predicate, factory));
+        return fromIterable(IterableX.super.groupedWhile(predicate, factory));
     }
 
     /* (non-Javadoc)
@@ -617,7 +615,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <C extends Collection<? super T>> AnyMSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
-        return fromIterable(FoldableTraversable.super.groupedUntil(predicate, factory));
+        return fromIterable(IterableX.super.groupedUntil(predicate, factory));
     }
 
     /* (non-Javadoc)
@@ -626,7 +624,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ListX<T>> grouped(final int groupSize) {
 
-        return fromIterable(FoldableTraversable.super.grouped(groupSize));
+        return fromIterable(IterableX.super.grouped(groupSize));
     }
 
 
@@ -636,7 +634,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> takeWhile(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.takeWhile(p));
+        return fromIterable(IterableX.super.takeWhile(p));
     }
 
     /* (non-Javadoc)
@@ -645,7 +643,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> dropWhile(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.dropWhile(p));
+        return fromIterable(IterableX.super.dropWhile(p));
     }
 
     /* (non-Javadoc)
@@ -654,7 +652,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> takeUntil(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.takeUntil(p));
+        return fromIterable(IterableX.super.takeUntil(p));
     }
 
     /* (non-Javadoc)
@@ -663,7 +661,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> dropUntil(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.dropUntil(p));
+        return fromIterable(IterableX.super.dropUntil(p));
     }
 
     /* (non-Javadoc)
@@ -672,7 +670,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> dropRight(final int num) {
 
-        return fromIterable(FoldableTraversable.super.dropRight(num));
+        return fromIterable(IterableX.super.dropRight(num));
     }
 
     /* (non-Javadoc)
@@ -681,7 +679,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> takeRight(final int num) {
 
-        return fromIterable(FoldableTraversable.super.takeRight(num));
+        return fromIterable(IterableX.super.takeRight(num));
     }
 
     /* (non-Javadoc)
@@ -690,7 +688,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> reverse() {
 
-        return fromIterable(FoldableTraversable.super.reverse());
+        return fromIterable(IterableX.super.reverse());
     }
 
     /* (non-Javadoc)
@@ -699,7 +697,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> shuffle() {
 
-        return fromIterable(FoldableTraversable.super.shuffle());
+        return fromIterable(IterableX.super.shuffle());
     }
 
     /* (non-Javadoc)
@@ -708,7 +706,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> shuffle(final Random random) {
 
-        return fromIterable(FoldableTraversable.super.shuffle(random));
+        return fromIterable(IterableX.super.shuffle(random));
     }
 
     /* (non-Javadoc)
@@ -717,7 +715,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> distinct() {
 
-        return fromIterable(FoldableTraversable.super.distinct());
+        return fromIterable(IterableX.super.distinct());
     }
 
     /* (non-Javadoc)
@@ -726,7 +724,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> scanLeft(final Monoid<T> monoid) {
 
-        return fromIterable(FoldableTraversable.super.scanLeft(monoid));
+        return fromIterable(IterableX.super.scanLeft(monoid));
     }
 
     /* (non-Javadoc)
@@ -735,7 +733,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
-        return fromIterable(FoldableTraversable.super.scanLeft(seed, function));
+        return fromIterable(IterableX.super.scanLeft(seed, function));
     }
 
     /* (non-Javadoc)
@@ -744,7 +742,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> scanRight(final Monoid<T> monoid) {
 
-        return fromIterable(FoldableTraversable.super.scanRight(monoid));
+        return fromIterable(IterableX.super.scanRight(monoid));
     }
 
     /* (non-Javadoc)
@@ -753,7 +751,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U> AnyMSeq<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
-        return fromIterable(FoldableTraversable.super.scanRight(identity, combiner));
+        return fromIterable(IterableX.super.scanRight(identity, combiner));
     }
 
     /* (non-Javadoc)
@@ -762,7 +760,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> sorted() {
 
-        return fromIterable(FoldableTraversable.super.sorted());
+        return fromIterable(IterableX.super.sorted());
     }
 
     /* (non-Javadoc)
@@ -771,7 +769,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> sorted(final Comparator<? super T> c) {
 
-        return fromIterable(FoldableTraversable.super.sorted(c));
+        return fromIterable(IterableX.super.sorted(c));
     }
 
     /* (non-Javadoc)
@@ -780,7 +778,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> skip(final long num) {
 
-        return fromIterable(FoldableTraversable.super.skip(num));
+        return fromIterable(IterableX.super.skip(num));
     }
 
     /* (non-Javadoc)
@@ -789,7 +787,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> skipWhile(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.skipWhile(p));
+        return fromIterable(IterableX.super.skipWhile(p));
     }
 
     /* (non-Javadoc)
@@ -798,7 +796,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> skipUntil(final Predicate<? super T> p) {
 
-        return fromIterable(FoldableTraversable.super.skipUntil(p));
+        return fromIterable(IterableX.super.skipUntil(p));
     }
 
     /* (non-Javadoc)
@@ -807,7 +805,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> intersperse(final T value) {
 
-        return fromIterable(FoldableTraversable.super.intersperse(value));
+        return fromIterable(IterableX.super.intersperse(value));
     }
 
     /* (non-Javadoc)
@@ -816,7 +814,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> skipLast(final int num) {
 
-        return fromIterable(FoldableTraversable.super.skipLast(num));
+        return fromIterable(IterableX.super.skipLast(num));
     }
 
     /* (non-Javadoc)
@@ -825,7 +823,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,T> slice(final long from, final long to) {
 
-        return fromIterable(FoldableTraversable.super.slice(from, to));
+        return fromIterable(IterableX.super.slice(from, to));
     }
 
     /* (non-Javadoc)
@@ -834,7 +832,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default <U extends Comparable<? super U>> AnyMSeq<W,T> sorted(final Function<? super T, ? extends U> function) {
 
-        return fromIterable(FoldableTraversable.super.sorted(function));
+        return fromIterable(IterableX.super.sorted(function));
     }
 
     /* (non-Javadoc)
@@ -843,7 +841,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> permutations() {
 
-        return fromIterable(FoldableTraversable.super.permutations());
+        return fromIterable(IterableX.super.permutations());
     }
 
     /* (non-Javadoc)
@@ -852,7 +850,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> combinations(final int size) {
 
-        return fromIterable(FoldableTraversable.super.combinations(size));
+        return fromIterable(IterableX.super.combinations(size));
     }
 
     /* (non-Javadoc)
@@ -861,7 +859,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> combinations() {
 
-        return fromIterable(FoldableTraversable.super.combinations());
+        return fromIterable(IterableX.super.combinations());
     }
 
     /* (non-Javadoc)
@@ -873,9 +871,14 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
         return (AnyMSeq<W,U>) AnyM.super.ofType(type);
     }
 
+    @Override
+    default AnyMSeq<W, T> notNull() {
+        return (AnyMSeq<W,T>) AnyM.super.notNull();
+    }
+
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
-     */
+         * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+         */
     @Override
     default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {
         return (AnyMSeq<W,T>) AnyM.super.filterNot(fn);
@@ -1013,52 +1016,52 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
     }
     @Override
     default AnyMSeq<W,T> prependS(Stream<? extends T> stream) {
-        return fromIterable(FoldableTraversable.super.prependS(stream));
+        return fromIterable(IterableX.super.prependS(stream));
     }
 
     @Override
     default AnyMSeq<W,T> append(T... values) {
-        return fromIterable(FoldableTraversable.super.append(values));
+        return fromIterable(IterableX.super.append(values));
     }
 
     @Override
     default AnyMSeq<W,T> append(T value) {
-        return fromIterable(FoldableTraversable.super.append(value));
+        return fromIterable(IterableX.super.append(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T value) {
-        return fromIterable(FoldableTraversable.super.prepend(value));
+        return fromIterable(IterableX.super.prepend(value));
     }
 
     @Override
     default AnyMSeq<W,T> prepend(T... values) {
-        return fromIterable(FoldableTraversable.super.prepend(values));
+        return fromIterable(IterableX.super.prepend(values));
     }
 
     @Override
     default AnyMSeq<W,T> insertAt(int pos, T... values) {
-        return fromIterable(FoldableTraversable.super.insertAt(pos,values));
+        return fromIterable(IterableX.super.insertAt(pos,values));
     }
 
     @Override
     default AnyMSeq<W,T> deleteBetween(int start, int end) {
-        return fromIterable(FoldableTraversable.super.deleteBetween(start,end));
+        return fromIterable(IterableX.super.deleteBetween(start,end));
     }
 
     @Override
     default AnyMSeq<W,T> insertAtS(int pos, Stream<T> stream) {
-        return fromIterable(FoldableTraversable.super.insertAtS(pos,stream));
+        return fromIterable(IterableX.super.insertAtS(pos,stream));
     }
 
     @Override
     default AnyMSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return fromIterable(FoldableTraversable.super.recover(fn));
+        return fromIterable(IterableX.super.recover(fn));
     }
 
     @Override
     default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return fromIterable(FoldableTraversable.super.recover(exceptionClass,fn));
+        return fromIterable(IterableX.super.recover(exceptionClass,fn));
     }
 
 
@@ -1103,45 +1106,45 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Foldable
 
     @Override
     default AnyMSeq<W,T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return fromIterable(FoldableTraversable.super.zip(combiner,app));
+        return fromIterable(IterableX.super.zip(combiner,app));
     }
 
     @Override
     default <R> AnyMSeq<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return fromIterable(FoldableTraversable.super.zipWith(fn));
+        return fromIterable(IterableX.super.zipWith(fn));
     }
 
     @Override
     default <R> AnyMSeq<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return fromIterable(FoldableTraversable.super.zipWithS(fn));
+        return fromIterable(IterableX.super.zipWithS(fn));
     }
 
     @Override
     default <R> AnyMSeq<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return fromIterable(FoldableTraversable.super.zipWithP(fn));
+        return fromIterable(IterableX.super.zipWithP(fn));
     }
 
     @Override
     default <T2, R> AnyMSeq<W,R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return fromIterable(FoldableTraversable.super.zipP(publisher,fn));
+        return fromIterable(IterableX.super.zipP(publisher,fn));
     }
 
 
 
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return fromIterable(FoldableTraversable.super.zipP(other));
+        return fromIterable(IterableX.super.zipP(other));
     }
 
 
     @Override
     default <S, U, R> AnyMSeq<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return fromIterable(FoldableTraversable.super.zip3(second,third,fn3));
+        return fromIterable(IterableX.super.zip3(second,third,fn3));
     }
 
     @Override
     default <T2, T3, T4, R> AnyMSeq<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return fromIterable(FoldableTraversable.super.zip4(second,third,fourth,fn));
+        return fromIterable(IterableX.super.zip4(second,third,fourth,fn));
     }
 
 

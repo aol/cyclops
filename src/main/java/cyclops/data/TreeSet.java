@@ -113,7 +113,7 @@ public class TreeSet<T> implements ImmutableSortedSet<T>{
     }
 
     @Override
-    public <U> Traversable<U> unitIterator(Iterator<U> it) {
+    public <U> TreeSet<U> unitIterator(Iterator<U> it) {
         return fromStream(ReactiveSeq.fromIterator(it),Comparators.naturalOrderIdentityComparator());
     }
 

@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 
 import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.traversable.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
@@ -244,13 +244,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> nestedFoldables() {
+    public AnyM<W,? extends IterableX<T>> nestedFoldables() {
         return run.map(ReactiveSeq::fromStream);
 
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> nestedCollectables() {
+    public AnyM<W,? extends IterableX<T>> nestedCollectables() {
         return run.map(ReactiveSeq::fromStream);
 
     }
@@ -262,7 +262,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> transformerStream() {
+    public AnyM<W,? extends IterableX<T>> transformerStream() {
 
         return run.map(ReactiveSeq::fromStream);
     }

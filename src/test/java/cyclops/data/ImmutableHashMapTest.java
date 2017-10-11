@@ -2,16 +2,15 @@ package cyclops.data;
 
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
-import org.junit.Test;
+import cyclops.data.basetests.BaseImmutableMapTest;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
-public class ImmutableHashMapTest extends BaseImmutableMapTest{
+public class ImmutableHashMapTest extends BaseImmutableMapTest {
 
 
     @Override

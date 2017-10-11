@@ -82,7 +82,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
     }
 
     @Override
-    public <U> Traversable<U> unitIterator(Iterator<U> it) {
+    public <U> TrieSet<U> unitIterator(Iterator<U> it) {
         return fromIterable(()->it);
     }
 

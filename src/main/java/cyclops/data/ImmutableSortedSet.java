@@ -236,7 +236,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     }
 
     @Override
-    <U> Traversable<U> unitIterator(Iterator<U> U);
+    <U> ImmutableSortedSet<U> unitIterator(Iterator<U> U);
 
     @Override
     default ImmutableSortedSet<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {

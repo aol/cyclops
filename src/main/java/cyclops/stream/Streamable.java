@@ -10,7 +10,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
@@ -44,15 +44,8 @@ import java.util.stream.*;
  */
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
-                                        Iterable<T>,
-                                        Folds<T>,
-                                        ReactiveStreamsTerminalOperations<T>,
-                                        FoldableTraversable<T>,
-                                        Transformable<T>,
-                                        Filters<T>,
-                                        Traversable<T>,
-                                        Unit<T>,
-                                        Zippable<T> {
+                                        IterableX<T>,
+                                        Unit<T> {
 
     public static <T> Streamable<T> fromObject(final Object toCoerce) {
         return new StreamableImpl(
@@ -161,11 +154,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.combine(predicate, op));
+        return Streamable.fromIterable(IterableX.super.combine(predicate, op));
     }
     @Override
     default Streamable<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
-        return (Streamable<T>)FoldableTraversable.super.combine(op,predicate);
+        return (Streamable<T>)IterableX.super.combine(op,predicate);
     }
 
     /* (non-Javadoc)
@@ -174,7 +167,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default <U, R> Streamable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.zip(other, zipper));
+        return Streamable.fromIterable(IterableX.super.zip(other, zipper));
     }
 
 
@@ -182,7 +175,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default <U, R> Streamable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.zipS(other, zipper));
+        return Streamable.fromIterable(IterableX.super.zipS(other, zipper));
     }
 
     /* (non-Javadoc)
@@ -191,7 +184,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.zipS(other));
+        return Streamable.fromIterable(IterableX.super.zipS(other));
     }
 
     /* (non-Javadoc)
@@ -200,7 +193,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.zip3(second, third));
+        return Streamable.fromIterable(IterableX.super.zip3(second, third));
     }
 
     /* (non-Javadoc)
@@ -210,7 +203,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.zip4(second, third, fourth));
+        return Streamable.fromIterable(IterableX.super.zip4(second, third, fourth));
     }
 
     /* (non-Javadoc)
@@ -219,7 +212,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return Streamable.fromIterable(FoldableTraversable.super.groupedStatefullyUntil(predicate));
+        return Streamable.fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
     }
 
 
@@ -229,7 +222,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> takeWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) FoldableTraversable.super.takeWhile(p);
+        return (Streamable<T>) IterableX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
@@ -238,7 +231,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> dropWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) FoldableTraversable.super.dropWhile(p);
+        return (Streamable<T>) IterableX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -247,7 +240,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> takeUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) FoldableTraversable.super.takeUntil(p);
+        return (Streamable<T>) IterableX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -256,7 +249,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> dropUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) FoldableTraversable.super.dropUntil(p);
+        return (Streamable<T>) IterableX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
@@ -265,7 +258,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> dropRight(final int num) {
 
-        return (Streamable<T>) FoldableTraversable.super.dropRight(num);
+        return (Streamable<T>) IterableX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -274,7 +267,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Streamable<T> takeRight(final int num) {
 
-        return (Streamable<T>) FoldableTraversable.super.takeRight(num);
+        return (Streamable<T>) IterableX.super.takeRight(num);
     }
 
     /**
@@ -1879,7 +1872,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     @Override
-    default Traversable<T> insertAtS(int pos, Stream<T> stream){
+    default Streamable<T> insertAtS(int pos, Stream<T> stream){
         return fromStream(reactiveSeq().insertAtS(pos,stream));
     }
 

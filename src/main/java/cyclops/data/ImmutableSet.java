@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.PersistentSetX;
@@ -32,51 +32,46 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public interface ImmutableSet<T> extends Folds<T>,
-                                         Filters<T>,
-                                         Transformable<T>,
-                                         OnEmpty<T>,
-                                         OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
-                                         FoldableTraversable<T>,
-                                         Iterable<T> {
+public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
+                                         IterableX<T>{
     @Override
     default <U> ImmutableSet<U> ofType(Class<? extends U> type) {
-        return (ImmutableSet<U>)FoldableTraversable.super.ofType(type);
+        return (ImmutableSet<U>)IterableX.super.ofType(type);
     }
 
     @Override
     default ImmutableSet<T> filterNot(Predicate<? super T> predicate) {
-        return (ImmutableSet<T>)FoldableTraversable.super.filterNot(predicate);
+        return (ImmutableSet<T>)IterableX.super.filterNot(predicate);
     }
 
     @Override
     default ImmutableSet<T> notNull() {
-        return (ImmutableSet<T>)FoldableTraversable.super.notNull();
+        return (ImmutableSet<T>)IterableX.super.notNull();
     }
 
     @Override
     default <U> ImmutableSet<U> cast(Class<? extends U> type) {
-        return (ImmutableSet<U>)FoldableTraversable.super.cast(type);
+        return (ImmutableSet<U>)IterableX.super.cast(type);
     }
 
     @Override
     default ImmutableSet<T> peek(Consumer<? super T> c) {
-        return (ImmutableSet<T>)FoldableTraversable.super.peek(c);
+        return (ImmutableSet<T>)IterableX.super.peek(c);
     }
 
     @Override
     default <R> ImmutableSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableSet<R>)FoldableTraversable.super.trampoline(mapper);
+        return (ImmutableSet<R>)IterableX.super.trampoline(mapper);
     }
 
     @Override
     default <R> ImmutableSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableSet<R>)FoldableTraversable.super.retry(fn);
+        return (ImmutableSet<R>)IterableX.super.retry(fn);
     }
 
     @Override
     default <R> ImmutableSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableSet<R>)FoldableTraversable.super.retry(fn,retries,delay,timeUnit);
+        return (ImmutableSet<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
     }
 
     default PersistentSetX<T> persistentSetX(){
@@ -306,7 +301,7 @@ public interface ImmutableSet<T> extends Folds<T>,
     }
 
     @Override
-    <U> Traversable<U> unitIterator(Iterator<U> U);
+    <U> ImmutableSet<U> unitIterator(Iterator<U> U);
 
     @Override
     default ImmutableSet<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {

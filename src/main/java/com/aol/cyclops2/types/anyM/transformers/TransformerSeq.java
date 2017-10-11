@@ -8,7 +8,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.*;
 import cyclops.control.Trampoline;
@@ -42,7 +42,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
     <T> TransformerSeq<W,T> unitAnyM(AnyM<W,Traversable<T>> traversable);
 
-    AnyM<W,? extends FoldableTraversable<T>> transformerStream();
+    AnyM<W,? extends IterableX<T>> transformerStream();
 
 
     @Override

@@ -79,6 +79,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return fromStream(ReactiveSeq.iterate(seed,pred,f));
 
     }
+    static <T> LazySeq<T> iterate(final T seed, final UnaryOperator<T> f,long times) {
+        return fromStream(ReactiveSeq.iterate(seed,f).limit(times));
+
+    }
     static <T> LazySeq<T> deferred(Supplier<? extends Iterable<? extends T>> lazy){
         return fromStream(ReactiveSeq.of(1).flatMapI(i->lazy.get()));
     }
@@ -87,6 +91,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
     static <T> LazySeq<T> generate(Supplier<T> s){
         return fromStream(ReactiveSeq.generate(s));
+    }
+    static <T> LazySeq<T> generate(Supplier<T> s,long times){
+        return fromStream(ReactiveSeq.generate(s).limit(times));
     }
     static <T> LazySeq<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));

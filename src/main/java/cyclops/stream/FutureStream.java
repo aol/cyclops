@@ -16,7 +16,7 @@ import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.reactive.FutureStreamSynchronousPublisher;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.async.QueueFactories;
@@ -314,7 +314,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return new LazyReact();
     }
 
-    default <R> Future<R> foldFuture(Function<? super FoldableTraversable<U>,? extends R> fn){
+    default <R> Future<R> foldFuture(Function<? super IterableX<U>,? extends R> fn){
         return Future.of(()->fn.apply(this),getSimpleReact().getExecutor());
     }
 

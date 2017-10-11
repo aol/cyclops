@@ -1,4 +1,4 @@
-package cyclops.data;
+package cyclops.data.basetests;
 
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
@@ -7,6 +7,7 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
 import cyclops.control.Option;
+import cyclops.data.ImmutableMap;
 import org.junit.Test;
 
 import java.util.HashMap;

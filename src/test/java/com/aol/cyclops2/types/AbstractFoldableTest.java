@@ -16,14 +16,14 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 
 public abstract class AbstractFoldableTest {
-    public abstract <T> FoldableTraversable<T> of(T...elements);
+    public abstract <T> IterableX<T> of(T...elements);
     
     @Test
     public void get0(){

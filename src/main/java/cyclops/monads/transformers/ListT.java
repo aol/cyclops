@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.types.Zippable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.Witness.reactiveSeq;
@@ -264,13 +264,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> nestedFoldables() {
+    public AnyM<W,? extends IterableX<T>> nestedFoldables() {
         return run;
 
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> nestedCollectables() {
+    public AnyM<W,? extends IterableX<T>> nestedCollectables() {
         return run;
 
     }
@@ -282,7 +282,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public AnyM<W,? extends FoldableTraversable<T>> transformerStream() {
+    public AnyM<W,? extends IterableX<T>> transformerStream() {
 
         return run;
     }

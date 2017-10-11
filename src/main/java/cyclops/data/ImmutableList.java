@@ -2,14 +2,11 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.traversable.FoldableTraversable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
@@ -37,13 +34,9 @@ import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
-                                          Folds<T>,
-                                          Filters<T>,
-        Transformable<T>,
-        OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
-                                           Iterable<T>,
-        FoldableTraversable<T>,
-        To<ImmutableList<T>> {
+                                          IterableX<T>,
+                                          OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
+                                          To<ImmutableList<T>> {
 
     <R> ImmutableList<R> unitStream(Stream<R> stream);
 
@@ -161,17 +154,17 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default <U> ImmutableList<U> ofType(Class<? extends U> type) {
-        return (ImmutableList<U>)FoldableTraversable.super.ofType(type);
+        return (ImmutableList<U>)IterableX.super.ofType(type);
     }
 
     @Override
     default ImmutableList<T> filterNot(Predicate<? super T> predicate) {
-        return (ImmutableList<T>)FoldableTraversable.super.filterNot(predicate);
+        return (ImmutableList<T>)IterableX.super.filterNot(predicate);
     }
 
     @Override
     default ImmutableList<T> notNull() {
-        return (ImmutableList<T>)FoldableTraversable.super.notNull();
+        return (ImmutableList<T>)IterableX.super.notNull();
     }
 
     @Override
@@ -191,25 +184,26 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<T> peek(Consumer<? super T> c) {
-        return (ImmutableList<T>)FoldableTraversable.super.peek(c);
+        return (ImmutableList<T>)IterableX.super.peek(c);
     }
 
     @Override
     default <R> ImmutableList<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableList<R>)FoldableTraversable.super.trampoline(mapper);
+        return (ImmutableList<R>)IterableX.super.trampoline(mapper);
     }
 
     @Override
     default <R> ImmutableList<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableList<R>)FoldableTraversable.super.retry(fn);
+        return (ImmutableList<R>)IterableX.super.retry(fn);
     }
 
     @Override
     default <R> ImmutableList<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableList<R>)FoldableTraversable.super.retry(fn,retries,delay,timeUnit);
+        return (ImmutableList<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
     }
 
     <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
+    //@TODO remove
     <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
@@ -396,7 +390,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default Filters<T> retainAll(T... values) {
+    default ImmutableList<T> retainAll(T... values) {
         return unitStream(stream().retainAll(values));
     }
 
@@ -711,6 +705,11 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     default Traversable<T> traversable() {
         return stream();
+    }
+
+    @Override
+    default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
     }
 
     @Override

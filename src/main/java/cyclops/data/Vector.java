@@ -6,14 +6,17 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
+import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -24,6 +27,51 @@ public class Vector<T> implements ImmutableList<T>{
 
     public static <T> Vector<T> empty(){
         return new Vector<>(new BAMT.Zero<>(),BAMT.ActiveTail.emptyTail(),0);
+    }
+    static <T> Vector<T> fill(T t, int max){
+        return Vector.fromStream(ReactiveSeq.fill(t).take(max));
+    }
+    static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+        return fromStream(ReactiveSeq.unfold(seed,unfolder));
+    }
+
+    static <T> Vector<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+        return fromStream(ReactiveSeq.iterate(seed,pred,f));
+
+    }
+    static <T> Vector<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
+        return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
+
+    }
+
+    static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
+        return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
+    }
+    static <T> Vector<T> generate(Supplier<T> s, int max){
+        return fromStream(ReactiveSeq.generate(s).limit(max));
+    }
+    static <T> Vector<T> generate(Generator<T> s){
+        return fromStream(ReactiveSeq.generate(s));
+    }
+    static Vector<Integer> range(final int start, final int end) {
+        return Vector.fromStream(ReactiveSeq.range(start,end));
+
+    }
+    static Vector<Integer> range(final int start, final int step, final int end) {
+        return Vector.fromStream(ReactiveSeq.range(start,step,end));
+
+    }
+    static Vector<Long> rangeLong(final long start, final long step, final long end) {
+        return Vector.fromStream(ReactiveSeq.rangeLong(start,step,end));
+    }
+
+
+    static Vector<Long> rangeLong(final long start, final long end) {
+        return Vector.fromStream(ReactiveSeq.rangeLong(start, end));
+
+    }
+    public static <T> Vector<T> fromStream(Stream<T> it){
+        return fromIterable(()->it.iterator());
     }
     public static <T> Vector<T> fromIterable(Iterable<T> it){
         Vector<T> res = empty();
