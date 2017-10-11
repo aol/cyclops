@@ -147,7 +147,7 @@ public class HAMT<K, V>  {
 
        @Override
        public ReactiveSeq<Tuple2<K, V>> stream() {
-           return ReactiveSeq.empty();
+           return ReactiveSeq.of(Tuple.tuple(key,value));
        }
 
        @Override
