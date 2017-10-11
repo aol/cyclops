@@ -43,6 +43,19 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     ImmutableList<T> emptyUnit();
 
+    default boolean equalTo(Iterable<T> iterable){
+        int size = size();
+        Iterator<T> it = iterable.iterator();
+        for(int i=0;i<size;i++){
+            T at = this.getOrElse(i,null);
+            if(!it.hasNext())
+                return false;
+            if(!Objects.equals(at,it.next()))
+                return false;
+        }
+        return !it.hasNext();
+    }
+
 
     default ImmutableList<T> replace(T currentElement, T newElement){
         ImmutableList<T> preceding = emptyUnit();

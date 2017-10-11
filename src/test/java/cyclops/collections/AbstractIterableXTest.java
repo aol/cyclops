@@ -2,6 +2,7 @@ package cyclops.collections;
 
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static cyclops.collections.tuple.Tuple.tuple;
@@ -1798,7 +1800,7 @@ public abstract class AbstractIterableXTest {
 	        assertEquals(6,of(1, 2).cycle(3).toListX().size());
 	       
 	    }
-	    int count =0;
+
 	    @Test
 	    public void testCycleWhile() {
 	        count =0;
@@ -1813,5 +1815,305 @@ public abstract class AbstractIterableXTest {
 	        assertEquals(6,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
 	       
 	    }
+
+
+
+	    //make not order dep
+
+    @Test
+    public void whenNilOrNotJoinWithFirstElementNoOrd(){
+
+
+        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
+        assertThat(res,equalTo("2world3"));
+    }
+    @Test
+    public void sortedComparatorNoOrd() {
+        assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
+    }
+    @Test
+    public void takeRightNoOrd(){
+        assertThat(of(1,2,3).takeRight(1).toListX(),hasItems(3));
+    }
+    @Test
+    public void takeRightEmptyNoOrd(){
+        assertThat(of().takeRight(1).toListX(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void takeUntilNoOrd(){
+        assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toListX().size(),greaterThan(0));
+    }
+    @Test
+    public void takeUntilEmptyNoOrd(){
+        assertThat(of().takeUntil(p->true).toListX(),equalTo(Arrays.asList()));
+    }
+    @Test
+    public void takeWhileNoOrd(){
+        assertThat(of(1,2,3,4,5).takeWhile(p->p<6).toListX().size(),greaterThan(1));
+    }
+    @Test
+    public void takeWhileEmptyNoOrd(){
+        assertThat(of().takeWhile(p->true).toListX(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void testOnEmptyOrderedNoOrd()  {
+        assertEquals(asList(1), of().onEmpty(1).toListX());
+        assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());
+
+        assertEquals(asList(2), of(2).onEmpty(1).toListX());
+        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
+
+
+        assertEquals(asList(2, 3), of(2, 3).onEmpty(1).toListX());
+        assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toListX());
+
+    }
+    @Test
+    public void testCycleNoOrd() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle(2).toListX());
+    }
+    @Test
+    public void testCycleTimesNoOrd() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+
+    }
+
+    int count =0;
+    @Test
+    public void testCycleWhileNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
+
+    }
+    @Test
+    public void testCycleUntilNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+
+    }
+    @Test
+    public void slidingNoOrd() {
+        ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2));
+        assertThat(list.get(1), hasItems(2, 3));
+    }
+
+    @Test
+    public void slidingIncrementNoOrd() {
+        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+
+        System.out.println(list);
+        assertThat(list.get(0), hasItems(1, 2, 3));
+        assertThat(list.get(1), hasItems(3, 4, 5));
+    }
+
+    @Test
+    public void combineNoOrd(){
+        assertThat(of(1,1,2,3)
+                .combine((a, b)->a.equals(b),Semigroups.intSum)
+                .toListX(),equalTo(ListX.of(4,3)));
+
+    }
+
+    @Test
+    public void zip3NoOrd(){
+        List<Tuple3<Integer,Integer,Character>> list =
+                of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
+                        .toListX();
+
+        System.out.println(list);
+        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
+        assertThat(right,hasItem(100));
+        assertThat(right,hasItem(200));
+        assertThat(right,hasItem(300));
+        assertThat(right,not(hasItem(400)));
+
+        List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
+        assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+        List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
+        assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+
+
+    }
+    @Test
+    public void zip4NoOrd(){
+        List<Tuple4<Integer,Integer,Character,String>> list =
+                of(1,2,3,4,5,6).zip4(of(100,200,300,400).stream(),of('a','b','c').stream(),of("hello","world").stream())
+                        .toListX();
+        System.out.println(list);
+        List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
+        assertThat(right,hasItem(100));
+        assertThat(right,hasItem(200));
+        assertThat(right,not(hasItem(300)));
+        assertThat(right,not(hasItem(400)));
+
+        List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
+        assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
+
+        List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
+        assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
+
+        List<String> four = list.stream().map(t -> t._4()).collect(Collectors.toList());
+        assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
+
+
+    }
+
+    @Test
+    public void testIntersperseNoOrd() {
+
+        assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
+
+
+
+
+    }
+
+
+
+    @Test
+    public void testOfTypeNoOrd() {
+
+
+
+        assertThat((((IterableX<Integer>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
+
+        assertThat((((IterableX<Integer>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
+
+        assertThat(((IterableX<Serializable>)of(1, "a", 2, "b", 3)
+
+                .ofType(Serializable.class)).toListX(),containsInAnyOrder(1, "a", 2, "b", 3));
+
+    }
+
+
+    private int addOne(Integer i){
+        return i+1;
+    }
+    private int add(Integer a, Integer b){
+        return a+b;
+    }
+    private String concat(String a, String b, String c){
+        return a+b+c;
+    }
+    private String concat4(String a, String b, String c,String d){
+        return a+b+c+d;
+    }
+    private String concat5(String a, String b, String c,String d,String e){
+        return a+b+c+d+e;
+    }
+
+
+
+    @Test
+    public void allCombinations3NoOrd() {
+        assertThat(of(1, 2, 3).combinations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+                Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
+    }
+
+    @Test
+    public void emptyAllCombinationsNoOrd() {
+        assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
+    }
+
+    @Test
+    public void emptyPermutationsNoOrd() {
+        assertThat(of().permutations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void permuations3NoOrd() {
+        System.out.println(of(1, 2, 3).permutations().map(s->s.toListX()).toListX());
+        assertThat(of(1, 2, 3).permutations().map(s->s.toListX()).toListX(),
+                equalTo(of(of(1, 2, 3),
+                        of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).peek(i->System.out.println("peek - " + i)).map(s->s.toListX()).toListX()));
+    }
+
+    @Test
+    public void emptyCombinationsNoOrd() {
+        assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
+    }
+
+    @Test
+    public void combinations2NoOrd() {
+        assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX(),
+                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
+    }
+
+    @Test
+    public void whenGreaterThan2NoOrd() {
+        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
+
+        assertThat(res, equalTo("2hello3"));
+    }
+
+    @Test
+    public void headTailReplayNoOrd() {
+
+        IterableX<String> helloWorld = of("hello", "world", "last");
+        HeadAndTail<String> headAndTail = helloWorld.headAndTail();
+        String head = headAndTail.head();
+        assertThat(head, equalTo("hello"));
+
+        ReactiveSeq<String> tail = headAndTail.tail();
+        assertThat(tail.headAndTail().head(), equalTo("world"));
+
+    }
+    @Test
+    public void testScanLeftStringConcatNoOrd() {
+        assertThat(of("a", "b", "c").scanLeft("", String::concat).toListX().size(),
+                is(4));
+    }
+    @Test
+    public void batchBySizeNoOrd(){
+        System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
+        assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
+    }
+    @Test
+    public void testReverseNoOrd() {
+
+        assertThat(of(1, 2, 3).reverse().toListX(), containsInAnyOrder(asList(3, 2, 1)));
+    }
+
+    @Test
+    public void testFoldRightNoOrd() {
+        Supplier<IterableX<String>> s = () -> of("a", "b", "c");
+
+        assertTrue(s.get().foldRight("", String::concat).contains("a"));
+        assertTrue(s.get().foldRight("", String::concat).contains("b"));
+        assertTrue(s.get().foldRight("", String::concat).contains("c"));
+
+    }
+
+    @Test
+    public void testFoldLeftNoOrd() {
+        for (int i = 0; i < 100; i++) {
+            Supplier<IterableX<String>> s = () -> of("a", "b", "c");
+
+            assertTrue(s.get().reduce("", String::concat).contains("a"));
+            assertTrue(s.get().reduce("", String::concat).contains("b"));
+            assertTrue(s.get().reduce("", String::concat).contains("c"));
+
+
+        }
+    }
+    private Trampoline<Integer> sum(int times,int sum){
+        return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
+    }
+    @Test
+    public void testTrampolineNoOrd() {
+
+        assertThat(of(10).trampoline(n ->sum(10_000,n)).findFirst().get(),greaterThan(0));
+    }
+
+
+
+
 	 
 }

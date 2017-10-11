@@ -53,8 +53,8 @@ public class VectorTest extends BaseImmutableListTest {
     }
 
     @Override
-    public <U, T> Seq<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
-        return Seq.unfold(seed,unfolder);
+    public <U, T> Vector<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+        return Vector.unfold(seed,unfolder);
     }
     @Test
     public void testVector(){

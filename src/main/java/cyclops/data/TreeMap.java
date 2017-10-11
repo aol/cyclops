@@ -31,9 +31,15 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
     public static <K,V> TreeMap<K,V> empty(Comparator<K> comp){
         return new TreeMap<>( RedBlackTree.empty(comp),comp);
     }
+    public static <K,V> TreeMap<K,V> of(Comparator<K> comp,K k,V v){
+        return TreeMap.<K,V>empty(comp).put(k,v);
+    }
+    public static <K,V> TreeMap<K,V> of(Comparator<K> comp,K k1,V v1,K k2,V v2){
+        return TreeMap.<K,V>empty(comp).put(k1,v1).put(k2,v2);
+    }
 
-    public static <K,V> TreeMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream, Comparator<K> comp){
-        return stream.foldLeft(empty(comp),(m,t2)->m.put(t2._1(),t2._2()));
+    public static <K,V> TreeMap<K,V> fromStream(Stream<Tuple2<K,V>> stream, Comparator<K> comp){
+        return ReactiveSeq.fromStream(stream).foldLeft(empty(comp),(m,t2)->m.put(t2._1(),t2._2()));
     }
     @Override
     public <R> TreeMap<K, R> mapValues(Function<? super V, ? extends R> map) {

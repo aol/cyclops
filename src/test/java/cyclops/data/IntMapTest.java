@@ -2,15 +2,61 @@ package cyclops.data;
 
 
 
+import cyclops.collections.tuple.Tuple2;
 import cyclops.control.Option;
+import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Test;
+
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
-public class IntMapTest {
+public class IntMapTest extends BaseImmutableListTest{
+    @Override
+    protected <T> IntMap<T> fromStream(Stream<T> s) {
+        return IntMap.fromStream(s);
+    }
 
+    @Override
+    public <T> IntMap<T> empty() {
+        return IntMap.empty();
+    }
+
+    @Override
+    public <T> IntMap<T> of(T... values) {
+        return IntMap.of(values);
+    }
+
+    @Override
+    public IntMap<Integer> range(int start, int end) {
+        return IntMap.range(start,end);
+    }
+
+    @Override
+    public IntMap<Long> rangeLong(long start, long end) {
+        return IntMap.rangeLong(start,end);
+    }
+
+    @Override
+    public <T> ImmutableList<T> iterate(int times, T seed, UnaryOperator<T> fn) {
+        return IntMap.iterate(seed,fn,times);
+    }
+
+    @Override
+    public <T> IntMap<T> generate(int times, Supplier<T> fn) {
+        return IntMap.generate(fn,times);
+    }
+
+    @Override
+    public <U, T> IntMap<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+        return IntMap.unfold(seed,unfolder);
+    }
     @Test
     public void appendPrependGet(){
         assertThat(IntMap.of(1,2,3).plus(4).get(3),equalTo(Option.some(4)));

@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
+import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,9 +13,11 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,10 +26,52 @@ public class IntMap<T> implements ImmutableList<T>{
 
     private final IntPatriciaTrie.Node<T> intMap;
     private final int size;
-
-    public static <T> IntMap<T> fromStream(Stream<T> seq){
-        return fromIterable(ReactiveSeq.fromStream(seq));
+    static <T> IntMap<T> fill(T t, int max){
+        return IntMap.fromStream(ReactiveSeq.fill(t).take(max));
     }
+    static <U, T> IntMap<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+        return fromStream(ReactiveSeq.unfold(seed,unfolder));
+    }
+
+    static <T> IntMap<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+        return fromStream(ReactiveSeq.iterate(seed,pred,f));
+
+    }
+    static <T> IntMap<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
+        return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
+
+    }
+
+    static <T, U> Tuple2<IntMap<T>, IntMap<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
+        return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
+    }
+    static <T> IntMap<T> generate(Supplier<T> s, int max){
+        return fromStream(ReactiveSeq.generate(s).limit(max));
+    }
+    static <T> IntMap<T> generate(Generator<T> s){
+        return fromStream(ReactiveSeq.generate(s));
+    }
+    static IntMap<Integer> range(final int start, final int end) {
+        return IntMap.fromStream(ReactiveSeq.range(start,end));
+
+    }
+    static IntMap<Integer> range(final int start, final int step, final int end) {
+        return IntMap.fromStream(ReactiveSeq.range(start,step,end));
+
+    }
+    static IntMap<Long> rangeLong(final long start, final long step, final long end) {
+        return IntMap.fromStream(ReactiveSeq.rangeLong(start,step,end));
+    }
+
+
+    static IntMap<Long> rangeLong(final long start, final long end) {
+        return IntMap.fromStream(ReactiveSeq.rangeLong(start, end));
+
+    }
+    public static <T> IntMap<T> fromStream(Stream<T> it){
+        return fromIterable(()->it.iterator());
+    }
+
 
     public static <T> IntMap<T> fromIterable(Iterable<T> iterable){
         Iterator<T> it = iterable.iterator();

@@ -15,13 +15,22 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrieMap<K,V> implements  ImmutableMap<K,V>{
     HashedPatriciaTrie.Node<K,V> map;
 
-    public static <K,V> TrieMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
-        return stream.foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
+    public static <K,V> TrieMap<K,V> fromStream(Stream<Tuple2<K,V>> stream){
+        return ReactiveSeq.fromStream(stream).foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
+    }
+    public static <K,V> TrieMap<K,V> of(K k,V v){
+        TrieMap<K,V> res = empty();
+        return res.put(k,v);
+    }
+    public static <K,V> TrieMap<K,V> of(K k1,V v1,K k2, V v2){
+        TrieMap<K,V> res = empty();
+        return res.put(k1,v1).put(k2,v2);
     }
 
     public static <K,V> TrieMap<K,V> empty(){

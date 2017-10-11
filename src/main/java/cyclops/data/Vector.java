@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,9 +29,11 @@ public class Vector<T> implements ImmutableList<T>{
     public static <T> Vector<T> empty(){
         return new Vector<>(new BAMT.Zero<>(),BAMT.ActiveTail.emptyTail(),0);
     }
+
     static <T> Vector<T> fill(T t, int max){
         return Vector.fromStream(ReactiveSeq.fill(t).take(max));
     }
+
     static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
@@ -44,7 +47,7 @@ public class Vector<T> implements ImmutableList<T>{
 
     }
 
-    static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
+    static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final Vector<Tuple2<T, U>> sequence) {
         return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
     }
     static <T> Vector<T> generate(Supplier<T> s, int max){
@@ -453,5 +456,21 @@ public class Vector<T> implements ImmutableList<T>{
     @Override
     public String toString() {
         return stream().join(",","[","]");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof Iterable))
+            return false;
+        return equalTo((Iterable<T>)o);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        for (T e : this)
+            hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+        return hashCode;
     }
 }
