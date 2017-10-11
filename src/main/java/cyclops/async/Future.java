@@ -2,6 +2,7 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import cyclops.control.lazy.Trampoline;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -10,8 +11,8 @@ import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.companion.Monoids;
 import cyclops.collections.box.Mutable;
 import cyclops.control.*;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.Witness.future;
@@ -43,9 +44,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import javax.annotation.processing.Completion;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;

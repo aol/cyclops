@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.standard.flatMap.publisher;
 
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.hamcrest.Matchers;

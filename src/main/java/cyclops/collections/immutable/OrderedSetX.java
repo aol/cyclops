@@ -17,7 +17,7 @@ import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.orderedSetX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;

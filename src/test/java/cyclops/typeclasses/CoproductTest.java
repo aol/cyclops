@@ -2,11 +2,9 @@ package cyclops.typeclasses;
 
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
-import cyclops.control.Maybe;
-import cyclops.monads.Witness;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.stream;
-import cyclops.monads.XorM;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

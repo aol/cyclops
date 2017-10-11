@@ -10,12 +10,11 @@ import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
-import cyclops.typeclasses.EnumerationTest;
 import cyclops.typeclasses.EnumerationTest.Days;
 import org.junit.Ignore;
 import org.junit.Test;

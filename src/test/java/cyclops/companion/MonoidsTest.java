@@ -1,12 +1,9 @@
 package cyclops.companion;
 
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
-import cyclops.function.Semigroup;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.maybe;
 import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

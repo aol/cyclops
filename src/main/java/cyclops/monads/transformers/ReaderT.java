@@ -3,7 +3,7 @@ package cyclops.monads.transformers;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Reader;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;

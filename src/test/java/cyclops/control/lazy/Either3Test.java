@@ -11,7 +11,8 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either3;
 import cyclops.control.lazy.Either3.CompletableEither3;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 
 import org.junit.Before;

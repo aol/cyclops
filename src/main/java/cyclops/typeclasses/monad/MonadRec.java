@@ -2,7 +2,6 @@ package cyclops.typeclasses.monad;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Eval;
 import cyclops.control.Xor;
 
 import java.util.function.Function;

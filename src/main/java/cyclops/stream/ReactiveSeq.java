@@ -35,9 +35,9 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 
 import cyclops.control.lazy.Either;
 import cyclops.function.Function3;

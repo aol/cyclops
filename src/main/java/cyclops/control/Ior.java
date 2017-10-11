@@ -12,6 +12,8 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.Monoids;
 import cyclops.collections.mutable.ListX;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;

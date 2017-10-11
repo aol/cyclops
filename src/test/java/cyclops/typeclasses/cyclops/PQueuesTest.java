@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.PersistentQueueX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.persistentQueueX;

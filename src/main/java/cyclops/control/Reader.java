@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.*;

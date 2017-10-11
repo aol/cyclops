@@ -1,12 +1,8 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -14,7 +10,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;

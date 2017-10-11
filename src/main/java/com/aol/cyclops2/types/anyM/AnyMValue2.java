@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.*;
 import cyclops.monads.AnyM;

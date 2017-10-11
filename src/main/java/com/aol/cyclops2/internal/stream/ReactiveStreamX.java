@@ -1,12 +1,10 @@
 package com.aol.cyclops2.internal.stream;
 
-import com.aol.cyclops2.internal.react.FutureStreamImpl;
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
 import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.async.LazyReact;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
@@ -15,7 +13,7 @@ import cyclops.async.adapters.Topic;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Option;
 import cyclops.control.lazy.Either;
 import cyclops.function.Monoid;

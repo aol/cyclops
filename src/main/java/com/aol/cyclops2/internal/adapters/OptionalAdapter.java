@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;

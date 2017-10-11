@@ -4,7 +4,7 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 
-import static cyclops.control.Trampoline.done;
+import static cyclops.control.lazy.Trampoline.done;
 import static cyclops.collections.tuple.Tuple.tuple;
 
 //Discrete Interval Encoded Tree

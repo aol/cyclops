@@ -7,8 +7,9 @@ import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.control.*;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
@@ -30,7 +31,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static com.aol.cyclops2.Matchers.equivalent;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -606,7 +606,7 @@ public class FutureTest {
         assertThat(capture.get(),equalTo(10));
     }
 
-    private Trampoline<Integer> sum(int times,int sum){
+    private Trampoline<Integer> sum(int times, int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
     @Test

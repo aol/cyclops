@@ -2,7 +2,6 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
@@ -12,7 +11,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.stream.ReactiveSeq;

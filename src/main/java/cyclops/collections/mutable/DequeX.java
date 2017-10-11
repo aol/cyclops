@@ -13,13 +13,13 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.deque;
 import cyclops.stream.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Function3;

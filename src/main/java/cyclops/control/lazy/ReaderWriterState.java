@@ -1,7 +1,8 @@
-package cyclops.control;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
+import cyclops.control.Xor;
 import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.*;

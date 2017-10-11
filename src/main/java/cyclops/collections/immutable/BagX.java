@@ -11,7 +11,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.control.Xor;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

@@ -15,7 +15,7 @@ import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.typeclasses.Pure;

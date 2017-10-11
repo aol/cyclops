@@ -18,10 +18,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collections.immutable.*;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.maybe;
 import cyclops.typeclasses.functions.SemigroupK;
 

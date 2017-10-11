@@ -9,16 +9,16 @@ import cyclops.companion.Streams;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.transformers.MaybeT;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -376,7 +376,7 @@ public class MaybeTTest implements Printable {
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times,int sum){
+	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
 	@Test

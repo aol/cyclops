@@ -13,7 +13,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.sortedSet;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Function3;

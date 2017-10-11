@@ -1,36 +1,23 @@
 package cyclops.typeclasses.functions;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Ior;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Xor;
-import cyclops.function.Semigroup;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import org.pcollections.PCollection;
-import org.reactivestreams.Publisher;
 
-import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 

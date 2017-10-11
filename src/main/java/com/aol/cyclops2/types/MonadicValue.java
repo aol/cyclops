@@ -6,13 +6,12 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Try;
 import cyclops.function.Monoid;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.collections.tuple.Tuple;
-import cyclops.matching.Api;
 import org.reactivestreams.Publisher;
 
 import java.util.NoSuchElementException;

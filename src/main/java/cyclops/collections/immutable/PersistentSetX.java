@@ -10,7 +10,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -18,7 +18,7 @@ import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.persistentSetX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;

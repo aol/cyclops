@@ -1,13 +1,9 @@
 package cyclops.typeclasses.functor;
 
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.State;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure

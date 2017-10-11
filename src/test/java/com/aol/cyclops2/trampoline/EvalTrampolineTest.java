@@ -1,17 +1,8 @@
 package com.aol.cyclops2.trampoline;
 
-import cyclops.control.Eval;
-import cyclops.control.Trampoline;
-import lombok.val;
-import org.junit.Ignore;
+import cyclops.control.lazy.Eval;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 

@@ -1,8 +1,9 @@
-package cyclops.control;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.control.Maybe.Nothing;
+import cyclops.control.Xor;
+import cyclops.control.lazy.Maybe.Nothing;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.state;
 import cyclops.monads.Witness.supplier;

@@ -8,7 +8,7 @@ import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Xor;
 import cyclops.function.Monoid;

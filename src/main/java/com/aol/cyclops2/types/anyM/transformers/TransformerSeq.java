@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.*;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.collections.tuple.Tuple2;

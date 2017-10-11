@@ -1,7 +1,7 @@
 package cyclops.control.computations;
 
 
-import cyclops.control.Unrestricted;
+import cyclops.control.lazy.Unrestricted;
 import cyclops.control.Xor;
 import cyclops.control.computations.ToyLanguage.Bell;
 import cyclops.control.computations.ToyLanguage.Done;

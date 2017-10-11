@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.traversable.Traversable;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;

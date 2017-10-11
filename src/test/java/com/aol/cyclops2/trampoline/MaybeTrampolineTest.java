@@ -1,15 +1,13 @@
 package com.aol.cyclops2.trampoline;
 
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import lombok.ToString;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import org.junit.Test;
 
-import static cyclops.control.Eval.now;
-import static cyclops.control.Maybe.just;
+import static cyclops.control.lazy.Eval.now;
+import static cyclops.control.lazy.Maybe.just;
 import static cyclops.collections.tuple.Tuple.tuple;
 
 

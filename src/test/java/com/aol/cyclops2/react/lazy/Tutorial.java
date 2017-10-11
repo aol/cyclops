@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 
 import cyclops.async.*;
 import cyclops.async.adapters.Queue;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;

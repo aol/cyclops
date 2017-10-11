@@ -6,7 +6,7 @@ import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Xor;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;

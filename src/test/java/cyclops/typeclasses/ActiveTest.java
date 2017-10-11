@@ -4,20 +4,18 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Xor;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
-import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
-import static cyclops.control.Maybe.Instances.applicative;
+import static cyclops.control.lazy.Maybe.Instances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 

@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Filters;
 import cyclops.companion.Streams;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 
 /**
  * An interface that represents a non-scalar Filters

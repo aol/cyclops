@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
 import cyclops.stream.ReactiveSeq;

@@ -1,26 +1,10 @@
 package cyclops.collections.tuple;
 
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
-import cyclops.collections.box.Mutable;
-import cyclops.collections.mutable.ListX;
-import cyclops.companion.Reducers;
-import cyclops.companion.Semigroups;
-import cyclops.companion.Streams;
-import cyclops.control.*;
-import cyclops.function.Monoid;
+import cyclops.control.lazy.Trampoline;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -209,7 +193,7 @@ public class Tuple1Test {
     }
 
 
-    private Trampoline<Integer> sum(int times,int sum){
+    private Trampoline<Integer> sum(int times, int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
     @Test

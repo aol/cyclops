@@ -2,7 +2,7 @@ package cyclops.typeclasses.monad;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.control.Xor;
 import cyclops.control.lazy.Either;
 import cyclops.function.Function0;

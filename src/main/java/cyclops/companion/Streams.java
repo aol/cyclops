@@ -8,7 +8,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;

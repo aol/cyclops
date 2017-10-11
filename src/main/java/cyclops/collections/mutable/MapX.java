@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
 import cyclops.stream.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import com.aol.cyclops2.types.*;
 import cyclops.collections.tuple.Tuple;

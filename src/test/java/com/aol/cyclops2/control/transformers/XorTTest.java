@@ -10,22 +10,19 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
-import cyclops.monads.transformers.MaybeT;
 import cyclops.monads.transformers.XorT;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
@@ -357,7 +354,7 @@ public class XorTTest implements Printable {
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times,int sum){
+	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
 	@Test

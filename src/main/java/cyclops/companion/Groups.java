@@ -1,31 +1,8 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import cyclops.async.Future;
-import cyclops.async.SimpleReact;
-import cyclops.collections.box.Mutable;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
-import cyclops.control.Xor;
 import cyclops.function.Group;
-import cyclops.function.Monoid;
-import cyclops.function.Semigroup;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.typeclasses.NaturalTransformation;
-import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 
 public interface Groups {

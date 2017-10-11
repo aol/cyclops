@@ -5,6 +5,7 @@ import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple1;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.identity;

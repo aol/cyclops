@@ -8,7 +8,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.control.Xor;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;

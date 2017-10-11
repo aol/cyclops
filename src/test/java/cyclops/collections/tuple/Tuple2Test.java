@@ -1,11 +1,8 @@
 package cyclops.collections.tuple;
 
 import cyclops.companion.Monoids;
-import cyclops.control.Trampoline;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;

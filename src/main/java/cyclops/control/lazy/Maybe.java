@@ -1,7 +1,9 @@
-package cyclops.control;
+package cyclops.control.lazy;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Option;
+import cyclops.control.Xor;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;

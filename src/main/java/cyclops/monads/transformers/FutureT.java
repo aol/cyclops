@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.types.*;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;

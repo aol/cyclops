@@ -10,7 +10,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.control.Xor;
 import cyclops.data.DataWitness.lazySeq;
 import cyclops.stream.Generator;

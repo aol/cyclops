@@ -26,7 +26,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.functor.Transformable;

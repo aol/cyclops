@@ -12,7 +12,7 @@ import cyclops.collections.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 
 import lombok.val;
 

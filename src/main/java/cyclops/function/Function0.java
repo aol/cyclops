@@ -1,6 +1,5 @@
 package cyclops.function;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -23,9 +22,9 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
 
 
-import cyclops.control.Eval;
+import cyclops.control.lazy.Eval;
 import cyclops.async.Future;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface

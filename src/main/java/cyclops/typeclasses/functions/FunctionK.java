@@ -3,7 +3,7 @@ package cyclops.typeclasses.functions;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;

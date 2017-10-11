@@ -28,6 +28,8 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;

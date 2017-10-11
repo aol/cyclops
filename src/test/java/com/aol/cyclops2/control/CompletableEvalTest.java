@@ -10,10 +10,11 @@ import cyclops.async.LazyReact;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.Eval;
-import cyclops.control.Eval.CompletableEval;
-import cyclops.control.Eval.Module.Later;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Eval.CompletableEval;
+import cyclops.control.lazy.Eval.Module.Later;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;
@@ -457,7 +458,7 @@ public class CompletableEvalTest {
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times,int sum){
+	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
 	@Test

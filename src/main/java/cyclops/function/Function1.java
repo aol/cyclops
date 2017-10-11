@@ -11,8 +11,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.monads.function.AnyMFunction1;
 
 import cyclops.monads.transformers.FutureT;

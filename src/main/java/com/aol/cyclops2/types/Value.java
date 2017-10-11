@@ -14,6 +14,7 @@ import java.util.stream.Collector;
 import com.aol.cyclops2.types.foldable.Visitable;
 import cyclops.control.*;
 import cyclops.control.lazy.Either;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function0;
 import cyclops.function.Monoid;
 import org.reactivestreams.Publisher;

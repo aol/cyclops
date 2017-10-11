@@ -1,9 +1,6 @@
 package cyclops.typeclasses.foldable;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.factory.Unit;
-import cyclops.control.Maybe;
-import cyclops.monads.Witness;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Traverse;

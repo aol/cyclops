@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;

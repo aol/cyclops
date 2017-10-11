@@ -1,7 +1,7 @@
-package cyclops.control;
+package cyclops.control.lazy;
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.lazy.Either3;
+import cyclops.control.Xor;
 import cyclops.function.Function3;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

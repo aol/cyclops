@@ -2,28 +2,18 @@ package cyclops.monads.transformers;
 
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.transformers.NonEmptyTransformer;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Trampoline;
+import cyclops.control.lazy.Trampoline;
 import cyclops.control.Xor;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
-import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
 * Monad Transformer for Xor's

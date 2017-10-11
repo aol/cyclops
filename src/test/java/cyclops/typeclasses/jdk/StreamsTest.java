@@ -13,7 +13,7 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.monads.Witness.stream;

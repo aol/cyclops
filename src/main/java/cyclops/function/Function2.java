@@ -8,8 +8,8 @@ import java.util.function.Function;
 
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.FutureT;

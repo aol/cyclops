@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

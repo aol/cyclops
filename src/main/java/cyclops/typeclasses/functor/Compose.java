@@ -6,10 +6,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import cyclops.control.State;
-import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.monad.Monad;
+import cyclops.control.lazy.State;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;

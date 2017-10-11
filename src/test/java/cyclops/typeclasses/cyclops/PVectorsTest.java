@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;

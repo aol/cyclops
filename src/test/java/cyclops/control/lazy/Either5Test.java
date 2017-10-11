@@ -9,13 +9,13 @@ import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Either5;
-import cyclops.control.Maybe;
+import cyclops.control.lazy.Maybe;
+import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -424,7 +424,7 @@ public class Either5Test {
         assertThat(capture.get(),equalTo(10));
     }
 
-    private Trampoline<Integer> sum(int times,int sum){
+    private Trampoline<Integer> sum(int times, int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
     @Test
