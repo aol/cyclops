@@ -450,5 +450,8 @@ public class Vector<T> implements ImmutableList<T>{
         }
     }
 
-
+    @Override
+    public String toString() {
+        return stream().join(",","[","]");
+    }
 }
