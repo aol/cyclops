@@ -1468,8 +1468,8 @@ public abstract class AbstractIterableXTest {
 	        Random r = new Random();
 	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
 
-	        assertEquals(3, ((CollectionX<Integer>)s.get()).shuffle(r).toListX().size());
-	        assertThat(((CollectionX<Integer>)s.get()).shuffle(r).toListX(), hasItems(1, 2, 3));
+	        assertEquals(3, ((IterableX<Integer>)s.get()).shuffle(r).toListX().size());
+	        assertThat(((IterableX<Integer>)s.get()).shuffle(r).toListX(), hasItems(1, 2, 3));
 
 	        
 	    }

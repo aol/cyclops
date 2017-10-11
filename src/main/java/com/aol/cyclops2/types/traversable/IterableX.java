@@ -511,7 +511,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
 
     @Override
     default IterableX<T> takeWhile(final Predicate<? super T> p) {
-        return null;
+        return (IterableX<T>)ExtendedTraversable.super.takeWhile(p);
     }
 
     @Override
