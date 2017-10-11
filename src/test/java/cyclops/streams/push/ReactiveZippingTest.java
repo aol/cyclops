@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static cyclops.stream.Spouts.of;
 import static java.util.Arrays.asList;

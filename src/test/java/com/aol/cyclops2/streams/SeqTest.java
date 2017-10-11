@@ -5,11 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple2;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SeqTest {

@@ -8,7 +8,6 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.constant;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
@@ -16,7 +15,6 @@ import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

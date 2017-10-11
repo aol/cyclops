@@ -7,7 +7,7 @@ import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import org.junit.Before;

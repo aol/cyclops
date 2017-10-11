@@ -11,8 +11,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.collections.box.Mutable;
-import cyclops.collections.box.MutableInt;
+import com.aol.cyclops2.util.box.Mutable;
+import com.aol.cyclops2.util.box.MutableInt;
 public class MutableIntTest {
 
 	@Test

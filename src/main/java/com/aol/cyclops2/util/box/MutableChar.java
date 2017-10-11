@@ -1,4 +1,4 @@
-package cyclops.collections.box;
+package com.aol.cyclops2.util.box;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

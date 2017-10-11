@@ -152,7 +152,7 @@ throw new IOException();
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,Value<T>,
                                                       Unit<T>, Transformable<T>, Filters<T>,
-                                                       Sealed2<T,X>,
+                                                      Sealed2<T,X>,
                                                       OrElseValue<T,Try<T,X>>,
                                                       Higher2<tryType,X,T> {
 
@@ -239,6 +239,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
             }
         });
     }
+
 
     /**
      *  Turn a list of Trys into a single Try with Lists of values.

@@ -1,6 +1,5 @@
 package cyclops.collections.tuple;
 
-import cyclops.control.Identity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 

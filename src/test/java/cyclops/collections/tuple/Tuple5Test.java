@@ -1,6 +1,5 @@
 package cyclops.collections.tuple;
 
-import cyclops.companion.Monoids;
 import org.junit.Before;
 import org.junit.Test;
 

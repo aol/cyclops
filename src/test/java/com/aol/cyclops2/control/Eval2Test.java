@@ -8,7 +8,7 @@ import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Eval.Module.Later;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;

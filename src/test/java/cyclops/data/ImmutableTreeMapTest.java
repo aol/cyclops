@@ -4,7 +4,6 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableMapTest;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Stream;
 

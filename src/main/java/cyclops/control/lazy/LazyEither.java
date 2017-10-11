@@ -783,12 +783,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
 
-    default boolean isLeft(){
-        return isLeft();
-    }
-    default boolean isRight(){
-        return isRight();
-    }
 
 
 

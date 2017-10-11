@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.react.base.BaseSequentialSeqTest;
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
+
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 
 	@Override

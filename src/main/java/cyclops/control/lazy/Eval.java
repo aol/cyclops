@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;

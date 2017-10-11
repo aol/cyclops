@@ -10,10 +10,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 

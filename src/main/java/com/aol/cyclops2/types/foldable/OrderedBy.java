@@ -1,8 +1,6 @@
 package com.aol.cyclops2.types.foldable;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.tuple.Tuple1;
-import cyclops.monads.Witness;
 import cyclops.typeclasses.Ord;
 
 

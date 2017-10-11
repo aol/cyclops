@@ -1,7 +1,6 @@
 package cyclops.data;
 
 import cyclops.collections.tuple.Tuple2;
-import cyclops.data.basetests.BaseImmutableSetTest;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
 
 import java.util.Optional;

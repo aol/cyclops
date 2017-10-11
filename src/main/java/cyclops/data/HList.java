@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed1Or;
 import cyclops.collections.tuple.Tuple;

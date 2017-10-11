@@ -8,7 +8,6 @@ import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.tuple.Tuple2;
 
 import cyclops.function.Reducer;
-import cyclops.companion.Reducers;
 
 public class PersistentMapXs {
 

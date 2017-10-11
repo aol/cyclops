@@ -3,7 +3,7 @@ package cyclops.async;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.async.adapters.Adapter;
-import cyclops.collections.box.LazyImmutable;
+import com.aol.cyclops2.util.box.LazyImmutable;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.tuple.Tuple;

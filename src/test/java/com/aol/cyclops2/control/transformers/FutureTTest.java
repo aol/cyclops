@@ -30,7 +30,7 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.mixins.Printable;

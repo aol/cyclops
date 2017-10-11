@@ -1,11 +1,10 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collections.box.Mutable;
-import cyclops.collections.box.MutableBoolean;
+import com.aol.cyclops2.util.box.Mutable;
+import com.aol.cyclops2.util.box.MutableBoolean;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;

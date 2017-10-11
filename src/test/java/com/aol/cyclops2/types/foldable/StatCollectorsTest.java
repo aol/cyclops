@@ -1,6 +1,5 @@
 package com.aol.cyclops2.types.foldable;
 
-import com.sun.org.apache.regexp.internal.RE;
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;

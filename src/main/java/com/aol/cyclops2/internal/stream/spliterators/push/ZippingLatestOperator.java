@@ -3,7 +3,6 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import cyclops.async.adapters.Queue;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
@@ -11,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.LongConsumer;

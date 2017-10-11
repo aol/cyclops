@@ -13,7 +13,7 @@ import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.stream.*;

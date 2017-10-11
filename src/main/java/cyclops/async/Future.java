@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.companion.Monoids;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;

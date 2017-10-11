@@ -8,7 +8,6 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
 import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;

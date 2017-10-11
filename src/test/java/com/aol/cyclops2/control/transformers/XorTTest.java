@@ -2,7 +2,7 @@ package com.aol.cyclops2.control.transformers;
 
 
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Reducers;

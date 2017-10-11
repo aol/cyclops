@@ -1,8 +1,8 @@
-package cyclops.collections.box;
+package com.aol.cyclops2.util.box;
 
-import java.util.OptionalLong;
+import java.util.OptionalDouble;
 import java.util.function.*;
-import java.util.stream.LongStream;
+import java.util.stream.DoubleStream;
 
 import com.aol.cyclops2.types.foldable.To;
 
@@ -38,9 +38,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer, Supplier<Long> {
+public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleConsumer, Supplier<Double> {
 
-    private long var;
+    private double var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
@@ -58,40 +58,40 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static MutableLong of(final long var) {
-        return new MutableLong(
-                               var);
+    public static <T> MutableDouble of(final double var) {
+        return new MutableDouble(
+                                 var);
     }
 
     /** 
-     * Construct a MutableLong that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableDouble that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+     *    MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableLong that gets / sets an external (mutable) value
+     * @return MutableDouble that gets / sets an external (mutable) value
      */
-    public static MutableLong fromExternal(final LongSupplier s, final LongConsumer c) {
-        return new MutableLong() {
+    public static MutableDouble fromExternal(final DoubleSupplier s, final DoubleConsumer c) {
+        return new MutableDouble() {
             @Override
-            public long getAsLong() {
-                return s.getAsLong();
+            public double getAsDouble() {
+                return s.getAsDouble();
             }
 
             @Override
-            public Long get() {
-                return getAsLong();
+            public Double get() {
+                return getAsDouble();
             }
 
             @Override
-            public MutableLong set(final long value) {
+            public MutableDouble set(final double value) {
                 c.accept(value);
                 return this;
             }
@@ -102,8 +102,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Long> withOverride = mutable.mapOutputToObj(b->{ 
+     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Double> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -116,8 +116,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Long, R> fn) {
-        final MutableLong host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Double, R> fn) {
+        final MutableDouble host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -131,8 +131,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Long> withOverride = mutable.mapInputToObj(b->{ 
+     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Double> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -145,8 +145,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Long> fn) {
-        final MutableLong host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Double> fn) {
+        final MutableDouble host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -161,8 +161,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
-     *  MutableLong withOverride = mutable.mapOutput(b->{ 
+     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
+     *  MutableDouble withOverride = mutable.mapOutput(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -175,12 +175,12 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableLong mapOutput(final LongUnaryOperator fn) {
-        final MutableLong host = this;
-        return new MutableLong() {
+    public MutableDouble mapOutput(final DoubleUnaryOperator fn) {
+        final MutableDouble host = this;
+        return new MutableDouble() {
             @Override
-            public long getAsLong() {
-                return fn.applyAsLong(host.getAsLong());
+            public double getAsDouble() {
+                return fn.applyAsDouble(host.getAsDouble());
             }
 
         };
@@ -190,8 +190,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
-     *  MutableLong withOverride = mutable.mapInput(b->{ 
+     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
+     *  MutableDouble withOverride = mutable.mapInput(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -204,12 +204,12 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableLong mapInput(final LongUnaryOperator fn) {
-        final MutableLong host = this;
-        return new MutableLong() {
+    public MutableDouble mapInput(final DoubleUnaryOperator fn) {
+        final MutableDouble host = this;
+        return new MutableDouble() {
             @Override
-            public MutableLong set(final long value) {
-                host.set(fn.applyAsLong(value));
+            public MutableDouble set(final double value) {
+                host.set(fn.applyAsDouble(value));
                 return this;
             }
 
@@ -220,7 +220,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @return Current value
      */
     @Override
-    public long getAsLong() {
+    public double getAsDouble() {
         return var;
     }
 
@@ -228,7 +228,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableLong set(final long var) {
+    public MutableDouble set(final double var) {
         this.var = var;
         return this;
     }
@@ -237,27 +237,28 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableLong mutate(final LongFunction<Long> varFn) {
-        var = varFn.apply(var);
-        return this;
+    public MutableDouble mutate(final DoubleFunction<Double> varFn) {
+        return set(varFn.apply(get()));
+
     }
 
-    public OptionalLong toOptionalLong() {
-        return OptionalLong.of(var);
+    public OptionalDouble toOptionalDouble() {
+        return OptionalDouble.of(var);
     }
 
-    public LongStream toLongStream() {
-        return LongStream.of(var);
-    }
-
-    @Override
-    public Long get() {
-        return getAsLong();
+    public DoubleStream toDoubleStream() {
+        return DoubleStream.of(var);
     }
 
     @Override
-    public void accept(final long value) {
+    public Double get() {
+        return getAsDouble();
+    }
+
+    @Override
+    public void accept(final double value) {
         set(value);
 
     }
+
 }

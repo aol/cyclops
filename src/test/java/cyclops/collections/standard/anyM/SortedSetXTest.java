@@ -4,7 +4,6 @@ import cyclops.collections.AbstractAnyMSeqTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collections.mutable.SortedSetX;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.sortedSet;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;

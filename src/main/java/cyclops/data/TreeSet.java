@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;

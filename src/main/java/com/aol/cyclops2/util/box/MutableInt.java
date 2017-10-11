@@ -1,15 +1,14 @@
-package cyclops.collections.box;
-
-import java.util.OptionalDouble;
-import java.util.function.*;
-import java.util.stream.DoubleStream;
+package com.aol.cyclops2.util.box;
 
 import com.aol.cyclops2.types.foldable.To;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.OptionalInt;
+import java.util.function.*;
+import java.util.stream.IntStream;
 
 /**
  * Class that represents a Closed Variable
@@ -38,16 +37,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleConsumer, Supplier<Double> {
+public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supplier<Integer> {
 
-    private double var;
+    private int var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   Mutable<Integer> num = Mutable.of(20);
+     *   MutableInt num = MutableInt.of(20);
      *   
      *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
@@ -58,40 +57,40 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableDouble of(final double var) {
-        return new MutableDouble(
-                                 var);
+    public static MutableInt of(final int var) {
+        return new MutableInt(
+                              var);
     }
 
     /** 
-     * Construct a MutableDouble that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableInt that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
+     *    MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableDouble that gets / sets an external (mutable) value
+     * @return MutableInt that gets / sets an external (mutable) value
      */
-    public static MutableDouble fromExternal(final DoubleSupplier s, final DoubleConsumer c) {
-        return new MutableDouble() {
+    public static MutableInt fromExternal(final IntSupplier s, final IntConsumer c) {
+        return new MutableInt() {
             @Override
-            public double getAsDouble() {
-                return s.getAsDouble();
+            public int getAsInt() {
+                return s.getAsInt();
             }
 
             @Override
-            public Double get() {
-                return getAsDouble();
+            public Integer get() {
+                return getAsInt();
             }
 
             @Override
-            public MutableDouble set(final double value) {
+            public MutableInt set(final int value) {
                 c.accept(value);
                 return this;
             }
@@ -102,8 +101,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Double> withOverride = mutable.mapOutputToObj(b->{ 
+     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Int> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -116,8 +115,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Double, R> fn) {
-        final MutableDouble host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Integer, R> fn) {
+        final MutableInt host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -131,10 +130,10 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Double> withOverride = mutable.mapInputToObj(b->{ 
+     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Int> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 10.0;
+     *                                                             return 10;
      *                                                         return b;
      *                                                         });
      *          
@@ -145,8 +144,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Double> fn) {
-        final MutableDouble host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Integer> fn) {
+        final MutableInt host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -161,10 +160,10 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
-     *  MutableDouble withOverride = mutable.mapOutput(b->{ 
+     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+     *  MutableInt withOverride = mutable.mapOutput(b->{ 
      *                                                        if(override)
-     *                                                             return 10.0;
+     *                                                             return 10;
      *                                                         return b;
      *                                                         });
      *          
@@ -175,12 +174,12 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableDouble mapOutput(final DoubleUnaryOperator fn) {
-        final MutableDouble host = this;
-        return new MutableDouble() {
+    public MutableInt mapOutput(final IntUnaryOperator fn) {
+        final MutableInt host = this;
+        return new MutableInt() {
             @Override
-            public double getAsDouble() {
-                return fn.applyAsDouble(host.getAsDouble());
+            public int getAsInt() {
+                return fn.applyAsInt(host.getAsInt());
             }
 
         };
@@ -190,10 +189,10 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
-     *  MutableDouble withOverride = mutable.mapInput(b->{ 
+     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+     *  MutableInt withOverride = mutable.mapInput(b->{ 
      *                                                        if(override)
-     *                                                             return 10.0;
+     *                                                             return 10;
      *                                                         return b;
      *                                                         });
      *          
@@ -204,12 +203,12 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableDouble mapInput(final DoubleUnaryOperator fn) {
-        final MutableDouble host = this;
-        return new MutableDouble() {
+    public MutableInt mapInput(final IntUnaryOperator fn) {
+        final MutableInt host = this;
+        return new MutableInt() {
             @Override
-            public MutableDouble set(final double value) {
-                host.set(fn.applyAsDouble(value));
+            public MutableInt set(final int value) {
+                host.set(fn.applyAsInt(value));
                 return this;
             }
 
@@ -220,7 +219,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @return Current value
      */
     @Override
-    public double getAsDouble() {
+    public int getAsInt() {
         return var;
     }
 
@@ -228,7 +227,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableDouble set(final double var) {
+    public MutableInt set(final int var) {
         this.var = var;
         return this;
     }
@@ -237,28 +236,27 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableDouble mutate(final DoubleFunction<Double> varFn) {
-        return set(varFn.apply(get()));
-
+    public MutableInt mutate(final IntFunction<Integer> varFn) {
+        var = varFn.apply(var);
+        return this;
     }
 
-    public OptionalDouble toOptionalDouble() {
-        return OptionalDouble.of(var);
+    public OptionalInt toOptionalInt() {
+        return OptionalInt.of(var);
     }
 
-    public DoubleStream toDoubleStream() {
-        return DoubleStream.of(var);
-    }
-
-    @Override
-    public Double get() {
-        return getAsDouble();
+    public IntStream toIntStream() {
+        return IntStream.of(var);
     }
 
     @Override
-    public void accept(final double value) {
+    public Integer get() {
+        return getAsInt();
+    }
+
+    @Override
+    public void accept(final int value) {
         set(value);
 
     }
-
 }

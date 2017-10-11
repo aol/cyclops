@@ -1,7 +1,6 @@
 package cyclops.collections.standard.anyM;
 
 import cyclops.collections.AbstractAnyMSeqTest;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.set;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;

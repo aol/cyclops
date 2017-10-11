@@ -1,6 +1,5 @@
 package cyclops.data;
 
-import com.aol.cyclops2.matching.Deconstruct;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;

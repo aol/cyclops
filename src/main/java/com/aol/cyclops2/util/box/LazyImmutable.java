@@ -1,4 +1,4 @@
-package cyclops.collections.box;
+package com.aol.cyclops2.util.box;
 
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.stream.ReactiveSeq;

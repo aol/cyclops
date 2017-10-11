@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Test;

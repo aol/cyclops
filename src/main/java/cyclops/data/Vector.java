@@ -5,14 +5,12 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.control.Option;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;

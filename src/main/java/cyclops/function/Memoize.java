@@ -17,7 +17,7 @@ import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
 import cyclops.collections.tuple.Tuple4;
 
-import cyclops.collections.box.LazyImmutable;
+import com.aol.cyclops2.util.box.LazyImmutable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 
 import lombok.val;

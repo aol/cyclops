@@ -1,10 +1,7 @@
 package cyclops.companion;
 
-import java.util.List;
-
 
 import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.ListX;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;

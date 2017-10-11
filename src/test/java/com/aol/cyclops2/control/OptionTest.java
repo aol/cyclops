@@ -4,7 +4,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;

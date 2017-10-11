@@ -9,11 +9,9 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.internal.stream.OneShotStreamX;
 import cyclops.async.LazyReact;
 import cyclops.companion.Streams;
 import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSequentialSQLTest;

@@ -1,14 +1,15 @@
-package cyclops.collections.box;
+package com.aol.cyclops2.util.box;
+
+import java.util.OptionalLong;
+import java.util.function.*;
+import java.util.stream.LongStream;
 
 import com.aol.cyclops2.types.foldable.To;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
-import java.util.OptionalInt;
-import java.util.function.*;
-import java.util.stream.IntStream;
 
 /**
  * Class that represents a Closed Variable
@@ -37,16 +38,16 @@ import java.util.stream.IntStream;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supplier<Integer> {
+public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer, Supplier<Long> {
 
-    private int var;
+    private long var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   MutableInt num = MutableInt.of(20);
+     *   Mutable<Integer> num = Mutable.of(20);
      *   
      *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
@@ -57,40 +58,40 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static MutableInt of(final int var) {
-        return new MutableInt(
-                              var);
+    public static MutableLong of(final long var) {
+        return new MutableLong(
+                               var);
     }
 
     /** 
-     * Construct a MutableInt that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableLong that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
+     *    MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableInt that gets / sets an external (mutable) value
+     * @return MutableLong that gets / sets an external (mutable) value
      */
-    public static MutableInt fromExternal(final IntSupplier s, final IntConsumer c) {
-        return new MutableInt() {
+    public static MutableLong fromExternal(final LongSupplier s, final LongConsumer c) {
+        return new MutableLong() {
             @Override
-            public int getAsInt() {
-                return s.getAsInt();
+            public long getAsLong() {
+                return s.getAsLong();
             }
 
             @Override
-            public Integer get() {
-                return getAsInt();
+            public Long get() {
+                return getAsLong();
             }
 
             @Override
-            public MutableInt set(final int value) {
+            public MutableLong set(final long value) {
                 c.accept(value);
                 return this;
             }
@@ -101,8 +102,8 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Int> withOverride = mutable.mapOutputToObj(b->{ 
+     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Long> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
      *                                                             return 10.0;
      *                                                         return b;
@@ -115,8 +116,8 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Integer, R> fn) {
-        final MutableInt host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Long, R> fn) {
+        final MutableLong host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -130,10 +131,10 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Int> withOverride = mutable.mapInputToObj(b->{ 
+     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Long> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 10;
+     *                                                             return 10.0;
      *                                                         return b;
      *                                                         });
      *          
@@ -144,8 +145,8 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Integer> fn) {
-        final MutableInt host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Long> fn) {
+        final MutableLong host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -160,10 +161,10 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
-     *  MutableInt withOverride = mutable.mapOutput(b->{ 
+     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+     *  MutableLong withOverride = mutable.mapOutput(b->{ 
      *                                                        if(override)
-     *                                                             return 10;
+     *                                                             return 10.0;
      *                                                         return b;
      *                                                         });
      *          
@@ -174,12 +175,12 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public MutableInt mapOutput(final IntUnaryOperator fn) {
-        final MutableInt host = this;
-        return new MutableInt() {
+    public MutableLong mapOutput(final LongUnaryOperator fn) {
+        final MutableLong host = this;
+        return new MutableLong() {
             @Override
-            public int getAsInt() {
-                return fn.applyAsInt(host.getAsInt());
+            public long getAsLong() {
+                return fn.applyAsLong(host.getAsLong());
             }
 
         };
@@ -189,10 +190,10 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableInt mutable = MutableInt.fromExternal(()->!this.value,val->!this.value);
-     *  MutableInt withOverride = mutable.mapInput(b->{ 
+     *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
+     *  MutableLong withOverride = mutable.mapInput(b->{ 
      *                                                        if(override)
-     *                                                             return 10;
+     *                                                             return 10.0;
      *                                                         return b;
      *                                                         });
      *          
@@ -203,12 +204,12 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public MutableInt mapInput(final IntUnaryOperator fn) {
-        final MutableInt host = this;
-        return new MutableInt() {
+    public MutableLong mapInput(final LongUnaryOperator fn) {
+        final MutableLong host = this;
+        return new MutableLong() {
             @Override
-            public MutableInt set(final int value) {
-                host.set(fn.applyAsInt(value));
+            public MutableLong set(final long value) {
+                host.set(fn.applyAsLong(value));
                 return this;
             }
 
@@ -219,7 +220,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @return Current value
      */
     @Override
-    public int getAsInt() {
+    public long getAsLong() {
         return var;
     }
 
@@ -227,7 +228,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableInt set(final int var) {
+    public MutableLong set(final long var) {
         this.var = var;
         return this;
     }
@@ -236,26 +237,26 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableInt mutate(final IntFunction<Integer> varFn) {
+    public MutableLong mutate(final LongFunction<Long> varFn) {
         var = varFn.apply(var);
         return this;
     }
 
-    public OptionalInt toOptionalInt() {
-        return OptionalInt.of(var);
+    public OptionalLong toOptionalLong() {
+        return OptionalLong.of(var);
     }
 
-    public IntStream toIntStream() {
-        return IntStream.of(var);
-    }
-
-    @Override
-    public Integer get() {
-        return getAsInt();
+    public LongStream toLongStream() {
+        return LongStream.of(var);
     }
 
     @Override
-    public void accept(final int value) {
+    public Long get() {
+        return getAsLong();
+    }
+
+    @Override
+    public void accept(final long value) {
         set(value);
 
     }

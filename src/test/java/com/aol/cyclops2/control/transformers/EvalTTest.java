@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.*;

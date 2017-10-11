@@ -351,7 +351,7 @@ completableMaybe.complete(value)
 | ReaderWriterState     | Monad transformer encompassing behaviour from Reader, Writer and State Monads (backed by Free)            | Lazy                |
 | Unrestricted     | "Java Friendly" implementation of the Free monad for Java, facilitates functional interpreters.         | Lazy, concurrent                |
 
-## cyclops.collections.box
+## com.aol.cyclops2.util.box
 
 | type | description | characteristics |
 |------|-------------|-----------------|

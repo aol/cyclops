@@ -2,14 +2,8 @@ package cyclops.companion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.mutable.MapX;
-import cyclops.collections.tuple.Tuple2;
-
-import cyclops.function.Reducer;
-import cyclops.companion.Reducers;
 
 public class MapXs {
 

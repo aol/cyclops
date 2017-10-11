@@ -7,7 +7,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import cyclops.collections.box.Mutable;
+import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;

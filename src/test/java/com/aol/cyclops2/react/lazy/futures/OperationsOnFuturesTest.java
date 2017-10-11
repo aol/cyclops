@@ -24,12 +24,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.internal.react.FutureStreamImpl;
-import com.aol.cyclops2.react.ThreadPools;
-import com.aol.cyclops2.react.collectors.lazy.MaxActive;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
 import org.junit.Before;

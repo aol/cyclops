@@ -5,7 +5,7 @@ import cyclops.function.checked.*;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.Try;
-import cyclops.collections.box.MutableInt;
+import com.aol.cyclops2.util.box.MutableInt;
 import cyclops.function.checked.CheckedTriFunction;
 import cyclops.monads.WitnessType;
 import com.aol.cyclops2.util.ExceptionSoftener;

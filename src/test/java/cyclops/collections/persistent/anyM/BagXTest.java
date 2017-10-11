@@ -3,14 +3,10 @@ package cyclops.collections.persistent.anyM;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.collections.immutable.BagX;
-import cyclops.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.collections.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.List;
 
 import static java.util.Comparator.comparing;
 import static cyclops.collections.tuple.Tuple.tuple;

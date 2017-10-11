@@ -1,6 +1,5 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 

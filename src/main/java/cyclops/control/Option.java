@@ -883,7 +883,7 @@ public interface Option<T> extends To<Option<T>>,
         }
     }
     public static class None<T> implements Option<T> {
-        static None NOTHING_EAGER = new None();
+        public static None NOTHING_EAGER = new None();
 
         @Override
         public <R> Option<R> map(final Function<? super T, ? extends R> mapper) {

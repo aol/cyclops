@@ -3,10 +3,10 @@ package cyclops.control.lazy;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.function.Function3;
+import cyclops.collections.tuple.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import cyclops.collections.tuple.*;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

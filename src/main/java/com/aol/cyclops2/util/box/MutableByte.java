@@ -1,4 +1,4 @@
-package cyclops.collections.box;
+package com.aol.cyclops2.util.box;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,7 +17,7 @@ import lombok.ToString;
  * variables can't be changed.
  * e.g.
  *<pre>{@code 
- * short var = true;
+ * byte var = true;
  * Runnable r = () -> var =false;
  * }</pre>
  * 
@@ -26,7 +26,7 @@ import lombok.ToString;
  * 
  * e.g.
  * <pre>{@code
- * MutableShort var =  MutableShort.of(true);
+ * MutableByte var =  MutableByte.of(true);
  * Runnable r = () -> var.set(false);
  * }</pre>
  * 
@@ -38,60 +38,60 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode
-public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer<Short> {
+public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byte> {
 
-    private short var;
+    private byte var;
 
     /**
      * Create a Mutable variable, which can be mutated inside a Closure 
      * 
      * e.g.
      * <pre>{@code
-     *   MutableShort num = MutableShort.of(true);
+     *   MutableByte num = MutableByte.of(true);
      *   
      *    num.mutate(n->!n))
      *   
-     *   System.out.println(num.getAsShort());
+     *   System.out.println(num.getAsByte());
      *   //prints false
      * } </pre>
      * 
      * @param var Initial value of Mutable
      * @return New Mutable instance
      */
-    public static <T> MutableShort of(final short var) {
-        return new MutableShort(
-                                var);
+    public static <T> MutableByte of(final byte var) {
+        return new MutableByte(
+                               var);
     }
 
     /** 
-     * Construct a MutableShort that gets and sets an external value using the provided Supplier and Consumer
+     * Construct a MutableByte that gets and sets an external value using the provided Supplier and Consumer
      * 
      * e.g.
      * <pre>
      * {@code 
-     *    MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
+     *    MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
      * }
      * </pre>
      * 
      * 
      * @param s Supplier of an external value
      * @param c Consumer that sets an external value
-     * @return MutableShort that gets / sets an external (mutable) value
+     * @return MutableByte that gets / sets an external (mutable) value
      */
-    public static MutableShort fromExternal(final Supplier<Short> s, final Consumer<Short> c) {
-        return new MutableShort() {
+    public static MutableByte fromExternal(final Supplier<Byte> s, final Consumer<Byte> c) {
+        return new MutableByte() {
             @Override
-            public short getAsShort() {
+            public byte getAsByte() {
                 return s.get();
             }
 
             @Override
-            public Short get() {
-                return getAsShort();
+            public Byte get() {
+                return getAsByte();
             }
 
             @Override
-            public MutableShort set(final short value) {
+            public MutableByte set(final byte value) {
                 c.accept(value);
                 return this;
             }
@@ -102,10 +102,10 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Short> withOverride = mutable.mapOutputToObj(b->{ 
+     *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Byte> withOverride = mutable.mapOutputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 3s;
+     *                                                             return 1b;
      *                                                         return b;
      *                                                         });
      *          
@@ -116,8 +116,8 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param fn Map function to be applied to the result when get is called
      * @return Mutable that lazily applies the provided function when get is called to the return value
      */
-    public <R> Mutable<R> mapOutputToObj(final Function<Short, R> fn) {
-        final MutableShort host = this;
+    public <R> Mutable<R> mapOutputToObj(final Function<Byte, R> fn) {
+        final MutableByte host = this;
         return new Mutable<R>() {
             @Override
             public R get() {
@@ -131,10 +131,10 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * Use the supplied function to perform a lazy transform operation when get is called
      * <pre>
      * {@code 
-     *  MutableShort mutable = MutableShort.fromExternal(()->!this.value,val->!this.value);
-     *  Mutable<Short> withOverride = mutable.mapInputToObj(b->{ 
+     *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);
+     *  Mutable<Byte> withOverride = mutable.mapInputToObj(b->{ 
      *                                                        if(override)
-     *                                                             return 1s;
+     *                                                             return 1b;
      *                                                         return b;
      *                                                         });
      *          
@@ -145,8 +145,8 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param fn Map function to be applied to the input when set is called
      * @return Mutable that lazily applies the provided function when set is called to the input value
      */
-    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Short> fn) {
-        final MutableShort host = this;
+    public <T1> Mutable<T1> mapInputToObj(final Function<T1, Byte> fn) {
+        final MutableByte host = this;
         return new Mutable<T1>() {
             @Override
             public Mutable<T1> set(final T1 value) {
@@ -160,7 +160,7 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
     /**
      * @return Current value
      */
-    public short getAsShort() {
+    public byte getAsByte() {
         return var;
     }
 
@@ -168,7 +168,7 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param var New value
      * @return  this object with mutated value
      */
-    public MutableShort set(final short var) {
+    public MutableByte set(final byte var) {
         this.var = var;
         return this;
     }
@@ -177,24 +177,24 @@ public class MutableShort implements To<MutableShort>, Supplier<Short>, Consumer
      * @param varFn New value
      * @return  this object with mutated value
      */
-    public MutableShort mutate(final ShortFunction varFn) {
-        return set(varFn.apply(get()));
+    public MutableByte mutate(final ByteFunction varFn) {
+        return set(varFn.apply(getAsByte()));
 
     }
 
-    public static interface ShortFunction {
-        short apply(short var);
-    }
-
-    @Override
-    public Short get() {
-        return getAsShort();
+    public static interface ByteFunction {
+        byte apply(byte var);
     }
 
     @Override
-    public void accept(final Short t) {
+    public void accept(final Byte t) {
         set(t);
 
+    }
+
+    @Override
+    public Byte get() {
+        return getAsByte();
     }
 
 }

@@ -3,7 +3,6 @@ package com.aol.cyclops2.react.lazy;
 
 import static org.junit.Assert.assertTrue;
 
-import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.collections.tuple.Tuple2;

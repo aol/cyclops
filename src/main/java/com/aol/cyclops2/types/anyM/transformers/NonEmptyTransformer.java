@@ -3,23 +3,17 @@ package com.aol.cyclops2.types.anyM.transformers;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Unwrapable;
 import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.collections.tuple.Tuple2;
 import cyclops.control.Option;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.StreamT;
-import cyclops.stream.ReactiveSeq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.function.*;
-import java.util.stream.Stream;
 
 public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements Publisher<T>,
                                                                             Unwrapable,Transformable<T>,
