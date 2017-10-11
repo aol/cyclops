@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -120,8 +120,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         }
         return fold(c->Seq.cons(c.head(),c.tail().imSeq()), nil->Seq.empty());
     }
-    default Maybe<NonEmptyList<T>> nonEmptyList(){
-        return Maybe.ofNullable(fold(c->NonEmptyList.cons(c.head(),c.tail()), nil->null));
+    default Option<NonEmptyList<T>> nonEmptyList(){
+        return Option.ofNullable(fold(c->NonEmptyList.cons(c.head(),c.tail()), nil->null));
     }
 
 
@@ -135,9 +135,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         ImmutableList<T> right= t2._2().fold(c->c.tail(), n->null);
         return Zipper.of(t2._1(),value, right);
     }
-    default Maybe<Zipper<T>> focusAt(int pos){
+    default Option<Zipper<T>> focusAt(int pos){
         Tuple2<ImmutableList<T>, ImmutableList<T>> t2 = splitAt(pos);
-        Maybe<T> value = t2._2().fold(c -> Maybe.just(c.head()), n -> Maybe.nothing());
+        Option<T> value = t2._2().fold(c -> Option.some(c.head()), n -> Option.none());
         return value.map(l-> {
             ImmutableList<T> right = t2._2().fold(c -> c.tail(), n -> null);
             return Zipper.of(t2._1(), l, right);

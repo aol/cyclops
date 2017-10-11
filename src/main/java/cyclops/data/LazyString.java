@@ -1,7 +1,7 @@
 package cyclops.data;
 
 
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -124,7 +124,7 @@ public final class LazyString implements ImmutableList<Character> {
     public LazyString  reverse() {
         return fromLazyList(string.reverse());
     }
-    public Maybe<Character> get(int pos){
+    public Option<Character> get(int pos){
         return string.get(pos);
     }
 

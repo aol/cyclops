@@ -1,7 +1,7 @@
 package cyclops.data;
 
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.lazy.Either;
 import cyclops.control.lazy.Either3;
 import cyclops.control.lazy.Either4;
@@ -38,8 +38,8 @@ public interface DMap{
         Two<K1,V1,K2,V2> put1(Tuple2<K1, V1> keyAndValue);
         Two<K1,V1,K2,V2> put2(Tuple2<K2, V2> keyAndValue);
         Either3<V1,V2,Nothing> get(Either<K1, K2> key);
-        Maybe<V1> get1(K1 key);
-        Maybe<V2> get2(K2 key);
+        Option<V1> get1(K1 key);
+        Option<V2> get2(K2 key);
         V1 getOrElse1(K1 key, V1 alt);
         V2 getOrElse2(K2 key, V2 alt);
         V1 getOrElseGet1(K1 key, Supplier<V1> alt);
@@ -68,9 +68,9 @@ public interface DMap{
         Three<K1,V1,K2,V2,K3,V3> put2(Tuple2<K2, V2> keyAndValue);
         Three<K1,V1,K2,V2,K3,V3> put3(Tuple2<K3, V3> keyAndValue);
         Either4<V1,V2,V3,Nothing> get(Either3<K1, K2, K3> key);
-        Maybe<V1> get1(K1 key);
-        Maybe<V2> get2(K2 key);
-        Maybe<V3> get3(K3 key);
+        Option<V1> get1(K1 key);
+        Option<V2> get2(K2 key);
+        Option<V3> get3(K3 key);
         V1 getOrElse1(K1 key, V1 alt);
         V2 getOrElse2(K2 key, V2 alt);
         V3 getOrElse3(K3 key, V3 alt);
@@ -106,7 +106,7 @@ public interface DMap{
         }
 
         @Override
-        public Maybe<V1> get1(K1 key) {
+        public Option<V1> get1(K1 key) {
             return map1.get(key);
         }
 
@@ -148,7 +148,7 @@ public interface DMap{
         }
 
         @Override
-        public Maybe<V2> get2(K2 key) {
+        public Option<V2> get2(K2 key) {
             return map2.get(key);
         }
 
@@ -229,7 +229,7 @@ public interface DMap{
         }
 
         @Override
-        public Maybe<V1> get1(K1 key) {
+        public Option<V1> get1(K1 key) {
             return map1.get(key);
         }
 
@@ -245,7 +245,7 @@ public interface DMap{
         }
 
         @Override
-        public Maybe<V2> get2(K2 key) {
+        public Option<V2> get2(K2 key) {
             return map2.get(key);
         }
 
@@ -284,7 +284,7 @@ public interface DMap{
         }
 
         @Override
-        public Maybe<V3> get3(K3 key) {
+        public Option<V3> get3(K3 key) {
             return map3.get(key);
         }
 

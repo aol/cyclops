@@ -4,7 +4,7 @@ package cyclops.data;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -154,7 +154,7 @@ public class IntMap<T> implements ImmutableList<T>{
         return unitStream(stream().reverse());
     }
 
-    public Maybe<T> get(int index){
+    public Option<T> get(int index){
         return intMap.get(index,index);
     }
     public T getOrElse(int index,T value){
@@ -325,8 +325,8 @@ public class IntMap<T> implements ImmutableList<T>{
         }
 
         @Override
-        public Maybe<T> get(int pos) {
-            return Maybe.nothing();
+        public Option<T> get(int pos) {
+            return Option.none();
         }
 
         @Override

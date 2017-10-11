@@ -4,7 +4,7 @@ package cyclops.data;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Option;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
@@ -267,7 +267,7 @@ public class Vector<T> implements ImmutableList<T>{
 
     public Option<T> get(int pos){
         if(pos<0||pos>=size){
-            return Maybe.nothing();
+            return Option.none();
         }
         int tailStart = size-tail.size();
         if(pos>=tailStart){
@@ -383,8 +383,8 @@ public class Vector<T> implements ImmutableList<T>{
         }
 
         @Override
-        public Maybe<T> get(int pos) {
-            return Maybe.nothing();
+        public Option<T> get(int pos) {
+            return Option.none();
         }
 
         @Override

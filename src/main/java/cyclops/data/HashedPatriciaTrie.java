@@ -3,7 +3,7 @@ package cyclops.data;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed4;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -47,7 +47,7 @@ public interface HashedPatriciaTrie<K, V>  {
 
         Node<K, V> put(int hash, K key, V value);
 
-        Maybe<V> get(int hash, K key);
+        Option<V> get(int hash, K key);
         V getOrElse(int hash, K key, V alt);
         V getOrElseGet(int hash, K key, Supplier<V> alt);
 
@@ -91,8 +91,8 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, K key) {
-            return Maybe.nothing();
+        public Option<V> get(int hash, K key) {
+            return Option.none();
         }
 
         @Override
@@ -168,10 +168,10 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, K key) {
+        public Option<V> get(int hash, K key) {
             if(hash==0 && this.key.equals(key))
-                return Maybe.of(value);
-            return Maybe.nothing();
+                return Option.of(value);
+            return Option.none();
 
         }
 
@@ -253,10 +253,10 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, K key) {
+        public Option<V> get(int hash, K key) {
             return (hash == 0)
                     ? bucket.filter(t2 -> t2._1().equals(key)).get(0).map(Tuple2::_2)
-                    : Maybe.nothing();
+                    : Option.none();
         }
 
         @Override
@@ -318,7 +318,7 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, K key) {
+        public Option<V> get(int hash, K key) {
             int newHash = hash >>> BITS;
             int index = hash & MASK;
             return nodes[index].get(newHash, key);

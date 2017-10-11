@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -50,8 +50,8 @@ public class Zipper<T> {
     }
 
     public Zipper<T> start() {
-        Maybe<Zipper<T>> result = Maybe.just(this);
-        Maybe<Zipper<T>> next = result;
+        Option<Zipper<T>> result = Option.some(this);
+        Option<Zipper<T>> next = result;
         while(next.isPresent()){
                 next = result.flatMap(p->p.previous());
                 if(next.isPresent())
@@ -61,8 +61,8 @@ public class Zipper<T> {
         return result.orElse(this);
     }
     public Zipper<T> end() {
-        Maybe<Zipper<T>> result = Maybe.just(this);
-        Maybe<Zipper<T>> next = result;
+        Option<Zipper<T>> result = Option.some(this);
+        Option<Zipper<T>> next = result;
         while(next.isPresent()){
             next = result.flatMap(p->p.next());
             if(next.isPresent())
@@ -73,7 +73,7 @@ public class Zipper<T> {
     public int index(){
         return left.size();
     }
-    public Maybe<Zipper<T>> position(int index) {
+    public Option<Zipper<T>> position(int index) {
         Zipper<T> result = this;
         while (index != result.index()) {
             if (result.index() < index && !result.isEnd()) {
@@ -81,13 +81,13 @@ public class Zipper<T> {
             } else if (result.index() > index && !result.isStart()) {
                 result = result.previous(result);
             } else {
-                return Maybe.nothing();
+                return Option.none();
             }
         }
-        return Maybe.just(result);
+        return Option.some(result);
     }
-    public <R> Maybe<Zipper<T>> next(){
-        return right.fold(c-> Maybe.just(new Zipper(left.prepend(point), c.hashCode(), c.tail())), nil-> Maybe.nothing());
+    public <R> Option<Zipper<T>> next(){
+        return right.fold(c-> Option.some(new Zipper(left.prepend(point), c.hashCode(), c.tail())), nil-> Option.none());
     }
     public <R> Zipper<T> next(Zipper<T> alt){
         return next().orElse(alt);
@@ -108,8 +108,8 @@ public class Zipper<T> {
             return of(reversed.tail().append(point),reversed.head(), LazySeq.empty());
         }),nil->this);
     }
-    public <R> Maybe<Zipper<T>> previous(){
-        return left.fold(c-> Maybe.just(new Zipper(c.tail(),c.head() ,right.prepend(point))), nil-> Maybe.nothing());
+    public <R> Option<Zipper<T>> previous(){
+        return left.fold(c-> Option.some(new Zipper(c.tail(),c.head() ,right.prepend(point))), nil-> Option.none());
     }
 
     public Zipper<T> left(T value){
@@ -121,15 +121,15 @@ public class Zipper<T> {
     public Zipper<T> deleteLeftAndRight() {
         return new Zipper<>(LazySeq.empty(), point, LazySeq.empty());
     }
-    public Maybe<Zipper<T>> deleteLeft() {
+    public Option<Zipper<T>> deleteLeft() {
 
-        return left.fold(c->right.fold(c2-> Maybe.just(of(c.tail(),c.head(),right)), n-> Maybe.just(of(c.tail(),c.head(),right))),
-                n->right.fold(c-> Maybe.just(of(left,c.head(),c.tail())), n2-> Maybe.nothing()));
+        return left.fold(c->right.fold(c2-> Option.some(of(c.tail(),c.head(),right)), n-> Option.some(of(c.tail(),c.head(),right))),
+                n->right.fold(c-> Option.some(of(left,c.head(),c.tail())), n2-> Option.none()));
     }
-    public Maybe<Zipper<T>> deleteRight() {
+    public Option<Zipper<T>> deleteRight() {
 
-        return right.fold(c->left.fold(c2-> Maybe.just(of(left,c.head(),c.tail())), n-> Maybe.just(of(left,c.head(),c.tail()))),
-                n->left.fold(c-> Maybe.just(of(c.tail(),c.head(),right)), n2-> Maybe.nothing()));
+        return right.fold(c->left.fold(c2-> Option.some(of(left,c.head(),c.tail())), n-> Option.some(of(left,c.head(),c.tail()))),
+                n->left.fold(c-> Option.some(of(c.tail(),c.head(),right)), n2-> Option.none()));
     }
 
 

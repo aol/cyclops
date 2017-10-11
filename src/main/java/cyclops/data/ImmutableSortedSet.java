@@ -7,7 +7,7 @@ import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -34,8 +34,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     Comparator<? super T> comparator();
     ImmutableSortedSet<T> subSet(T fromElement, T toElement);
 
-    Maybe<T> first();
-    Maybe<T> last();
+    Option<T> first();
+    Option<T> last();
 
     ImmutableSortedSet<T> drop(int num);
     ImmutableSortedSet<T> take(int num);

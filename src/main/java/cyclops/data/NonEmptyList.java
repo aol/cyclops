@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.stream.ReactiveSeq;

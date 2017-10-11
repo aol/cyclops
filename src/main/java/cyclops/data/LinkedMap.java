@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import cyclops.collections.immutable.PersistentMapX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
     public static <K,V> LinkedMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
         return stream.foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
     }
-    public Maybe<V> get(K key){
+    public Option<V> get(K key){
         return map.get(key);
     }
 

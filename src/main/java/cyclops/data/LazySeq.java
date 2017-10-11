@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.data.DataWitness.lazySeq;
@@ -327,16 +327,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
 
-    default Maybe<T> get(int pos){
+    default Option<T> get(int pos){
         T result = null;
         ImmutableList<T> l = this;
         for(int i=0;i<pos;i++){
            l = l.fold(c->c.tail(), n->n);
            if(l instanceof Nil){ //short circuit
-               return Maybe.nothing();
+               return Option.none();
            }
         }
-        return Maybe.ofNullable(l.fold(c->c.head(), n->null));
+        return Option.ofNullable(l.fold(c->c.head(), n->null));
     }
 
 

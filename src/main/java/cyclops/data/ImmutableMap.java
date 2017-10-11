@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -50,7 +50,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     boolean containsKey(K key);
 
     boolean contains(Tuple2<K, V> t);
-    Maybe<V> get(K key);
+    Option<V> get(K key);
     V getOrElse(K key, V alt);
     V getOrElseGet(K key, Supplier<V> alt);
 

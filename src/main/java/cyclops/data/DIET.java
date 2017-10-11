@@ -3,7 +3,7 @@ package cyclops.data;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.foldable.Folds;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 
 import cyclops.stream.ReactiveSeq;
@@ -132,7 +132,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         }
         @Override
         public DIET<T> add(Range<T> range) {
-            Tuple2<Range<T>, Maybe<Range<T>>> t = focus.plusAll(range);
+            Tuple2<Range<T>, Option<Range<T>>> t = focus.plusAll(range);
             return t._2().visit(s-> t._1()==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
 
                 //create new expanded range and rebalance the trees

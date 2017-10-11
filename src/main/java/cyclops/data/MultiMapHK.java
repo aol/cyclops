@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.typeclasses.Pure;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,10 +27,10 @@ public class MultiMapHK<W,K,V> {
         Higher<W,V> hkt = multiMap.get(key).map(v->appender.append(v,value)).orElseGet(()->pure.unit(value));
         return new MultiMapHK<>(multiMap.put(key,hkt),appender,pure);
     }
-    public <R> Maybe<R> get(K key, Function<? super Higher<W,V>,? extends R> decoder){
+    public <R> Option<R> get(K key, Function<? super Higher<W,V>,? extends R> decoder){
         return multiMap.get(key).map(decoder);
     }
-    public Maybe<Higher<W,V>> get(K key){
+    public Option<Higher<W,V>> get(K key){
         return multiMap.get(key);
     }
 

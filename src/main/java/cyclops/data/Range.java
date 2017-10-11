@@ -1,7 +1,7 @@
 package cyclops.data;
 
 
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.function.Ordering;
 import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
@@ -31,8 +31,8 @@ public class Range<T> {
     public static Range<Integer> range(int start,int end){
         return range(start, end, new Enumeration<Integer>() {
             @Override
-            public Maybe<Integer> toEnum(int e) {
-                return Maybe.just(e);
+            public Option<Integer> toEnum(int e) {
+                return Option.some(e);
             }
 
             @Override
@@ -72,66 +72,66 @@ public class Range<T> {
     }
 
 
-    public Tuple2<Range<T>,Maybe<Range<T>>> plusAll(Range<T> range){
+    public Tuple2<Range<T>,Option<Range<T>>> plusAll(Range<T> range){
         //1 .. x    >=1 .. y
         if(comp.isLessThanOrEqual(start,range.start)){
             if(range.contains(end)){
-                return tuple(range(start,range.end,enm,comp), Maybe.nothing());
+                return tuple(range(start,range.end,enm,comp), Option.none());
             }
             if(end.equals(enm.succ(range.end).orElse(null))){
-                return tuple(range(start,end,enm,comp), Maybe.nothing());
+                return tuple(range(start,end,enm,comp), Option.none());
             }
-            return tuple(this, Maybe.just(range));
+            return tuple(this, Option.some(range));
 
         }else{
             if(this.contains(range.end)){
-                return tuple(range(range.start,end,enm,comp), Maybe.nothing());
+                return tuple(range(range.start,end,enm,comp), Option.none());
             }if(range.end.equals(enm.succ(end).orElse(null))){
-                return tuple(range(start,range.end,enm,comp), Maybe.nothing());
+                return tuple(range(start,range.end,enm,comp), Option.none());
             }
             else{
-                return tuple(range, Maybe.just(this));
+                return tuple(range, Option.some(this));
             }
         }
 
     }
-    public Maybe<Tuple2<Range<T>,Maybe<Range<T>>>> minusAll(Range<T> range){
+    public Option<Tuple2<Range<T>,Option<Range<T>>>> minusAll(Range<T> range){
         //            |         |  <--range
         // |    |
         if (comp.isLessThan(end, range.start)) {
-            return Maybe.just(tuple(this, Maybe.nothing()));
+            return Option.some(tuple(this, Option.none()));
         }
         //                           |   |
         if(comp.isGreaterThanOrEqual(start,range.end)){
-            return Maybe.just(tuple(this, Maybe.nothing()));
+            return Option.some(tuple(this, Option.none()));
         }
         //                 | |
         if(range.contains(this)){
-            return Maybe.nothing();
+            return Option.none();
         }
         if(comp.isLessThanOrEqual(start,range.start)){
             if(comp.isLessThanOrEqual(end,range.end))
-                return Maybe.just(tuple(range(start,range.start,enm,comp), Maybe.nothing()));
+                return Option.some(tuple(range(start,range.start,enm,comp), Option.none()));
             else
-                return Maybe.just(tuple(range(start,range.start,enm,comp), Maybe.just(range(range.end,end,enm,comp))));
+                return Option.some(tuple(range(start,range.start,enm,comp), Option.some(range(range.end,end,enm,comp))));
         }
 
         //     |              |  <--range
         // |       |
         // |                            |
         //               |            |
-        return Maybe.just(tuple(range(range.end,end,enm,comp), Maybe.nothing()));
+        return Option.some(tuple(range(range.end,end,enm,comp), Option.none()));
 
     }
 
 
-    public Maybe<Range<T>> intersection(Range<T> toMerge) {
+    public Option<Range<T>> intersection(Range<T> toMerge) {
 
         T newStart = (T) comp.max(this.start, toMerge.start);
         T newEnd = (T) comp.min(this.end, toMerge.end);
         if (comp.isLessThanOrEqual(start, end))
-            return Maybe.just(range(start, end, enm, comp));
-        return Maybe.nothing();
+            return Option.some(range(start, end, enm, comp));
+        return Option.none();
     }
 
     public ReactiveSeq<T> stream(){

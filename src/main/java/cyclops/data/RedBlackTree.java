@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct5;
 import com.aol.cyclops2.matching.Sealed2;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -36,7 +36,7 @@ public interface RedBlackTree {
 
         boolean isEmpty();
         boolean isBlack();
-        Maybe<V> get(K key);
+        Option<V> get(K key);
         V getOrElse(K key, V alt);
         V getOrElseGet(K key, Supplier<V> alt);
         Tree<K,V> plus(K key, V value);
@@ -129,12 +129,12 @@ public interface RedBlackTree {
         }
 
         @Override
-        public Maybe<V> get(K key) {
+        public Option<V> get(K key) {
             int compRes = comp.compare(this.key,key);
             if (compRes>0)
                 return left.get(key);
             else if (compRes==0)
-                return Maybe.of(value);
+                return Option.of(value);
             return right.get(key);
         }
 
@@ -234,8 +234,8 @@ public interface RedBlackTree {
         }
 
         @Override
-        public Maybe<V> get(K key) {
-            return Maybe.nothing();
+        public Option<V> get(K key) {
+            return Option.none();
         }
 
         @Override

@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.collections.tuple.Tuple;
@@ -28,7 +28,7 @@ public class HAMT<K, V>  {
    interface Node<K,V>{
 
        public Node<K,V> plus(int bitShiftDepth, int hash, K key, V value);
-       public Maybe<V> get(int bitShiftDepth, int hash, K key);
+       public Option<V> get(int bitShiftDepth, int hash, K key);
        public V getOrElse(int bitShiftDepth, int hash, K key, V alt);
        public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt);
        public Node<K,V> minus(int bitShiftDepth, int hash, K key);
@@ -45,8 +45,8 @@ public class HAMT<K, V>  {
        }
 
        @Override
-       public Maybe<V> get(int bitShiftDepth, int hash, K key) {
-           return Maybe.nothing();
+       public Option<V> get(int bitShiftDepth, int hash, K key) {
+           return Option.none();
        }
 
        @Override
@@ -109,8 +109,8 @@ public class HAMT<K, V>  {
 
 
        @Override
-       public Maybe<V> get(int bitShiftDepth, int hash, K key) {
-           return isMatch(hash, key) ? Maybe.of(value) : Maybe.nothing();
+       public Option<V> get(int bitShiftDepth, int hash, K key) {
+           return isMatch(hash, key) ? Option.of(value) : Option.none();
        }
 
        @Override
@@ -187,11 +187,11 @@ public class HAMT<K, V>  {
         }
 
         @Override
-       public Maybe<V> get(int bitShiftDepth, int hash, K key) {
+       public Option<V> get(int bitShiftDepth, int hash, K key) {
            if(this.hash==hash){
                return bucket.stream().filter(t->Objects.equals(key,t._1())).findOne().map(Tuple2::_2);
            }
-           return Maybe.nothing();
+           return Option.none();
        }
 
         @Override
@@ -254,9 +254,9 @@ public class HAMT<K, V>  {
         }
 
         @Override
-        public Maybe<V> get(int bitShiftDepth, int hash, K key) {
+        public Option<V> get(int bitShiftDepth, int hash, K key) {
             int pos = bitpos(hash, bitShiftDepth);
-            return absent(pos)? Maybe.nothing() : find(bitShiftDepth,pos,hash,key);
+            return absent(pos)? Option.none() : find(bitShiftDepth,pos,hash,key);
         }
 
         @Override
@@ -280,7 +280,7 @@ public class HAMT<K, V>  {
         private V find(int shift,int pos, int hash, K key,V alt) {
             return nodes[index(pos)].getOrElse(shift+BITS_IN_INDEX,hash,key,alt);
         }
-        private Maybe<V> find(int shift, int pos, int hash, K key) {
+        private Option<V> find(int shift, int pos, int hash, K key) {
             return nodes[index(pos)].get(shift+BITS_IN_INDEX,hash,key);
         }
         private Node<K,V> findNode(int pos) {

@@ -2,7 +2,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import com.aol.cyclops2.matching.Sealed3;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -45,7 +45,7 @@ public interface IntPatriciaTrie<V>  {
 
         Node<V> put(int hash, int pos, V value);
 
-        Maybe<V> get(int hash, int pos);
+        Option<V> get(int hash, int pos);
         V getOrElse(int hash, int pos, V value);
         V getOrElseGet(int hash, int pos, Supplier<V> value);
 
@@ -91,8 +91,8 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, int pos) {
-            return Maybe.nothing();
+        public Option<V> get(int hash, int pos) {
+            return Option.none();
         }
 
         @Override
@@ -164,10 +164,10 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, int key) {
+        public Option<V> get(int hash, int key) {
             if(hash==0)
-                return Maybe.just(value);
-            return Maybe.nothing();
+                return Option.some(value);
+            return Option.none();
 
         }
 
@@ -223,7 +223,7 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public Maybe<V> get(int hash, int key) {
+        public Option<V> get(int hash, int key) {
             int newHash = hash >>> BITS;
             int index = hash & MASK;
             return nodes[index].get(newHash, key);

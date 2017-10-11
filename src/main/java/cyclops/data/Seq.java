@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Xor;
 import cyclops.data.DataWitness.seq;
@@ -161,16 +161,16 @@ public interface Seq<T> extends ImmutableList<T>,
         return Nil.Instance;
     }
 
-    default Maybe<T> get(final int pos){
+    default Option<T> get(final int pos){
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
            l = l.visit(c->c.tail,n->n);
            if(l instanceof Nil){ //short circuit
-               return Maybe.nothing();
+               return Option.none();
            }
         }
-        return Maybe.ofNullable(l.visit(c->c.head, n->null));
+        return Option.ofNullable(l.visit(c->c.head, n->null));
     }
     default T getOrElse(int pos, T alt){
         T result = null;

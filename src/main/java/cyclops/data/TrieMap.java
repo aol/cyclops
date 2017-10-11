@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import cyclops.collections.immutable.PersistentMapX;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -82,7 +82,7 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
         return get(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
     }
 
-    public Maybe<V> get(K key){
+    public Option<V> get(K key){
         return map.get(key.hashCode(),key);
     }
     public V getOrElse(K key,V alt){

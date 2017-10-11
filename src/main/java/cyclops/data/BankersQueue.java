@@ -1,7 +1,6 @@
 package cyclops.data;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
@@ -263,7 +262,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
                int pos = n-sizeFront;
                return  back.get(sizeBack-pos-1);
            }
-           return Maybe.nothing();
+           return Option.none();
 
        }
 
