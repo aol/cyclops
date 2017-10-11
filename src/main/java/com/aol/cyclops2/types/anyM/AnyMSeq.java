@@ -33,7 +33,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;
 import cyclops.function.Function4;
@@ -442,8 +442,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return fromIterable(IterableX.super.cycleWhile(predicate));
     }
     @Override
-    default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
-        return Xor.primary(this);
+    default Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
+        return Either.right(this);
     }
     @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){

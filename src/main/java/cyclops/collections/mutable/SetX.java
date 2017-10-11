@@ -10,7 +10,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.set;
@@ -1386,7 +1386,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
             return new MonadRec<set>(){
                 @Override
-                public <T, R> Higher<set, R> tailRec(T initial, Function<? super T, ? extends Higher<set,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<set, R> tailRec(T initial, Function<? super T, ? extends Higher<set,? extends Either<T, R>>> fn) {
                     return SetX.tailRec(initial,fn.andThen(SetX::narrowK));
                 }
             };
@@ -1563,9 +1563,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
         }
     }
-    public static  <T,R> SetX<R> tailRec(T initial, Function<? super T, ? extends SetX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> SetX<R> tailRec(T initial, Function<? super T, ? extends SetX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1580,7 +1580,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().setX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().setX(Evaluation.LAZY);
     }
 
 }

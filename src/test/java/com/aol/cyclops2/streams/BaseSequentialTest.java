@@ -23,7 +23,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import org.hamcrest.Matchers;
 import cyclops.collections.tuple.Tuple2;
 import cyclops.collections.tuple.Tuple3;
@@ -542,7 +542,7 @@ public class BaseSequentialTest {
     public void combineOneFirstOrError() {
         assertThat(of(1)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findFirstOrError(), Matchers.equalTo(Either.right(1)));
+                .findFirstOrError(), Matchers.equalTo(LazyEither.right(1)));
     }
 
     @Test

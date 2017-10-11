@@ -27,7 +27,7 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
@@ -157,16 +157,16 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       Higher2<tryType,X,T> {
 
 
-    final Xor<X,T> xor;
+    final Either<X,T> xor;
     private final Class<? extends Throwable>[] classes;
 
-    public Xor<X,T> asXor(){
+    public Either<X,T> asXor(){
         return xor;
     }
 
-    public static  <X extends Throwable,T,R> Try<R,X> tailRec(T initial, Function<? super T, ? extends Try<? extends Xor<T, R>,X>> fn){
-        Try<? extends Xor<T, R>,X> next[] = new Try[1];
-        next[0] = Try.success(Xor.secondary(initial));
+    public static  <X extends Throwable,T,R> Try<R,X> tailRec(T initial, Function<? super T, ? extends Try<? extends Either<T, R>,X>> fn){
+        Try<? extends Either<T, R>,X> next[] = new Try[1];
+        next[0] = Try.success(Either.left(initial));
         boolean cont = true;
         do {
             cont = next[0].visit(p -> p.visit(s -> {
@@ -192,7 +192,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public <W2,R> Nested<Higher<tryType,X>,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
-    public Trampoline<Xor<X,T>> toTrampoline() {
+    public Trampoline<Either<X,T>> toTrampoline() {
         return xor.toTrampoline();
     }
 
@@ -200,7 +200,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public void subscribe(Subscriber<? super T> sub) {
 
-        xor.nestedEval().subscribe(new Subscriber<Xor<X, T>>() {
+        xor.nestedEval().subscribe(new Subscriber<Either<X, T>>() {
             boolean onCompleteSent = false;
             @Override
             public void onSubscribe(Subscription s) {
@@ -208,13 +208,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
             }
 
             @Override
-            public void onNext(Xor<X, T> pts) {
-                if(pts.isPrimary()){
+            public void onNext(Either<X, T> pts) {
+                if(pts.isRight()){
                     T v = pts.orElse(null);
                     if(v!=null)
                         sub.onNext(v);
                 }
-                if(pts.isSecondary()){
+                if(pts.isLeft()){
                     X v = pts.swap().orElse(null);
                     if(v!=null)
                         sub.onError(v);
@@ -259,8 +259,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param xors Trys to sequence
      * @return Try sequenced and swapped
      */
-    public static <ST extends Throwable, PT> Xor<ListX<PT>, ListX<ST>> sequenceFailures(final CollectionX<Try<PT,ST>> xors) {
-        return Xor.sequenceSecondary(xors.map(t->t.xor));
+    public static <ST extends Throwable, PT> Either<ListX<PT>, ListX<ST>> sequenceFailures(final CollectionX<Try<PT,ST>> xors) {
+        return Either.sequenceLeft(xors.map(t->t.xor));
     }
     /**
      * Accumulate the result of the Secondary types in the Collection of Trys provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -278,7 +278,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate failure operation
      */
-    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
         return sequenceFailures(xors).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -304,8 +304,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Semigroup to combine values from each Ior
      * @return Try populated with the accumulate Secondary operation
      */
-    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
-                                                                             final Monoid<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
+                                                                                final Monoid<R> reducer) {
         return sequenceFailures(xors).map(s -> s.map(mapper)
                 .reduce(reducer));
     }
@@ -331,8 +331,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param iors Trys to sequence
      * @return Try Sequenced
      */
-    public static <ST extends Throwable, PT> Xor<ListX<ST>, ListX<PT>> sequenceSuccess(final CollectionX<Try<PT,ST>> xors) {
-        return Xor.sequencePrimary(xors.map(t->t.xor));
+    public static <ST extends Throwable, PT> Either<ListX<ST>, ListX<PT>> sequenceSuccess(final CollectionX<Try<PT,ST>> xors) {
+        return Either.sequenceRight(xors.map(t->t.xor));
     }
     /**
      * Accumulate the result of the Primary types in the Collection of Trys provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -350,7 +350,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
         return sequenceSuccess(xors).map(s -> s.mapReduce(reducer));
     }
 
@@ -375,8 +375,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT, R> Xor<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
-                                                                              final Monoid<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
+                                                                                 final Monoid<R> reducer) {
         return sequenceSuccess(xors).map(s -> s.map(mapper)
                 .reduce(reducer));
     }
@@ -399,7 +399,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer  Reducer to accumulate results
      * @return  Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT> Xor<?, PT> accumulateSuccesses(final Monoid<PT> reducer,final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<?, PT> accumulateSuccesses(final Monoid<PT> reducer, final CollectionX<Try<PT,ST>> xors) {
         return sequenceSuccess(xors).map(s -> s.reduce(reducer));
     }
 
@@ -421,7 +421,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer  Semigroup to combine values from each Try
      * @return Try populated with the accumulate Secondary operation
      */
-    public static <ST extends Throwable, PT> Xor<?, ST> accumulateFailures(final Monoid<ST> reducer,final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<?, ST> accumulateFailures(final Monoid<ST> reducer, final CollectionX<Try<PT,ST>> xors) {
         return sequenceFailures(xors).map(s -> s.reduce(reducer));
     }
 
@@ -432,7 +432,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-    public static <T, X extends Throwable> Try<T, X> fromXor(final Xor<X,T> pub) {
+    public static <T, X extends Throwable> Try<T, X> fromXor(final Either<X,T> pub) {
         return new Try<>(pub,new Class[0]);
     }
     /**
@@ -454,7 +454,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      */
     @SafeVarargs
     public static <T, X extends Throwable> Try<T, X> fromPublisher(final Publisher<T> pub, final Class<X>... classes) {
-        return new Try<T,X>(Either.fromPublisher(pub).<X>secondaryMap(t->{
+        return new Try<T,X>(LazyEither.fromPublisher(pub).<X>mapLeft(t->{
             if (classes.length == 0)
                 return (X) t;
             val error = Stream.of(classes)
@@ -485,7 +485,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try populated with first value from Publisher
      */
     public static <T> Try<T, Throwable> fromPublisher(final Publisher<T> pub) {
-        return new Try<>(Either.fromPublisher(pub),new Class[0]);
+        return new Try<>(LazyEither.fromPublisher(pub),new Class[0]);
     }
 
 
@@ -507,7 +507,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try populated with first value from Iterable
      */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable, T alt) {
-        return new Try<>(Either.fromIterable(iterable,alt), new Class[0]);
+        return new Try<>(LazyEither.fromIterable(iterable,alt), new Class[0]);
     }
 
 
@@ -592,13 +592,13 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return The exception returned in the Failure case, Implementations should throw NoSuchElementException if no failure is present
      */
     public Option<X> failureGet(){
-        return xor.secondaryGet();
+        return xor.getLeft();
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toXor()
+     * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    public Xor<X, T> toXor(){
+    public Either<X, T> toXor(){
         return xor;
     }
 
@@ -674,7 +674,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return new Failure with error
      */
     public static <T, X extends Throwable> Try<T, X> failure(final X error) {
-        return new Try<>(Xor.secondary(
+        return new Try<>(Either.left(
                 error),new Class[0]);
     }
 
@@ -691,18 +691,18 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return new Success with value
      */
     public static <T, X extends Throwable> Try<T, X> success(final T value) {
-        return new Try<>(Xor.primary(
+        return new Try<>(Either.right(
                 value),new Class[0]);
     }
     public static <T, X extends Throwable> Try<T, X> success(final T value,final Class<? extends Throwable>... classes) {
-        return new Try<>(Xor.primary(
+        return new Try<>(Either.right(
                 value),classes);
     }
 
     /**
-     * @return Convert this Try to an Xor with the error type as the secondary value
+     * @return Convert this Try to an Xor with the error type as the lazyLeft value
      */
-    public Xor<X, T> toXorWithError() {
+    public Either<X, T> toXorWithError() {
         return xor;
     }
 
@@ -804,7 +804,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return this
      */
     public Try<T, X> onFail(Consumer<? super X> consumer){
-        return new Try<>(xor.secondaryPeek(consumer),classes);
+        return new Try<>(xor.peekLeft(consumer),classes);
     }
 
     /**
@@ -813,7 +813,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return this
      */
     public Try<T, X> onFail(Class<? extends X> t, Consumer<X> consumer){
-        return new Try<>(xor.secondaryPeek(error->{
+        return new Try<>(xor.peekLeft(error->{
             if (t.isAssignableFrom(error.getClass()))
                 consumer.accept(error);
         }),classes);
@@ -824,7 +824,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return new Try
      */
     public Try<T, X> recover(Function<? super X, ? extends T> fn){
-        return new Try<>(xor.secondaryToPrimayMap(fn),classes);
+        return new Try<>(xor.mapLeftToRight(fn),classes);
     }
 
     /**
@@ -834,10 +834,10 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Success from recovery function
      */
     public Try<T, X> recoverFlatMap(Function<? super X, ? extends Try<T, X>> fn){
-        return new Try<>(xor.secondaryToPrimayFlatMap(fn.andThen(t->t.xor)),classes);
+        return new Try<>(xor.flatMapLeftToRight(fn.andThen(t->t.xor)),classes);
     }
     public Try<T, X> recoverFlatMapFor(Class<? extends X> t,Function<? super X, ? extends Try<T, X>> fn){
-        return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{
+        return new Try<T,X>(xor.flatMapLeftToRight(x->{
             if (t.isAssignableFrom(x.getClass()))
                 return fn.apply(x).xor;
             return xor;
@@ -851,9 +851,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return New Success if failure and types fold / otherwise this
      */
     public Try<T, X> recoverFor(Class<? extends X> t, Function<? super X, ? extends T> fn){
-        return new Try<T,X>(xor.secondaryToPrimayFlatMap(x->{
+        return new Try<T,X>(xor.flatMapLeftToRight(x->{
             if (t.isAssignableFrom(x.getClass()))
-                return Xor.primary(fn.apply(x));
+                return Either.right(fn.apply(x));
             return xor;
         }),classes);
     }
@@ -896,14 +896,14 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return true if Success / false if Failure
      */
     public boolean isSuccess(){
-        return xor.isPrimary();
+        return xor.isRight();
     }
 
     /**
      * @return True if Failure / false if Success
      */
     public boolean isFailure(){
-        return !xor.isPrimary();
+        return !xor.isRight();
     }
 
     /**
@@ -929,7 +929,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public <T2, R> Try<R,X> zip(final Try<T2,X> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
-    public <T2, R> Try<R,X> zip(final Xor<X,T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
+    public <T2, R> Try<R,X> zip(final Either<X,T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
         return Try.fromXor(xor.zip(app,fn));
     }
     public <T2, R> Try<R,X> zip(final Ior<X,T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
@@ -1287,7 +1287,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         try {
             return s.apply(in);
         } catch (final Throwable t) {
-            Xor<Throwable, ? extends R> x = Xor.secondary(orThrow(Stream.of(classes)
+            Either<Throwable, ? extends R> x = Either.left(orThrow(Stream.of(classes)
                             .filter(c -> c.isAssignableFrom(t.getClass()))
                             .map(c -> t)
                             .findFirst(),
@@ -1296,11 +1296,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
         }
     }
-    private <R> Xor<X,R> safeApply(T in,final Function<? super T,? extends R> s) {
+    private <R> Either<X,R> safeApply(T in, final Function<? super T,? extends R> s) {
         try {
-            return Xor.primary(s.apply(in));
+            return Either.right(s.apply(in));
         } catch (final Throwable t) {
-            return (Xor) Xor.secondary(orThrow(Stream.of(classes)
+            return (Either) Either.left(orThrow(Stream.of(classes)
                             .filter(c -> c.isAssignableFrom(t.getClass()))
                             .map(c -> t)
                             .findFirst(),
@@ -1497,9 +1497,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
             return new MonadRec<Higher<tryType, X>>(){
                 @Override
-                public <T, R> Higher<Higher<tryType, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, X>, ? extends Xor<T, R>>> fn) {
-                    Try<? extends Xor<T, R>,X> next[] = new Try[1];
-                    next[0] = Try.success(Xor.secondary(initial));
+                public <T, R> Higher<Higher<tryType, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tryType, X>, ? extends Either<T, R>>> fn) {
+                    Try<? extends Either<T, R>,X> next[] = new Try[1];
+                    next[0] = Try.success(Either.left(initial));
                     boolean cont = true;
                     do {
                         cont = next[0].visit(p -> p.visit(s -> {

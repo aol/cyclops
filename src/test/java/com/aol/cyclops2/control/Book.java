@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control;
 
 
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 
 import java.util.function.Function;
 
@@ -17,7 +17,7 @@ public abstract class Book {
 
 
 
-    public abstract Either<Fiction,NonFiction> match();
+    public abstract LazyEither<Fiction,NonFiction> match();
 
     public static class Fiction extends Book{
 
@@ -26,8 +26,8 @@ public abstract class Book {
         }
 
         @Override
-        public Either<Fiction, NonFiction> match() {
-            return Either.left(this);
+        public LazyEither<Fiction, NonFiction> match() {
+            return LazyEither.left(this);
         }
 
 
@@ -39,8 +39,8 @@ public abstract class Book {
         }
 
         @Override
-        public Either<Fiction, NonFiction> match() {
-            return Either.right(this);
+        public LazyEither<Fiction, NonFiction> match() {
+            return LazyEither.right(this);
         }
 
 

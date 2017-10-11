@@ -2,7 +2,7 @@ package cyclops.monads;
 
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.*;
 import cyclops.collections.tuple.Tuple;
 import cyclops.collections.tuple.Tuple2;
@@ -88,11 +88,11 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
 
     }
 
-    default <__> KleisliM<W,Xor<T, __>, Xor<R, __>> leftK(W type) {
-         return kleisli(xr -> xr.visit(l -> apply(l).map(Xor::secondary), r -> type.adapter().unit(r).map(Xor::primary)));
+    default <__> KleisliM<W,Either<T, __>, Either<R, __>> leftK(W type) {
+         return kleisli(xr -> xr.visit(l -> apply(l).map(Either::left), r -> type.adapter().unit(r).map(Either::right)));
     }
-    default <__> KleisliM<W,Xor<__,T>, Xor<__,R>> rightK(W type) {
-        return kleisli(xr -> xr.visit(l -> type.adapter().unit(l).map(Xor::secondary), r -> apply(r).map(Xor::primary)));
+    default <__> KleisliM<W,Either<__,T>, Either<__,R>> rightK(W type) {
+        return kleisli(xr -> xr.visit(l -> type.adapter().unit(l).map(Either::left), r -> apply(r).map(Either::right)));
     }
     default <__> KleisliM<W,Tuple2<T, __>, Tuple2<R, __>> firstK() {
         return kleisli(xr -> xr.transform((v1, v2) -> apply(v1).map(r1-> Tuple.tuple(r1,v2))));
@@ -102,14 +102,14 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
     }
 
 
-    default <T2,R2> KleisliM<W,Xor<T, T2>, Xor<R, R2>> merge(KleisliM<W,T2,R2> merge, W type) {
-        KleisliM<W,T, Xor<R, R2>> first = then(lift(Xor::secondary, type));
-        KleisliM<W,T2, Xor<R, R2>> second = merge.then(lift(Xor::primary, type));
+    default <T2,R2> KleisliM<W,Either<T, T2>, Either<R, R2>> merge(KleisliM<W,T2,R2> merge, W type) {
+        KleisliM<W,T, Either<R, R2>> first = then(lift(Either::left, type));
+        KleisliM<W,T2, Either<R, R2>> second = merge.then(lift(Either::right, type));
         return first.fanIn(second);
 
     }
 
-    default <T2> KleisliM<W,Xor<T, T2>, R> fanIn(KleisliM<W,T2,R> fanIn) {
+    default <T2> KleisliM<W,Either<T, T2>, R> fanIn(KleisliM<W,T2,R> fanIn) {
         return e -> e.visit(this, fanIn);
     }
 

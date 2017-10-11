@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Function0;
 import cyclops.function.Function3;
 import cyclops.collections.tuple.Tuple;
@@ -99,20 +99,20 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
     default  <B,R> Trampoline<R> zip(Trampoline<B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
-        Xor<Trampoline<T>,T> first = resume();
-        Xor<Trampoline<B>,B> second = b.resume();
+        Either<Trampoline<T>,T> first = resume();
+        Either<Trampoline<B>,B> second = b.resume();
 
-        if(first.isSecondary() && second.isSecondary()) {
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),zipper));
+        if(first.isLeft() && second.isLeft()) {
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),zipper));
         }
-        if(first.isPrimary() && second.isPrimary()){
+        if(first.isRight() && second.isRight()){
             return Trampoline.done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
-        if(first.isSecondary() && second.isPrimary()){
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,zipper));
+        if(first.isLeft() && second.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,zipper));
         }
-        if(first.isPrimary() && second.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),zipper));
+        if(first.isRight() && second.isLeft()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),zipper));
         }
         //unreachable
         return null;
@@ -124,43 +124,43 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
     default  <B,C,R> Trampoline<R> zip(Trampoline<B> b, Trampoline<C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
-        Xor<Trampoline<T>,T> first = resume();
-        Xor<Trampoline<B>,B> second = b.resume();
-        Xor<Trampoline<C>,C> third = c.resume();
+        Either<Trampoline<T>,T> first = resume();
+        Either<Trampoline<B>,B> second = b.resume();
+        Either<Trampoline<C>,C> third = c.resume();
 
-        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),third.secondaryOrElse(null),fn));
+        if(first.isLeft() && second.isLeft() && third.isLeft()) {
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),third.leftOrElse(null),fn));
         }
-        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
+        if(first.isRight() && second.isRight() && third.isRight()){
             return Trampoline.done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
-        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,c,fn));
+        if(first.isLeft() && second.isRight() && third.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,c,fn));
         }
-        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),c,fn));
+        if(first.isRight() && second.isLeft() && third.isRight()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),c,fn));
         }
-        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(b,third.secondaryOrElse(null),fn));
+        if(first.isRight() && second.isRight() && third.isLeft()){
+            return Trampoline.more(()->this.zip(b,third.leftOrElse(null),fn));
         }
 
 
-        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryOrElse(null),third.secondaryOrElse(null),fn));
+        if(first.isRight() && second.isLeft() && third.isLeft()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),third.leftOrElse(null),fn));
         }
-        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(b,third.secondaryOrElse(null),fn));
+        if(first.isLeft() && second.isRight() && third.isLeft()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,third.leftOrElse(null),fn));
         }
-        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryOrElse(null).zip(second.secondaryOrElse(null),c,fn));
+        if(first.isLeft() && second.isLeft() && third.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),c,fn));
         }
         //unreachable
         return null;
     }
 
-    default Xor<Trampoline<T>,T> resume(){
-        return this.visit(Xor::secondary,Xor::primary);
+    default Either<Trampoline<T>,T> resume(){
+        return this.visit(Either::left, Either::right);
     }
 
 

@@ -2,7 +2,7 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.control.lazy.Maybe.Nothing;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.state;
@@ -207,7 +207,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         });
 
     }
-    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Xor<T, R>>> fn) {
+    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Either<T, R>>> fn) {
         return narrowK( State.Instances.<S> monadRec().tailRec(initial, fn));
 
     }
@@ -432,7 +432,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         public static <S> MonadRec<Higher<state,S>> monadRec() {
             return new MonadRec<Higher<state,S>>() {
                 @Override
-                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Either<T, R>>> fn) {
                     return narrowK(fn.apply(initial)).flatMap( eval ->
                             eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
                 }

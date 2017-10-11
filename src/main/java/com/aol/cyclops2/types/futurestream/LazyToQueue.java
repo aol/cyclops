@@ -97,7 +97,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
     default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {
 
         //in this case all the items have to be pushed to the shards,
-        //we can't rely on the client pulling them all to get them in to the right shards
+        //we can't rely on the client pulling them all to get them in to the lazyRight shards
         final LazyReact service = getPopulator();
         then(it -> shards.get(sharder.apply(it))
                          .offer(it),

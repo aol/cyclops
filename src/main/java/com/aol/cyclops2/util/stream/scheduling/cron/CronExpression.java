@@ -41,60 +41,60 @@ import java.util.TreeSet;
  * 
  * <table cellspacing="8">
  * <tr>
- * <th align="left">Field Name</th>
- * <th align="left">&nbsp;</th>
- * <th align="left">Allowed Values</th>
- * <th align="left">&nbsp;</th>
- * <th align="left">Allowed Special Characters</th>
+ * <th align="lazyLeft">Field Name</th>
+ * <th align="lazyLeft">&nbsp;</th>
+ * <th align="lazyLeft">Allowed Values</th>
+ * <th align="lazyLeft">&nbsp;</th>
+ * <th align="lazyLeft">Allowed Special Characters</th>
  * </tr>
  * <tr>
- * <td align="left"><code>Seconds</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>0-59</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * /</code></td>
+ * <td align="lazyLeft"><code>Seconds</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>0-59</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Minutes</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>0-59</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * /</code></td>
+ * <td align="lazyLeft"><code>Minutes</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>0-59</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Hours</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>0-23</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * /</code></td>
+ * <td align="lazyLeft"><code>Hours</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>0-23</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Day-of-month</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>1-31</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * ? / L W</code></td>
+ * <td align="lazyLeft"><code>Day-of-month</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>1-31</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * ? / L W</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Month</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>0-11 or JAN-DEC</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * /</code></td>
+ * <td align="lazyLeft"><code>Month</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>0-11 or JAN-DEC</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * /</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Day-of-Week</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>1-7 or SUN-SAT</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * ? / L #</code></td>
+ * <td align="lazyLeft"><code>Day-of-Week</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>1-7 or SUN-SAT</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * ? / L #</code></td>
  * </tr>
  * <tr>
- * <td align="left"><code>Year (Optional)</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>zero, 1970-2199</code></td>
- * <td align="left">&nbsp;</th>
- * <td align="left"><code>, - * /</code></td>
+ * <td align="lazyLeft"><code>Year (Optional)</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>zero, 1970-2199</code></td>
+ * <td align="lazyLeft">&nbsp;</th>
+ * <td align="lazyLeft"><code>, - * /</code></td>
  * </tr>
  * </table>
  * <P>
@@ -182,7 +182,7 @@ import java.util.TreeSet;
  * not complete (you'll need to use the '?' character in one of these fields).
  * </li>
  * <li>Overflowing ranges is supported - that is, having a larger number on 
- * the left hand side than the right. You might do 22-2 to catch 10 o'clock 
+ * the lazyLeft hand side than the lazyRight. You might do 22-2 to catch 10 o'clock
  * at night until 2 o'clock in the morning, or you might have NOV-FEB. It is 
  * very important to note that overuse of overflowing ranges creates ranges 
  * that don't make sense and no effort has been made to determine which 

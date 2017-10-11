@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /**
- * A right biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
+ * A lazyRight biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
  * 
  * 
  * Can be one of 4 types
@@ -43,11 +43,11 @@ import java.util.function.*;
  * @param <LT4> Fourth Type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
+public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                         Filters<RT>,
                                                         BiTransformable<LT4, RT>,
-                                                        To<Either5<LT1, LT2,LT3, LT4,RT>>,
-                                                        OrElseValue<RT,Either5<LT1,LT2,LT3,LT4,RT>>,
+                                                        To<LazyEither5<LT1, LT2,LT3, LT4,RT>>,
+                                                        OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
                                                         Unit<RT>,
                                                         Value<RT>{
 
@@ -60,7 +60,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      *  {@code
      *      ___Example 1___
      *
-     *      CompletableEither<Integer,Integer> completable = Either4.either4();
+     *      CompletableEither<Integer,Integer> completable = Either4.lazyEither4();
     Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
@@ -71,7 +71,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     ___Example 2___
 
-    CompletableEither<Integer,Integer> completable = Either4.either4();
+    CompletableEither<Integer,Integer> completable = Either4.lazyEither4();
     Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
@@ -82,7 +82,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     ___Example 3___
 
-    CompletableEither<Integer,Integer> completable = Either4.either4();
+    CompletableEither<Integer,Integer> completable = Either4.lazyEither4();
     Either4<Throwable,String,Integer> mapped = completable.transform(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
@@ -95,15 +95,15 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param <RT>
      * @return
      */
-    static <LT2,LT3,LT4,RT> Either5.CompletableEither5<RT,LT2,LT3,LT4,RT> either5(){
+    static <LT2,LT3,LT4,RT> LazyEither5.CompletableEither5<RT,LT2,LT3,LT4,RT> either5(){
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
         return new CompletableEither5<RT,LT2,LT3,LT4, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
     @AllArgsConstructor
-    static class CompletableEither5<ORG,LT1,LT2,LT3,RT> implements Either5<Throwable,LT1,LT2,LT3,RT>, Completable<ORG> {
+    static class CompletableEither5<ORG,LT1,LT2,LT3,RT> implements LazyEither5<Throwable,LT1,LT2,LT3,RT>, Completable<ORG> {
 
         public final Completable.CompletablePublisher<ORG> complete;
-        public final Either5<Throwable, LT1, LT2, LT3, RT> either;
+        public final LazyEither5<Throwable, LT1, LT2, LT3, RT> either;
 
         @Override
         public boolean isFailed() {
@@ -141,27 +141,27 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<Throwable, LT1, LT2, LT3, RT1> flatMap(Function<? super RT, ? extends Either5<Throwable, LT1, LT2, LT3, ? extends RT1>> mapper) {
+        public <RT1> LazyEither5<Throwable, LT1, LT2, LT3, RT1> flatMap(Function<? super RT, ? extends LazyEither5<Throwable, LT1, LT2, LT3, ? extends RT1>> mapper) {
             return either.flatMap(mapper);
         }
 
         @Override
-        public Either5<Throwable, LT1, LT2, RT, LT3> swap4() {
+        public LazyEither5<Throwable, LT1, LT2, RT, LT3> swap4() {
             return either.swap4();
         }
 
         @Override
-        public Either5<Throwable, LT1, RT, LT3, LT2> swap3() {
+        public LazyEither5<Throwable, LT1, RT, LT3, LT2> swap3() {
             return either.swap3();
         }
 
         @Override
-        public Either5<Throwable, RT, LT2, LT3, LT1> swap2() {
+        public LazyEither5<Throwable, RT, LT2, LT3, LT1> swap2() {
             return either.swap2();
         }
 
         @Override
-        public Either5<RT, LT1, LT2, LT3, Throwable> swap1() {
+        public LazyEither5<RT, LT1, LT2, LT3, Throwable> swap1() {
             return either.swap1();
         }
 
@@ -191,17 +191,17 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <R1, R2> Either5<Throwable, LT1, LT2, R1, R2> bimap(Function<? super LT3, ? extends R1> fn1, Function<? super RT, ? extends R2> fn2) {
+        public <R1, R2> LazyEither5<Throwable, LT1, LT2, R1, R2> bimap(Function<? super LT3, ? extends R1> fn1, Function<? super RT, ? extends R2> fn2) {
             return either.bimap(fn1,fn2);
         }
 
         @Override
-        public <R> Either5<Throwable, LT1, LT2, LT3, R> map(Function<? super RT, ? extends R> fn) {
+        public <R> LazyEither5<Throwable, LT1, LT2, LT3, R> map(Function<? super RT, ? extends R> fn) {
             return either.map(fn);
         }
 
         @Override
-        public <T> Either5<Throwable, LT1, LT2, LT3, T> unit(T unit) {
+        public <T> LazyEither5<Throwable, LT1, LT2, LT3, T> unit(T unit) {
             return either.unit(unit);
         }
 
@@ -228,22 +228,22 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @return Consumer we can applyHKT to consume value
      */
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, LT4 extends X, RT extends X> Consumer<Consumer<? super X>> consumeAny(
-            Either5<LT1, LT2, LT3, LT4, RT> either) {
+            LazyEither5<LT1, LT2, LT3, LT4, RT> either) {
         return in -> visitAny(in, either);
     }
 
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, LT4 extends X, RT extends X, R> Function<Function<? super X, R>, R> applyAny(
-            Either5<LT1, LT2, LT3, LT4, RT> either) {
+            LazyEither5<LT1, LT2, LT3, LT4, RT> either) {
         return in -> visitAny(either, in);
     }
 
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, LT4 extends X, RT extends X, R> R visitAny(
-            Either5<LT1, LT2, LT3, LT4, RT> either, Function<? super X, ? extends R> fn) {
+            LazyEither5<LT1, LT2, LT3, LT4, RT> either, Function<? super X, ? extends R> fn) {
         return either.visit(fn, fn, fn, fn, fn);
     }
 
     static <X, LT1 extends X, LT2 extends X, LT3 extends X, LT4 extends X, RT extends X> X visitAny(
-            Consumer<? super X> c, Either5<LT1, LT2, LT3, LT4, RT> either) {
+            Consumer<? super X> c, LazyEither5<LT1, LT2, LT3, LT4, RT> either) {
         Function<? super X, X> fn = x -> {
             c.accept(x);
             return x;
@@ -252,18 +252,18 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
 
-    static <LT2,LT3,LT4,RT> Either5<Throwable,LT2,LT3,LT4,RT> either4(){
-        return Either5.<LT2,LT3,LT4,RT>fromFuture(Future.<RT>future());
+    static <LT2,LT3,LT4,RT> LazyEither5<Throwable,LT2,LT3,LT4,RT> either4(){
+        return LazyEither5.<LT2,LT3,LT4,RT>fromFuture(Future.<RT>future());
     }
 
-    static <LT1,LT2,LT3,LT4,RT> Either5<LT1,LT2,LT3,LT4,RT> fromLazy(Eval<Either5<LT1,LT2,LT3,LT4,RT>> lazy){
-        return new Either5.Lazy<>(lazy);
+    static <LT1,LT2,LT3,LT4,RT> LazyEither5<LT1,LT2,LT3,LT4,RT> fromLazy(Eval<LazyEither5<LT1,LT2,LT3,LT4,RT>> lazy){
+        return new LazyEither5.Lazy<>(lazy);
     }
 
-    static <LT2,LT3,LT4,RT> Either5<Throwable,LT2,LT3,LT4,RT> fromFuture(Future<RT> future){
-        return fromLazy(Eval.<Either5<Throwable,LT2,LT3,LT4,RT>>fromFuture(
-                future.map(e->e!=null?Either5.<Throwable,LT2,LT3,LT4,RT>right(e):Either5.<Throwable,LT2,LT3,LT4,RT>left1(new NoSuchElementException()))
-                        .recover(t->Either5.<Throwable,LT2,LT3,LT4,RT>left1(t.getCause()))));
+    static <LT2,LT3,LT4,RT> LazyEither5<Throwable,LT2,LT3,LT4,RT> fromFuture(Future<RT> future){
+        return fromLazy(Eval.<LazyEither5<Throwable,LT2,LT3,LT4,RT>>fromFuture(
+                future.map(e->e!=null? LazyEither5.<Throwable,LT2,LT3,LT4,RT>right(e): LazyEither5.<Throwable,LT2,LT3,LT4,RT>left1(new NoSuchElementException()))
+                        .recover(t-> LazyEither5.<Throwable,LT2,LT3,LT4,RT>left1(t.getCause()))));
     }
 
 
@@ -273,12 +273,12 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * <pre>
      * {@code
      *
-     * Either4<String,String,String,Integer> just  = Either4.right(10);
-       Either4<String,String,String,Integer> none = Either4.left("none");
+     * Either4<String,String,String,Integer> just  = Either4.lazyRight(10);
+       Either4<String,String,String,Integer> none = Either4.lazyLeft("none");
 
 
-     * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.right(1)));
-       //Eitehr.right(ListX.of(10,1)));
+     * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.lazyRight(1)));
+       //Eitehr.lazyRight(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -287,10 +287,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param Either3 Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2,LT3,LT4,PT> Either5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<PT>> sequence(final CollectionX<Either5<LT1, LT2, LT3, LT4, PT>> xors) {
+    public static <LT1,LT2,LT3,LT4,PT> LazyEither5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<PT>> sequence(final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either5::isRight).map(AnyM::fromEither5).to().listX(),Witness.either5.INSTANCE)
-                .to(Witness::either5);
+        return AnyM.sequence(xors.stream().filter(LazyEither5::isRight).map(AnyM::fromEither5).to().listX(), Witness.lazyEither5.INSTANCE)
+                .to(Witness::lazyEither5);
     }
     /**
      * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
@@ -300,7 +300,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param fn Transformation function
      * @return An Either4 with a transformed list
      */
-    public static <LT1,LT2, LT3,LT4,PT,R> Either5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<R>> traverse(final CollectionX<Either5<LT1, LT2, LT3, LT4, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, LT3,LT4,PT,R> LazyEither5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<R>> traverse(final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -311,22 +311,22 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      *
      * <pre>
      * {@code
-     * Either4<String,String,String,Integer> just  = Either4.right(10);
-       Either4<String,String,String,Integer> none = Either4.left("none");
+     * Either4<String,String,String,Integer> just  = Either4.lazyRight(10);
+       Either4<String,String,String,Integer> none = Either4.lazyLeft("none");
      *
-     *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either4.right(1)));
-        //Either4.right(11);
+     *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulateRight(Monoids.intSum,ListX.of(just,none,Either4.lazyRight(1)));
+        //Either4.lazyRight(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Eithers to accumulate primary values
+     * @param xors Collection of Eithers to accumulate lazyRight values
      * @param reducer  Reducer to accumulate results
-     * @return  Either4 populated with the accumulate primary operation
+     * @return  Either4 populated with the accumulate lazyRight operation
      */
-    public static <LT1,LT2,LT3,LT4, RT> Either5<ListX<LT1>, ListX<LT2>,ListX<LT3>,ListX<LT4>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<Either5<LT1, LT2, LT3, LT4, RT>> xors) {
+    public static <LT1,LT2,LT3,LT4, RT> LazyEither5<ListX<LT1>, ListX<LT2>,ListX<LT3>,ListX<LT4>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 
@@ -347,7 +347,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param pub Publisher to construct an Either from
      * @return Either constructed from the supplied Publisher
      */
-    public static <T1,T2,T3,T> Either5<Throwable, T1, T2,T3, T> fromPublisher(final Publisher<T> pub) {
+    public static <T1,T2,T3,T> LazyEither5<Throwable, T1, T2,T3, T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
     }
     /**
@@ -365,19 +365,19 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param iterable Iterable to construct an Either from
      * @return Either constructed from the supplied Iterable
      */
-    public static <ST, T, T2,T3,RT> Either5<ST, T,T2,T3,RT> fromIterable(final Iterable<RT> iterable) {
+    public static <ST, T, T2,T3,RT> LazyEither5<ST, T,T2,T3,RT> fromIterable(final Iterable<RT> iterable) {
 
         final Iterator<RT> it = iterable.iterator();
-        return it.hasNext() ? Either5.right( it.next()) : Either5.left1(null);
+        return it.hasNext() ? LazyEither5.right( it.next()) : LazyEither5.left1(null);
     }
 
     /**
      * Construct a Either4#Right from an Eval
      *
      * @param right Eval to construct Either4#Right from
-     * @return Either4 right instance
+     * @return Either4 lazyRight instance
      */
-    public static <LT, M1,B, T4,RT> Either5<LT, M1,B,T4, RT> rightEval(final Eval<RT> right) {
+    public static <LT, M1,B, T4,RT> LazyEither5<LT, M1,B,T4, RT> rightEval(final Eval<RT> right) {
         return new Right<>(
                            right);
     }
@@ -388,7 +388,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param left Eval to construct Either4#Left1 from
      * @return Either4 Left1 instance
      */
-    public static <LT, M1, B, T4,RT> Either5<LT, M1, B,T4, RT> left1Eval(final Eval<LT> left) {
+    public static <LT, M1, B, T4,RT> LazyEither5<LT, M1, B,T4, RT> left1Eval(final Eval<LT> left) {
         return new Left1<>(
                           left);
     }
@@ -399,7 +399,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param right Value to store
      * @return Either4 Right instance
      */
-    public static <LT, M1, B, T4,RT> Either5<LT, M1, B, T4,RT> right(final RT right) {
+    public static <LT, M1, B, T4,RT> LazyEither5<LT, M1, B, T4,RT> right(final RT right) {
         return new Right<>(
                            Eval.later(()->right));
     }
@@ -410,7 +410,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param left Value to store
      * @return Left1 instance
      */
-    public static <LT, M1, B, T4,RT> Either5<LT, M1, B, T4,RT> left1(final LT left) {
+    public static <LT, M1, B, T4,RT> LazyEither5<LT, M1, B, T4,RT> left1(final LT left) {
         return new Left1<>(
                           Eval.now(left));
     }
@@ -421,7 +421,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param middle Value to store
      * @return Second instance
      */
-    public static <LT, M1, B, T4,RT> Either5<LT, M1, B, T4,RT> left2(final M1 middle) {
+    public static <LT, M1, B, T4,RT> LazyEither5<LT, M1, B, T4,RT> left2(final M1 middle) {
         return new Left2<>(
                             Eval.now(middle));
     }
@@ -431,7 +431,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param middle Value to store
      * @return Third instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B,T4, RT> left3(final B middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B,T4, RT> left3(final B middle) {
         return new Left3<>(
                             Eval.now(middle));
     }
@@ -442,7 +442,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param middle Value to store
      * @return Third instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B,T4, RT> left4(final T4 middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B,T4, RT> left4(final T4 middle) {
         return new Left4<>(
                             Eval.now(middle));
     }
@@ -452,7 +452,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param second Eval to construct Either4#middle from
      * @return Either4 second instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B, T4, RT> left2Eval(final Eval<M1> middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B, T4, RT> left2Eval(final Eval<M1> middle) {
         return new Left2<>(
                             middle);
     }
@@ -462,7 +462,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B, T4, RT> left3Eval(final Eval<B> middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B, T4, RT> left3Eval(final Eval<B> middle) {
         return new Left3<>(
                             middle);
     }
@@ -472,7 +472,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B, T4, RT> left4Eval(final Eval<T4> middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B, T4, RT> left4Eval(final Eval<T4> middle) {
         return new Left4<>(
                             middle);
     }
@@ -482,22 +482,22 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param third Eval to construct Either4#middle from
      * @return Either4 third instance
      */
-    public static <LT, M1, B, T4, RT> Either5<LT, M1, B, T4, RT> foEval(final Eval<B> middle) {
+    public static <LT, M1, B, T4, RT> LazyEither5<LT, M1, B, T4, RT> foEval(final Eval<B> middle) {
         return new Left3<>(
                             middle);
     }
-    default Trampoline<Either5<LT1,LT2,LT3,LT4,RT>> toTrampoline() {
+    default Trampoline<LazyEither5<LT1,LT2,LT3,LT4,RT>> toTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
 
     @Override
-    default <R> Either5<LT1,LT2,LT3,LT4,R> retry(final Function<? super RT, ? extends R> fn) {
-        return (Either5<LT1,LT2,LT3,LT4,R>)Transformable.super.retry(fn);
+    default <R> LazyEither5<LT1,LT2,LT3,LT4,R> retry(final Function<? super RT, ? extends R> fn) {
+        return (LazyEither5<LT1,LT2,LT3,LT4,R>)Transformable.super.retry(fn);
     }
 
     @Override
-    default <R> Either5<LT1,LT2,LT3,LT4,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Either5<LT1,LT2,LT3,LT4,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    default <R> LazyEither5<LT1,LT2,LT3,LT4,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (LazyEither5<LT1,LT2,LT3,LT4,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
     }
 
     /**
@@ -506,7 +506,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param left1 Function to execute if this Either4 is a Left1 instance
      * @param left2 Function to execute if this Either4 is a Left2 instance
      * @param left3 Function to execute if this Either4 is a Left3 instance
-     * @param right Function to execute if this Either4 is a right instance
+     * @param right Function to execute if this Either4 is a lazyRight instance
      * @return Result of executed function
      */
     <R> R visit(final Function<? super LT1, ? extends R> left1, final Function<? super LT2, ? extends R> left2
@@ -530,29 +530,29 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param mapper Mapping function
      * @return Mapped Either4
      */
-    < RT1> Either5<LT1, LT2,LT3, LT4,RT1> flatMap(
-            Function<? super RT, ? extends Either5<LT1, LT2,LT3, LT4,? extends RT1>> mapper);
+    < RT1> LazyEither5<LT1, LT2,LT3, LT4,RT1> flatMap(
+            Function<? super RT, ? extends LazyEither5<LT1, LT2,LT3, LT4,? extends RT1>> mapper);
 
     /**
-     * @return Swap the fourth and the right types
+     * @return Swap the fourth and the lazyRight types
      */
-    Either5<LT1,LT2, LT3,RT,LT4> swap4();
+    LazyEither5<LT1,LT2, LT3,RT,LT4> swap4();
     /**
-     * @return Swap the third and the right types
+     * @return Swap the third and the lazyRight types
      */
-    Either5<LT1,LT2, RT,LT4, LT3> swap3();
+    LazyEither5<LT1,LT2, RT,LT4, LT3> swap3();
     /**
-     * @return Swap the second and the right types
+     * @return Swap the second and the lazyRight types
      */
-    Either5<LT1, RT,LT3, LT4, LT2> swap2();
+    LazyEither5<LT1, RT,LT3, LT4, LT2> swap2();
 
     /**
-     * @return Swap the right and left types
+     * @return Swap the lazyRight and lazyLeft types
      */
-    Either5<RT, LT2,LT3, LT4,LT1> swap1();
+    LazyEither5<RT, LT2,LT3, LT4,LT1> swap1();
 
     /**
-     * @return True if this lazy contains the right type
+     * @return True if this lazy contains the lazyRight type
      */
     boolean isRight();
 
@@ -606,8 +606,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * java.util.function.Function)
      */
     @Override
-    <R1, R2> Either5<LT1, LT2, LT3,R1, R2> bimap(Function<? super LT4, ? extends R1> fn1,
-                                                 Function<? super RT, ? extends R2> fn2);
+    <R1, R2> LazyEither5<LT1, LT2, LT3,R1, R2> bimap(Function<? super LT4, ? extends R1> fn1,
+                                                     Function<? super RT, ? extends R2> fn2);
 
     /*
      * (non-Javadoc)
@@ -615,10 +615,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
-    <R> Either5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
+    <R> LazyEither5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
 
     /**
-     * Return an Ior that can be this object or a Ior.primary or Ior.secondary
+     * Return an Ior that can be this object or a Ior.lazyRight or Ior.lazyLeft
      * @return new Ior
      */
      default Ior<LT1, RT> toIor() {
@@ -628,40 +628,40 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                           m->Ior.secondary(null),
                           r->Ior.primary(r));
     }
-     default Xor<LT1, RT> toXor() {
-         return this.visit(l->Xor.secondary(l),
-                           m->Xor.secondary(null),
-                           m->Xor.secondary(null),
-                           m->Xor.secondary(null),
-                           r->Xor.primary(r));
+     default Either<LT1, RT> toXor() {
+         return this.visit(l-> Either.left(l),
+                           m-> Either.left(null),
+                           m-> Either.left(null),
+                           m-> Either.left(null),
+                           r-> Either.right(r));
      }
 
 
 
 
-    default <R> Either5<LT1,LT2,LT3,LT4,R> coflatMap(Function<? super Either5<LT1,LT2,LT3,LT4,RT>, R> mapper) {
+    default <R> LazyEither5<LT1,LT2,LT3,LT4,R> coflatMap(Function<? super LazyEither5<LT1,LT2,LT3,LT4,RT>, R> mapper) {
 
         return mapper.andThen(r -> unit(r))
                 .apply(this);
     }
 
-    default Either5<LT1,LT2,LT3,LT4,Either5<LT1,LT2,LT3,LT4,RT>> nest() {
+    default LazyEither5<LT1,LT2,LT3,LT4,LazyEither5<LT1,LT2,LT3,LT4,RT>> nest() {
 
         return this.map(t -> unit(t));
     }
 
-    default <T2, R1, R2, R3, R> Either5<LT1,LT2,LT3,LT4,R> forEach4(Function<? super RT, ? extends Either5<LT1,LT2,LT3,LT4,R1>> value1,
-                                                                    BiFunction<? super RT, ? super R1, ? extends Either5<LT1,LT2,LT3,LT4,R2>> value2,
-                                                                    Function3<? super RT, ? super R1, ? super R2, ? extends Either5<LT1,LT2,LT3,LT4,R3>> value3,
-                                                                    Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R3, R> LazyEither5<LT1,LT2,LT3,LT4,R> forEach4(Function<? super RT, ? extends LazyEither5<LT1,LT2,LT3,LT4,R1>> value1,
+                                                                        BiFunction<? super RT, ? super R1, ? extends LazyEither5<LT1,LT2,LT3,LT4,R2>> value2,
+                                                                        Function3<? super RT, ? super R1, ? super R2, ? extends LazyEither5<LT1,LT2,LT3,LT4,R3>> value3,
+                                                                        Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
 
-            Either5<LT1,LT2,LT3,LT4,R1> a = value1.apply(in);
+            LazyEither5<LT1,LT2,LT3,LT4,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Either5<LT1,LT2,LT3,LT4,R2> b = value2.apply(in,ina);
+                LazyEither5<LT1,LT2,LT3,LT4,R2> b = value2.apply(in,ina);
                 return b.flatMap(inb-> {
-                    Either5<LT1,LT2,LT3,LT4,R3> c= value3.apply(in,ina,inb);
+                    LazyEither5<LT1,LT2,LT3,LT4,R3> c= value3.apply(in,ina,inb);
                     return c.map(in2->yieldingFunction.apply(in,ina,inb,in2));
                 });
 
@@ -671,15 +671,15 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
 
-    default <T2, R1, R2, R> Either5<LT1,LT2,LT3,LT4,R> forEach3(Function<? super RT, ? extends Either5<LT1,LT2,LT3,LT4,R1>> value1,
-                                                                BiFunction<? super RT, ? super R1, ? extends Either5<LT1,LT2,LT3,LT4,R2>> value2,
-                                                                Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R> LazyEither5<LT1,LT2,LT3,LT4,R> forEach3(Function<? super RT, ? extends LazyEither5<LT1,LT2,LT3,LT4,R1>> value1,
+                                                                    BiFunction<? super RT, ? super R1, ? extends LazyEither5<LT1,LT2,LT3,LT4,R2>> value2,
+                                                                    Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
 
-            Either5<LT1,LT2,LT3,LT4,R1> a = value1.apply(in);
+            LazyEither5<LT1,LT2,LT3,LT4,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Either5<LT1,LT2,LT3,LT4,R2> b = value2.apply(in,ina);
+                LazyEither5<LT1,LT2,LT3,LT4,R2> b = value2.apply(in,ina);
                 return b.map(in2->yieldingFunction.apply(in,ina, in2));
             });
 
@@ -687,17 +687,17 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
 
-    default <R1, R> Either5<LT1,LT2,LT3,LT4,R> forEach2(Function<? super RT, ? extends Either5<LT1,LT2,LT3,LT4,R1>> value1,
-                                                        BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
+    default <R1, R> LazyEither5<LT1,LT2,LT3,LT4,R> forEach2(Function<? super RT, ? extends LazyEither5<LT1,LT2,LT3,LT4,R1>> value1,
+                                                            BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
-            Either5<LT1,LT2,LT3,LT4,R1> b = value1.apply(in);
+            LazyEither5<LT1,LT2,LT3,LT4,R1> b = value1.apply(in);
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
     }
 
 
-    default <T2, R> Either5<LT1, LT2,LT3,LT4,R> zip(final Either5<LT1, LT2,LT3,LT4,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
+    default <T2, R> LazyEither5<LT1, LT2,LT3,LT4,R> zip(final LazyEither5<LT1, LT2,LT3,LT4,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
 
@@ -707,7 +707,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
      */
     @Override
-    <T> Either5<LT1, LT2,LT3,LT4, T> unit(T unit);
+    <T> LazyEither5<LT1, LT2,LT3,LT4, T> unit(T unit);
 
 
     /*
@@ -717,9 +717,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * java.util.function.Consumer)
      */
     @Override
-    default Either5<LT1, LT2, LT3, LT4, RT> bipeek(final Consumer<? super LT4> c1, final Consumer<? super RT> c2) {
+    default LazyEither5<LT1, LT2, LT3, LT4, RT> bipeek(final Consumer<? super LT4> c1, final Consumer<? super RT> c2) {
 
-        return (Either5<LT1, LT2, LT3,LT4, RT>) BiTransformable.super.bipeek(c1, c2);
+        return (LazyEither5<LT1, LT2, LT3,LT4, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
     /*
@@ -729,9 +729,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * java.lang.Class)
      */
     @Override
-    default <U1, U2> Either5<LT1, LT2, LT3, U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
+    default <U1, U2> LazyEither5<LT1, LT2, LT3, U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (Either5<LT1, LT2,LT3, U1, U2>) BiTransformable.super.bicast(type1, type2);
+        return (LazyEither5<LT1, LT2,LT3, U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /*
@@ -742,11 +742,11 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * java.util.function.Function)
      */
     @Override
-    default <R1, R2> Either5<LT1, LT2, LT3, R1, R2> bitrampoline(
+    default <R1, R2> LazyEither5<LT1, LT2, LT3, R1, R2> bitrampoline(
             final Function<? super LT4, ? extends Trampoline<? extends R1>> mapper1,
             final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Either5<LT1,LT2,LT3, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
+        return (LazyEither5<LT1,LT2,LT3, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
     /*
@@ -755,9 +755,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
      */
     @Override
-    default <U> Either5<LT1, LT2, LT3, LT4, U> cast(final Class<? extends U> type) {
+    default <U> LazyEither5<LT1, LT2, LT3, LT4, U> cast(final Class<? extends U> type) {
 
-        return (Either5<LT1, LT2, LT3,LT4, U>) Transformable.super.cast(type);
+        return (LazyEither5<LT1, LT2, LT3,LT4, U>) Transformable.super.cast(type);
     }
 
     /*
@@ -766,9 +766,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
-    default Either5<LT1, LT2, LT3,LT4, RT> peek(final Consumer<? super RT> c) {
+    default LazyEither5<LT1, LT2, LT3,LT4, RT> peek(final Consumer<? super RT> c) {
 
-        return (Either5<LT1, LT2, LT3, LT4, RT>) Transformable.super.peek(c);
+        return (LazyEither5<LT1, LT2, LT3, LT4, RT>) Transformable.super.peek(c);
     }
 
     /*
@@ -778,37 +778,37 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> Either5<LT1, LT2, LT3,LT4, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
+    default <R> LazyEither5<LT1, LT2, LT3,LT4, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Either5<LT1, LT2, LT3,LT4, R>) Transformable.super.trampoline(mapper);
+        return (LazyEither5<LT1, LT2, LT3,LT4, R>) Transformable.super.trampoline(mapper);
     }
 
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    final static class Lazy<ST, M,M2,M3, PT> implements Either5<ST, M,M2,M3, PT> {
+    final static class Lazy<ST, M,M2,M3, PT> implements LazyEither5<ST, M,M2,M3, PT> {
 
-        private final Eval<Either5<ST, M,M2,M3, PT>> lazy;
+        private final Eval<LazyEither5<ST, M,M2,M3, PT>> lazy;
 
-        public Either5<ST, M,M2,M3, PT> resolve() {
+        public LazyEither5<ST, M,M2,M3, PT> resolve() {
             return lazy.get()
-                       .visit(Either5::left1, Either5::left2,Either5::left3,Either5::left4, Either5::right);
+                       .visit(LazyEither5::left1, LazyEither5::left2, LazyEither5::left3, LazyEither5::left4, LazyEither5::right);
         }
 
-        private static <ST, M,M2,M3, PT> Lazy<ST, M,M2, M3,PT> lazy(final Eval<Either5<ST, M,M2,M3, PT>> lazy) {
+        private static <ST, M,M2,M3, PT> Lazy<ST, M,M2, M3,PT> lazy(final Eval<LazyEither5<ST, M,M2,M3, PT>> lazy) {
             return new Lazy<>(lazy);
         }
 
 
         @Override
-        public <R> Either5<ST, M,M2,M3, R> map(final Function<? super PT, ? extends R> mapper) {
-            return flatMap(t -> Either5.right(mapper.apply(t)));
+        public <R> LazyEither5<ST, M,M2,M3, R> map(final Function<? super PT, ? extends R> mapper) {
+            return flatMap(t -> LazyEither5.right(mapper.apply(t)));
         }
 
         @Override
-        public <RT1> Either5<ST, M,M2,M3, RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3, ? extends RT1>> mapper) {
-            return Either5.fromLazy(lazy.map(m->m.flatMap(mapper)));
+        public <RT1> LazyEither5<ST, M,M2,M3, RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3, ? extends RT1>> mapper) {
+            return LazyEither5.fromLazy(lazy.map(m->m.flatMap(mapper)));
         }
 
         @Override
@@ -820,14 +820,14 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public Trampoline<Either5<ST,M,M2,M3,PT>> toTrampoline() {
-            Trampoline<Either5<ST,M,M2,M3,PT>> trampoline = lazy.toTrampoline();
-            return new Trampoline<Either5<ST,M,M2,M3,PT>>() {
+        public Trampoline<LazyEither5<ST,M,M2,M3,PT>> toTrampoline() {
+            Trampoline<LazyEither5<ST,M,M2,M3,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<LazyEither5<ST,M,M2,M3,PT>>() {
                 @Override
-                public Either5<ST,M,M2,M3,PT> get() {
-                    Either5<ST,M,M2,M3,PT> either = lazy.get();
-                    while (either instanceof Either5.Lazy) {
-                        either = ((Either5.Lazy<ST,M,M2,M3,PT>) either).lazy.get();
+                public LazyEither5<ST,M,M2,M3,PT> get() {
+                    LazyEither5<ST,M,M2,M3,PT> either = lazy.get();
+                    while (either instanceof LazyEither5.Lazy) {
+                        either = ((LazyEither5.Lazy<ST,M,M2,M3,PT>) either).lazy.get();
                     }
                     return either;
                 }
@@ -836,9 +836,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                     return false;
                 }
                 @Override
-                public Trampoline<Either5<ST,M,M2,M3,PT>> bounce() {
-                    Either5<ST,M,M2,M3,PT> either = lazy.get();
-                    if(either instanceof Either5.Lazy){
+                public Trampoline<LazyEither5<ST,M,M2,M3,PT>> bounce() {
+                    LazyEither5<ST,M,M2,M3,PT> either = lazy.get();
+                    if(either instanceof LazyEither5.Lazy){
                         return either.toTrampoline();
                     }
                     return Trampoline.done(either);
@@ -851,8 +851,8 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             return trampoline().get();
         }
 
-        private Either5<ST,M,M2,M3,PT> trampoline(){
-            Either5<ST,M,M2,M3,PT> maybe = lazy.get();
+        private LazyEither5<ST,M,M2,M3,PT> trampoline(){
+            LazyEither5<ST,M,M2,M3,PT> maybe = lazy.get();
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<ST,M,M2,M3,PT>) maybe).lazy.get();
             }
@@ -899,20 +899,20 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                        .visit(first, second,third,fourth, primary);
         }
         @Override
-        public Either5<ST, M, M2,PT, M3> swap4() {
+        public LazyEither5<ST, M, M2,PT, M3> swap4() {
             return lazy(Eval.later(() -> resolve().swap4()));
         }
         @Override
-        public Either5<ST, M, PT, M3, M2> swap3() {
+        public LazyEither5<ST, M, PT, M3, M2> swap3() {
             return lazy(Eval.later(() -> resolve().swap3()));
         }
         @Override
-        public Either5<ST, PT, M2, M3, M> swap2() {
+        public LazyEither5<ST, PT, M2, M3, M> swap2() {
             return lazy(Eval.later(() -> resolve().swap2()));
         }
 
         @Override
-        public Either5<PT, M,M2, M3,ST> swap1() {
+        public LazyEither5<PT, M,M2, M3,ST> swap1() {
             return lazy(Eval.later(() -> resolve().swap1()));
         }
 
@@ -945,22 +945,22 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <R1, R2> Either5<ST, M,M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
+        public <R1, R2> LazyEither5<ST, M,M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                           final Function<? super PT, ? extends R2> fn2) {
             return lazy(Eval.later(() -> resolve().bimap(fn1, fn2)));
         }
 
         @Override
-        public <T> Either5<ST, M, M2,M3,T> unit(final T unit) {
+        public <T> LazyEither5<ST, M, M2,M3,T> unit(final T unit) {
 
-            return Either5.right(unit);
+            return LazyEither5.right(unit);
         }
         /* (non-Javadoc)
          * @see java.lang.Object#hashCode()
          */
         @Override
         public int hashCode() {
-            return this.visit(Either5::left1,Either5::left2,Either5::left3,Either5::left4,Either5::right).hashCode();
+            return this.visit(LazyEither5::left1, LazyEither5::left2, LazyEither5::left3, LazyEither5::left4, LazyEither5::right).hashCode();
         }
 
         /* (non-Javadoc)
@@ -968,7 +968,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
          */
         @Override
         public boolean equals(Object obj) {
-            return this.visit(Either5::left1,Either5::left2,Either5::left3,Either5::left4,Either5::right).equals(obj);
+            return this.visit(LazyEither5::left1, LazyEither5::left2, LazyEither5::left3, LazyEither5::left4, LazyEither5::right).equals(obj);
         }
 
         /* (non-Javadoc)
@@ -982,17 +982,17 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Right<ST, M,M2,M3, PT> implements Either5<ST, M,M2,M3, PT> {
+    static class Right<ST, M,M2,M3, PT> implements LazyEither5<ST, M,M2,M3, PT> {
         private final Eval<PT> value;
 
         @Override
-        public <R> Either5<ST, M, M2, M3, R> map(final Function<? super PT, ? extends R> fn) {
+        public <R> LazyEither5<ST, M, M2, M3, R> map(final Function<? super PT, ? extends R> fn) {
             return new Right<ST, M, M2,M3, R>(
                                        value.map(fn));
         }
 
         @Override
-        public Either5<ST, M,M2,M3, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither5<ST, M,M2,M3, PT> peek(final Consumer<? super PT> action) {
             return map(i -> {
                 action.accept(i);
                 return i;
@@ -1014,12 +1014,12 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<ST, M, M2, M3, RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3, ? extends RT1>> mapper) {
-            Eval<? extends Either5<? extends ST, ? extends M, ? extends M2,? extends M3, ? extends RT1>> et = value.map(mapper);
+        public <RT1> LazyEither5<ST, M, M2, M3, RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3, ? extends RT1>> mapper) {
+            Eval<? extends LazyEither5<? extends ST, ? extends M, ? extends M2,? extends M3, ? extends RT1>> et = value.map(mapper);
 
 
-           final Eval<Either5<ST, M, M2,M3, RT1>> e3 =  (Eval<Either5<ST, M, M2,M3, RT1>>)et;
+           final Eval<LazyEither5<ST, M, M2,M3, RT1>> e3 =  (Eval<LazyEither5<ST, M, M2,M3, RT1>>)et;
            return new Lazy<>(
                              e3);
 
@@ -1043,7 +1043,7 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public String mkString() {
-            return "Either5.right[" + value.get() + "]";
+            return "Either5.lazyRight[" + value.get() + "]";
         }
 
         @Override
@@ -1058,9 +1058,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <R1, R2> Either5<ST,M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
-            return (Either5<ST, M,M2,R1, R2>) this.map(fn2);
+        public <R1, R2> LazyEither5<ST,M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                           final Function<? super PT, ? extends R2> fn2) {
+            return (LazyEither5<ST, M,M2,R1, R2>) this.map(fn2);
         }
 
         @Override
@@ -1086,30 +1086,30 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <T> Either5<ST, M, M2, M3, T> unit(final T unit) {
-            return Either5.right(unit);
+        public <T> LazyEither5<ST, M, M2, M3, T> unit(final T unit) {
+            return LazyEither5.right(unit);
         }
         @Override
-        public Either5<ST,  M, M2,PT,M3> swap4() {
+        public LazyEither5<ST,  M, M2,PT,M3> swap4() {
 
             return  new Left4<>(value);
         }
         @Override
-        public Either5<ST,  M, PT,M3, M2> swap3() {
+        public LazyEither5<ST,  M, PT,M3, M2> swap3() {
 
             return  new Left3<>(value);
         }
 
 
         @Override
-        public Either5<ST, PT, M2, M3, M> swap2() {
+        public LazyEither5<ST, PT, M2, M3, M> swap2() {
 
             return  new Left2<>(value);
         }
 
 
         @Override
-        public Either5<PT, M,M2,M3, ST> swap1() {
+        public LazyEither5<PT, M,M2,M3, ST> swap1() {
 
             return new Left1<>(
                               value);
@@ -1170,16 +1170,16 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Left1<ST, M, M2, M3,PT> implements Either5<ST, M,M2, M3, PT> {
+    static class Left1<ST, M, M2, M3,PT> implements LazyEither5<ST, M,M2, M3, PT> {
         private final Eval<ST> value;
 
         @Override
-        public <R> Either5<ST, M, M2,M3, R> map(final Function<? super PT, ? extends R> fn) {
-            return (Either5<ST, M, M2, M3,R>) this;
+        public <R> LazyEither5<ST, M, M2,M3, R> map(final Function<? super PT, ? extends R> fn) {
+            return (LazyEither5<ST, M, M2, M3,R>) this;
         }
 
         @Override
-        public Either5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
             return this;
 
         }
@@ -1197,10 +1197,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<ST, M, M2, M3,RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3, ? extends RT1>> mapper) {
+        public <RT1> LazyEither5<ST, M, M2, M3,RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3, ? extends RT1>> mapper) {
 
-            return (Either5) this;
+            return (LazyEither5) this;
 
         }
 
@@ -1245,9 +1245,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <R1, R2> Either5<ST, M,M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
-            return (Either5<ST,M, M2,R1, R2>) this;
+        public <R1, R2> LazyEither5<ST, M,M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                           final Function<? super PT, ? extends R2> fn2) {
+            return (LazyEither5<ST,M, M2,R1, R2>) this;
         }
 
         @Override
@@ -1273,28 +1273,28 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <T> Either5<ST, M,M2,M3, T> unit(final T unit) {
-            return Either5.right(unit);
+        public <T> LazyEither5<ST, M,M2,M3, T> unit(final T unit) {
+            return LazyEither5.right(unit);
         }
         @Override
-        public Either5<ST, M,M2,PT,M3> swap4() {
+        public LazyEither5<ST, M,M2,PT,M3> swap4() {
 
-            return (Either5<ST, M,M2,PT,M3>) this;
+            return (LazyEither5<ST, M,M2,PT,M3>) this;
         }
         @Override
-        public Either5<ST, M,PT,M3, M2> swap3() {
+        public LazyEither5<ST, M,PT,M3, M2> swap3() {
 
-            return (Either5<ST, M,PT,M3, M2>) this;
-        }
-
-        @Override
-        public Either5<ST, PT,M2,M3, M> swap2() {
-
-            return (Either5<ST, PT,M2,M3, M>) this;
+            return (LazyEither5<ST, M,PT,M3, M2>) this;
         }
 
         @Override
-        public Either5<PT, M,M2,M3, ST> swap1() {
+        public LazyEither5<ST, PT,M2,M3, M> swap2() {
+
+            return (LazyEither5<ST, PT,M2,M3, M>) this;
+        }
+
+        @Override
+        public LazyEither5<PT, M,M2,M3, ST> swap1() {
 
             return new Right<>(
                                value);
@@ -1344,16 +1344,16 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Left2<ST, M,M2, M3, PT> implements Either5<ST, M, M2, M3, PT> {
+    static class Left2<ST, M,M2, M3, PT> implements LazyEither5<ST, M, M2, M3, PT> {
         private final Eval<M> value;
 
         @Override
-        public <R> Either5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
-            return (Either5<ST, M, M2,M3,R>) this;
+        public <R> LazyEither5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
+            return (LazyEither5<ST, M, M2,M3,R>) this;
         }
 
         @Override
-        public Either5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
             return this;
 
         }
@@ -1371,10 +1371,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<ST, M, M2, M3, RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3, ? extends RT1>> mapper) {
+        public <RT1> LazyEither5<ST, M, M2, M3, RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3, ? extends RT1>> mapper) {
 
-            return (Either5) this;
+            return (LazyEither5) this;
 
         }
 
@@ -1414,9 +1414,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <R1, R2> Either5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
-            return (Either5<ST, M,M2,R1, R2>) this;
+        public <R1, R2> LazyEither5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                            final Function<? super PT, ? extends R2> fn2) {
+            return (LazyEither5<ST, M,M2,R1, R2>) this;
         }
 
         @Override
@@ -1442,29 +1442,29 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <T> Either5<ST, M,M2,M3, T> unit(final T unit) {
-            return Either5.right(unit);
+        public <T> LazyEither5<ST, M,M2,M3, T> unit(final T unit) {
+            return LazyEither5.right(unit);
         }
         @Override
-        public Either5<ST, M, M2,PT,M3> swap4() {
-            return (Either5<ST, M, M2,PT,M3>) this;
+        public LazyEither5<ST, M, M2,PT,M3> swap4() {
+            return (LazyEither5<ST, M, M2,PT,M3>) this;
 
         }
         @Override
-        public Either5<ST, M, PT,M3,M2> swap3() {
-            return (Either5<ST, M, PT,M3,M2>) this;
+        public LazyEither5<ST, M, PT,M3,M2> swap3() {
+            return (LazyEither5<ST, M, PT,M3,M2>) this;
 
         }
         @Override
-        public Either5<ST, PT,M2, M3, M> swap2() {
+        public LazyEither5<ST, PT,M2, M3, M> swap2() {
             return new Right<>(
                                value);
 
         }
 
         @Override
-        public Either5<PT, M, M2,M3,ST> swap1() {
-            return (Either5<PT, M,M2, M3, ST>) this;
+        public LazyEither5<PT, M, M2,M3,ST> swap1() {
+            return (LazyEither5<PT, M,M2, M3, ST>) this;
 
         }
 
@@ -1516,16 +1516,16 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Left3<ST, M,M2, M3, PT> implements Either5<ST, M, M2, M3,PT> {
+    static class Left3<ST, M,M2, M3, PT> implements LazyEither5<ST, M, M2, M3,PT> {
         private final Eval<M2> value;
 
         @Override
-        public <R> Either5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
-            return (Either5<ST, M, M2,M3,R>) this;
+        public <R> LazyEither5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
+            return (LazyEither5<ST, M, M2,M3,R>) this;
         }
 
         @Override
-        public Either5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
             return this;
 
         }
@@ -1543,11 +1543,11 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<ST, M, M2, M3,RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3,
-                                                ? extends RT1>> mapper) {
+        public <RT1> LazyEither5<ST, M, M2, M3,RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3,
+                                                                ? extends RT1>> mapper) {
 
-            return (Either5) this;
+            return (LazyEither5) this;
 
         }
 
@@ -1591,9 +1591,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <R1, R2> Either5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
-            return (Either5<ST, M,M2,R1, R2>) this;
+        public <R1, R2> LazyEither5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                            final Function<? super PT, ? extends R2> fn2) {
+            return (LazyEither5<ST, M,M2,R1, R2>) this;
         }
 
         @Override
@@ -1619,29 +1619,29 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <T> Either5<ST, M,M2,M3, T> unit(final T unit) {
-            return Either5.right(unit);
+        public <T> LazyEither5<ST, M,M2,M3, T> unit(final T unit) {
+            return LazyEither5.right(unit);
         }
         @Override
-        public Either5<ST, M,M2,PT,M3> swap4() {
-           return (Either5<ST, M,M2,PT,M3>)this;
+        public LazyEither5<ST, M,M2,PT,M3> swap4() {
+           return (LazyEither5<ST, M,M2,PT,M3>)this;
 
         }
         @Override
-        public Either5<ST, M, PT,M3, M2> swap3() {
+        public LazyEither5<ST, M, PT,M3, M2> swap3() {
             return new Right<>(
                     value);
 
         }
         @Override
-        public Either5<ST, PT,M2, M3, M> swap2() {
-           return (Either5<ST, PT,M2, M3, M>)this;
+        public LazyEither5<ST, PT,M2, M3, M> swap2() {
+           return (LazyEither5<ST, PT,M2, M3, M>)this;
 
         }
 
         @Override
-        public Either5<PT, M, M2, M3, ST> swap1() {
-            return (Either5<PT, M,M2, M3, ST>) this;
+        public LazyEither5<PT, M, M2, M3, ST> swap1() {
+            return (LazyEither5<PT, M,M2, M3, ST>) this;
 
         }
 
@@ -1689,16 +1689,16 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Left4<ST, M,M2, M3, PT> implements Either5<ST, M, M2, M3,PT> {
+    static class Left4<ST, M,M2, M3, PT> implements LazyEither5<ST, M, M2, M3,PT> {
         private final Eval<M3> value;
 
         @Override
-        public <R> Either5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
-            return (Either5<ST, M, M2,M3,R>) this;
+        public <R> LazyEither5<ST, M, M2, M3,R> map(final Function<? super PT, ? extends R> fn) {
+            return (LazyEither5<ST, M, M2,M3,R>) this;
         }
 
         @Override
-        public Either5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither5<ST, M, M2,M3, PT> peek(final Consumer<? super PT> action) {
             return this;
 
         }
@@ -1716,10 +1716,10 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <RT1> Either5<ST, M, M2, M3,RT1> flatMap(
-                final Function<? super PT, ? extends Either5<ST, M,M2,M3, ? extends RT1>> mapper) {
+        public <RT1> LazyEither5<ST, M, M2, M3,RT1> flatMap(
+                final Function<? super PT, ? extends LazyEither5<ST, M,M2,M3, ? extends RT1>> mapper) {
 
-            return (Either5) this;
+            return (LazyEither5) this;
 
         }
 
@@ -1762,9 +1762,9 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         }
 
         @Override
-        public <R1, R2> Either5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
-                final Function<? super PT, ? extends R2> fn2) {
-            return (Either5<ST, M,M2,R1, R2>) this;
+        public <R1, R2> LazyEither5<ST, M, M2,R1, R2> bimap(final Function<? super M3, ? extends R1> fn1,
+                                                            final Function<? super PT, ? extends R2> fn2) {
+            return (LazyEither5<ST, M,M2,R1, R2>) this;
         }
 
         @Override
@@ -1785,29 +1785,29 @@ public interface Either5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
         @Override
-        public <T> Either5<ST, M,M2,M3, T> unit(final T unit) {
-            return Either5.right(unit);
+        public <T> LazyEither5<ST, M,M2,M3, T> unit(final T unit) {
+            return LazyEither5.right(unit);
         }
         @Override
-        public Either5<ST, M,M2,PT,M3> swap4() {
+        public LazyEither5<ST, M,M2,PT,M3> swap4() {
             return new Right<>(
                     value);
 
         }
         @Override
-        public Either5<ST, M, PT,M3, M2> swap3() {
-            return (Either5<ST, M, PT,M3, M2>)this;
+        public LazyEither5<ST, M, PT,M3, M2> swap3() {
+            return (LazyEither5<ST, M, PT,M3, M2>)this;
             
         }
         @Override
-        public Either5<ST, PT,M2, M3, M> swap2() {
-           return (Either5<ST, PT,M2, M3, M>)this;
+        public LazyEither5<ST, PT,M2, M3, M> swap2() {
+           return (LazyEither5<ST, PT,M2, M3, M>)this;
 
         }
 
         @Override
-        public Either5<PT, M, M2, M3, ST> swap1() {
-            return (Either5<PT, M,M2, M3, ST>) this;
+        public LazyEither5<PT, M, M2, M3, ST> swap1() {
+            return (LazyEither5<PT, M,M2, M3, ST>) this;
 
         }
 

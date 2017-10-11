@@ -32,7 +32,7 @@ import cyclops.collections.tuple.Tuple;
 import cyclops.companion.Streams;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Lambda;
@@ -78,7 +78,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default Either<Throwable, U> findFirstOrError(){
+    default LazyEither<Throwable, U> findFirstOrError(){
         return stream().findFirstOrError();
     }
 
@@ -2239,7 +2239,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream to the left.
+     * Scan a reactiveStream to the lazyLeft.
      *
      *
      * // ("", "a", "ab", "abc") FutureStream.of("a", "b", "c").scanLeft("",
@@ -2254,7 +2254,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream to the right. - careful with infinite streams!
+     * Scan a reactiveStream to the lazyRight. - careful with infinite streams!
      *
      *
      * // ("", "c", "cb", "cba") FutureStream.of("a", "b",

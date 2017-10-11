@@ -9,13 +9,13 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.*;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.optional;
-import cyclops.monads.transformers.XorT;
+import cyclops.monads.transformers.EitherT;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,16 +30,16 @@ import static org.junit.Assert.*;
 
 public class XorTTest implements Printable {
 
-	XorT<optional,Throwable,Integer> just;
-	XorT<optional,Throwable,Integer> none;
-	XorT<optional,Throwable,Integer> one;
+	EitherT<optional,Throwable,Integer> just;
+	EitherT<optional,Throwable,Integer> none;
+	EitherT<optional,Throwable,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 
 
-		just = Xor.<Throwable,Integer>primary(10).liftM(optional.INSTANCE);
-		none = XorT.of(AnyM.ofNullable(null));
-		one = XorT.of(AnyM.ofNullable(Either.right(1)));
+		just = Either.<Throwable,Integer>right(10).liftM(optional.INSTANCE);
+		none = EitherT.of(AnyM.ofNullable(null));
+		one = EitherT.of(AnyM.ofNullable(LazyEither.right(1)));
 
 	}
 	
@@ -50,7 +50,7 @@ public class XorTTest implements Printable {
 	    Optional.of(10)
 	            .map(i->print("optional " + (i+10)));
 	            
-	    Xor.primary(10)
+	    Either.right(10)
 	         .map(i->print("maybe " + (i+10)));
 	    
 	}
@@ -65,7 +65,7 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testOfT() {
-		assertThat(Xor.primary(1),equalTo(Xor.primary(1)));
+		assertThat(Either.right(1),equalTo(Either.right(1)));
 	}
 
 	
@@ -90,8 +90,8 @@ public class XorTTest implements Printable {
 	@Test
 	public void testFlatMap() {
 	    
-		assertThat(just.flatMap(i->Xor.primary(i+5)).get(),equalTo(Option.some(15)));
-		assertThat(none.flatMap(i->Xor.primary(i+5)).orElse(-1),equalTo(-1));
+		assertThat(just.flatMap(i-> Either.right(i+5)).get(),equalTo(Option.some(15)));
+		assertThat(none.flatMap(i-> Either.right(i+5)).orElse(-1),equalTo(-1));
 	}
 	
 	@Test
@@ -156,7 +156,7 @@ public class XorTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("XorT[Optional[Xor.primary[10]]]"));
+		assertThat(just.mkString(),equalTo("XorT[Optional[Xor.lazyRight[10]]]"));
 		assertThat(none.mkString(),equalTo("XorT[Optional.empty]"));
 	}
 
@@ -289,7 +289,7 @@ public class XorTTest implements Printable {
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 	    
 	    
-	    String match = Xor.primary("data is present")
+	    String match = Either.right("data is present")
 	                        .visit(present->"hello", ()->"missing");
 	    
 	    

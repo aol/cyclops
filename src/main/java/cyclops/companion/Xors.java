@@ -1,7 +1,7 @@
 package cyclops.companion;
 
 import cyclops.monads.AnyM;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
@@ -41,7 +41,7 @@ public class Xors {
      * @param adapter Adapter to fold on
      * @return Structural pattern matcher for Adapter types.
      */
-    public static <T> Xor<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
+    public static <T> Either<Queue<T>, Topic<T>> adapter(final Adapter<T> adapter) {
         return adapter.matches();
     }
 
@@ -69,7 +69,7 @@ public class Xors {
       USE EITHER HERE
     public static <T1> Xor<T1, Throwable> future(final CompletableFuture<T1> future) {
         return () -> Future.of(future)
-                            .toXor()
+                            .toLazyEither()
                             .swap();
     }*/
 
@@ -102,18 +102,18 @@ public class Xors {
      * @return Pattern Matcher for Futures
 
     public static <T1> MXor<T1, Throwable> future(final Future<T1> future) {
-        return () -> future.toXor()
+        return () -> future.toLazyEither()
                            .swap();
     }
 USE EITHER
     public static <T1, X extends Throwable> MXor<T1, X> tryMatch(final Try<T1, X> fold) {
-        return () -> fold.toXor()
+        return () -> fold.toLazyEither()
                           .swap();
     }
 */
 
-    public static <W extends WitnessType<W>,T> Xor<AnyMValue<W,T>, AnyMSeq<W,T>> anyM(final AnyM<W,T> anyM) {
-        return anyM instanceof AnyMValue ? Xor.secondary((AnyMValue<W,T>) anyM) : Xor.primary((AnyMSeq<W,T>) anyM);
+    public static <W extends WitnessType<W>,T> Either<AnyMValue<W,T>, AnyMSeq<W,T>> anyM(final AnyM<W,T> anyM) {
+        return anyM instanceof AnyMValue ? Either.left((AnyMValue<W,T>) anyM) : Either.right((AnyMSeq<W,T>) anyM);
     }
 
 
@@ -141,9 +141,9 @@ USE EITHER
      * @param queue Queue to pattern fold on
      * @return Pattern matchier on the blocking / non-blocking nature of the supplied Queue
      */
-    public static <T> Xor<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {
+    public static <T> Either<BlockingQueue<T>, java.util.Queue<T>> blocking(final java.util.Queue<T> queue) {
 
-        return queue instanceof BlockingQueue ? Xor.<BlockingQueue<T>, java.util.Queue<T>> secondary((BlockingQueue) queue)
-                : Xor.<BlockingQueue<T>, java.util.Queue<T>> primary(queue);
+        return queue instanceof BlockingQueue ? Either.<BlockingQueue<T>, java.util.Queue<T>>left((BlockingQueue) queue)
+                : Either.<BlockingQueue<T>, java.util.Queue<T>>right(queue);
     }
 }

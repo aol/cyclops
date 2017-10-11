@@ -28,9 +28,9 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
     private final T value;
 
 
-    public static  <T,R> Identity<R> tailRec(T initial, Function<? super T, ? extends Identity<? extends Xor<T, R>>> fn){
-        Identity<? extends Xor<T, R>> next[] = new Identity[1];
-        next[0] = Identity.of(Xor.secondary(initial));
+    public static  <T,R> Identity<R> tailRec(T initial, Function<? super T, ? extends Identity<? extends Either<T, R>>> fn){
+        Identity<? extends Either<T, R>> next[] = new Identity[1];
+        next[0] = Identity.of(Either.left(initial));
         boolean cont = true;
         do {
 
@@ -251,7 +251,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct
 
             return new MonadRec<identity>(){
                 @Override
-                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Either<T, R>>> fn) {
                    return Identity.tailRec(initial,fn.andThen(Identity::narrowK));
                 }
 

@@ -16,7 +16,7 @@ import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.companion.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.Witness;
@@ -83,11 +83,11 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Either<Throwable,T> findFirstOrError(){
-        return Either.fromLazy(Eval.later(()->{
+    public LazyEither<Throwable,T> findFirstOrError(){
+        return LazyEither.fromLazy(Eval.later(()->{
             ValueSubscriber<T> valueSubscriber = ValueSubscriber.subscriber();
             subscribe(valueSubscriber);
-            return Either.fromXor(valueSubscriber.toXor());
+            return LazyEither.fromXor(valueSubscriber.toXor());
         }));
     }
 
@@ -632,7 +632,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
-        //not composable to the 'left' (as statefulness is lost)
+        //not composable to the 'lazyLeft' (as statefulness is lost)
         return createSeq(new LazyMappingSpliterator<T,R>(this.get(),fn), reversible);
 
     }

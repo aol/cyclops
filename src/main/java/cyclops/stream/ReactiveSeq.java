@@ -6,7 +6,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
 
 import cyclops.typeclasses.*;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.Enumeration;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -39,7 +39,7 @@ import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1687,7 +1687,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> distinct();
 
     /**
-     * Scan left using supplied Monoid
+     * Scan lazyLeft using supplied Monoid
      *
      * <pre>
      * {@code
@@ -1699,7 +1699,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param monoid
-     * @return ReactiveSeq with values combined scanning left
+     * @return ReactiveSeq with values combined scanning lazyLeft
      */
     @Override
     default ReactiveSeq<T> scanLeft(Monoid<T> monoid){
@@ -1711,7 +1711,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Scan left
+     * Scan lazyLeft
      *
      * <pre>
      * {@code
@@ -1724,7 +1724,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /**
-     * Scan right
+     * Scan lazyRight
      *
      * <pre>
      * {@code
@@ -1740,7 +1740,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Scan right
+     * Scan lazyRight
      *
      * <pre>
      * {@code
@@ -2153,7 +2153,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @return
      */
-    Either<Throwable,T> findFirstOrError();
+    LazyEither<Throwable,T> findFirstOrError();
     /**
      * @return first matching element, but order is not guaranteed
      *
@@ -2483,7 +2483,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     T foldRight(Monoid<T> reducer);
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      *
      * <pre>
      * {@code
@@ -5236,7 +5236,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
             return new MonadRec<reactiveSeq>(){
                 @Override
-                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Either<T, R>>> fn) {
                    return ReactiveSeq.tailRec(initial,fn.andThen(ReactiveSeq::narrowK));
                 }
             };
@@ -5368,7 +5368,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>) future;
     }
 
-    public static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Xor<T, R>>> fn) {
+    public static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).stream();
     }
 }

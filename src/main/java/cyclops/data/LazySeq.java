@@ -11,7 +11,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.data.DataWitness.lazySeq;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
@@ -45,8 +45,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return LinkedListX.fromIterable(this);
     }
 
-    static  <T,R> LazySeq<R> tailRec(T initial, Function<? super T, ? extends LazySeq<? extends Xor<T, R>>> fn) {
-        LazySeq<Xor<T, R>> next = LazySeq.of(Xor.secondary(initial));
+    static  <T,R> LazySeq<R> tailRec(T initial, Function<? super T, ? extends LazySeq<? extends Either<T, R>>> fn) {
+        LazySeq<Either<T, R>> next = LazySeq.of(Either.left(initial));
 
         boolean newValue[] = {true};
         for(;;){
@@ -62,7 +62,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
+        ListX<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
         return LazySeq.fromIterator(x.iterator());
     }
     static <T> LazySeq<T> fill(T t){

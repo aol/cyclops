@@ -5,7 +5,7 @@ import static cyclops.typeclasses.free.CharToy.bell;
 import static cyclops.typeclasses.free.CharToy.done;
 import static cyclops.typeclasses.free.CharToy.output;
 
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
 import cyclops.collections.tuple.Tuple2;
@@ -85,9 +85,9 @@ public final class FreeTest {
 
     static <R> String interleaveProgram(Free<CharToy.µ,R> program1,Free<CharToy.µ,R> program2){
 
-        Tuple2<Xor<CharToy<Free<µ, R>>, R>, Xor<CharToy<Free<µ, R>>, R>> tuple = Free.product(CharToy.functor, program1, CharToy::narrowK, program2, CharToy::narrowK);
-        Xor<CharToy<Free<µ, R>>, R> a = tuple._1();
-        Xor<CharToy<Free<µ, R>>, R> b = tuple._2();
+        Tuple2<Either<CharToy<Free<µ, R>>, R>, Either<CharToy<Free<µ, R>>, R>> tuple = Free.product(CharToy.functor, program1, CharToy::narrowK, program2, CharToy::narrowK);
+        Either<CharToy<Free<µ, R>>, R> a = tuple._1();
+        Either<CharToy<Free<µ, R>>, R> b = tuple._2();
 
 
 

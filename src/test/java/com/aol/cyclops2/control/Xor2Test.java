@@ -29,32 +29,32 @@ import static org.junit.Assert.*;
 
 public class Xor2Test {
 
-	Xor<String,Integer> just;
-	Xor<String,Integer> none;
+	Either<String,Integer> just;
+	Either<String,Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Xor.primary(10);
-		none = Xor.secondary("none");
+		just = Either.right(10);
+		none = Either.left("none");
 	}
 
 
    
 	@Test
     public void testSequenceSecondary() {
-        Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Xor.primary(1)));
-        assertThat(xors,equalTo(Xor.primary(ListX.of("none"))));
+        Either<ListX<Integer>,ListX<String>> xors = Either.sequenceLeft(ListX.of(just,none, Either.right(1)));
+        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.primary(1)),Reducers.<String>toPersistentSetX());
-        assertThat(xors,equalTo(Xor.primary(PersistentSetX.of("none"))));
+        Either<?,PersistentSetX<String>> xors = Either.accumulateLeft(ListX.of(just,none, Either.right(1)),Reducers.<String>toPersistentSetX());
+        assertThat(xors,equalTo(Either.right(PersistentSetX.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondarySemigroup() {
-        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Xor.secondary("1")),i->""+i, Monoids.stringConcat);
-        assertThat(xors,equalTo(Xor.primary("none1")));
+        Either<?,String> xors = Either.accumulateLeft(ListX.of(just,none, Either.left("1")), i->""+i, Monoids.stringConcat);
+        assertThat(xors,equalTo(Either.right("none1")));
     }
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
@@ -76,8 +76,8 @@ public class Xor2Test {
 	}
 	@Test
     public void visitXor(){
-        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Xor.primary("yes")));
-        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Xor.secondary("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Either.right("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Either.left("no")));
     }
 	@Test
 	public void testToMaybe() {
@@ -98,57 +98,57 @@ public class Xor2Test {
 
 	@Test
 	public void testSequence() {
-		Xor.sequencePrimary(ListX.of(just,Xor.primary(1))).printOut();
-		Xor<ListX<String>,ListX<Integer>> maybes =Xor.sequencePrimary(ListX.of(just,none,Xor.primary(1)));
-		assertThat(maybes,equalTo(Xor.primary(ListX.of(10,1))));
+		Either.sequenceRight(ListX.of(just, Either.right(1))).printOut();
+		Either<ListX<String>,ListX<Integer>> maybes = Either.sequenceRight(ListX.of(just,none, Either.right(1)));
+		assertThat(maybes,equalTo(Either.right(ListX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),Reducers.toPersistentSetX());
-		assertThat(maybes,equalTo(Xor.primary(PersistentSetX.of(10,1))));
+		Either<?,PersistentSetX<Integer>> maybes = Either.accumulateRight(ListX.of(just,none, Either.right(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Either.right(PersistentSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Xor<?,String> maybes = Xor.accumulatePrimary(ListX.of(just,none,Xor.primary(1)),i->""+i,Monoids.stringConcat);
-		assertThat(maybes,equalTo(Xor.primary("101")));
+		Either<?,String> maybes = Either.accumulateRight(ListX.of(just,none, Either.right(1)), i->""+i,Monoids.stringConcat);
+		assertThat(maybes,equalTo(Either.right("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Xor<?,Integer> maybes =Xor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Xor.primary(1)));
-		assertThat(maybes,equalTo(Xor.primary(11)));
+		Either<?,Integer> maybes = Either.accumulateRight(Monoids.intSum,ListX.of(just,none, Either.right(1)));
+		assertThat(maybes,equalTo(Either.right(11)));
 	}
 	@Test
     public void testAccumulateSecondary() {
-        Xor<?,String> maybes =Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(just,none,Xor.secondary("hello")));
-        assertThat(maybes,equalTo(Xor.primary("nonehello")));
+        Either<?,String> maybes = Either.accumulateLeft(Monoids.stringConcat,ListX.of(just,none, Either.left("hello")));
+        assertThat(maybes,equalTo(Either.right("nonehello")));
     }
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Xor.primary(20)));
+		assertThat(just.unit(20),equalTo(Either.right(20)));
 	}
 
 	
 
 	@Test
 	public void testisPrimary() {
-		assertTrue(just.isPrimary());
-		assertFalse(none.isPrimary());
+		assertTrue(just.isRight());
+		assertFalse(none.isRight());
 	}
 
 	
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Xor.primary(15)));
-		assertThat(none.map(i->i+5),equalTo(Xor.secondary("none")));
+		assertThat(just.map(i->i+5),equalTo(Either.right(15)));
+		assertThat(none.map(i->i+5),equalTo(Either.left("none")));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Xor.primary(i+5)),equalTo(Xor.primary(15)));
-		assertThat(none.flatMap(i->Xor.primary(i+5)),equalTo(Xor.secondary("none")));
+		assertThat(just.flatMap(i-> Either.right(i+5)),equalTo(Either.right(15)));
+		assertThat(none.flatMap(i-> Either.right(i+5)),equalTo(Either.left("none")));
 	}
 
 	@Test
@@ -199,27 +199,27 @@ public class Xor2Test {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
+		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-		Xor<String,Integer> xor = none;
-		assertTrue(xor.isSecondary());
-		assertThat(xor,equalTo(Xor.secondary("none")));
+		Either<String,Integer> xor = none;
+		assertTrue(xor.isLeft());
+		assertThat(xor,equalTo(Either.left("none")));
 		
 	}
 
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
-		Xor<Integer,String> xorNone = none.swap();
-		assertThat(xorNone,equalTo(Xor.primary("none")));
+		Either<Integer,String> xorNone = none.swap();
+		assertThat(xorNone,equalTo(Either.right("none")));
 		
 	}
 	@Test
@@ -265,8 +265,8 @@ public class Xor2Test {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Xor.primary[10]"));
-		assertThat(none.mkString(),equalTo("Xor.secondary[none]"));
+		assertThat(just.mkString(),equalTo("Xor.lazyRight[10]"));
+		assertThat(none.mkString(),equalTo("Xor.lazyLeft[none]"));
 	}
 	LazyReact react = new LazyReact();
 
@@ -396,12 +396,12 @@ public class Xor2Test {
 
 	@Test
 	public void testCast() {
-		Xor<?,Number> num = just.cast(Number.class);
+		Either<?,Number> num = just.cast(Number.class);
 	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Xor.primary(15)));
+		assertThat(just.map(i->i+5),equalTo(Either.right(15)));
 	}
 	
 	@Test
@@ -417,7 +417,7 @@ public class Xor2Test {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Xor.primary(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either.right(65)));
 	}
 
 	

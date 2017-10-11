@@ -110,21 +110,21 @@ public interface Witness {
     public static <T> CompletableFuture<T> completableFuture(AnyM<completableFuture,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <ST,T> Xor<ST,T> xor(AnyM<xor,? extends T> anyM){
+    public static <ST,T> Either<ST,T> either(AnyM<either,? extends T> anyM){
         return anyM.unwrap();
     }
 
 
-    public static <L,R> Either<L,R> either(AnyM<either,? extends R> anyM){
+    public static <L,R> LazyEither<L,R> lazyEither(AnyM<lazyEither,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,R> Either3<L1,L2,R> either3(AnyM<either3,? extends R> anyM){
+    public static <L1,L2,R> LazyEither3<L1,L2,R> lazyEither3(AnyM<lazyEither3,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,L3,R> Either4<L1,L2,L3,R> either4(AnyM<either4,? extends R> anyM){
+    public static <L1,L2,L3,R> LazyEither4<L1,L2,L3,R> lazyEither4(AnyM<lazyEither4,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,L3,L4,R> Either5<L1,L2,L3,L4,R> either5(AnyM<either5,? extends R> anyM){
+    public static <L1,L2,L3,L4,R> LazyEither5<L1,L2,L3,L4,R> lazyEither5(AnyM<lazyEither5,? extends R> anyM){
         return anyM.unwrap();
     }
     public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
@@ -308,53 +308,53 @@ public interface Witness {
         }
         
     }
-    public static enum either implements MonadicValueWitness<either>{
+    public static enum lazyEither implements MonadicValueWitness<lazyEither>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither> adapter() {
+            return new LazyEitherAdapter();
+        }
+
+    }
+    public static enum lazyEither3 implements MonadicValueWitness<lazyEither3>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither3> adapter() {
+            return new LazyEither3Adapter();
+        }
+
+    }
+    public static enum lazyEither4 implements MonadicValueWitness<lazyEither4>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither4> adapter() {
+            return new LazyEither4Adapter();
+        }
+
+    }
+    public static enum lazyEither5 implements MonadicValueWitness<lazyEither5>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither5> adapter() {
+            return new LazyEither5Adapter();
+        }
+
+    }
+    public static enum either implements WitnessType<either>{
         INSTANCE;
 
 
         @Override
         public FunctionalAdapter<either> adapter() {
             return new EitherAdapter();
-        }
-
-    }
-    public static enum either3 implements MonadicValueWitness<either3>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either3> adapter() {
-            return new Either3Adapter();
-        }
-
-    }
-    public static enum either4 implements MonadicValueWitness<either4>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either4> adapter() {
-            return new Either4Adapter();
-        }
-
-    }
-    public static enum either5 implements MonadicValueWitness<either5>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either5> adapter() {
-            return new Either5Adapter();
-        }
-
-    }
-    public static enum xor implements WitnessType<xor>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<xor> adapter() {
-            return new XorAdapter();
         }
         
     }

@@ -2,7 +2,7 @@ package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.*;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 
@@ -1432,7 +1432,7 @@ public class Streams {
 
     /**
      * Concat an Object and a Stream
-     * If the Object is a Stream, Streamable or Iterable will be converted (or left) in Stream form and concatonated
+     * If the Object is a Stream, Streamable or Iterable will be converted (or lazyLeft) in Stream form and concatonated
      * Otherwise a new Stream.of(o) is created
      * 
      * @param o Object to concat
@@ -1838,7 +1838,7 @@ public class Streams {
     }
 
     /**
-     * Scan left using supplied Monoid
+     * Scan lazyLeft using supplied Monoid
      * 
      * <pre>
      * {@code  
@@ -3083,7 +3083,7 @@ public class Streams {
 
             return new MonadRec<stream>(){
                 @Override
-                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Either<T, R>>> fn) {
                     return widen(ReactiveSeq.tailRec(initial,fn.andThen(s->ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
                 }
             };
@@ -3478,7 +3478,7 @@ public class Streams {
         }
 
     }
-    public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Xor<T, R>>> fn) {
+    public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn.andThen(ReactiveSeq::fromStream)).stream();
     }
 }

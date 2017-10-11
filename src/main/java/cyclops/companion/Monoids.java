@@ -10,7 +10,7 @@ import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
@@ -318,73 +318,73 @@ public interface Monoids {
         return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the first primary
+     * @return Combine two Xor's by taking the first lazyRight
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> firstPrimaryXor(ST zero) {
-        return Monoid.of(Xor.secondary(zero), Semigroups.firstPrimaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> firstRightEither(ST zero) {
+        return Monoid.of(Either.left(zero), Semigroups.firstPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the first secondary
+     * @return Combine two Xor's by taking the first lazyLeft
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> firstSecondaryXor(PT zero) {
-        return Monoid.of(Xor.primary(zero), Semigroups.firstSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> firstSecondaryXor(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.firstSecondaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last primary
+     * @return Combine two Xor's by taking the last lazyRight
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> lastPrimaryXor(ST zero) {
-        return Monoid.of(Xor.secondary(zero), Semigroups.lastPrimaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastPrimaryXor(ST zero) {
+        return Monoid.of(Either.left(zero), Semigroups.lastPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last secondary
+     * @return Combine two Xor's by taking the last lazyLeft
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> lastSecondaryXor(PT zero) {
-        return Monoid.of(Xor.primary(zero), Semigroups.lastSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastSecondaryXor(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.lastSecondaryXor());
     }
     /**
-     * @return Combine two Try's by taking the first primary
+     * @return Combine two Try's by taking the first lazyRight
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.firstTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the first secondary
+     * @return Combine two Try's by taking the first lazyLeft
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.firstTryFailure());
     }
     /**
-     * @return Combine two Tryr's by taking the last primary
+     * @return Combine two Tryr's by taking the last lazyRight
      */
     static<T,X extends Throwable> Monoid<Try<T,X>> lastTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.lastTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the last secondary
+     * @return Combine two Try's by taking the last lazyLeft
      */
     static <T,X extends Throwable> Monoid<Try<T,X>>lastTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.lastTryFailure());
     }
     /**
-     * @return Combine two Ior's by taking the first primary
+     * @return Combine two Ior's by taking the first lazyRight
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstPrimaryIor(ST zero) {
         return Monoid.of(Ior.secondary(zero), Semigroups.firstPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the first secondary
+     * @return Combine two Ior's by taking the first lazyLeft
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstSecondaryIor(PT zero) {
         return Monoid.of(Ior.primary(zero), Semigroups.firstSecondaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last primary
+     * @return Combine two Ior's by taking the last lazyRight
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastPrimaryIor(ST zero) {
         return Monoid.of(Ior.secondary(zero), Semigroups.lastPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last secondary
+     * @return Combine two Ior's by taking the last lazyLeft
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastSecondaryIor(PT zero) {
         return Monoid.of(Ior.primary(zero), Semigroups.lastSecondaryIor());

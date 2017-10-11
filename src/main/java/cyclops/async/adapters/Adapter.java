@@ -8,7 +8,7 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 
 /**
@@ -24,8 +24,8 @@ public interface Adapter<T> {
     /**
      * @return A structural Pattern Matcher for this Adapter that allows matching on  Queue / Topic types
      */
-    default Xor<Queue<T>, Topic<T>> matches() {
-        return visit(q -> Xor.secondary(q), topic -> Xor.primary(topic));
+    default Either<Queue<T>, Topic<T>> matches() {
+        return visit(q -> Either.left(q), topic -> Either.right(topic));
     }
 
     /**

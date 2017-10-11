@@ -560,7 +560,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Scan left using supplied Monoid
+     * Scan lazyLeft using supplied Monoid
      * 
      * <pre>
      * {@code  
@@ -579,7 +579,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Scan left
+     * Scan lazyLeft
      * 
      * <pre>
      * {@code 
@@ -593,7 +593,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Scan right
+     * Scan lazyRight
      * 
      * <pre>
      * {@code 
@@ -607,7 +607,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Scan right
+     * Scan lazyRight
      * 
      * <pre>
      * {@code 

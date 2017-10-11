@@ -80,21 +80,21 @@ public interface Transformers {
 
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class XorTransformer<W1,L,R> implements Transformer<W1,Higher<xor,L>,R>{
-        private final Nested<W1,Higher<xor,L>,R> nested;
+    static class XorTransformer<W1,L,R> implements Transformer<W1,Higher<either,L>,R>{
+        private final Nested<W1,Higher<either,L>,R> nested;
         private final Monad<W1> monad1;
 
-        private final  static <W1,L> TransformerFactory<W1,Higher<xor,L>> factory(){
+        private final  static <W1,L> TransformerFactory<W1,Higher<either,L>> factory(){
             return XorTransformer::xorT;
         }
-        public static <W1,L,R> XorTransformer<W1,L,R> xorT(Nested<W1,Higher<xor,L>,R> nested){
+        public static <W1,L,R> XorTransformer<W1,L,R> xorT(Nested<W1,Higher<either,L>,R> nested){
             return new XorTransformer<W1,L,R>(nested,nested.def1.monad());
         }
 
 
         @Override
-        public <R1> Nested<W1, Higher<xor, L>, R1> flatMap(Function<? super R, ? extends Nested<W1, Higher<xor, L>, R1>> fn) {
-            Higher<W1, Higher<Higher<xor, L>, R1>> res = monad1.flatMap(m -> Xor.narrowK(m).visit(l -> monad1.unit(Xor.secondary(l)),
+        public <R1> Nested<W1, Higher<either, L>, R1> flatMap(Function<? super R, ? extends Nested<W1, Higher<either, L>, R1>> fn) {
+            Higher<W1, Higher<Higher<either, L>, R1>> res = monad1.flatMap(m -> Either.narrowK(m).visit(l -> monad1.unit(Either.left(l)),
 
                     r -> fn.apply(r).nested),
                     nested.nested);
@@ -103,7 +103,7 @@ public interface Transformers {
         }
 
         @Override
-        public <R1> Nested<W1, Higher<xor, L>, R1> flatMapK(Function<? super R, ? extends Higher<W1, Higher<Higher<xor, L>, R1>>> fn) {
+        public <R1> Nested<W1, Higher<either, L>, R1> flatMapK(Function<? super R, ? extends Higher<W1, Higher<Higher<either, L>, R1>>> fn) {
             return flatMap(fn.andThen(x->Nested.of(x,nested.def1,nested.def2)));
         }
     }

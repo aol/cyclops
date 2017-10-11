@@ -1,9 +1,9 @@
 package com.aol.cyclops2.types.reactive;
 
-import cyclops.control.Xor;
+import cyclops.control.Either;
 
 public enum BufferOverflowPolicy{ DROP, BLOCK;
-    public <T> Xor<Void,T> match(T value){
-        return this==DROP? Xor.secondary(null) : Xor.primary(value);
+    public <T> Either<Void,T> match(T value){
+        return this==DROP? Either.left(null) : Either.right(value);
     }
 }

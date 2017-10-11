@@ -381,27 +381,27 @@ public class FutureTest {
 
     @Test
     public void testToXor() {
-        assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
+        assertThat(just.toEither(-5000),equalTo(Either.right(10)));
         
     }
     @Test
     public void testToXorNone(){
-        Xor<Throwable,Integer> xor = none.toXor();
-        assertTrue(xor.isSecondary());
-        assertThat(xor,equalTo(Xor.secondary(exception)));
+        Either<Throwable,Integer> xor = none.toXor();
+        assertTrue(xor.isLeft());
+        assertThat(xor,equalTo(Either.left(exception)));
         
     }
 
 
     @Test
     public void testToXorSecondary() {
-        assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
+        assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
     }
 
     @Test
     public void testToXorSecondaryNone(){
-        Xor<Integer, Throwable> xorNone = none.toXor().swap();
-        assertThat(xorNone,equalTo(Xor.primary(exception)));
+        Either<Integer, Throwable> xorNone = none.toXor().swap();
+        assertThat(xorNone,equalTo(Either.right(exception)));
         
     }
     @Test
@@ -611,7 +611,7 @@ public class FutureTest {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Xor.primary(65).toTry()));
+        assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Either.right(65).toTry()));
     }
 
     

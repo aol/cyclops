@@ -4,7 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -1454,7 +1454,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
             return new MonadRec<queue>(){
                 @Override
-                public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<queue, R> tailRec(T initial, Function<? super T, ? extends Higher<queue,? extends Either<T, R>>> fn) {
                     return QueueX.tailRec(initial,fn.andThen(QueueX::narrowK));
                 }
             };
@@ -1554,9 +1554,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             return lt.map(fn);
         }
     }
-    public static  <T,R> QueueX<R> tailRec(T initial, Function<? super T, ? extends QueueX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> QueueX<R> tailRec(T initial, Function<? super T, ? extends QueueX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1571,7 +1571,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().queueX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().queueX(Evaluation.LAZY);
     }
 
 }

@@ -10,7 +10,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -1143,9 +1143,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
-    public static  <T,R> OrderedSetX<R> tailRec(T initial, Function<? super T, ? extends OrderedSetX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> OrderedSetX<R> tailRec(T initial, Function<? super T, ? extends OrderedSetX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1160,7 +1160,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().orderedSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().orderedSetX(Evaluation.LAZY);
     }
 
 }

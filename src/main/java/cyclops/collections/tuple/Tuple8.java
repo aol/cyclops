@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
-  A Tuple implementation that can be either eager / strict or lazy
+  A Tuple implementation that can be lazyEither eager / strict or lazy
 
 
  */

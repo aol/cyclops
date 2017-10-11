@@ -4,7 +4,7 @@ import com.aol.cyclops2.hkt.Higher;
 
 import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
 import com.aol.cyclops2.types.reactive.PushSubscriber;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
@@ -832,7 +832,7 @@ public interface Spouts {
 
             return new MonadRec<reactiveSeq>(){
                 @Override
-                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Either<T, R>>> fn) {
                     return  Spouts.reactive(ReactiveSeq.deferred( ()-> ReactiveSeq.tailRec(initial, fn.andThen(ReactiveSeq::narrowK))),ex);
 
                 }

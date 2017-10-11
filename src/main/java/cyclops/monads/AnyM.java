@@ -63,7 +63,7 @@ import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.streamable;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.Witness.tryType;
-import cyclops.monads.Witness.xor;
+import cyclops.monads.Witness.either;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
@@ -77,7 +77,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * Wrapper for Any Monad type
  * 
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
- * AnyMValue is used to represent Monads that wrap a singleUnsafe value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Xor}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMValue is used to represent Monads that wrap a singleUnsafe value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior}, {@link FeatureToggle}
  * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  * 
  * Use AnyM to create your monad wrapper.
@@ -333,8 +333,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
 
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
-     * If this AnyM can only store a singleUnsafe value an Xor.secondary with type AnyMValue is returned
-     * If this AnyM can  store one or many values an Xor.primary with type AnyMSeq is returned
+     * If this AnyM can only store a singleUnsafe value an Xor.lazyLeft with type AnyMValue is returned
+     * If this AnyM can  store one or many values an Xor.lazyRight with type AnyMSeq is returned
      * 
      * <pre>
      * {@code
@@ -347,7 +347,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * 
      * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
-    Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
+    Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
 
 
 
@@ -767,17 +767,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param xor Xor to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Xor
      */
-    public static <ST,T> AnyMValue2<xor,ST,T> fromXor(final Xor<ST, T> xor) {
+    public static <ST,T> AnyMValue2<either,ST,T> fromLazyEither(final Either<ST, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value2(xor,Witness.xor.INSTANCE);
+        return AnyMFactory.instance.value2(xor, either.INSTANCE);
     }
-    public static <ST,T> AnyMValue2<xor,ST,T> primary(final T p) {
+    public static <ST,T> AnyMValue2<either,ST,T> right(final T p) {
         Objects.requireNonNull(p);
-        return fromXor(Xor.primary(p));
+        return fromLazyEither(Either.right(p));
     }
-    public static <ST,T> AnyMValue2<xor,ST,T> secondary(final ST s) {
+    public static <ST,T> AnyMValue2<either,ST,T> left(final ST s) {
         Objects.requireNonNull(s);
-        return fromXor(Xor.secondary(s));
+        return fromLazyEither(Either.left(s));
     }
 
     /**
@@ -786,17 +786,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param xor Xor to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either
      */
-    public static <LT1,T> AnyMValue2<either,LT1,T> fromEither(final Either<LT1, T> xor) {
+    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> fromLazyEither(final LazyEither<LT1, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value2(xor,Witness.either.INSTANCE);
+        return AnyMFactory.instance.value2(xor, lazyEither.INSTANCE);
     }
-    public static <LT1,T> AnyMValue2<either,LT1,T> right(final T right) {
+    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> lazyRight(final T right) {
         Objects.requireNonNull(right);
-        return fromEither(Either.right(right));
+        return fromLazyEither(LazyEither.right(right));
     }
-    public static <LT1,T> AnyMValue2<either,LT1,T> left(final LT1 left) {
+    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> lazyLeft(final LT1 left) {
         Objects.requireNonNull(left);
-        return fromEither(Either.left(left));
+        return fromLazyEither(LazyEither.left(left));
     }
     /**
      * Create an AnyMValue instance that wraps an Either3
@@ -804,9 +804,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param xor Xor to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either3
      */
-    public static <LT1,LT2,T> AnyMValue<either3,T> fromEither3(final Either3<LT1, LT2, T> xor) {
+    public static <LT1,LT2,T> AnyMValue<lazyEither3,T> fromEither3(final LazyEither3<LT1, LT2, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value(xor,Witness.either3.INSTANCE);
+        return AnyMFactory.instance.value(xor, lazyEither3.INSTANCE);
     }
     /**
      * Create an AnyMValue instance that wraps an Either4
@@ -814,9 +814,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param xor Either4 to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either4
      */
-    public static <LT1,LT2,LT3,T> AnyMValue<either4,T> fromEither4(final Either4<LT1, LT2, LT3, T> xor) {
+    public static <LT1,LT2,LT3,T> AnyMValue<lazyEither4,T> fromEither4(final LazyEither4<LT1, LT2, LT3, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value(xor,Witness.either4.INSTANCE);
+        return AnyMFactory.instance.value(xor, lazyEither4.INSTANCE);
     }
     /**
      * Create an AnyMValue instance that wraps an Either4
@@ -824,9 +824,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * @param xor Either4 to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Either4
      */
-    public static <LT1,LT2,LT3,LT4,T> AnyMValue<either5,T> fromEither5(final Either5<LT1, LT2, LT3, LT4, T> xor) {
+    public static <LT1,LT2,LT3,LT4,T> AnyMValue<lazyEither5,T> fromEither5(final LazyEither5<LT1, LT2, LT3, LT4, T> xor) {
         Objects.requireNonNull(xor);
-        return AnyMFactory.instance.value(xor,Witness.either5.INSTANCE);
+        return AnyMFactory.instance.value(xor, lazyEither5.INSTANCE);
     }
     /**
      * Create an AnyMValue instance that wraps a Try
@@ -1005,15 +1005,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Either3s and convert them into a List of AnyMs
      * e.g.
      * {@code
-     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.right(1),Either4.left(10));
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.lazyRight(1),Either4.lazyLeft(10));
      *
-     *     //List[AnyM[Either4:right[1],Either4:left[10]]]
+     *     //List[AnyM[Either4:lazyRight[1],Either4:lazyLeft[10]]]
      * }
      *
      * @param anyM Iterable containing Eithers
      * @return List of AnyMs
      */
-    public static <ST, LT2, LT3,LT4,T> ListX<AnyMValue<either5,T>> listFromEither5(final Iterable<Either5<ST, LT2, LT3, LT4, T>> anyM) {
+    public static <ST, LT2, LT3,LT4,T> ListX<AnyMValue<lazyEither5,T>> listFromEither5(final Iterable<LazyEither5<ST, LT2, LT3, LT4, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> fromEither5(e))
                 .toListX();
@@ -1023,15 +1023,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Either3s and convert them into a List of AnyMs
      * e.g.
      * {@code
-     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.right(1),Either4.left(10));
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either4.lazyRight(1),Either4.lazyLeft(10));
      *
-     *     //List[AnyM[Either4:right[1],Either4:left[10]]]
+     *     //List[AnyM[Either4:lazyRight[1],Either4:lazyLeft[10]]]
      * }
      *
      * @param anyM Iterable containing Eithers
      * @return List of AnyMs
      */
-    public static <ST, LT2, LT3,T> ListX<AnyMValue<either4,T>> listFromEither4(final Iterable<Either4<ST, LT2, LT3, T>> anyM) {
+    public static <ST, LT2, LT3,T> ListX<AnyMValue<lazyEither4,T>> listFromEither4(final Iterable<LazyEither4<ST, LT2, LT3, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> fromEither4(e))
                 .toListX();
@@ -1040,15 +1040,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Either3s and convert them into a List of AnyMs
      * e.g.
      * {@code
-     *     List<AnyM<Integer>> anyMs = listFromEither3(Arrays.asList(Either3.right(1),Either3.left(10));
+     *     List<AnyM<Integer>> anyMs = listFromEither3(Arrays.asList(Either3.lazyRight(1),Either3.lazyLeft(10));
      *
-     *     //List[AnyM[Either3:right[1],Either3:left[10]]]
+     *     //List[AnyM[Either3:lazyRight[1],Either3:lazyLeft[10]]]
      * }
      *
      * @param anyM Iterable containing Eithers
      * @return List of AnyMs
      */
-    public static <ST, LT2, T> ListX<AnyMValue<either3,T>> listFromEither3(final Iterable<Either3<ST, LT2, T>> anyM) {
+    public static <ST, LT2, T> ListX<AnyMValue<lazyEither3,T>> listFromEither3(final Iterable<LazyEither3<ST, LT2, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> AnyM.fromEither3(e))
                 .toListX();
@@ -1057,18 +1057,18 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Either3s and convert them into a List of AnyMs
      * e.g.
      * {@code
-     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either.right(1),Either.left(10));
+     *     List<AnyM<Integer>> anyMs = anyMList(Arrays.asList(Either.lazyRight(1),Either.lazyLeft(10));
      *
-     *     //List[AnyM[Either.right[1],Either:left[10]]]
+     *     //List[AnyM[Either.lazyRight[1],Either:lazyLeft[10]]]
      * }
      *
      * @param anyM Iterable containing Eithers
      * @return List of AnyMs
      */
-    public static <ST,  T> ListX<AnyMValue2<either,ST,T>> listFromEither(final Iterable<Either<ST, T>> anyM) {
+    public static <ST,  T> ListX<AnyMValue2<lazyEither,ST,T>> listFromEither(final Iterable<LazyEither<ST, T>> anyM) {
         Objects.requireNonNull(anyM);
         return ReactiveSeq.fromIterable(anyM)
-                .map(e -> AnyM.fromEither(e))
+                .map(e -> AnyM.fromLazyEither(e))
                 .toListX();
     }
     /**
@@ -1147,17 +1147,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Xors and convert them into a List of AnyMs
      * e.g.
      * {@code 
-     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Xor.primary(1),Xor.secondary(10));
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Xor.lazyRight(1),Xor.lazyLeft(10));
      *     
-     *     //List[AnyM[Xor:primary[1],Xor:secondaary[10]]]
+     *     //List[AnyM[Xor:lazyRight[1],Xor:secondaary[10]]]
      * }
      * 
      * @param anyM Iterable containing Xors
      * @return List of AnyMs
      */
-    public static <ST, T> ListX<AnyMValue2<xor,ST,T>> listFromXor(final Iterable<Xor<ST, T>> anyM) {
+    public static <ST, T> ListX<AnyMValue2<either,ST,T>> listFromXor(final Iterable<Either<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
-                            .map(i -> AnyM.fromXor(i))
+                            .map(i -> AnyM.fromLazyEither(i))
                             .collect(ListX.listXCollector());
     }
 
@@ -1165,9 +1165,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * Take an iterable containing Iors and convert them into a List of AnyMs
      * e.g.
      * {@code 
-     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Ior.primary(1),Ior.secondary(10));
+     *     List<AnyM<Integer>> anyMs = AnyM.listFromXor(Arrays.asList(Ior.lazyRight(1),Ior.lazyLeft(10));
      *     
-     *     //List[AnyM[Ior:primary[1],Ior:secondaary[10]]]
+     *     //List[AnyM[Ior:lazyRight[1],Ior:secondaary[10]]]
      * }
      * 
      * @param anyM Iterable containing Iors

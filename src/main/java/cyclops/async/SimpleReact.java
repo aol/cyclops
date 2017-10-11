@@ -223,7 +223,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * This internal method has been left protected, so it can be mocked / stubbed as some of the entry points are final
+     * This internal method has been lazyLeft protected, so it can be mocked / stubbed as some of the entry points are final
      * 
      */
     @SafeVarargs

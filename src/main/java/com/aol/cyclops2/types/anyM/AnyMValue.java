@@ -9,7 +9,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
@@ -361,8 +361,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
     
     @Override
-    default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
-        return Xor.secondary(this);
+    default Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
+        return Either.left(this);
     }
 
     /* (non-Javadoc)

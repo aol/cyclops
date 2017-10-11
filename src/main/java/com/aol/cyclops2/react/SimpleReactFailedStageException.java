@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react;
 
 
-import cyclops.control.Xor;
+import cyclops.control.Either;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,9 +18,9 @@ public class SimpleReactFailedStageException extends RuntimeException {
         return (T) value;
     }
 
-    public static Xor<Throwable, SimpleReactFailedStageException> matchable(final Throwable t) {
-        final Xor<Throwable, SimpleReactFailedStageException> error = t instanceof SimpleReactFailedStageException
-                ? Xor.primary((SimpleReactFailedStageException) t) : Xor.secondary(t);
+    public static Either<Throwable, SimpleReactFailedStageException> matchable(final Throwable t) {
+        final Either<Throwable, SimpleReactFailedStageException> error = t instanceof SimpleReactFailedStageException
+                ? Either.right((SimpleReactFailedStageException) t) : Either.left(t);
         return error;
     }
 }

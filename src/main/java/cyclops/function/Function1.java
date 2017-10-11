@@ -118,21 +118,21 @@ public interface Function1<T,  R> extends Function<T,R>{
         return Memoize.memoizeFunctionAsync(this,ex,timeToLiveMillis);
     }
 
-    default <T2,R2> Function1<Xor<T, T2>, Xor<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
-        Function1<T, Xor<R, R2>> first = andThen(Xor::secondary);
-        Function<? super T2, ? extends Xor<R,R2>> second = fn.andThen(Xor::primary);
+    default <T2,R2> Function1<Either<T, T2>, Either<R, R2>> merge(Function<? super T2, ? extends R2> fn) {
+        Function1<T, Either<R, R2>> first = andThen(Either::left);
+        Function<? super T2, ? extends Either<R,R2>> second = fn.andThen(Either::right);
         return first.fanIn(second);
 
     }
 
-    default <T2> Function1<Xor<T, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
+    default <T2> Function1<Either<T, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
         return e ->   e.visit(this, fanIn);
     }
-    default <__> Function1<Xor<T, __>, Xor<R, __>> leftFn() {
+    default <__> Function1<Either<T, __>, Either<R, __>> leftFn() {
 
         return either->  either.bimap(this,Function.identity());
     }
-    default <__> Function1<Xor<__, T>, Xor<__,R>> rightFn() {
+    default <__> Function1<Either<__, T>, Either<__,R>> rightFn() {
 
         return either->  either.bimap(Function.identity(),this);
     }
@@ -260,7 +260,7 @@ public interface Function1<T,  R> extends Function<T,R>{
         default <X extends Throwable> Try<R,X> mapF(Try<T1,X> xor) {
             return xor.map(this);
         }
-        default <ST> Xor<ST,R> mapF(Xor<ST,T1> xor) {
+        default <ST> Either<ST,R> mapF(Either<ST,T1> xor) {
             return xor.map(this);
         }
         default <ST> Ior<ST,R> mapF(Ior<ST,T1> ior) {

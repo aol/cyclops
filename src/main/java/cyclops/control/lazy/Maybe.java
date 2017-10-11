@@ -3,7 +3,7 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -112,7 +112,7 @@ return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
 public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
-    public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Xor<T, R>>> fn){
+    public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
     }
     public static  <T> Kleisli<maybe,Maybe<T>,T> kindKleisli(){
@@ -1734,7 +1734,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return new MonadRec<maybe>(){
 
                 @Override
-                public <T, R> Higher<maybe, R> tailRec(T initial, Function<? super T, ? extends Higher<maybe, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<maybe, R> tailRec(T initial, Function<? super T, ? extends Higher<maybe, ? extends Either<T, R>>> fn) {
                     return Maybe.tailRec(initial,fn.andThen(Maybe::narrowK));
                 }
             };

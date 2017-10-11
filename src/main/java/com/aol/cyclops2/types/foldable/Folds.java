@@ -357,7 +357,7 @@ public interface Folds<T> {
      *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
      * @param accumulator Combiner function
      * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
+     *          next value to the combiner function as this Folds is traversed from lazyLeft to lazyRight
      */
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return stream().reduce(identity, accumulator);
@@ -369,7 +369,7 @@ public interface Folds<T> {
      * @param identity Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combiner function
      * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
+     *          next value to the combiner function as this Folds is traversed from lazyLeft to lazyRight
      */
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         final Folds<T> foldable = stream();
@@ -467,7 +467,7 @@ public interface Folds<T> {
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      * 
      * <pre>
      * {@code 
@@ -485,7 +485,7 @@ public interface Folds<T> {
 
     /**
      * 
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      * 
      * @param identity  Identity value for the combiner function (leaves the input unchanged)
      * @param accumulator Combining function
@@ -575,14 +575,14 @@ public interface Folds<T> {
     }
 
     /**
-     *  Print each value in this Folds to the console in turn (left-to-right)
+     *  Print each value in this Folds to the console in turn (lazyLeft-to-lazyRight)
      */
     default void printOut() {
         stream().printOut();
     }
 
     /**
-     *  Print each value in this Folds to the error console in turn (left-to-right)
+     *  Print each value in this Folds to the error console in turn (lazyLeft-to-lazyRight)
      */
     default void printErr() {
         stream().printErr();

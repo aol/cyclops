@@ -4,7 +4,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -20,11 +20,11 @@ public class XorTest {
     @Test
     public void visitAny(){
        
-        Xor<One,Two> test = Xor.primary(new Two());
-        test.to(Xor::applyAny).apply(b->b.toString());
-        Xor.primary(10).to(Xor::consumeAny).accept(System.out::println);
-        Xor.primary(10).to(e->Xor.visitAny(System.out::println,e));
-        Object value = Xor.primary(10).to(e->Xor.visitAny(e,x->x));
+        Either<One,Two> test = Either.right(new Two());
+        test.to(Either::applyAny).apply(b->b.toString());
+        Either.right(10).to(Either::consumeAny).accept(System.out::println);
+        Either.right(10).to(e-> Either.visitAny(System.out::println,e));
+        Object value = Either.right(10).to(e-> Either.visitAny(e, x->x));
         assertThat(value,equalTo(10));
     }
 	
@@ -40,9 +40,9 @@ public class XorTest {
 	   
 	    
 	    
-		assertThat(Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(Xor.secondary("failed1"),
-													Xor.secondary("failed2"),
-													Xor.primary("success"))
+		assertThat(Either.accumulateLeft(Monoids.stringConcat,ListX.of(Either.left("failed1"),
+													Either.left("failed2"),
+													Either.right("success"))
 													).orElse(":"),equalTo("failed1failed2"));
 		
 	}
@@ -54,21 +54,21 @@ public class XorTest {
 
 	@Test
 	public void applicative(){
-	    Xor<String,String> fail1 =  Xor.secondary("failed1");
-	    Xor<String,String> result = fail1.combine(Xor.secondary("failed2"), Semigroups.stringConcat,(a,b)->a+b);
-	    assertThat(result.secondaryOrElse(":"),equalTo("failed2failed1"));
+	    Either<String,String> fail1 =  Either.left("failed1");
+	    Either<String,String> result = fail1.combine(Either.left("failed2"), Semigroups.stringConcat,(a, b)->a+b);
+	    assertThat(result.leftOrElse(":"),equalTo("failed2failed1"));
 	}
 	@Test
     public void applicativeColleciton(){
-        Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<LinkedListX<String>,String> result = fail1.list().combine(Xor.secondary("failed2").list(), Semigroups.collectionXConcat(),(a, b)->a+b);
-        assertThat(result.secondaryOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
+        Either<String,String> fail1 =  Either.left("failed1");
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionXConcat(),(a, b)->a+b);
+        assertThat(result.leftOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	@Test
     public void applicativePStack(){
-        Xor<String,String> fail1 =  Xor.secondary("failed1");
-        Xor<LinkedListX<String>,String> result = fail1.combineToList(Xor.<String,String>secondary("failed2"),(a, b)->a+b);
-        assertThat(result.secondaryOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
+        Either<String,String> fail1 =  Either.left("failed1");
+        Either<LinkedListX<String>,String> result = fail1.combineToList(Either.<String,String>left("failed2"),(a, b)->a+b);
+        assertThat(result.leftOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
     }
 	
 

@@ -7,7 +7,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyM2;
@@ -326,8 +326,8 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     @Override
-    default Xor<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
-        return Xor.secondary(this);
+    default Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
+        return Either.left(this);
     }
 
     /* (non-Javadoc)

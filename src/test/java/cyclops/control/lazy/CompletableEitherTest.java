@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either.CompletableEither;
+import cyclops.control.lazy.LazyEither.CompletableEither;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -28,15 +28,15 @@ import static org.junit.Assert.*;
 public class CompletableEitherTest {
 
     public static <RT> CompletableEither<RT,RT> right(RT value){
-        CompletableEither<RT,RT> completable = Either.either();
+        CompletableEither<RT,RT> completable = LazyEither.either();
         completable.complete(value);
         return completable;
     }
     @Test
     public void completableTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                                           .flatMap(i->Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                                           .flatMap(i-> LazyEither.right(i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());
@@ -47,28 +47,28 @@ public class CompletableEitherTest {
     }
     @Test
     public void completableNoneTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                                                      .flatMap(i->Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                      .flatMap(i-> LazyEither.right(i+1));
 
         completable.complete(null);
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryOrElse(null),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.leftOrElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
     public void completableErrorTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                .flatMap(i->Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                .flatMap(i-> LazyEither.right(i+1));
 
         completable.completeExceptionally(new IllegalStateException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryOrElse(null),instanceOf(IllegalStateException.class));
+        assertThat(mapped.leftOrElse(null),instanceOf(IllegalStateException.class));
 
     }
 
@@ -101,22 +101,22 @@ public class CompletableEitherTest {
         System.out.println(even(CompletableEitherTest.right(200000)).get());
     }
 
-    public Either<Throwable,String> odd(Either<Throwable,Integer> n) {
+    public LazyEither<Throwable,String> odd(LazyEither<Throwable,Integer> n) {
 
         return n.flatMap(x -> even(CompletableEitherTest.right(x - 1)));
     }
 
-    public Either<Throwable,String> even(Either<Throwable,Integer> n) {
+    public LazyEither<Throwable,String> even(LazyEither<Throwable,Integer> n) {
         return n.flatMap(x -> {
             return x <= 0 ? CompletableEitherTest.right("done") : odd(CompletableEitherTest.right(x - 1));
         });
     }
-    Either<Throwable,Integer> just;
-    Either<Throwable,Integer> none;
+    LazyEither<Throwable,Integer> just;
+    LazyEither<Throwable,Integer> none;
     @Before
     public void setUp() throws Exception {
         just = CompletableEitherTest.right(10);
-        none = Either.left(new NoSuchElementException("none"));
+        none = LazyEither.left(new NoSuchElementException("none"));
     }
 
 
@@ -140,8 +140,8 @@ public class CompletableEitherTest {
     }
     @Test
     public void visitEither(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Either.right("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Either.left("no")));
+        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
+        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
     }
     @Test
     public void testToMaybe() {
@@ -170,8 +170,8 @@ public class CompletableEitherTest {
     public void hashCodeTest(){
        
         System.out.println(new Integer(10).hashCode());
-        System.out.println("Xor " + Xor.primary(10).hashCode());
-        assertThat(Xor.primary(10).hashCode(),equalTo(CompletableEitherTest.right(10).hashCode()));
+        System.out.println("Xor " + Either.right(10).hashCode());
+        assertThat(Either.right(10).hashCode(),equalTo(CompletableEitherTest.right(10).hashCode()));
     }
 
 
@@ -180,27 +180,27 @@ public class CompletableEitherTest {
 
     @Test
     public void testUnitT() {
-        assertThat(just.unit(20),equalTo(Either.right(20)));
+        assertThat(just.unit(20),equalTo(LazyEither.right(20)));
     }
 
     
 
     @Test
     public void testisPrimary() {
-        assertTrue(just.isPrimary());
-        assertFalse(none.isPrimary());
+        assertTrue(just.isRight());
+        assertFalse(none.isRight());
     }
 
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5),equalTo(Either.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
 
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->CompletableEitherTest.right(i+5)),equalTo(Either.right(15)));
+        assertThat(just.flatMap(i->CompletableEitherTest.right(i+5)),equalTo(LazyEither.right(15)));
 
     }
 
@@ -291,7 +291,7 @@ public class CompletableEitherTest {
       @Test
     public void testMkString() {
         assertThat(just.mkString(),equalTo("CompletableEither[10]"));
-        assertThat(none.mkString(),equalTo("Either.left[java.util.NoSuchElementException: none]"));
+        assertThat(none.mkString(),equalTo("Either.lazyLeft[java.util.NoSuchElementException: none]"));
     }
 
 
@@ -400,12 +400,12 @@ public class CompletableEitherTest {
 
     @Test
     public void testCast() {
-        Either<?,Number> num = just.cast(Number.class);
+        LazyEither<?,Number> num = just.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5),equalTo(Either.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
     }
     
     @Test
@@ -422,17 +422,17 @@ public class CompletableEitherTest {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either.right(65)));
+        assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither.right(65)));
     }
 
     @Test
     public void equalsTest(){
         assertTrue(just.equals(CompletableEitherTest.right(10)
                                      .map(i->i)));
-        assertThat(just,equalTo(Either.left(10)
-                                      .secondaryFlatMap(i->CompletableEitherTest.right(i))));
-        assertThat(Either.left(10)
-                        .flatMap(i->Either.right(i)),equalTo(Either.left(10)));
+        assertThat(just,equalTo(LazyEither.left(10)
+                                      .flatMapLeft(i->CompletableEitherTest.right(i))));
+        assertThat(LazyEither.left(10)
+                        .flatMap(i-> LazyEither.right(i)),equalTo(LazyEither.left(10)));
     }
 
 

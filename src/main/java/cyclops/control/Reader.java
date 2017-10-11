@@ -40,7 +40,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
     public static <T,R> Reader<T,R> of(Reader<T,R> i){
         return i;
     }
-    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Xor<T, R>>> fn ){
+    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Either<T, R>>> fn ){
         return narrowK(Instances.<IN, T, R>monadRec().tailRec(initial, fn));
     }
     public static  <R,T> Kleisli<Higher<reader,T>,Reader<T,R>,R> kindKleisli(){
@@ -367,16 +367,16 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
         public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
              return new MonadRec<Higher<reader, IN>>() {
                 @Override
-                public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Either<T, R>>> fn) {
 
                     Reader<IN, Reader<IN, R>> reader = (IN in) -> {
-                        Reader<IN, ? extends Xor<T, R>> next[] = new Reader[1];
-                        next[0] = __ -> Xor.secondary(initial);
+                        Reader<IN, ? extends Either<T, R>> next[] = new Reader[1];
+                        next[0] = __ -> Either.left(initial);
                         boolean cont = true;
                         do {
 
                             cont = next[0].apply(in).visit(s -> {
-                                Reader<IN, ? extends Xor<T, R>> x = narrowK(fn.apply(s));
+                                Reader<IN, ? extends Either<T, R>> x = narrowK(fn.apply(s));
 
                                 next[0] = narrowK(fn.apply(s));
                                 return true;

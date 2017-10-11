@@ -2,7 +2,7 @@ package cyclops.monads;
 
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.stream.ReactiveSeq;
@@ -37,13 +37,13 @@ public class KleisliMTest {
     public void leftK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(Option.some(10)),
-                equalTo(k1.leftK(stream.INSTANCE).apply(Xor.secondary(10)).reactiveSeq().map(Xor::secondaryGet).toList()));
+                equalTo(k1.leftK(stream.INSTANCE).apply(Either.left(10)).reactiveSeq().map(Either::getLeft).toList()));
     }
     @Test
     public void rightK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(Option.some(10)),
-                equalTo(k1.rightK(stream.INSTANCE).apply(Xor.primary(10)).reactiveSeq().map(Xor::get).toList()));
+                equalTo(k1.rightK(stream.INSTANCE).apply(Either.right(10)).reactiveSeq().map(Either::get).toList()));
     }
     @Test
     public void andThen(){

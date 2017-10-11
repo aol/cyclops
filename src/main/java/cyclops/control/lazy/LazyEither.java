@@ -12,7 +12,7 @@ import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.monads.Witness.either;
+import cyclops.monads.Witness.lazyEither;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.function.*;
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
  the monadic chain of computations will only be executed once data arrives).
  * 
- * 'Right' (or primary type) biased disjunct union. 
+ * 'Right' (or lazyRight type) biased disjunct union.
  
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
@@ -58,22 +58,22 @@ import java.util.function.*;
  *  </pre>
  *
  *  Either's have two states
- *  Right : Most methods operate naturally on the primary type, if it is present. If it is not, nothing happens.
- *  Left : Most methods do nothing to the secondary type if it is present.
- *              To operate on the Left type first call swap() or use secondary analogs of the main operators.
+ *  Right : Most methods operate naturally on the lazyRight type, if it is present. If it is not, nothing happens.
+ *  Left : Most methods do nothing to the lazyLeft type if it is present.
+ *              To operate on the Left type first call swap() or use lazyLeft analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.right("hello").transform(v->v+" world")
- *    //Either.right["hello world"]
+ *      Either.lazyRight("hello").transform(v->v+" world")
+ *    //Either.lazyRight["hello world"]
  *  }
  *  </pre>
  *
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.left("hello").transform(v->v+" world")
+ *      Either.lazyLeft("hello").transform(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
@@ -83,17 +83,17 @@ import java.util.function.*;
  *   Values can be accumulated via
  *  <pre>
  *  {@code
- *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
-                                                    Either.left("failed2"),
-                                                    Either.right("success")),
+ *  Xor.accumulateLeft(ListX.of(Either.lazyLeft("failed1"),
+                                                    Either.lazyLeft("failed2"),
+                                                    Either.lazyRight("success")),
                                                     SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
- *   Either<String,String> fail1 = Either.left("failed1");
+ *   Either<String,String> fail1 = Either.lazyLeft("failed1");
      fail1.swap().combine((a,b)->a+b)
-                 .combine(Either.left("failed2").swap())
-                 .combine(Either.<String,String>primary("success").swap())
+                 .combine(Either.lazyLeft("failed2").swap())
+                 .combine(Either.<String,String>lazyRight("success").swap())
  *
  *  //failed1failed2
  *  }
@@ -107,28 +107,28 @@ import java.util.function.*;
  * @param <LT> Left type
  * @param <RT> Right type
  */
-public interface Either<LT, RT> extends Xor<LT, RT>{
+public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     /**
     default Either<NonEmptyList<LT>, RT> nel() {
-        return Either.fromLazy(Eval.always(()->visit(s->Either.left(NonEmptyList.of(s)),p->Either.right(p))));
+        return Either.fromLazy(Eval.always(()->visit(s->Either.lazyLeft(NonEmptyList.of(s)),p->Either.lazyRight(p))));
     }
     **/
-    default Either<LT,RT> accumulate(Xor<LT,RT> next,Semigroup<RT> sg){
+    default LazyEither<LT,RT> accumulate(Either<LT,RT> next, Semigroup<RT> sg){
         return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
     }
-    default Either<LT,RT> accumulatePrimary(Semigroup<RT> sg, Xor<LT,RT>... values){
-        return (Either<LT,RT>)Xor.super.accumulatePrimary(sg,values);
+    default LazyEither<LT,RT> accumulateRight(Semigroup<RT> sg, Either<LT,RT>... values){
+        return (LazyEither<LT,RT>)Either.super.accumulateRight(sg,values);
     }
-    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT> next){
-        return secondaryFlatMap(s1->next.secondaryMap(s2->sg.apply(s1,s2)));
+    default LazyEither<LT,RT> accumulate(Semigroup<LT> sg, Either<LT,RT> next){
+        return flatMapLeft(s1->next.mapLeft(s2->sg.apply(s1,s2)));
     }
-    default Either<LT,RT> accumulate(Semigroup<LT> sg, Xor<LT,RT>... values){
-        return (Either<LT,RT>)Xor.super.accumulate(sg,values);
+    default LazyEither<LT,RT> accumulate(Semigroup<LT> sg, Either<LT,RT>... values){
+        return (LazyEither<LT,RT>)Either.super.accumulate(sg,values);
     }
-    public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Xor<T, R>>> fn){
-        Either<L,? extends Xor<T, R>> next[] = new Either[1];
-        next[0] = Either.right(Xor.secondary(initial));
+    public static  <L,T,R> LazyEither<L,R> tailRec(T initial, Function<? super T, ? extends LazyEither<L,? extends Either<T, R>>> fn){
+        LazyEither<L,? extends Either<T, R>> next[] = new LazyEither[1];
+        next[0] = LazyEither.right(Either.left(initial));
         boolean cont = true;
         do {
             cont = next[0].visit(p -> p.visit(s -> {
@@ -140,7 +140,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
 
-    static <RT> Either<Throwable,RT> async( final Executor ex, final Supplier<RT> s){
+    static <RT> LazyEither<Throwable,RT> async(final Executor ex, final Supplier<RT> s){
         return fromFuture(Future.of(s,ex));
     }
     /**
@@ -187,14 +187,14 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      */
     static <RT> CompletableEither<RT,RT> either(){
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
-        return new Either.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
+        return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
 
     @AllArgsConstructor
-    static class CompletableEither<ORG,RT> implements Either<Throwable,RT>, Completable<ORG> {
+    static class CompletableEither<ORG,RT> implements LazyEither<Throwable,RT>, Completable<ORG> {
 
         public final Completable.CompletablePublisher<ORG> complete;
-        public final Either<Throwable,RT> either;
+        public final LazyEither<Throwable,RT> either;
 
         @Override
         public boolean isFailed() {
@@ -224,17 +224,17 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
         @Override
-        public <R> Either<Throwable, R> map(Function<? super RT, ? extends R> fn) {
+        public <R> LazyEither<Throwable, R> map(Function<? super RT, ? extends R> fn) {
             return either.map(fn);
         }
 
         @Override
-        public Either<Throwable, RT> peek(Consumer<? super RT> action) {
+        public LazyEither<Throwable, RT> peek(Consumer<? super RT> action) {
             return either.peek(action);
         }
 
         @Override
-        public Either<RT, Throwable> swap() {
+        public LazyEither<RT, Throwable> swap() {
             return either.swap();
         }
 
@@ -251,13 +251,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
         @Override
-        public Option<Throwable> secondaryGet() {
-            return either.secondaryGet();
+        public Option<Throwable> getLeft() {
+            return either.getLeft();
         }
 
         @Override
-        public Throwable secondaryOrElse(Throwable alt) {
-            return either.secondaryOrElse(alt);
+        public Throwable leftOrElse(Throwable alt) {
+            return either.leftOrElse(alt);
         }
 
         @Override
@@ -266,12 +266,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public ReactiveSeq<java.lang.Throwable> secondaryToStream() {
-            return either.secondaryToStream();
+        public ReactiveSeq<java.lang.Throwable> leftToStream() {
+            return either.leftToStream();
         }
 
         @Override
-        public <RT1> Either<Throwable, RT1> flatMap(Function<? super RT, ? extends Xor<? extends Throwable, ? extends RT1>> mapper) {
+        public <RT1> LazyEither<Throwable, RT1> flatMap(Function<? super RT, ? extends Either<? extends Throwable, ? extends RT1>> mapper) {
             return either.flatMap(mapper);
         }
 
@@ -296,13 +296,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Either<Throwable, RT> secondaryToPrimayFlatMap(Function<? super Throwable, ? extends Xor<Throwable, RT>> fn) {
-            return either.secondaryToPrimayFlatMap(fn);
+        public LazyEither<Throwable, RT> flatMapLeftToRight(Function<? super Throwable, ? extends Either<Throwable, RT>> fn) {
+            return either.flatMapLeftToRight(fn);
         }
 
         @Override
-        public <LT1> Either<LT1, RT> secondaryFlatMap(Function<? super Throwable, ? extends Xor<LT1, RT>> mapper) {
-            return either.secondaryFlatMap(mapper);
+        public <LT1> LazyEither<LT1, RT> flatMapLeft(Function<? super Throwable, ? extends Either<LT1, RT>> mapper) {
+            return either.flatMapLeft(mapper);
         }
 
         @Override
@@ -311,18 +311,18 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Either<java.lang.Throwable, RT> secondaryPeek(Consumer<? super Throwable> action) {
-            return either.secondaryPeek(action);
+        public LazyEither<Throwable, RT> peekLeft(Consumer<? super Throwable> action) {
+            return either.peekLeft(action);
         }
 
         @Override
-        public <R> Either<R, RT> secondaryMap(Function<? super Throwable, ? extends R> fn) {
-            return either.secondaryMap(fn);
+        public <R> LazyEither<R, RT> mapLeft(Function<? super Throwable, ? extends R> fn) {
+            return either.mapLeft(fn);
         }
 
         @Override
-        public Either<Throwable, RT> secondaryToPrimayMap(Function<? super Throwable, ? extends RT> fn) {
-            return either.secondaryToPrimayMap(fn);
+        public LazyEither<Throwable, RT> mapLeftToRight(Function<? super Throwable, ? extends RT> fn) {
+            return either.mapLeftToRight(fn);
         }
 
         @Override
@@ -346,20 +346,20 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
     }
 
-    static <ST,PT> Either<ST,PT> fromXor(Xor<ST,PT> xor){
-        if(xor instanceof Either)
-            return (Either<ST,PT>)xor;
-        return xor.visit(Either::left, Either::right);
+    static <ST,PT> LazyEither<ST,PT> fromXor(Either<ST,PT> xor){
+        if(xor instanceof LazyEither)
+            return (LazyEither<ST,PT>)xor;
+        return xor.visit(LazyEither::left, LazyEither::right);
     }
 
-    static <LT,RT> Either<LT,RT> fromLazy(Eval<Either<LT,RT>> lazy){
-        return new Either.Lazy<>(lazy);
+    static <LT,RT> LazyEither<LT,RT> fromLazy(Eval<LazyEither<LT,RT>> lazy){
+        return new LazyEither.Lazy<>(lazy);
     }
 
-    static <T> Either<Throwable,T> fromFuture(Future<T> future){
-        return fromLazy(Eval.<Either<Throwable,T>>fromFuture(
-                        future.map(e->e!=null? Either.<Throwable,T>right(e) : Either.<Throwable,T>left(new NoSuchElementException()))
-                            .recover(t->Either.<Throwable,T>left(t.getCause()))));
+    static <T> LazyEither<Throwable,T> fromFuture(Future<T> future){
+        return fromLazy(Eval.<LazyEither<Throwable,T>>fromFuture(
+                        future.map(e->e!=null? LazyEither.<Throwable,T>right(e) : LazyEither.<Throwable,T>left(new NoSuchElementException()))
+                            .recover(t-> LazyEither.<Throwable,T>left(t.getCause()))));
     }
 
     /**
@@ -368,12 +368,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * <pre>
      * {@code
      *
-     * Either<String,Integer> just  = Either.right(10);
-       Either<String,Integer> none = Either.left("none");
+     * Either<String,Integer> just  = Either.lazyRight(10);
+       Either<String,Integer> none = Either.lazyLeft("none");
 
 
-     * Either<ListX<String>,ListX<Integer>> xors =Either.sequence(ListX.of(just,none,Either.right(1)));
-       //Eitehr.right(ListX.of(10,1)));
+     * Either<ListX<String>,ListX<Integer>> xors =Either.sequence(ListX.of(just,none,Either.lazyRight(1)));
+       //Eitehr.lazyRight(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -382,19 +382,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param Either Either to sequence
      * @return Either Sequenced
      */
-    public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<Either<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromEither).to().listX(), either.INSTANCE)
-                .to(Witness::either);
+        return AnyM.sequence(xors.stream().filter(LazyEither::isRight).map(AnyM::fromLazyEither).to().listX(), lazyEither.INSTANCE)
+                .to(Witness::lazyEither);
     }
-    public static <LT1, PT> Either<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<Either<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        Either<ListX<PT>,ListX<LT1>> res = AnyM.sequence(xors.stream()
-                                 .filter(Either::isRight)
-                                 .map(i->AnyM.fromEither(i.swap())).to()
+        LazyEither<ListX<PT>,ListX<LT1>> res = AnyM.sequence(xors.stream()
+                                 .filter(LazyEither::isRight)
+                                 .map(i->AnyM.fromLazyEither(i.swap())).to()
                                  .listX(),
-                                either.INSTANCE)
-                    .to(Witness::either);
+                                lazyEither.INSTANCE)
+                    .to(Witness::lazyEither);
         return res.swap();
     }
     /**
@@ -405,11 +405,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param fn Transformation function
      * @return An Either with a transformed list
      */
-    public static <LT1, PT,R> Either<ListX<LT1>,ListX<R>> traverseRight(final CollectionX<Either<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1, PT,R> LazyEither<ListX<LT1>,ListX<R>> traverseRight(final CollectionX<LazyEither<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequenceRight(xors).map(l->l.map(fn));
     }
-    public static <LT1, PT,R> Either<ListX<R>,ListX<PT>> traverseLeft(final CollectionX<Either<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
-        return  sequenceLeft(xors).secondaryMap(l->l.map(fn));
+    public static <LT1, PT,R> LazyEither<ListX<R>,ListX<PT>> traverseLeft(final CollectionX<LazyEither<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
+        return  sequenceLeft(xors).mapLeft(l->l.map(fn));
     }
 
 
@@ -419,32 +419,32 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *
      * <pre>
      * {@code
-     * Either3<String,String,Integer> just  = Either3.right(10);
-       Either3<String,String,Integer> none = Either3.left("none");
+     * Either3<String,String,Integer> just  = Either3.lazyRight(10);
+       Either3<String,String,Integer> none = Either3.lazyLeft("none");
      *
-     *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either3.right(1)));
-        //Either3.right(11);
+     *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulateRight(Monoids.intSum,ListX.of(just,none,Either3.lazyRight(1)));
+        //Either3.lazyRight(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Eithers to accumulate primary values
+     * @param xors Collection of Eithers to accumulate lazyRight values
      * @param reducer  Reducer to accumulate results
-     * @return  Either populated with the accumulate primary operation
+     * @return  Either populated with the accumulate lazyRight operation
      */
-    public static <LT1, RT> Either<ListX<LT1>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<Either<LT1, RT>> xors) {
+    public static <LT1, RT> LazyEither<ListX<LT1>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither<LT1, RT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
 
-    public static <LT, B, RT> Either<LT,RT> rightEval(final Eval<RT> right) {
-        return new Right<>(
+    public static <LT, B, RT> LazyEither<LT,RT> rightEval(final Eval<RT> right) {
+        return new Right(
                            right);
     }
 
-    public static <LT, B, RT> Either<LT, RT> leftEval(final Eval<LT> left) {
-        return new Left<>(
+    public static <LT, B, RT> LazyEither<LT, RT> leftEval(final Eval<LT> left) {
+        return new Left(
                           left);
     }
 
@@ -464,19 +464,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param either Either to consume value for
      * @return Consumer we can applyHKT to consume value
      */
-    static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(Either<LT, RT> either){
+    static <X, LT extends X, M extends X, RT extends X>  Consumer<Consumer<? super X>> consumeAny(LazyEither<LT, RT> either){
         return in->visitAny(in,either);
     }
 
-    static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(Either<LT, RT> either){
+    static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(LazyEither<LT, RT> either){
         return in->visitAny(either,in);
     }
 
-    static <X, PT extends X, ST extends X,R> R visitAny(Either<ST, PT> either, Function<? super X, ? extends R> fn){
+    static <X, PT extends X, ST extends X,R> R visitAny(LazyEither<ST, PT> either, Function<? super X, ? extends R> fn){
         return either.visit(fn, fn);
     }
 
-    static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c, Either<LT, RT> either){
+    static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c, LazyEither<LT, RT> either){
         Function<? super X, X> fn = x ->{
             c.accept(x);
             return x;
@@ -491,19 +491,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     @Override
-    default <T2, R1, R2, R3, R> Either<LT, R> forEach4(Function<? super RT, ? extends Xor<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends Xor<LT, R2>> value2,
-                                                       Function3<? super RT, ? super R1, ? super R2, ? extends Xor<LT, R3>> value3, Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return (Either<LT,R>)Xor.super.forEach4(value1,value2,value3,yieldingFunction);
+    default <T2, R1, R2, R3, R> LazyEither<LT, R> forEach4(Function<? super RT, ? extends Either<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends Either<LT, R2>> value2,
+                                                           Function3<? super RT, ? super R1, ? super R2, ? extends Either<LT, R3>> value3, Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+        return (LazyEither<LT,R>)Either.super.forEach4(value1,value2,value3,yieldingFunction);
     }
 
     @Override
-    default <T2, R1, R2, R> Xor<LT, R> forEach3(Function<? super RT, ? extends Xor<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends Xor<LT, R2>> value2, Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        return (Either<LT, R>)Xor.super.forEach3(value1, value2, yieldingFunction);
+    default <T2, R1, R2, R> Either<LT, R> forEach3(Function<? super RT, ? extends Either<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends Either<LT, R2>> value2, Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+        return (LazyEither<LT, R>)Either.super.forEach3(value1, value2, yieldingFunction);
     }
 
     @Override
-    default <R1, R> Xor<LT, R> forEach2(Function<? super RT, ? extends Xor<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
-        return (Either<LT, R>)Xor.super.forEach2(value1, yieldingFunction);
+    default <R1, R> Either<LT, R> forEach2(Function<? super RT, ? extends Either<LT, R1>> value1, BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
+        return (LazyEither<LT, R>)Either.super.forEach2(value1, yieldingFunction);
     }
 
 
@@ -511,19 +511,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.control.Xor#combineToList(com.aol.cyclops2.control.Xor, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Either<LinkedListX<LT>, R> combineToList(Xor<LT, ? extends T2> app,
-                                                             BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> LazyEither<LinkedListX<LT>, R> combineToList(Either<LT, ? extends T2> app,
+                                                                 BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (Either<LinkedListX<LT>, R>)Xor.super.combineToList(app, fn);
+        return (LazyEither<LinkedListX<LT>, R>)Either.super.combineToList(app, fn);
     }
     /* (non-Javadoc)
      * @see com.aol.cyclops2.control.Xor#combine(com.aol.cyclops2.control.Xor, java.util.function.BinaryOperator, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> Either<LT, R> combine(Xor<? extends LT, ? extends T2> app, BinaryOperator<LT> semigroup,
-                                          BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> LazyEither<LT, R> combine(Either<? extends LT, ? extends T2> app, BinaryOperator<LT> semigroup,
+                                              BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (Either<LT, R>)Xor.super.combine(app, semigroup, fn);
+        return (LazyEither<LT, R>)Either.super.combine(app, semigroup, fn);
     }
     /**
      * Lazily construct a Right Either from the supplied publisher
@@ -540,7 +540,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param pub Publisher to construct an Either from
      * @return Either constructed from the supplied Publisher
      */
-    public static <T> Either<Throwable, T> fromPublisher(final Publisher<T> pub) {
+    public static <T> LazyEither<Throwable, T> fromPublisher(final Publisher<T> pub) {
         return fromFuture(Future.fromPublisher(pub));
     }
 
@@ -559,24 +559,24 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param iterable Iterable to construct an Either from
      * @return Either constructed from the supplied Iterable
      */
-    public static <ST, T> Either<ST, T> fromIterable(final Iterable<T> iterable,T alt) {
+    public static <ST, T> LazyEither<ST, T> fromIterable(final Iterable<T> iterable, T alt) {
 
         final Iterator<T> it = iterable.iterator();
-        return it.hasNext() ? Either.right( it.next()) : Either.right(alt);
+        return it.hasNext() ? LazyEither.right( it.next()) : LazyEither.right(alt);
     }
 
 
     /**
-     * Create an instance of the secondary type. Most methods are biased to the primary type,
+     * Create an instance of the lazyLeft type. Most methods are biased to the lazyRight type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>left(10).transform(i->i+1);
-     *   //Either.left[10]
+     *   Either.<Integer,Integer>lazyLeft(10).transform(i->i+1);
+     *   //Either.lazyLeft[10]
      *
-     *    Either.<Integer,Integer>left(10).swap().transform(i->i+1);
-     *    //Either.right[11]
+     *    Either.<Integer,Integer>lazyLeft(10).swap().transform(i->i+1);
+     *    //Either.lazyRight[11]
      * }
      * </pre>
      *
@@ -584,18 +584,18 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param value to wrap
      * @return Left instance of Either
      */
-    public static <ST, PT> Either<ST, PT> left(final ST value) {
-        return new Left<>(Eval.later(()-> value));
+    public static <ST, PT> LazyEither<ST, PT> left(final ST value) {
+        return new Left(Eval.later(()-> value));
     }
 
     /**
-     * Create an instance of the primary type. Most methods are biased to the primary type,
-     * which means, for example, that the transform method operates on the primary type but does nothing on secondary Eithers
+     * Create an instance of the lazyRight type. Most methods are biased to the lazyRight type,
+     * which means, for example, that the transform method operates on the lazyRight type but does nothing on lazyLeft Eithers
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>right(10).transform(i->i+1);
-     *   //Either.right[11]
+     *   Either.<Integer,Integer>lazyRight(10).transform(i->i+1);
+     *   //Either.lazyRight[11]
      *
      *
      * }
@@ -605,9 +605,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param value To construct an Either from
      * @return Right type instanceof Either
      */
-    public static <ST, PT> Either<ST, PT> right(final PT value) {
+    public static <ST, PT> LazyEither<ST, PT> right(final PT value) {
 
-        return new Right<ST,PT>(Eval.later(()->
+        return new Right(Eval.later(()->
                            value));
     }
 
@@ -617,8 +617,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
 
-    default AnyM<either, RT> anyMEither() {
-        return AnyM.fromEither(this);
+    default AnyM<lazyEither, RT> anyMEither() {
+        return AnyM.fromLazyEither(this);
     }
 
 
@@ -627,10 +627,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
 
-    default Trampoline<Xor<LT,RT>> toTrampoline() {
+    default Trampoline<Either<LT,RT>> toTrampoline() {
         return (Trampoline)toEitherTrampoline();
     }
-    default Trampoline<Either<LT,RT>> toEitherTrampoline() {
+    default Trampoline<LazyEither<LT,RT>> toEitherTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
     // cojoin
@@ -640,7 +640,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.MonadicValue#nest()
      */
 
-    default Either<LT, Xor<LT,RT>> nest() {
+    default LazyEither<LT, Either<LT,RT>> nest() {
         return this.map(t -> unit(t));
     }
 
@@ -652,8 +652,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
-    default <T> Either<LT, T> unit(final T unit) {
-        return Either.right(unit);
+    default <T> LazyEither<LT, T> unit(final T unit) {
+        return LazyEither.right(unit);
     }
 
 
@@ -670,10 +670,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * If this Either contains the Left type, transform it's value so that it contains the Right type
      *
      *
-     * @param fn Function to transform secondary type to primary
-     * @return Either with secondary type mapped to primary
+     * @param fn Function to transform lazyLeft type to lazyRight
+     * @return Either with lazyLeft type mapped to lazyRight
      */
-    Either<LT, RT> secondaryToPrimayMap(Function<? super LT, ? extends RT> fn);
+    LazyEither<LT, RT> mapLeftToRight(Function<? super LT, ? extends RT> fn);
 
     /**
      * Always transform the Left type of this Either if it is present using the provided transformation function
@@ -681,7 +681,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param fn Transformation function for Left types
      * @return Either with Left type transformed
      */
-    <R> Either<R, RT> secondaryMap(Function<? super LT, ? extends R> fn);
+    <R> LazyEither<R, RT> mapLeft(Function<? super LT, ? extends R> fn);
 
     /*
      * (non-Javadoc)
@@ -689,7 +689,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
-    <R> Either<LT, R> map(Function<? super RT, ? extends R> fn);
+    <R> LazyEither<LT, R> map(Function<? super RT, ? extends R> fn);
 
     /**
      * Peek at the Left type value if present
@@ -697,7 +697,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param action Consumer to peek at the Left type value
      * @return Either with the same values as before
      */
-    Either<LT, RT> secondaryPeek(Consumer<? super LT> action);
+    LazyEither<LT, RT> peekLeft(Consumer<? super LT> action);
 
     /*
      * (non-Javadoc)
@@ -705,19 +705,19 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    Either<LT, RT> peek(Consumer<? super RT> action);
+    LazyEither<LT, RT> peek(Consumer<? super RT> action);
 
 
 
     @Override
-    default <R> Either<LT,R> retry(final Function<? super RT, ? extends R> fn) {
-        return (Either<LT,R>)Xor.super.retry(fn);
+    default <R> LazyEither<LT,R> retry(final Function<? super RT, ? extends R> fn) {
+        return (LazyEither<LT,R>)Either.super.retry(fn);
     }
 
 
     @Override
-    default <R> Either<LT,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Either<LT,R>)Xor.super.retry(fn,retries,delay,timeUnit);
+    default <R> LazyEither<LT,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (LazyEither<LT,R>)Either.super.retry(fn,retries,delay,timeUnit);
     }
 
 
@@ -726,11 +726,11 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *<pre>
      *  {@code
      *
-     *    Either.left("hello")
+     *    Either.lazyLeft("hello")
      *       .transform(v->v+" world")
      *    //Either.seconary["hello"]
      *
-     *    Either.left("hello")
+     *    Either.lazyLeft("hello")
      *       .swap()
      *       .transform(v->v+" world")
      *       .swap()
@@ -739,9 +739,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      *  </pre>
      *
      *
-     * @return Swap the primary and secondary types, allowing operations directly on what was the Left type
+     * @return Swap the lazyRight and lazyLeft types, allowing operations directly on what was the Left type
      */
-    Either<RT, LT> swap();
+    LazyEither<RT, LT> swap();
 
     /*
      * (non-Javadoc)
@@ -764,29 +764,29 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toEither()
+     * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    default Xor<LT, RT> toXor() {
-        return visit(Xor::secondary, Xor::primary);
+    default Either<LT, RT> toXor() {
+        return visit(Either::left, Either::right);
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toEither(java.lang.Object)
+     * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
-    default <ST2> Xor<ST2, RT> toXor(final ST2 secondary) {
-        return visit(s -> Xor.secondary(secondary), p -> Xor.primary(p));
+    default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
+        return visit(s -> Either.left(secondary), p -> Either.right(p));
     }
 
 
 
 
-    default boolean isSecondary(){
+    default boolean isLeft(){
         return isLeft();
     }
-    default boolean isPrimary(){
+    default boolean isRight(){
         return isRight();
     }
 
@@ -794,18 +794,18 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
     /**
      * Visitor pattern for this Ior.
-     * Execute the secondary function if this Either contains an element of the secondary type
-     * Execute the primary function if this Either contains an element of the primary type
+     * Execute the lazyLeft function if this Either contains an element of the lazyLeft type
+     * Execute the lazyRight function if this Either contains an element of the lazyRight type
      *
      *
      * <pre>
      * {@code
-     *  Either.right(10)
-     *     .visit(secondary->"no", primary->"yes")
+     *  Either.lazyRight(10)
+     *     .visit(lazyLeft->"no", lazyRight->"yes")
      *  //Either["yes"]
 
-        Either.left(90)
-           .visit(secondary->"no", primary->"yes")
+        Either.lazyLeft(90)
+           .visit(lazyLeft->"no", lazyRight->"yes")
         //Either["no"]
 
 
@@ -821,12 +821,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     <R> R visit(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
 
     @Deprecated // use bimap instead
-    default <R1, R2> Either<R1, R2> mapBoth(final Function<? super LT, ? extends R1> secondary,
-                                            final Function<? super RT, ? extends R2> primary) {
+    default <R1, R2> LazyEither<R1, R2> mapBoth(final Function<? super LT, ? extends R1> secondary,
+                                                final Function<? super RT, ? extends R2> primary) {
         if (isLeft())
-            return (Either<R1, R2>) swap().map(secondary)
+            return (LazyEither<R1, R2>) swap().map(secondary)
                                           .swap();
-        return (Either<R1, R2>) map(primary);
+        return (LazyEither<R1, R2>) map(primary);
     }
 
     /*
@@ -836,12 +836,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * java.util.function.Function)
      */
     @Override
-    default <R1, R2> Either<R1, R2> bimap(Function<? super LT, ? extends R1> secondary,
-                                          Function<? super RT, ? extends R2> primary) {
+    default <R1, R2> LazyEither<R1, R2> bimap(Function<? super LT, ? extends R1> secondary,
+                                              Function<? super RT, ? extends R2> primary) {
         if (isLeft())
-            return (Either<R1, R2>) swap().map(secondary)
+            return (LazyEither<R1, R2>) swap().map(secondary)
                                           .swap();
-        return (Either<R1, R2>) map(primary);
+        return (LazyEither<R1, R2>) map(primary);
     }
 
     /*
@@ -851,9 +851,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * java.util.function.Consumer)
      */
     @Override
-    default Either<LT, RT> bipeek(Consumer<? super LT> c1, Consumer<? super RT> c2) {
+    default LazyEither<LT, RT> bipeek(Consumer<? super LT> c1, Consumer<? super RT> c2) {
 
-        return (Either<LT, RT>) Xor.super.bipeek(c1, c2);
+        return (LazyEither<LT, RT>) Either.super.bipeek(c1, c2);
     }
 
     /*
@@ -863,9 +863,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * java.lang.Class)
      */
     @Override
-    default <U1, U2> Either<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
+    default <U1, U2> LazyEither<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
 
-        return (Either<U1, U2>) Xor.super.bicast(type1, type2);
+        return (LazyEither<U1, U2>) Either.super.bicast(type1, type2);
     }
 
     /*
@@ -876,10 +876,10 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * java.util.function.Function)
      */
     @Override
-    default <R1, R2> Either<R1, R2> bitrampoline(Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
-                                                 Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
+    default <R1, R2> LazyEither<R1, R2> bitrampoline(Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
+                                                     Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Either<R1, R2>) Xor.super.bitrampoline(mapper1, mapper2);
+        return (LazyEither<R1, R2>) Either.super.bitrampoline(mapper1, mapper2);
     }
 
 
@@ -898,7 +898,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     /**
      * @return The Left Value if present, otherwise null
      */
-    Option<LT> secondaryGet();
+    Option<LT> getLeft();
 
     /**
      * @return The Left value wrapped in an Optional if present, otherwise an zero Optional
@@ -906,13 +906,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     Optional<LT> secondaryToOptional();
 
     /**
-     * @return A Stream containing the secondary value if present, otherwise an zero Stream
+     * @return A Stream containing the lazyLeft value if present, otherwise an zero Stream
      */
-    ReactiveSeq<LT> secondaryToStream();
+    ReactiveSeq<LT> leftToStream();
 
 
-    <RT1> Either<LT, RT1> flatMap(
-            Function<? super RT, ? extends Xor<? extends LT,? extends RT1>> mapper);
+    <RT1> LazyEither<LT, RT1> flatMap(
+            Function<? super RT, ? extends Either<? extends LT,? extends RT1>> mapper);
 
 
 
@@ -922,7 +922,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param mapper Flattening transformation function
      * @return Either containing the value inside the result of the transformation function as the Left value, if the Left type was present
      */
-    <LT1> Either<LT1, RT> secondaryFlatMap(Function<? super LT, ? extends Xor<LT1, RT>> mapper);
+    <LT1> LazyEither<LT1, RT> flatMapLeft(Function<? super LT, ? extends Either<LT1, RT>> mapper);
 
 
     /**
@@ -931,68 +931,68 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @param fn Transformation function
      * @return Either
      */
-    Either<LT, RT> secondaryToPrimayFlatMap(Function<? super LT, ? extends Xor<LT, RT>> fn);
+    LazyEither<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn);
 
     @Deprecated // use bipeek
     void peek(Consumer<? super LT> stAction, Consumer<? super RT> ptAction);
 
     /**
-     * @return True if this is a primary Either
+     * @return True if this is a lazyRight Either
      */
     public boolean isRight();
 
     /**
-     * @return True if this is a secondary Either
+     * @return True if this is a lazyLeft Either
      */
     public boolean isLeft();
 
 
 
     /**
-     * @return An Either with the secondary type converted to a persistent list, for use with accumulating app function  {@link Either#combine(Either,BiFunction)}
+     * @return An Either with the lazyLeft type converted to a persistent list, for use with accumulating app function  {@link LazyEither#combine(LazyEither,BiFunction)}
      */
-    default Either<LinkedListX<LT>, RT> list() {
-        return secondaryMap(LinkedListX::of);
+    default LazyEither<LinkedListX<LT>, RT> list() {
+        return mapLeft(LinkedListX::of);
     }
 
     /**
      * Accumulate secondarys into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
-     * Right accumulation only occurs if all phases are primary
+     * Right accumulation only occurs if all phases are lazyRight
      *
      * @param app Value to combine with
-     * @param fn Combiner function for primary values
+     * @param fn Combiner function for lazyRight values
      * @return Combined Either
      */
-    default <T2, R> Either<LinkedListX<LT>, R> combineToList(final Either<LT, ? extends T2> app,
-                                                             final BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> LazyEither<LinkedListX<LT>, R> combineToList(final LazyEither<LT, ? extends T2> app,
+                                                                 final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return list().combine(app.list(), Semigroups.collectionXConcat(), fn);
     }
 
     /**
-     * Accumulate secondary values with the provided BinaryOperator / Semigroup {@link Semigroups}
-     * Right accumulation only occurs if all phases are primary
+     * Accumulate lazyLeft values with the provided BinaryOperator / Semigroup {@link Semigroups}
+     * Right accumulation only occurs if all phases are lazyRight
      *
      * <pre>
      * {@code
-     *  Either<String,String> fail1 =  Either.left("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
+     *  Either<String,String> fail1 =  Either.lazyLeft("failed1");
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.lazyLeft("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
      *
      * @param app Value to combine with
-     * @param semigroup to combine secondary types
-     * @param fn To combine primary types
+     * @param semigroup to combine lazyLeft types
+     * @param fn To combine lazyRight types
      * @return Combined Either
      */
 
-    default <T2, R> Either<LT, R> combine(final Either<? extends LT, ? extends T2> app,
-                                          final BinaryOperator<LT> semigroup, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        return this.visit(secondary -> app.visit(s2 -> Either.left(semigroup.apply(s2, secondary)),
-                                                 p2 -> Either.left(secondary)),
-                          primary -> app.visit(s2 -> Either.left(s2),
-                                               p2 -> Either.right(fn.apply(primary, p2))));
+    default <T2, R> LazyEither<LT, R> combine(final LazyEither<? extends LT, ? extends T2> app,
+                                              final BinaryOperator<LT> semigroup, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
+        return this.visit(secondary -> app.visit(s2 -> LazyEither.left(semigroup.apply(s2, secondary)),
+                                                 p2 -> LazyEither.left(secondary)),
+                          primary -> app.visit(s2 -> LazyEither.left(s2),
+                                               p2 -> LazyEither.right(fn.apply(primary, p2))));
     }
 
 
@@ -1010,9 +1010,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
      */
     @Override
-    default <U> Either<LT, U> cast(final Class<? extends U> type) {
+    default <U> LazyEither<LT, U> cast(final Class<? extends U> type) {
 
-        return (Either<LT, U>) Xor.super.cast(type);
+        return (LazyEither<LT, U>) Either.super.cast(type);
     }
 
     /*
@@ -1022,36 +1022,36 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
      * Function)
      */
     @Override
-    default <R> Either<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
+    default <R> LazyEither<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Either<LT, R>) Xor.super.trampoline(mapper);
+        return (LazyEither<LT, R>) Either.super.trampoline(mapper);
     }
 
-    static <ST, PT> Either<ST, PT> narrow(final Either<? extends ST, ? extends PT> broad) {
-        return (Either<ST, PT>) broad;
+    static <ST, PT> LazyEither<ST, PT> narrow(final LazyEither<? extends ST, ? extends PT> broad) {
+        return (LazyEither<ST, PT>) broad;
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static final class Lazy<ST, PT> implements Either<ST, PT> {
+    static final class Lazy<ST, PT> implements LazyEither<ST, PT> {
 
-        private final Eval<Either<ST, PT>> lazy;
+        private final Eval<LazyEither<ST, PT>> lazy;
 
-        public Eval<Xor<ST, PT>> nestedEval(){
+        public Eval<Either<ST, PT>> nestedEval(){
             return (Eval)lazy;
         }
-        private static <ST, PT> Lazy<ST, PT> lazy(Eval<Either<ST, PT>> lazy) {
+        private static <ST, PT> Lazy<ST, PT> lazy(Eval<LazyEither<ST, PT>> lazy) {
             return new Lazy<>(
                               lazy);
         }
         @Override
-        public Trampoline<Either<ST,PT>> toEitherTrampoline() {
-            Trampoline<Either<ST,PT>> trampoline = lazy.toTrampoline();
-            return new Trampoline<Either<ST,PT>>() {
+        public Trampoline<LazyEither<ST,PT>> toEitherTrampoline() {
+            Trampoline<LazyEither<ST,PT>> trampoline = lazy.toTrampoline();
+            return new Trampoline<LazyEither<ST,PT>>() {
                 @Override
-                public Either<ST,PT> get() {
-                    Either<ST,PT> either = lazy.get();
-                    while (either instanceof Either.Lazy) {
-                        either = ((Either.Lazy<ST,PT>) either).lazy.get();
+                public LazyEither<ST,PT> get() {
+                    LazyEither<ST,PT> either = lazy.get();
+                    while (either instanceof LazyEither.Lazy) {
+                        either = ((LazyEither.Lazy<ST,PT>) either).lazy.get();
                     }
                     return either;
                 }
@@ -1060,9 +1060,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                     return false;
                 }
                 @Override
-                public Trampoline<Either<ST,PT>> bounce() {
-                    Either<ST,PT> either = lazy.get();
-                    if(either instanceof Either.Lazy){
+                public Trampoline<LazyEither<ST,PT>> bounce() {
+                    LazyEither<ST,PT> either = lazy.get();
+                    if(either instanceof LazyEither.Lazy){
                         return either.toEitherTrampoline();
                     }
                     return Trampoline.done(either);
@@ -1095,30 +1095,30 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             };
         }
 
-        public Either<ST, PT> resolve() {
+        public LazyEither<ST, PT> resolve() {
           return lazy.get()
-                       .visit(Either::left, Either::right);
+                       .visit(LazyEither::left, LazyEither::right);
         }
         @Override
-        public <R> Either<ST, R> map(final Function<? super PT, ? extends R> mapper) {
-            return flatMap(t -> Either.right(mapper.apply(t)));
+        public <R> LazyEither<ST, R> map(final Function<? super PT, ? extends R> mapper) {
+            return flatMap(t -> LazyEither.right(mapper.apply(t)));
 
 
         }
 
-        private <PT> Either<ST, PT> toEither(MonadicValue<? extends PT> value) {
-            return value.visit(p -> Either.right(p), () -> Either.left(null));
+        private <PT> LazyEither<ST, PT> toEither(MonadicValue<? extends PT> value) {
+            return value.visit(p -> LazyEither.right(p), () -> LazyEither.left(null));
         }
 
         @Override
-        public <RT1> Either<ST, RT1> flatMap(Function<? super PT, ? extends Xor<? extends ST, ? extends RT1>> mapper) {
-            return Either.fromLazy(lazy.map(m->m.flatMap(mapper)));
+        public <RT1> LazyEither<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST, ? extends RT1>> mapper) {
+            return LazyEither.fromLazy(lazy.map(m->m.flatMap(mapper)));
         }
 
 
         @Override
         public final void subscribe(final Subscriber<? super PT> sub) {
-            lazy.subscribe(new Subscriber<Either<ST, PT>>() {
+            lazy.subscribe(new Subscriber<LazyEither<ST, PT>>() {
                 boolean onCompleteSent = false;
                 @Override
                 public void onSubscribe(Subscription s) {
@@ -1126,9 +1126,9 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
                 }
 
                 @Override
-                public void onNext(Either<ST, PT> pts) {
+                public void onNext(LazyEither<ST, PT> pts) {
                     if(pts.isRight()){ //if we create a LazyThrowable type
-                                        // we could safely propagate an error if pts was a left
+                                        // we could safely propagate an error if pts was a lazyLeft
                         PT v = pts.orElse(null);
                         if(v!=null)
                             sub.onNext(v);
@@ -1164,13 +1164,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#secondaryToPrimayMap(java.util.
+         * @see com.aol.cyclops2.sum.types.Either#mapLeftToRight(java.util.
          * function.Function)
          */
         @Override
-        public Either<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn) {
+        public LazyEither<ST, PT> mapLeftToRight(Function<? super ST, ? extends PT> fn) {
             return lazy(Eval.later(() ->  resolve()
-                                             .secondaryToPrimayMap(fn)));
+                                             .mapLeftToRight(fn)));
 
         }
 
@@ -1178,24 +1178,24 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#secondaryMap(java.util.function.
+         * com.aol.cyclops2.sum.types.Either#mapLeft(java.util.function.
          * Function)
          */
         @Override
-        public <R> Either<R, PT> secondaryMap(Function<? super ST, ? extends R> fn) {
-            return lazy(Eval.later(() -> resolve().secondaryMap(fn)));
+        public <R> LazyEither<R, PT> mapLeft(Function<? super ST, ? extends R> fn) {
+            return lazy(Eval.later(() -> resolve().mapLeft(fn)));
         }
 
         /*
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#secondaryPeek(java.util.function.
+         * com.aol.cyclops2.sum.types.Either#peekLeft(java.util.function.
          * Consumer)
          */
         @Override
-        public Either<ST, PT> secondaryPeek(Consumer<? super ST> action) {
-            return lazy(Eval.later(() -> resolve().secondaryPeek(action)));
+        public LazyEither<ST, PT> peekLeft(Consumer<? super ST> action) {
+            return lazy(Eval.later(() -> resolve().peekLeft(action)));
         }
 
         /*
@@ -1205,7 +1205,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
          * com.aol.cyclops2.sum.types.Either#peek(java.util.function.Consumer)
          */
         @Override
-        public Either<ST, PT> peek(Consumer<? super PT> action) {
+        public LazyEither<ST, PT> peek(Consumer<? super PT> action) {
             return lazy(Eval.later(() -> resolve().peek(action)));
         }
 
@@ -1215,7 +1215,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
          * @see com.aol.cyclops2.sum.types.Either#swap()
          */
         @Override
-        public Either<PT, ST> swap() {
+        public LazyEither<PT, ST> swap() {
             return lazy(Eval.later(() ->  resolve()
                                              .swap()));
         }
@@ -1243,8 +1243,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             return trampoline()
                        .visit(secondary, primary);
         }
-        private Either<ST,PT> trampoline(){
-            Either<ST,PT> maybe = lazy.get();
+        private LazyEither<ST,PT> trampoline(){
+            LazyEither<ST,PT> maybe = lazy.get();
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<ST,PT>) maybe).lazy.get();
             }
@@ -1265,16 +1265,16 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#secondaryGet()
+         * @see com.aol.cyclops2.sum.types.Either#getLeft()
          */
         @Override
-        public Option<ST> secondaryGet() {
+        public Option<ST> getLeft() {
             return Maybe.fromIterable(swap());
         }
 
         @Override
-        public ST secondaryOrElse(ST alt) {
-            return trampoline().secondaryOrElse(alt);
+        public ST leftOrElse(ST alt) {
+            return trampoline().leftOrElse(alt);
         }
 
         /*
@@ -1291,12 +1291,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#secondaryToStream()
+         * @see com.aol.cyclops2.sum.types.Either#leftToStream()
          */
         @Override
-        public ReactiveSeq<ST> secondaryToStream() {
+        public ReactiveSeq<ST> leftToStream() {
             return ReactiveSeq.generate(() -> trampoline()
-                                                  .secondaryToStream())
+                                                  .leftToStream())
                               .flatMap(Function.identity());
         }
 
@@ -1304,25 +1304,25 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#secondaryFlatMap(java.util.function.
+         * com.aol.cyclops2.sum.types.Either#flatMapLeft(java.util.function.
          * Function)
          */
         @Override
-        public <LT1> Either<LT1, PT> secondaryFlatMap(Function<? super ST, ? extends Xor<LT1, PT>> mapper) {
+        public <LT1> LazyEither<LT1, PT> flatMapLeft(Function<? super ST, ? extends Either<LT1, PT>> mapper) {
             return lazy(Eval.later(() -> resolve()
-                                             .secondaryFlatMap(mapper)));
+                                             .flatMapLeft(mapper)));
         }
 
         /*
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#secondaryToPrimayFlatMap(java.util.
+         * com.aol.cyclops2.sum.types.Either#flatMapLeftToRight(java.util.
          * function.Function)
          */
         @Override
-        public Either<ST, PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Xor<ST, PT>> fn) {
-            return lazy(Eval.later(() -> resolve().secondaryToPrimayFlatMap(fn)));
+        public LazyEither<ST, PT> flatMapLeftToRight(Function<? super ST, ? extends Either<ST, PT>> fn) {
+            return lazy(Eval.later(() -> resolve().flatMapLeftToRight(fn)));
         }
 
         /*
@@ -1402,32 +1402,32 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Right<ST, PT> implements Either<ST, PT> {
+    static class Right<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<PT> value;
 
         @Override
-        public Either<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
+        public LazyEither<ST, PT> mapLeftToRight(final Function<? super ST, ? extends PT> fn) {
             return this;
         }
 
         @Override
-        public <R> Either<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
-            return (Either<R, PT>) this;
+        public <R> LazyEither<R, PT> mapLeft(final Function<? super ST, ? extends R> fn) {
+            return (LazyEither<R, PT>) this;
         }
 
         @Override
-        public <R> Either<ST, R> map(final Function<? super PT, ? extends R> fn) {
-            return new Right<ST, R>(
+        public <R> LazyEither<ST, R> map(final Function<? super PT, ? extends R> fn) {
+            return new LazyEither.Right(
                                     value.map(fn));
         }
 
         @Override
-        public Either<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
+        public LazyEither<ST, PT> peekLeft(final Consumer<? super ST> action) {
             return this;
         }
 
         @Override
-        public Either<ST, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither<ST, PT> peek(final Consumer<? super PT> action) {
             return map(i -> {
                 action.accept(i);
                 return i;
@@ -1441,8 +1441,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Either<PT, ST> swap() {
-            return new Left<PT, ST>(
+        public LazyEither<PT, ST> swap() {
+            return new LazyEither.Left(
                                     value);
         }
 
@@ -1452,12 +1452,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Option<ST> secondaryGet() {
+        public Option<ST> getLeft() {
             return Option.none();
         }
 
         @Override
-        public ST secondaryOrElse(ST alt) {
+        public ST leftOrElse(ST alt) {
             return alt;
         }
 
@@ -1467,16 +1467,16 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public ReactiveSeq<ST> secondaryToStream() {
+        public ReactiveSeq<ST> leftToStream() {
             return ReactiveSeq.empty();
         }
 
         @Override
-        public <RT1> Either<ST, RT1> flatMap(Function<? super PT, ? extends Xor<? extends ST, ? extends RT1>> mapper) {
-            Eval<? extends Either<? extends ST,  ? extends RT1>> ret = value.map(mapper.andThen(Either::fromXor));
+        public <RT1> LazyEither<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST, ? extends RT1>> mapper) {
+            Eval<? extends LazyEither<? extends ST,  ? extends RT1>> ret = value.map(mapper.andThen(LazyEither::fromXor));
 
 
-            final Eval<Either<ST, RT1>> e3 =  (Eval<Either<ST,  RT1>>)ret;
+            final Eval<LazyEither<ST, RT1>> e3 =  (Eval<LazyEither<ST,  RT1>>)ret;
             return new Lazy<>(
                     e3);
         }
@@ -1484,13 +1484,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
         @Override
-        public <LT1> Either<LT1, PT> secondaryFlatMap(
-                final Function<? super ST, ? extends Xor<LT1, PT>> mapper) {
-            return (Either<LT1, PT>) this;
+        public <LT1> LazyEither<LT1, PT> flatMapLeft(
+                final Function<? super ST, ? extends Either<LT1, PT>> mapper) {
+            return (LazyEither<LT1, PT>) this;
         }
 
         @Override
-        public Either<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Xor<ST, PT>> fn) {
+        public LazyEither<ST, PT> flatMapLeftToRight(final Function<? super ST, ? extends Either<ST, PT>> fn) {
             return this;
         }
 
@@ -1517,7 +1517,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         @Override
         public String mkString() {
-            return "Either.right[" + value.get() + "]";
+            return "Either.lazyRight[" + value.get() + "]";
         }
 
         @Override
@@ -1557,13 +1557,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             if(obj instanceof Lazy){
                 return ((Lazy)obj).equals(this);
             }
-            if(obj instanceof Primary){
-                return Objects.equals(value.get(),((Primary)obj).orElse(null));
+            if(obj instanceof Either.Right){
+                return Objects.equals(value.get(),((Either.Right)obj).orElse(null));
 
             }
             if (getClass() != obj.getClass())
                 return false;
-            Right other = (Right) obj;
+            LazyEither.Right other = (LazyEither.Right) obj;
             return Objects.equals(value.get(),other.orElse(null));
 
         }
@@ -1580,7 +1580,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Left<ST, PT> implements Either<ST, PT> {
+    static class Left<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<ST> value;
 
         @Override
@@ -1596,29 +1596,29 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
 
         @Override
-        public Either<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-            return new Right<ST, PT>(
+        public LazyEither<ST, PT> mapLeftToRight(final Function<? super ST, ? extends PT> fn) {
+            return new LazyEither.Right(
                                      value.map(fn));
         }
 
         @Override
-        public <R> Either<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
-            return new Left<R, PT>(
+        public <R> LazyEither<R, PT> mapLeft(final Function<? super ST, ? extends R> fn) {
+            return new LazyEither.Left(
                                    value.map(fn));
         }
 
         @Override
-        public <R> Either<ST, R> map(final Function<? super PT, ? extends R> fn) {
-            return (Either<ST, R>) this;
+        public <R> LazyEither<ST, R> map(final Function<? super PT, ? extends R> fn) {
+            return (LazyEither<ST, R>) this;
         }
 
         @Override
-        public Either<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
-            return secondaryMap((Function) FluentFunctions.expression(action));
+        public LazyEither<ST, PT> peekLeft(final Consumer<? super ST> action) {
+            return mapLeft((Function) FluentFunctions.expression(action));
         }
 
         @Override
-        public Either<ST, PT> peek(final Consumer<? super PT> action) {
+        public LazyEither<ST, PT> peek(final Consumer<? super PT> action) {
             return this;
         }
 
@@ -1628,8 +1628,8 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Either<PT, ST> swap() {
-            return new Right<PT, ST>(
+        public LazyEither<PT, ST> swap() {
+            return new LazyEither.Right(
                                      value);
         }
 
@@ -1639,12 +1639,12 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public Option<ST> secondaryGet() {
+        public Option<ST> getLeft() {
             return value.toMaybe();
         }
 
         @Override
-        public ST secondaryOrElse(ST alt) {
+        public ST leftOrElse(ST alt) {
             return value.get();
         }
 
@@ -1654,32 +1654,32 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
         }
 
         @Override
-        public ReactiveSeq<ST> secondaryToStream() {
+        public ReactiveSeq<ST> leftToStream() {
             return ReactiveSeq.fromStream(Streams.optionalToStream(secondaryToOptional()));
         }
 
         @Override
-        public <RT1> Either<ST, RT1> flatMap(Function<? super PT, ? extends Xor<? extends ST, ? extends RT1>> mapper) {
-            return (Either<ST, RT1>) this;
+        public <RT1> LazyEither<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST, ? extends RT1>> mapper) {
+            return (LazyEither<ST, RT1>) this;
         }
 
 
         @Override
-        public <LT1> Either<LT1, PT> secondaryFlatMap(
-                final Function<? super ST, ? extends Xor<LT1, PT>> mapper) {
-            Eval<? extends Xor<LT1,? extends PT>> ret = value.map(mapper);
-            Eval<? extends Either<? extends LT1,  ? extends PT>> et = ret.map(Either::fromXor);
+        public <LT1> LazyEither<LT1, PT> flatMapLeft(
+                final Function<? super ST, ? extends Either<LT1, PT>> mapper) {
+            Eval<? extends Either<LT1,? extends PT>> ret = value.map(mapper);
+            Eval<? extends LazyEither<? extends LT1,  ? extends PT>> et = ret.map(LazyEither::fromXor);
             
-           final Eval<Either<LT1, PT>> e3 =  (Eval<Either<LT1,  PT>>)et;
+           final Eval<LazyEither<LT1, PT>> e3 =  (Eval<LazyEither<LT1,  PT>>)et;
            return new Lazy<>(
                              e3);
 
         }
 
         @Override
-        public Either<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Xor<ST, PT>> fn) {
+        public LazyEither<ST, PT> flatMapLeftToRight(final Function<? super ST, ? extends Either<ST, PT>> fn) {
             return new Lazy<ST, PT>(
-                    Eval.now(this)).secondaryToPrimayFlatMap(fn);
+                    Eval.now(this)).flatMapLeftToRight(fn);
         }
 
         @Override
@@ -1713,7 +1713,7 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
 
         @Override
         public String mkString() {
-            return "Either.left[" + value.get() + "]";
+            return "Either.lazyLeft[" + value.get() + "]";
         }
 
 
@@ -1745,13 +1745,13 @@ public interface Either<LT, RT> extends Xor<LT, RT>{
             if(obj instanceof Lazy){
                 return ((Lazy)obj).equals(this);
             }
-            if(obj instanceof Secondary){
-                return Objects.equals(value.get(),((Secondary)obj).secondaryOrElse(null));
+            if(obj instanceof Either.Left){
+                return Objects.equals(value.get(),((Either.Left)obj).leftOrElse(null));
             }
             if (getClass() != obj.getClass())
                 return false;
-            Left other = (Left) obj;
-            return Objects.equals(value.get(),other.secondaryOrElse(null));
+            LazyEither.Left other = (LazyEither.Left) obj;
+            return Objects.equals(value.get(),other.leftOrElse(null));
         }
 
 

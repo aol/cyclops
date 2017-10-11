@@ -3,8 +3,8 @@ package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.lazy.Eval;
-import cyclops.control.Xor;
-import cyclops.control.lazy.Either;
+import cyclops.control.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function0;
 
 import java.util.function.Function;
@@ -26,11 +26,11 @@ public interface ApplicativeError<W,E> extends Applicative<W>{
             return raiseError(mapper.apply(t));
         }
     }
-    default <T,X extends Throwable> Higher<W,T> fromXor(Xor<E,T> t){
+    default <T,X extends Throwable> Higher<W,T> fromXor(Either<E,T> t){
         return t.visit(this::raiseError,a->unit(a));
     }
-     default <T> Higher<W, Either<E, T>> recover(Higher<W, T> ds){
-        return handleErrorWith(l->unit(Either.left(l)),map(r->Either.right(r),ds));
+     default <T> Higher<W, LazyEither<E, T>> recover(Higher<W, T> ds){
+        return handleErrorWith(l->unit(LazyEither.left(l)),map(r-> LazyEither.right(r),ds));
      }
 
 }

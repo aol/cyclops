@@ -14,23 +14,23 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.Option;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
 public class XorPrimaryTest {
 
-	Xor<FileNotFoundException,Integer> success;
+	Either<FileNotFoundException,Integer> success;
 	final Integer value = 10;
 	
 	
-	public Xor<FileNotFoundException,String> load(String filename){
-		return Xor.primary("test-data");
+	public Either<FileNotFoundException,String> load(String filename){
+		return Either.right("test-data");
 	}
 	
 	public void process(){
 		
-		Xor<FileNotFoundException,String> attempt = load("data");
+		Either<FileNotFoundException,String> attempt = load("data");
 		
 		attempt.map(String::toUpperCase)
 				.peek(System.out::println);
@@ -39,7 +39,7 @@ public class XorPrimaryTest {
 	
 	@Before
 	public void setup(){
-		success = Xor.primary(10);
+		success = Either.right(10);
 	}
 
 
@@ -56,12 +56,12 @@ public class XorPrimaryTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Xor.primary(value+1)));
+		assertThat(success.map(x->x+1),equalTo(Either.right(value+1)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Xor.primary(x+1)),equalTo(Xor.primary(value+1)));
+		assertThat(success.flatMap(x-> Either.right(x+1)),equalTo(Either.right(value+1)));
 	}
 
 	@Test
@@ -98,12 +98,12 @@ public class XorPrimaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertTrue(success.isPrimary());
+		assertTrue(success.isRight());
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertFalse(success.isSecondary());
+		assertFalse(success.isLeft());
 	}
 	Integer valueCaptured = null;
 	@Test

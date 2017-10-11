@@ -339,12 +339,12 @@ public class Pipes<K, V> {
      * @return Xor containing lazy a NoSuchElementException an Adapter with the specified key does not exist,
      *            or the next value from that Adapter
      */
-    public Xor<Throwable, V> oneOrError(final K key) {
+    public Either<Throwable, V> oneOrError(final K key) {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
                        .map(a -> sub.toXor())
-                       .orElse(Xor.secondary(new NoSuchElementException(
+                       .orElse(Either.left(new NoSuchElementException(
                                                                         "no adapter for key " + key)));
     }
 

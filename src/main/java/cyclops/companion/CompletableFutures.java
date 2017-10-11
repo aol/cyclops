@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.hkt.Higher;
 
 import cyclops.typeclasses.*;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.monads.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -53,7 +53,7 @@ public class CompletableFutures {
         cf.completeExceptionally(t);
         return cf;
     }
-    public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Xor<T, R>>> fn){
+    public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Either<T, R>>> fn){
         Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(Future::of));
         return Future.narrowK(x).getFuture();
     }
@@ -899,7 +899,7 @@ public class CompletableFutures {
             return new  MonadRec<completableFuture>(){
 
                 @Override
-                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Either<T, R>>> fn) {
                     Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
                     return CompletableFutureKind.narrowFuture(x);
                 }

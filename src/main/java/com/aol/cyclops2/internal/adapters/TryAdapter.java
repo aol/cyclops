@@ -6,10 +6,8 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Try;
-import cyclops.control.Xor;
 
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.tryType;
 import lombok.AllArgsConstructor;
 

@@ -7,23 +7,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.Option;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
 public class XorSecondaryTest {
 
-	Xor<FileNotFoundException,Integer> failure;
+	Either<FileNotFoundException,Integer> failure;
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
-		failure = Xor.secondary(error);
+		failure = Either.left(error);
 	}
 
 
@@ -41,7 +40,7 @@ public class XorSecondaryTest {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(failure.flatMap(x->Xor.primary(10)),equalTo(failure));
+		assertThat(failure.flatMap(x-> Either.right(10)),equalTo(failure));
 	}
 
 	@Test
@@ -75,12 +74,12 @@ public class XorSecondaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertThat(failure.isPrimary(),equalTo(false));
+		assertThat(failure.isRight(),equalTo(false));
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertThat(failure.isSecondary(),equalTo(true));
+		assertThat(failure.isLeft(),equalTo(true));
 	}
 
 	Integer value = null;
@@ -96,7 +95,7 @@ public class XorSecondaryTest {
 	@Test
 	public void testForeachFailed() {
 		errorCaptured = null;
-		failure.secondaryPeek(e -> errorCaptured =e);
+		failure.peekLeft(e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));
 	}
 

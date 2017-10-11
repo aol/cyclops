@@ -8,8 +8,8 @@ import static org.junit.Assert.assertThat;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.Xor;
-import cyclops.control.lazy.Either;
+import cyclops.control.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function1;
 import cyclops.monads.Witness.eval;
 import org.junit.Test;
@@ -48,8 +48,8 @@ public class EvalsTest {
     }
     @Test
     public void tailRec(){
-        System.out.println(Eval.Instances.monadRec().tailRec(10,i->Eval.now(Xor.primary(i+10))));
-        System.out.println(Eval.Instances.monadRec().tailRec(10,i-> i<1000_000 ? Eval.now(Either.left(i+1)) : Eval.now(Either.right(i+10))));
+        System.out.println(Eval.Instances.monadRec().tailRec(10,i->Eval.now(Either.right(i+10))));
+        System.out.println(Eval.Instances.monadRec().tailRec(10,i-> i<1000_000 ? Eval.now(LazyEither.left(i+1)) : Eval.now(LazyEither.right(i+10))));
     }
     @Test
     public void applicative(){

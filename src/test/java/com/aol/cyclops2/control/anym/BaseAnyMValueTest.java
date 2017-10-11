@@ -196,12 +196,12 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(1000000),equalTo(Xor.primary(10)));
+		assertThat(just.toEither(1000000),equalTo(Either.right(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-	    Xor<?,Integer> empty = none.toXor(1000000);
+	    Either<?,Integer> empty = none.toEither(1000000);
 	    
 	    
         assertTrue(empty.swap().map(__->10).orElse(-10000)==10);
@@ -211,14 +211,14 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor(1000000).swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toEither(1000000).swap(),equalTo(Either.left(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
-		Xor<Integer,?> empty = none.toXor(100000).swap();
-		assertTrue(empty.isPrimary());
-		assertThat(empty.map(__->10),equalTo(Xor.primary(10)));
+		Either<Integer,?> empty = none.toEither(100000).swap();
+		assertTrue(empty.isRight());
+		assertThat(empty.map(__->10),equalTo(Either.right(10)));
 		
 		
 	}

@@ -23,7 +23,7 @@ public class LazyReactiveTest {
             
             pipes.get("hello").map(a->a.close()).orElse(false);
             pipes.reactiveSeq("hello").orElse(ReactiveSeq.of("boo!")).forEach(System.out::println);
-          //  assertThat(pipes.oneOrError("hello"),equalTo(Xor.primary("world")));
+          //  assertThat(pipes.oneOrError("hello"),equalTo(Xor.lazyRight("world")));
             
         }
 		

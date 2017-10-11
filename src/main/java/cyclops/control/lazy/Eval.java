@@ -3,7 +3,7 @@ package cyclops.control.lazy;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -81,7 +81,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-    public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Xor<T, R>>> fn){
+    public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval ->
                 eval.visit(s->tailRec(s,fn),p->Eval.now(p)));
     }
@@ -1374,7 +1374,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             return new MonadRec<eval>(){
 
                 @Override
-                public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<eval, R> tailRec(T initial, Function<? super T, ? extends Higher<eval, ? extends Either<T, R>>> fn) {
                     return Eval.tailRec(initial,fn.andThen(Eval::narrowK));
                 }
             };

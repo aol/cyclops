@@ -7,7 +7,7 @@ import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.function.*;
 
 /*
-  A Tuple implementation that can be either eager / strict or lazy
+  A Tuple implementation that can be lazyEither eager / strict or lazy
 
 
  */
@@ -152,9 +152,9 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return (Tuple2<T1,T2>)ds;
     }
 
-    public static  <T1,T2,R> Tuple2<T1,R> tailRec(Monoid<T1> op,T2 initial, Function<? super T2, ? extends Tuple2<T1,? extends Xor<T2, R>>> fn){
-        Tuple2<T1,? extends Xor<T2, R>> next[] = new Tuple2[1];
-        next[0] = Tuple2.of(op.zero(),Xor.secondary(initial));
+    public static  <T1,T2,R> Tuple2<T1,R> tailRec(Monoid<T1> op,T2 initial, Function<? super T2, ? extends Tuple2<T1,? extends Either<T2, R>>> fn){
+        Tuple2<T1,? extends Either<T2, R>> next[] = new Tuple2[1];
+        next[0] = Tuple2.of(op.zero(), Either.left(initial));
         boolean cont = true;
         do {
 
@@ -329,7 +329,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         public static <T1> MonadRec<Higher<tuple2, T1>> monadRec(Monoid<T1> m) {
             return new MonadRec<Higher<tuple2, T1>>(){
                 @Override
-                public <T, R> Higher<Higher<tuple2, T1>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tuple2, T1>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<tuple2, T1>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<tuple2, T1>, ? extends Either<T, R>>> fn) {
                     return Tuple2.tailRec(m,initial,fn.andThen(Tuple2::narrowK));
                 }
 

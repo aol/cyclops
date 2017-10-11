@@ -10,7 +10,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Identity;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /*
-  A Tuple1 implementation that can be either eager / strict or lazy
+  A Tuple1 implementation that can be lazyEither eager / strict or lazy
   Roughly analogous to the Identity monad
 
  */
@@ -157,9 +157,9 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return (Tuple1<T>)ds;
     }
 
-    public static  <T,R> Tuple1<R> tailRec(T initial, Function<? super T, ? extends Tuple1<? extends Xor<T, R>>> fn){
-        Tuple1<? extends Xor<T, R>> next[] = new Tuple1[1];
-        next[0] = Tuple1.of(Xor.secondary(initial));
+    public static  <T,R> Tuple1<R> tailRec(T initial, Function<? super T, ? extends Tuple1<? extends Either<T, R>>> fn){
+        Tuple1<? extends Either<T, R>> next[] = new Tuple1[1];
+        next[0] = Tuple1.of(Either.left(initial));
         boolean cont = true;
         do {
 
@@ -326,7 +326,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
 
             return new MonadRec<tuple1>(){
                 @Override
-                public <T, R> Higher<tuple1, R> tailRec(T initial, Function<? super T, ? extends Higher<tuple1, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<tuple1, R> tailRec(T initial, Function<? super T, ? extends Higher<tuple1, ? extends Either<T, R>>> fn) {
                     return Tuple1.tailRec(initial,fn.andThen(Tuple1::narrowK));
                 }
 

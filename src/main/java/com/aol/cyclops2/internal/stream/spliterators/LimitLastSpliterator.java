@@ -13,7 +13,7 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
         if(limit==0){
             return Spliterators.emptySpliterator();
         }
-        if(limit==source.getExactSizeIfKnown()){ //right sized already
+        if(limit==source.getExactSizeIfKnown()){ //lazyRight sized already
             return source;
         }
         if(limit==1)

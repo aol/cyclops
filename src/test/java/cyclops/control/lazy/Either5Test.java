@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either5;
+import cyclops.control.lazy.LazyEither5;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
@@ -30,9 +30,9 @@ public class Either5Test {
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        Either5.right(10)
-             .flatMap(i -> { lazy=false; return  Either5.right(15);})
-             .map(i -> { lazy=false; return  Either5.right(15);})
+        LazyEither5.right(10)
+             .flatMap(i -> { lazy=false; return  LazyEither5.right(15);})
+             .map(i -> { lazy=false; return  LazyEither5.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -42,38 +42,38 @@ public class Either5Test {
     
     @Test
     public void mapFlatMapTest(){
-        assertThat(Either5.right(10)
+        assertThat(LazyEither5.right(10)
                .map(i->i*2)
-               .flatMap(i->Either5.right(i*4))
+               .flatMap(i-> LazyEither5.right(i*4))
                .orElse(-10),equalTo(80));
     }
     @Test
     public void odd() {
-        System.out.println(even(Either5.right(200000)).get());
+        System.out.println(even(LazyEither5.right(200000)).get());
     }
 
-    public Either5<String,String,String,String,String> odd(Either5<String,String,String,String,Integer> n) {
+    public LazyEither5<String,String,String,String,String> odd(LazyEither5<String,String,String,String,Integer> n) {
 
-        return n.flatMap(x -> even(Either5.right(x - 1)));
+        return n.flatMap(x -> even(LazyEither5.right(x - 1)));
     }
 
-    public Either5<String,String,String,String,String> even(Either5<String,String,String,String,Integer> n) {
+    public LazyEither5<String,String,String,String,String> even(LazyEither5<String,String,String,String,Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? Either5.right("done") : odd(Either5.right(x - 1));
+            return x <= 0 ? LazyEither5.right("done") : odd(LazyEither5.right(x - 1));
         });
     }
-    Either5<String,String,String,String,Integer> just;
-    Either5<String,String,String,String,Integer> left2;
-    Either5<String,String,String,String,Integer> left3;
-    Either5<String,String,String,String,Integer> left4;
-    Either5<String,String,String,String,Integer> none;
+    LazyEither5<String,String,String,String,Integer> just;
+    LazyEither5<String,String,String,String,Integer> left2;
+    LazyEither5<String,String,String,String,Integer> left3;
+    LazyEither5<String,String,String,String,Integer> left4;
+    LazyEither5<String,String,String,String,Integer> none;
     @Before
     public void setUp() throws Exception {
-        just = Either5.right(10);
-        none = Either5.left1("none");
-        left2 = Either5.left2("left2");
-        left3 = Either5.left3("left3");
-        left4 = Either5.left4("left4");
+        just = LazyEither5.right(10);
+        none = LazyEither5.left1("none");
+        left2 = LazyEither5.left2("left2");
+        left3 = LazyEither5.left3("left3");
+        left4 = LazyEither5.left4("left4");
         
     }
     @Test
@@ -106,28 +106,28 @@ public class Either5Test {
 
     @Test
     public void testTraverseLeft1() {
-        ListX<Either5<Integer,String,String,String,String>> list = ListX.of(just,none,Either5.<String,String,String,String,Integer>right(1)).map(Either5::swap1);
-        Either5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = Either5.traverse(list,s->"hello:"+s);
-        assertThat(xors,equalTo(Either5.right(ListX.of("hello:none"))));
+        ListX<LazyEither5<Integer,String,String,String,String>> list = ListX.of(just,none, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap1);
+        LazyEither5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.traverse(list, s->"hello:"+s);
+        assertThat(xors,equalTo(LazyEither5.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
-        ListX<Either5<Integer,String,String,String,String>> list = ListX.of(just,none,Either5.<String,String,String,String,Integer>right(1)).map(Either5::swap1);
-        Either5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = Either5.sequence(list);
-        assertThat(xors,equalTo(Either5.right(ListX.of("none"))));
+        ListX<LazyEither5<Integer,String,String,String,String>> list = ListX.of(just,none, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap1);
+        LazyEither5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.sequence(list);
+        assertThat(xors,equalTo(LazyEither5.right(ListX.of("none"))));
     }
     @Test
     public void testSequenceLeft2() {
-        ListX<Either5<String,Integer,String,String,String>> list = ListX.of(just,left2,Either5.<String,String,String,String,Integer>right(1)).map(Either5::swap2);
-        Either5<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = Either5.sequence(list);
-        assertThat(xors,equalTo(Either5.right(ListX.of("left2"))));
+        ListX<LazyEither5<String,Integer,String,String,String>> list = ListX.of(just,left2, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap2);
+        LazyEither5<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.sequence(list);
+        assertThat(xors,equalTo(LazyEither5.right(ListX.of("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-        Either5<ListX<String>,ListX<String>,ListX<String>,ListX<String>,Integer> iors = Either5.accumulate(Monoids.intSum,ListX.of(none,just,Either5.right(10)));
-        assertThat(iors,equalTo(Either5.right(20)));
+        LazyEither5<ListX<String>,ListX<String>,ListX<String>,ListX<String>,Integer> iors = LazyEither5.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither5.right(10)));
+        assertThat(iors,equalTo(LazyEither5.right(20)));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class Either5Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Either5.right(50)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(LazyEither5.right(50)));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class Either5Test {
 
     @Test
     public void testUnitT() {
-        assertThat(just.unit(20),equalTo(Either5.right(20)));
+        assertThat(just.unit(20),equalTo(LazyEither5.right(20)));
     }
 
     
@@ -190,14 +190,14 @@ public class Either5Test {
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5),equalTo(Either5.right(15)));
-        assertThat(none.map(i->i+5),equalTo(Either5.left1("none")));
+        assertThat(just.map(i->i+5),equalTo(LazyEither5.right(15)));
+        assertThat(none.map(i->i+5),equalTo(LazyEither5.left1("none")));
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->Either5.right(i+5)),equalTo(Either5.right(15)));
-        assertThat(none.flatMap(i->Either5.right(i+5)),equalTo(Either5.left1("none")));
+        assertThat(just.flatMap(i-> LazyEither5.right(i+5)),equalTo(LazyEither5.right(15)));
+        assertThat(none.flatMap(i-> LazyEither5.right(i+5)),equalTo(LazyEither5.left1("none")));
     }
 
     @Test
@@ -295,7 +295,7 @@ public class Either5Test {
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either5.right[10]"));
+        assertThat(just.mkString(),equalTo("Either5.lazyRight[10]"));
         assertThat(none.mkString(),equalTo("Either5.left1[none]"));
     }
 
@@ -407,12 +407,12 @@ public class Either5Test {
 
     @Test
     public void testCast() {
-        Either5<String,String,String,String,Number> num = just.cast(Number.class);
+        LazyEither5<String,String,String,String,Number> num = just.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5),equalTo(Either5.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither5.right(15)));
     }
     
     @Test
@@ -429,7 +429,7 @@ public class Either5Test {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either5.right(65)));
+        assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither5.right(65)));
     }
 
     

@@ -214,14 +214,14 @@ public class Ior2Test {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
+		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-		Xor<String,Integer> xor = none.toXor();
-		assertTrue(xor.isSecondary());
-		assertThat(xor,equalTo(Xor.secondary("none")));
+		Either<String,Integer> xor = none.toEither();
+		assertTrue(xor.isLeft());
+		assertThat(xor,equalTo(Either.left("none")));
 		
 	}
 
@@ -229,7 +229,7 @@ public class Ior2Test {
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
 	}
 
 
@@ -247,8 +247,8 @@ public class Ior2Test {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Ior.primary[10]"));
-		assertThat(none.mkString(),equalTo("Ior.secondary[none]"));
+		assertThat(just.mkString(),equalTo("Ior.lazyRight[10]"));
+		assertThat(none.mkString(),equalTo("Ior.lazyLeft[none]"));
 	}
 	LazyReact react = new LazyReact();
 

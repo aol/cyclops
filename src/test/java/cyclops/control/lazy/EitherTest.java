@@ -9,8 +9,8 @@ import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either;
-import cyclops.control.lazy.Either.CompletableEither;
+import cyclops.control.lazy.LazyEither;
+import cyclops.control.lazy.LazyEither.CompletableEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
@@ -35,9 +35,9 @@ public class EitherTest {
 
     @Test
     public void completableTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                                           .flatMap(i-> Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                                           .flatMap(i-> LazyEither.right(i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());
@@ -48,28 +48,28 @@ public class EitherTest {
     }
     @Test
     public void completableNoneTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                                                      .flatMap(i->Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                                                      .flatMap(i-> LazyEither.right(i+1));
 
         completable.complete(null);
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryOrElse(null),instanceOf(NoSuchElementException.class));
+        assertThat(mapped.leftOrElse(null),instanceOf(NoSuchElementException.class));
 
     }
     @Test
     public void completableErrorTest(){
-        CompletableEither<Integer,Integer> completable = Either.either();
-        Either<Throwable,Integer> mapped = completable.map(i->i*2)
-                .flatMap(i->Either.right(i+1));
+        CompletableEither<Integer,Integer> completable = LazyEither.either();
+        LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
+                .flatMap(i-> LazyEither.right(i+1));
 
         completable.completeExceptionally(new IllegalStateException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
-        assertThat(mapped.secondaryOrElse(null),instanceOf(IllegalStateException.class));
+        assertThat(mapped.leftOrElse(null),instanceOf(IllegalStateException.class));
 
     }
 
@@ -88,7 +88,7 @@ public class EitherTest {
         });
         t.start();
 
-        Spouts.from(Either.fromFuture(future)
+        Spouts.from(LazyEither.fromFuture(future)
                 .map(i->i*2))
                 .peek(System.out::println)
                 .map(i->i*100)
@@ -103,28 +103,28 @@ public class EitherTest {
 
     @Test
     public void testTraverseLeft1() {
-        ListX<Either<Integer,String>> list = ListX.of(just,none,Either.<String,Integer>right(1)).map(Either::swap);
-        Either<ListX<Integer>,ListX<String>> xors   = Either.traverseRight(list,s->"hello:"+s);
-        assertThat(xors,equalTo(Either.right(ListX.of("hello:none"))));
+        ListX<LazyEither<Integer,String>> list = ListX.of(just,none, LazyEither.<String,Integer>right(1)).map(LazyEither::swap);
+        LazyEither<ListX<Integer>,ListX<String>> xors   = LazyEither.traverseRight(list, s->"hello:"+s);
+        assertThat(xors,equalTo(LazyEither.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
-        ListX<Either<Integer,String>> list = ListX.of(just,none,Either.<String,Integer>right(1)).map(Either::swap);
-        Either<ListX<Integer>,ListX<String>> xors   = Either.sequenceRight(list);
-        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
+        ListX<LazyEither<Integer,String>> list = ListX.of(just,none, LazyEither.<String,Integer>right(1)).map(LazyEither::swap);
+        LazyEither<ListX<Integer>,ListX<String>> xors   = LazyEither.sequenceRight(list);
+        assertThat(xors,equalTo(LazyEither.right(ListX.of("none"))));
     }
     @Test
     public void testAccumulate() {
-        Either<ListX<String>,Integer> iors = Either.accumulate(Monoids.intSum,ListX.of(none,just,Either.right(10)));
-        assertThat(iors,equalTo(Either.right(20)));
+        LazyEither<ListX<String>,Integer> iors = LazyEither.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither.right(10)));
+        assertThat(iors,equalTo(LazyEither.right(20)));
     }
     
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        Either.right(10)
-             .flatMap(i -> { lazy=false; return  Either.right(15);})
-             .map(i -> { lazy=false; return  Either.right(15);})
+        LazyEither.right(10)
+             .flatMap(i -> { lazy=false; return  LazyEither.right(15);})
+             .map(i -> { lazy=false; return  LazyEither.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -133,50 +133,50 @@ public class EitherTest {
     }
     @Test
     public void mapFlatMapTest(){
-        assertThat(Either.right(10)
+        assertThat(LazyEither.right(10)
                .map(i->i*2)
-               .flatMap(i->Either.right(i*4))
+               .flatMap(i-> LazyEither.right(i*4))
                .get(),equalTo(Option.some(80)));
     }
     @Test
     public void odd() {
-        System.out.println(even(Either.right(200000)).get());
+        System.out.println(even(LazyEither.right(200000)).get());
     }
 
-    public Either<String,String> odd(Either<String,Integer> n) {
+    public LazyEither<String,String> odd(LazyEither<String,Integer> n) {
 
-        return n.flatMap(x -> even(Either.right(x - 1)));
+        return n.flatMap(x -> even(LazyEither.right(x - 1)));
     }
 
-    public Either<String,String> even(Either<String,Integer> n) {
+    public LazyEither<String,String> even(LazyEither<String,Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? Either.right("done") : odd(Either.right(x - 1));
+            return x <= 0 ? LazyEither.right("done") : odd(LazyEither.right(x - 1));
         });
     }
-    Either<String,Integer> just;
-    Either<String,Integer> none;
+    LazyEither<String,Integer> just;
+    LazyEither<String,Integer> none;
     @Before
     public void setUp() throws Exception {
-        just = Either.right(10);
-        none = Either.left("none");
+        just = LazyEither.right(10);
+        none = LazyEither.left("none");
     }
 
     @Test
     public void testSequenceSecondary() {
-        Xor<ListX<Integer>,ListX<String>> xors =Xor.sequenceSecondary(ListX.of(just,none,Either.right(1)));
-        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
+        Either<ListX<Integer>,ListX<String>> xors = Either.sequenceLeft(ListX.of(just,none, LazyEither.right(1)));
+        assertThat(xors,equalTo(LazyEither.right(ListX.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondary2() {
-        Xor<?,PersistentSetX<String>> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.right(1)),Reducers.<String>toPersistentSetX());
-        assertThat(xors,equalTo(Either.right(PersistentSetX.of("none"))));
+        Either<?,PersistentSetX<String>> xors = Either.accumulateLeft(ListX.of(just,none, LazyEither.right(1)),Reducers.<String>toPersistentSetX());
+        assertThat(xors,equalTo(LazyEither.right(PersistentSetX.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondarySemigroup() {
-        Xor<?,String> xors = Xor.accumulateSecondary(ListX.of(just,none,Either.left("1")),i->""+i,Monoids.stringConcat);
-        assertThat(xors,equalTo(Either.right("none1")));
+        Either<?,String> xors = Either.accumulateLeft(ListX.of(just,none, LazyEither.left("1")), i->""+i,Monoids.stringConcat);
+        assertThat(xors,equalTo(LazyEither.right("none1")));
     }
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
@@ -198,8 +198,8 @@ public class EitherTest {
     }
     @Test
     public void visitEither(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(Either.right("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(Either.left("no")));
+        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
+        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
     }
     @Test
     public void testToMaybe() {
@@ -224,63 +224,63 @@ public class EitherTest {
 
     @Test
     public void testSequence() {
-        Xor<ListX<String>,ListX<Integer>> maybes =Xor.sequencePrimary(ListX.of(just,none,Either.right(1)));
-        assertThat(maybes,equalTo(Either.right(ListX.of(10,1))));
+        Either<ListX<String>,ListX<Integer>> maybes = Either.sequenceRight(ListX.of(just,none, LazyEither.right(1)));
+        assertThat(maybes,equalTo(LazyEither.right(ListX.of(10,1))));
     }
 
     @Test @Ignore  //pending https://github.com/aol/cyclops-react/issues/390
     public void hashCodeTest(){
        
         System.out.println(new Integer(10).hashCode());
-        System.out.println("Xor " + Xor.primary(10).hashCode());
-        assertThat(Xor.primary(10).hashCode(),equalTo(Either.right(10).hashCode()));
+        System.out.println("Xor " + Either.right(10).hashCode());
+        assertThat(Either.right(10).hashCode(),equalTo(LazyEither.right(10).hashCode()));
     }
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Xor<?,PersistentSetX<Integer>> maybes =Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),Reducers.toPersistentSetX());
-        assertThat(maybes,equalTo(Either.right(PersistentSetX.of(10,1))));
+        Either<?,PersistentSetX<Integer>> maybes = Either.accumulateRight(ListX.of(just,none, LazyEither.right(1)),Reducers.toPersistentSetX());
+        assertThat(maybes,equalTo(LazyEither.right(PersistentSetX.of(10,1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Xor<?,String> maybes = Xor.accumulatePrimary(ListX.of(just,none,Either.right(1)),i->""+i,Monoids.stringConcat);
-        assertThat(maybes,equalTo(Either.right("101")));
+        Either<?,String> maybes = Either.accumulateRight(ListX.of(just,none, LazyEither.right(1)), i->""+i,Monoids.stringConcat);
+        assertThat(maybes,equalTo(LazyEither.right("101")));
     }
     @Test
     public void testAccumulateJust() {
-        Xor<?,Integer> maybes =Xor.accumulatePrimary(Monoids.intSum,ListX.of(just,none,Either.right(1)));
-        assertThat(maybes,equalTo(Either.right(11)));
+        Either<?,Integer> maybes = Either.accumulateRight(Monoids.intSum,ListX.of(just,none, LazyEither.right(1)));
+        assertThat(maybes,equalTo(LazyEither.right(11)));
     }
     @Test
     public void testAccumulateSecondary() {
-        Xor<?,String> maybes =Xor.accumulateSecondary(Monoids.stringConcat,ListX.of(just,none,Either.left("hello")));
-        assertThat(maybes,equalTo(Either.right("nonehello")));
+        Either<?,String> maybes = Either.accumulateLeft(Monoids.stringConcat,ListX.of(just,none, LazyEither.left("hello")));
+        assertThat(maybes,equalTo(LazyEither.right("nonehello")));
     }
 
     @Test
     public void testUnitT() {
-        assertThat(just.unit(20),equalTo(Either.right(20)));
+        assertThat(just.unit(20),equalTo(LazyEither.right(20)));
     }
 
     
 
     @Test
     public void testisPrimary() {
-        assertTrue(just.isPrimary());
-        assertFalse(none.isPrimary());
+        assertTrue(just.isRight());
+        assertFalse(none.isRight());
     }
 
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5),equalTo(Either.right(15)));
-        assertThat(none.map(i->i+5),equalTo(Either.left("none")));
+        assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
+        assertThat(none.map(i->i+5),equalTo(LazyEither.left("none")));
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->Either.right(i+5)),equalTo(Either.right(15)));
-        assertThat(none.flatMap(i->Either.right(i+5)),equalTo(Either.left("none")));
+        assertThat(just.flatMap(i-> LazyEither.right(i+5)),equalTo(LazyEither.right(15)));
+        assertThat(none.flatMap(i-> LazyEither.right(i+5)),equalTo(LazyEither.left("none")));
     }
 
     @Test
@@ -373,8 +373,8 @@ public class EitherTest {
 
       @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either.right[10]"));
-        assertThat(none.mkString(),equalTo("Either.left[none]"));
+        assertThat(just.mkString(),equalTo("Either.lazyRight[10]"));
+        assertThat(none.mkString(),equalTo("Either.lazyLeft[none]"));
     }
 
     @Test
@@ -481,12 +481,12 @@ public class EitherTest {
 
     @Test
     public void testCast() {
-        Either<?,Number> num = just.cast(Number.class);
+        LazyEither<?,Number> num = just.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5),equalTo(Either.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
     }
     
     @Test
@@ -503,17 +503,17 @@ public class EitherTest {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either.right(65)));
+        assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither.right(65)));
     }
 
     @Test
     public void equalsTest(){
-        assertTrue(just.equals(Either.right(10)
+        assertTrue(just.equals(LazyEither.right(10)
                                      .map(i->i)));
-        assertThat(just,equalTo(Either.left(10)
-                                      .secondaryFlatMap(i->Either.right(i))));
-        assertThat(Either.left(10)
-                        .flatMap(i->Either.right(i)),equalTo(Either.left(10)));
+        assertThat(just,equalTo(LazyEither.left(10)
+                                      .flatMapLeft(i-> LazyEither.right(i))));
+        assertThat(LazyEither.left(10)
+                        .flatMap(i-> LazyEither.right(i)),equalTo(LazyEither.left(10)));
     }
 
     @Test

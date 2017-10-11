@@ -265,11 +265,11 @@ public interface OperationsOnFutures<T> {
     				of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
     		
-    		List<Integer> right = list.reactiveStream().transform(t -> t._2).collect(CyclopsCollectors.toList());
-    		assertThat(right,hasItem(100));
-    		assertThat(right,hasItem(200));
-    		assertThat(right,hasItem(300));
-    		assertThat(right,hasItem(400));
+    		List<Integer> lazyRight = list.reactiveStream().transform(t -> t._2).collect(CyclopsCollectors.toList());
+    		assertThat(lazyRight,hasItem(100));
+    		assertThat(lazyRight,hasItem(200));
+    		assertThat(lazyRight,hasItem(300));
+    		assertThat(lazyRight,hasItem(400));
      * 
      * 
      * }
@@ -1256,7 +1256,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Reduce sequentially from the right
+     * Reduce sequentially from the lazyRight
      * 
      * <pre>
      * {@code 
@@ -1282,7 +1282,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Sequentially reduce from the left
+     * Sequentially reduce from the lazyLeft
      * 
      * <pre>
      * {@code 

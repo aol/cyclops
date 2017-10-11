@@ -187,11 +187,11 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return (Product<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
     }
 
-    public <R> Active<W1, R> tailRec1(T initial,Function<? super T,? extends Higher<W1, ? extends Xor<T, R>>> fn){
+    public <R> Active<W1, R> tailRec1(T initial,Function<? super T,? extends Higher<W1, ? extends Either<T, R>>> fn){
         return asActiveTuple()._1().tailRec(initial, fn);
     }
 
-    public <R> Active<W2, R> tailRec2(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
+    public <R> Active<W2, R> tailRec2(T initial,Function<? super T,? extends Higher<W2, ? extends Either<T, R>>> fn){
         return asActiveTuple()._2().tailRec(initial, fn);
     }
 
@@ -546,9 +546,9 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
             return new MonadRec<Higher<Higher<product, W1>, W2>>(){
                 @Override
-                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<product, W1>, W2>, ? extends Xor<T, R>>> fn) {
-                    Product<W1,W2,? extends Xor<T, R>> next[] = new Product[1];
-                    Xor<T, R> in = Xor.secondary(initial);
+                public <T, R> Higher<Higher<Higher<product, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<product, W1>, W2>, ? extends Either<T, R>>> fn) {
+                    Product<W1,W2,? extends Either<T, R>> next[] = new Product[1];
+                    Either<T, R> in = Either.left(initial);
 
                     next[0] = Product.of(Tuple.tuple(def1.unit().unit(in),def2.unit().unit(in)),def1,def2);
                     boolean cont = true;
@@ -558,7 +558,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
                             Higher<W1, ?> b = a;
                             Higher<W1, Boolean> r = def1.functor().map(p -> {
-                                Xor<T, R> x = (Xor<T, R>) p;
+                                Either<T, R> x = (Either<T, R>) p;
                                 internalCont[0] = internalCont[0] || x.visit(s -> {
                                     next[0] = narrowK(fn.apply(s));
                                     return true;

@@ -445,7 +445,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Fold a Streamable fromt the right
+     * Fold a Streamable fromt the lazyRight
      * <pre>
     * {@code 
     *   Streamable.of("hello","world")
@@ -1128,7 +1128,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Scan left using supplied Monoid
+     * Scan lazyLeft using supplied Monoid
      * 
      * <pre>
      * {@code  
@@ -1148,7 +1148,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Scan left
+     * Scan lazyLeft
      * <pre>
      * {@code 
      *  assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
@@ -1162,7 +1162,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Scan right
+     * Scan lazyRight
      * <pre>
      * {@code 
      * assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
@@ -1176,7 +1176,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Scan right
+     * Scan lazyRight
      * 
      * <pre>
      * {@code 
@@ -1620,7 +1620,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      * <pre>
      * {@code 
      *  assertTrue(Streamable.of("a","b","c").foldRight("", String::concat).equals("cba"));

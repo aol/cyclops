@@ -425,9 +425,9 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
         public static <W, T, R> MonadRec<Higher<writer, W>> monadRec(Monoid<W> monoid) {
             return new MonadRec<Higher<writer, W>>() {
                 @Override
-                public <T, R> Higher<Higher<writer, W>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<writer, W>, ? extends Xor<T, R>>> fn) {
-                    Writer<W,? extends Xor<T, R>> next[] = new Writer[1];
-                    next[0] = Writer.writer(Xor.secondary(initial),monoid);
+                public <T, R> Higher<Higher<writer, W>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<writer, W>, ? extends Either<T, R>>> fn) {
+                    Writer<W,? extends Either<T, R>> next[] = new Writer[1];
+                    next[0] = Writer.writer(Either.left(initial),monoid);
 
                     boolean cont = true;
                     do {

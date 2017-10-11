@@ -6,7 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
@@ -1568,7 +1568,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
             return new MonadRec<linkedListX>(){
                 @Override
-                public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Either<T, R>>> fn) {
                     return LinkedListX.tailRec(initial,fn.andThen(LinkedListX::narrowK));
                 }
             };
@@ -1661,7 +1661,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         }
     }
 
-    public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Xor<T, R>>> fn) {
+    public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Either<T, R>>> fn) {
        return ListX.tailRec(initial,fn).to().linkedListX(Evaluation.LAZY);
     }
 }

@@ -1,7 +1,7 @@
 package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.lazy.Either3;
+import cyclops.control.lazy.LazyEither3;
 import cyclops.function.Function1;
 import cyclops.function.Function2;
 import cyclops.typeclasses.functor.Functor;
@@ -13,7 +13,7 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
     public static class µ {
     }
 
-    public abstract Either3<CharOutput<A>,CharBell<A>,CharDone<A>> match();
+    public abstract LazyEither3<CharOutput<A>,CharBell<A>,CharDone<A>> match();
 
 
     public static <T> CharToy<T> narrowK(Higher<CharToy.µ, T> wide){
@@ -55,8 +55,8 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
         @Override
-        public Either3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
-            return Either3.left1(this);
+        public LazyEither3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
+            return LazyEither3.left1(this);
         }
 
 
@@ -77,8 +77,8 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
         }
 
         @Override
-        public Either3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
-            return Either3.left2(this);
+        public LazyEither3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
+            return LazyEither3.left2(this);
         }
 
 
@@ -94,8 +94,8 @@ abstract class CharToy<A> implements Higher<CharToy.µ, A> {
 
      static final class CharDone<A> extends CharToy<A> {
         @Override
-        public Either3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
-            return Either3.right(this);
+        public LazyEither3<CharOutput<A>, CharBell<A>, CharDone<A>> match() {
+            return LazyEither3.right(this);
         }
 
 

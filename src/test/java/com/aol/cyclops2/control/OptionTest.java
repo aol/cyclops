@@ -298,13 +298,13 @@ public class OptionTest implements Printable {
 
     @Test
     public void testToXor() {
-        assertThat(eager.toXor(-1000), equalTo(Xor.primary(10)));
+        assertThat(eager.toEither(-1000), equalTo(Either.right(10)));
 
     }
 
     @Test
     public void testToXorNone() {
-        Xor<?, Integer> empty = none.toXor(-50000);
+        Either<?, Integer> empty = none.toEither(-50000);
 
         assertTrue(empty.swap().map(__ -> 10).toOptional().get() == 10);
 
@@ -312,14 +312,14 @@ public class OptionTest implements Printable {
 
     @Test
     public void testToXorSecondary() {
-        assertThat(eager.toXor(-1000).swap(), equalTo(Xor.secondary(10)));
+        assertThat(eager.toEither(-1000).swap(), equalTo(Either.left(10)));
     }
 
     @Test
     public void testToXorSecondaryNone() {
-        Xor<Integer, ?> empty = none.toXor(-50000).swap();
-        assertTrue(empty.isPrimary());
-        assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
+        Either<Integer, ?> empty = none.toEither(-50000).swap();
+        assertTrue(empty.isRight());
+        assertThat(empty.map(__ -> 10), equalTo(Either.right(10)));
 
     }
 
@@ -337,9 +337,9 @@ public class OptionTest implements Printable {
 
     @Test
     public void testToIorNone() {
-        Xor<Integer, ?> empty = none.toXor(-50000).swap();
-        assertTrue(empty.isPrimary());
-        assertThat(empty.map(__ -> 10), equalTo(Xor.primary(10)));
+        Either<Integer, ?> empty = none.toEither(-50000).swap();
+        assertTrue(empty.isRight());
+        assertThat(empty.map(__ -> 10), equalTo(Either.right(10)));
 
     }
 

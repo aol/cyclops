@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either4;
+import cyclops.control.lazy.LazyEither4;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
@@ -29,9 +29,9 @@ public class Either4Test {
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        Either4.right(10)
-             .flatMap(i -> { lazy=false; return  Either4.right(15);})
-             .map(i -> { lazy=false; return  Either4.right(15);})
+        LazyEither4.right(10)
+             .flatMap(i -> { lazy=false; return  LazyEither4.right(15);})
+             .map(i -> { lazy=false; return  LazyEither4.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -41,36 +41,36 @@ public class Either4Test {
     
     @Test
     public void mapFlatMapTest(){
-        assertThat(Either4.right(10)
+        assertThat(LazyEither4.right(10)
                .map(i->i*2)
-               .flatMap(i->Either4.right(i*4))
+               .flatMap(i-> LazyEither4.right(i*4))
                .orElse(-10),equalTo(80));
     }
     @Test
     public void odd() {
-        System.out.println(even(Either4.right(200000)).get());
+        System.out.println(even(LazyEither4.right(200000)).get());
     }
 
-    public Either4<String,String,String,String> odd(Either4<String,String,String,Integer> n) {
+    public LazyEither4<String,String,String,String> odd(LazyEither4<String,String,String,Integer> n) {
 
-        return n.flatMap(x -> even(Either4.right(x - 1)));
+        return n.flatMap(x -> even(LazyEither4.right(x - 1)));
     }
 
-    public Either4<String,String,String,String> even(Either4<String,String,String,Integer> n) {
+    public LazyEither4<String,String,String,String> even(LazyEither4<String,String,String,Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? Either4.right("done") : odd(Either4.right(x - 1));
+            return x <= 0 ? LazyEither4.right("done") : odd(LazyEither4.right(x - 1));
         });
     }
-    Either4<String,String,String,Integer> just;
-    Either4<String,String,String,Integer> left2;
-    Either4<String,String,String,Integer> left3;
-    Either4<String,String,String,Integer> none;
+    LazyEither4<String,String,String,Integer> just;
+    LazyEither4<String,String,String,Integer> left2;
+    LazyEither4<String,String,String,Integer> left3;
+    LazyEither4<String,String,String,Integer> none;
     @Before
     public void setUp() throws Exception {
-        just = Either4.right(10);
-        none = Either4.left1("none");
-        left2 = Either4.left2("left2");
-        left3 = Either4.left3("left3");
+        just = LazyEither4.right(10);
+        none = LazyEither4.left1("none");
+        left2 = LazyEither4.left2("left2");
+        left3 = LazyEither4.left3("left3");
         
     }
     @Test
@@ -98,28 +98,28 @@ public class Either4Test {
 
     @Test
     public void testTraverseLeft1() {
-        ListX<Either4<Integer,String,String,String>> list = ListX.of(just,none,Either4.<String,String,String,Integer>right(1)).map(Either4::swap1);
-        Either4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = Either4.traverse(list,s->"hello:"+s);
-        assertThat(xors,equalTo(Either4.right(ListX.of("hello:none"))));
+        ListX<LazyEither4<Integer,String,String,String>> list = ListX.of(just,none, LazyEither4.<String,String,String,Integer>right(1)).map(LazyEither4::swap1);
+        LazyEither4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither4.traverse(list, s->"hello:"+s);
+        assertThat(xors,equalTo(LazyEither4.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
-        ListX<Either4<Integer,String,String,String>> list = ListX.of(just,none,Either4.<String,String,String,Integer>right(1)).map(Either4::swap1);
-        Either4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = Either4.sequence(list);
-        assertThat(xors,equalTo(Either4.right(ListX.of("none"))));
+        ListX<LazyEither4<Integer,String,String,String>> list = ListX.of(just,none, LazyEither4.<String,String,String,Integer>right(1)).map(LazyEither4::swap1);
+        LazyEither4<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither4.sequence(list);
+        assertThat(xors,equalTo(LazyEither4.right(ListX.of("none"))));
     }
     @Test
     public void testSequenceLeft2() {
-        ListX<Either4<String,Integer,String,String>> list = ListX.of(just,left2,Either4.<String,String,String,Integer>right(1)).map(Either4::swap2);
-        Either4<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>> xors   = Either4.sequence(list);
-        assertThat(xors,equalTo(Either4.right(ListX.of("left2"))));
+        ListX<LazyEither4<String,Integer,String,String>> list = ListX.of(just,left2, LazyEither4.<String,String,String,Integer>right(1)).map(LazyEither4::swap2);
+        LazyEither4<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>> xors   = LazyEither4.sequence(list);
+        assertThat(xors,equalTo(LazyEither4.right(ListX.of("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-        Either4<ListX<String>,ListX<String>,ListX<String>,Integer> iors = Either4.accumulate(Monoids.intSum,ListX.of(none,just,Either4.right(10)));
-        assertThat(iors,equalTo(Either4.right(20)));
+        LazyEither4<ListX<String>,ListX<String>,ListX<String>,Integer> iors = LazyEither4.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither4.right(10)));
+        assertThat(iors,equalTo(LazyEither4.right(20)));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class Either4Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Either4.right(50)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(LazyEither4.right(50)));
     }
 
     @Test
@@ -167,7 +167,7 @@ public class Either4Test {
 
     @Test
     public void testUnitT() {
-        assertThat(just.unit(20),equalTo(Either4.right(20)));
+        assertThat(just.unit(20),equalTo(LazyEither4.right(20)));
     }
 
     
@@ -181,14 +181,14 @@ public class Either4Test {
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5),equalTo(Either4.right(15)));
-        assertThat(none.map(i->i+5),equalTo(Either4.left1("none")));
+        assertThat(just.map(i->i+5),equalTo(LazyEither4.right(15)));
+        assertThat(none.map(i->i+5),equalTo(LazyEither4.left1("none")));
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->Either4.right(i+5)),equalTo(Either4.right(15)));
-        assertThat(none.flatMap(i->Either4.right(i+5)),equalTo(Either4.left1("none")));
+        assertThat(just.flatMap(i-> LazyEither4.right(i+5)),equalTo(LazyEither4.right(15)));
+        assertThat(none.flatMap(i-> LazyEither4.right(i+5)),equalTo(LazyEither4.left1("none")));
     }
 
     @Test
@@ -288,7 +288,7 @@ public class Either4Test {
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either4.right[10]"));
+        assertThat(just.mkString(),equalTo("Either4.lazyRight[10]"));
         assertThat(none.mkString(),equalTo("Either4.left1[none]"));
     }
 
@@ -404,12 +404,12 @@ public class Either4Test {
 
     @Test
     public void testCast() {
-        Either4<String,String,String,Number> num = just.cast(Number.class);
+        LazyEither4<String,String,String,Number> num = just.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5),equalTo(Either4.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither4.right(15)));
     }
     
     @Test
@@ -426,7 +426,7 @@ public class Either4Test {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either4.right(65)));
+        assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither4.right(65)));
     }
 
     

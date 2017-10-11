@@ -2,7 +2,7 @@ package cyclops.control.lazy;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.*;
@@ -34,7 +34,7 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
         return Function0.run(runState.apply(r,s));
     }
 
-    public static <T,R1, W, S, R> ReaderWriterState<R1, W, S, R> tailRec(Monoid<W> monoid,T initial, Function<? super T, ? extends  ReaderWriterState<R1, W, S,  ? extends Xor<T, R>>> fn) {
+    public static <T,R1, W, S, R> ReaderWriterState<R1, W, S, R> tailRec(Monoid<W> monoid,T initial, Function<? super T, ? extends  ReaderWriterState<R1, W, S,  ? extends Either<T, R>>> fn) {
         Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> x = Instances.<R1,W,S> monadRec(monoid).tailRec(initial, fn);
         return narrowK(x);
     }
@@ -372,7 +372,7 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
 
 
                 @Override
-                public <T, R> Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<rws, R1>, W>, S>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<rws, R1>, W>, S>, ? extends Either<T, R>>> fn) {
                     return narrowK(fn.apply(initial)).flatMap( eval ->
                             eval.visit(s->narrowK(tailRec(s,fn)),p->{
                                 ReaderWriterState<R1, W, S, R> k = narrowK(Instances.<R1, W, S>unit(monoid).<R>unit(p));

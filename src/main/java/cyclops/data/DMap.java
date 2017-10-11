@@ -2,9 +2,9 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.control.Option;
-import cyclops.control.lazy.Either;
-import cyclops.control.lazy.Either3;
-import cyclops.control.lazy.Either4;
+import cyclops.control.lazy.LazyEither;
+import cyclops.control.lazy.LazyEither3;
+import cyclops.control.lazy.LazyEither4;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -37,7 +37,7 @@ public interface DMap{
         Two<K1,V1,K2,V2> put2(K2 key, V2 value);
         Two<K1,V1,K2,V2> put1(Tuple2<K1, V1> keyAndValue);
         Two<K1,V1,K2,V2> put2(Tuple2<K2, V2> keyAndValue);
-        Either3<V1,V2,Nothing> get(Either<K1, K2> key);
+        LazyEither3<V1,V2,Nothing> get(LazyEither<K1, K2> key);
         Option<V1> get1(K1 key);
         Option<V2> get2(K2 key);
         V1 getOrElse1(K1 key, V1 alt);
@@ -46,9 +46,9 @@ public interface DMap{
         V2 getOrElseGet2(K2 key, Supplier<V2> alt);
         int size();
         <K3,V3> Three<K1,V1,K2,V2,K3,V3> merge(ImmutableMap<K3, V3> one);
-        ReactiveSeq<Either<Tuple2<K1,V1>,Tuple2<K2,V2>>> stream();
-        ReactiveSeq<Either<V1, V2>> streamValues();
-        ReactiveSeq<Either<K1, K2>> streamKeys();
+        ReactiveSeq<LazyEither<Tuple2<K1,V1>,Tuple2<K2,V2>>> stream();
+        ReactiveSeq<LazyEither<V1, V2>> streamValues();
+        ReactiveSeq<LazyEither<K1, K2>> streamKeys();
         ImmutableMap<K1,V1> map1();
         ImmutableMap<K2,V2> map2();
 
@@ -60,14 +60,14 @@ public interface DMap{
     }
     static interface Three<K1,V1,K2,V2,K3,V3> extends DMap, To<Three<K1,V1,K2,V2,K3,V3>> {
 
-        Three<K1,V1,K2,V2,K3,V3> put(Either3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>> keyAndValue);
+        Three<K1,V1,K2,V2,K3,V3> put(LazyEither3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>> keyAndValue);
         Three<K1,V1,K2,V2,K3,V3> put1(K1 key, V1 value);
         Three<K1,V1,K2,V2,K3,V3> put2(K2 key, V2 value);
         Three<K1,V1,K2,V2,K3,V3> put3(K3 key, V3 value);
         Three<K1,V1,K2,V2,K3,V3> put1(Tuple2<K1, V1> keyAndValue);
         Three<K1,V1,K2,V2,K3,V3> put2(Tuple2<K2, V2> keyAndValue);
         Three<K1,V1,K2,V2,K3,V3> put3(Tuple2<K3, V3> keyAndValue);
-        Either4<V1,V2,V3,Nothing> get(Either3<K1, K2, K3> key);
+        LazyEither4<V1,V2,V3,Nothing> get(LazyEither3<K1, K2, K3> key);
         Option<V1> get1(K1 key);
         Option<V2> get2(K2 key);
         Option<V3> get3(K3 key);
@@ -78,9 +78,9 @@ public interface DMap{
         V2 getOrElseGet2(K2 key, Supplier<V2> alt);
         V3 getOrElseGet3(K3 key, Supplier<V3> alt);
         int size();
-        ReactiveSeq<Either3<Tuple2<K1,V1>,Tuple2<K2,V2>,Tuple2<K3,V3>>> stream();
-        ReactiveSeq<Either3<K1, K2, K3>> streamKeys();
-        ReactiveSeq<Either3<V1, V2, V3>> streamValues();
+        ReactiveSeq<LazyEither3<Tuple2<K1,V1>,Tuple2<K2,V2>,Tuple2<K3,V3>>> stream();
+        ReactiveSeq<LazyEither3<K1, K2, K3>> streamKeys();
+        ReactiveSeq<LazyEither3<V1, V2, V3>> streamValues();
         ImmutableMap<K1,V1> map1();
         ImmutableMap<K2,V2> map2();
         ImmutableMap<K3,V3> map3();
@@ -137,13 +137,13 @@ public interface DMap{
         }
 
         @Override
-        public Either3<V1, V2, Nothing> get(Either<K1, K2> key) {
+        public LazyEither3<V1, V2, Nothing> get(LazyEither<K1, K2> key) {
             return key.visit(k1->{
                 V1 r = getOrElse1(k1, null);
-                return r==null ? Either3.right(Nothing.EMPTY) : Either3.left1(r);
+                return r==null ? LazyEither3.right(Nothing.EMPTY) : LazyEither3.left1(r);
             },k2->{
                 V2 r = getOrElse2(k2, null);
-                return r==null ? Either3.right(Nothing.EMPTY) : Either3.left2(r);
+                return r==null ? LazyEither3.right(Nothing.EMPTY) : LazyEither3.left2(r);
             });
         }
 
@@ -174,14 +174,14 @@ public interface DMap{
 
 
         @Override
-        public ReactiveSeq<Either<Tuple2<K1, V1>, Tuple2<K2, V2>>> stream() {
-            ReactiveSeq<Either<Tuple2<K1, V1>, Tuple2<K2, V2>>> x = map1.stream().map(Either::left);
-            return x.mergeP(map2.stream().map(Either::right));
+        public ReactiveSeq<LazyEither<Tuple2<K1, V1>, Tuple2<K2, V2>>> stream() {
+            ReactiveSeq<LazyEither<Tuple2<K1, V1>, Tuple2<K2, V2>>> x = map1.stream().map(LazyEither::left);
+            return x.mergeP(map2.stream().map(LazyEither::right));
         }
         @Override
-        public ReactiveSeq<Either<K1, K2>> streamKeys() {
-            ReactiveSeq<Either<K1, K2>> x = map1.stream().map(t->t._1()).map(Either::left);
-            return x.mergeP(map2.stream().map(t->t._1()).map(Either::right));
+        public ReactiveSeq<LazyEither<K1, K2>> streamKeys() {
+            ReactiveSeq<LazyEither<K1, K2>> x = map1.stream().map(t->t._1()).map(LazyEither::left);
+            return x.mergeP(map2.stream().map(t->t._1()).map(LazyEither::right));
         }
 
         @Override
@@ -200,9 +200,9 @@ public interface DMap{
         }
 
         @Override
-        public ReactiveSeq<Either<V1, V2>> streamValues() {
-            ReactiveSeq<Either<V1, V2>> x = map1.stream().map(t->t._2()).map(Either::left);
-            return x.mergeP(map2.stream().map(t->t._2()).map(Either::right));
+        public ReactiveSeq<LazyEither<V1, V2>> streamValues() {
+            ReactiveSeq<LazyEither<V1, V2>> x = map1.stream().map(t->t._2()).map(LazyEither::left);
+            return x.mergeP(map2.stream().map(t->t._2()).map(LazyEither::right));
         }
 
     }
@@ -218,7 +218,7 @@ public interface DMap{
         private final ImmutableMap<K3,V3> map3;
 
         @Override
-        public Three<K1, V1, K2, V2, K3, V3> put(Either3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>> keyAndValue) {
+        public Three<K1, V1, K2, V2, K3, V3> put(LazyEither3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>> keyAndValue) {
             return keyAndValue.visit(kv1->put1(kv1),kv2->put2(kv2),kv3->put3(kv3));
         }
 
@@ -270,16 +270,16 @@ public interface DMap{
         }
 
         @Override
-        public Either4<V1, V2, V3, Nothing> get(Either3<K1, K2, K3> key) {
+        public LazyEither4<V1, V2, V3, Nothing> get(LazyEither3<K1, K2, K3> key) {
             return key.visit(k1->{
                 V1 r = getOrElse1(k1, null);
-                return r==null ? Either4.right(Nothing.EMPTY) : Either4.left1(r);
+                return r==null ? LazyEither4.right(Nothing.EMPTY) : LazyEither4.left1(r);
             },k2->{
                 V2 r = getOrElse2(k2, null);
-                return r==null ? Either4.right(Nothing.EMPTY) : Either4.left2(r);
+                return r==null ? LazyEither4.right(Nothing.EMPTY) : LazyEither4.left2(r);
             },k3->{
                 V3 r = getOrElse3(k3, null);
-                return r==null ? Either4.right(Nothing.EMPTY) : Either4.left3(r);
+                return r==null ? LazyEither4.right(Nothing.EMPTY) : LazyEither4.left3(r);
             });
         }
 
@@ -319,19 +319,19 @@ public interface DMap{
         }
 
         @Override
-        public ReactiveSeq<Either3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>>> stream() {
-            ReactiveSeq<Either3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>>> x = map1.stream().map(Either3::left1);
-            return x.mergeP(map2.stream().map(Either3::left2), map3.stream().map(Either3::right));
+        public ReactiveSeq<LazyEither3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>>> stream() {
+            ReactiveSeq<LazyEither3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>>> x = map1.stream().map(LazyEither3::left1);
+            return x.mergeP(map2.stream().map(LazyEither3::left2), map3.stream().map(LazyEither3::right));
         }
         @Override
-        public ReactiveSeq<Either3<K1, K2, K3>> streamKeys() {
-            ReactiveSeq<Either3<K1, K2, K3>> x = map1.stream().map(t->t._1()).map(Either3::left1);
-            return x.mergeP(map2.stream().map(t->t._1()).map(Either3::left2), map3.stream().map(t->t._1()).map(Either3::right));
+        public ReactiveSeq<LazyEither3<K1, K2, K3>> streamKeys() {
+            ReactiveSeq<LazyEither3<K1, K2, K3>> x = map1.stream().map(t->t._1()).map(LazyEither3::left1);
+            return x.mergeP(map2.stream().map(t->t._1()).map(LazyEither3::left2), map3.stream().map(t->t._1()).map(LazyEither3::right));
         }
         @Override
-        public ReactiveSeq<Either3<V1, V2, V3>> streamValues() {
-            ReactiveSeq<Either3<V1, V2, V3>> x = map1.stream().map(t->t._2()).map(Either3::left1);
-            return x.mergeP(map2.stream().map(t->t._2()).map(Either3::left2), map3.stream().map(t->t._2()).map(Either3::right));
+        public ReactiveSeq<LazyEither3<V1, V2, V3>> streamValues() {
+            ReactiveSeq<LazyEither3<V1, V2, V3>> x = map1.stream().map(t->t._2()).map(LazyEither3::left1);
+            return x.mergeP(map2.stream().map(t->t._2()).map(LazyEither3::left2), map3.stream().map(t->t._2()).map(LazyEither3::right));
         }
 
         @Override

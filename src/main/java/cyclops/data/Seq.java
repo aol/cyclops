@@ -11,7 +11,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.data.DataWitness.seq;
 import cyclops.function.Monoid;
 import cyclops.stream.Generator;
@@ -71,8 +71,8 @@ public interface Seq<T> extends ImmutableList<T>,
             return (Seq<T>)it;
         return fromIterator(it.iterator());
     }
-      static  <T,R> Seq<R> tailRec(T initial, Function<? super T, ? extends Seq<? extends Xor<T, R>>> fn) {
-          Seq<Xor<T, R>> next = Seq.of(Xor.secondary(initial));
+      static  <T,R> Seq<R> tailRec(T initial, Function<? super T, ? extends Seq<? extends Either<T, R>>> fn) {
+          Seq<Either<T, R>> next = Seq.of(Either.left(initial));
 
         boolean newValue[] = {true};
         for(;;){
@@ -89,7 +89,7 @@ public interface Seq<T> extends ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Xor.sequencePrimary(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
+        ListX<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
         return Seq.fromIterator(x.iterator());
     }
     static <T> Seq<T> fill(T t, int max){

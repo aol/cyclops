@@ -3,8 +3,8 @@ package cyclops.typeclasses.free;
 import com.aol.cyclops2.hkt.Higher;
 
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.control.Xor;
-import cyclops.control.lazy.Either3;
+import cyclops.control.Either;
+import cyclops.control.lazy.LazyEither3;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Function5;
@@ -401,10 +401,10 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
     public final T go(final Function<? super Higher<F, Free<F, T>>,? extends Free<F,T>> fn, final Functor<F> functor){
         Free<F,T> toUse = this;
         for(;;) {
-            Xor<Higher<F, Free<F, T>>, T> xor = (Xor)toUse.resume(functor);
-            if (xor.isPrimary())
+            Either<Higher<F, Free<F, T>>, T> xor = (Either)toUse.resume(functor);
+            if (xor.isRight())
                 return xor.orElse(null);
-            toUse =  fn.apply(xor.secondaryOrElse(null));
+            toUse =  fn.apply(xor.leftOrElse(null));
         }
     }
 
@@ -417,31 +417,31 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     public abstract <R> Free<F, R> flatMap(final Function<? super T,? extends Free<F, ? extends R>> f);
 
-    public final <R> Xor<R, T> resume(final Functor<F> functor, Function<Higher<F,Free<F,T>>,R> decoder) {
-        return resume(functor).secondaryMap(decoder);
+    public final <R> Either<R, T> resume(final Functor<F> functor, Function<Higher<F,Free<F,T>>,R> decoder) {
+        return resume(functor).mapLeft(decoder);
     }
     public  <B> Free<F,Tuple2<T,B>> zip(Functor<F> f,Free<F,B> b){
         return zip(f,b,Tuple::tuple);
     }
     public  <B,R> Free<F,R> zip(Functor<F> f,Free<F,B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
-        Xor<Higher<F, Free<F, T>>, T> first = resume(f);
-        Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
+        Either<Higher<F, Free<F, T>>, T> first = resume(f);
+        Either<Higher<F, Free<F, B>>, B> second = b.resume(f);
 
-        if(first.isSecondary() && second.isSecondary()) {
-            return suspend(f.map_(first.secondaryOrElse(null), a1->{
-                return suspend(f.map_(second.secondaryOrElse(null), b1->a1.zip(f,b1,zipper)));
+        if(first.isLeft() && second.isLeft()) {
+            return suspend(f.map_(first.leftOrElse(null), a1->{
+                return suspend(f.map_(second.leftOrElse(null), b1->a1.zip(f,b1,zipper)));
             }));
         }
-        if(first.isPrimary() && second.isPrimary()){
+        if(first.isRight() && second.isRight()){
             return done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
-        if(first.isSecondary() && second.isPrimary()){
-            return suspend(f.map_(first.secondaryOrElse(null), a1->a1.zip(f,b,zipper)));
+        if(first.isLeft() && second.isRight()){
+            return suspend(f.map_(first.leftOrElse(null), a1->a1.zip(f,b,zipper)));
 
         }
-        if(first.isPrimary() && second.isSecondary()){
-            return suspend(f.map_(second.secondaryOrElse(null), a1->Free.<F,T>done(first.orElse(null)).zip(f,b,zipper)));
+        if(first.isRight() && second.isLeft()){
+            return suspend(f.map_(second.leftOrElse(null), a1->Free.<F,T>done(first.orElse(null)).zip(f,b,zipper)));
         }
         return null;
     }
@@ -452,53 +452,53 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
     }
     public  <B,C,R> Free<F,R> zip(Functor<F> f,Free<F,B> b, Free<F,C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
-        Xor<Higher<F, Free<F, T>>, T> first = resume(f);
-        Xor<Higher<F, Free<F, B>>, B> second = b.resume(f);
-        Xor<Higher<F, Free<F, C>>, C> third = c.resume(f);
+        Either<Higher<F, Free<F, T>>, T> first = resume(f);
+        Either<Higher<F, Free<F, B>>, B> second = b.resume(f);
+        Either<Higher<F, Free<F, C>>, C> third = c.resume(f);
 
-        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return suspend(f.map_(first.secondaryOrElse(null), a1->{
-                return suspend(f.map_(second.secondaryOrElse(null), b1->{
-                    return suspend(f.map_(third.secondaryOrElse(null), c1->a1.zip(f,b1,c1,fn)));
+        if(first.isLeft() && second.isLeft() && third.isLeft()) {
+            return suspend(f.map_(first.leftOrElse(null), a1->{
+                return suspend(f.map_(second.leftOrElse(null), b1->{
+                    return suspend(f.map_(third.leftOrElse(null), c1->a1.zip(f,b1,c1,fn)));
                 }));
             }));
         }
 
-        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
+        if(first.isRight() && second.isRight() && third.isRight()){
             return done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
-        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return suspend(f.map_(first.secondaryOrElse(null), a1->a1.zip(f,b,c,fn)));
+        if(first.isLeft() && second.isRight() && third.isRight()){
+            return suspend(f.map_(first.leftOrElse(null), a1->a1.zip(f,b,c,fn)));
         }
-        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
+        if(first.isRight() && second.isLeft() && third.isRight()){
 
-            return suspend(f.map_(second.secondaryOrElse(null), b1->this.zip(f,b1,c,fn)));
+            return suspend(f.map_(second.leftOrElse(null), b1->this.zip(f,b1,c,fn)));
 
 
 
         }
-        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-            return suspend(f.map_(third.secondaryOrElse(null), c1->this.zip(f,b,c1,fn)));
+        if(first.isRight() && second.isRight() && third.isLeft()){
+            return suspend(f.map_(third.leftOrElse(null), c1->this.zip(f,b,c1,fn)));
         }
 
 
-        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return suspend(f.map_(second.secondaryOrElse(null), b1->{
-                return suspend(f.map_(third.secondaryOrElse(null), c1->this.zip(f,b1,c1,fn)));
+        if(first.isRight() && second.isLeft() && third.isLeft()){
+            return suspend(f.map_(second.leftOrElse(null), b1->{
+                return suspend(f.map_(third.leftOrElse(null), c1->this.zip(f,b1,c1,fn)));
             }));
 
         }
-        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return suspend(f.map_(first.secondaryOrElse(null), a1->{
+        if(first.isLeft() && second.isRight() && third.isLeft()){
+            return suspend(f.map_(first.leftOrElse(null), a1->{
 
-                return suspend(f.map_(third.secondaryOrElse(null), c1->a1.zip(f,b,c1,fn)));
+                return suspend(f.map_(third.leftOrElse(null), c1->a1.zip(f,b,c1,fn)));
 
             }));
         }
-        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return suspend(f.map_(first.secondaryOrElse(null), a1->{
-                return suspend(f.map_(second.secondaryOrElse(null), b1->a1.zip(f,b1,c,fn)));
+        if(first.isLeft() && second.isLeft() && third.isRight()){
+            return suspend(f.map_(first.leftOrElse(null), a1->{
+                return suspend(f.map_(second.leftOrElse(null), b1->a1.zip(f,b1,c,fn)));
 
             }));
         }
@@ -517,7 +517,7 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         private <R,X> Function<Higher<F,Free<F,R>>,X> decoder(){
             return (Function)decoder1;
         }
-        public final <R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(Free<F,R1> free1, Free<F,R2> free2 ){
+        public final <R1,R2,X1,X2> Tuple2<Either<X1,R1>,Either<X2,R2>> product(Free<F,R1> free1, Free<F,R2> free2 ){
 
             return Tuple.tuple(free1.resume(functor,decoder()),free2.resume(functor,decoder()));
 
@@ -526,17 +526,17 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
     }
 
 
-    public static final <F,R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(final Functor<F> functor, Free<F,R1> free1, Function<Higher<F,Free<F,R1>>,X1> decoder1,
-                                                                              Free<F,R2> free2, Function<Higher<F,Free<F,R2>>,X2> decoder2 ){
+    public static final <F,R1,R2,X1,X2> Tuple2<Either<X1,R1>,Either<X2,R2>> product(final Functor<F> functor, Free<F,R1> free1, Function<Higher<F,Free<F,R1>>,X1> decoder1,
+                                                                                    Free<F,R2> free2, Function<Higher<F,Free<F,R2>>,X2> decoder2 ){
 
         return Tuple.tuple(free1.resume(functor,decoder1),free2.resume(functor,decoder2));
 
     }
-    public final Xor<Higher<F, Free<F, T>>, T> resume(final Functor<F> functor) {
-        return resumeInternal( functor).visit(Xor::secondary,Xor::primary,t->null);
+    public final Either<Higher<F, Free<F, T>>, T> resume(final Functor<F> functor) {
+        return resumeInternal( functor).visit(Either::left, Either::right, t->null);
 
     }
-   abstract <T1, U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor);
+   abstract <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor);
 
     public final <R> Free<F, R> map(final Function<? super T, ? extends R> mapper) {
         return flatMap(t -> new Pure<>(mapper.apply(t)));
@@ -555,8 +555,8 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
                                     Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
             return done.apply(this);
         }
-        <T1, U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
-            return Either3.left2(value);
+        <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
+            return LazyEither3.left2(value);
         }
         @Override
         public <R> Free<F, R> flatMap(Function<? super T, ? extends Free<F, ? extends R>> f) {
@@ -576,8 +576,8 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
                            Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
             return suspend.apply(this);
         }
-        <T1, U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
-            return Either3.left1(suspended);
+        <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
+            return LazyEither3.left1(suspended);
         }
         @Override
         public <R> Free<F, R> flatMap(Function<? super T,? extends Free<F, ? extends R>> f) {
@@ -607,16 +607,16 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         public <R> Free<F, R> flatMap(final Function<? super T,? extends Free<F, ? extends R>> g) {
             return new FlatMapped<F, IN, R>(free, aa -> new FlatMapped<F,T, R>(narrowFn().apply(aa), g));
         }
-        <T1, U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
+        <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
             return   resumeNestedFree(functor).flatMap(cur->cur.resumeInternal(functor));
         }
-        private  <U> Either3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeNestedFree(Functor<F> functor){
+        private  <U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeNestedFree(Functor<F> functor){
             Function<IN, Free<F, T>> f = narrowFn();
-            return free.visit(pure->Either3.right(f.apply(pure.value)),
-                    s-> Either3.left1(functor.map(o -> o.flatMap(f), s.suspended)),
+            return free.visit(pure-> LazyEither3.right(f.apply(pure.value)),
+                    s-> LazyEither3.left1(functor.map(o -> o.flatMap(f), s.suspended)),
                     fm->{
                         final FlatMapped<F, U, IN> flatMapped2 = (FlatMapped<F, U, IN>)fm;
-                        return Either3.right(flatMapped2.free.flatMap(o ->
+                        return LazyEither3.right(flatMapped2.free.flatMap(o ->
                                 flatMapped2.fn.apply(o).flatMap(fn)));
                     });
 

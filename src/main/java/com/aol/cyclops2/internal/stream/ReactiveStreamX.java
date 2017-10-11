@@ -15,7 +15,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Option;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -171,7 +171,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public Either<Throwable, T> findFirstOrError() {
+    public LazyEither<Throwable, T> findFirstOrError() {
         if (async == Type.NO_BACKPRESSURE) {
             Future<T> result = Future.future();
             source.subscribeAll(e -> {
@@ -185,9 +185,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 }
             });
 
-            return Either.fromFuture(result);
+            return LazyEither.fromFuture(result);
         }
-        return Either.fromPublisher(this);
+        return LazyEither.fromPublisher(this);
     }
 
     @Override

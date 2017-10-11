@@ -10,7 +10,7 @@ import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Semigroup;
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
@@ -365,73 +365,73 @@ public interface Semigroups {
         return (a, b) -> Future.firstSuccess(a,b);
     }
     /**
-     * @return Combine two Xor's by taking the first primary
+     * @return Combine two Xor's by taking the first lazyRight
      */
-    static <ST,PT> Semigroup<Xor<ST,PT>> firstPrimaryXor() {
-        return  (a, b) -> a.isPrimary() ? a : b;
+    static <ST,PT> Semigroup<Either<ST,PT>> firstPrimaryXor() {
+        return  (a, b) -> a.isRight() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the first secondary
+     * @return Combine two Xor's by taking the first lazyLeft
      */
-    static <ST,PT> Semigroup<Xor<ST,PT>> firstSecondaryXor() {
-        return  (a, b) -> a.isSecondary() ? a : b;
+    static <ST,PT> Semigroup<Either<ST,PT>> firstSecondaryXor() {
+        return  (a, b) -> a.isLeft() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the last primary
+     * @return Combine two Xor's by taking the last lazyRight
      */
-    static <ST,PT> Semigroup<Xor<ST,PT>> lastPrimaryXor() {
-        return  (a, b) -> b.isPrimary() ? b : a;
+    static <ST,PT> Semigroup<Either<ST,PT>> lastPrimaryXor() {
+        return  (a, b) -> b.isRight() ? b : a;
     }
     /**
-     * @return Combine two Xor's by taking the last secondary
+     * @return Combine two Xor's by taking the last lazyLeft
      */
-    static <ST,PT> Semigroup<Xor<ST,PT>> lastSecondaryXor() {
-        return  (a, b) -> b.isSecondary() ? b : a;
+    static <ST,PT> Semigroup<Either<ST,PT>> lastSecondaryXor() {
+        return  (a, b) -> b.isLeft() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the first primary
+     * @return Combine two Try's by taking the first lazyRight
      */
     static <T,X extends Throwable> Semigroup<Try<T,X>> firstTrySuccess() {
         return  (a, b) -> a.isSuccess() ? a : b;
     }
     /**
-     * @return Combine two Try's by taking the first secondary
+     * @return Combine two Try's by taking the first lazyLeft
      */
     static <T,X extends Throwable> Semigroup<Try<T,X>> firstTryFailure() {
         return  (a, b) -> a.isFailure() ? a : b;
     }
     /**
-     * @return Combine two Tryr's by taking the last primary
+     * @return Combine two Tryr's by taking the last lazyRight
      */
     static<T,X extends Throwable> Semigroup<Try<T,X>> lastTrySuccess() {
         return  (a, b) -> b.isSuccess() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the last secondary
+     * @return Combine two Try's by taking the last lazyLeft
      */
     static <T,X extends Throwable> Semigroup<Try<T,X>>lastTryFailure() {
         return  (a, b) -> b.isFailure() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the first primary
+     * @return Combine two Ior's by taking the first lazyRight
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> firstPrimaryIor() {
         return  (a, b) -> a.isPrimary() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the first secondary
+     * @return Combine two Ior's by taking the first lazyLeft
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> firstSecondaryIor() {
         return  (a, b) -> a.isSecondary() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the last primary
+     * @return Combine two Ior's by taking the last lazyRight
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> lastPrimaryIor() {
         return  (a, b) -> b.isPrimary() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the last secondary
+     * @return Combine two Ior's by taking the last lazyLeft
      */
     static <ST,PT> Semigroup<Ior<ST,PT>> lastSecondaryIor() {
         return  (a, b) -> b.isSecondary() ? b : a;

@@ -234,7 +234,7 @@ public class Active<W,T> implements Filters<T>,
     public <C,R> NarrowedApplicative<C,R> concreteAp(Kleisli<W,C,Function<T,R>> widen){
         return new NarrowedApplicative<>(widen);
     }
-    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W,C,Xor<T,R>> widen){
+    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W,C,Either<T,R>> widen){
         return new NarrowedTailRec<>(widen);
     }
     @AllArgsConstructor
@@ -253,7 +253,7 @@ public class Active<W,T> implements Filters<T>,
     }
     @AllArgsConstructor
     class NarrowedTailRec<C,R>{
-        private final Kleisli<W,C,Xor<T,R>>  narrow;
+        private final Kleisli<W,C,Either<T,R>>  narrow;
 
         public  Active<W, R> tailRec(T initial,Function<? super T,? extends C> fn){
             return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
@@ -416,10 +416,10 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
-    public <R> Active<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+    public <R> Active<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Either<T, R>>> fn){
         return Active.of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
     }
-    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
+    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Either<T, R>>> fn){
         return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
     @AllArgsConstructor

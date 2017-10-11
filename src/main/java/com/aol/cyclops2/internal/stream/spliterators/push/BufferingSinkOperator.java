@@ -1,7 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
-import cyclops.control.Xor;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 

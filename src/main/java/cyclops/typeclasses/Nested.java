@@ -222,7 +222,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return new NarrowedApplicative<>(widen);
     }
 
-    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W2,C,Xor<T,R>> widen){
+    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W2,C,Either<T,R>> widen){
         return new NarrowedTailRec<>(widen);
     }
     public <S,R> Converter<W1,S> concreteConversion(Function<? super Higher<W2, T>,? extends S> narrow2){
@@ -252,7 +252,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     @AllArgsConstructor
     class NarrowedTailRec<C,R>{
-        private final Kleisli<W2,C,Xor<T,R>> widen;
+        private final Kleisli<W2,C,Either<T,R>> widen;
 
         public  Nested<W1,W2,R> tailRecN(T initial,Function<? super T,? extends C> fn){
             return Nested.this.tailRecN(initial,fn.andThen(widen));
@@ -310,10 +310,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return new Nested<>(res,composedFunctor,def1,def2);
     }
 
-    public <R> Nested<W1,W2, R> tailRecN(T initial,Function<? super T,? extends Higher<W2, ? extends Xor<T, R>>> fn){
+    public <R> Nested<W1,W2, R> tailRecN(T initial,Function<? super T,? extends Higher<W2, ? extends Either<T, R>>> fn){
         return flatMapA(in->Active.of(def2.unit().unit(in),def2).tailRec(initial,fn));
     }
-    public <R> Nested<W1,W2, R> tailRec(T initial,Function<? super T,? extends Nested<W1,W2, ? extends Xor<T, R>>> fn){
+    public <R> Nested<W1,W2, R> tailRec(T initial,Function<? super T,? extends Nested<W1,W2, ? extends Either<T, R>>> fn){
         return narrowK(Instances.monadRec(def1, def2).tailRec(initial, fn));
     }
 
@@ -565,13 +565,13 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
         return of(hkt, ListX.Instances.definitions(), Try.Instances.definitions());
     }
-    public static <L,R> Nested<list,Higher<xor,L>,R> listXor(List<? extends Xor<L,R>> listXor){
-        Higher<list,Higher<Higher<xor,L>,R>> hkt = (Higher)listXor;
-        return of(hkt, ListX.Instances.definitions(), Xor.Instances.definitions());
+    public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
+        Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
+        return of(hkt, ListX.Instances.definitions(), Either.Instances.definitions());
     }
-    public static <L,R> Nested<future,Higher<xor,L>,R> futureXor(Future<? extends Xor<L,R>> futureXor){
-        Higher<future,Higher<Higher<xor,L>,R>> hkt = (Higher)futureXor;
-        return of(hkt, Future.Instances.definitions(), Xor.Instances.definitions());
+    public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
+        Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
+        return of(hkt, Future.Instances.definitions(), Either.Instances.definitions());
     }
     public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
         return of(futureList.map(ListX::fromIterable),Future.Instances.definitions(), ListX.Instances.definitions());
@@ -731,26 +731,26 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         public static <W1,W2> MonadRec<Higher<Higher<nested, W1>, W2>> monadRec(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2) {
             return new MonadRec<Higher<Higher<nested, W1>, W2>>() {
                 @Override
-                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<nested, W1>, W2>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<Higher<nested, W1>, W2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<nested, W1>, W2>, ? extends Either<T, R>>> fn) {
 
-                    Higher<Higher<Higher<nested, W1>, W2>, Xor<T, R>>[] next = new Higher[1];
-                    next[0] = Instances.unit(def1, def2).unit(Xor.secondary(initial));
+                    Higher<Higher<Higher<nested, W1>, W2>, Either<T, R>>[] next = new Higher[1];
+                    next[0] = Instances.unit(def1, def2).unit(Either.left(initial));
                     Foldable<Higher<Higher<nested, W1>, W2>> foldable = Instances.foldable();
                     boolean cont[] = {true};
                     do {
-                        BinaryOperator<Xor<T,R>> bifn = (a,b)->{
+                        BinaryOperator<Either<T,R>> bifn = (a, b)->{
                             if (cont[0] && b.visit(s -> {
-                                Higher<Higher<Higher<nested, W1>, W2>, ? extends Xor<T, R>> x = fn.apply(s);
+                                Higher<Higher<Higher<nested, W1>, W2>, ? extends Either<T, R>> x = fn.apply(s);
                                 next[0] = (Higher)x;
                                 return true;
                             }, pr -> false)) cont[0] = true;
                             else cont[0] = false;
-                            return Xor.secondary(initial);
+                            return Either.left(initial);
                         };
-                        foldable.foldLeft(Xor.<T,R>secondary(initial),bifn,next[0]);
+                        foldable.foldLeft(Either.<T,R>left(initial),bifn,next[0]);
 
                     } while (cont[0]);
-                    Nested<W1, W2, Xor<T, R>> res = narrowK(next[0]);
+                    Nested<W1, W2, Either<T, R>> res = narrowK(next[0]);
                     return res.map(x->x.orElse(null));
                 }
             };

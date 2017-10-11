@@ -40,8 +40,8 @@ import java.util.function.*;
 /**
  * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
  * 
- * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
- * 'Right' (or primary type) biased disjunct union.
+ * An Either or Union type, but lazyRight biased. Primary and Secondary are used instead of Right & Left.
+ * 'Right' (or lazyRight type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *  
  *  
@@ -159,13 +159,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     }
 
     /**
-     * Create an instance of the primary type. Most methods are biased to the primary type,
-     * which means, for example, that the transform method operates on the primary type but does nothing on secondary Iors
+     * Create an instance of the lazyRight type. Most methods are biased to the lazyRight type,
+     * which means, for example, that the transform method operates on the lazyRight type but does nothing on lazyLeft Iors
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>primary(10).transform(i->i+1);
-     * //Ior.primary[11]
+     *   Ior.<Integer,Integer>lazyRight(10).transform(i->i+1);
+     * //Ior.lazyRight[11]
      *
      *
      * }
@@ -180,16 +180,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
                              primary);
     }
     /**
-     * Create an instance of the secondary type. Most methods are biased to the primary type,
+     * Create an instance of the lazyLeft type. Most methods are biased to the lazyRight type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>secondary(10).transform(i->i+1);
-     *   //Ior.secondary[10]
+     *   Ior.<Integer,Integer>lazyLeft(10).transform(i->i+1);
+     *   //Ior.lazyLeft[10]
      *
-     *    Ior.<Integer,Integer>secondary(10).swap().transform(i->i+1);
-     *    //Ior.primary[11]
+     *    Ior.<Integer,Integer>lazyLeft(10).swap().transform(i->i+1);
+     *    //Ior.lazyRight[11]
      * }
      * </pre>
      *
@@ -205,7 +205,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
 
     /**
-     * Create an Ior instance that contains both secondary and primary types
+     * Create an Ior instance that contains both lazyLeft and lazyRight types
      *
      * <pre>
      * {@code
@@ -216,7 +216,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * @param secondary Secondary value
      * @param primary Primary value
-     * @return Ior that contains both the secondary and the primary value
+     * @return Ior that contains both the lazyLeft and the lazyRight value
      */
     public static <ST, PT> Ior<ST, PT> both(final ST secondary, final PT primary) {
         return new Both<ST, PT>(
@@ -294,21 +294,21 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     Option<PT> filter(Predicate<? super PT> test);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toXor()
+     * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    Xor<ST, PT> toXor();
+    Either<ST, PT> toEither();
 
     /**
-     * @return Convert to an Xor, dropping the primary type if this Ior contains both
+     * @return Convert to an Either, dropping the right type if this Ior contains both
      */
-    Xor<ST, PT> toXorDropPrimary(); //drop PT
+    Either<ST, PT> toEitherDropRight(); //drop PT
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toXor(java.lang.Object)
+     * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
-    default <ST2> Xor<ST2, PT> toXor(final ST2 secondary) {
-        return visit(s -> Xor.secondary(secondary), p -> Xor.primary(p), (s, p) -> Xor.primary(p));
+    default <ST2> Either<ST2, PT> toEither(final ST2 secondary) {
+        return visit(s -> Either.left(secondary), p -> Either.right(p), (s, p) -> Either.right(p));
     }
 
 
@@ -317,8 +317,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * If this Ior contains the Secondary type only, transform it's value so that it contains the Primary type only
      * If this Ior contains both types, this method has no effect in the default implementations
      *
-     * @param fn Function to transform secondary type to primary
-     * @return Ior with secondary type mapped to primary
+     * @param fn Function to transform lazyLeft type to lazyRight
+     * @return Ior with lazyLeft type mapped to lazyRight
      */
     Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
@@ -384,22 +384,22 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
     /**
      * Visitor pattern for this Ior.
-     * Execute the secondary function if this Ior contains an element of the secondary type only
-     * Execute the primary function if this Ior contains an element of the primary type only
+     * Execute the lazyLeft function if this Ior contains an element of the lazyLeft type only
+     * Execute the lazyRight function if this Ior contains an element of the lazyRight type only
      * Execute the both function if this Ior contains an element of both type
      *
      * <pre>
      * {@code
-     *  Ior.primary(10)
-     *     .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+     *  Ior.lazyRight(10)
+     *     .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
      *  //Ior["yes"]
 
-        Ior.secondary(90)
-           .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+        Ior.lazyLeft(90)
+           .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
         //Ior["no"]
 
         Ior.both(10, "eek")
-           .visit(secondary->"no", primary->"yes",(sec,pri)->"oops!")
+           .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
         //Ior["oops!"]
      *
      *
@@ -458,30 +458,30 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     Ior<ST, PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Ior<ST, PT>> fn);
 
     /**
-     * @return True if this is a primary (only) Ior
+     * @return True if this is a lazyRight (only) Ior
      */
     public boolean isPrimary();
 
     /**
-     * @return True if this was a secondary (only) Ior
+     * @return True if this was a lazyLeft (only) Ior
      */
     public boolean isSecondary();
 
     /**
-     * @return True if this Ior has both secondary and primary types
+     * @return True if this Ior has both lazyLeft and lazyRight types
      */
     public boolean isBoth();
 
     /**
      *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
-     *  Primary and secondary types are swapped during this operation.
+     *  Primary and lazyLeft types are swapped during this operation.
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
-     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
-        //Ior.primary(ListX.of("none")))
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.lazyRight(1)));
+        //Ior.lazyRight(ListX.of("none")))
      *
      * }
      * </pre>
@@ -501,15 +501,15 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
-     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)),Reducers.<String>toPersistentSetX());
-      //Ior.primary(PersistentSetX.of("none"))));
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.lazyRight(1)),Reducers.<String>toPersistentSetX());
+      //Ior.lazyRight(PersistentSetX.of("none"))));
       * }
      * </pre>
-     * @param iors Collection of Iors to accumulate secondary values
+     * @param iors Collection of Iors to accumulate lazyLeft values
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate secondary operation
+     * @return Ior populated with the accumulate lazyLeft operation
      */
     public static <ST, PT, R> Ior<ListX<PT>, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
         return sequenceSecondary(iors).map(s -> s.mapReduce(reducer));
@@ -522,18 +522,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
 
-     *  Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
-        //Ior.primary("none1")
+     *  Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.lazyLeft("1")),i->""+i,Monoids.stringConcat);
+        //Ior.lazyRight("none1")
      *
      * }
      * </pre>
      *
      *
      *
-     * @param iors Collection of Iors to accumulate secondary values
+     * @param iors Collection of Iors to accumulate lazyLeft values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Semigroup to combine values from each Ior
      * @return Ior populated with the accumulate Secondary operation
@@ -551,18 +551,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * <pre>
      * {@code
      *
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
 
-     * Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
-       //Ior.primary(3);  2+1
+     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.lazyLeft(1)));
+       //Ior.lazyRight(3);  2+1
      *
      *
      * }
      * </pre>
      *
      *
-     * @param iors Collection of Iors to accumulate secondary values
+     * @param iors Collection of Iors to accumulate lazyLeft values
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
      */
@@ -576,12 +576,12 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * <pre>
      * {@code
      *
-     * Ior<String,Integer> just  = Ior.primary(10);
-       Ior<String,Integer> none = Ior.secondary("none");
+     * Ior<String,Integer> just  = Ior.lazyRight(10);
+       Ior<String,Integer> none = Ior.lazyLeft("none");
 
 
-     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
-       //Ior.primary(ListX.of(10,1)));
+     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.lazyRight(1)));
+       //Ior.lazyRight(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -600,16 +600,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
      *
-     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
-        //Ior.primary(PersistentSetX.of(10,1))));
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),Reducers.toPersistentSetX());
+        //Ior.lazyRight(PersistentSetX.of(10,1))));
      * }
      * </pre>
-     * @param iors Collection of Iors to accumulate primary values
+     * @param iors Collection of Iors to accumulate lazyRight values
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate primary operation
+     * @return Ior populated with the accumulate lazyRight operation
      */
     public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
         return sequencePrimary(iors).map(s -> s.mapReduce(reducer));
@@ -622,19 +622,19 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
 
-     * Ior<?,String> iors = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,SemigroupK.stringConcat);
-       //Ior.primary("101"));
+     * Ior<?,String> iors = Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),i->""+i,SemigroupK.stringConcat);
+       //Ior.lazyRight("101"));
      * }
      * </pre>
      *
      *
-     * @param iors Collection of Iors to accumulate primary values
+     * @param iors Collection of Iors to accumulate lazyRight values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate primary operation
+     * @return Ior populated with the accumulate lazyRight operation
      */
     public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
             final Semigroup<R> reducer) {
@@ -649,20 +649,20 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.primary(10);
-        Ior<String,Integer> none = Ior.secondary("none");
+     *  Ior<String,Integer> just  = Ior.lazyRight(10);
+        Ior<String,Integer> none = Ior.lazyLeft("none");
      *
-     *  Ior<?,Integer> iors =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),SemigroupK.intSum);
-        //Ior.primary(11);
+     *  Ior<?,Integer> iors =Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),SemigroupK.intSum);
+        //Ior.lazyRight(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param iors Collection of Iors to accumulate primary values
+     * @param iors Collection of Iors to accumulate lazyRight values
      * @param reducer  Reducer to accumulate results
-     * @return  Ior populated with the accumulate primary operation
+     * @return  Ior populated with the accumulate lazyRight operation
      */
     public static <ST, PT> Ior<ListX<ST>, PT> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
         return sequencePrimary(iors).map(s -> s.reduce(reducer)
@@ -748,7 +748,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     default <T2, R> Ior<ST, R> zip(final Ior<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
-    default <T2, R> Ior<ST, R> zip(final Xor<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+    default <T2, R> Ior<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)).toIor());
     }
 
@@ -759,13 +759,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         private final PT value;
 
         @Override
-        public Xor<ST, PT> toXor() {
-            return Xor.primary(value);
+        public Either<ST, PT> toEither() {
+            return Either.right(value);
         }
 
         @Override
-        public Xor<ST, PT> toXorDropPrimary() {
-            return Xor.primary(value);
+        public Either<ST, PT> toEitherDropRight() {
+            return Either.right(value);
         }
 
         @Override
@@ -882,7 +882,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
         @Override
         public String mkString() {
-            return "Ior.primary[" + value + "]";
+            return "Ior.lazyRight[" + value + "]";
         }
 
 
@@ -907,13 +907,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Xor<ST, PT> toXor() {
-                return Xor.secondary(value);
+            public Either<ST, PT> toEither() {
+                return Either.left(value);
             }
 
             @Override
-            public Xor<ST, PT> toXorDropPrimary() {
-                return Xor.secondary(value);
+            public Either<ST, PT> toEitherDropRight() {
+                return Either.left(value);
             }
 
             @Override
@@ -1028,7 +1028,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             @Override
             public String mkString() {
-                return "Ior.secondary[" + value + "]";
+                return "Ior.lazyLeft[" + value + "]";
             }
 
 
@@ -1041,7 +1041,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @AllArgsConstructor(access = AccessLevel.PACKAGE)
-        @EqualsAndHashCode(of = {"secondary", "primary"})
+        @EqualsAndHashCode(of = {"lazyLeft", "lazyRight"})
         public static class Both<ST, PT> implements Ior<ST, PT> {
             private final ST secondary;
             private final PT primary;
@@ -1062,13 +1062,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Xor<ST, PT> toXor() {
-                return Xor.primary(primary);
+            public Either<ST, PT> toEither() {
+                return Either.right(primary);
             }
 
             @Override
-            public Xor<ST, PT> toXorDropPrimary() {
-                return Xor.secondary(secondary);
+            public Either<ST, PT> toEitherDropRight() {
+                return Either.left(secondary);
             }
 
             @Override
@@ -1100,7 +1100,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             @Override
             public Option<PT> filter(final Predicate<? super PT> test) {
-                return Xor.primary(primary).filter(test);
+                return Either.right(primary).filter(test);
             }
 
             @Override
@@ -1439,9 +1439,9 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             return new MonadRec<Higher<ior, X>>(){
                 @Override
-                public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Xor<T, R>>> fn) {
-                    Ior<X,? extends Xor<T, R>> next[] = new Ior[1];
-                    next[0] = Ior.primary(Xor.secondary(initial));
+                public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Either<T, R>>> fn) {
+                    Ior<X,? extends Either<T, R>> next[] = new Ior[1];
+                    next[0] = Ior.primary(Either.left(initial));
                     boolean cont = true;
                     do {
                         cont = next[0].visit(p -> p.visit(s -> {

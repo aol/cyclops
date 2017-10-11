@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.anyM.transformers.NonEmptyTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
@@ -25,11 +25,11 @@ import java.util.function.*;
  *
  * @param <T> Type of data stored inside the nested Maybe(s)
  */
-public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransformer<W, T> implements  To<XorT<W, ST,T>>,
+public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTransformer<W, T> implements  To<EitherT<W, ST,T>>,
                                                                                                     Transformable<T>,
                                                                                                      Filters<T> {
 
-    private final AnyM<W,Xor<ST,T>> run;
+    private final AnyM<W,Either<ST,T>> run;
 
 
     public Iterator<T> iterator() {
@@ -38,7 +38,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
 
     @Override
     public ReactiveSeq<T> stream() {
-        return run.stream().flatMap(Xor::stream);
+        return run.stream().flatMap(Either::stream);
     }
 
 
@@ -47,33 +47,33 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @return The wrapped AnyM
      */
     @Override
-    public AnyM<W,Xor<ST,T>> unwrap() {
+    public AnyM<W,Either<ST,T>> unwrap() {
         return run;
     }
 
-    public <R> R unwrapTo(Function<? super AnyM<W,Xor<ST,T>>, ? extends R> fn) {
+    public <R> R unwrapTo(Function<? super AnyM<W,Either<ST,T>>, ? extends R> fn) {
         return unwrap().to(fn);
     }
 
-    private XorT(final AnyM<W,Xor<ST,T>> run) {
+    private EitherT(final AnyM<W,Either<ST,T>> run) {
         this.run = run;
     }
 
     
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
-    protected <R> XorT<W,ST,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
+    protected <R> EitherT<W,ST,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
         return of((AnyM) traversable);
     }
 
     @Override
-    public AnyM<W,? extends Xor<ST,T>> transformerStream() {
+    public AnyM<W,? extends Either<ST,T>> transformerStream() {
 
         return run;
     }
 
     @Override
-    public XorT<W,ST,T> filter(final Predicate<? super T> test) {
+    public EitherT<W,ST,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
                      .filter( f->f.visit(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
@@ -94,7 +94,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @return MaybeWT with peek call
      */
     @Override
-    public XorT<W,ST,T> peek(final Consumer<? super T> peek) {
+    public EitherT<W,ST,T> peek(final Consumer<? super T> peek) {
         return map(e->{
             peek.accept(e);
             return e;
@@ -118,8 +118,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @return MaybeWT that applies the transform function to the wrapped Maybe
      */
     @Override
-    public <B> XorT<W,ST,B> map(final Function<? super T, ? extends B> f) {
-        return new XorT<W,ST,B>(
+    public <B> EitherT<W,ST,B> map(final Function<? super T, ? extends B> f) {
+        return new EitherT<W,ST,B>(
                                   run.map(o -> o.map(f)));
     }
 
@@ -138,20 +138,20 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @return MaybeWT that applies the flatMap function to the wrapped Maybe
      */
 
-    public <B> XorT<W,ST,B> flatMapT(final Function<? super T, XorT<W,ST,B>> f) {
+    public <B> EitherT<W,ST,B> flatMapT(final Function<? super T, EitherT<W,ST,B>> f) {
         return of(run.map(Maybe -> Maybe.flatMap(a -> f.apply(a).run.stream()
                                                                       .toList()
                                                                       .get(0))));
     }
 
-    private static <W extends WitnessType<W>,ST,B> AnyM<W,Xor<ST,B>> narrow(final AnyM<W,Xor<ST,? extends B>> run) {
+    private static <W extends WitnessType<W>,ST,B> AnyM<W,Either<ST,B>> narrow(final AnyM<W,Either<ST,? extends B>> run) {
         return (AnyM) run;
     }
 
 
-    public <B> XorT<W,ST,B> flatMap(final Function<? super T, ? extends Xor<ST,? extends B>> f) {
+    public <B> EitherT<W,ST,B> flatMap(final Function<? super T, ? extends Either<ST,? extends B>> f) {
 
-        final AnyM<W,Xor<ST,? extends B>> mapped = run.map(o -> o.flatMap(f));
+        final AnyM<W,Either<ST,? extends B>> mapped = run.map(o -> o.flatMap(f));
         return of(narrow(mapped));
 
     }
@@ -185,7 +185,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @param fn Function to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
-    public static <W extends WitnessType<W>,U,ST, R> Function<XorT<W,ST,U>, XorT<W,ST,R>> lift(final Function<? super U, ? extends R> fn) {
+    public static <W extends WitnessType<W>,U,ST, R> Function<EitherT<W,ST,U>, EitherT<W,ST,R>> lift(final Function<? super U, ? extends R> fn) {
         return optTu -> optTu.map(input -> fn.apply(input));
     }
 
@@ -219,7 +219,7 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @param fn BiFunction to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
-    public static <W extends WitnessType<W>, ST,U1,  U2, R> BiFunction<XorT<W,ST,U1>, XorT<W,ST,U2>, XorT<W,ST,R>> lift2(
+    public static <W extends WitnessType<W>, ST,U1,  U2, R> BiFunction<EitherT<W,ST,U1>, EitherT<W,ST,U2>, EitherT<W,ST,R>> lift2(
             final BiFunction<? super U1, ? super U2, ? extends R> fn) {
         return (optTu1, optTu2) -> optTu1.flatMapT(input1 -> optTu2.map(input2 -> fn.apply(input1, input2)));
     }
@@ -231,8 +231,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @param anyM AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeWT
      */
-    public static <W extends WitnessType<W>,ST,A> XorT<W,ST,A> fromAnyM(final AnyM<W,A> anyM) {
-        return of(anyM.map(Xor::primary));
+    public static <W extends WitnessType<W>,ST,A> EitherT<W,ST,A> fromAnyM(final AnyM<W,A> anyM) {
+        return of(anyM.map(Either::right));
     }
 
     /**
@@ -241,8 +241,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
      * @param monads AnyM that contains a monad wrapping an Maybe
      * @return MaybeWT
      */
-    public static <W extends WitnessType<W>,ST,A> XorT<W,ST,A> of(final AnyM<W,Xor<ST,A>> monads) {
-        return new XorT<>(
+    public static <W extends WitnessType<W>,ST,A> EitherT<W,ST,A> of(final AnyM<W,Either<ST,A>> monads) {
+        return new EitherT<>(
                                  monads);
     }
 
@@ -259,14 +259,14 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
     
 
 
-    public <R> XorT<W,ST,R> unitIterator(final Iterator<R> it) {
+    public <R> EitherT<W,ST,R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
-                     .map(i -> Xor.primary(i)));
+                     .map(i -> Either.right(i)));
     }
 
     @Override
-    public <R> XorT<W,ST,R> unit(final R value) {
-        return of(run.unit(Xor.primary(value)));
+    public <R> EitherT<W,ST,R> unit(final R value) {
+        return of(run.unit(Either.right(value)));
     }
 
 
@@ -281,8 +281,8 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
 
     @Override
     public boolean equals(final Object o) {
-        if (o instanceof XorT) {
-            return run.equals(((XorT) o).run);
+        if (o instanceof EitherT) {
+            return run.equals(((EitherT) o).run);
         }
         return false;
     }
@@ -319,29 +319,29 @@ public final class XorT<W extends WitnessType<W>, ST,T> extends NonEmptyTransfor
     }
 
     @Override
-    public <U> XorT<W,ST,U> cast(Class<? extends U> type) {
-        return (XorT<W,ST,U>)super.cast(type);
+    public <U> EitherT<W,ST,U> cast(Class<? extends U> type) {
+        return (EitherT<W,ST,U>)super.cast(type);
     }
 
     @Override
-    public <U> XorT<W,ST,U> ofType(Class<? extends U> type) {
-        return (XorT<W,ST,U>)Filters.super.ofType(type);
+    public <U> EitherT<W,ST,U> ofType(Class<? extends U> type) {
+        return (EitherT<W,ST,U>)Filters.super.ofType(type);
     }
 
     @Override
-    public XorT<W,ST,T> filterNot(Predicate<? super T> predicate) {
-        return (XorT<W,ST,T>)Filters.super.filterNot(predicate);
+    public EitherT<W,ST,T> filterNot(Predicate<? super T> predicate) {
+        return (EitherT<W,ST,T>)Filters.super.filterNot(predicate);
     }
 
     @Override
-    public XorT<W,ST,T> notNull() {
-        return (XorT<W,ST,T>)Filters.super.notNull();
+    public EitherT<W,ST,T> notNull() {
+        return (EitherT<W,ST,T>)Filters.super.notNull();
     }
 
 
     @Override
-    public <R> XorT<W,ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (XorT<W,ST,R>)super.trampoline(mapper);
+    public <R> EitherT<W,ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (EitherT<W,ST,R>)super.trampoline(mapper);
     }
 
 

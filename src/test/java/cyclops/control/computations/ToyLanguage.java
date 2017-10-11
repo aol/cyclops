@@ -2,7 +2,7 @@ package cyclops.control.computations;
 
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.lazy.Unrestricted;
-import cyclops.control.lazy.Either3;
+import cyclops.control.lazy.LazyEither3;
 import cyclops.function.Function1;
 import cyclops.function.Function2;
 
@@ -11,7 +11,7 @@ import java.util.function.Function;
 //ToyLanguage from https://github.com/xuwei-k/free-monad-java
 abstract class ToyLanguage<A> implements Transformable<A> {
 
-    public abstract Either3<Output<A>,Bell<A>,Done<A>> match();
+    public abstract LazyEither3<Output<A>,Bell<A>,Done<A>> match();
 
 
     public static <T> ToyLanguage<T> narrowK(Transformable<T> wide){
@@ -49,8 +49,8 @@ abstract class ToyLanguage<A> implements Transformable<A> {
         }
 
         @Override
-        public Either3<Output<A>, Bell<A>, Done<A>> match() {
-            return Either3.left1(this);
+        public LazyEither3<Output<A>, Bell<A>, Done<A>> match() {
+            return LazyEither3.left1(this);
         }
 
 
@@ -71,8 +71,8 @@ abstract class ToyLanguage<A> implements Transformable<A> {
         }
 
         @Override
-        public Either3<Output<A>, Bell<A>, Done<A>> match() {
-            return Either3.left2(this);
+        public LazyEither3<Output<A>, Bell<A>, Done<A>> match() {
+            return LazyEither3.left2(this);
         }
 
 
@@ -88,8 +88,8 @@ abstract class ToyLanguage<A> implements Transformable<A> {
 
      static final class Done<A> extends ToyLanguage<A> {
         @Override
-        public Either3<Output<A>, Bell<A>, Done<A>> match() {
-            return Either3.right(this);
+        public LazyEither3<Output<A>, Bell<A>, Done<A>> match() {
+            return LazyEither3.right(this);
         }
 
 

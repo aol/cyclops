@@ -5,7 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -1603,7 +1603,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
             return new MonadRec<deque>(){
                 @Override
-                public <T, R> Higher<deque, R> tailRec(T initial, Function<? super T, ? extends Higher<deque,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<deque, R> tailRec(T initial, Function<? super T, ? extends Higher<deque,? extends Either<T, R>>> fn) {
                     return DequeX.tailRec(initial,fn.andThen(DequeX::narrowK));
                 }
             };
@@ -1705,9 +1705,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
         }
     }
 
-    public static  <T,R> DequeX<R> tailRec(T initial, Function<? super T, ? extends DequeX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> DequeX<R> tailRec(T initial, Function<? super T, ? extends DequeX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1722,6 +1722,6 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().dequeX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().dequeX(Evaluation.LAZY);
     }
 }

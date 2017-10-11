@@ -6,7 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -1589,7 +1589,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
             return new MonadRec<persistentQueueX>(){
                 @Override
-                public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Either<T, R>>> fn) {
                     return PersistentQueueX.tailRec(initial,fn.andThen(PersistentQueueX::narrowK));
                 }
             };
@@ -1679,7 +1679,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         }
     }
 
-    public static  <T,R> PersistentQueueX<R> tailRec(T initial, Function<? super T, ? extends PersistentQueueX<? extends Xor<T, R>>> fn) {
+    public static  <T,R> PersistentQueueX<R> tailRec(T initial, Function<? super T, ? extends PersistentQueueX<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).to().persistentQueueX(Evaluation.LAZY);
     }
 }

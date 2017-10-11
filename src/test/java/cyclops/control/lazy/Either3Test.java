@@ -9,8 +9,8 @@ import cyclops.async.Future;
 import cyclops.collections.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Either3;
-import cyclops.control.lazy.Either3.CompletableEither3;
+import cyclops.control.lazy.LazyEither3;
+import cyclops.control.lazy.LazyEither3.CompletableEither3;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
@@ -33,9 +33,9 @@ public class Either3Test {
 
     @Test
     public void completableTest(){
-        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
-        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
-                                                               .flatMap(i-> Either3.right(i+1));
+        CompletableEither3<Integer,Integer,Integer> completable = LazyEither3.either3();
+        LazyEither3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                               .flatMap(i-> LazyEither3.right(i+1));
 
         completable.complete(5);
         System.out.println(mapped.getClass());
@@ -46,9 +46,9 @@ public class Either3Test {
     }
     @Test
     public void completableNoneTest(){
-        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
-        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
-                                                              .flatMap(i->Either3.right(i+1));
+        CompletableEither3<Integer,Integer,Integer> completable = LazyEither3.either3();
+        LazyEither3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                              .flatMap(i-> LazyEither3.right(i+1));
 
         completable.complete(null);
 
@@ -59,9 +59,9 @@ public class Either3Test {
     }
     @Test
     public void completableErrorTest(){
-        CompletableEither3<Integer,Integer,Integer> completable = Either3.either3();
-        Either3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
-                                                                .flatMap(i->Either3.right(i+1));
+        CompletableEither3<Integer,Integer,Integer> completable = LazyEither3.either3();
+        LazyEither3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
+                                                                .flatMap(i-> LazyEither3.right(i+1));
 
         completable.completeExceptionally(new IllegalStateException());
 
@@ -73,9 +73,9 @@ public class Either3Test {
     boolean lazy = true;
     @Test
     public void lazyTest() {
-        Either3.right(10)
-             .flatMap(i -> { lazy=false; return  Either3.right(15);})
-             .map(i -> { lazy=false; return  Either3.right(15);})
+        LazyEither3.right(10)
+             .flatMap(i -> { lazy=false; return  LazyEither3.right(15);})
+             .map(i -> { lazy=false; return  LazyEither3.right(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -85,9 +85,9 @@ public class Either3Test {
     
     @Test
     public void mapFlatMapTest(){
-        assertThat(Either3.right(10)
+        assertThat(LazyEither3.right(10)
                .map(i->i*2)
-               .flatMap(i->Either3.right(i*4))
+               .flatMap(i-> LazyEither3.right(i*4))
                .orElse(-30),equalTo(80));
     }
     static class Base{ }
@@ -96,36 +96,36 @@ public class Either3Test {
     @Test
     public void visitAny(){
        
-        Either3<One,Two,Two> test = Either3.right(new Two());
-        test.to(Either3::applyAny).apply(b->b.toString());
-        just.to(Either3::consumeAny).accept(System.out::println);
-        just.to(e->Either3.visitAny(System.out::println,e));
-        Object value = just.to(e->Either3.visitAny(e,x->x));
+        LazyEither3<One,Two,Two> test = LazyEither3.right(new Two());
+        test.to(LazyEither3::applyAny).apply(b->b.toString());
+        just.to(LazyEither3::consumeAny).accept(System.out::println);
+        just.to(e-> LazyEither3.visitAny(System.out::println,e));
+        Object value = just.to(e-> LazyEither3.visitAny(e, x->x));
         assertThat(value,equalTo(10));
     }
     @Test
     public void odd() {
-        System.out.println(even(Either3.right(200000)).get());
+        System.out.println(even(LazyEither3.right(200000)).get());
     }
 
-    public Either3<String,String,String> odd(Either3<String,String,Integer> n) {
+    public LazyEither3<String,String,String> odd(LazyEither3<String,String,Integer> n) {
 
-        return n.flatMap(x -> even(Either3.right(x - 1)));
+        return n.flatMap(x -> even(LazyEither3.right(x - 1)));
     }
 
-    public Either3<String,String,String> even(Either3<String,String,Integer> n) {
+    public LazyEither3<String,String,String> even(LazyEither3<String,String,Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? Either3.right("done") : odd(Either3.right(x - 1));
+            return x <= 0 ? LazyEither3.right("done") : odd(LazyEither3.right(x - 1));
         });
     }
-    Either3<String,String,Integer> just;
-    Either3<String,String,Integer> left2;
-    Either3<String,String,Integer> none;
+    LazyEither3<String,String,Integer> just;
+    LazyEither3<String,String,Integer> left2;
+    LazyEither3<String,String,Integer> none;
     @Before
     public void setUp() throws Exception {
-        just = Either3.right(10);
-        none = Either3.left1("none");
-        left2 = Either3.left2("left2");
+        just = LazyEither3.right(10);
+        none = LazyEither3.left1("none");
+        left2 = LazyEither3.left2("left2");
     }
     @Test
     public void isLeftRight(){
@@ -138,28 +138,28 @@ public class Either3Test {
 
     @Test
     public void testTraverseLeft1() {
-        ListX<Either3<Integer,String,String>> list = ListX.of(just,none,Either3.<String,String,Integer>right(1)).map(Either3::swap1);
-        Either3<ListX<Integer>,ListX<String>,ListX<String>> xors   = Either3.traverse(list,s->"hello:"+s);
-        assertThat(xors,equalTo(Either3.right(ListX.of("hello:none"))));
+        ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
+        LazyEither3<ListX<Integer>,ListX<String>,ListX<String>> xors   = LazyEither3.traverse(list, s->"hello:"+s);
+        assertThat(xors,equalTo(LazyEither3.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
-        ListX<Either3<Integer,String,String>> list = ListX.of(just,none,Either3.<String,String,Integer>right(1)).map(Either3::swap1);
-        Either3<ListX<Integer>,ListX<String>,ListX<String>> xors   = Either3.sequence(list);
-        assertThat(xors,equalTo(Either3.right(ListX.of("none"))));
+        ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
+        LazyEither3<ListX<Integer>,ListX<String>,ListX<String>> xors   = LazyEither3.sequence(list);
+        assertThat(xors,equalTo(LazyEither3.right(ListX.of("none"))));
     }
     @Test
     public void testSequenceLeft2() {
-        ListX<Either3<String,Integer,String>> list = ListX.of(just,left2,Either3.<String,String,Integer>right(1)).map(Either3::swap2);
-        Either3<ListX<String>,ListX<Integer>,ListX<String>> xors   = Either3.sequence(list);
-        assertThat(xors,equalTo(Either3.right(ListX.of("left2"))));
+        ListX<LazyEither3<String,Integer,String>> list = ListX.of(just,left2, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap2);
+        LazyEither3<ListX<String>,ListX<Integer>,ListX<String>> xors   = LazyEither3.sequence(list);
+        assertThat(xors,equalTo(LazyEither3.right(ListX.of("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-        Either3<ListX<String>,ListX<String>,Integer> iors = Either3.accumulate(Monoids.intSum,ListX.of(none,just,Either3.right(10)));
-        assertThat(iors,equalTo(Either3.right(20)));
+        LazyEither3<ListX<String>,ListX<String>,Integer> iors = LazyEither3.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither3.right(10)));
+        assertThat(iors,equalTo(LazyEither3.right(20)));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class Either3Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Either3.right(50)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(LazyEither3.right(50)));
     }
 
     @Test
@@ -208,7 +208,7 @@ public class Either3Test {
 
     @Test
     public void testUnitT() {
-        assertThat(just.unit(20),equalTo(Either3.right(20)));
+        assertThat(just.unit(20),equalTo(LazyEither3.right(20)));
     }
 
     
@@ -222,14 +222,14 @@ public class Either3Test {
     
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
-        assertThat(just.map(i->i+5),equalTo(Either3.right(15)));
-        assertThat(none.map(i->i+5),equalTo(Either3.left1("none")));
+        assertThat(just.map(i->i+5),equalTo(LazyEither3.right(15)));
+        assertThat(none.map(i->i+5),equalTo(LazyEither3.left1("none")));
     }
 
     @Test
     public void testFlatMap() {
-        assertThat(just.flatMap(i->Either3.right(i+5)),equalTo(Either3.right(15)));
-        assertThat(none.flatMap(i->Either3.right(i+5)),equalTo(Either3.left1("none")));
+        assertThat(just.flatMap(i-> LazyEither3.right(i+5)),equalTo(LazyEither3.right(15)));
+        assertThat(none.flatMap(i-> LazyEither3.right(i+5)),equalTo(LazyEither3.left1("none")));
     }
 
     @Test
@@ -336,7 +336,7 @@ public class Either3Test {
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either3.right[10]"));
+        assertThat(just.mkString(),equalTo("Either3.lazyRight[10]"));
         assertThat(none.mkString(),equalTo("Either3.left1[none]"));
     }
 
@@ -450,12 +450,12 @@ public class Either3Test {
 
     @Test
     public void testCast() {
-        Either3<String,String,Number> num = just.cast(Number.class);
+        LazyEither3<String,String,Number> num = just.cast(Number.class);
     }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
-        assertThat(just.map(i->i+5),equalTo(Either3.right(15)));
+        assertThat(just.map(i->i+5),equalTo(LazyEither3.right(15)));
     }
     
     @Test
@@ -472,7 +472,7 @@ public class Either3Test {
     }
     @Test
     public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either3.right(65)));
+        assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither3.right(65)));
     }
 
     

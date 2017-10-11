@@ -5,7 +5,7 @@ import cyclops.companion.Semigroups;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
@@ -453,7 +453,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     public void combineOneFirstOrError() {
         assertThat(ofWait(1)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findFirstOrError(), Matchers.equalTo(Either.right(1)));
+                .findFirstOrError(), Matchers.equalTo(LazyEither.right(1)));
     }
     @Test
     public void combineTwo() {

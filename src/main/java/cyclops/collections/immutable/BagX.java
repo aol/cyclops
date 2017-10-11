@@ -12,7 +12,7 @@ import cyclops.async.Future;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.lazy.Trampoline;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1141,7 +1141,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return (BagX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
-    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Xor<T, R>>> fn) {
+    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).to().bagX(Evaluation.LAZY);
     }
 

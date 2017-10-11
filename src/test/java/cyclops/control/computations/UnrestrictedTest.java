@@ -2,7 +2,7 @@ package cyclops.control.computations;
 
 
 import cyclops.control.lazy.Unrestricted;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.control.computations.ToyLanguage.Bell;
 import cyclops.control.computations.ToyLanguage.Done;
 import cyclops.control.computations.ToyLanguage.Output;
@@ -54,9 +54,9 @@ public final class UnrestrictedTest {
 
     static <R> String interleaveProgram(Unrestricted<R> program1, Unrestricted<R> program2){
 
-        Tuple2<Xor<ToyLanguage<Unrestricted<R>>, R>, Xor<ToyLanguage<Unrestricted<R>>, R>> tuple = Unrestricted.product(program1,ToyLanguage.decoder() ,program2,ToyLanguage.decoder());
-        Xor<ToyLanguage<Unrestricted<R>>, R> a = tuple._1();
-        Xor<ToyLanguage<Unrestricted<R>>, R> b = tuple._2();
+        Tuple2<Either<ToyLanguage<Unrestricted<R>>, R>, Either<ToyLanguage<Unrestricted<R>>, R>> tuple = Unrestricted.product(program1,ToyLanguage.decoder() ,program2,ToyLanguage.decoder());
+        Either<ToyLanguage<Unrestricted<R>>, R> a = tuple._1();
+        Either<ToyLanguage<Unrestricted<R>>, R> b = tuple._2();
 
 
 

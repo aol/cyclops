@@ -7,7 +7,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -1495,15 +1495,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
             return new MonadRec<vectorX>(){
                 @Override
-                public <T, R> Higher<vectorX, R> tailRec(T initial, Function<? super T, ? extends Higher<vectorX,? extends Xor<T, R>>> fn) {
-                    VectorX<Xor<T, R>> next = VectorX.of(Xor.secondary(initial));
+                public <T, R> Higher<vectorX, R> tailRec(T initial, Function<? super T, ? extends Higher<vectorX,? extends Either<T, R>>> fn) {
+                    VectorX<Either<T, R>> next = VectorX.of(Either.left(initial));
                     boolean newValue[] = {false};
                     for(;;){
                         next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
                         if(!newValue[0])
                             break;
                     }
-                    return Xor.sequencePrimary(next).map(l -> l.to().vectorX(LAZY)).orElse(VectorX.empty());
+                    return Either.sequenceRight(next).map(l -> l.to().vectorX(LAZY)).orElse(VectorX.empty());
 
                 }
             };
@@ -1625,7 +1625,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return lt.map(fn);
         }
     }
-    public static  <T,R> VectorX<R> tailRec(T initial, Function<? super T, ? extends VectorX<? extends Xor<T, R>>> fn) {
+    public static  <T,R> VectorX<R> tailRec(T initial, Function<? super T, ? extends VectorX<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).to().vectorX(Evaluation.LAZY);
     }
 }

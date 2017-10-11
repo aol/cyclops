@@ -8,14 +8,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.collections.box.Mutable;
 
-public class XorAnyMValueTest extends BaseAnyMValueTest<Witness.xor> {
+public class XorAnyMValueTest extends BaseAnyMValueTest<Witness.either> {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromXor(Xor.primary(10));
-        none = AnyM.fromXor(Xor.secondary(null));
+        just = AnyM.fromLazyEither(Either.right(10));
+        none = AnyM.fromLazyEither(Either.left(null));
     }
     @Test
     public void testPeek() {

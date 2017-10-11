@@ -73,7 +73,7 @@ public class ValueSubscriberTest {
        
         ReactiveSeq<Integer> stream =  Spouts.of(1,2,3);
         
-        Xor<Throwable,Integer> maybe = Xor.fromPublisher(stream);
+        Either<Throwable,Integer> maybe = Either.fromPublisher(stream);
         assertThat(maybe.toOptional().get(),equalTo(1));
         
     }
@@ -116,37 +116,37 @@ public class ValueSubscriberTest {
     @Test
     public void xorPublisherTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
-        Xor.primary(1)
+        Either.right(1)
              .subscribe(sub);
         
-        Xor<Throwable,Integer> maybe = sub.toXor();
+        Either<Throwable,Integer> maybe = sub.toXor();
         assertThat(maybe.toOptional().get(),equalTo(1));
     }
     @Test
     public void xorPublisherErrorTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
-        Xor.<Integer,Integer>secondary(1)
+        Either.<Integer,Integer>left(1)
              .subscribe(sub);
         
-        Xor<Throwable,Integer> xor = sub.toXor();
+        Either<Throwable,Integer> xor = sub.toXor();
         assertThat(xor.swap().orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
     public void xorSecondryPublisherTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
-        Xor.primary(1)
+        Either.right(1)
              .subscribe(sub);
         
-        Xor<Integer,Throwable> maybe = sub.toXor().swap();
+        Either<Integer,Throwable> maybe = sub.toXor().swap();
         assertThat(maybe.swap().orElse(null),equalTo(1));
     }
     @Test
     public void xorSecondaryPublisherErrorTest(){
         ValueSubscriber<Integer> sub = ValueSubscriber.subscriber();
-        Xor.<Integer,Integer>secondary(1)
+        Either.<Integer,Integer>left(1)
              .subscribe(sub);
         
-        Xor<Integer,Throwable> xor = sub.toXor().swap();
+        Either<Integer,Throwable> xor = sub.toXor().swap();
         assertThat(xor.orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test

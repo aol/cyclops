@@ -13,7 +13,7 @@ import java.util.stream.Collector;
 
 import com.aol.cyclops2.types.foldable.Visitable;
 import cyclops.control.*;
-import cyclops.control.lazy.Either;
+import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Function0;
 import cyclops.function.Monoid;
@@ -156,30 +156,30 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
 
 
     /**
-     * Convert to an Xor where the secondary value will be used if no primary value is present
+     * Convert to an Xor where the left value will be used if no lazyRight value is present
      *
-    * @param secondary Value to use in case no primary value is present
-    * @return Primary Xor with same value as this Value, or a Secondary Xor with the provided Value if this Value is zero
+    * @param secondary Value to use in case no lazyRight value is present
+    * @return Right Either with same value as this Value, or a Left Either with the provided Value if this Value is zero
     */
-    default <ST> Xor<ST, T> toXor(final ST secondary) {
-        return visit(p->Xor.primary(p),()->Xor.secondary(secondary));
+    default <ST> Either<ST, T> toEither(final ST secondary) {
+        return visit(p-> Either.right(p),()-> Either.left(secondary));
 
     }
-    default  Either<Throwable, T> toEither() {
-       return Either.fromPublisher(this);
+    default LazyEither<Throwable, T> toLazyEither() {
+       return LazyEither.fromPublisher(this);
     }
 
     /**
-     * Lazily convert this Value to an Either.right instance
+     * Lazily convert this Value to an Either.lazyRight instance
      */
-    default <LT> Either<LT,T> toRight(T alt){
-        return Either.fromIterable(this,alt);
+    default <LT> LazyEither<LT,T> toRight(T alt){
+        return LazyEither.fromIterable(this,alt);
     }
     /**
-     * Lazily convert this Value to an Either.left instance
+     * Lazily convert this Value to an Either.lazyLeft instance
      */
-    default <RT> Either<T,RT> toLeft(T alt){
-        return Either.<RT,T>fromIterable(this,alt)
+    default <RT> LazyEither<T,RT> toLeft(T alt){
+        return LazyEither.<RT,T>fromIterable(this,alt)
                      .swap();
     }
     /**
@@ -187,7 +187,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
      * @return Try that has the same value as this Value or the provided Exception
      */
     default <X extends Throwable> Try<T, X> toTry(final X throwable) {
-        return Try.fromXor(toTry().asXor().secondaryMap(t->throwable));
+        return Try.fromXor(toTry().asXor().mapLeft(t->throwable));
 
     }
 
@@ -257,14 +257,14 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     }
 
     /**
-     *  Print each value in this Folds to the console in turn (left-to-right)
+     *  Print each value in this Folds to the console in turn (lazyLeft-to-lazyRight)
      */
     default void printOut() {
         stream().printOut();
     }
 
     /**
-     *  Print each value in this Folds to the error console in turn (left-to-right)
+     *  Print each value in this Folds to the error console in turn (lazyLeft-to-lazyRight)
      */
     default void printErr() {
         stream().printErr();

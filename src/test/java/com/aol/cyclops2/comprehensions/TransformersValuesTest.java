@@ -16,7 +16,7 @@ public class TransformersValuesTest {
   //  CompletableFutureTValue<Integer> cf = CompletableFutureT.fromValue(Eval.now(CompletableFuture.completedFuture(10)));
     FutureT<Witness.eval,Integer> future = FutureT.of(Eval.now(Future.ofResult(10)).anyM());
   //  TryTValue<Integer,Throwable> recover = TryT.fromValue(Eval.now(Try.success(10)));
-   // XorTValue<Throwable,Integer> lazy = XorT.fromValue(Eval.now(Xor.primary(10)));
+   // XorTValue<Throwable,Integer> lazy = XorT.fromValue(Eval.now(Xor.lazyRight(10)));
     
     ListX<ValueTransformer<?,Integer>> all = ListX.of(future);// ListX.of(opt,maybe,eval,cf,future,recover,lazy);
 

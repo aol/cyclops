@@ -3,7 +3,7 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Function1;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -75,11 +75,11 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     }
 
-    public <__> Kleisli<W,Xor<T, __>, Xor<R, __>> leftK(W type) {
-        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Xor::secondary,apply(l)), r -> monad.map(Xor::primary,monad.unit(r))));
+    public <__> Kleisli<W,Either<T, __>, Either<R, __>> leftK(W type) {
+        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Either::left,apply(l)), r -> monad.map(Either::right,monad.unit(r))));
     }
-    public <__> Kleisli<W,Xor<__,T>, Xor<__,R>> rightK(W type) {
-        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Xor::secondary,monad.unit(l)), r -> monad.map(Xor::primary,apply(r))));
+    public <__> Kleisli<W,Either<__,T>, Either<__,R>> rightK(W type) {
+        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Either::left,monad.unit(l)), r -> monad.map(Either::right,apply(r))));
     }
     public <__> Kleisli<W,Tuple2<T, __>, Tuple2<R, __>> firstK() {
         return kleisliK(monad, xr -> xr.transform((v1, v2) -> monad.map(r1-> Tuple.tuple(r1,v2),apply(v1))));
@@ -89,14 +89,14 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
     }
 
 
-    public <T2,R2> Kleisli<W,Xor<T, T2>, Xor<R, R2>> merge(Kleisli<W,T2,R2> merge, W type) {
-        Kleisli<W,T, Xor<R, R2>> first = then(lift(monad,Xor::secondary, type));
-        Kleisli<W,T2, Xor<R, R2>> second = merge.then(lift(monad,Xor::primary, type));
+    public <T2,R2> Kleisli<W,Either<T, T2>, Either<R, R2>> merge(Kleisli<W,T2,R2> merge, W type) {
+        Kleisli<W,T, Either<R, R2>> first = then(lift(monad, Either::left, type));
+        Kleisli<W,T2, Either<R, R2>> second = merge.then(lift(monad, Either::right, type));
         return first.fanIn(second);
 
     }
 
-    public <T2> Kleisli<W,Xor<T, T2>, R> fanIn(Kleisli<W,T2,R> fanIn) {
+    public <T2> Kleisli<W,Either<T, T2>, R> fanIn(Kleisli<W,T2,R> fanIn) {
         return of(monad,e -> e.visit(this, fanIn));
     }
 

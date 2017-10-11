@@ -225,7 +225,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      * 
      * <pre>
      * {@code 
@@ -236,14 +236,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param identity value that results in the input parameter to the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
-     * @return AnyM containing the results of the nest fold right
+     * @return AnyM containing the results of the nest fold lazyRight
      */
     default AnyM<W,T> foldRight(final T identity, final BinaryOperator<T> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));
     }
 
     /**
-     * Immutable reduction from right to left
+     * Immutable reduction from lazyRight to lazyLeft
      * <pre>
      * {@code 
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", (a,b)->a+b).equals("cba"));
@@ -252,7 +252,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param identity value that results in the input parameter to the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
-     * @return AnyM containing the results of the nest fold right
+     * @return AnyM containing the results of the nest fold lazyRight
      */
     default <U> AnyM<W,U> foldRight(final U identity, final BiFunction<? super T, U, U> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));

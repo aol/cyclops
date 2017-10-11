@@ -36,7 +36,7 @@ public class TryTest {
 		just = Try.success(10);
 		none = Try.failure(exception);
 
-		just.toXor(-5000).secondaryMap(x-> new Exception()).toTry(Exception.class);
+		just.toEither(-5000).mapLeft(x-> new Exception()).toTry(Exception.class);
 	}
 
 
@@ -106,7 +106,7 @@ public class TryTest {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
-		assertThat(none.map(i->i+5).toXor(),equalTo(Xor.secondary(exception)));
+		assertThat(none.map(i->i+5).toXor(),equalTo(Either.left(exception)));
 	}
 
 	@Test
@@ -163,28 +163,28 @@ public class TryTest {
 
 	@Test
 	public void testToXor() {
-		assertThat(just.toXor(-5000),equalTo(Xor.primary(10)));
+		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
 		
 	}
 	@Test
 	public void testToXorNone(){
-		Xor<RuntimeException,Integer> xor = none.toXor();
-		assertTrue(xor.isSecondary());
-		assertThat(xor,equalTo(Xor.secondary(exception)));
+		Either<RuntimeException,Integer> xor = none.toXor();
+		assertTrue(xor.isLeft());
+		assertThat(xor,equalTo(Either.left(exception)));
 		
 	}
 
 
 	@Test
 	public void testToXorSecondary() {
-		assertThat(just.toXor(-5000).swap(),equalTo(Xor.secondary(10)));
+		assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
 	}
 
 	@Test
 	public void testToXorSecondaryNone(){
 
-		Xor<Integer,RuntimeException> xorNone = none.toXor().swap();
-		assertThat(xorNone,equalTo(Xor.primary(exception)));
+		Either<Integer,RuntimeException> xorNone = none.toXor().swap();
+		assertThat(xorNone,equalTo(Either.right(exception)));
 		
 	}
 	@Test
@@ -389,7 +389,7 @@ public class TryTest {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).toXor(),equalTo(Xor.primary(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).toXor(),equalTo(Either.right(65)));
 	}
 
 	

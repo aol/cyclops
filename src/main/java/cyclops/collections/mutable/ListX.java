@@ -6,7 +6,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -333,7 +333,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
             return new MonadRec<list>(){
                 @Override
-                public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<list, R> tailRec(T initial, Function<? super T, ? extends Higher<list,? extends Either<T, R>>> fn) {
                     return ListX.tailRec(initial,fn.andThen(ListX::narrowK));
                 }
             };
@@ -1806,9 +1806,9 @@ public interface ListX<T> extends To<ListX<T>>,
     default <T2, T3, T4, R> ListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
-    public static  <T,R> ListX<R> tailRec(T initial, Function<? super T, ? extends Iterable<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> ListX<R> tailRec(T initial, Function<? super T, ? extends Iterable<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1823,6 +1823,6 @@ public interface ListX<T> extends To<ListX<T>>,
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty());
+        return Either.sequenceRight(next).orElse(ListX.empty());
     }
 }

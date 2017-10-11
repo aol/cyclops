@@ -11,7 +11,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.lazy.Maybe;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -1368,7 +1368,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
             return new MonadRec<persistentSetX>(){
                 @Override
-                public <T, R> Higher<persistentSetX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentSetX,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<persistentSetX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentSetX,? extends Either<T, R>>> fn) {
                     return PersistentSetX.tailRec(initial,fn.andThen(PersistentSetX::narrowK));
                 }
             };
@@ -1534,9 +1534,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         }
     }
 
-    public static  <T,R> PersistentSetX<R> tailRec(T initial, Function<? super T, ? extends PersistentSetX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> PersistentSetX<R> tailRec(T initial, Function<? super T, ? extends PersistentSetX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1551,7 +1551,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
                 break;
 
         }
-        return Xor.sequencePrimary(next).orElse(ListX.empty()).to().persistentSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().persistentSetX(Evaluation.LAZY);
     }
 
 }

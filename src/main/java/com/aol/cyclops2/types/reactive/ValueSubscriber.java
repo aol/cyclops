@@ -14,7 +14,7 @@ import org.reactivestreams.Subscription;
 
 import cyclops.control.Ior;
 import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Memoize;
@@ -29,8 +29,8 @@ import cyclops.function.Memoize;
  *    ReactiveSeq.of(1,2,3)
  *               .publish(anInt);
  *    
- *    Xor<Throwable,Integer> xor = anInt.toXor();
- *    Try<Integer,Throwable> myTry = xor.toTry();
+ *    Xor<Throwable,Integer> either = anInt.toLazyEither();
+ *    Try<Integer,Throwable> myTry = either.toTry();
  *    Maybe<Integer> maybe = myTry.toMaybe();
  *    Optional<Integer> maybe = maybe.toOptional();
  * }
@@ -130,11 +130,11 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
 
-    public Xor<Throwable, T> toXor() {
+    public Either<Throwable, T> toXor() {
         if (orElse(null) == null && firstError.get() != UNSET) {
-            return Xor.secondary((Throwable) firstError.get());
+            return Either.left((Throwable) firstError.get());
         }
-        return Xor.primary(orElse(null));
+        return Either.right(orElse(null));
     }
 
     private T throwingGet() {

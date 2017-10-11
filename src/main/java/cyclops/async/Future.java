@@ -73,11 +73,11 @@ public class Future<T> implements To<Future<T>>,
                                   RecoverableFrom<Throwable,T>,
                                   OrElseValue<T,Future<T>>{
 
-    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Xor<T, R>>> fn){
+    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
         SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
         return Future.of(()->{
-            Future<? extends Xor<T, R>> next[] = new Future[1];
-            next[0]=Future.ofResult(Xor.secondary(initial));
+            Future<? extends Either<T, R>> next[] = new Future[1];
+            next[0]=Future.ofResult(Either.left(initial));
             boolean cont = true;
             do {
                 cont = next[0].visit(p ->  p.visit(s -> {
@@ -1047,13 +1047,13 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toXor()
+     * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    public Xor<Throwable, T> toXor() {
+    public Either<Throwable, T> toXor() {
         try {
-            return Xor.primary(future.join());
+            return Either.right(future.join());
         } catch (final Throwable t) {
-            return Xor.<Throwable, T> secondary(t.getCause());
+            return Either.<Throwable, T>left(t.getCause());
         }
     }
 
@@ -1642,7 +1642,7 @@ public class Future<T> implements To<Future<T>>,
             return new MonadRec<future>(){
 
                 @Override
-                public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Either<T, R>>> fn) {
                     return Future.tailRec(initial,fn.andThen(Future::narrowK));
                 }
             };
