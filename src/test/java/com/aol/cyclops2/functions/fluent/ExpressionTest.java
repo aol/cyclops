@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import org.junit.Test;
 
 import cyclops.function.FluentFunctions;

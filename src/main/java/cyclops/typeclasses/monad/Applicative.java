@@ -4,8 +4,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.lazy.Eval;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

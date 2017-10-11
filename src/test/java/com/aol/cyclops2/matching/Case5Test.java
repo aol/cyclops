@@ -3,7 +3,7 @@ package com.aol.cyclops2.matching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import cyclops.collections.tuple.Tuple5;
+import cyclops.data.tuple.Tuple5;
 import org.junit.Test;
 
 public class Case5Test {

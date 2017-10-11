@@ -6,8 +6,8 @@ import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.*;
 import java.util.function.Function;

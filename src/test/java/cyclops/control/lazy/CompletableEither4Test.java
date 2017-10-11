@@ -6,7 +6,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.LazyEither4.CompletableEither4;
 import cyclops.function.Monoid;

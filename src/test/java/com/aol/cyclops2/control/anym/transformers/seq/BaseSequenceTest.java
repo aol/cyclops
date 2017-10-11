@@ -21,10 +21,10 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 

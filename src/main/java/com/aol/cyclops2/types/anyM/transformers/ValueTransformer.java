@@ -7,7 +7,7 @@ import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.control.Option;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

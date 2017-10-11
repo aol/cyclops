@@ -2,18 +2,14 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.SetX;
 import cyclops.stream.ReactiveSeq;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collector;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An extended Set type {@see java.util.List}

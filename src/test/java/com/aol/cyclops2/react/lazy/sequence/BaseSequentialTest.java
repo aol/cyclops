@@ -22,9 +22,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

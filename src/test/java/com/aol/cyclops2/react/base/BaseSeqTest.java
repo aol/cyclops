@@ -10,7 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -33,15 +33,15 @@ import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
 
 import cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {

@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 

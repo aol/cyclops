@@ -2,8 +2,8 @@ package cyclops.typeclasses.monads;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.SetX;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.lazy.Maybe;

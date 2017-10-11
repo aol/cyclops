@@ -2,15 +2,13 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.mutable.DequeX;
+import cyclops.collectionx.mutable.DequeX;
 import cyclops.stream.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collector;
-
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
  * An extended List type {@see java.util.List}

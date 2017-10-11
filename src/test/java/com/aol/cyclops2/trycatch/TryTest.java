@@ -10,8 +10,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.control.Try;

@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import cyclops.async.adapters.Adapter;
 

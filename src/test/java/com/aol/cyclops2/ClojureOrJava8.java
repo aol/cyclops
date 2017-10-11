@@ -7,19 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.aol.cyclops2.types.stream.HeadAndTail;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.MapX;
 import cyclops.companion.MapXs;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

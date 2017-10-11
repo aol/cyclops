@@ -1,13 +1,13 @@
 package com.aol.cyclops2.internal.react.stream.traits.future.operators;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple3;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 

@@ -1,9 +1,9 @@
 package cyclops.streams.push.async;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;

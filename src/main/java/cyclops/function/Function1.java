@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.*;
 
 import cyclops.control.lazy.Eval;
@@ -17,20 +17,20 @@ import cyclops.monads.function.AnyMFunction1;
 
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.mutable.DequeX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.SetX;
 import cyclops.monads.WitnessType;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 
 @FunctionalInterface
 public interface Function1<T,  R> extends Function<T,R>{

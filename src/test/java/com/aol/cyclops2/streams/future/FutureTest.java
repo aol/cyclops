@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;

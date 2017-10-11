@@ -5,7 +5,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
@@ -25,15 +25,15 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * Provide easy access to all typeclasses for a type

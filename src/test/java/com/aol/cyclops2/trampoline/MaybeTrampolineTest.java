@@ -2,13 +2,13 @@ package com.aol.cyclops2.trampoline;
 
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 import org.junit.Test;
 
 import static cyclops.control.lazy.Eval.now;
 import static cyclops.control.lazy.Maybe.just;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 public class MaybeTrampolineTest {

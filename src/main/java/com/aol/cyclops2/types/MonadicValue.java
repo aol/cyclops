@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import java.util.NoSuchElementException;

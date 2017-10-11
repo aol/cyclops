@@ -1,9 +1,9 @@
 package com.aol.cyclops2.control;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Either;
 import org.junit.Test;
 

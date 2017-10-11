@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
@@ -23,9 +23,9 @@ import cyclops.stream.StreamSource;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Signal;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.mutable.SetX;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.util.stream.pushable.MultipleStreamSource;
 import com.aol.cyclops2.util.stream.pushable.PushableFutureStream;

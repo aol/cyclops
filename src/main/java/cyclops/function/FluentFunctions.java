@@ -12,9 +12,9 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 
 import java.util.Objects;
 import java.util.Optional;

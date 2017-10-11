@@ -7,7 +7,7 @@ import cyclops.control.computations.ToyLanguage.Bell;
 import cyclops.control.computations.ToyLanguage.Done;
 import cyclops.control.computations.ToyLanguage.Output;
 
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.control.computations.ToyLanguage.bell;

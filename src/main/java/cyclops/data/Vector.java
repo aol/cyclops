@@ -3,13 +3,13 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Optional;
 import java.util.function.Function;

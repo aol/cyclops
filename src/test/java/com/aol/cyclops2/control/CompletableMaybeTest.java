@@ -2,7 +2,7 @@ package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -10,7 +10,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
@@ -19,8 +19,8 @@ import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class CompletableMaybeTest implements Printable {

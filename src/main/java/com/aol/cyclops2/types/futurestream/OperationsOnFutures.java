@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;

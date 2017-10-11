@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.grouping.sliding;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 
 import java.util.Arrays;
 import java.util.List;

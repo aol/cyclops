@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -13,9 +13,9 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 
 import com.aol.cyclops2.util.box.LazyImmutable;
 import com.aol.cyclops2.util.ExceptionSoftener;

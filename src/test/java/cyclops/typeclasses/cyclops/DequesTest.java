@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.mutable.DequeX;
+import cyclops.collectionx.mutable.DequeX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;

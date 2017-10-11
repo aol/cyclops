@@ -11,15 +11,15 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**

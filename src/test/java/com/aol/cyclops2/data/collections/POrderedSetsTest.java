@@ -6,9 +6,8 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import cyclops.collections.immutable.OrderedSetX;
+import cyclops.collectionx.immutable.OrderedSetX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;

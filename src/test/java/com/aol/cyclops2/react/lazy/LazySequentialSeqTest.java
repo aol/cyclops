@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSequentialSeqTest;

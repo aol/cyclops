@@ -3,12 +3,12 @@ package com.aol.cyclops2.data.collections;
 import java.util.ArrayList;
 import java.util.List;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import org.junit.Test;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 
 //simple sanity check to make sure performance is in the ballpark not a proper benchmark!

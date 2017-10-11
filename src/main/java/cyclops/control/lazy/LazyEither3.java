@@ -11,7 +11,7 @@ import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.monads.AnyM;

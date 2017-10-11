@@ -1,7 +1,7 @@
 package cyclops.data;
 
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableMapTest;
 
 import java.util.Map;

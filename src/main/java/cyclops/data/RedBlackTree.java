@@ -8,10 +8,10 @@ import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple5;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple5;
 
 import java.util.Comparator;
 import java.util.function.Function;

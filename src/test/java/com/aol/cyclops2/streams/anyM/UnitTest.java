@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Optional;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.monads.Witness;
 import org.junit.Test;
 

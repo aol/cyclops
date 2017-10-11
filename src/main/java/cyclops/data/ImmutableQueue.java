@@ -8,9 +8,9 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function3;
@@ -18,10 +18,10 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

@@ -9,7 +9,7 @@ import cyclops.companion.CompletableFutures;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 public class CompletableFuturesTest {
     

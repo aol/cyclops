@@ -2,12 +2,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.immutable.PersistentQueueX;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
-import org.pcollections.PSet;
 import org.pcollections.PVector;
 
 import java.util.*;

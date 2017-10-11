@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react.base;
 
 import static java.util.Arrays.asList;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.BiPredicate;

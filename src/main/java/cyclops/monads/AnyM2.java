@@ -12,7 +12,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
@@ -25,9 +25,9 @@ import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

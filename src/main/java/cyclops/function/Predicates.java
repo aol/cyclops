@@ -5,7 +5,7 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.lazy.Maybe;
 import cyclops.monads.Witness.predicate;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 

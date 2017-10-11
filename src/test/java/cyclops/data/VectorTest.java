@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Ignore;

@@ -23,7 +23,7 @@ import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 import lombok.Value;
 public class BatchingTest {

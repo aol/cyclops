@@ -1,9 +1,6 @@
 package cyclops.data.basetests;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.collections.AbstractIterableXTest;
-import cyclops.collections.CollectionXTestsWithNulls;
+import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.ImmutableList;
 import cyclops.data.Seq;

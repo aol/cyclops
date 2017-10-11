@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 
 public class HeadTailTest {

@@ -12,12 +12,12 @@ import com.aol.cyclops2.types.Value;
 import cyclops.control.Either;
 import cyclops.function.Function0;
 import cyclops.function.Function3;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 import cyclops.stream.ReactiveSeq;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 

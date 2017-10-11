@@ -6,8 +6,8 @@ import com.aol.cyclops2.hkt.Higher3;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
 import cyclops.companion.Monoids;
@@ -37,8 +37,8 @@ import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +50,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * Class for working with Nested Data Structures.

@@ -2,15 +2,15 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.lang.reflect.Proxy;
 import java.util.Iterator;

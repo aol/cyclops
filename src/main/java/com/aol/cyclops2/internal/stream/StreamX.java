@@ -4,12 +4,12 @@ import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 
 import java.util.*;
 import java.util.function.*;

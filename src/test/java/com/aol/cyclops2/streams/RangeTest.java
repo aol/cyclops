@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;

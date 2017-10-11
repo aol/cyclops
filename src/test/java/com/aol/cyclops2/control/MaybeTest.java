@@ -1,9 +1,9 @@
 package com.aol.cyclops2.control;
 
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
@@ -18,7 +18,7 @@ import cyclops.control.lazy.Maybe.CompletableMaybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -32,7 +32,7 @@ import java.util.stream.StreamSupport;
 
 import static cyclops.control.lazy.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class MaybeTest implements Printable {

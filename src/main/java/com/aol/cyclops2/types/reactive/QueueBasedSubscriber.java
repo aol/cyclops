@@ -23,7 +23,7 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.ClosedQueueException;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.QueueX;
+import cyclops.collectionx.mutable.QueueX;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.types.futurestream.Continuation;
 

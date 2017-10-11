@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 

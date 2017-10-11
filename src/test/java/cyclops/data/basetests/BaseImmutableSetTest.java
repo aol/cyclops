@@ -1,11 +1,9 @@
 package cyclops.data.basetests;
 
-import cyclops.collections.AbstractIterableXTest;
+import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.HashSet;
-import cyclops.data.ImmutableList;
 import cyclops.data.ImmutableSet;
-import cyclops.data.Seq;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 

@@ -2,10 +2,10 @@ package cyclops.streams.push.async;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class AsyncZippingTest {

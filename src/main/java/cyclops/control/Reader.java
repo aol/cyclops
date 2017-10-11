@@ -16,8 +16,8 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad

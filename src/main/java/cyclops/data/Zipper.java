@@ -5,8 +5,8 @@ import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

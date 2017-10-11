@@ -34,7 +34,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 import cyclops.companion.Reducers;
 import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule

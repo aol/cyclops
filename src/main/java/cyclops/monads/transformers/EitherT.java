@@ -10,7 +10,7 @@ import cyclops.control.Either;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 
 import java.util.Iterator;
 import java.util.function.*;

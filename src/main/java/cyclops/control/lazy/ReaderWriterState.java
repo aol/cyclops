@@ -15,13 +15,13 @@ import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple3;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

@@ -2,12 +2,10 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.immutable.BagX;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.BagX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.PBag;
-import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;

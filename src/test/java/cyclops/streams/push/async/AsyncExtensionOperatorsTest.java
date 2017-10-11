@@ -4,15 +4,15 @@ package cyclops.streams.push.async;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.lazy.Maybe;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;
 import org.hamcrest.Matchers;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import java.io.Serializable;

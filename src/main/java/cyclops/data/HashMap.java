@@ -1,11 +1,11 @@
 package cyclops.data;
 
-import cyclops.collections.immutable.PersistentMapX;
+import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.stream.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.Objects;

@@ -3,8 +3,8 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import cyclops.async.adapters.Queue;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.ArrayList;
 import java.util.List;

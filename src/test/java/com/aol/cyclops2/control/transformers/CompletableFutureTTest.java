@@ -3,13 +3,13 @@ package com.aol.cyclops2.control.transformers;
 
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;

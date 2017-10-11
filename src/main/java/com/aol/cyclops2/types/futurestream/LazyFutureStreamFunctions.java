@@ -9,8 +9,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import com.aol.cyclops2.internal.react.stream.CloseableIterator;
 

@@ -9,15 +9,15 @@ import java.util.stream.Collector;
 
 import com.aol.cyclops2.data.collections.extensions.lazy.*;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.mutable.DequeX;
+import cyclops.collectionx.mutable.DequeX;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
-import cyclops.collections.mutable.QueueX;
+import cyclops.collectionx.mutable.QueueX;
 
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.SetX;
 
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.collectionx.mutable.SortedSetX;
 
 
 /**

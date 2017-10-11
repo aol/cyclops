@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
 
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.lazy.Maybe;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;

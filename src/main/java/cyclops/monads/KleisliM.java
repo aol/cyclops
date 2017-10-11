@@ -4,8 +4,8 @@ package cyclops.monads;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.function.*;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

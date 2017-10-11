@@ -1,6 +1,6 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import cyclops.stream.Streamable;

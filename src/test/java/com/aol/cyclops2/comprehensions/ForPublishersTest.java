@@ -2,14 +2,14 @@ package com.aol.cyclops2.comprehensions;
 
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.SetX;
 
 public class ForPublishersTest {
 

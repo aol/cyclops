@@ -4,12 +4,12 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Traverse;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Optional;
 import java.util.function.Function;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 public interface Unfoldable<W> {

@@ -3,8 +3,8 @@ package com.aol.cyclops2.types.futurestream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.QueueReader;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.List;

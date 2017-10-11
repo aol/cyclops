@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 
 import cyclops.async.LazyReact;
 import cyclops.stream.FutureStream;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;

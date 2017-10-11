@@ -8,7 +8,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -24,11 +24,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.stream.Spouts;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +37,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 
 public abstract class AbstractTraversableTest {

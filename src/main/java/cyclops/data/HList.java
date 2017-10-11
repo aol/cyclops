@@ -3,11 +3,11 @@ package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed1Or;
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

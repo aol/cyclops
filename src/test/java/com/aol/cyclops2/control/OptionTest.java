@@ -5,8 +5,8 @@ import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class OptionTest implements Printable {

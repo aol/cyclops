@@ -1,14 +1,14 @@
 package cyclops.typeclasses.monad;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Constant;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.State;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.foldable.Foldable;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 import static cyclops.control.Constant.Instances.applicative;
 import static cyclops.control.lazy.State.state;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 //HighJ Traverse, ScalaZ Traverse and Cats Traverse Influences
 public interface Traverse<CRE> extends Applicative<CRE>{

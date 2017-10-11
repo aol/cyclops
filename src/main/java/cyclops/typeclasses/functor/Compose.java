@@ -9,8 +9,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.lazy.State;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 /**
  * Compose two functors so operations are applied to the inner functor

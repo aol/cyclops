@@ -26,7 +26,7 @@ import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;

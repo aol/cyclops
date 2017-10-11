@@ -3,7 +3,7 @@ package cyclops.companion;
 import java.util.HashMap;
 import java.util.Map;
 
-import cyclops.collections.mutable.MapX;
+import cyclops.collectionx.mutable.MapX;
 
 public class MapXs {
 

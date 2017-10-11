@@ -12,10 +12,10 @@ import cyclops.function.Monoid;
 import cyclops.companion.Monoids;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import cyclops.stream.ReactiveSeq;

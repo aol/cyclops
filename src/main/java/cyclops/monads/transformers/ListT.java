@@ -12,21 +12,21 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.Witness.reactiveSeq;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.stream.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.monads.Witness;

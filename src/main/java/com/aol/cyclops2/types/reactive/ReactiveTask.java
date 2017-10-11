@@ -3,7 +3,7 @@ package com.aol.cyclops2.types.reactive;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
 import lombok.Value;

@@ -28,7 +28,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.Streamable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 
 import lombok.Value;

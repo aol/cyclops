@@ -8,7 +8,7 @@ import cyclops.control.lazy.LazyEither4;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

@@ -14,9 +14,9 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
 import cyclops.function.Predicates;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

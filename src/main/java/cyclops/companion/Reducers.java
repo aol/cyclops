@@ -1,8 +1,8 @@
 package cyclops.companion;
 
 
-import cyclops.collections.immutable.*;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.collectionx.immutable.*;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import org.pcollections.AmortizedPQueue;
@@ -20,7 +20,7 @@ import org.pcollections.PStack;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import cyclops.collections.immutable.BagX;
+import cyclops.collectionx.immutable.BagX;
 
 
 import lombok.experimental.UtilityClass;

@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 
 import lombok.val;

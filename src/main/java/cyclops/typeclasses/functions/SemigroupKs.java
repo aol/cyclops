@@ -2,8 +2,8 @@ package cyclops.typeclasses.functions;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
+import cyclops.collectionx.immutable.*;
+import cyclops.collectionx.mutable.*;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;

@@ -7,9 +7,9 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
 import cyclops.companion.Optionals;
@@ -34,8 +34,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 
 import java.util.List;
@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of="either")

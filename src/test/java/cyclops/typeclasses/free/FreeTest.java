@@ -8,7 +8,7 @@ import static cyclops.typeclasses.free.CharToy.output;
 import cyclops.control.Either;
 import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.typeclasses.free.CharToy.*;

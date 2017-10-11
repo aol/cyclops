@@ -22,16 +22,16 @@ import java.util.stream.Stream;
 
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.QueueX;
+import cyclops.collectionx.mutable.SetX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
 import reactor.core.publisher.Flux;

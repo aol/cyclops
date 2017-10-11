@@ -2,7 +2,7 @@ package cyclops.typeclasses.monad;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.functions.MonoidK;
 

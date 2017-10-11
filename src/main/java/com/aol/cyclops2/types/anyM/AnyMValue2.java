@@ -13,9 +13,9 @@ import cyclops.monads.AnyM;
 import cyclops.monads.AnyM2;
 import cyclops.monads.WitnessType;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;

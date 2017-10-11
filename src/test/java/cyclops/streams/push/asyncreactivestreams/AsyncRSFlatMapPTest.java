@@ -1,6 +1,6 @@
 package cyclops.streams.push.asyncreactivestreams;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Spouts;
 import org.junit.Test;

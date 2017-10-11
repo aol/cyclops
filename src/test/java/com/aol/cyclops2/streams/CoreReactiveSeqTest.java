@@ -21,12 +21,12 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import org.hamcrest.CoreMatchers;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 

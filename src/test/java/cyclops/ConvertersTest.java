@@ -1,7 +1,7 @@
 package cyclops;
 
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
+import cyclops.collectionx.immutable.*;
+import cyclops.collectionx.mutable.*;
 import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
 import org.junit.Test;

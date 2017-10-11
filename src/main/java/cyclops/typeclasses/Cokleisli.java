@@ -7,7 +7,7 @@ import cyclops.function.Function1;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 

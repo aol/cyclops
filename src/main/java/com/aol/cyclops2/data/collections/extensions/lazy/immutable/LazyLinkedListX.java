@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import org.pcollections.ConsPStack;

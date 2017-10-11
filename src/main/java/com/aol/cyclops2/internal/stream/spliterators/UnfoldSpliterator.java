@@ -1,14 +1,14 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 public class UnfoldSpliterator<T1,T> implements Spliterator<T>, CopyableSpliterator<T> {

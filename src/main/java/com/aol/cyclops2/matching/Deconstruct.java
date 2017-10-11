@@ -3,11 +3,11 @@ package com.aol.cyclops2.matching;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Function5;
-import cyclops.collections.tuple.Tuple1;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
-import cyclops.collections.tuple.Tuple5;
+import cyclops.data.tuple.Tuple1;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.data.tuple.Tuple5;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

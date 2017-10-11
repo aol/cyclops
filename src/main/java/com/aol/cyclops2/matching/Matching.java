@@ -5,8 +5,8 @@ import static java.util.Arrays.stream;
 import com.aol.cyclops2.matching.Case.Any;
 
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple0;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple0;
 
 import java.util.Optional;
 

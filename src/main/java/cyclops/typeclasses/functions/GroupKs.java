@@ -1,29 +1,15 @@
 package cyclops.typeclasses.functions;
 
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.OrderedSetX;
-import cyclops.collections.immutable.PersistentQueueX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SortedSetX;
-import cyclops.companion.Monoids;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.immutable.PersistentQueueX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.DequeX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.QueueX;
 import cyclops.companion.Streams;
-import cyclops.function.Group;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
-import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.reactivestreams.Publisher;
-
-import java.math.BigInteger;
-import java.util.Deque;
-import java.util.List;
-import java.util.Queue;
-import java.util.SortedSet;
-import java.util.stream.Stream;
 
 
 public interface GroupKs {

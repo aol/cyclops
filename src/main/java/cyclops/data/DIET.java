@@ -10,15 +10,15 @@ import cyclops.stream.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 
 import static cyclops.control.lazy.Trampoline.done;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 //Discrete Interval Encoded Tree
 public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>, Folds<T> {

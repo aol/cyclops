@@ -4,7 +4,7 @@ package com.aol.cyclops2.streams.streamable;
 
 import static cyclops.stream.Streamable.of;
 import static java.util.Arrays.asList;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 
 import java.util.function.BiPredicate;

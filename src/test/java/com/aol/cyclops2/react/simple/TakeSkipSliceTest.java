@@ -2,7 +2,7 @@ package com.aol.cyclops2.react.simple;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.async.SimpleReact;

@@ -6,15 +6,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.monads.WitnessType;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;

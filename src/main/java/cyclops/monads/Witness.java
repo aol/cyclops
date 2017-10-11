@@ -9,7 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.internal.adapters.*;
-import cyclops.collections.immutable.*;
+import cyclops.collectionx.immutable.*;
 import cyclops.control.*;
 import cyclops.async.Future;
 import cyclops.control.lazy.*;
@@ -17,11 +17,11 @@ import cyclops.stream.FutureStream;
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.collectionx.mutable.DequeX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.QueueX;
+import cyclops.collectionx.mutable.SetX;
+import cyclops.collectionx.mutable.SortedSetX;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 

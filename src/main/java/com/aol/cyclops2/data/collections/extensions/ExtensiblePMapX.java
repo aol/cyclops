@@ -2,11 +2,11 @@ package com.aol.cyclops2.data.collections.extensions;
 
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
-import cyclops.collections.immutable.PersistentMapX;
+import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.function.Reducer;
 import cyclops.stream.ReactiveSeq;
 import lombok.NonNull;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.pcollections.PMap;
 
 import java.util.function.Supplier;

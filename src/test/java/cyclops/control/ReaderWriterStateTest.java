@@ -1,7 +1,7 @@
 package cyclops.control;
 
 import cyclops.companion.Monoids;
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import cyclops.control.lazy.ReaderWriterState;
 import org.junit.Test;
 

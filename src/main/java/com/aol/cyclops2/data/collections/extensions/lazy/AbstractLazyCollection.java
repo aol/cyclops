@@ -5,11 +5,9 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.experimental.Wither;
 
 import java.util.Collection;
 import java.util.Iterator;

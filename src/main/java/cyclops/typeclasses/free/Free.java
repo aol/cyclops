@@ -2,7 +2,7 @@ package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import cyclops.collections.tuple.*;
+import cyclops.data.tuple.*;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Either;
 import cyclops.control.lazy.LazyEither3;

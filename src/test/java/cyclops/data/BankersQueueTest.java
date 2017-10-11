@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;
 import org.junit.Test;
 

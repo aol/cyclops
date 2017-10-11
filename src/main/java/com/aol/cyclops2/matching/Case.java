@@ -2,11 +2,11 @@ package com.aol.cyclops2.matching;
 
 import static java.util.Optional.empty;
 
-import cyclops.collections.tuple.Tuple1;
-import cyclops.collections.tuple.Tuple2;
-import cyclops.collections.tuple.Tuple3;
-import cyclops.collections.tuple.Tuple4;
-import cyclops.collections.tuple.Tuple5;
+import cyclops.data.tuple.Tuple1;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.data.tuple.Tuple5;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
@@ -31,7 +31,7 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 import com.aol.cyclops2.types.mixins.Printable;
 

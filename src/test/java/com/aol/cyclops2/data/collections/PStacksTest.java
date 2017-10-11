@@ -4,13 +4,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 
 public class PStacksTest {
 

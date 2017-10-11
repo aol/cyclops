@@ -1,6 +1,6 @@
 package com.aol.cyclops2.control.anym.transformers.seq;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.AbstractTraversableTest;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.monads.Witness;

@@ -1,9 +1,8 @@
 package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
-import cyclops.monads.Witness;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.Witness.vectorX;

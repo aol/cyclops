@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react.async.vertx;
 
 import static org.hamcrest.Matchers.equalTo;
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertThat;
 
 import java.util.concurrent.CompletableFuture;

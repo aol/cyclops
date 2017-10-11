@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.aol.cyclops2.react.lazy.DuplicationTest;
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.stream.ReactiveSeq;
 import cyclops.stream.Streamable;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 public class WindowingTest {
 	FutureStream<Integer> empty;

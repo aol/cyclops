@@ -3,7 +3,7 @@ package com.aol.cyclops2.control;
 import cyclops.async.Future;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Eval.CompletableEval;
-import cyclops.collections.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import cyclops.stream.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;

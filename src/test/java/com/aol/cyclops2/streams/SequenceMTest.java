@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 
 public class SequenceMTest {
 	

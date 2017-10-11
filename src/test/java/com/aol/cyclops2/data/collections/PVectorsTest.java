@@ -4,9 +4,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
-import java.util.stream.Stream;
 
-import cyclops.collections.immutable.VectorX;
+import cyclops.collectionx.immutable.VectorX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;

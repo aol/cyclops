@@ -1,8 +1,8 @@
 package cyclops.data;
 
 
-import cyclops.collections.tuple.Tuple;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.stream.Generator;
 import cyclops.stream.ReactiveSeq;
 import lombok.AccessLevel;

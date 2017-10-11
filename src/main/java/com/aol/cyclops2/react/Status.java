@@ -2,7 +2,7 @@ package com.aol.cyclops2.react;
 
 import org.pcollections.PStack;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.collectionx.immutable.LinkedListX;
 
 import lombok.AllArgsConstructor;
 

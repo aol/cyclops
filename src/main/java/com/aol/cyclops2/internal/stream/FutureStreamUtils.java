@@ -1,13 +1,13 @@
 package com.aol.cyclops2.internal.stream;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple3;
 import org.reactivestreams.Subscription;
 
 import cyclops.companion.Streams;

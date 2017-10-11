@@ -2,7 +2,7 @@ package com.aol.cyclops2.matching.sample;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
 
-import cyclops.collections.tuple.Tuple3;
+import cyclops.data.tuple.Tuple3;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

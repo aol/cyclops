@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.map;
 
 
-import cyclops.collections.mutable.ListX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.stream.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;

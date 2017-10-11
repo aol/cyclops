@@ -1,13 +1,13 @@
 package com.aol.cyclops2.streams;
 
-import static cyclops.collections.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
 
 import cyclops.stream.ReactiveSeq;
-import cyclops.collections.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 public class SeqTest {
