@@ -1838,7 +1838,6 @@ public abstract class AbstractIterableXTest {
     @Test
     public void testCycleTimesNoOrd() {
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
-
     }
 
     int count =0;

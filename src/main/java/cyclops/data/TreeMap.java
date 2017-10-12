@@ -229,4 +229,9 @@ public class TreeMap<K,V> implements ImmutableMap<K,V> {
     public Iterator<Tuple2<K, V>> iterator() {
         return stream().iterator();
     }
+
+    @Override
+    public String toString(){
+        return mkString();
+    }
 }

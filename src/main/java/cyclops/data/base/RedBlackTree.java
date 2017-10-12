@@ -161,8 +161,9 @@ public interface RedBlackTree {
         @Override
         public Tree<K, V> plus(K key, V value) {
             int compRes = comp.compare(this.key,key);
-            if (compRes>0)
-                return balance(isBlack, left.plus(key, value), right,this.key, this.value);
+            if (compRes>0) {
+                return balance(isBlack, left.plus(key, value), right, this.key, this.value);
+            }
             else if (compRes==0)
                 return new Node(isBlack, left,right, key, value,comp);
 

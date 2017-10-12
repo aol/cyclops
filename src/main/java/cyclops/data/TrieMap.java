@@ -164,10 +164,13 @@ public class TrieMap<K,V> implements  ImmutableMap<K,V>{
 
     @Override
     public <R1, R2> TrieMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2) {
-        return null;
+        return fromStream(stream().map(t->t.bimap(fn1,fn2)));
     }
 
-
+    @Override
+    public String toString(){
+        return mkString();
+    }
     @Override
     public Iterator<Tuple2<K, V>> iterator() {
         return stream().iterator();

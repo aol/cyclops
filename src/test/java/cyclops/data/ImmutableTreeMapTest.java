@@ -3,9 +3,14 @@ package cyclops.data;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableMapTest;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.Map;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 
 public class ImmutableTreeMapTest extends BaseImmutableMapTest {
@@ -32,4 +37,14 @@ public class ImmutableTreeMapTest extends BaseImmutableMapTest {
         TreeMap<String, Integer> x = TreeMap.fromStream(s,Comparators.naturalOrderIdentityComparator());
         return x;
     }
+    @Test @Ignore
+    public void add50000Entries(){
+        ImmutableMap<Integer,Integer> map = empty();
+        for(int i=0;i<50000;i++){
+            map = map.put(i,i*2);
+        }
+        assertThat(map.size(),equalTo(50000));
+        putAndCompare(map);
+    }
+
 }
