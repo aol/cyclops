@@ -221,20 +221,10 @@ public  class CoreStreamableTest {
 		 assertTrue(copies._3().limit(3).toList().size()==3);
 		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
-	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
-	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
-	    		
-	    }
-	   
-	   
 
-		
-	    @Test
-	    public void testGroupByEager() {
+
+	@Test
+	public void testGroupByEager() {
 	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 	       
 	        assertThat(map1.get(0),hasItem(2));
@@ -245,7 +235,7 @@ public  class CoreStreamableTest {
 	        assertEquals(2, map1.size());
 
 	     
-	    }
+	}
 	    
 
 	    @Test
@@ -278,10 +268,6 @@ public  class CoreStreamableTest {
         System.out.println(left);
         assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
-    }
-	    @Test(expected=ClassCastException.class)
-    public void cast(){
-        of(1,2,3).cast(String.class).toList();
     }
 
 	    @Test

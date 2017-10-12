@@ -233,14 +233,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return (AnyMValue<W,T>) AnyM.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> AnyMValue<W,U> cast(final Class<? extends U> type) {
 
-        return (AnyMValue<W,U>) AnyM.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Functor#trampoline(java.util.function.Function)

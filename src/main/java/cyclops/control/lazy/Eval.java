@@ -535,13 +535,6 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return toMaybe().filter(pred);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Eval<U> cast(final Class<? extends U> type) {
-        return (Eval<U>) MonadicValue.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Functor#peek(java.util.function.Consumer)

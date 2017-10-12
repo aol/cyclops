@@ -163,10 +163,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     @Override
     ImmutableQueue<T> filter(Predicate<? super T> fn);
 
-    @Override
-    default <U> ImmutableQueue<U> cast(Class<? extends U> type) {
-        return null;
-    }
 
     @Override
     <R> ImmutableQueue<R> map(Function<? super T, ? extends R> fn);

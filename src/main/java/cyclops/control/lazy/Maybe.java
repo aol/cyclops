@@ -1052,16 +1052,6 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         return (Maybe<T>) Option.super.notNull();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Maybe<U> cast(final Class<? extends U> type) {
-
-        return (Maybe<U>) Option.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)

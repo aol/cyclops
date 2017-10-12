@@ -926,10 +926,6 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT) FoldableTransformerSeq.super.removeAllS(stream);
     }
 
-    @Override
-    public <U> ListT<W,U> cast(final Class<? extends U> type) {
-        return (ListT) FoldableTransformerSeq.super.cast(type);
-    }
 
     @Override
     public <U> ListT<W,U> ofType(final Class<? extends U> type) {

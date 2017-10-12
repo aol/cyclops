@@ -990,25 +990,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
 
-
-
-
-
-
-
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> LazyEither<LT, U> cast(final Class<? extends U> type) {
-
-        return (LazyEither<LT, U>) Either.super.cast(type);
-    }
-
     /*
      * (non-Javadoc)
      *

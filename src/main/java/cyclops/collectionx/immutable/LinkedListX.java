@@ -1157,14 +1157,6 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> LinkedListX<U> cast(final Class<? extends U> type) {
-
-        return (LinkedListX<U>) LazyCollectionX.super.cast(type);
-    }
 
 
     @Override

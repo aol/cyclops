@@ -51,12 +51,6 @@ public class Tuple1Test {
     }
 
     @Test
-    public void cast() throws Exception {
-        Tuple1<Number> local  = t1.cast(Number.class);
-        assertThat(local._1(),equalTo(10));
-    }
-
-    @Test
     public void map() throws Exception {
         assertThat(t1.map(i->i+1),equalTo(Tuple.tuple(11)));
     }

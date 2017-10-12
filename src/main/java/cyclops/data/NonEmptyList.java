@@ -150,10 +150,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
         return asList().filter(pred);
     }
 
-    @Override
-    public <U> NonEmptyList<U> cast(Class<? extends U> type) {
-        return (NonEmptyList<U>)ImmutableList.Some.super.cast(type);
-    }
 
     public <R> NonEmptyList<R> map(Function<? super T, ? extends R> fn) {
         return NonEmptyList.of(fn.apply(head),tail.map(fn));

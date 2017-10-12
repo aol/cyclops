@@ -1069,15 +1069,6 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> DequeX<U> cast(final Class<? extends U> type) {
-
-        return (DequeX<U>) LazyCollectionX.super.cast(type);
-    }
-
-    /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override

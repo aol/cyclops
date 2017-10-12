@@ -715,16 +715,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return (LazyEither4<LT1,LT2, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> LazyEither4<LT1, LT2, LT3, U> cast(final Class<? extends U> type) {
 
-        return (LazyEither4<LT1, LT2, LT3, U>) Transformable.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)

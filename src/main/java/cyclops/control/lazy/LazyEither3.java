@@ -667,16 +667,6 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
         return (LazyEither3<LT1, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> LazyEither3<LT1, LT2, U> cast(final Class<? extends U> type) {
-
-        return (LazyEither3<LT1, LT2, U>) Transformable.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)

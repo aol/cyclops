@@ -21,10 +21,6 @@ public class DifferenceList<T> implements Folds<T>, Transformable<T> {
 
     private final Function<LazySeq<T>,Free<supplier, LazySeq<T>>> appending;
 
-    @Override
-    public <U> DifferenceList<U> cast(Class<? extends U> type) {
-        return (DifferenceList<U>)Transformable.super.cast(type);
-    }
 
     public <R> DifferenceList<R> map(Function<? super T, ? extends R> fn){
         return new DifferenceList<>(l-> Free.done(run().map(fn)));

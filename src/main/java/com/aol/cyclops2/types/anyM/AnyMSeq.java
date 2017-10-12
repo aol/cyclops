@@ -395,14 +395,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
 
     
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> AnyMSeq<W,U> cast(final Class<? extends U> type) {
-
-        return (AnyMSeq<W,U>) AnyM.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)

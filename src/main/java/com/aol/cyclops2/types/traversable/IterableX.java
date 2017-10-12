@@ -697,10 +697,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.recover(exceptionClass,fn);
     }
 
-    @Override
-    default <U> IterableX<U> cast(final Class<? extends U> type) {
-        return (IterableX<U>)ExtendedTraversable.super.cast(type);
-    }
+
 
     @Override
     default IterableX<T> peek(final Consumer<? super T> c) {

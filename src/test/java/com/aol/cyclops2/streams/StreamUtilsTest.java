@@ -105,14 +105,7 @@ utilResultList:[1]
 
 	}
 
-	@Test
-	public void testCastPast() {
-		ReactiveSeq.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
-	
 
-
-
-	}
 	@Test
 	public void testIntersperse() {
 		

@@ -320,9 +320,10 @@ public interface Seq<T> extends ImmutableList<T>,
 
         public final T head;
         public final Seq<T> tail;
+        private final int size;
 
         public static <T> Cons<T> cons(T value, Seq<T> tail){
-            return new Cons<>(value,tail);
+            return new Cons<>(value,tail,tail.size()+1);
         }
 
         @Override
@@ -373,19 +374,7 @@ public interface Seq<T> extends ImmutableList<T>,
             return (Cons<T>)Seq.super.reverse();
         }
         public int size(){
-            int result =1;
-            Seq<T> current[] = new Seq[0];
-            current[0]=tail;
-            while(true){
-               int toAdd =current[0].visit(c->{
-                    current[0]=c;
-                    return 1;
-                },n->0);
-                result+=toAdd;
-                if(toAdd==0)
-                    break;
-            }
-            return result;
+            return size;
         }
         @Override
         public int hashCode() {

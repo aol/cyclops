@@ -904,10 +904,6 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT) FoldableTransformerSeq.super.removeAllS(stream);
     }
 
-    @Override
-    public <U> StreamT<W,U> cast(final Class<? extends U> type) {
-        return (StreamT) FoldableTransformerSeq.super.cast(type);
-    }
 
     @Override
     public <U> StreamT<W,U> ofType(final Class<? extends U> type) {

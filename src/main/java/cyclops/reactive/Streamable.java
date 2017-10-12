@@ -1774,18 +1774,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(reactiveSeq().ofType(type));
     }
 
-    /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
-     * {@link ClassCastException}.
-     * 
-     * 
-     * // ClassCastException Streamable.of(1, "a", 2, "b", 3).cast(Integer.class)
-     * 
-     */
-    @Override
-    default <U> Streamable<U> cast(final Class<? extends U> type) {
-        return fromStream(reactiveSeq().cast(type));
-    }
 
 
     /* 

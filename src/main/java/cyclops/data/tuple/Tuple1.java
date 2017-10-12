@@ -81,10 +81,6 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return Identity.of(_1());
     }
 
-    @Override
-    public <U> Tuple1<U> cast(Class<? extends U> type) {
-        return (Tuple1<U>)Transformable.super.cast(type);
-    }
 
     public <R> Tuple1<R> map(Function<? super T, ? extends R> fn){
         return of((fn.apply(_1())));

@@ -992,16 +992,6 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         return (PersistentSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> PersistentSetX<U> cast(final Class<? extends U> type) {
-
-        return (PersistentSetX<U>) LazyCollectionX.super.cast(type);
-    }
-
-
 
     @Override
     default <C extends Collection<? super T>> PersistentSetX<C> grouped(final int size, final Supplier<C> supplier) {

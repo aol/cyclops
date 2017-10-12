@@ -403,14 +403,7 @@ public class ExtensionOperatorsRSTest {
 
 	}
 
-	@Test
-	public void testCastPast() {
-		Spouts.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
-	
 
-
-
-	}
 	
 	@Test
 	public void flatMapCompletableFuture(){
@@ -432,10 +425,6 @@ public class ExtensionOperatorsRSTest {
 
 
 
-	}
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		Spouts.of(1,2,3).cast(String.class).to(Streamable::fromStream).collect(Collectors.toList());
 	}
 	@Test
 	public void xMatch(){

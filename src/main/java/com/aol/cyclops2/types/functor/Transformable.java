@@ -17,17 +17,6 @@ import cyclops.control.lazy.Trampoline;
 @FunctionalInterface
 public interface Transformable<T> {
 
-    /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
-     * {@link ClassCastException}.
-     *
-     *
-     * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
-     *
-     */
-    default <U> Transformable<U> cast(final Class<? extends U> type) {
-        return map(type::cast);
-    }
 
 
     /**

@@ -512,10 +512,7 @@ public class Active<W,T> implements Filters<T>,
         return Product.of(this,active);
     }
 
-    @Override
-    public <U> Active<W,U> cast(Class<? extends U> type) {
-        return (Active<W,U>)Transformable.super.cast(type);
-    }
+
 
     @Override
     public <U> Active<W,U> ofType(Class<? extends U> type) {

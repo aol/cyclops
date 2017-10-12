@@ -366,10 +366,6 @@ public class TryTest {
 				equalTo(Arrays.asList(10)));
 	}
 
-	@Test
-	public void testCast() {
-		Try<Number,RuntimeException> num = just.cast(Number.class);
-	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {

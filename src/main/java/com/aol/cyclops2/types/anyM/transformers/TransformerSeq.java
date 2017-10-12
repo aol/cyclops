@@ -154,11 +154,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    @Override
-    default <U> Traversable<U> cast(final Class<? extends U> type) {
-        AnyM<W, Traversable<U>> zipped = transformerStream().map(s -> (Traversable)s.cast(type));
-        return unitAnyM(zipped);
-    }
 
     @Override
     default <U> Traversable<U> ofType(final Class<? extends U> type) {

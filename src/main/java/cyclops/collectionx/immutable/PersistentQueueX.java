@@ -1235,19 +1235,6 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#
-     * cast(java.lang.Class)
-     */
-    @Override
-    default <U> PersistentQueueX<U> cast(final Class<? extends U> type) {
-
-        return (PersistentQueueX<U>) LazyCollectionX.super.cast(type);
-    }
-
 
     @Override
     default <C extends Collection<? super T>> PersistentQueueX<C> grouped(final int size, final Supplier<C> supplier) {

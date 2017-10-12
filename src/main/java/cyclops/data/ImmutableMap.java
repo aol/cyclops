@@ -167,10 +167,6 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     ImmutableMap<K,V> filterValues(Predicate<? super V> predicate);
 
     @Override
-    default <U> ImmutableMap<K,U> cast(Class<? extends U> type) {
-        return (HashMap<K,U>)Transformable.super.cast(type);
-    }
-    @Override
     default ImmutableMap<K,V> filterNot(Predicate<? super Tuple2<K, V>> predicate){
         return (HashMap<K,V>)Filters.super.filterNot(predicate);
     }

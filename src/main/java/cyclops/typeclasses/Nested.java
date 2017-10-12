@@ -521,11 +521,6 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
 
     @Override
-    public <U> Nested<W1,W2,U> cast(Class<? extends U> type) {
-        return (Nested<W1,W2,U>)Transformable.super.cast(type);
-    }
-
-    @Override
     public <R> Nested<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (Nested<W1,W2,R>)Transformable.super.trampoline(mapper);
     }

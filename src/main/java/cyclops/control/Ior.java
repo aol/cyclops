@@ -699,14 +699,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         return (Option<PT>) Filters.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Ior<ST, U> cast(final Class<? extends U> type) {
 
-        return (Ior<ST, U>) Transformable.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)

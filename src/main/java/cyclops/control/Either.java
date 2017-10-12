@@ -899,14 +899,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         return (Option<PT>) Filters.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Either<ST, U> cast(final Class<? extends U> type) {
 
-        return (Either<ST, U>) Transformable.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.Function)

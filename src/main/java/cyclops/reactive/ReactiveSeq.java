@@ -2726,18 +2726,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<U>)IterableX.super.ofType(type);
     }
 
-    /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
-     * {@link ClassCastException}.
-     *
-     *
-     * // ClassCastException ReactiveSeq.of(1, "a", 2, "b", 3).cast(Integer.class)
-     *
-     */
-    @Override
-    default <U> ReactiveSeq<U> cast(Class<? extends U> type){
-        return (ReactiveSeq<U>)IterableX.super.cast(type);
-    }
+
 
 
 

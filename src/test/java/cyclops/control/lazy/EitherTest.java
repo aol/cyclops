@@ -480,11 +480,6 @@ public class EitherTest {
     }
 
     @Test
-    public void testCast() {
-        LazyEither<?,Number> num = just.cast(Number.class);
-    }
-
-    @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
     }

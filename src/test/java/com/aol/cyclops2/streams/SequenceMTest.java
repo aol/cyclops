@@ -401,14 +401,7 @@ public class SequenceMTest {
 
 	}
 
-	@Test
-	public void testCastPast() {
-		ReactiveSeq.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
-	
 
-
-
-	}
 	
 	@Test
 	public void flatMapCompletableFuture(){
@@ -431,10 +424,7 @@ public class SequenceMTest {
 
 
 	}
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		ReactiveSeq.of(1,2,3).cast(String.class).collect(Collectors.toList());
-	}
+
 	@Test
 	public void xMatch(){
 		assertTrue(ReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));

@@ -940,14 +940,6 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> SortedSetX<U> cast(final Class<? extends U> type) {
-
-        return (SortedSetX<U>) LazyCollectionX.super.cast(type);
-    }
 
 
     @Override

@@ -535,10 +535,6 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return toString();
     }
 
-    @Override
-    public <U> FutureT<W,U> cast(Class<? extends U> type) {
-        return (FutureT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> FutureT<W,U> ofType(Class<? extends U> type) {

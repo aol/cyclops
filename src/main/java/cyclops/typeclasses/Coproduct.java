@@ -116,10 +116,6 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return (Coproduct<W1,W2,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <U>  Coproduct<W1,W2,U> cast(Class<? extends U> type) {
-        return (Coproduct<W1,W2,U>)Transformable.super.cast(type);
-    }
 
 
 

@@ -246,14 +246,6 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return (MapX<K, V>) FluentMapX.super.minusAll(keys);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> MapX<K, U> cast(final Class<? extends U> type) {
-
-        return (MapX<K, U>) Transformable.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)

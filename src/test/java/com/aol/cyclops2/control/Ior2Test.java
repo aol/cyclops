@@ -381,10 +381,6 @@ public class Ior2Test {
 				equalTo(Arrays.asList(10)));
 	}
 
-	@Test
-	public void testCast() {
-		Ior<?,Number> num = just.cast(Number.class);
-	}
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {

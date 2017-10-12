@@ -980,14 +980,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> SetX<U> cast(final Class<? extends U> type) {
 
-        return (SetX<U>) LazyCollectionX.super.cast(type);
-    }
 
 
     /* (non-Javadoc)

@@ -578,11 +578,6 @@ public class CompletableMaybeTest implements Printable {
     }
 
     @Test
-    public void testCast() {
-        Maybe<Number> num = just.cast(Number.class);
-    }
-
-    @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i -> i + 5), equalTo(Maybe.of(15)));
     }

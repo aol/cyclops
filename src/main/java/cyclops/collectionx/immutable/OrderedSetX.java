@@ -975,14 +975,6 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> OrderedSetX<U> cast(final Class<? extends U> type) {
-
-        return (OrderedSetX<U>) LazyCollectionX.super.cast(type);
-    }
 
     @Override
     default <C extends Collection<? super T>> OrderedSetX<C> grouped(final int size, final Supplier<C> supplier) {

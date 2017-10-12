@@ -1102,15 +1102,6 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return (VectorX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> VectorX<U> cast(final Class<? extends U> type) {
-
-        return (VectorX<U>) LazyCollectionX.super.cast(type);
-    }
-
 
     @Override
     default <C extends Collection<? super T>> VectorX<C> grouped(final int size, final Supplier<C> supplier) {

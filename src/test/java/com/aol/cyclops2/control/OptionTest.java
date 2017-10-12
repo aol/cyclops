@@ -479,10 +479,6 @@ public class OptionTest implements Printable {
                 equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testCast() {
-        Option<Number> num = eager.cast(Number.class);
-    }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {

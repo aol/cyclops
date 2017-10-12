@@ -626,15 +626,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    public <U> Try<U, X> cast(final Class<? extends U> type) {
-        return (Try<U, X>) Transformable.super.cast(type);
-    }
-
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
      */

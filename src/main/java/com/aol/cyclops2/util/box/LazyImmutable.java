@@ -189,16 +189,6 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
 
 
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    public <U> LazyImmutable<U> cast(final Class<? extends U> type) {
-
-        return (LazyImmutable<U>) Zippable.super.cast(type);
-    }
-
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */

@@ -1572,10 +1572,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return (AnyM)Zippable.super.zip(other);
     }
 
-    @Override
-    default <U> AnyM<W,U> cast(final Class<? extends U> type) {
-        return (AnyM<W,U>)Zippable.super.cast(type);
-    }
+
 
     @Override
     default <R> AnyM<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {

@@ -526,10 +526,6 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return toString();
     }
 
-    @Override
-    public <U> MaybeT<W,U> cast(Class<? extends U> type) {
-        return (MaybeT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> MaybeT<W,U> ofType(Class<? extends U> type) {

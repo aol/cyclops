@@ -403,11 +403,6 @@ public class Either4Test {
     }
 
     @Test
-    public void testCast() {
-        LazyEither4<String,String,String,Number> num = just.cast(Number.class);
-    }
-
-    @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither4.right(15)));
     }

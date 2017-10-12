@@ -448,11 +448,6 @@ public class Eval2Test {
 	}
 
 	@Test
-	public void testCast() {
-		Eval<Number> num = just.cast(Number.class);
-	}
-
-	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5),equalTo(Eval.now(15)));
 	}

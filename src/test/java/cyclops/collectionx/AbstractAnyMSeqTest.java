@@ -708,21 +708,6 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	}
 	
 
-	@Test(expected=ClassCastException.class)
-	public void testCastPast() {
-		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
-		        .toList();
-	
-
-
-
-	}
-	
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-
-		of(1,2,3).cast(String.class).toList();
-	}
 	@Test
 	public void xMatch(){
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
@@ -1057,29 +1042,6 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 
             
         }
-
-          
-            @Test
-            public void testCastNumber() {
-                
-                of(1,  2,  3)
-                        .cast(Number.class)
-                            .peek(it ->System.out.println(it)).toList();
-                
-              
-            }
-           
-
-           
-
-            
-           
-
-            
-           
-
-        
-      
 
             @Test
             public void testSplitAtHead() {

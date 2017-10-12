@@ -1137,19 +1137,6 @@ public abstract class AbstractIterableXTest {
 	}
 	
 
-	@Test(expected=ClassCastException.class)
-	public void testCastPast() {
-		of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime()).join();
-	
-
-
-
-	}
-	
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		of(1,2,3).cast(String.class).join();
-	}
 	@Test
 	public void xMatch(){
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
@@ -1460,8 +1447,8 @@ public abstract class AbstractIterableXTest {
 
 	        Supplier<IterableX<Integer>> s = () ->of(1, 2, 3);
 
-	        assertEquals(3, ((CollectionX<Integer>)s.get().shuffle()).toListX().size());
-	        assertThat(((CollectionX<Integer>)s.get().shuffle()).toListX(), hasItems(1, 2, 3));
+	        assertEquals(3, ((IterableX<Integer>)s.get().shuffle()).toListX().size());
+	        assertThat(((IterableX<Integer>)s.get().shuffle()).toListX(), hasItems(1, 2, 3));
 
 	        
 	    }
@@ -1483,21 +1470,7 @@ public abstract class AbstractIterableXTest {
 	    
 	    
 
-	     
-	        @Test
-	        public void testCastNumber() {
-	            
-	            of(1,  2,  3)
-	                    .cast(Number.class)
-	                        .peek(it ->System.out.println(it)).toList();
-	            
-	          
-	        }
-	       
 
-	       
-
-	        
 	       
 
 	        
@@ -1699,7 +1672,7 @@ public abstract class AbstractIterableXTest {
 	        @Test
 	        public void testIntersperseNoOrder() {
 	            
-	            assertThat(((CollectionX<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
+	            assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
 	        
 
 
@@ -2078,7 +2051,7 @@ public abstract class AbstractIterableXTest {
     @Test
     public void testReverseNoOrd() {
 
-        assertThat(of(1, 2, 3).reverse().toListX(), containsInAnyOrder(asList(3, 2, 1)));
+        assertThat(of(1, 2, 3).reverse().toListX(), containsInAnyOrder(3, 2, 1));
     }
 
     @Test

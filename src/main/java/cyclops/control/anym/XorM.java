@@ -103,11 +103,7 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
         return of(xor.map(m -> m.notNull()).mapLeft(m->m.notNull()));
     }
 
-    @Override
-    public <U>  XorM<W1,W2,U> cast(Class<? extends U> type) {
-        Either<? extends AnyM<? extends W1, ? extends U>, ? extends AnyM<? extends W2, ? extends U>> x = xor.map(m -> m.cast(type)).mapLeft(m -> m.cast(type));
-        return of(x);
-    }
+
 
     @Override
     public <R>  XorM<W1,W2,R> map(Function<? super T, ? extends R> fn) {

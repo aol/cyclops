@@ -45,7 +45,7 @@ public class BAMT<T> {
 
     }
 
-    static class ArrayUtils{
+    public static class ArrayUtils{
 
         public static <T> T[] append(T[] array, T value) {
             T[] newArray = (T[])new Object[array.length + 1];

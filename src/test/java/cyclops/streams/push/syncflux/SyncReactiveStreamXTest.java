@@ -262,23 +262,7 @@ public  class SyncReactiveStreamXTest {
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
-	@Test
-	public void cast(){
-        AtomicReference<Throwable> error = new AtomicReference<>(null);
-        AtomicBoolean complete=  new AtomicBoolean(false);
-		of(1,2,3).cast(String.class).forEach(System.out::println,e->error.set(e),()->complete.set(true));
-		while(!complete.get()){
-            LockSupport.parkNanos(100l);
-        }
-		System.out.println(error.get());
-		assertTrue(error.get() instanceof ClassCastException);
-	}
-	@Test(expected=ClassCastException.class)
-	public void castList(){
 
-		of(1,2,3).cast(String.class).toList();
-
-	}
     @Test
 	public void dropRight(){
 		System.out.println(of(1,2,3).skipLast(1).toList());
@@ -386,14 +370,7 @@ public  class SyncReactiveStreamXTest {
 		 assertTrue(copies._3().limit(3).toList().size()==3);
 		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
-	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
-	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
-	    		
-	    }
+
 
 	public void prepend(){
 		List<String> result = 	of(1,2,3).prepend(100,200,300)

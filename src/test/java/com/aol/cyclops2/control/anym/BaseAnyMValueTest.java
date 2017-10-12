@@ -433,11 +433,6 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 	}
 
 	@Test
-	public void testCast() {
-		AnyMValue<W,Number> num = just.cast(Number.class);
-	}
-
-	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5).toMaybe(),equalTo(Maybe.of(15)));
 	}

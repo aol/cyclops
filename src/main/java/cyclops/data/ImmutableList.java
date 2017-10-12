@@ -186,10 +186,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     ImmutableList<T> filter(Predicate<? super T> fn);
 
-    @Override
-    default <U> ImmutableList<U> cast(Class<? extends U> type) {
-        return null;
-    }
 
     @Override
     <R> ImmutableList<R> map(Function<? super T, ? extends R> fn);
@@ -393,7 +389,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
+        return unitStream(stream().retainAllI(it));
     }
 
     @Override

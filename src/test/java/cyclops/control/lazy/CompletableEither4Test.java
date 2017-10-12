@@ -429,10 +429,6 @@ public class CompletableEither4Test {
                 equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testCast() {
-        LazyEither4<Throwable,String,String,Number> num = just.cast(Number.class);
-    }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {

@@ -310,17 +310,8 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
         return super.generate(alt);
     }
 
-
-
-
-
     public String mkString(){
         return toString();
-    }
-
-    @Override
-    public <U> EitherT<W,ST,U> cast(Class<? extends U> type) {
-        return (EitherT<W,ST,U>)super.cast(type);
     }
 
     @Override

@@ -469,15 +469,6 @@ public class AsyncExtensionOperatorsTest {
 	}
 
 	@Test
-	public void testCastPast() {
-		of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
-	
-
-
-
-	}
-	
-	@Test
 	public void flatMapCompletableFuture(){
 		assertThat(of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
 				  								.collect(Collectors.toList()),
@@ -493,15 +484,8 @@ public class AsyncExtensionOperatorsTest {
 	public void testIntersperse() {
 		
 		assertThat(of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
-	
-
-
-
 	}
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		of(1,2,3).cast(String.class).collect(Collectors.toList());
-	}
+
 	@Test
 	public void xMatch(){
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));

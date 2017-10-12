@@ -710,15 +710,6 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> QueueX<U> cast(final Class<? extends U> type) {
-
-        return (QueueX<U>) LazyCollectionX.super.cast(type);
-    }
-
-    /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(int)
      */
     @Override

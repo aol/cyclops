@@ -588,10 +588,6 @@ public class FutureTest {
                 equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testCast() {
-        Future<Number> num = just.cast(Number.class);
-    }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {

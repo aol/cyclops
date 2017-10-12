@@ -970,16 +970,6 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return (BagX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> BagX<U> cast(final Class<? extends U> type) {
-
-        return (BagX<U>) LazyCollectionX.super.cast(type);
-    }
-
-
 
     @Override
     default <C extends Collection<? super T>> BagX<C> grouped(final int size, final Supplier<C> supplier) {

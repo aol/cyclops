@@ -150,14 +150,7 @@ public interface PersistentMapX<K, V>
         return (PersistentMapX) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> PersistentMapX<K, U> cast(final Class<? extends U> type) {
 
-        return (PersistentMapX<K, U>) Transformable.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)

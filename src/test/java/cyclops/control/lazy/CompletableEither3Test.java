@@ -413,11 +413,6 @@ public class CompletableEither3Test {
     }
 
     @Test
-    public void testCast() {
-        LazyEither3<Throwable,String,Number> num = just.cast(Number.class);
-    }
-
-    @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither3.right(15)));
     }

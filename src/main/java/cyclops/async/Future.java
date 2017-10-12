@@ -1133,16 +1133,6 @@ public class Future<T> implements To<Future<T>>,
                                 .exceptionally(failure));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    public <U> Future<U> cast(final Class<? extends U> type) {
-
-        return (Future<U>) MonadicValue.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)

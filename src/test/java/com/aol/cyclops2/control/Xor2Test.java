@@ -395,11 +395,6 @@ public class Xor2Test {
 	}
 
 	@Test
-	public void testCast() {
-		Either<?,Number> num = just.cast(Number.class);
-	}
-
-	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5),equalTo(Either.right(15)));
 	}

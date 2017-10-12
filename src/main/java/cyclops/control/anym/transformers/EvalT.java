@@ -525,10 +525,6 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
         return toString();
     }
 
-    @Override
-    public <U> EvalT<W,U> cast(Class<? extends U> type) {
-        return (EvalT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> EvalT<W,U> ofType(Class<? extends U> type) {

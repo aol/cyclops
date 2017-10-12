@@ -80,16 +80,7 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
         assertThat(res, equalTo("2world3"));
     }
 
-	@Test
-    public void cast(){
-        assertThat(of(1,2,3).cast(String.class).toListX(),equalTo(ListX.of()));
-    }
-	@Test
-    public void testCastPast() {
-        of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
-                .toList();
-    }
-    
+
     @Test
     public void testParallelFlatMap() {
         assertThat(new LazyReact(ThreadPools.getCommonFreeThread()).fromStream(Stream.generate(() -> 1).limit(1000)).parallel()

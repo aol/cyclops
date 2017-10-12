@@ -96,10 +96,6 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return (Product<W1,W2,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <U> Product<W1,W2,U> cast(Class<? extends U> type) {
-        return (Product<W1,W2,U>)Transformable.super.cast(type);
-    }
     public <W2,T2,R> Active<W1,R> zipWithSecond(BiFunction<? super T,? super Maybe<T>,? extends R> f) {
         return Active.of(def1.traverse().zipWith(def2.foldable(),f,run._1(),run._2()),def1);
     }

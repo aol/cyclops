@@ -671,15 +671,6 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().retainAll(values));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> LazyCollectionX<U> cast(final Class<? extends U> type) {
-        return fromStream(stream().cast(type));
-    }
-
-
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#permutations()

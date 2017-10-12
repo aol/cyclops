@@ -741,16 +741,6 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<T>) MonadicValue.super.notNull();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Option<U> cast(final Class<? extends U> type) {
-
-        return (Option<U>) MonadicValue.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)

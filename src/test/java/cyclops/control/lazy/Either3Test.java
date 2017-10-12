@@ -448,10 +448,6 @@ public class Either3Test {
                 equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testCast() {
-        LazyEither3<String,String,Number> num = just.cast(Number.class);
-    }
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {

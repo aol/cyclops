@@ -528,10 +528,6 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return toString();
     }
 
-    @Override
-    public <U> OptionalT<W,U> cast(Class<? extends U> type) {
-        return (OptionalT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> OptionalT<W,U> ofType(Class<? extends U> type) {

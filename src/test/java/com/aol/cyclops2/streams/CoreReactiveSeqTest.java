@@ -597,16 +597,7 @@ public  class CoreReactiveSeqTest {
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		assertThat(of(1,2,3).cast(String.class).toList(),equalTo(ListX.empty()));
-        of(1,2,3).cast(String.class).printOut();
-	}
-	@Test(expected=ClassCastException.class)
-	public void castList(){
-		of(1,2,3).cast(String.class).toList();
 
-	}
     @Test
 	public void dropRight(){
 		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
@@ -709,14 +700,7 @@ public  class CoreReactiveSeqTest {
 		 assertTrue(copies._3().limit(3).toList().size()==3);
 		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
-	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
-	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
-	    		
-	    }
+
 
 	public void prepend(){
 		List<String> result = 	of(1,2,3).prepend(100,200,300)

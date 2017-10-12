@@ -542,10 +542,6 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return toString();
     }
 
-    @Override
-    public <U> CompletableFutureT<W,U> cast(Class<? extends U> type) {
-        return (CompletableFutureT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> CompletableFutureT<W,U> ofType(Class<? extends U> type) {

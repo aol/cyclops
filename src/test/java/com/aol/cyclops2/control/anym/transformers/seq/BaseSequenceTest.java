@@ -230,16 +230,6 @@ public  class BaseSequenceTest {
 		 assertTrue(copies._3().limit(3).toList().size()==3);
 		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
-	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
-	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
-	    		
-	    }
-	   
-	   
 
 		
 	    @Test

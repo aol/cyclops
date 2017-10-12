@@ -1408,14 +1408,6 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<ReactiveSeq<T>>) LazyCollectionX.super.combinations();
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> ListX<U> cast(final Class<? extends U> type) {
-
-        return (ListX<U>) LazyCollectionX.super.cast(type);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#distinct()

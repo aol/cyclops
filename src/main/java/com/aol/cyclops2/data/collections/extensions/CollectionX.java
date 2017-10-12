@@ -887,14 +887,7 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     CollectionX<ReactiveSeq<T>> combinations();
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> CollectionX<U> cast(final Class<? extends U> type) {
 
-        return (CollectionX<U>) IterableX.super.cast(type);
-    }
 
 
 }

@@ -398,10 +398,7 @@ public class CompletableEitherTest {
                 equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testCast() {
-        LazyEither<?,Number> num = just.cast(Number.class);
-    }
+
 
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {

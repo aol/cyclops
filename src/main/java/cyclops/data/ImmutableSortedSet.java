@@ -56,11 +56,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     }
 
     @Override
-    default <U> ImmutableSortedSet<U> cast(Class<? extends U> type) {
-        return (ImmutableSortedSet<U>)ImmutableSet.super.cast(type);
-    }
-
-    @Override
     default ImmutableSortedSet<T> peek(Consumer<? super T> c) {
         return (ImmutableSortedSet<T>)ImmutableSet.super.peek(c);
     }

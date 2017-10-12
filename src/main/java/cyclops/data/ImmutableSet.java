@@ -46,11 +46,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default <U> ImmutableSet<U> cast(Class<? extends U> type) {
-        return (ImmutableSet<U>)IterableX.super.cast(type);
-    }
-
-    @Override
     default ImmutableSet<T> peek(Consumer<? super T> c) {
         return (ImmutableSet<T>)IterableX.super.peek(c);
     }
