@@ -17,10 +17,10 @@ import cyclops.control.lazy.Maybe;
 import cyclops.control.Option;
 import cyclops.control.lazy.LazyEither;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
@@ -1228,7 +1228,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
+    public Tuple2<Option<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
                 Tuple2._1().to().optional()

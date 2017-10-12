@@ -6,11 +6,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.aol.cyclops2.types.functor.FilterableTransformable;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.NestedCollectable;
 import com.aol.cyclops2.types.anyM.NestedFoldable;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 
 /**

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 

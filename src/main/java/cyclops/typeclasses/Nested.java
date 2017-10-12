@@ -22,8 +22,8 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Group;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -449,34 +449,34 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
         private final Unfoldable<W2> unfold2;
 
-        public <R> Nested<W1,W2, R> unfold(Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R> Nested<W1,W2, R> unfold(Function<? super T, Option<Tuple2<R, T>>> fn){
             Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(c, fn), a), nested);
             return Nested.of(x,def1,def2);
         }
-        private <T2> Nested<W1,W2, T> unfoldPrivate(T2 b,Function<T2, Optional<Tuple2<T, T2>>> fn){
+        private <T2> Nested<W1,W2, T> unfoldPrivate(T2 b,Function<T2, Option<Tuple2<T, T2>>> fn){
             Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, T>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn.andThen(o->o.map(t->t.map1(v->c)))), a), nested);
             return Nested.of(x,def1,def2);
         }
 
-        private <T,R> Nested<W1,W2, R> unfoldIgnore(T b,Function<T, Optional<Tuple2<R, T>>> fn){
+        private <T,R> Nested<W1,W2, R> unfoldIgnore(T b,Function<T, Option<Tuple2<R, T>>> fn){
             Unfoldable<W2> unf = unfold2;
             Higher<W1, Higher<W2, R>> x = def1.functor().map(a -> def2.monad().flatMap(c -> unf.unfold(b, fn), a), nested);
             return Nested.of(x,def1,def2);
         }
 
         public <R> Nested<W1,W2, R> replaceWith(int n, R value) {
-            return this.<Integer,R>unfoldIgnore(n, i-> Optional.of(Tuple.tuple(value, i - 1)));
+            return this.<Integer,R>unfoldIgnore(n, i-> Option.of(Tuple.tuple(value, i - 1)));
         }
 
         public  Nested<W1,W2, T> replicate(int n) {
-            return this.<Integer>unfoldPrivate(n, i-> Optional.of(Tuple.tuple(null, i - 1)));
+            return this.<Integer>unfoldPrivate(n, i-> Option.some(Tuple.tuple(null, i - 1)));
         }
 
 
         public <R> Nested<W1,W2, R> none() {
-            return unfold(t -> Optional.<Tuple2<R, T>>empty());
+            return unfold(t -> Option.<Tuple2<R, T>>none());
         }
         public <R> Nested<W1,W2, R> replaceWith(R a) {
             return replaceWith(1, a);
@@ -853,7 +853,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             return new Unfoldable<Higher<Higher<nested, W1>, W2>>(){
 
                 @Override
-                public <R, T> Higher<Higher<Higher<nested, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<Higher<Higher<nested, W1>, W2>, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     return narrowK(unit(def1,def2).unit(b)).unfoldsUnsafe().unfold(fn);
                 }
             };

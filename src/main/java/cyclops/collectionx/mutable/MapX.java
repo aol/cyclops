@@ -9,7 +9,7 @@ import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;

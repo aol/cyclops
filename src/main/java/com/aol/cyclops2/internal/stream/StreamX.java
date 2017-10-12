@@ -5,7 +5,8 @@ import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -130,7 +131,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
+    public Tuple2<Option<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
                 Tuple2._1().to().optional()

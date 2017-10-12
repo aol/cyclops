@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 

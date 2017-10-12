@@ -13,10 +13,11 @@ import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import cyclops.collectionx.immutable.*;
 import cyclops.companion.Streams;
+import cyclops.control.Option;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -30,7 +31,7 @@ import cyclops.collectionx.mutable.QueueX;
 import cyclops.collectionx.mutable.SetX;
 import cyclops.collectionx.mutable.SortedSetX;
 import com.aol.cyclops2.types.Value;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 
 /**
@@ -207,7 +208,12 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return value().toMaybe();
 
     }
-
+    public Option<ListX<T>> option() {
+        final ListX<T> list = listX();
+        if (list.size() == 0)
+            return Option.none();
+        return Option.of(list);
+    }
 
     public Optional<ListX<T>> optional() {
         final ListX<T> list = listX();

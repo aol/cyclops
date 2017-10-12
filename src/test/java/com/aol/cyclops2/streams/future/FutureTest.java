@@ -1,5 +1,5 @@
 package com.aol.cyclops2.streams.future;
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.stream.Collectors.joining;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -17,7 +17,7 @@ import cyclops.async.Future;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 
 

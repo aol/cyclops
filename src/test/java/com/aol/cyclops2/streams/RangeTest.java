@@ -12,7 +12,7 @@ import java.util.stream.LongStream;
 import cyclops.collectionx.mutable.ListX;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public class RangeTest {
 

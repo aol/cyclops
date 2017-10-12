@@ -11,7 +11,7 @@ import cyclops.collectionx.immutable.OrderedSetX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public class POrderedSetsTest {
 

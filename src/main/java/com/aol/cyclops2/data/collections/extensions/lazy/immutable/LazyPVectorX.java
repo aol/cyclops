@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.PVector;
 
 import java.util.*;
@@ -228,7 +229,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     }
 
     @Override
-    public VectorX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public VectorX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (VectorX<T>)super.plusLoop(supplier);
     }
 

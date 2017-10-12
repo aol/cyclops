@@ -16,7 +16,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
-import cyclops.monads.Witness.optional;
+import cyclops.control.anym.Witness.optional;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 

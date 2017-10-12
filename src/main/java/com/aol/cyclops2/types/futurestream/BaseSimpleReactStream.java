@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.async.SimpleReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;

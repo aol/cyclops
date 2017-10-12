@@ -2,7 +2,8 @@ package cyclops.data;
 
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.stream.ReactiveSeq;
+import cyclops.data.base.HAMT;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

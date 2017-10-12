@@ -1,6 +1,6 @@
 package com.aol.cyclops2.streams;
 
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

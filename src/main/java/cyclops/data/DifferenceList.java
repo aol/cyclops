@@ -5,12 +5,13 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function0;
-import cyclops.monads.Witness.supplier;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.supplier;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.free.Free;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -80,5 +81,10 @@ public class DifferenceList<T> implements Folds<T>, Transformable<T> {
     @Override
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(run());
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return run().iterator();
     }
 }

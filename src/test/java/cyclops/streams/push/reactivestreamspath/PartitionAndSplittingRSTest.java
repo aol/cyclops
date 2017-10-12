@@ -1,13 +1,13 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static cyclops.stream.Spouts.of;
+import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;

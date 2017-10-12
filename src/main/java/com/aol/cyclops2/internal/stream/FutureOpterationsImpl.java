@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.aol.cyclops2.types.reactive.ReactiveTask;
 

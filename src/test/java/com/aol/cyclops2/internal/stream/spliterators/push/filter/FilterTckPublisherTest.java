@@ -1,9 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.filter;
 
 
-import com.aol.cyclops2.internal.stream.spliterators.push.FilterOperator;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;

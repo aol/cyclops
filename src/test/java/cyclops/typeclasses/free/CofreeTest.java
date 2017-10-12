@@ -2,7 +2,7 @@ package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Identity;
-import cyclops.monads.Witness.identity;
+import cyclops.control.anym.Witness.identity;
 import org.junit.Test;
 
 import static cyclops.control.Identity.Instances.functor;

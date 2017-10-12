@@ -7,9 +7,9 @@ import cyclops.collectionx.mutable.DequeX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.QueueX;
 import cyclops.companion.Streams;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 
 
 public interface GroupKs {

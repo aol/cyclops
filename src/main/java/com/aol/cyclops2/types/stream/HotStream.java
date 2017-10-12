@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 /**
  * A HotStream - Stream already emitting data

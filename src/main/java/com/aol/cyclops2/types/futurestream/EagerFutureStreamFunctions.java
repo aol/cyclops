@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.futurestream;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.QueueReader;
 import cyclops.data.tuple.Tuple;

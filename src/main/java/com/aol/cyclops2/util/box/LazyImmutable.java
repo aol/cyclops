@@ -1,7 +1,7 @@
 package com.aol.cyclops2.util.box;
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Zippable;

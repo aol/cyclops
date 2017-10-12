@@ -1,8 +1,8 @@
 package com.aol.cyclops2.types.futurestream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.SimpleReact;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;

@@ -1,7 +1,7 @@
 package cyclops.collectionx.persistent;
 
 import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 /**

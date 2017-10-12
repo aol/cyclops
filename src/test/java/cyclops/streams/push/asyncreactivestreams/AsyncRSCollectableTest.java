@@ -2,7 +2,7 @@ package cyclops.streams.push.asyncreactivestreams;
 
 import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
 import com.aol.cyclops2.types.foldable.Folds;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 

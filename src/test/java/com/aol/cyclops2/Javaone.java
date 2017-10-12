@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 

@@ -1,8 +1,8 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.companion.Reducers;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;

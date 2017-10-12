@@ -2,7 +2,7 @@ package com.aol.cyclops2.types.traversable;
 
 import java.util.concurrent.TimeUnit;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 /**
  * A sequential non-scalar data type

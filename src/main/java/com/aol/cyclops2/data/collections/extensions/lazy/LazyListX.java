@@ -3,7 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;
 import java.util.function.Supplier;

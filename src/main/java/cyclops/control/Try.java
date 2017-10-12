@@ -1,7 +1,7 @@
 
 package cyclops.control;
 
-import static cyclops.monads.Witness.*;
+import static cyclops.control.anym.Witness.*;
 
 import java.io.Closeable;
 import java.util.Iterator;
@@ -31,8 +31,8 @@ import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

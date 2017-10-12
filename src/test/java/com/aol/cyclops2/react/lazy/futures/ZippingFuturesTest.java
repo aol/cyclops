@@ -20,7 +20,7 @@ import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class ZippingFuturesTest {
 	FutureStream<Integer> empty;

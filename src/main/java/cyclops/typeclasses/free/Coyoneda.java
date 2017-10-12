@@ -1,10 +1,8 @@
 package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.hkt.Higher3;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.coyoneda;
+import cyclops.control.anym.Witness.coyoneda;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

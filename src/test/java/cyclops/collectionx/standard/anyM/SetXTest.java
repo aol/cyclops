@@ -1,11 +1,11 @@
 package cyclops.collectionx.standard.anyM;
 
 import cyclops.collectionx.AbstractAnyMSeqTest;
-import cyclops.monads.Witness.set;
+import cyclops.control.anym.Witness.set;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.collectionx.mutable.SetX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 

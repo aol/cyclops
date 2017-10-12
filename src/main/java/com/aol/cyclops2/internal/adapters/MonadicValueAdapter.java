@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.monads.AnyM.fromMonadicValue;
-import static cyclops.monads.Witness.monadicValue;
+import static cyclops.control.anym.AnyM.fromMonadicValue;
+import static cyclops.control.anym.Witness.monadicValue;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -9,10 +9,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import cyclops.control.Option;
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;

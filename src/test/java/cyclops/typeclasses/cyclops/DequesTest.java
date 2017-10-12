@@ -10,7 +10,7 @@ import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.deque;
+import cyclops.control.anym.Witness.deque;
 import org.junit.Test;
 
 

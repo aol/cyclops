@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.ConsPStack;
 import org.pcollections.PStack;
 
@@ -241,7 +242,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
 
     @Override
-    public LinkedListX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public LinkedListX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (LinkedListX<T>)super.plusLoop(supplier);
     }
 

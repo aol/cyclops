@@ -4,8 +4,8 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

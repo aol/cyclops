@@ -6,8 +6,8 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Either;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 

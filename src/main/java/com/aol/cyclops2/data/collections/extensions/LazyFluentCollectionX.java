@@ -1,11 +1,8 @@
 package com.aol.cyclops2.data.collections.extensions;
 
 import java.util.Collection;
-import java.util.Optional;
-import java.util.function.IntFunction;
-import java.util.function.Supplier;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 
 /**

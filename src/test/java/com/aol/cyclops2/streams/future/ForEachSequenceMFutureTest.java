@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Subscription;
 
 public class ForEachSequenceMFutureTest {

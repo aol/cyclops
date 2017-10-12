@@ -1,8 +1,7 @@
 package cyclops.data;
 
 import cyclops.companion.Monoids;
-import cyclops.data.basetests.BaseImmutableListTest;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

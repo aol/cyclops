@@ -15,7 +15,7 @@ import cyclops.control.lazy.Maybe;
 import org.junit.Test;
 
 import cyclops.async.Future;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 
 public class ValueSubscriberTest {

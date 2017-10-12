@@ -10,7 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
 public class PartitionAndSplittingTest {

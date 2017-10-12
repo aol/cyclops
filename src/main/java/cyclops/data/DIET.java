@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

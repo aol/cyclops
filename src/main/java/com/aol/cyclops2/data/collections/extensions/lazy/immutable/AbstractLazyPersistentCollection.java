@@ -5,12 +5,12 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.pcollections.PCollection;
-import org.pcollections.PStack;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -149,11 +149,11 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
     @Override
-    public FluentCollectionX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public FluentCollectionX<T> plusLoop(Supplier<Option<T>> supplier) {
         PCollection<T> toUse = get();
-        Optional<T> next =  supplier.get();
+        Option<T> next =  supplier.get();
         while(next.isPresent()){
-            toUse = toUse.plus(next.get());
+            toUse = toUse.plus(next.orElse(null));
             next = supplier.get();
         }
         return unit(toUse);

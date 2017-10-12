@@ -2,13 +2,14 @@ package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.factory.Unit;
+import cyclops.control.Option;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Reader;
 import cyclops.function.*;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.WitnessType;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.WitnessType;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.Monad;
 
 import java.util.*;
@@ -107,8 +108,8 @@ public class Functions {
     static <K,V> Function1<K,Maybe<V>> maybeMap(Map<K,V> map) {
         return k->Maybe.ofNullable(map.get(k));
     }
-    static <K,V> Function1<K,Optional<V>> optionalMap(Map<K,V> map) {
-        return k-> Optional.ofNullable(map.get(k));
+    static <K,V> Function1<K,Option<V>> optionalMap(Map<K,V> map) {
+        return k-> Option.ofNullable(map.get(k));
     }
 
     static <T,R,R1, R2, R3, R4> Function<T,R4> forEach4(Function<? super T, ? extends R> fn,

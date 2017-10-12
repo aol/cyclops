@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -35,8 +35,8 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 
 

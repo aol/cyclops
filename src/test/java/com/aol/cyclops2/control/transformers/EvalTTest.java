@@ -12,9 +12,9 @@ import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.transformers.EvalT;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.transformers.EvalT;
 import org.junit.Before;
 import org.junit.Test;
 

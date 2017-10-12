@@ -54,7 +54,7 @@ public class IntMapTest extends BaseImmutableListTest{
     }
 
     @Override
-    public <U, T> IntMap<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> IntMap<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return IntMap.unfold(seed,unfolder);
     }
     @Test

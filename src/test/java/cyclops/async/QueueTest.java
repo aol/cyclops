@@ -1,7 +1,7 @@
 package cyclops.async;
 
 import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;

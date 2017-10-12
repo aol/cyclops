@@ -8,7 +8,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import com.aol.cyclops2.internal.stream.spliterators.ClosingSpliterator;
 import com.aol.cyclops2.types.stream.HotStream;

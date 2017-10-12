@@ -12,14 +12,14 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.StreamSource;
+import cyclops.reactive.ReactiveSeq;
+import com.aol.cyclops2.util.stream.StreamSource;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Signal;

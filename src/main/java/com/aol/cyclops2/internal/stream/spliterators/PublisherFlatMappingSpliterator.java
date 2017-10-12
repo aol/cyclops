@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;

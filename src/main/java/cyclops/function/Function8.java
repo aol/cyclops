@@ -1,8 +1,9 @@
 package cyclops.function;
 
-import java.util.Optional;
+
 import java.util.concurrent.Executor;
 
+import cyclops.control.Option;
 import cyclops.control.lazy.Eval;
 import cyclops.async.Future;
 import cyclops.control.lazy.Maybe;
@@ -95,9 +96,9 @@ public interface Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> extends Function1<
         return (s1, s2, s3, s4, s5,s6,s7,s8) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5,s6,s7,s8), Throwable.class);
     }
 
-    default Function8<T1, T2, T3, T4, T5, T6, T7, T8,Optional<R>> liftOpt8() {
+    default Function8<T1, T2, T3, T4, T5, T6, T7, T8,Option<R>> liftOpt8() {
 
-        return (s1, s2, s3, s4, s5, s6,s7,s8) -> Optional.ofNullable(apply(s1, s2, s3, s4, s5, s6,s7,s8));
+        return (s1, s2, s3, s4, s5, s6,s7,s8) -> Option.ofNullable(apply(s1, s2, s3, s4, s5, s6,s7,s8));
     }
 
     default Function1<? super T1, Function1<? super T2, Function1<? super T3, Function1<? super T4, Function1<? super T5,Function1<? super T6,Function1<? super T7,Function1<? super T8, ? extends R>>>>>>>> curry() {

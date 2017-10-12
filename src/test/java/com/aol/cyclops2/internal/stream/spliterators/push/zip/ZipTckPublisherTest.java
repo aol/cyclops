@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.zip;
 
 
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;

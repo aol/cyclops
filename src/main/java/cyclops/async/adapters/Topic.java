@@ -14,7 +14,7 @@ import org.pcollections.PMap;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 
 import lombok.AccessLevel;

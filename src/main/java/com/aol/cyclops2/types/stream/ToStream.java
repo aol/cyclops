@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.internal.stream.ReversedIterator;
 import com.aol.cyclops2.internal.stream.SeqUtils;
 

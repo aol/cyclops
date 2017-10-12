@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentQueueX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.PQueue;
 
 import java.util.Collection;
@@ -161,7 +162,7 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public PersistentQueueX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public PersistentQueueX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (PersistentQueueX<T>)super.plusLoop(supplier);
     }
     

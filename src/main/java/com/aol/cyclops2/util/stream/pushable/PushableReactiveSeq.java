@@ -1,6 +1,6 @@
 package com.aol.cyclops2.util.stream.pushable;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 
 /**

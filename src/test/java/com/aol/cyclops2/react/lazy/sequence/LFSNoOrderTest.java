@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -33,7 +33,7 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 
 //see BaseSequentialSeqTest for in order tests

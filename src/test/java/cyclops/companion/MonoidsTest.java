@@ -2,7 +2,7 @@ package cyclops.companion;
 
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.maybe;
+import cyclops.control.anym.Witness.maybe;
 import cyclops.typeclasses.functions.MonoidK;
 import org.junit.Test;
 

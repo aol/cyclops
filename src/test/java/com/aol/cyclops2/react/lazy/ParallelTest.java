@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;

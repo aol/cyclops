@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.OrderedSetX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.POrderedSet;
 
 import java.util.Collection;
@@ -142,7 +143,7 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     }
 
     @Override
-    public OrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public OrderedSetX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (OrderedSetX<T>)super.plusLoop(supplier);
     }
     

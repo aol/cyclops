@@ -17,7 +17,7 @@ import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Maybe.CompletableMaybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;

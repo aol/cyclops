@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class ForEachLFSTest {
 	boolean complete =false;

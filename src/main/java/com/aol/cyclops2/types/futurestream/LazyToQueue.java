@@ -9,7 +9,7 @@ import cyclops.async.LazyReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.ClosedQueueException;
 import com.aol.cyclops2.internal.react.async.future.CompletedException;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 

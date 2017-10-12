@@ -16,14 +16,14 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public class ZippingTest {
 	FutureStream<Integer> empty;

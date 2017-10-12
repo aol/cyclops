@@ -1,12 +1,12 @@
 package cyclops.control;
 
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
-import static cyclops.stream.Generator.*;
+import static cyclops.reactive.Generator.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 

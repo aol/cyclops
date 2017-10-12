@@ -8,7 +8,7 @@ import com.aol.cyclops2.hkt.Higher;
 
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
-import cyclops.monads.Witness.future;
+import cyclops.control.anym.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
@@ -17,9 +17,9 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.Witness.completableFuture;
-import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.CompletableFutureT;
+import cyclops.control.anym.Witness.completableFuture;
+import cyclops.control.anym.WitnessType;
+import cyclops.control.anym.transformers.CompletableFutureT;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -30,12 +30,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.Value;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 
 import lombok.experimental.UtilityClass;
 

@@ -15,7 +15,7 @@ import java.util.concurrent.locks.LockSupport;
 
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.stream.PausableHotStream;
 
 public class PrimedHotStreamTest {

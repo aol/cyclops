@@ -1,7 +1,7 @@
 package cyclops.data;
 
 import cyclops.control.Option;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;

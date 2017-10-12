@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.ArrayList;

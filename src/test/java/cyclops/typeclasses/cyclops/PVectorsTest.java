@@ -10,7 +10,7 @@ import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.vectorX;
+import cyclops.control.anym.Witness.vectorX;
 import org.junit.Test;
 
 

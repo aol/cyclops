@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 import com.aol.cyclops2.react.lazy.DuplicationTest;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import cyclops.collectionx.mutable.ListX;
 
 public class WindowingTest {

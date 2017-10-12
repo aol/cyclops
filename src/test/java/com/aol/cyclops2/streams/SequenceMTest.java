@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.lazy.Maybe;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;

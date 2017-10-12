@@ -7,10 +7,10 @@ import static org.junit.Assert.assertThat;
 import java.util.stream.Stream;
 
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{

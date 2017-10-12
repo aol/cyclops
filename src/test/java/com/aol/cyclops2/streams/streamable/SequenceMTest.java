@@ -23,9 +23,9 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 
 public class SequenceMTest {
 	

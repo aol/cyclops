@@ -3,7 +3,8 @@ package cyclops.data;
 
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.stream.ReactiveSeq;
+import cyclops.data.base.HashedPatriciaTrie;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;

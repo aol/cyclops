@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.async.future.FinalPipeline;
 import com.aol.cyclops2.internal.react.async.future.FuturePool;

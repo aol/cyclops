@@ -21,14 +21,14 @@ import cyclops.collectionx.immutable.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
-import cyclops.monads.Witness.maybe;
+import cyclops.control.anym.Witness.maybe;
 import cyclops.typeclasses.functions.SemigroupK;
 
 import org.junit.Test;
 import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.immutable.BagX;
 import cyclops.collectionx.mutable.DequeX;
 import cyclops.collectionx.mutable.ListX;

@@ -4,7 +4,7 @@ import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
 import com.aol.cyclops2.internal.react.stream.ReactBuilder;
 import com.aol.cyclops2.react.ThreadPools;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;

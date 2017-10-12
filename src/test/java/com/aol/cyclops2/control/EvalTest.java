@@ -4,7 +4,7 @@ import cyclops.async.Future;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Eval.CompletableEval;
 import cyclops.data.tuple.Tuple;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;

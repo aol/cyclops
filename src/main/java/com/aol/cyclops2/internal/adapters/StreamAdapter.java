@@ -1,8 +1,8 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.monads.AnyM.fromStream;
+import static cyclops.control.anym.AnyM.fromStream;
 import static cyclops.companion.Streams.zipSequence;
-import static cyclops.monads.Witness.stream;
+import static cyclops.control.anym.Witness.stream;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -10,11 +10,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 
 

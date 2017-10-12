@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 
 import lombok.val;
 

@@ -14,12 +14,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentBiFunction;
 import cyclops.function.FluentFunctions.FluentFunction;

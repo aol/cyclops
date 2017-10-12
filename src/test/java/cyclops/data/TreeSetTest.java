@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
 
@@ -46,7 +47,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     }
 
     @Override
-    public <U, T> ImmutableSortedSet<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> ImmutableSortedSet<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return TreeSet.unfold(seed,unfolder);
     }
 }

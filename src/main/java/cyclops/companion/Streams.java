@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.control.Option;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import cyclops.typeclasses.Active;
@@ -10,16 +11,16 @@ import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.*;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import com.aol.cyclops2.util.box.Mutable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.internal.stream.*;
 import com.aol.cyclops2.internal.stream.operators.*;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.stream;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.stream;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.NonPausableHotStream;
@@ -2931,7 +2932,7 @@ public class Streams {
         public static Unfoldable<Witness.stream> unfoldable(){
             return new Unfoldable<Witness.stream>() {
                 @Override
-                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     return StreamKind.widen(ReactiveSeq.unfold(b,fn));
                 }
             };

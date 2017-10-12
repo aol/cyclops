@@ -3,10 +3,10 @@ package cyclops.collectionx.standard.anyM;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;

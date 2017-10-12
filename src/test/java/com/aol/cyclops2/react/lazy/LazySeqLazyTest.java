@@ -16,7 +16,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSeqLazyTest;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class LazySeqLazyTest extends BaseSeqLazyTest{
 	

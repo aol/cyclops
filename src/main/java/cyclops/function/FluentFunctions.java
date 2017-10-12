@@ -1,13 +1,14 @@
 package cyclops.function;
 
+import cyclops.control.Option;
 import cyclops.control.Reader;
 import cyclops.function.checked.*;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Try;
 import com.aol.cyclops2.util.box.MutableInt;
 import cyclops.function.checked.CheckedTriFunction;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
 import java.util.Objects;
-import java.util.Optional;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
@@ -954,9 +955,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A Function that accepts and returns an Optional
+         * @return A Function that accepts and returns an Option
 
-        public FluentFunction<Optional<T>, Optional<R>> lift() {
+        public FluentFunction<Option<T>, Option<R>> lift() {
             return new FluentFunction<>(
                                         opt -> opt.transform(t -> fn.applyHKT(t)));
         }*/
@@ -1339,9 +1340,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A BiFunction that accepts and returns Optionals
+         * @return A BiFunction that accepts and returns Options
          */
-        public FluentBiFunction<Optional<T1>, Optional<T2>, Optional<R>> liftOptional() {
+        public FluentBiFunction<Option<T1>, Option<T2>, Option<R>> liftOption() {
             return new FluentBiFunction<>(
                     (opt1, opt2) -> opt1.flatMap(t1 -> opt2.map(t2 -> fn.apply(t1, t2))));
         }
@@ -1719,9 +1720,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A TriFunction that accepts and returns Optionals
+         * @return A TriFunction that accepts and returns Options
          */
-        public FluentTriFunction<Optional<T1>, Optional<T2>, Optional<T3>, Optional<R>> liftOptional() {
+        public FluentTriFunction<Option<T1>, Option<T2>, Option<T3>, Option<R>> liftOption() {
             return new FluentTriFunction<>(
                                            (opt1, opt2, opt3) -> opt1.flatMap(t1 -> opt2.flatMap(t2 -> opt3.map(t3 -> fn.apply(t1, t2, t3)))));
         }

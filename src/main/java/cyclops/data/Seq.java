@@ -3,6 +3,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
+import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
@@ -10,12 +11,13 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
+import cyclops.control.anym.Witness;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Either;
-import cyclops.data.DataWitness.seq;
+import cyclops.control.anym.DataWitness.seq;
 import cyclops.function.Monoid;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,7 +28,6 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -36,6 +37,7 @@ public interface Seq<T> extends ImmutableList<T>,
                                 Filters<T>,
                                 Transformable<T>,
                                 Higher<seq,T> {
+
 
     @Override
     default <R> Seq<R> unitStream(Stream<R> stream){
@@ -95,7 +97,7 @@ public interface Seq<T> extends ImmutableList<T>,
     static <T> Seq<T> fill(T t, int max){
         return Seq.fromStream(ReactiveSeq.fill(t).take(max));
     }
-    static <U, T> Seq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> Seq<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
 
@@ -310,6 +312,7 @@ public interface Seq<T> extends ImmutableList<T>,
     default Seq<T> emptyUnit() {
         return empty();
     }
+
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(of={"head,tail"})

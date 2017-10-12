@@ -1,6 +1,6 @@
 package com.aol.cyclops2.control.anym.transformers.seq;
 
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -30,7 +30,7 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 
 //see BaseSequentialSeqTest for in order tests

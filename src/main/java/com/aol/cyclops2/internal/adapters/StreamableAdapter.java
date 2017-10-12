@@ -1,16 +1,16 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.monads.AnyM.fromStreamable;
-import static cyclops.monads.Witness.streamable;
+import static cyclops.control.anym.AnyM.fromStreamable;
+import static cyclops.control.anym.Witness.streamable;
 
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.Streamable;
-import cyclops.monads.Witness;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.Streamable;
+import cyclops.control.anym.Witness;
 
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 

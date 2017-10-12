@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import cyclops.control.Option;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 

@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import cyclops.companion.Streams;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 
 public class LiftAndBindTest {
 	@Test

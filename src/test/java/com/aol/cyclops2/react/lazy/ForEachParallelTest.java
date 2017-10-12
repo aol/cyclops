@@ -1,7 +1,6 @@
 package com.aol.cyclops2.react.lazy;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 public class ForEachParallelTest {

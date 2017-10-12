@@ -1,8 +1,8 @@
 package cyclops.streams.push.async;
 
 import com.aol.cyclops2.types.stream.PausableHotStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Ignore;
 import org.junit.Test;

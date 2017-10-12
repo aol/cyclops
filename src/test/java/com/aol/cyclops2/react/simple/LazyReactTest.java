@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 
 public class LazyReactTest {

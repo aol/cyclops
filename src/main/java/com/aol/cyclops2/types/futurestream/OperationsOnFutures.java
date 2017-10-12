@@ -13,13 +13,14 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.stream.FutureStream;
+import cyclops.control.Option;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.async.subscription.Continueable;
@@ -197,7 +198,7 @@ public interface OperationsOnFutures<T> {
      * 
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    default Tuple2<Optional<T>, FutureStream<T>> splitAtHead() {
+    default Tuple2<Option<T>, FutureStream<T>> splitAtHead() {
         return ReactiveSeq.<FastFuture<T>> fromStream((Stream<FastFuture<T>>) (Stream) this.getLastActive()
                                                                                            .injectFutures())
                           .splitAtHead()

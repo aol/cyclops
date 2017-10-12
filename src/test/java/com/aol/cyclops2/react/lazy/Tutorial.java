@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 import cyclops.async.*;
 import cyclops.async.adapters.Queue;
 import cyclops.control.lazy.Eval;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.pcollections.HashTreePMap;
@@ -28,7 +28,7 @@ import org.pcollections.HashTreePMap;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 
 import lombok.AllArgsConstructor;

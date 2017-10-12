@@ -13,7 +13,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

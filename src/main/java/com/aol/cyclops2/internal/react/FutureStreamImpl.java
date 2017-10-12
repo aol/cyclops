@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collectionx.mutable.ListX;

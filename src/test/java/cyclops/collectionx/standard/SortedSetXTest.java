@@ -18,9 +18,10 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collectionx.mutable.ListX;
+import cyclops.control.Option;
 import cyclops.function.FluentFunctions;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -156,7 +157,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return SortedSetX.unfold(seed, unfolder);
     }
 }

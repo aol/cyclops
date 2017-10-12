@@ -7,7 +7,7 @@ import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.function.Function1;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

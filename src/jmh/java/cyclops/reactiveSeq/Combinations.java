@@ -1,7 +1,7 @@
 package cyclops.reactiveSeq;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.ArrayList;
@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 
 public class Combinations {

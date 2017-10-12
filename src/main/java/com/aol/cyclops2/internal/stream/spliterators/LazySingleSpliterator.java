@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators;
 
 import com.aol.cyclops2.internal.stream.StreamX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 import java.util.Spliterator;
 import java.util.function.Consumer;

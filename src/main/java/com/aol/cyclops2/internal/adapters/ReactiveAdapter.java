@@ -2,11 +2,11 @@ package com.aol.cyclops2.internal.adapters;
 
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.StreamWitness;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.StreamWitness;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static cyclops.companion.Streams.zipSequence;
-import static cyclops.monads.AnyM.fromStream;
+import static cyclops.control.anym.AnyM.fromStream;
 
 @AllArgsConstructor
 public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {

@@ -1,12 +1,12 @@
 package cyclops.function;
 
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import cyclops.async.Future;
 
+import cyclops.control.Option;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
@@ -39,9 +39,9 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)->  Try.withCatch(()->host.apply(s1,s2,s3),Throwable.class);
     }
-    default Function3<S1, S2, S3, Optional<R>> liftOpt3(){
+    default Function3<S1, S2, S3, Option<R>> liftOpt3(){
         Function3<S1, S2, S3, R> host = this;
-       return (s1,s2,s3)-> Optional.ofNullable(host.apply(s1,s2,s3));
+       return (s1,s2,s3)-> Option.ofNullable(host.apply(s1,s2,s3));
     }
     
     default Function3<S1,S2,S3,R> memoize3(){

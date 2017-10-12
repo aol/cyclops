@@ -21,7 +21,8 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractCollectionXTest;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -132,7 +133,7 @@ public class SetXTest extends AbstractCollectionXTest {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return SetX.unfold(seed, unfolder);
     }
 

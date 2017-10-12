@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 
 import cyclops.async.LazyReact;
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
@@ -29,7 +30,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 	public abstract  CollectionX<Long> rangeLong(long start, long end);
 	public abstract <T> CollectionX<T> iterate(int times, T seed, UnaryOperator<T> fn);
 	public abstract <T> CollectionX<T> generate(int times,Supplier<T> fn);
-	public abstract <U,T> CollectionX<T> unfold(U seed,Function<? super U,Optional<Tuple2<T,U>>> unfolder);
+	public abstract <U,T> CollectionX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
@@ -81,7 +82,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     @Test
     public void plusLoopOpt(){
         int[] i = {10};
-        assertThat(of(0,1,2).plusLoop(()->i[0]!=20? Optional.of(i[0]++) : Optional.empty()).size(),equalTo(13));
+        assertThat(of(0,1,2).plusLoop(()->i[0]!=20? Option.of(i[0]++) : Option.none()).size(),equalTo(13));
     }
 
 	@Test

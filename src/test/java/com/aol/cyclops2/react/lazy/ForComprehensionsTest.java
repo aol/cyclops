@@ -1,6 +1,5 @@
 package com.aol.cyclops2.react.lazy;
 
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import java.util.Arrays;

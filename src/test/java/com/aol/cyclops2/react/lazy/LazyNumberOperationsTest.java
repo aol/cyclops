@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.react.base.BaseLazyNumberOperationsTest;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class LazyNumberOperationsTest extends BaseLazyNumberOperationsTest{
 	@Override

@@ -1,8 +1,8 @@
 package com.aol.cyclops2.streams.anyM;
 
 
-import static cyclops.monads.AnyM.fromStream;
-import static cyclops.monads.AnyM.ofValue;
+import static cyclops.control.anym.AnyM.fromStream;
+import static cyclops.control.anym.AnyM.ofValue;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -18,15 +18,15 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFunction1;
-import cyclops.monads.function.AnyMFunction2;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.function.AnyMFunction1;
+import cyclops.control.anym.function.AnyMFunction2;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.control.lazy.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 

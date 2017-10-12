@@ -5,7 +5,7 @@ import cyclops.control.Option;
 import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.LazyEither3;
 import cyclops.control.lazy.LazyEither4;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;

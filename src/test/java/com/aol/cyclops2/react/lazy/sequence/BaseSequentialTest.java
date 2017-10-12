@@ -23,13 +23,13 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public class BaseSequentialTest {
 

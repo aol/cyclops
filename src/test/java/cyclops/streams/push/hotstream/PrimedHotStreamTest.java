@@ -1,8 +1,7 @@
 package cyclops.streams.push.hotstream;
 
 import com.aol.cyclops2.types.stream.PausableHotStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.Arrays;

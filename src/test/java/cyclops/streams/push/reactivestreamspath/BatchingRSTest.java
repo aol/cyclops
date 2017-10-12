@@ -2,9 +2,9 @@ package cyclops.streams.push.reactivestreamspath;
 
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import lombok.Value;
 import org.junit.Test;
 
@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static cyclops.stream.Spouts.iterate;
-import static cyclops.stream.Spouts.of;
+import static cyclops.reactive.Spouts.iterate;
+import static cyclops.reactive.Spouts.of;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;

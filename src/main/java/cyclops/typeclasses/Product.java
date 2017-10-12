@@ -13,8 +13,8 @@ import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -30,7 +30,6 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
@@ -243,17 +242,17 @@ public class Product<W1,W2,T> implements  Filters<T>,
         private final Unfoldable<W1> unf1;
         private final Unfoldable<W2> unf2;
 
-        public <R, T> Product<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R, T> Product<W1,W2, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
             Tuple2<Higher<W1, R>, Higher<W2, R>> res = run.transform((left, right) -> Tuple.tuple(unf1.unfold(b, fn), unf2.unfold(b, fn)));
             return Product.of(res, def1, def2);
         }
 
         public <T> Product<W1,W2,T> replicate(int n, T value) {
-            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+            return unfold(n,i -> Option.some(tuple(value, i-1)));
         }
 
         public <R> Product<W1,W2,R> none() {
-            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+            return unfold((T) null, t -> Option.<Tuple2<R, T>>none());
         }
         public <T> Product<W1,W2,T> one(T a) {
             return replicate(1, a);
@@ -718,7 +717,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
             return Maybe.just(new  Unfoldable<Higher<Higher<product, W1>, W2>>(){
 
                 @Override
-                public <R, T> Higher<Higher<Higher<product, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<Higher<Higher<product, W1>, W2>, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     Higher<W1, R> a1 = def1.unfoldable().orElse(null).unfold(b, fn);
                     Higher<W2, R> a2 = def2.unfoldable().orElse(null).unfold(b, fn);
                     return Product.of(Tuple.tuple(a1,a2),def1,def2);

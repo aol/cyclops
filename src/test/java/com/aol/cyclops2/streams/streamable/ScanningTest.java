@@ -1,7 +1,7 @@
 package com.aol.cyclops2.streams.streamable;
 
 
-import static cyclops.stream.Streamable.of;
+import static cyclops.reactive.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

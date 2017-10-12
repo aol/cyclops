@@ -6,7 +6,7 @@ import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 import com.aol.cyclops2.types.futurestream.BlockingStreamHelper;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import com.aol.cyclops2.types.futurestream.OperationsOnFutures;
 
 import lombok.AllArgsConstructor;

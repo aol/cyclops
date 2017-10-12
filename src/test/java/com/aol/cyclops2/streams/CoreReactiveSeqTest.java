@@ -1,6 +1,6 @@
 package com.aol.cyclops2.streams;
 
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -33,7 +33,7 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.async.LazyReact;
 import cyclops.control.lazy.Maybe;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 

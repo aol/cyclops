@@ -4,7 +4,7 @@ package com.aol.cyclops2.data.collections.extensions;
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.NonNull;
 import cyclops.data.tuple.Tuple2;
 import org.pcollections.PMap;

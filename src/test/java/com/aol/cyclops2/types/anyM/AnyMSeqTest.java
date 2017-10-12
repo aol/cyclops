@@ -14,7 +14,7 @@ import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 
 import cyclops.async.QueueFactories;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class AnyMSeqTest {
 

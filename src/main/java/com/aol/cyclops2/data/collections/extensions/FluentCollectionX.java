@@ -1,5 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions;
 
+import cyclops.control.Option;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.IntFunction;
@@ -21,11 +23,12 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
         }
         return toUse;
     }
-    default FluentCollectionX<T> plusLoop(Supplier<Optional<T>> supplier){
+    default FluentCollectionX<T> plusLoop(Supplier<Option<T>> supplier){
         FluentCollectionX<T> toUse = this;
-        Optional<T> next =  supplier.get();
+
+        Option<T> next =  supplier.get();
         while(next.isPresent()){
-            toUse = toUse.plus(next.get());
+            toUse = toUse.plus(next.orElse(null));
             next = supplier.get();
         }
         return toUse;

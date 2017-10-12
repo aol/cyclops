@@ -7,7 +7,7 @@ import java.util.function.Supplier;
 
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.function.Memoize;
 
 import lombok.AllArgsConstructor;

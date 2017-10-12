@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import cyclops.control.lazy.Eval;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Queue.ClosedQueueException;
 import cyclops.async.adapters.QueueFactory;

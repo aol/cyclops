@@ -2,11 +2,12 @@ package com.aol.cyclops2.internal.stream;
 
 import com.aol.cyclops2.internal.stream.spliterators.LimitWhileClosedSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -109,11 +110,11 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     }
     @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public final Tuple2<Optional<T>, ReactiveSeq<T>> splitAtHead() {
+    public final Tuple2<Option<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return Tuple2.of(
-                Tuple2._1().to().optional()
-                        .flatMap(l -> l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty()),
+                Tuple2._1().to().option()
+                        .flatMap(l -> l.size() > 0 ? Option.some(l.get(0)) : Option.none()),
                 Tuple2._2());
     }
 

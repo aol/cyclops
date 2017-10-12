@@ -7,8 +7,9 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collectionx.immutable.*;
-import cyclops.monads.Witness;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.control.anym.Witness;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -254,7 +255,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ListX.unfold(seed, unfolder);
     }
 

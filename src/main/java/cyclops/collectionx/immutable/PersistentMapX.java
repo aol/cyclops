@@ -25,7 +25,7 @@ import org.pcollections.PMap;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import cyclops.collectionx.mutable.ListX;

@@ -32,7 +32,6 @@ import java.util.function.ToIntFunction;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -42,8 +41,8 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Warmup;
 
-import cyclops.stream.ReactiveSeq;
-import static cyclops.stream.ReactiveSeq.reactiveSeq;
+import cyclops.reactive.ReactiveSeq;
+import static cyclops.reactive.ReactiveSeq.reactiveSeq;
 
 
 

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.lambda.monads;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static cyclops.monads.Witness.*;
+import static cyclops.control.anym.Witness.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFunction1;
-import cyclops.monads.function.AnyMFunction2;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.function.AnyMFunction1;
+import cyclops.control.anym.function.AnyMFunction2;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.collectionx.mutable.ListX;
 
 

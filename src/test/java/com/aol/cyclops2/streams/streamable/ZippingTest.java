@@ -1,6 +1,6 @@
 package com.aol.cyclops2.streams.streamable;
 
-import static cyclops.stream.Streamable.of;
+import static cyclops.reactive.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -21,7 +21,7 @@ import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 
 public class ZippingTest {
 	Streamable<Integer> empty;

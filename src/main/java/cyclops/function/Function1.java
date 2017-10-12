@@ -1,6 +1,5 @@
 package cyclops.function;
 
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiConsumer;
@@ -13,19 +12,19 @@ import cyclops.control.*;
 
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.monads.function.AnyMFunction1;
+import cyclops.control.anym.function.AnyMFunction1;
 
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.transformers.ListT;
+import cyclops.control.anym.transformers.FutureT;
+import cyclops.control.anym.transformers.ListT;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.DequeX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import cyclops.async.Future;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -96,8 +95,8 @@ public interface Function1<T,  R> extends Function<T,R>{
     default Function1<T, Try<R,Throwable>> liftTry(){
        return (T1)->  Try.withCatch(()->apply(T1),Throwable.class);
     }
-    default Function1<T,   Optional<R>> liftOpt(){
-       return (T1)-> Optional.ofNullable(apply(T1));
+    default Function1<T,   Option<R>> liftOpt(){
+       return (T1)-> Option.ofNullable(apply(T1));
     }
 
     default <W extends WitnessType<W>> AnyMFunction1<W, T,R> liftF(){

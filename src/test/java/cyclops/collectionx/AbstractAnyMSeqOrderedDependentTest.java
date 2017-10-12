@@ -1,12 +1,12 @@
 package cyclops.collectionx;
 
 import cyclops.companion.Semigroups;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import com.aol.cyclops2.types.stream.HeadAndTail;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple3;

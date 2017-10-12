@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 
 import lombok.AllArgsConstructor;
 

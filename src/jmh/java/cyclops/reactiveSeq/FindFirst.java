@@ -2,7 +2,7 @@ package cyclops.reactiveSeq;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;

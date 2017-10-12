@@ -1,12 +1,11 @@
 package cyclops.function;
 
 import cyclops.companion.Semigroups;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.typeclasses.Cokleisli;
 import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
 import org.reactivestreams.Publisher;
 
 import java.util.Arrays;

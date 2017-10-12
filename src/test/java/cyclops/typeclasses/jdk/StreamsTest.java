@@ -16,8 +16,8 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.Witness.stream;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.stream;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 

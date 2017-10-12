@@ -11,11 +11,11 @@ import cyclops.control.Ior;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
-import cyclops.monads.Witness.*;
-import cyclops.monads.Witness.list;
-import cyclops.monads.Witness.optional;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.control.anym.Witness.*;
+import cyclops.control.anym.Witness.list;
+import cyclops.control.anym.Witness.optional;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;

@@ -4,8 +4,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 public class HeadTailTest {

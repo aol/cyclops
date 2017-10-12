@@ -8,7 +8,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.immutable.LinkedListX;
 
 public class PStacksTest {

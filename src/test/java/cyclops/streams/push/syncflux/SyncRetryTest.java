@@ -1,8 +1,8 @@
 package cyclops.streams.push.syncflux;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

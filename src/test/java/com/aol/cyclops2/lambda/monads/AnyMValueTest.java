@@ -1,6 +1,6 @@
 package com.aol.cyclops2.lambda.monads;
 
-import cyclops.monads.Witness.*;
+import cyclops.control.anym.Witness.*;
 import static com.aol.cyclops2.Matchers.equivalent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.monads.Witness;
-import cyclops.monads.function.AnyMFunction1;
-import cyclops.monads.function.AnyMFunction2;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.function.AnyMFunction1;
+import cyclops.control.anym.function.AnyMFunction2;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMValue;
 

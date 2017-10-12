@@ -3,7 +3,7 @@ package cyclops.companion;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 

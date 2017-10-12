@@ -1,8 +1,6 @@
 package cyclops.typeclasses.functor;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
-import cyclops.monads.Witness;
 
 import java.util.function.Function;
 

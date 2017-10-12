@@ -4,7 +4,7 @@ import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.HashSet;
 import cyclops.data.ImmutableSet;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Arrays;

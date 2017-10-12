@@ -8,9 +8,9 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.reactive.ReactiveSeq;
 
 import java.io.BufferedReader;
 import java.io.File;

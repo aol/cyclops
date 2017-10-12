@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import lombok.Getter;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
 
 import lombok.val;

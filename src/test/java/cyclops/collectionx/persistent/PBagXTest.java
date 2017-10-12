@@ -5,7 +5,8 @@ import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.collectionx.immutable.BagX;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,7 +112,7 @@ public class PBagXTest extends AbstractCollectionXTest {
        return BagX.generate(times, fn);
     }
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
        return BagX.unfold(seed, unfolder);
     }
 

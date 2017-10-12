@@ -13,7 +13,7 @@ import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.stream.MissingValue;
 import com.aol.cyclops2.types.futurestream.BlockingStream;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

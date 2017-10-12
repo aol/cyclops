@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.BagX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.PBag;
 
 import java.util.Collection;
@@ -60,7 +61,7 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     }
 
     @Override
-    public BagX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public BagX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (BagX<T>)super.plusLoop(supplier);
     }
     

@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
 import cyclops.companion.Streams;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
 import com.aol.cyclops2.react.base.BaseSequentialSQLTest;

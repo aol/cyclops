@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.companion.MapXs;

@@ -8,7 +8,7 @@ import cyclops.collectionx.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

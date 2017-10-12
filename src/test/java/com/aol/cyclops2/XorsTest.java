@@ -1,6 +1,6 @@
 package com.aol.cyclops2;
 
-import cyclops.companion.Xors;
+import cyclops.companion.Eithers;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.QueueFactories;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
@@ -32,7 +32,7 @@ public class XorsTest {
 	    Adapter<Integer> adapter = QueueFactories.<Integer>unboundedQueue()
 	                                                        .build();
 	                                                         
-	        String result =   Xors.adapter(adapter)
+	        String result =   Eithers.adapter(adapter)
 	                                          .visit(queue->"we have a queue",topic->"we have a topic");
 	        assertThat(result,equalTo("we have a queue"));
 	        
@@ -41,12 +41,12 @@ public class XorsTest {
 	
 	@Test
 	public void nonBlocking(){
-	    assertThat(Xors.blocking(new ManyToManyConcurrentArrayQueue(10))
+	    assertThat(Eithers.blocking(new ManyToManyConcurrentArrayQueue(10))
 	                                  .visit(c->"blocking", c->"not"),equalTo("not"));
 	}
 	@Test
     public void blocking(){
-        assertThat(Xors.blocking(new LinkedBlockingQueue(10))
+        assertThat(Eithers.blocking(new LinkedBlockingQueue(10))
                                       .visit(c->"blocking", c->"not"),equalTo("blocking"));
     }
 

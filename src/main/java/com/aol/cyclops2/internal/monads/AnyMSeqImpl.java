@@ -1,9 +1,8 @@
 package com.aol.cyclops2.internal.monads;
 
-import cyclops.companion.Streams;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
 import java.util.Objects;

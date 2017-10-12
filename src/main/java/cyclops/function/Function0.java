@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import java.util.Optional;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,13 +12,14 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.monads.Witness.supplier;
-import cyclops.monads.function.AnyMFunction0;
+import cyclops.control.Option;
+import cyclops.control.anym.Witness.supplier;
+import cyclops.control.anym.function.AnyMFunction0;
 import cyclops.typeclasses.free.Free;
-import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.transformers.ListT;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.WitnessType;
+import cyclops.control.anym.transformers.FutureT;
+import cyclops.control.anym.transformers.ListT;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
 
 
@@ -57,8 +58,8 @@ public interface Function0<R> extends Supplier<R>{
     default Function0<   Try<R,Throwable>> liftTry(){
        return ()->  Try.withCatch(()->apply(),Throwable.class);
     }
-    default Function0<   Optional<R>> liftOpt(){
-       return ()-> Optional.ofNullable(apply());
+    default Function0<Option<R>> liftOpt(){
+       return ()-> Option.ofNullable(apply());
     }
 
     default <W extends WitnessType<W>> AnyMFunction0<W,R> liftF(W witness){

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.rangeLong;
 
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

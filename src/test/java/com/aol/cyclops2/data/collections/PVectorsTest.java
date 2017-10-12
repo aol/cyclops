@@ -9,7 +9,7 @@ import cyclops.collectionx.immutable.VectorX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public class PVectorsTest {
 

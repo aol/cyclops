@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 public class PredicatesTest {
 
     @Test

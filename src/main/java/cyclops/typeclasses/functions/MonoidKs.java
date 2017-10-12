@@ -16,8 +16,8 @@ import cyclops.control.Ior;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;

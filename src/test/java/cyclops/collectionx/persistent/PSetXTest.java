@@ -6,7 +6,8 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.AbstractCollectionXTest;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -144,7 +145,7 @@ public class PSetXTest extends AbstractCollectionXTest {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return PersistentSetX.unfold(seed, unfolder);
     }
 

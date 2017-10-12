@@ -5,13 +5,13 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.data.base.BAMT;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -24,6 +24,8 @@ public class Vector<T> implements ImmutableList<T>{
     private final BAMT.ActiveTail<T> tail;
     private final int size;
 
+
+
     public static <T> Vector<T> empty(){
         return new Vector<>(new BAMT.Zero<>(),BAMT.ActiveTail.emptyTail(),0);
     }
@@ -32,7 +34,7 @@ public class Vector<T> implements ImmutableList<T>{
         return Vector.fromStream(ReactiveSeq.fill(t).take(max));
     }
 
-    static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
 

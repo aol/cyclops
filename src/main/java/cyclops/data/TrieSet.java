@@ -1,15 +1,16 @@
 package cyclops.data;
 
 
+import cyclops.control.Option;
+import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -23,7 +24,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
         return new TrieSet<T>( HashedPatriciaTrie.empty());
     }
 
-    static <U, T> TrieSet<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> TrieSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
 

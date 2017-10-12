@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;

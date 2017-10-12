@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.stream;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 /**
  * A type that lazy has a reactiveStream of data or can be converted to a Stream of data

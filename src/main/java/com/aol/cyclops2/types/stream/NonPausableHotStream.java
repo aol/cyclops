@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import cyclops.companion.Xors;
+import cyclops.companion.Eithers;
 import cyclops.function.FluentFunctions;
 import com.aol.cyclops2.internal.stream.BaseHotStreamImpl;
 
@@ -34,7 +34,7 @@ public class NonPausableHotStream<T> extends BaseHotStreamImpl<T> {
 
                 for (int i = 0; i < local; i++) {
 
-                    Xors.blocking(connections.get(i))
+                    Eithers.blocking(connections.get(i))
                               .visit(FluentFunctions.ofChecked(in -> {
                         in.put(a);
                         return true;

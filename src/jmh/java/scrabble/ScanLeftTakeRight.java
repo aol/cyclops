@@ -18,7 +18,7 @@
 
 package scrabble;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.*;

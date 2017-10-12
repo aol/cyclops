@@ -22,8 +22,8 @@ import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
@@ -299,18 +299,18 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public class Unfolds{
         private final Unfoldable<W1> unf1;
         private final Unfoldable<W2> unf2;
-        public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
             Either<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Either.left(unf1.unfold(b, fn)), r -> Either.right(unf2.unfold(b, fn)));
             Coproduct<W1, W2, R> cop = Coproduct.of(res, def1, def2);
             return cop;
         }
 
         public <T> Coproduct<W1,W2,T> replicate(int n, T value) {
-            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+            return unfold(n,i -> Option.some(tuple(value, i-1)));
         }
 
         public <R> Coproduct<W1,W2,R> none() {
-            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+            return unfold((T) null, t -> Option.<Tuple2<R, T>>none());
         }
         public <T> Coproduct<W1,W2,T> one(T a) {
             return replicate(1, a);
@@ -455,7 +455,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return new Unfoldable<Higher<Higher<coproduct, W1>, W2>>(){
 
                 @Override
-                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     return cop.unfolds().orElse(null).unfold(b,fn);
                 }
             };

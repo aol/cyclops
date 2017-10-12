@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
 
 public class StreamTest {

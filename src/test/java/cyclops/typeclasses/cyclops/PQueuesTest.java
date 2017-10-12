@@ -9,7 +9,7 @@ import cyclops.collectionx.immutable.PersistentQueueX;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.persistentQueueX;
+import cyclops.control.anym.Witness.persistentQueueX;
 import org.junit.Test;
 
 

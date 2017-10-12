@@ -2,8 +2,8 @@ package cyclops.streams.push;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 

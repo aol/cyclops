@@ -11,7 +11,7 @@ import cyclops.control.lazy.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness.list;
+import cyclops.control.anym.Witness.list;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 

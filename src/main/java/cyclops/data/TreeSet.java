@@ -2,8 +2,9 @@ package cyclops.data;
 
 
 import cyclops.control.Option;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.data.base.RedBlackTree;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -31,7 +32,7 @@ public class TreeSet<T> implements ImmutableSortedSet<T>{
         return ReactiveSeq.fromIterable(it).foldLeft(empty(comp),(m, t2)->m.plus(t2));
     }
 
-    static <U, T> TreeSet<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> TreeSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder),Comparators.naturalOrderIdentityComparator());
     }
 

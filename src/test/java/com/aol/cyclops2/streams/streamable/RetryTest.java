@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 import com.aol.cyclops2.util.ExceptionSoftener;
 
 

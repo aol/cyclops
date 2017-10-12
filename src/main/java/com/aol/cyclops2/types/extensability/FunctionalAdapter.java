@@ -5,10 +5,10 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import cyclops.monads.AnyM;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.WitnessType;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 /**

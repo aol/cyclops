@@ -1,9 +1,8 @@
 package com.aol.cyclops2.types.reactive;
 
-import com.aol.cyclops2.internal.stream.spliterators.push.BufferingSinkOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.CapturingOperator;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.reactivestreams.Subscriber;

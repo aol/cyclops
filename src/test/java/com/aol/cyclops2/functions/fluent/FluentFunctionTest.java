@@ -16,11 +16,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentSupplier;
 import cyclops.control.Try;

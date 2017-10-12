@@ -11,13 +11,13 @@ import java.util.Date;
 import com.aol.cyclops2.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
-import cyclops.monads.Witness.futureStream;
-import cyclops.stream.FutureStream;
+import cyclops.control.anym.Witness.futureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
 import java.util.stream.Stream;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 

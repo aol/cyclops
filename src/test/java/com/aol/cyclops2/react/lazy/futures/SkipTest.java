@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 public class SkipTest {

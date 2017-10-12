@@ -20,7 +20,7 @@ import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.mutable.ListX;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 public abstract class AbstractFoldableTest {
     public abstract <T> IterableX<T> of(T...elements);

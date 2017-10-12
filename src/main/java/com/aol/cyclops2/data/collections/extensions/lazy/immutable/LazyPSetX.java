@@ -3,8 +3,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.control.Option;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.pcollections.PSet;
 
 import java.util.Collection;
@@ -133,7 +134,7 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     }
 
     @Override
-    public PersistentSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    public PersistentSetX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (PersistentSetX<T>)super.plusLoop(supplier);
     }
 }

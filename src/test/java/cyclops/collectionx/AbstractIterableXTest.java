@@ -21,9 +21,9 @@ import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public abstract class AbstractIterableXTest {
 	public abstract  IterableX<Long> rangeLong(long start, long end);
 	public abstract <T> IterableX<T> iterate(int times, T seed, UnaryOperator<T> fn);
 	public abstract <T> IterableX<T> generate(int times,Supplier<T> fn);
-	public abstract <U,T> IterableX<T> unfold(U seed,Function<? super U,Optional<Tuple2<T,U>>> unfolder);
+	public abstract <U,T> IterableX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
 	public static final LazyReact r = new LazyReact(10,10);
 	
 	int captured=-1;
@@ -224,7 +224,7 @@ public abstract class AbstractIterableXTest {
     }
 	@Test
     public void testUnfold(){
-	    Function<Integer,Optional<Tuple2<Integer,Integer>>> fn= i-> i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.empty();
+	    Function<Integer,Option<Tuple2<Integer,Integer>>> fn= i-> i<=6 ? Option.of(Tuple.tuple(i,i+1)) : Option.none();
 	  
         assertThat(unfold(1,fn ).size(),equalTo(6));
     }

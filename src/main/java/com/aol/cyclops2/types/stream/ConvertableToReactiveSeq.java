@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.stream;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 /**
  * 

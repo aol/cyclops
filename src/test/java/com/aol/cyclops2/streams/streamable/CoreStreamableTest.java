@@ -1,7 +1,7 @@
 package com.aol.cyclops2.streams.streamable;
 
 
-import static cyclops.stream.Streamable.of;
+import static cyclops.reactive.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertEquals;
@@ -26,8 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 
 
 

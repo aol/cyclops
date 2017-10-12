@@ -10,11 +10,11 @@ import java.util.Optional;
 
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.Converters;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
-import cyclops.monads.transformers.ListT;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.transformers.ListT;
 
 
 public class ListTTest {

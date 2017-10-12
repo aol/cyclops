@@ -1,12 +1,12 @@
 package cyclops.data;
 
+import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -53,7 +53,7 @@ public class VectorTest extends BaseImmutableListTest {
     }
 
     @Override
-    public <U, T> Vector<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> Vector<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return Vector.unfold(seed,unfolder);
     }
     @Test

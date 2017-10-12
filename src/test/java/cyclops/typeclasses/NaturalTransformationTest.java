@@ -3,10 +3,10 @@ package cyclops.typeclasses;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.Witness.list;
-import cyclops.monads.Witness.reactiveSeq;
-import cyclops.monads.Witness.vectorX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.list;
+import cyclops.control.anym.Witness.reactiveSeq;
+import cyclops.control.anym.Witness.vectorX;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

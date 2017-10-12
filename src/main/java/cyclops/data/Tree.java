@@ -1,7 +1,7 @@
 package cyclops.data;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;

@@ -4,7 +4,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functions.MonoidK;
 
 import java.util.function.BinaryOperator;

@@ -6,10 +6,9 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import cyclops.stream.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 public class FlatMapTest {
 
 

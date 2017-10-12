@@ -15,7 +15,7 @@ import cyclops.function.Function3;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 import static cyclops.data.tuple.Tuple.tuple;
 

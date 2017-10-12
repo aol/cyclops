@@ -1,9 +1,8 @@
 package com.aol.cyclops2.internal.monads;
 
-import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.anyM.AnyMValue2;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 
 import java.util.Objects;
 

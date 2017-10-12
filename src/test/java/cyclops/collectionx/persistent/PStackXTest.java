@@ -7,8 +7,9 @@ import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -140,7 +141,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	       return LinkedListX.generate(times, fn);
 	    }
 	    @Override
-	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
 	       return LinkedListX.unfold(seed, unfolder);
 	    }
 }

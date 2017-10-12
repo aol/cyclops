@@ -19,9 +19,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import cyclops.async.adapters.Adapter;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.internal.react.FutureStreamImpl;

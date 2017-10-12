@@ -12,9 +12,9 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Either;
-import cyclops.data.DataWitness.lazySeq;
-import cyclops.stream.Generator;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.DataWitness.lazySeq;
+import cyclops.reactive.Generator;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -23,7 +23,6 @@ import cyclops.data.tuple.Tuple3;
 
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -33,6 +32,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         Filters<T>,
         Transformable<T>,
         Higher<lazySeq,T> {
+
 
     default <R> LazySeq<R> unitStream(Stream<R> stream){
         return fromIterable(ReactiveSeq.fromStream(stream));
@@ -68,7 +68,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> fill(T t){
         return LazySeq.fromStream(ReactiveSeq.fill(t));
     }
-    static <U, T> LazySeq<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> LazySeq<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
     static <T> LazySeq<T> iterate(final T seed, final UnaryOperator<T> f) {

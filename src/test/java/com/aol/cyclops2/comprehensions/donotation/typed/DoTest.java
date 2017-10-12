@@ -1,9 +1,9 @@
 package com.aol.cyclops2.comprehensions.donotation.typed;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import static cyclops.stream.ReactiveSeq.range;
+import static cyclops.reactive.ReactiveSeq.range;
 import static cyclops.data.tuple.Tuple.tuple;
 public class DoTest {
 	

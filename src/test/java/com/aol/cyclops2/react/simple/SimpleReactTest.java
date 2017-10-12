@@ -36,7 +36,6 @@ import org.junit.Test;
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import com.aol.cyclops2.types.futurestream.BaseSimpleReactStream;
-import cyclops.stream.FutureStream;
 
 
 public class SimpleReactTest {

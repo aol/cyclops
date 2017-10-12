@@ -11,8 +11,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
-
 
 
 public class HotStreamTest {

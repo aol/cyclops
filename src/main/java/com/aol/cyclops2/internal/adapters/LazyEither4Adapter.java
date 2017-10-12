@@ -7,9 +7,9 @@ import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Either;
 import cyclops.control.lazy.LazyEither4;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.lazyEither4;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.lazyEither4;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;

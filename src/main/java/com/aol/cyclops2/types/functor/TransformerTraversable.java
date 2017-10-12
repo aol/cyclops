@@ -3,9 +3,9 @@ package com.aol.cyclops2.types.functor;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import cyclops.monads.Witness.reactiveSeq;
-import cyclops.stream.ReactiveSeq;
-import cyclops.monads.transformers.ListT;
+import cyclops.control.anym.Witness.reactiveSeq;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.control.anym.transformers.ListT;
 import cyclops.collectionx.mutable.ListX;
 
 /**

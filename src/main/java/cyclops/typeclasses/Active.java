@@ -11,7 +11,7 @@ import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.FunctionK;
@@ -29,7 +29,6 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
@@ -426,12 +425,12 @@ public class Active<W,T> implements Filters<T>,
     public class Unfolds{
         private final Unfoldable<W> unfoldable;
 
-        public <R, T> Active<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R, T> Active<W, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
             return Active.of(unfoldable.unfold(b,fn),def1);
         }
 
         public <T> Active<W, T> replicate(long n, T value) {
-            return unfold(n,i -> i>0? Optional.of(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Optional.empty());
+            return unfold(n,i -> i>0? Option.some(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Option.none());
         }
         public <R> Nested<W, W,R> replicate(Function<? super T,Long> fn, Function<? super T,R> mapper) {
             return Nested.of(def1.functor().map(value->replicate(fn.apply(value), mapper.apply(value)).getSingle(),single),def1,def1);
@@ -444,7 +443,7 @@ public class Active<W,T> implements Filters<T>,
         }
 
         public <R> Active<W,R> none() {
-            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+            return unfold((T) null, t -> Option.<Tuple2<R, T>>none());
         }
         public <T> Active<W,T> one(T a) {
             return replicate(1, a);

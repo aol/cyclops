@@ -6,10 +6,10 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.lazy.Maybe;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 

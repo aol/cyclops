@@ -11,13 +11,18 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.types.stream.ConvertableToReactiveSeq;
+import cyclops.data.*;
+import cyclops.data.HashSet;
+import cyclops.data.TreeSet;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.control.lazy.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
@@ -29,10 +34,34 @@ import com.aol.cyclops2.types.stream.HotStream;
  *
  * @param <T> Data type of element(s) in this Folds
  */
-public interface Folds<T> {
+public interface Folds<T> extends Iterable<T>  {
 
 
     ReactiveSeq<T> stream();
+
+
+
+    default <R> R iterableTo(Function<? super Iterable<? super T>,? extends R> fn){
+        return fn.apply(this);
+    }
+    default BankersQueue<T> bankersQueue(){
+        return BankersQueue.fromIterable(this);
+    }
+    default TreeSet<T> treeSet(Comparator<? super T> comp){
+        return TreeSet.fromIterable(this,comp);
+    }
+    default HashSet<T> hashSet(){
+        return HashSet.fromIterable(this);
+    }
+    default Vector<T> vector(){
+        return Vector.fromIterable(this);
+    }
+    default LazySeq<T> lazySeq(){
+        return LazySeq.fromIterable(this);
+    }
+    default Seq<T> seq(){
+        return Seq.fromIterable(this);
+    }
     /**
      * Collect the collectable into a {@link Map}.
      */

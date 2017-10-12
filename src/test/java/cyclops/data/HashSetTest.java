@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 
@@ -46,7 +47,7 @@ public class HashSetTest extends BaseImmutableSetTest{
     }
 
     @Override
-    public <U, T> ImmutableSet<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> ImmutableSet<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return HashSet.unfold(seed,unfolder);
     }
 }

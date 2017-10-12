@@ -1,8 +1,8 @@
 package com.aol.cyclops2.streams;
 
-import static cyclops.stream.ReactiveSeq.fromIntStream;
-import static cyclops.stream.ReactiveSeq.iterate;
-import static cyclops.stream.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.fromIntStream;
+import static cyclops.reactive.ReactiveSeq.iterate;
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -21,7 +21,7 @@ import java.util.stream.IntStream;
 
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 

@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Optional;
 
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 
 public class UnitTest {
 	@Test

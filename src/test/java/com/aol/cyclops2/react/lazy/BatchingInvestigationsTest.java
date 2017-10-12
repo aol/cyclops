@@ -5,7 +5,7 @@ import com.aol.cyclops2.react.async.subscription.Subscription;
 import cyclops.async.LazyReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
-import cyclops.stream.StreamSource;
+import com.aol.cyclops2.util.stream.StreamSource;
 import org.junit.Ignore;
 import org.junit.Test;
 

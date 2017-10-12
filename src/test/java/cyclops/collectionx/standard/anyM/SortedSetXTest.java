@@ -3,8 +3,8 @@ package cyclops.collectionx.standard.anyM;
 import cyclops.collectionx.AbstractAnyMSeqTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.mutable.SortedSetX;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness.sortedSet;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness.sortedSet;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 

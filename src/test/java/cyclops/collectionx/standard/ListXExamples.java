@@ -2,9 +2,9 @@ package cyclops.collectionx.standard;
 
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.list;
-import cyclops.monads.transformers.ListT;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.list;
+import cyclops.control.anym.transformers.ListT;
 import org.junit.Test;
 
 /**

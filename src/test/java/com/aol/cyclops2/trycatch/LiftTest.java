@@ -1,19 +1,19 @@
 package com.aol.cyclops2.trycatch;
 
 import cyclops.control.Option;
-import cyclops.monads.Witness.*;
+import cyclops.control.anym.Witness.*;
 
-import static cyclops.monads.AnyM.success;
+import static cyclops.control.anym.AnyM.success;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import cyclops.monads.function.AnyMFunction2;
+import cyclops.control.anym.function.AnyMFunction2;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.control.Try;
 
 

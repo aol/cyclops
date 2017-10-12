@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.traversable;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 
 /**
  * Represents a finite traversable type

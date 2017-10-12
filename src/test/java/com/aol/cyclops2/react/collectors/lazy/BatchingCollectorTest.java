@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import cyclops.stream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

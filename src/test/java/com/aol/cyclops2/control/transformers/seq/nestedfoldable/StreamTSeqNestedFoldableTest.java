@@ -2,8 +2,8 @@ package com.aol.cyclops2.control.transformers.seq.nestedfoldable;
 
 import com.aol.cyclops2.types.AbstractNestedFoldableTest;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness;
+import cyclops.reactive.ReactiveSeq;
 
 
 public class StreamTSeqNestedFoldableTest extends AbstractNestedFoldableTest<Witness.list> {

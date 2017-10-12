@@ -1,11 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.iterable;
 
 import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import cyclops.stream.Spouts;
-import org.junit.Test;
-import org.reactivestreams.Subscription;
+import cyclops.reactive.Spouts;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertTrue;
 

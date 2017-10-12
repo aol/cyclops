@@ -3,10 +3,10 @@ package cyclops.collectionx.standard.anyM;
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.concurrent.ForkJoinPool;

@@ -24,7 +24,7 @@ import cyclops.data.tuple.Tuple4;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.lazy.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.ListX;

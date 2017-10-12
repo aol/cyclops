@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.monads;
 import java.util.Objects;
 
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
 public class AnyMValueImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMValue<W,T> {

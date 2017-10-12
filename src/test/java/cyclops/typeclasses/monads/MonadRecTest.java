@@ -9,8 +9,8 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
-import cyclops.monads.Witness.*;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness.*;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 

@@ -5,9 +5,9 @@ import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.*;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 

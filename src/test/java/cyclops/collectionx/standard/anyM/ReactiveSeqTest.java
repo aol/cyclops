@@ -4,11 +4,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import cyclops.collectionx.AbstractAnyMSeqOrderedDependentTest;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq> {
     

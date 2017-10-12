@@ -24,11 +24,11 @@ import java.util.stream.Stream;
 import cyclops.async.LazyReact;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import cyclops.control.lazy.Maybe;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 
 public class SequenceMTest {

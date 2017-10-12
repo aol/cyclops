@@ -1,10 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.publisher;
 
 
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.tck.PublisherVerification;
-import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
 @Test(enabled =false)

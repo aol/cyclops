@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

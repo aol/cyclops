@@ -19,9 +19,9 @@ import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.Witness;
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.AnyM;
+import cyclops.reactive.ReactiveSeq;
 
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

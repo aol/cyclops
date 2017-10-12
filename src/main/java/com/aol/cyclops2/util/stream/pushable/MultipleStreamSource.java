@@ -3,10 +3,10 @@ package com.aol.cyclops2.util.stream.pushable;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 /**
  * Build Streams that reactiveStream data from the topic instance

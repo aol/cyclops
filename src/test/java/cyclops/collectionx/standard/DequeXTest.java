@@ -14,7 +14,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.stream.Spouts;
+import cyclops.control.Option;
+import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +87,7 @@ public class DequeXTest extends AbstractCollectionXTest{
 	       return DequeX.generate(times, fn);
 	    }
 	    @Override
-	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
 	       return DequeX.unfold(seed, unfolder);
 	    }
 

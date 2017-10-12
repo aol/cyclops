@@ -2,7 +2,7 @@ package cyclops.streams.push.async;
 
 import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
 import com.aol.cyclops2.types.foldable.Folds;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 
 
 public class AsyncCollectableTest extends CollectableTest {

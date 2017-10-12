@@ -14,10 +14,10 @@ import cyclops.control.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.optional;
-import cyclops.monads.transformers.CompletableFutureT;
+import cyclops.control.anym.AnyM;
+import cyclops.control.anym.Witness;
+import cyclops.control.anym.Witness.optional;
+import cyclops.control.anym.transformers.CompletableFutureT;
 import org.junit.Before;
 import org.junit.Test;
 

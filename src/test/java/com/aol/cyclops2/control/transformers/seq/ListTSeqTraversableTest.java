@@ -3,7 +3,7 @@ package com.aol.cyclops2.control.transformers.seq;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.AbstractTraversableTest;
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness;
 
 
 public class ListTSeqTraversableTest extends AbstractTraversableTest {

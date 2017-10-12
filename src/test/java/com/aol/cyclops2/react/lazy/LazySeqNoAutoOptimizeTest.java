@@ -3,7 +3,7 @@ package com.aol.cyclops2.react.lazy;
 import java.util.function.Supplier;
 
 import cyclops.async.LazyReact;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 
 public class LazySeqNoAutoOptimizeTest extends LazySeqTest {
 	@Override

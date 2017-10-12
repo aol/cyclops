@@ -9,10 +9,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 
 public class PartitionAndSplittingTest {

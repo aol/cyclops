@@ -8,7 +8,7 @@ import cyclops.function.Function1;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 
-import cyclops.monads.WitnessType;
+import cyclops.control.anym.WitnessType;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -20,7 +20,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
-import cyclops.monads.Witness.kleisli;
+import cyclops.control.anym.Witness.kleisli;
 
 
 /**

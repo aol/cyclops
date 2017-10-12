@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 
 
 public class ReductionTest {

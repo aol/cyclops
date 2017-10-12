@@ -3,7 +3,7 @@ package cyclops.data;
 
 import cyclops.control.Option;
 import cyclops.function.Ordering;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

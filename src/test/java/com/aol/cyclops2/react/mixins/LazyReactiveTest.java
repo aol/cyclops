@@ -1,7 +1,7 @@
 package com.aol.cyclops2.react.mixins;
 import static org.junit.Assert.assertFalse;
 
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import cyclops.async.Pipes;

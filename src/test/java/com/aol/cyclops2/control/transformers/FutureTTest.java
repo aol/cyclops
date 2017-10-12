@@ -18,12 +18,12 @@ import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
-import cyclops.monads.Witness.optional;
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.Witness;
+import cyclops.control.anym.Witness.optional;
+import cyclops.control.anym.transformers.FutureT;
+import cyclops.control.anym.Witness;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.monads.AnyM;
+import cyclops.control.anym.AnyM;
 import org.junit.Before;
 import org.junit.Test;
 

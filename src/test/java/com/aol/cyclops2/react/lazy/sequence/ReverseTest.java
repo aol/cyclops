@@ -7,7 +7,6 @@ import static org.junit.Assert.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import cyclops.stream.FutureStream;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
