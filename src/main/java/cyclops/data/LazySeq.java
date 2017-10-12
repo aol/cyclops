@@ -13,6 +13,7 @@ import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.anym.DataWitness.lazySeq;
+import cyclops.function.Memoize;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -28,14 +29,17 @@ import java.util.stream.Stream;
 
 //safe LazyList (Stream) that does not support exceptional states
 public interface LazySeq<T> extends  ImmutableList<T>,
-        Folds<T>,
-        Filters<T>,
-        Transformable<T>,
-        Higher<lazySeq,T> {
+                                    Folds<T>,
+                                    Filters<T>,
+                                    Transformable<T>,
+                                    Higher<lazySeq,T> {
 
 
+    static <R> LazySeq<R> narrow(LazySeq<? extends R> rs) {
+        return (LazySeq<R>)rs;
+    }
     default <R> LazySeq<R> unitStream(Stream<R> stream){
-        return fromIterable(ReactiveSeq.fromStream(stream));
+        return fromStream(stream);
     }
 
     default ReactiveSeq<T> stream(){
@@ -415,13 +419,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     default <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
         return this.visit(cons->{
-            LazySeq<R> l1 = (LazySeq<R>)fn.apply(cons.head);
+            LazySeq<R> l1 = LazySeq.narrow(LazySeq.fromIterable(fn.apply(cons.head)));
             return l1.appendAll(cons.tail.get().flatMap(a -> fn.apply(a)));
         },nil->empty());
     }
+
+
+
     default <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return this.visit(cons->{
-            LazySeq<R> l1 = (LazySeq<R>)fn.apply(cons.head);
+            LazySeq<R> l1 = LazySeq.narrow(LazySeq.fromIterable(fn.apply(cons.head)));
             return l1.appendAll(cons.tail.get().flatMap(a -> fromIterable(fn.apply(a))));
         },nil->empty());
     }
@@ -445,7 +452,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public final Supplier<LazySeq<T>> tail;
 
         public static <T> Cons<T> cons(T value, Supplier<LazySeq<T>> tail){
-            return new Cons<>(value,tail);
+            return new Cons<>(value,Memoize.memoizeSupplier(tail));
         }
 
         @Override
@@ -496,7 +503,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             current[0]=tail.get();
             while(true){
                int toAdd =current[0].fold(c->{
-                    current[0]=c;
+                    current[0]=c.tail();
                     return 1;
                 },n->0);
                 result+=toAdd;
@@ -519,13 +526,21 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         @Override
         public int hashCode() {
-            return linkedListX().hashCode();
+            int hashCode = 1;
+            for (T next : this)
+                hashCode = 31*hashCode + (next==null ? 0 : next.hashCode());
+            return hashCode;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof LazySeq)
-                return linkedListX().equals(((LazySeq)obj).linkedListX());
+            if(obj==null)
+                return false;
+            if (obj == this)
+                return true;
+            if(obj instanceof ImmutableList) {
+                return equalToIteration((Iterable)obj);
+            }
             return false;
         }
 
@@ -558,7 +573,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return fn1.apply(this);
         }
         public String toString(){
-            return mkString();
+            return "{"+head+"...}";
         }
     }
 
@@ -620,6 +635,24 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         public Nil<T> cycle(){
             return this;
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj==null)
+                return false;
+            if (obj == this)
+                return true;
+
+            if(obj instanceof ImmutableList) {
+                return ((ImmutableList)obj).size()==0;
+            }
+            return false;
         }
     }
 

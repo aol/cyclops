@@ -7,6 +7,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
@@ -28,6 +29,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -321,9 +323,10 @@ public interface Seq<T> extends ImmutableList<T>,
         public final T head;
         public final Seq<T> tail;
         private final int size;
+        private final int hash;
 
         public static <T> Cons<T> cons(T value, Seq<T> tail){
-            return new Cons<>(value,tail,tail.size()+1);
+            return new Cons<>(value,tail,tail.size()+1, Objects.hash(value,tail));
         }
 
         @Override
@@ -378,14 +381,26 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         @Override
         public int hashCode() {
-            return linkedListX().hashCode();
+            return hash;
         }
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof Seq)
-                return linkedListX().equals(((Seq)obj).linkedListX());
-            return false;
+            if(obj==null)
+                return false;
+            if (obj == this)
+                return true;
+             if (obj instanceof Seq) {
+                 Seq<T> seq1 = this;
+                 Seq seq2 = (Seq) obj;
+                 if (seq1.size() != seq2.size()) {
+                     return false;
+                 }
+             }
+             if(obj instanceof ImmutableList) {
+                 return equalToIteration((Iterable)obj);
+             }
+             return false;
         }
 
         @Override
@@ -469,6 +484,27 @@ public interface Seq<T> extends ImmutableList<T>,
         @Override
         public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
             return fn2.apply(this);
+        }
+        @Override
+        public String toString(){
+            return "[]";
+        }
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj==null)
+                return false;
+            if (obj == this)
+                return true;
+
+            if(obj instanceof ImmutableList) {
+                return ((ImmutableList)obj).size()==0;
+            }
+            return false;
         }
     }
 

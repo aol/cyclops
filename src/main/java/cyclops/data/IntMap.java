@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
+import cyclops.control.lazy.Eval;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -26,6 +27,7 @@ public class IntMap<T> implements ImmutableList<T>{
 
     private final IntPatriciaTrie.Node<T> intMap;
     private final int size;
+    private final Eval<Integer> hash = Eval.later(()->calcHash());
     static <T> IntMap<T> fill(T t, int max){
         return IntMap.fromStream(ReactiveSeq.fill(t).take(max));
     }
@@ -393,6 +395,24 @@ public class IntMap<T> implements ImmutableList<T>{
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return supplier.get();
         }
+    }
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof ImmutableList) || o==null)
+            return false;
+        return equalToDirectAccess((Iterable<T>)o);
+
+    }
+
+    private int calcHash() {
+        int hashCode = 1;
+        for (T e : this)
+            hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+        return hashCode;
+    }
+    @Override
+    public int hashCode() {
+        return hash.get();
     }
 
 }

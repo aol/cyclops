@@ -42,7 +42,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     ImmutableList<T> emptyUnit();
 
-    default boolean equalTo(Iterable<T> iterable){
+    default boolean equalToDirectAccess(Iterable<T> iterable){
         int size = size();
         Iterator<T> it = iterable.iterator();
         for(int i=0;i<size;i++){
@@ -53,6 +53,16 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                 return false;
         }
         return !it.hasNext();
+    }
+    default boolean equalToIteration(Iterable<T> iterable){
+
+        Iterator<T> it2 = iterable.iterator();
+        Iterator<T> it1 = iterator();
+        while(it2.hasNext() && it1.hasNext()){
+            if(!Objects.equals(it2.next(),it1.next()))
+                return false;
+        }
+        return it2.hasNext() == it1.hasNext();
     }
 
 

@@ -3,6 +3,7 @@ package cyclops.data.basetests;
 import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.ImmutableList;
+import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;

@@ -4,8 +4,10 @@ package cyclops.data;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -13,6 +15,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 public class LazySeqTest extends BaseImmutableListTest {
@@ -30,6 +33,39 @@ public class LazySeqTest extends BaseImmutableListTest {
     @Override
     public <T> LazySeq<T> of(T... values) {
         return LazySeq.of(values);
+    }
+    @Test
+    public void retainAllStream(){
+        /**
+        System.out.println(of(1,2,3,4,5));
+        System.out.println(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)));
+
+        System.out.println(ReactiveSeq.fromIterator(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)).iterator()).toListX());
+         **/
+      //  assertThat(Arrays.asList(1,2,3),hasItems(1,2,3));
+
+        ImmutableList<Integer> l = of(1, 2, 3, 4, 5).retainAllS(Stream.of(1, 2, 3));
+        for(Integer n : l)
+            System.out.println("n is " +n);
+
+        l.stream().forEach(System.out::println);
+
+        System.out.println(l.stream().join(",","[","]"));
+        l.stream().forEach(System.out::println);
+        assertThat(l,hasItems(1,2,3));
+    }
+
+
+    @Test
+    public void fromStreamTest(){
+        ImmutableList<Integer> l = of(1,2,3,4,5).retainAllS(Stream.of(1, 2, 3));
+
+
+        for(Integer n : l) {
+           // System.out.println("n is " + n);
+        }
+
+         assertThat(fromStream(Stream.of(1,2,3)),equalTo(of(1,2,3)));
     }
 
     @Override

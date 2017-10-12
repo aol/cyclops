@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
+import cyclops.control.lazy.Eval;
 import cyclops.data.base.BAMT;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -23,6 +24,7 @@ public class Vector<T> implements ImmutableList<T>{
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
     private final int size;
+    private final Eval<Integer> hash = Eval.later(()->calcHash());
 
 
 
@@ -460,17 +462,20 @@ public class Vector<T> implements ImmutableList<T>{
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Iterable))
+        if(!(o instanceof ImmutableList) || o==null)
             return false;
-        return equalTo((Iterable<T>)o);
+        return equalToDirectAccess((Iterable<T>)o);
 
     }
 
-    @Override
-    public int hashCode() {
+    private int calcHash() {
         int hashCode = 1;
         for (T e : this)
             hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
         return hashCode;
+    }
+    @Override
+    public int hashCode() {
+       return hash.get();
     }
 }
