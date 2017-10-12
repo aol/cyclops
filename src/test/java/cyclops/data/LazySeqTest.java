@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import cyclops.companion.Reducers;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
@@ -14,8 +15,10 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class LazySeqTest extends BaseImmutableListTest {
@@ -33,6 +36,14 @@ public class LazySeqTest extends BaseImmutableListTest {
     @Override
     public <T> LazySeq<T> of(T... values) {
         return LazySeq.of(values);
+    }
+    @Test
+    public void testScanRightSumMonoid() {
+        assertThat(of("a", "ab", "abc").peek(System.out::println)
+                .map(str -> str.length())
+                .peek(System.out::println)
+                .scanRight(Reducers.toTotalInt()).toList(), is(asList(6,5,3,0)));
+
     }
     @Test
     public void retainAllStream(){

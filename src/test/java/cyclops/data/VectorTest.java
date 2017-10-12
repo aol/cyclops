@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
+
 public class VectorTest extends BaseImmutableListTest {
     @Override
     protected <T> Vector<T> fromStream(Stream<T> s) {
@@ -116,7 +117,7 @@ public class VectorTest extends BaseImmutableListTest {
         }
 
     }
-    @Test
+    @Test @Ignore
     public void test4Pow(){
         Vector<Integer> ints = Vector.<Integer>empty();
 
@@ -135,7 +136,7 @@ public class VectorTest extends BaseImmutableListTest {
         );
     }
 
-    @Test
+    @Test @Ignore
     public void test4PowSet(){
         Vector<Integer> ints = Vector.<Integer>empty();
 
@@ -153,7 +154,7 @@ public class VectorTest extends BaseImmutableListTest {
         }
 
     }
-    @Test
+    @Test @Ignore
     public void test5Pow(){
         Vector<Integer> ints = Vector.<Integer>empty();
 
@@ -172,7 +173,7 @@ public class VectorTest extends BaseImmutableListTest {
         );
     }
 
-    @Test
+    @Test @Ignore
     public void test5PowSet(){
         Vector<Integer> ints = Vector.<Integer>empty();
 

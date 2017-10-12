@@ -34,6 +34,7 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
     @Test
     public void testFoldRightA(){
+
         assertThat(fromStream(ReactiveSeq.range(0,100_000)).foldRight(Monoids.intSum),equalTo(704982704));
     }
     @Test

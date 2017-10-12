@@ -54,16 +54,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         }
         return !it.hasNext();
     }
-    default boolean equalToIteration(Iterable<T> iterable){
 
-        Iterator<T> it2 = iterable.iterator();
-        Iterator<T> it1 = iterator();
-        while(it2.hasNext() && it1.hasNext()){
-            if(!Objects.equals(it2.next(),it1.next()))
-                return false;
-        }
-        return it2.hasNext() == it1.hasNext();
-    }
 
 
     default ImmutableList<T> replace(T currentElement, T newElement){

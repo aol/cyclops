@@ -81,7 +81,7 @@ public class IntMap<T> implements ImmutableList<T>{
         int count = 0;
         while(it.hasNext()){
             T next = it.next();
-            tree.put(count,count,next);
+            tree = tree.put(count,count,next);
             count++;
         }
         return new IntMap<T>(tree,count);

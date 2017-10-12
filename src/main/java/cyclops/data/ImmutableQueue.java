@@ -212,6 +212,11 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
+    default <R> ImmutableQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
+    @Override
     ImmutableQueue<T> onEmpty(T value);
 
     @Override

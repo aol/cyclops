@@ -1,6 +1,7 @@
 package cyclops.data;
 
 import com.aol.cyclops2.types.traversable.IterableX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.data.basetests.BaseImmutableQueueTest;
 import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;
@@ -28,20 +29,31 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
 
         assertThat(q.dequeue(-1),equalTo(Tuple.tuple(1,q.tail())));
 
-
-
-
     }
     @Test
     public void enqueue2(){
-        BankersQueue<Integer> q = BankersQueue.cons(1).enqueue(10);
+        BankersQueue<Integer> q = BankersQueue.cons(1)
+                                              .enqueue(10);
 
 
+        System.out.println(q.equals(q));
         assertThat(q.dequeue(-1),equalTo(Tuple.tuple(10,q.tail())));
         BankersQueue<Integer> q2  = q.dequeue(-1)._2();
 
         assertThat(q2.dequeue(-1),equalTo(Tuple.tuple(1,q2.tail())));
 
+    }
+
+    @Test
+    public void fromStream(){
+        System.out.println(BankersQueue.of(1,2,3));
+        System.out.println(fromStream(Stream.of(1,2,3)));
+        fromStream(Stream.of(1,2,3)).iterator();
+        assertThat(fromStream(Stream.of(1,2,3)),equalTo(BankersQueue.of(1,2,3)));
+    }
+    @Test
+    public void fromStreamToList(){
+        assertThat(fromStream(Stream.of(1,2,3)).toList(),equalTo(ListX.of(1,2,3)));
     }
 
     @Test

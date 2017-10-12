@@ -23,10 +23,7 @@ import cyclops.function.Function1;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -46,7 +43,16 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default int size(){
         return (int)count();
     }
+    default boolean equalToIteration(Iterable<T> iterable){
 
+        Iterator<T> it2 = iterable.iterator();
+        Iterator<T> it1 = iterator();
+        while(it2.hasNext() && it1.hasNext()){
+            if(!Objects.equals(it2.next(),it1.next()))
+                return false;
+        }
+        return it2.hasNext() == it1.hasNext();
+    }
 
 
     @Override

@@ -162,7 +162,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
        private static <T> BankersQueue<T> check(Cons<T> check) {
             if(check.sizeBack<check.sizeFront)
                 return check;
-           return new Cons((check.sizeFront + check.sizeBack), check.front.prependAll(check.back), 0, LazySeq.empty());
+           return new Cons((check.sizeFront + check.sizeBack), check.front.prependAll(check.back.reverse()), 0, LazySeq.empty());
         }
 
         @Override
@@ -256,8 +256,10 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
             return  front==replaceF && back==replaceB ? this : new Cons<>(replaceF, replaceB);
         }
        public Option<T> get(int n) {
+            if(n<0)
+                return Option.none();
            if (n < sizeFront)
-               return front.get(sizeFront-n-1);
+               return front.get(n);
            else if (n < sizeFront + sizeBack) {
                int pos = n-sizeFront;
                return  back.get(sizeBack-pos-1);
@@ -299,23 +301,34 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         }
 
 
+
+        @Override
+        public int hashCode() {
+            int hashCode = 1;
+            for (T next : this)
+                hashCode = 31*hashCode + (next==null ? 0 : next.hashCode());
+            return hashCode;
+        }
+
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof ImmutableQueue){
-                ImmutableQueue<T> q = (ImmutableQueue<T>)obj;
-                return q.linkdedListX().equals(linkdedListX());
+            if(obj==null)
+                return false;
+            if (obj == this)
+                return true;
+            if(obj instanceof ImmutableQueue) {
+                return equalToIteration((Iterable)obj);
             }
             return false;
         }
 
+
         @Override
-        public int hashCode() {
-            return linkdedListX().hashCode();
+        public String toString(){
+            return seq().toString();
         }
 
-        public String toString(){
-           return lazySeq().toString();
-        }
+
 
         @Override
         public Tuple2<T, ImmutableQueue<T>> unapply() {
@@ -358,7 +371,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
 
         @Override
         public <R> ImmutableQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-            return null;
+            return Instance;
         }
         @Override
         public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
@@ -413,6 +426,24 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         @Override
         public T getOrElseGet(int pos, Supplier<T> alt) {
             return alt.get();
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof ImmutableQueue){
+                return ((ImmutableQueue)obj).size()==0;
+            }
+            return false;
+        }
+
+        @Override
+        public String toString(){
+            return seq().toString();
         }
 
     }

@@ -78,6 +78,11 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     <R> ImmutableSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn);
     <R> ImmutableSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
+    @Override
+    default <R> ImmutableSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
     ImmutableSet<T> filter(Predicate<? super T> predicate);
 
     default <R1, R2, R3, R> ImmutableSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1,

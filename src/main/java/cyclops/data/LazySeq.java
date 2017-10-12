@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
+import lombok.val;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -268,12 +269,17 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
     default LazySeq<T> dropWhile(Predicate<? super T> p) {
         LazySeq<T> current = this;
-        while(true && !current.isEmpty()){
+        boolean[] found = {false};
+        while(!found[0] && !current.isEmpty()){
+            LazySeq<T> active = current;
             current =  current.visit(c->{
                 if(!p.test(c.head)){
-                    return LazySeq.empty();
+                    found[0]=true;
+                    return active;
+
                 }
                 return c.tail.get();
+
             },empty->empty);
         }
         return current;
@@ -474,15 +480,11 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return new Step().loop(this,i-> Trampoline.done(i)).result();
         }
         public <R> LazySeq<R> scanRight(R zero,BiFunction<? super T, ? super R, ? extends R> f) {
-
-            class Step{
-                public Trampoline<LazySeq<R>> loop(ImmutableList<T> s, BiFunction<? super R,? super LazySeq<R> ,? extends Trampoline<LazySeq<R>>> fn){
-
-                    return s.fold(c-> Trampoline.more(()->loop(c.tail(), (rem, res) -> Trampoline.more(() -> fn.apply(f.apply(c.head(), rem),res)))), n->fn.apply(zero,empty()));
-
-                }
-            }
-            return new Step().loop(this,(i,res)-> Trampoline.done(LazySeq.cons(i,()->res))).result();
+            Tuple2<R, LazySeq<R>> t2 = Tuple.tuple(zero, LazySeq.of(zero));
+            return  foldRight(t2, (a, b) -> {
+                R b2 = f.apply(a, b._1());
+                return Tuple.tuple(b2, LazySeq.cons(b2, ()->b._2()));
+            })._2();
         }
 
         @Override

@@ -648,6 +648,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testScanRightStringConcatMonoid() {
+        System.out.println(of("a", "b", "c","d").scanRight(Monoid.of("", String::concat)).toListX());
         assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
             is(asList("", "c", "bc", "abc").size()));
     }
@@ -664,13 +665,7 @@ public abstract class AbstractIterableXTest {
         
     }
 
-    
 
-   
-    
-
-   
-   
     
     @Test
     public void testIterable() {
@@ -680,13 +675,7 @@ public abstract class AbstractIterableXTest {
             assertThat(list,hasItem(i));
         }
     }
-	
 
-	   
-	   
-	   
-
-		
 	    @Test
 	    public void testGroupByEager() {
 	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
@@ -707,19 +696,17 @@ public abstract class AbstractIterableXTest {
 	        assertEquals("123".length(),of(1, 2, 3).join().length());
 	        assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").length());
 	        assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
-	        
-	      
+
 	    }
 
 	    
-	   
-	  
 
-	   
 	    @Test
 	    public void testSkipWhile() {
 	        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
+            of(1, 2, 3, 4, 5).dropWhile(i -> false);
+	        System.out.println(s.get().dropWhile(i -> false).toList());
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	      
 	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());

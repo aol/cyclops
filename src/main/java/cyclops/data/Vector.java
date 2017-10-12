@@ -232,7 +232,7 @@ public class Vector<T> implements ImmutableList<T>{
         if(num>=size())
             return this;
         if(size()<32){
-            return new Vector<T>(this.root,tail.dropRight(Math.max(32-(int)num,0)),(int)num);
+            return new Vector<T>(this.root,tail.dropRight(Math.max(tail.size()-(int)num,0)),(int)num);
         }
         return unitStream(stream().take(num));
     }

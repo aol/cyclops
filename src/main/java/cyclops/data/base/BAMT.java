@@ -101,7 +101,7 @@ public class BAMT<T> {
             return tail(ArrayUtils.drop(array,num));
         }
         public ActiveTail<T> takeRight(int num){
-            T[] newArray = (T[])new Object[Math.max(num,array.length)];
+            T[] newArray = (T[])new Object[Math.min(num,array.length)];
             System.arraycopy(array, array.length-newArray.length, newArray, 0, num);
 
             return tail(newArray);
