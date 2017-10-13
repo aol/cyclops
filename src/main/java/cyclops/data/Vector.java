@@ -93,6 +93,10 @@ public class Vector<T> implements ImmutableList<T>{
         return res;
     }
 
+
+    public Vector<T> removeFirst(Predicate<? super T> pred) {
+        return (Vector<T>)ImmutableList.super.removeFirst(pred);
+    }
     public VectorX<T> vectorX(){
         return stream().to().vectorX(Evaluation.LAZY);
     }
@@ -174,6 +178,10 @@ public class Vector<T> implements ImmutableList<T>{
         }else{
             return new Vector<T>(root.append(tail),BAMT.ActiveTail.tail(t),size+1);
         }
+    }
+    @Override
+    public Vector<T> replace(T currentElement, T newElement){
+        return (Vector<T>)ImmutableList.super.replace(currentElement,newElement);
     }
 
     @Override

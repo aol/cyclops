@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
@@ -374,6 +375,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
     default LazySeq<T> prepend(T value){
         return cons(value,()->this);
+    }
+
+    @Override
+    default LazySeq<T> removeFirst(Predicate<? super T> pred) {
+        return (LazySeq<T>)ImmutableList.super.removeFirst(pred);
+    }
+
+    @Override
+    default LazySeq<T> plus(T value) {
+        return prepend(value);
     }
 
     default LazySeq<T> prependAll(Iterable<T> it){

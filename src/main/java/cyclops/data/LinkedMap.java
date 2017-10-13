@@ -15,18 +15,28 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LinkedMap<K,V> implements ImmutableMap<K,V>{
 
     private final ImmutableMap<K, V> map;
-    private final BankersQueue<Tuple2<K, V>> order;
+    private final Vector<Tuple2<K, V>> order;
+
     public static <K,V> LinkedMap<K,V> empty(){
-        return new LinkedMap<>(HashMap.empty(),BankersQueue.empty());
+        return new LinkedMap<>(HashMap.empty(),Vector.empty());
+    }
+    public static <K,V> LinkedMap<K,V> of(K k,V v){
+        LinkedMap<K,V> res = empty();
+        return res.put(k,v);
+    }
+    public static <K,V> LinkedMap<K,V> of(K k1,V v1,K k2, V v2){
+        LinkedMap<K,V> res = empty();
+        return res.put(k1,v1).put(k2,v2);
     }
 
-    public static <K,V> LinkedMap<K,V> fromStream(ReactiveSeq<Tuple2<K,V>> stream){
-        return stream.foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
+    public static <K,V> LinkedMap<K,V> fromStream(Stream<Tuple2<K,V>> stream){
+        return ReactiveSeq.fromStream(stream).foldLeft(empty(),(m,t2)->m.put(t2._1(),t2._2()));
     }
     public Option<V> get(K key){
         return map.get(key);
@@ -127,11 +137,12 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
     }
 
     public LinkedMap<K, V> put(K key, V value) {
-        BankersQueue<Tuple2<K, V>> newOrder = get(key).map(v -> order.replace(Tuple.tuple(key, v), Tuple.tuple(key, value)))
-                .orElseGet(() -> order.enqueue(Tuple.tuple(key, value)));
+        Vector<Tuple2<K, V>> newOrder = get(key).map(v -> order.replace(Tuple.tuple(key, v), Tuple.tuple(key, value)))
+                .orElseGet(() -> order.plus(Tuple.tuple(key, value)));
         return new LinkedMap<>(map.put(key,value),newOrder);
 
     }
+
 
     @Override
     public ImmutableMap<K, V> put(Tuple2<K, V> keyAndValue) {
@@ -143,13 +154,13 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
         ImmutableMap<K,V> res = map;
         for(Tuple2<K,V> t : map){
             res = res.put(t);
-            order.enqueue(t);
+            order.plus(t);
         }
         return new LinkedMap<>(res,order);
     }
 
     public LinkedMap<K, V> remove(K key) {
-       return containsKey(key) ? new LinkedMap<>(map.remove(key),BankersQueue.ofAll(order.lazySeq().removeFirst(t-> Objects.equals(key,t._1())))) : this;
+       return containsKey(key) ? new LinkedMap<K,V>(map.remove(key),order.removeFirst(t -> Objects.equals(key, t._1()))) : this;
     }
 
     @Override
@@ -159,6 +170,21 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
             cur = cur.remove(key);
         }
         return cur;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+       return this.map.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.map.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return mkString();
     }
 
     @Override
