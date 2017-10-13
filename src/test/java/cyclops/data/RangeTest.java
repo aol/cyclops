@@ -1,10 +1,14 @@
 package cyclops.data;
 
+import cyclops.control.Option;
+import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import cyclops.typeclasses.EnumerationTest;
 import cyclops.typeclasses.EnumerationTest.Days;
 import cyclops.typeclasses.Ord;
 import org.junit.Test;
+import sun.security.provider.Sun;
 
 import static cyclops.typeclasses.Enumeration.enums;
 import static cyclops.typeclasses.EnumerationTest.Days.*;
@@ -61,30 +65,52 @@ public class RangeTest {
 
     @Test
     public void contains() throws Exception {
+        assertTrue(days.contains(Range.range(Wednesday,Thursday,enums(Days.class))));
+        assertFalse(days.contains(Range.range(Wednesday,Sunday,enums(Days.class))));
     }
 
     @Test
     public void contains1() throws Exception {
+        assertTrue(days.contains(Wednesday));
+        assertFalse(days.contains(Sunday));
     }
 
     @Test
     public void plusAll() throws Exception {
+        Tuple2<Range<Days>,Option<Range<Days>>> toSunday = days.plusAll(Range.range(Saturday, Sunday,enums(Days.class)));
+
+        Range<Days> rday = toSunday._1();
+        System.out.println(rday);
+        assertThat(rday.start,equalTo(Days.Tuesday));
+        assertThat(rday.end,equalTo(Days.Sunday));
     }
 
     @Test
     public void minusAll() throws Exception {
+        Option<Tuple2<Range<Days>, Option<Range<Days>>>> toFriday = days.minusAll(Range.range(Friday, Sunday, enums(Days.class)));
+
+        assertThat(toFriday.map(t2->t2._1().end).orElse(Monday),equalTo(Friday));
     }
 
     @Test
     public void intersection() throws Exception {
+        Option<Range<Days>> inter = days.intersection(Range.range(Friday, Sunday, enums(Days.class)));
+
+       assertThat(inter.map(t2-> t2.start).orElse(Days.Monday),equalTo(Friday));
+        assertThat(inter.map(t2-> t2.end).orElse(Days.Monday),equalTo(Saturday));
     }
 
     @Test
     public void stream() throws Exception {
+        System.out.println(ReactiveSeq.range(1,5).toListX());
+        assertThat(five.stream().toListX(),equalTo(ReactiveSeq.range(1,6).toListX()));
     }
 
     @Test
     public void lazySeq() throws Exception {
+        System.out.println(ReactiveSeq.range(1,5).lazySeq().seq());
+        System.out.println(five.lazySeq().seq());
+        assertThat(five.lazySeq(),equalTo(ReactiveSeq.range(1,6).lazySeq()));
     }
 
 }

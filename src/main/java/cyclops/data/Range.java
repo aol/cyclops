@@ -8,6 +8,7 @@ import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;
+import lombok.ToString;
 
 import java.util.Comparator;
 import java.util.function.Function;
@@ -129,13 +130,13 @@ public class Range<T> {
 
         T newStart = (T) comp.max(this.start, toMerge.start);
         T newEnd = (T) comp.min(this.end, toMerge.end);
-        if (comp.isLessThanOrEqual(start, end))
-            return Option.some(range(start, end, enm, comp));
+        if (comp.isLessThanOrEqual(newStart, newEnd))
+            return Option.some(range(newStart, newEnd, enm, comp));
         return Option.none();
     }
 
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.iterate(start, e->!end.equals(e), e->enm.succ(e).orElse(null));
+        return lazySeq().stream();
     }
 
     public LazySeq<T> lazySeq(){
@@ -148,5 +149,14 @@ public class Range<T> {
         return LazySeq.cons(start,()->range(enm.pred(start).orElse(null),end,enm,comp).lazySeq());
     }
 
+
+    @Override
+    public String toString(){
+            return "["+  start + " .. " + end + "]";
+    }
+
+    public String allToString(){
+        return stream().join(",","[","]");
+    }
 
 }
