@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple1;
 import cyclops.data.tuple.Tuple2;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -148,7 +149,7 @@ public interface HashedPatriciaTrie<K, V>  {
         @Override
         public Node<K, V> put(int hash, K key, V value) {
             if (hash == 0) {
-                return new CollisionNode<>(bucket().prepend(Tuple.tuple(key, value)));
+                return new CollisionNode<>(bucket());
             } else {
                 int newHash = hash >>> BITS;
                 int index = hash & MASK;
@@ -167,6 +168,8 @@ public interface HashedPatriciaTrie<K, V>  {
                 return new ArrayNode<>(nodes);
             }
         }
+
+
 
         @Override
         public Option<V> get(int hash, K key) {
@@ -252,6 +255,8 @@ public interface HashedPatriciaTrie<K, V>  {
                 return new ArrayNode<>(nodes);
             }
         }
+
+
 
         @Override
         public Option<V> get(int hash, K key) {

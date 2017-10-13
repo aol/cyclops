@@ -89,7 +89,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
 
     @Override
     public TrieSet<T> add(T value) {
-        return null;
+        return plus(value);
     }
 
     @Override
@@ -147,5 +147,29 @@ public class TrieSet<T> implements ImmutableSet<T> {
     @Override
     public Iterator<T> iterator() {
         return stream().iterator();
+    }
+    @Override
+    public boolean equals(Object o) {
+        if(!(o instanceof ImmutableSet) || o==null)
+            return false;
+        ImmutableSet s = (ImmutableSet)o;
+        for(T next : this){
+            if(!s.contains(next))
+                return false;
+        }
+        return size()==size();
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        for (T e : this)
+            hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+        return hashCode;
+    }
+
+    @Override
+    public String toString(){
+        return stream().join(",","[","]");
     }
 }

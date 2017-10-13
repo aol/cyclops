@@ -197,7 +197,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void testCycleNoOrder() {
         assertEquals(2,of(1, 2).cycle(3).toListX().size());
-        assertEquals(2, of(1, 2, 3).cycle(2).toListX().size());
+        assertEquals(3, of(1, 2, 3).cycle(2).toListX().size());
     }
 
 }

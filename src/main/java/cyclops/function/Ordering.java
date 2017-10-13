@@ -8,7 +8,7 @@ import java.util.Comparator;
 public interface Ordering<T> extends Comparator<T> {
 
     default Ord.Ordering compareOrder(T left, T right){
-        return Ord.Ordering.values()[Math.max(-1,Math.min(1,compare(left,right)))];
+        return Ord.Ordering.values()[Math.max(-1,Math.min(1,compare(left,right)))+1];
     }
     default boolean isLessThan(T left, T right){
         return compare(left,right)<0;
