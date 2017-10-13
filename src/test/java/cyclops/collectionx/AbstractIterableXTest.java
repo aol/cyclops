@@ -1876,7 +1876,6 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,1,2,3)
                 .combine((a, b)->a.equals(b),Semigroups.intSum)
                 .toListX(),equalTo(ListX.of(4,3)));
-
     }
 
     @Test
