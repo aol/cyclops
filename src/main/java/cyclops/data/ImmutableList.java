@@ -247,6 +247,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier);
 
+    default T last(T alt){
+        return getOrElse(size()-1,alt);
+    }
     @Override
     ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
 
@@ -254,6 +257,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         ImmutableList<T> tail();
         T head();
         Some<T> reverse();
+
         @Override
         default <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2){
             return fn1.apply(this);

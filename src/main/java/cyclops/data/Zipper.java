@@ -1,6 +1,8 @@
 package cyclops.data;
 
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +10,8 @@ import lombok.experimental.Wither;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -15,7 +19,7 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 @Getter
 @Wither
-public class Zipper<T> {
+public class Zipper<T> implements IterableX<T> {
 
     private final ImmutableList<T> left;
     private final T point;
@@ -109,16 +113,16 @@ public class Zipper<T> {
         }),nil->this);
     }
     public <R> Option<Zipper<T>> previous(){
-        return left.fold(c-> Option.some(new Zipper(c.tail(),c.head() ,right.prepend(point))), nil-> Option.none());
+        return left.fold(c-> Option.some(new Zipper(c.limit(c.size()-1),c.last(null) ,right.prepend(point))), nil-> Option.none());
     }
 
     public Zipper<T> left(T value){
-        return new Zipper<>(left,value,right.prepend(value));
+        return new Zipper<>(left,value,right.prepend(point));
     }
     public Zipper<T> right(T value){
-        return new Zipper<>(left.prepend(value),value,right);
+        return new Zipper<>(left.append(point),value,right);
     }
-    public Zipper<T> deleteLeftAndRight() {
+    public Zipper<T> deleteAllLeftAndRight() {
         return new Zipper<>(LazySeq.empty(), point, LazySeq.empty());
     }
     public Option<Zipper<T>> deleteLeft() {
@@ -144,8 +148,8 @@ public class Zipper<T> {
     }
 
 
-    public Tuple2<ImmutableList<T>, ImmutableList<T>> split() {
-        return Tuple.tuple(left, right);
+    public Tuple3<ImmutableList<T>,T, ImmutableList<T>> split() {
+        return Tuple.tuple(left,point, right);
     }
     public ImmutableList<T> list(){
         return right.prepend(point).prependAll(left);
@@ -155,6 +159,20 @@ public class Zipper<T> {
         return left.stream().append(point).appendS(right.stream());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Zipper<?> zipper = (Zipper<?>) o;
+        return Objects.equals(left, zipper.left) &&
+                Objects.equals(point, zipper.point) &&
+                Objects.equals(right, zipper.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, point, right);
+    }
 
     @Override
     public String toString() {
@@ -163,5 +181,10 @@ public class Zipper<T> {
 
         String r = right.stream().join(",",",","]");
        return l + p +r ;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return stream().iterator();
     }
 }

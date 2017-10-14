@@ -510,6 +510,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public T head(){
             return head;
         }
+
+
+
         public int size(){
             int result =1;
             ImmutableList<T> current[] = new LazySeq[1];
