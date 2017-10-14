@@ -101,15 +101,15 @@ public class Zipper<T> implements IterableX<T> {
     }
     public Zipper<T> cycleNext() {
         return left.fold(cons->right.fold(c->next().orElse(this), nil->{
-            ImmutableList.Some<T> reversed = cons.reverse();
-            return of(LazySeq.empty(),reversed.head(),reversed.tail().append(point));
+
+            return of(LazySeq.empty(),cons.head(),cons.tail().append(point));
         }),nil->this);
 
     }
     public Zipper<T> cyclePrevious() {
-        return right.fold(cons->left.fold(c->next().orElse(this), nil->{
+        return right.fold(cons->left.fold(c->previous().orElse(this), nil->{
             ImmutableList.Some<T> reversed = cons.reverse();
-            return of(reversed.tail().append(point),reversed.head(), LazySeq.empty());
+            return of(reversed.tail().reverse().prepend(point),reversed.head(), LazySeq.empty());
         }),nil->this);
     }
     public <R> Option<Zipper<T>> previous(){

@@ -66,14 +66,16 @@ public class ZipperTest {
 
     @Test
     public void cycleNext() throws Exception {
-        System.out.println(z.cycleNext());
+        assertThat(z.cycleNext(),equalTo(z.next().orElse(z2)));
+        assertThat(Zipper.of(LazySeq.of(1,2,3),5,LazySeq.empty()).cycleNext(),equalTo(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5))));
 
     }
 
     @Test
     public void cyclePrevious() throws Exception {
-        System.out.println(z.cyclePrevious());
-
+        System.out.println(z.previous().orElse(z2));
+        assertThat(z.cyclePrevious(),equalTo(z.previous().orElse(z2)));
+        assertThat(Zipper.of(LazySeq.empty(),5,LazySeq.of(1,2,3)).cyclePrevious(),equalTo(Zipper.of(LazySeq.of(5,1,2),3,LazySeq.empty())));
     }
 
     @Test
