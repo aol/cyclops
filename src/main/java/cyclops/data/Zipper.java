@@ -39,9 +39,9 @@ public class Zipper<T> {
         return of(left.map(fn),fn.apply(point),right.map(fn));
     }
     public <R> Zipper<R> zip(Zipper<T> zipper, BiFunction<? super T, ? super T, ? extends R> fn){
-        ReactiveSeq<R> newLeft = left.stream().zip(zipper.left.stream(),fn);
+        ImmutableList<R> newLeft = left.zip(zipper.left.stream(),fn);
         R newPoint = fn.apply(point, zipper.point);
-        ReactiveSeq<R> newRight = right.stream().zip(zipper.right.stream(),fn);
+        ImmutableList<R> newRight = right.zip(zipper.right.stream(),fn);
         return of(newLeft,newPoint,newRight);
     }
 
@@ -87,7 +87,7 @@ public class Zipper<T> {
         return Option.some(result);
     }
     public <R> Option<Zipper<T>> next(){
-        return right.fold(c-> Option.some(new Zipper(left.prepend(point), c.hashCode(), c.tail())), nil-> Option.none());
+        return right.fold(c-> Option.some(new Zipper(left.append(point), c.head(), c.tail())), nil-> Option.none());
     }
     public <R> Zipper<T> next(Zipper<T> alt){
         return next().orElse(alt);
@@ -149,5 +149,19 @@ public class Zipper<T> {
     }
     public ImmutableList<T> list(){
         return right.prepend(point).prependAll(left);
+    }
+
+    public ReactiveSeq<T> stream(){
+        return left.stream().append(point).appendS(right.stream());
+    }
+
+
+    @Override
+    public String toString() {
+        String l = left.stream().join(",","[","");
+        String p = ",>>" + point.toString() + "<<";
+
+        String r = right.stream().join(",",",","]");
+       return l + p +r ;
     }
 }
