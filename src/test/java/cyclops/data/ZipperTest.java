@@ -18,18 +18,27 @@ public class ZipperTest {
 
     @Test
     public void isStart() throws Exception {
+        assertFalse(z.isStart());
+        assertTrue(z.position(0).orElse(z2).isStart());
     }
 
     @Test
     public void isEnd() throws Exception {
+        assertFalse(z.isEnd());
+        assertTrue(z.position(6).orElse(z2).isEnd());
     }
 
     @Test
     public void map() throws Exception {
+
+        assertThat(z.map(i->((int)0)-i),equalTo(Zipper.of(LazySeq.of(-1,-2,-3),-5,LazySeq.of(-10,-20,-30))));
     }
 
     @Test
     public void zip() throws Exception {
+        assertThat(z.zip(z2,Tuple::tuple),equalTo(Zipper.of(LazySeq.of(tuple(1,40),tuple(2,20),tuple(3,60)),
+                tuple(5,50),
+                LazySeq.of(tuple(10,1),tuple(20,2),tuple(30,3)))));
     }
 
     @Test
@@ -41,7 +50,9 @@ public class ZipperTest {
 
     @Test
     public void start() throws Exception {
-        assertThat(z.start(),equalTo(equalTo(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5,10,20,30)))));
+        System.out.println(z.start());
+        System.out.println(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5,10,20,30)));
+        assertThat(z.start(),equalTo(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5,10,20,30))));
     }
 
     @Test
@@ -124,17 +135,17 @@ public class ZipperTest {
 
     @Test
     public void filterLeft() throws Exception {
-        assertThat(z.filterLeft(i->i>2).getRight(),equalTo(LazySeq.of(3)));
+        assertThat(z.filterLeft(i->i>2).getLeft(),equalTo(LazySeq.of(3)));
     }
 
     @Test
     public void filterRight() throws Exception {
-        assertThat(z.filterRight(i->i<25).getRight(),equalTo(LazySeq.of(30)));
+        assertThat(z.filterRight(i->i<25).getRight(),equalTo(LazySeq.of(10,20)));
     }
 
     @Test
     public void split() throws Exception {
-       assertThat(z.split(),equalTo(tuple(left,4,right)));
+       assertThat(z.split(),equalTo(tuple(left,5,right)));
     }
 
     @Test
@@ -160,7 +171,7 @@ public class ZipperTest {
     @Test
     public void getLeft() throws Exception {
         assertThat(z.getLeft(),equalTo(left));
-        assertThat(z.next().orElse(z2).getLeft(),equalTo(LazySeq.of(1,2,3,4,5)));
+        assertThat(z.next().orElse(z2).getLeft().seq(),equalTo(LazySeq.of(1,2,3,5).seq()));
     }
 
     @Test

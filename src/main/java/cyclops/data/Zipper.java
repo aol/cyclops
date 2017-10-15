@@ -127,7 +127,7 @@ public class Zipper<T> implements IterableX<T> {
     }
     public Option<Zipper<T>> deleteLeft() {
 
-        return left.fold(c->right.fold(c2-> Option.some(of(c.tail(),c.head(),right)), n-> Option.some(of(c.tail(),c.head(),right))),
+        return left.fold(c->right.fold(c2-> Option.some(of(c.dropRight(1),c.last(null),right)), n-> Option.some(of(c.dropRight(1),c.last(null),right))),
                 n->right.fold(c-> Option.some(of(left,c.head(),c.tail())), n2-> Option.none()));
     }
     public Option<Zipper<T>> deleteRight() {
@@ -164,6 +164,7 @@ public class Zipper<T> implements IterableX<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Zipper<?> zipper = (Zipper<?>) o;
+
         return Objects.equals(left, zipper.left) &&
                 Objects.equals(point, zipper.point) &&
                 Objects.equals(right, zipper.right);
