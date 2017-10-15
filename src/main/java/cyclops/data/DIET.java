@@ -150,7 +150,8 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> merge(DIET<T> merge) {
             return merge.fold(s-> {
-                        DIET<T> x = max().transform((r, d) -> cons(d, r, right));
+                        Tuple2<Range<T>, DIET<T>> t2 = max();
+                        DIET<T> x =  cons(t2._2(), t2._1(), merge);
                         return x;
                     }
             ,n->this);

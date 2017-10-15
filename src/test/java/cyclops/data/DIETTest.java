@@ -63,6 +63,8 @@ public class DIETTest {
 
     @Test
     public void merge() throws Exception {
+        System.out.println(diet.merge(DIET.cons(Range.range(100,200))));
+        System.out.println(diet.merge(DIET.cons(Range.range(2,9))));
     }
 
     @Test

@@ -44,6 +44,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -1085,6 +1087,15 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
         private final Eval<T> lazy;
+
+        /**
+        private Object writeReplace() {
+            return toOption();
+        }
+        private Object readResolve() {
+            return new ConvenientPoint(x, y, name);
+        }
+         **/
 
         @Override
         public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
