@@ -61,17 +61,13 @@ public class DIETTest {
         assertTrue(diet2.contains(Range.range(100,101)));
     }
 
-    @Test
-    public void merge() throws Exception {
-        System.out.println(diet.merge(DIET.cons(Range.range(100,200))));
-        System.out.println(diet.merge(DIET.cons(Range.range(2,9))));
-    }
 
     @Test
     public void remove() throws Exception {
-        System.out.println(diet.remove(Range.range(2,4)));
-        System.out.println(diet.remove(Range.range(12,14)));
-        System.out.println(diet.remove(Range.range(6,7)));
+        System.out.println("DIET " + diet);
+        System.out.println("A:"+diet.remove(Range.range(2,4)));
+        System.out.println("B:"+diet.remove(Range.range(12,14)));
+        System.out.println("C:"+diet.remove(Range.range(6,7)));
     }
 
     @Test
@@ -80,6 +76,7 @@ public class DIETTest {
 
     @Test
     public void map() throws Exception {
+        System.out.println(diet.map(i->i*2));
     }
 
     @Test

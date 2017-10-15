@@ -49,7 +49,6 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
 
 
     DIET<T> add(Range<T> range);
-    DIET<T> merge(DIET<T> merge);
     default DIET<T> remove(T value, Enumeration<T> enm, Comparator<? super T> comp){
         return enm.succ(value).visit(s-> {
             return remove(Range.range(value,s, enm, comp));
@@ -58,9 +57,11 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
     DIET<T> remove(Range<T> range);
 
     <R> DIET<R> map(Function<? super T, ? extends R> fn, Enumeration<R> enm, Comparator<? super R> comp);
-
+    <R> DIET<R> flatMap(Function<? super T, ? extends DIET<? extends R>> fn);
+    DIET<T> map(Function<? super T, ? extends T> fn);
     LazySeq<T> lazySeq();
     ReactiveSeq<T> stream();
+    ReactiveSeq<Range<T>> streamRanges();
     default Iterator<T> iterator(){
         return stream().iterator();
     }
@@ -147,14 +148,22 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
             });
         }
 
-        @Override
-        public DIET<T> merge(DIET<T> merge) {
-            return merge.fold(s-> {
-                        Tuple2<Range<T>, DIET<T>> t2 = max();
-                        DIET<T> x =  cons(t2._2(), t2._1(), merge);
+
+        private static <T> DIET<T> merge(DIET<T> l,DIET<T> r) {
+            if(r.isEmpty())
+                return l;
+            if(l.isEmpty())
+                return r;
+            Node<T> left = l.fold(i->i,n->null);
+            Node<T> right = r.fold(i->i,n->null);
+
+            return left.fold(s -> {
+
+                        Tuple2<Range<T>, DIET<T>> t2 = left.max();
+                        DIET<T> x = cons(t2._2(), t2._1(), right);
                         return x;
                     }
-            ,n->this);
+                    , n -> right);
         }
 
         @Override
@@ -166,12 +175,11 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
                         Range<T> x1 = r;
                         DIET<T> a1 = right;
 
-                       return cons( left,r, empty()).merge(cons(empty(),sr,  right));
-                    },
-                                                                () -> cons(range.startsBefore(focus) ? left.remove(range) : left, r, range.endsAfter(focus) ? right.remove(range) : right))
+                       return merge(cons( left,r, empty()),cons(empty(),sr,  right));
+                    },() -> cons(range.startsBefore(focus) ? left.remove(range) : left, r, range.endsAfter(focus) ? right.remove(range) : right))
                                             ),
                     //none
-                    ()->left.merge(right));
+                    ()->merge(left,right));
 //
         }
 
@@ -179,8 +187,20 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         public <R> DIET<R> map(Function<? super T, ? extends R> fn, Enumeration<R> enm, Comparator<? super R> comp) {
             Range<R> r = focus.map(fn,enm,comp);
             DIET<R> l2 = left.map(fn,enm,comp);
-            return l2.add(r).merge(right.map(fn,enm,comp));
+            return merge(l2.add(r),right.map(fn,enm,comp));
 
+        }
+
+        @Override
+        public <R> DIET<R> flatMap(Function<? super T, ? extends DIET<? extends R>> fn) {
+            ReactiveSeq<DIET<R>> x = stream().map(t -> (DIET<R>)fn.apply(t));
+            ReactiveSeq<Range<R>> y = x.flatMap(d -> d.streamRanges());
+            return y.foldLeft(DIET.empty(),(a,b)->a.add(b));
+        }
+
+        @Override
+        public DIET<T> map(Function<? super T, ? extends T> fn) {
+            return map(fn,focus.enumeration(),focus.ordering());
         }
 
         @Override
@@ -191,6 +211,10 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public ReactiveSeq<T> stream() {
             return left.stream().appendS(focus.stream()).appendS(right.stream());
+        }
+        @Override
+        public ReactiveSeq<Range<T>> streamRanges() {
+            return left.streamRanges().append(focus).appendS(right.streamRanges());
         }
 
 
@@ -237,10 +261,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
             return DIET.cons(range);
         }
 
-        @Override
-        public DIET<T> merge(DIET<T> merge) {
-            return merge;
-        }
+
 
         @Override
         public DIET<T> remove(Range<T> range) {
@@ -253,12 +274,27 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         }
 
         @Override
+        public <R> DIET<R> flatMap(Function<? super T, ? extends DIET<? extends R>> fn) {
+            return INSTANCE;
+        }
+
+        @Override
+        public DIET<T> map(Function<? super T, ? extends T> fn) {
+            return INSTANCE;
+        }
+
+        @Override
         public LazySeq<T> lazySeq() {
             return LazySeq.empty();
         }
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.empty();
+        }
+
+        @Override
+        public ReactiveSeq<Range<T>> streamRanges() {
             return ReactiveSeq.empty();
         }
 
