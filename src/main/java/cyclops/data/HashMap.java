@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class HashMap<K,V> implements ImmutableMap<K,V>{
     private final HAMT.Node<K,V> map;
+    private static final long serialVersionUID = 1L;
 
     public static <K,V> HashMap<K,V> empty(){
         return new HashMap<>(HAMT.empty());
@@ -180,5 +181,18 @@ public class HashMap<K,V> implements ImmutableMap<K,V>{
     @Override
     public String toString() {
         return mkString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HashMap<?, ?> hashMap = (HashMap<?, ?>) o;
+        return Objects.equals(map, hashMap.map);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(map);
     }
 }

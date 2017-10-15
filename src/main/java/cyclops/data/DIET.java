@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
@@ -67,10 +68,12 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
 
     boolean isEmpty();
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Node<T> implements DIET<T>,Deconstruct3<DIET<T>,Range<T>,DIET<T>> {
+    public static final class Node<T> implements DIET<T>,Deconstruct3<DIET<T>,Range<T>,DIET<T>>, Serializable {
         private final DIET<T> left;
         private final Range<T> focus;
         private final DIET<T> right;
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         public Trampoline<Boolean> containsRec(T value) {
@@ -156,9 +159,19 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> remove(Range<T> range) {
 
-            focus.minusAll(range).visit(s->s.transform((r, mr) ->  mr.visit(sr -> cons(left, r, empty()).merge(cons(empty(), sr, right)), () ->
-                    cons(focus.startsBefore(range) ? left.remove(range) : left, r, focus.endsAfter(range) ? right.remove(range) : right))),()->left.merge(right));
-            return null;
+            Option<Tuple2<Range<T>, Option<Range<T>>>> x = focus.minusAll(range);
+            System.out.println("X is " + x);
+            return x.visit(s->s.transform((r, mr) ->  mr.visit(sr ->{
+                        Range<T> x1 = r;
+                        DIET<T> a1 = right;
+
+                       return cons( left,r, empty()).merge(cons(empty(),sr,  right));
+                    },
+                                                                () -> cons(range.startsBefore(focus) ? left.remove(range) : left, r, range.endsAfter(focus) ? right.remove(range) : right))
+                                            ),
+                    //none
+                    ()->left.merge(right));
+//
         }
 
         @Override
@@ -190,15 +203,23 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         }
 
         @Override
+        public String toString() {
+            return "[{" + left +
+                    "}," + focus +
+                    ",{" + right +
+                    "}]";
+        }
+
+        @Override
         public Tuple3<DIET<T>, Range<T>, DIET<T>> unapply() {
             return tuple(left,focus,right);
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Nil<T> implements DIET<T> {
+    public static final class Nil<T> implements DIET<T>, Serializable {
         public final static Nil INSTANCE = new Nil();
 
-
+        private static final long serialVersionUID = 1L;
 
         @Override
         public Trampoline<Boolean> containsRec(T value) {
@@ -248,6 +269,11 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public <R> R fold(Function<? super Node<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2) {
             return fn2.apply(this);
+        }
+
+        @Override
+        public String toString() {
+            return "{}";
         }
     }
 }

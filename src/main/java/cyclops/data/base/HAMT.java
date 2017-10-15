@@ -8,14 +8,18 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 
 @AllArgsConstructor
-public class HAMT<K, V>  {
+public class HAMT<K, V>  implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     static final int BITS_IN_INDEX = 5;
     static final int SIZE = (int) StrictMath.pow(2, BITS_IN_INDEX);
     static final int MIN_INDEX = 0;
@@ -26,7 +30,9 @@ public class HAMT<K, V>  {
         return EmptyNode.Instance;
     }
 
-   public interface Node<K,V>{
+   public interface Node<K,V> extends Serializable{
+
+
 
        public Node<K,V> plus(int bitShiftDepth, int hash, K key, V value);
        public Option<V> get(int bitShiftDepth, int hash, K key);
@@ -81,8 +87,9 @@ public class HAMT<K, V>  {
        }
    }
    @AllArgsConstructor
+   @EqualsAndHashCode
    public static class ValueNode<K,V> implements Node<K,V>, Deconstruct2<K,V> {
-
+       private static final long serialVersionUID = 1L;
        private final int hash;
        public final K key;
        public final V value;
@@ -157,10 +164,13 @@ public class HAMT<K, V>  {
        }
    }
     @AllArgsConstructor
+    @EqualsAndHashCode
    public static class CollisionNode<K,V> implements Node<K,V>{
 
        private final int hash;
        private final LazySeq<Tuple2<K,V>> bucket;
+
+       private static final long serialVersionUID = 1L;
        @Override
        public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
            LazySeq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
@@ -229,11 +239,12 @@ public class HAMT<K, V>  {
         }
     }
     @AllArgsConstructor
+    @EqualsAndHashCode
    public static class BitsetNode<K,V> implements Node<K,V>{
        private final int bitset;
        private final int size;
        private final Node<K,V>[] nodes;
-
+        private static final long serialVersionUID = 1L;
         @Override
         public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
             int bitPos = bitpos(hash, bitShiftDepth);

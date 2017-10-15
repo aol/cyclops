@@ -55,6 +55,19 @@ public interface Enumeration<E> {
         return new EnumerationByEnum<E>(c.getEnumConstants());
     }
 
+    static Enumeration<Integer> ints(){
+          return   new Enumeration<Integer>() {
+        @Override
+        public Option<Integer> toEnum(int e) {
+            return Option.some(e);
+        }
+
+        @Override
+        public int fromEnum(Integer a) {
+            return a;
+        }
+    };
+    }
     static <E> Enumeration<E> enums(IndexedSequenceX<E> seq){
         return new EnumerationByIndexed<E>(seq);
     }

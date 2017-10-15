@@ -47,7 +47,7 @@ public class Coyoneda<F, T, R> implements Higher3<coyoneda, F, T, R> {
     
     public static class Instances{
         
-        public <F, T1, R> Functor<Higher<Higher<coyoneda, F>, T1>> functor(){
+        public static <F, T1, R> Functor<Higher<Higher<coyoneda, F>, T1>> functor(){
             return new Functor<Higher<Higher<coyoneda, F>, T1>>() {
                 @Override
                 public <T, R> Higher<Higher<Higher<coyoneda, F>, T1>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<coyoneda, F>, T1>, T> ds) {

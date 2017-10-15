@@ -21,6 +21,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,7 +38,8 @@ public interface Option<T> extends To<Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
                                    Sealed2<T,Option.None<T>>,
-                                   Iterable<T>{
+                                   Iterable<T>, Serializable{
+
 
 
 
@@ -779,6 +781,7 @@ public interface Option<T> extends To<Option<T>>,
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Some<T> implements Option<T>, Present<T> {
+        private static final long serialVersionUID = 1L;
         private final T value;
 
 
@@ -873,6 +876,7 @@ public interface Option<T> extends To<Option<T>>,
         }
     }
     public static class None<T> implements Option<T> {
+        private static final long serialVersionUID = 1L;
         public static None NOTHING_EAGER = new None();
 
         @Override
