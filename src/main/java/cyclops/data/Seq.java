@@ -46,22 +46,8 @@ public interface Seq<T> extends ImmutableList<T>,
         return fromStream(stream);
     }
 
-    public static <R> Seq<R> fromStreamLazily(Stream<R> stream) {
-        Iterator<R> it = stream.iterator();
-        return fromIteratorLazily(it);
-    }
-    public static <R> Seq<R> fromIterableLazily(Iterable<R> it) {
-        return fromIteratorLazily(it.iterator());
-    }
 
-    public static <R> Seq<R> fromIteratorLazily(Iterator<R> it) {
-        if(it.hasNext()){
-            return cons(it.next(),(Seq<R>) Proxy.newProxyInstance(ImmutableList.class.getClassLoader(),
-                    new Class<?>[] { Seq.class },
-                    (p, m, a) -> m.invoke(fromIteratorLazily(it), a)));
-        }
-        return Seq.empty();
-    }
+
 
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(iterable());

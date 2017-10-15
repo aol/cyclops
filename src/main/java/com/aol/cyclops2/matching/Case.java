@@ -53,7 +53,7 @@ public interface Case<T, R> {
 
     @Override
     public Optional<R> test(T value) {
-      return Optional.of(fn.apply(value));
+      return Optional.ofNullable(fn.apply(value));
     }
 
   }

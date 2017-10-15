@@ -3,12 +3,16 @@ package cyclops.data;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class NonEmptyListTest extends BaseImmutableListTest {
     @Override
@@ -27,7 +31,8 @@ public class NonEmptyListTest extends BaseImmutableListTest {
             return empty();
         if(values.length==1)
             return NonEmptyList.of(values[0]);
-        return NonEmptyList.of(values[0], Arrays.copyOf(values,1));
+
+        return NonEmptyList.of(values[0], Arrays.copyOfRange(values,1,values.length));
     }
 
     @Override
@@ -53,5 +58,13 @@ public class NonEmptyListTest extends BaseImmutableListTest {
     @Override
     public <U, T> Seq<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return Seq.unfold(seed,unfolder);
+    }
+
+    @Test
+    public void stream(){
+
+        System.out.println("D"+of(1, 2, 3, 4, 5).drop(2).toList());
+       assertThat(NonEmptyList.of(1,2,3).foldLeft(0,(a,b)->a+b),equalTo(6));
+        NonEmptyList.of(1,2,3,4).takeRight(2).forEach(System.out::println);
     }
 }

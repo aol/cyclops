@@ -160,9 +160,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
 
 
        private static <T> BankersQueue<T> check(Cons<T> check) {
-            if(check.sizeBack<check.sizeFront)
+            if(check.sizeBack<=check.sizeFront)
                 return check;
-           return new Cons((check.sizeFront + check.sizeBack), check.front.prependAll(check.back.reverse()), 0, LazySeq.empty());
+           return new Cons((check.sizeFront + check.sizeBack), check.front.appendAll(check.back.reverse()), 0, LazySeq.empty());
         }
 
         @Override
@@ -237,7 +237,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
             return front.fold(s->s.fold((h, t)->h), n->back.fold(s2->s2.fold( (h2, t2) ->h2), nil->{throw new RuntimeException("Unreachable!");}));
         }
         public BankersQueue<T> tail() {
-            if(size()==1)
+        /**    return front.fold(s->  check(new Cons(sizeFront - 1, s.tail(), sizeBack, back)) ,
+                    n->empty());
+           **/if(size()==1)
                 return empty();
             if(sizeFront==0){
                 return BankersQueue.ofAll(back.fold(s->s.fold((h, t)->t), n->n));
@@ -246,8 +248,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
                 return ofAll(back);
             }
             return new BankersQueue.Cons<>(sizeFront-1,front.fold(s->s.fold((h, t)->t), n->n),sizeBack,back);
-
-
 
         }
         public BankersQueue<T> replace(T currentElement, T newElement) {

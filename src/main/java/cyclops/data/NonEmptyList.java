@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple2;
 
 import java.lang.reflect.Proxy;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -82,9 +83,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     @Override
     public <R> ImmutableList<R> unitIterator(Iterator<R> it) {
         if(it.hasNext()){
-            return cons(it.next(),(ImmutableList<R>)Proxy.newProxyInstance(ImmutableList.class.getClassLoader(),
-                                    new Class<?>[] { ImmutableList.class },
-                                    (p, m, a) -> m.invoke(unitIterator(it), a)));
+            return cons(it.next(), LazySeq.fromIterator(it));
         }
         return LazySeq.empty();
     }
@@ -96,7 +95,10 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
 
     @Override
     public ImmutableList<T> drop(long num) {
-        return tail.fold(s ->  of(s.head(), s.tail()), n -> n);
+        if(num>=size())
+            return Seq.empty();
+
+        return unitStream(stream().drop(num));
     }
 
     @Override
@@ -239,10 +241,29 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
         return new NonEmptyList<>(value,tail);
     }
 
-
+    @Override
+    public String toString() {
+        return stream().join(",","[","]");
+    }
 
     @Override
     public Tuple2<T, ImmutableList<T>> unapply() {
         return Tuple.tuple(head,tail);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if(o instanceof ImmutableList){
+            ImmutableList<T> im =(ImmutableList<T>)o;
+            return equalToIteration(im);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), head, tail);
     }
 }

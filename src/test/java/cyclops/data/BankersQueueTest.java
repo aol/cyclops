@@ -37,10 +37,10 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
 
 
         System.out.println(q.equals(q));
-        assertThat(q.dequeue(-1),equalTo(Tuple.tuple(10,q.tail())));
+        assertThat(q.dequeue(-1),equalTo(Tuple.tuple(1,q.tail())));
         BankersQueue<Integer> q2  = q.dequeue(-1)._2();
 
-        assertThat(q2.dequeue(-1),equalTo(Tuple.tuple(1,q2.tail())));
+        assertThat(q2.dequeue(-1),equalTo(Tuple.tuple(10,q2.tail())));
 
     }
 
@@ -58,7 +58,20 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
 
     @Test
     public void get(){
-        BankersQueue<Integer> q = BankersQueue.of(1,2,3);
+        BankersQueue<Integer> q =  BankersQueue.cons(1)
+                .enqueue(2)
+                .enqueue(3);
+                //BankersQueue.of(1,2,3);
+
+        System.out.println("0 " + q.get(0));
+        System.out.println("1 " + q.get(1));
+        System.out.println("2 " + q.get(2));
+        System.out.println("0 " + q.dequeue(-1));
+        System.out.println("1 " + q.dequeue(-1)._2().dequeue(-1));
+        System.out.println("2 " + q.dequeue(-1)._2().dequeue(-1)._2().dequeue(-1));
+        for (Integer integer : q) {
+            System.out.println(integer);
+        }
 
         assertThat(q.get(0),equalTo(Option.some(1)));
         assertThat(q.get(1),equalTo(Option.some(2)));

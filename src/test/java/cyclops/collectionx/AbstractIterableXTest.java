@@ -980,6 +980,12 @@ public abstract class AbstractIterableXTest {
                             .takeRight(2)
                             .stream().collect(java.util.stream.Collectors.toList()),equalTo(Arrays.asList(4,5)));
     }
+    @Test
+    public void testTakeRight5(){
+        assertThat(of(1,2)
+                .takeRight(5)
+                .stream().collect(java.util.stream.Collectors.toList()),equalTo(Arrays.asList(1,2)));
+    }
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(of()
