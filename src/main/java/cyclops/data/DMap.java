@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -206,6 +207,27 @@ public interface DMap{
             return x.mergeP(map2.stream().map(t->t._2()).map(LazyEither::right));
         }
 
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("[");
+            b =b.append(map1.stream().join(","));
+            b= b.append(map2.stream().join(","));
+            return b.append("]").toString();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DMap2<?, ?, ?, ?> dMap2 = (DMap2<?, ?, ?, ?>) o;
+            return Objects.equals(map1, dMap2.map1) &&
+                    Objects.equals(map2, dMap2.map2);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(map1, map2);
+        }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Nothing{
@@ -358,6 +380,30 @@ public interface DMap{
         @Override
         public <KR1, VR1, KR2, VR2, KR3, VR3> Three<KR1, VR1, KR2, VR2, KR3, VR3> map(Function<? super K1, ? extends KR1> keyMapper1, Function<? super V1, ? extends VR1> valueMapper1, Function<? super K2, ? extends KR2> keyMapper2, Function<? super V2, ? extends VR2> valueMapper2, Function<? super K3, ? extends KR3> keyMapper3, Function<? super V3, ? extends VR3> valueMapper3) {
             return new DMap3<>(map1.bimap(keyMapper1,valueMapper1),map2.bimap(keyMapper2,valueMapper2),map3.bimap(keyMapper3,valueMapper3));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DMap3<?, ?, ?, ?, ?, ?> dMap3 = (DMap3<?, ?, ?, ?, ?, ?>) o;
+            return Objects.equals(map1, dMap3.map1) &&
+                    Objects.equals(map2, dMap3.map2) &&
+                    Objects.equals(map3, dMap3.map3);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(map1, map2, map3);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder("[");
+            b =b.append(map1.stream().join(","));
+            b= b.append(map2.stream().join(","));
+            b= b.append(map3.stream().join(","));
+            return b.append("]").toString();
         }
     }
 
