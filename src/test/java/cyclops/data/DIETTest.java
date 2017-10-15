@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Comparator;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 public class DIETTest {
@@ -64,10 +65,33 @@ public class DIETTest {
 
     @Test
     public void remove() throws Exception {
-        System.out.println("DIET " + diet);
+    System.out.println("DIET " + diet);
         System.out.println("A:"+diet.remove(Range.range(2,4)));
         System.out.println("B:"+diet.remove(Range.range(12,14)));
         System.out.println("C:"+diet.remove(Range.range(6,7)));
+
+        DIET<Integer> d2 = diet.remove(Range.range(2,4));
+        assertFalse(d2.contains(2));
+        assertFalse(d2.contains(3));
+        assertTrue(d2.contains(4));
+        assertFalse(d2.contains(5));
+        assertTrue(d2.contains(1));
+        assertTrue(d2.contains(10));
+
+        DIET<Integer> d3 = diet.remove(Range.range(12,14));
+        assertFalse(d3.contains(12));
+        assertFalse(d3.contains(13));
+        assertTrue(d3.contains(14));
+        assertTrue(d3.contains(1));
+        assertTrue(d3.contains(10));
+
+        DIET<Integer> d4 = diet.remove(Range.range(6,7));
+        assertFalse(d4.contains(5));
+        assertFalse(d4.contains(6));
+        assertFalse(d4.contains(7));
+        assertTrue(d4.contains(14));
+        assertTrue(d4.contains(1));
+        assertTrue(d4.contains(10));
     }
 
     @Test

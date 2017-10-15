@@ -169,11 +169,10 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         @Override
         public DIET<T> remove(Range<T> range) {
 
+
             Option<Tuple2<Range<T>, Option<Range<T>>>> x = focus.minusAll(range);
-            System.out.println("X is " + x);
+
             return x.visit(s->s.transform((r, mr) ->  mr.visit(sr ->{
-                        Range<T> x1 = r;
-                        DIET<T> a1 = right;
 
                        return merge(cons( left,r, empty()),cons(empty(),sr,  right));
                     },() -> cons(range.startsBefore(focus) ? left.remove(range) : left, r, range.endsAfter(focus) ? right.remove(range) : right))

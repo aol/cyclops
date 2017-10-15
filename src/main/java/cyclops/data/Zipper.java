@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 @Getter
 @Wither
-public class Zipper<T> implements IterableX<T> {
+public class Zipper<T> implements Iterable<T> {
 
     private final ImmutableList<T> left;
     private final T point;

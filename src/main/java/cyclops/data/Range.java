@@ -64,7 +64,7 @@ public class Range<T> {
         return range(end,start,enm,comp);
     }
     public boolean contains(T value){
-        if(comp.isGreaterThanOrEqual(value,start) && comp.isLessThanOrEqual(value,end))
+        if(comp.isGreaterThanOrEqual(value,start) && comp.isLessThan(value,end))
             return true;
         return false;
     }
