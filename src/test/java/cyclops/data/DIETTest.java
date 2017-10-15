@@ -4,7 +4,9 @@ import cyclops.function.Ordering;
 import cyclops.typeclasses.Enumeration;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
@@ -96,27 +98,52 @@ public class DIETTest {
 
     @Test
     public void remove1() throws Exception {
+        DIET<Integer> d2 = diet.remove(2).remove(3);
+        assertFalse(d2.contains(2));
+        assertFalse(d2.contains(3));
+        assertTrue(d2.contains(4));
+        assertFalse(d2.contains(5));
+        assertTrue(d2.contains(1));
+        assertTrue(d2.contains(10));
     }
 
     @Test
     public void map() throws Exception {
-        System.out.println(diet.map(i->i*2));
+        assertThat(diet.map(i->i*2).stream().toList(),equalTo(
+                Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40)
+        ));
+        assertThat(diet.map(i->i*2,Enumeration.ints(),Comparator.naturalOrder()).stream().toList(),equalTo(
+                Arrays.asList(2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40)
+        ));
     }
 
     @Test
+    public void flatMap(){
+        DIET<Integer> d2 = diet.flatMap(i -> DIET.cons(Range.range(500, 1000)));
+        List<Integer> l = d2.stream().toListX();
+        System.out.println(d2);
+
+        System.out.println(Range.range(500,1000).stream().size());
+
+        assertThat(d2.stream().toListX().size(),equalTo(501));
+
+    }
+
+
+    @Test
     public void lazySeq() throws Exception {
+        assertThat(diet.lazySeq().size(),equalTo(18));
     }
 
     @Test
     public void stream() throws Exception {
+        assertThat(diet.stream().size(),equalTo(18));
     }
 
-    @Test
-    public void iterator() throws Exception {
-    }
 
     @Test
     public void isEmpty() throws Exception {
+        assertFalse(diet.isEmpty());
     }
 
 }

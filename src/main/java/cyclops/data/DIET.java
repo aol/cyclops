@@ -49,11 +49,8 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
 
 
     DIET<T> add(Range<T> range);
-    default DIET<T> remove(T value, Enumeration<T> enm, Comparator<? super T> comp){
-        return enm.succ(value).visit(s-> {
-            return remove(Range.range(value,s, enm, comp));
-        },()->this);
-    }
+    DIET<T> remove(T value);
+
     DIET<T> remove(Range<T> range);
 
     <R> DIET<R> map(Function<? super T, ? extends R> fn, Enumeration<R> enm, Comparator<? super R> comp);
@@ -84,6 +81,10 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
                 return right.containsRec(value);
             return done(focus.contains(value));
 
+        }
+
+        public DIET<T> add(T value){
+            return add(value,focus.enumeration(),focus.ordering());
         }
 
         @Override
@@ -136,6 +137,8 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
         }
         @Override
         public DIET<T> add(Range<T> range) {
+            if(contains(range))
+                return this;
             Tuple2<Range<T>, Option<Range<T>>> t = focus.plusAll(range);
             return t._2().visit(s-> t._1()==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
 
@@ -146,6 +149,13 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
                 return cons(leftAndStart._1(), Range.range(leftAndStart._2(), rightAndEnd._2(), focus.enumeration(), focus.ordering()), rightAndEnd._1());
 
             });
+        }
+
+        @Override
+        public DIET<T> remove(T value) {
+            return focus.enumeration().succ(value).visit(s-> {
+                return remove(Range.range(value,s, focus.enumeration(),focus.ordering()));
+            },()->this);
         }
 
 
@@ -228,10 +238,11 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
 
         @Override
         public String toString() {
-            return "[{" + left +
+             return "[{" + left +
                     "}," + focus +
                     ",{" + right +
                     "}]";
+
         }
 
         @Override
@@ -260,6 +271,10 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>, Iterable<T>,
             return DIET.cons(range);
         }
 
+        @Override
+        public DIET<T> remove(T value) {
+            return INSTANCE;
+        }
 
 
         @Override
