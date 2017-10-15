@@ -118,6 +118,12 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
             return res;
 
     }
+
+    @Override
+    default Iterator<T> iterator() {
+        return lazySeq().iterator();
+    }
+
     @Override
     default BankersQueue<T> append(T value) {
         return enqueue(value);
@@ -229,7 +235,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
 
         public Tuple2<T,BankersQueue<T>> dequeue() {
 
-            return front.fold(cons->cons.fold((head, tail)->Tuple.tuple(head,tail.fold(c->check(new Cons<>(sizeFront-1,tail,sizeBack,back)), n->Nil.Instance)))
+            return front.fold(cons->cons.fold((head, tail)->Tuple.tuple(head,tail()))
                                  ,nil->{throw new RuntimeException("Unreachable!");});
 
         }

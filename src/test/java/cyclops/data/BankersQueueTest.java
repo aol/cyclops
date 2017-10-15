@@ -7,8 +7,10 @@ import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,6 +18,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -37,6 +40,8 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
 
 
         System.out.println(q.equals(q));
+        System.out.println(q.tail());
+        System.out.println(q.dequeue(-1));
         assertThat(q.dequeue(-1),equalTo(Tuple.tuple(1,q.tail())));
         BankersQueue<Integer> q2  = q.dequeue(-1)._2();
 
@@ -79,6 +84,36 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
         assertThat(q.get(3).isPresent(),equalTo(false));
         assertThat(q.get(-1).isPresent(),equalTo(false));
     }
+    @Test
+    public void get2(){
+        BankersQueue<Integer> q =  BankersQueue.cons(1)
+                .enqueue(2)
+                .enqueue(3)
+                .enqueue(4)
+                .enqueue(5)
+                .enqueue(6);
+        //BankersQueue.of(1,2,3);
+
+        System.out.println("0 " + q.get(0));
+        System.out.println("1 " + q.get(1));
+        System.out.println("2 " + q.get(2));
+        System.out.println("3 " + q.get(3));
+        System.out.println("4 " + q.get(4));
+        System.out.println("5 " + q.get(5));
+        System.out.println(q);
+        System.out.println("0 " + q.dequeue(-1));
+        System.out.println("1 " + q.dequeue(-1)._2().dequeue(-1));
+        System.out.println("2 " + q.dequeue(-1)._2().dequeue(-1)._2().dequeue(-1));
+        for (Integer integer : q) {
+            System.out.println(integer);
+        }
+
+        assertThat(q.get(0),equalTo(Option.some(1)));
+        assertThat(q.get(1),equalTo(Option.some(2)));
+        assertThat(q.get(2),equalTo(Option.some(3)));
+        assertThat(q.get(3).isPresent(),equalTo(true));
+        assertThat(q.get(-1).isPresent(),equalTo(false));
+    }
 
     @Override
     protected <T> ImmutableQueue<T> fromStream(Stream<T> s) {
@@ -118,5 +153,21 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
     @Override
     public <U, T> IterableX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return BankersQueue.fromStream(ReactiveSeq.unfold(seed,unfolder));
+    }
+    @Test
+    public void retainAll(){
+        System.out.println(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)));
+        assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+    }
+    @Test
+    public void streamable(){
+        System.out.println("S"+of(1,2,3,4,5,6));
+        Streamable<Integer> repeat = (of(1,2,3,4,5,6)
+                .map(i->i*2)
+        ).to()
+                .streamable();
+
+        assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+        assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
     }
 }

@@ -367,7 +367,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default ImmutableQueue<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
+        return unitStream(stream().retainAllI(it));
     }
 
     @Override
