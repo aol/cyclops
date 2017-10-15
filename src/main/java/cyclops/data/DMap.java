@@ -1,6 +1,7 @@
 package cyclops.data;
 
 import com.aol.cyclops2.types.foldable.To;
+import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.lazy.LazyEither;
 import cyclops.control.lazy.LazyEither3;
@@ -37,7 +38,7 @@ public interface DMap{
         Two<K1,V1,K2,V2> put2(K2 key, V2 value);
         Two<K1,V1,K2,V2> put1(Tuple2<K1, V1> keyAndValue);
         Two<K1,V1,K2,V2> put2(Tuple2<K2, V2> keyAndValue);
-        LazyEither3<V1,V2,Nothing> get(LazyEither<K1, K2> key);
+        LazyEither3<V1,V2,Nothing> get(Either<K1, K2> key);
         Option<V1> get1(K1 key);
         Option<V2> get2(K2 key);
         V1 getOrElse1(K1 key, V1 alt);
@@ -46,9 +47,9 @@ public interface DMap{
         V2 getOrElseGet2(K2 key, Supplier<V2> alt);
         int size();
         <K3,V3> Three<K1,V1,K2,V2,K3,V3> merge(ImmutableMap<K3, V3> one);
-        ReactiveSeq<LazyEither<Tuple2<K1,V1>,Tuple2<K2,V2>>> stream();
-        ReactiveSeq<LazyEither<V1, V2>> streamValues();
-        ReactiveSeq<LazyEither<K1, K2>> streamKeys();
+        ReactiveSeq<Either<Tuple2<K1,V1>,Tuple2<K2,V2>>> stream();
+        ReactiveSeq<Either<V1, V2>> streamValues();
+        ReactiveSeq<Either<K1, K2>> streamKeys();
         ImmutableMap<K1,V1> map1();
         ImmutableMap<K2,V2> map2();
 
@@ -137,7 +138,7 @@ public interface DMap{
         }
 
         @Override
-        public LazyEither3<V1, V2, Nothing> get(LazyEither<K1, K2> key) {
+        public LazyEither3<V1, V2, Nothing> get(Either<K1, K2> key) {
             return key.visit(k1->{
                 V1 r = getOrElse1(k1, null);
                 return r==null ? LazyEither3.right(Nothing.EMPTY) : LazyEither3.left1(r);
@@ -174,13 +175,13 @@ public interface DMap{
 
 
         @Override
-        public ReactiveSeq<LazyEither<Tuple2<K1, V1>, Tuple2<K2, V2>>> stream() {
-            ReactiveSeq<LazyEither<Tuple2<K1, V1>, Tuple2<K2, V2>>> x = map1.stream().map(LazyEither::left);
+        public ReactiveSeq<Either<Tuple2<K1, V1>, Tuple2<K2, V2>>> stream() {
+            ReactiveSeq<Either<Tuple2<K1, V1>, Tuple2<K2, V2>>> x = map1.stream().map(LazyEither::left);
             return x.mergeP(map2.stream().map(LazyEither::right));
         }
         @Override
-        public ReactiveSeq<LazyEither<K1, K2>> streamKeys() {
-            ReactiveSeq<LazyEither<K1, K2>> x = map1.stream().map(t->t._1()).map(LazyEither::left);
+        public ReactiveSeq<Either<K1, K2>> streamKeys() {
+            ReactiveSeq<Either<K1, K2>> x = map1.stream().map(t->t._1()).map(LazyEither::left);
             return x.mergeP(map2.stream().map(t->t._1()).map(LazyEither::right));
         }
 
@@ -200,8 +201,8 @@ public interface DMap{
         }
 
         @Override
-        public ReactiveSeq<LazyEither<V1, V2>> streamValues() {
-            ReactiveSeq<LazyEither<V1, V2>> x = map1.stream().map(t->t._2()).map(LazyEither::left);
+        public ReactiveSeq<Either<V1, V2>> streamValues() {
+            ReactiveSeq<Either<V1, V2>> x = map1.stream().map(t->t._2()).map(LazyEither::left);
             return x.mergeP(map2.stream().map(t->t._2()).map(LazyEither::right));
         }
 
@@ -209,6 +210,11 @@ public interface DMap{
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Nothing{
         public final static Nothing EMPTY = new Nothing();
+
+        @Override
+        public String toString() {
+            return "Nothing[]";
+        }
     }
     @AllArgsConstructor
     static class DMap3<K1,V1,K2,V2,K3,V3> implements Three<K1,V1,K2,V2,K3,V3> {
