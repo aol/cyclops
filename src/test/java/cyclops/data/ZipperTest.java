@@ -4,6 +4,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
@@ -33,30 +34,42 @@ public class ZipperTest {
 
     @Test
     public void zip1() throws Exception {
+        assertThat(z.zip(z2),equalTo(Zipper.of(LazySeq.of(tuple(1,40),tuple(2,20),tuple(3,60)),
+                                            tuple(5,50),
+                                                LazySeq.of(tuple(10,1),tuple(20,2),tuple(30,3)))));
     }
 
     @Test
     public void start() throws Exception {
+        assertThat(z.start(),equalTo(equalTo(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5,10,20,30)))));
     }
 
     @Test
     public void end() throws Exception {
+        assertThat(z.end(),equalTo(Zipper.of(LazySeq.of(1,2,3,5,10,20),30,LazySeq.empty())));
     }
 
     @Test
     public void index() throws Exception {
+        assertThat(z.index(),equalTo(3));
+        assertThat(z.next().orElse(z2).index(),equalTo(4));
+        assertThat(z.previous().orElse(z2).index(),equalTo(2));
     }
 
     @Test
     public void position() throws Exception {
+        assertThat(z.position(0).orElse(z2),equalTo(Zipper.of(LazySeq.empty(),1,LazySeq.of(2,3,5,10,20,30))));
+        assertThat(z.position(1).orElse(z2),equalTo(Zipper.of(LazySeq.of(1),2,LazySeq.of(3,5,10,20,30))));
     }
 
     @Test
     public void next() throws Exception {
+        assertThat(z.next().orElse(z2),equalTo(Zipper.of(LazySeq.of(1,2,3,5),10,LazySeq.of(20,30))));
     }
 
     @Test
     public void next1() throws Exception {
+        assertThat(z.next(z2),equalTo(Zipper.of(LazySeq.of(1,2,3,5),10,LazySeq.of(20,30))));
     }
 
     @Test
@@ -121,7 +134,7 @@ public class ZipperTest {
 
     @Test
     public void split() throws Exception {
-       assertThat(z.split(),equalTo(Tuple.tuple(left,4,right)));
+       assertThat(z.split(),equalTo(tuple(left,4,right)));
     }
 
     @Test
