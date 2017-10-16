@@ -31,11 +31,11 @@ public class RBTTest {
         assertTrue(empty().isBlack());
         assertTrue(empty().isEmpty());
         assertTrue(empty().size()==0);
-        assertThat(of(1).getOrElse(1,-1),equalTo(-1));
+        assertThat(empty().getOrElse(1,-1),equalTo(-1));
     }
     @Test
     public void oneProperties(){
-        assertFalse(of(1).isBlack());
+        assertTrue(of(1).isBlack());
         assertFalse(of(1).isEmpty());
         assertTrue(of(1).size()==1);
         assertThat(of(1).getOrElse(1,-1),equalTo(1));
@@ -103,7 +103,7 @@ public class RBTTest {
 
         tree = RedBlackTree.rootIsBlack(tree.minus(102));
         assertThat(tree.tree(),equalTo("{BLACK:5 {RED:-2 {BLACK:-5 {RED:-7}} {BLACK:-1}} {RED:101 {BLACK:100 {RED:7}}}}"));
-        assertThat(tree.size(),equalTo(7));
+        assertThat(tree.size(),equalTo(8));
 
     }
     @Test
@@ -137,7 +137,7 @@ public class RBTTest {
         assertThat(tree.size(),equalTo(6));
 
         tree = RedBlackTree.rootIsBlack(tree.plus(6,6));
-        assertThat(tree.tree(),equalTo("{BLACK:5 {BLACK:-5 {RED:-7}} {BLACK:100 {RED:7}}}"));
+        assertThat(tree.tree(),equalTo("{BLACK:3 {BLACK:1 {BLACK:0} {BLACK:2}} {BLACK:5 {BLACK:4} {BLACK:6}}}"));
         assertThat(tree.size(),equalTo(7));
     }
 
