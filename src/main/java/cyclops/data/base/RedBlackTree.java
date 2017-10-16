@@ -5,6 +5,8 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct5;
 import com.aol.cyclops2.matching.Sealed2;
 import cyclops.control.Option;
 
+import cyclops.control.lazy.Trampoline;
+import cyclops.matching.Api;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,15 +14,20 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple5;
+import lombok.experimental.Wither;
 
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static cyclops.matching.Api.Case;
+
 
 public interface RedBlackTree {
-
+    static <K,V> Tree<K,V> rootIsBlack(Tree<K,V> root){
+        return Api.MatchType(root).of(Case(node->node.withBlack(true)),Case(leaf->leaf));
+    }
     public static <K,V> Tree<K,V> fromStream(Comparator<? super K> comp, Stream<? extends Tuple2<? extends K, ? extends V>> stream){
         Tree<K,V> tree[] = new Tree[1];
         tree[0]= new Leaf(comp);
@@ -36,6 +43,9 @@ public interface RedBlackTree {
 
         boolean isEmpty();
         boolean isBlack();
+        default boolean isRed(){
+            return !isBlack();
+        }
         Option<V> get(K key);
         V getOrElse(K key, V alt);
         V getOrElseGet(K key, Supplier<V> alt);
@@ -44,6 +54,8 @@ public interface RedBlackTree {
         Comparator<? super K> comparator();
         ReactiveSeq<Tuple2<K,V>> stream();
         int size();
+        String tree();
+
 
 
 
@@ -51,8 +63,9 @@ public interface RedBlackTree {
 
 
 
-            if(isBlack && !isEmpty()){
-                if(!left.isBlack() && !left.isEmpty()){
+            if(isBlack && !isEmpty())
+            {
+                if(left.isRed() && !left.isEmpty()){
                     Node<K,V> leftNode = left.fold(n->n, leaf->//unreachable
                             null);
                     if(!leftNode.left.isBlack() && !leftNode.left.isEmpty()){
@@ -71,7 +84,7 @@ public interface RedBlackTree {
                                 nestedRightNode.key,nestedRightNode.value,comparator());
                     }
                 }
-                else if(!right.isBlack() && !right.isEmpty()){
+                if(!right.isBlack() && !right.isEmpty()){
 
                     Node<K,V> rightNode = right.fold(n->n, leaf->//unreachable
                             null);
@@ -99,6 +112,7 @@ public interface RedBlackTree {
     }
 
     @AllArgsConstructor
+    @Wither
     public static class Node<K,V> implements Tree<K,V>, Deconstruct5<Boolean,Tree<K,V>,Tree<K,V>, K,V> {
         private final boolean isBlack;
         private final Tree<K,V> left;
@@ -169,6 +183,15 @@ public interface RedBlackTree {
 
             return balance(isBlack, left, right.plus(key, value),this.key, this.value);
         }
+
+        @Override
+        public String tree() {
+            String value = (this.isBlack ? "BLACK" : "RED") + ":" + this.value;
+            String left = this.left.isEmpty() ? "" : " " + this.left.tree();
+            String right = this.right.isEmpty() ? "" : " " + this.right.tree();
+             return "{" + value + left + right + "}";
+        }
+
 
         @Override
         public Tree<K, V> minus(K key) {
@@ -272,6 +295,11 @@ public interface RedBlackTree {
         @Override
         public int size() {
             return 0;
+        }
+
+        @Override
+        public String tree() {
+            return "{LEAF}";
         }
 
         @Override

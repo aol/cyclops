@@ -17,10 +17,15 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+
 public class TreeSet<T> implements ImmutableSortedSet<T>{
     private final RedBlackTree.Tree<T,T> map;
     private final Comparator<? super T> comp;
+
+    public TreeSet(RedBlackTree.Tree<T, T> map, Comparator<? super T> comp) {
+        this.map = RedBlackTree.rootIsBlack(map);
+        this.comp = comp;
+    }
 
     public static <T> TreeSet<T> empty(Comparator<? super T> comp){
         return new TreeSet<T>( RedBlackTree.empty(comp),comp);
@@ -204,5 +209,14 @@ public class TreeSet<T> implements ImmutableSortedSet<T>{
     @Override
     public ImmutableSortedSet<T> take(int num) {
         return fromStream(stream().take(num),comp);
+    }
+
+    public String printTree(){
+        return map.tree();
+    }
+
+    @Override
+    public String toString() {
+        return stream().join(",","[","]");
     }
 }

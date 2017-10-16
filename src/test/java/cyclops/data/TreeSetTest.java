@@ -1,14 +1,20 @@
 package cyclops.data;
 
+import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
+import cyclops.reactive.ReactiveSeq;
+import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class TreeSetTest extends BaseImmutableSortedSetTest{
     @Override
@@ -49,5 +55,9 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     @Override
     public <U, T> ImmutableSortedSet<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return TreeSet.unfold(seed,unfolder);
+    }
+    @Test
+    public void printTree(){
+       System.out.println(TreeSet.range(0,10_000).printTree());
     }
 }
