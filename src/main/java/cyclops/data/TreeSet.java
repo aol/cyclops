@@ -18,9 +18,11 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 
-public class TreeSet<T> implements ImmutableSortedSet<T>{
+public final class TreeSet<T> implements ImmutableSortedSet<T>{
     private final RedBlackTree.Tree<T,T> map;
     private final Comparator<? super T> comp;
+
+    private static final long serialVersionUID = 1L;
 
     public TreeSet(RedBlackTree.Tree<T, T> map, Comparator<? super T> comp) {
         this.map = RedBlackTree.rootIsBlack(map);

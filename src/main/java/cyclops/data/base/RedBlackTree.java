@@ -16,6 +16,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple5;
 import lombok.experimental.Wither;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ import java.util.stream.Stream;
 import static cyclops.matching.Api.Case;
 
 
-public interface RedBlackTree {
+public interface RedBlackTree extends Serializable{
     static <K,V> Tree<K,V> rootIsBlack(Tree<K,V> root){
         return Api.MatchType(root).of(Case(node->node.withBlack(true)),Case(leaf->leaf));
     }
@@ -113,13 +114,15 @@ public interface RedBlackTree {
 
     @AllArgsConstructor
     @Wither
-    public static class Node<K,V> implements Tree<K,V>, Deconstruct5<Boolean,Tree<K,V>,Tree<K,V>, K,V> {
+    public static final class Node<K,V> implements Tree<K,V>, Deconstruct5<Boolean,Tree<K,V>,Tree<K,V>, K,V> {
         private final boolean isBlack;
         private final Tree<K,V> left;
         private final Tree<K,V> right;
         private final K key;
         private final V value;
         private final Comparator<K> comp;
+
+        private static final long serialVersionUID = 1L;
 
 
 
@@ -245,7 +248,8 @@ public interface RedBlackTree {
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Leaf<K,V> implements Tree<K,V> {
+    public static final class Leaf<K,V> implements Tree<K,V> {
+        private static final long serialVersionUID = 1L;
         private final Comparator<? super K> comp;
         @Override
         public boolean isEmpty() {
