@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
@@ -10,15 +11,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class TreeSetTest extends BaseImmutableSortedSetTest{
@@ -34,6 +34,10 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
 
     @Override
     public <T> ImmutableSortedSet<T> of(T... values) {
+        return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
+    }
+   
+    public <T> ImmutableSortedSet<T> of(Comparator<T> comp, T... values) {
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
     }
 
@@ -79,10 +83,20 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     public void testOfTypeNoOrd() {
 
 
+        ImmutableSortedSet<Number> set = this.<Number>of(Comparators.identityComparator(),1, 10l, 2, 20l, 3);
+        ImmutableSortedSet<Integer> setA = set.ofType(Integer.class);
+        assertThat(setA.toListX(),containsInAnyOrder(1, 2, 3));
 
-        assertThat((((IterableX<Integer>)of(1, 10l, 2, 20l, 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
+    }
+    @Test
+    public void headTailReplayNoOrd() {
 
+        IterableX<String> helloWorld = of("hello", "world", "last");
+        HeadAndTail<String> headAndTail = helloWorld.headAndTail();
+        String head = headAndTail.head();
+        assertThat(head, isOneOf("hello","world","last"));
 
+      
 
     }
 
