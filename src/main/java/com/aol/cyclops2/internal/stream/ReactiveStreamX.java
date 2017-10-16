@@ -1231,9 +1231,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<Option<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return new Tuple2(
-                Tuple2._1().to().optional()
+                Tuple2._1().to().option()
                         .flatMap(l -> {
-                            return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
+                            return l.size() > 0 ? Option.of(l.get(0)) : Option.none();
                         }),
                 Tuple2._2());
     }

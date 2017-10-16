@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
@@ -631,18 +632,18 @@ public abstract class BaseSequentialSeqTest {
 	}
 	    @Test
 	    public void testSplitAtHead() {
-	        assertEquals(Optional.empty(), of().splitAtHead()._1());
+	        assertEquals(Option.none(), of().splitAtHead()._1());
 	        assertEquals(asList(), of().splitAtHead()._2().toList());
 
-	        assertEquals(Optional.of(1), of(1).splitAtHead()._1());
+	        assertEquals(Option.of(1), of(1).splitAtHead()._1());
 	        assertEquals(asList(), of(1).splitAtHead()._2().toList());
 
-	        assertEquals(Optional.of(1), of(1, 2).splitAtHead()._1());
+	        assertEquals(Option.of(1), of(1, 2).splitAtHead()._1());
 	        assertEquals(asList(2), of(1, 2).splitAtHead()._2().toList());
 
-	        assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead()._1());
-	        assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-	        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+	        assertEquals(Option.of(1), of(1, 2, 3).splitAtHead()._1());
+	        assertEquals(Option.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+	        assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 	        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead()._2().toList());
 	        assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 	        assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());

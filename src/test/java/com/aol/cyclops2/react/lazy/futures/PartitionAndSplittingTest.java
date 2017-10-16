@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
@@ -44,17 +45,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), of(1).actOnFutures().splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().actOnFutures().splitAtHead()._1());
+		assertEquals(Option.none(), of().actOnFutures().splitAtHead()._1());
 		assertEquals(asList(), of().actOnFutures().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1).actOnFutures().splitAtHead()._1());
+		assertEquals(Option.of(1), of(1).actOnFutures().splitAtHead()._1());
 
-		assertEquals(Optional.of(1), of(1, 2).actOnFutures().splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2).actOnFutures().splitAtHead()._1());
 		assertEquals(asList(2), of(1, 2).actOnFutures().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1, 2, 3).actOnFutures().splitAtHead()._1());
-		assertEquals(Optional.of(2), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2, 3).actOnFutures().splitAtHead()._1());
+		assertEquals(Option.of(2), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), of(1, 2, 3).actOnFutures().splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());

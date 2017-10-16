@@ -38,7 +38,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     }
 
     public <T> ImmutableSortedSet<T> of(Comparator<T> comp, T... values) {
-        return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
+        return TreeSet.of(comp,values);
     }
 
     @Override
@@ -80,6 +80,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
          System.out.println(TreeSet.range(0,10).foldRight(Monoids.intSum));
     }
 
+    @Test
     public void testOfTypeNoOrd() {
 
 

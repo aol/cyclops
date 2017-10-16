@@ -22,6 +22,7 @@ import cyclops.async.adapters.Topic;
 import cyclops.async.adapters.Queue;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
+import cyclops.control.Option;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.LazyEither;
 import org.hamcrest.Matchers;
@@ -212,10 +213,10 @@ public class BaseSequentialTest {
 
     @Test
     public void splitThenSplit() {
-        assertThat(of(1, 2, 3).to().optional(), equalTo(Optional.of(ListX.of(1, 2, 3))));
+        assertThat(of(1, 2, 3).to().option(), equalTo(Option.of(ListX.of(1, 2, 3))));
         // System.out.println(of(1, 2, 3).splitAtHead()._2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toListX());
-        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
     }
 
     @Test
