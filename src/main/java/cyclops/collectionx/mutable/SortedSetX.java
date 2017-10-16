@@ -983,12 +983,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.aol.cyclops2.lambda.monads.ExtendedTraversable#permutations()
      */
     @Override
-    default SortedSetX<ReactiveSeq<T>> permutations() {
+    default SetX<ReactiveSeq<T>> permutations() {
         ReactiveSeq<ReactiveSeq<T>> x = stream().permutations()
                 .map(c->{
                     return Comparables.comparable(c);
                 });
-        return fromStream(x);
+        return SetX.setX(x);
 
     }
 
@@ -996,25 +996,25 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.aol.cyclops2.lambda.monads.ExtendedTraversable#combinations(int)
      */
     @Override
-    default SortedSetX<ReactiveSeq<T>> combinations(final int size) {
+    default SetX<ReactiveSeq<T>> combinations(final int size) {
         ReactiveSeq<ReactiveSeq<T>> x = stream().combinations(size)
                 .map(c->{
                     return Comparables.comparable(c);
                 });
-        return fromStream(x);
+        return SetX.setX(x);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.ExtendedTraversable#combinations()
      */
     @Override
-    default SortedSetX<ReactiveSeq<T>> combinations() {
+    default SetX<ReactiveSeq<T>> combinations() {
 
         ReactiveSeq<ReactiveSeq<T>> x = stream().combinations()
                                             .map(c->{
                                                 return Comparables.comparable(c);
                                             });
-        return fromStream(x);
+        return SetX.setX(x);
     }
 
 

@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import cyclops.control.Option;
 import cyclops.control.anym.Witness;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
@@ -217,7 +218,7 @@ public class FluentTriFunctionTest {
         assertThat(FluentFunctions.of(this::add)
                                   .liftOpt3()
                                   .apply(2, 1, 3),
-                   equalTo(Optional.of(6)));
+                   equalTo(Option.some(6)));
     }
 
     @Test

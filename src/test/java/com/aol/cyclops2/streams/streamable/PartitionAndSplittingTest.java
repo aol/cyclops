@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import org.junit.Test;
 
 import cyclops.reactive.Streamable;
@@ -97,17 +98,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), Streamable.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), Streamable.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Streamable.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), Streamable.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), Streamable.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Streamable.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), Streamable.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
@@ -118,17 +119,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), Streamable.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), Streamable.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Streamable.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), Streamable.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), Streamable.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Streamable.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), Streamable.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), Streamable.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), Streamable.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());

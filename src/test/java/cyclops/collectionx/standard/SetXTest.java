@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractCollectionXTest;
+import cyclops.collectionx.AbstractSetTest;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
@@ -30,7 +31,7 @@ import org.junit.Test;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import cyclops.collectionx.mutable.SetX;
 
-public class SetXTest extends AbstractCollectionXTest {
+public class SetXTest extends AbstractSetTest {
 
     @Override
     public <T> FluentCollectionX<T> of(T... values) {

@@ -15,6 +15,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
@@ -25,7 +26,7 @@ import org.junit.Test;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import cyclops.collectionx.AbstractCollectionXTest;
 
-public class POrderedSetXTest extends AbstractCollectionXTest{
+public class POrderedSetXTest extends AbstractSetTest {
 
 	AtomicLong counter = new AtomicLong(0);
 	@Before

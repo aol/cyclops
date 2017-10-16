@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractCollectionXTest;
+import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.BagX;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
@@ -11,6 +12,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -21,6 +23,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
@@ -28,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class PBagXTest extends AbstractCollectionXTest {
+public class PBagXTest extends AbstractSetTest {
 
     AtomicLong counter = new AtomicLong(0);
     @Before
@@ -115,5 +118,34 @@ public class PBagXTest extends AbstractCollectionXTest {
     public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
        return BagX.unfold(seed, unfolder);
     }
+    @Test
+    public void forEach2() {
 
+        assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a , b) -> a + b).toList().size(),
+                equalTo(30));
+    }
+
+    @Test
+    public void testCycleNoOrd() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).toListX().size());
+        assertEquals(asList(1, 2, 3, 1, 2, 3).size(), of(1, 2, 3).cycle(2).toListX().size());
+    }
+    @Test
+    public void testCycleTimesNoOrd() {
+        assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).toListX().size());
+    }
+
+    int count =0;
+    @Test
+    public void testCycleWhileNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3).size(),of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
+
+    }
+    @Test
+    public void testCycleUntilNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3, 1, 2,3).size(),of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
+
+    }
 }

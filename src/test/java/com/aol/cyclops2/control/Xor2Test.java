@@ -265,8 +265,8 @@ public class Xor2Test {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Xor.lazyRight[10]"));
-		assertThat(none.mkString(),equalTo("Xor.lazyLeft[none]"));
+		assertThat(just.mkString(),equalTo("Either.right[10]"));
+		assertThat(none.mkString(),equalTo("Either.left[none]"));
 	}
 	LazyReact react = new LazyReact();
 

@@ -3,6 +3,7 @@ package cyclops.collectionx.persistent;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.AbstractCollectionXTest;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class PSetXTest extends AbstractCollectionXTest {
+public class PSetXTest extends AbstractSetTest {
 
     AtomicLong counter = new AtomicLong(0);
     @Before

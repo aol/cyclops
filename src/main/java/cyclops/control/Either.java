@@ -1017,7 +1017,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
         @Override
         public String mkString() {
-            return "Either.lazyRight[" + value + "]";
+            return "Either.right[" + value + "]";
         }
 
         @Override
@@ -1190,7 +1190,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
         @Override
         public String mkString() {
-            return "Either.lazyLeft[" + value + "]";
+            return "Either.left[" + value + "]";
         }
 
 

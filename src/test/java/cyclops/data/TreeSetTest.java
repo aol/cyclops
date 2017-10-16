@@ -36,7 +36,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     public <T> ImmutableSortedSet<T> of(T... values) {
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
     }
-   
+
     public <T> ImmutableSortedSet<T> of(Comparator<T> comp, T... values) {
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
     }

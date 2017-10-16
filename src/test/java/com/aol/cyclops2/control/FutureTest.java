@@ -63,7 +63,7 @@ public class FutureTest {
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
 
         just.combineEager(add,none).printOut();
-        assertThat(just.combineEager(add,none),equalTo(just));
+        assertThat(just.combineEager(add,none).orElse(-1),equalTo(just.orElse(-1)));
 
 
     }

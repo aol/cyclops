@@ -2023,10 +2023,10 @@ public abstract class AbstractIterableXTest {
         IterableX<String> helloWorld = of("hello", "world", "last");
         HeadAndTail<String> headAndTail = helloWorld.headAndTail();
         String head = headAndTail.head();
-        assertThat(head, equalTo("hello"));
+        assertThat(head, isOneOf("world","last","hello"));
 
         ReactiveSeq<String> tail = headAndTail.tail();
-        assertThat(tail.headAndTail().head(), equalTo("world"));
+        assertThat(tail.headAndTail().head(), isOneOf("world","last","hello"));
 
     }
     @Test
