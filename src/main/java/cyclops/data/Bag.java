@@ -75,7 +75,6 @@ public class Bag<T> implements IterableX<T>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bag<?> bag = (Bag<?>) o;
-        System.out.println(Objects.equals(map, bag.map));
         return size == bag.size &&
                 Objects.equals(map, bag.map);
     }

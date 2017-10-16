@@ -106,7 +106,40 @@ public class RBTTest {
         assertThat(tree.size(),equalTo(7));
 
     }
+    @Test
+    public void balanceCheckTo6() {
+        RedBlackTree.Tree<Integer,Integer> tree = empty();
+        assertThat(tree.tree(),equalTo("{LEAF}"));
+        assertThat(tree.size(),equalTo(0));
 
+        tree = RedBlackTree.rootIsBlack(tree.plus(0,0));
+        assertThat(tree.tree(),equalTo("{BLACK:0}"));
+        assertThat(tree.size(),equalTo(1));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(1,1));
+        assertThat(tree.tree(),equalTo("{BLACK:0 {RED:1}}"));
+        assertThat(tree.size(),equalTo(2));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(2,2));
+        assertThat(tree.tree(),equalTo("{BLACK:1 {BLACK:0} {BLACK:2}}"));
+        assertThat(tree.size(),equalTo(3));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(3,3));
+        assertThat(tree.tree(),equalTo("{BLACK:1 {BLACK:0} {BLACK:2 {RED:3}}}"));
+        assertThat(tree.size(),equalTo(4));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(4,4));
+        assertThat(tree.tree(),equalTo("{BLACK:1 {BLACK:0} {RED:3 {BLACK:2} {BLACK:4}}}"));
+        assertThat(tree.size(),equalTo(5));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(5,5));
+        assertThat(tree.tree(),equalTo("{BLACK:1 {BLACK:0} {RED:3 {BLACK:2} {BLACK:4 {RED:5}}}}"));
+        assertThat(tree.size(),equalTo(6));
+
+        tree = RedBlackTree.rootIsBlack(tree.plus(6,6));
+        assertThat(tree.tree(),equalTo("{BLACK:5 {BLACK:-5 {RED:-7}} {BLACK:100 {RED:7}}}"));
+        assertThat(tree.size(),equalTo(7));
+    }
 
 
 

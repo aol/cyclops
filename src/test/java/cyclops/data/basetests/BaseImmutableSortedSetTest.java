@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public abstract class BaseImmutableSortedSetTest extends AbstractIterableXTest {
+public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
 
     protected abstract <T> ImmutableSortedSet<T> fromStream(Stream<T> s);
 
@@ -49,4 +50,10 @@ public abstract class BaseImmutableSortedSetTest extends AbstractIterableXTest {
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toList().size(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10).size()));
     }
+    @Test
+    public void testCycleTimesNoOrder() {
+        assertEquals(2,of(1, 2).cycle(3).toListX().size());
+
+    }
+
 }

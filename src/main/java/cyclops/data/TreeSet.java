@@ -86,7 +86,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
     public static <T> TreeSet<T> of(Comparator<? super T> comp, T... values){
         RedBlackTree.Tree<T, T> tree = RedBlackTree.empty(comp);
         for(T value : values){
-            tree = tree.plus(value,value);
+            tree = RedBlackTree.rootIsBlack(tree.plus(value,value));
+
         }
         return new TreeSet<>(tree,comp);
     }
@@ -166,6 +167,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
 
 
     public TreeSet<T> plus(T value){
+
         return new TreeSet<>(map.plus(value,value),comp);
     }
     public TreeSet<T> minus(T value){
@@ -215,6 +217,27 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
 
     public String printTree(){
         return map.tree();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if(o instanceof ImmutableSet) {
+            ImmutableSet<T> set = (ImmutableSet<T>) o;
+            return equalToIteration(set);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        for (Object element : this)
+            result = 31 * result + (element == null ? 0 : element.hashCode());
+
+        return result;
     }
 
     @Override

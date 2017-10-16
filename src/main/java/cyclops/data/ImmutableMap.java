@@ -138,7 +138,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
             @Override
             public Set<Entry<K, V>> entrySet() {
-                return ImmutableMap.this.stream().peek(System.out::println).map(t->(Entry<K,V>)new AbstractMap.SimpleEntry<>(t._1(),t._2())).toSet();
+                return ImmutableMap.this.stream().map(t->(Entry<K,V>)new AbstractMap.SimpleEntry<>(t._1(),t._2())).toSet();
             }
         };
     }

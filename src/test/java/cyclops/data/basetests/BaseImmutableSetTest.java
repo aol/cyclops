@@ -83,6 +83,11 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     }
     @Test
     public void permuations3NoOrd() {
+        /**
+         * Hello [[1, 2, 3]]
+         peek - [1,2,3]
+
+         */
         System.out.println("Hello " +of(1, 2, 3).permutations().map(s->s.toSet()).toSet());
         assertThat(of(1, 2, 3).permutations().map(s->s.toSet()).toSet(),
                 equalTo(of(of(1, 2, 3),

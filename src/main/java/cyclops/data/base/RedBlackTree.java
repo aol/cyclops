@@ -22,6 +22,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static cyclops.data.base.RedBlackTree.Node.*;
 import static cyclops.matching.Api.Case;
 
 
@@ -63,7 +64,6 @@ public interface RedBlackTree extends Serializable{
         default Tree<K,V> balance(boolean isBlack, Tree<K, V> left, Tree<K, V> right, K key, V value){
 
 
-
             if(isBlack && !isEmpty())
             {
                 if(left.isRed() && !left.isEmpty()){
@@ -72,37 +72,43 @@ public interface RedBlackTree extends Serializable{
                     if(!leftNode.left.isBlack() && !leftNode.left.isEmpty()){
                         Node<K,V> nestedLeftNode = leftNode.left.fold(n->n, leaf->//unreachable
                                 null);
-                        return new Node(false,
-                                new Node(true,nestedLeftNode.left,nestedLeftNode.right,nestedLeftNode.key,nestedLeftNode.value,comparator()),
-                                new Node(true,leftNode.right,right,key,value,comparator()),leftNode.key,leftNode.value,comparator());
+
+                        return RED(
+                                LEFT_BLACK(nestedLeftNode.left,nestedLeftNode.right,nestedLeftNode.key,nestedLeftNode.value,comparator()),
+                                RIGHT_BLACK(leftNode.right,right,key,value,comparator()),leftNode.key,leftNode.value,comparator());
                     }
                     if(!leftNode.right.isBlack() && !leftNode.right.isEmpty()){
                         Node<K,V> nestedRightNode = leftNode.right.fold(n->n, leaf->//unreachable
                                 null);
-                        return new Node(false,
-                                new Node(true,leftNode.left,nestedRightNode.left,leftNode.key,leftNode.value,comparator()),
-                                new Node(true,nestedRightNode.right,right,key,value,comparator()),
+
+                        return RED(
+                                LEFT_BLACK(leftNode.left,nestedRightNode.left,leftNode.key,leftNode.value,comparator()),
+                                RIGHT_BLACK(nestedRightNode.right,right,key,value,comparator()),
                                 nestedRightNode.key,nestedRightNode.value,comparator());
                     }
                 }
-                if(!right.isBlack() && !right.isEmpty()){
+                if(right.isRed() && !right.isEmpty()){
 
                     Node<K,V> rightNode = right.fold(n->n, leaf->//unreachable
                             null);
-                    if(!rightNode.left.isBlack() && !rightNode.left.isEmpty()){
+                    if(rightNode.left.isRed() && !rightNode.left.isEmpty()){
                         Node<K,V> nestedLeftNode = rightNode.left.fold(n->n, leaf->//unreachable
                                 null);
-                        return new Node(false,
-                                new Node(true,left,nestedLeftNode.left,key,value,comparator()),
-                                new Node(true,nestedLeftNode.right,rightNode.right,rightNode.key,rightNode.value,comparator()),nestedLeftNode.key,nestedLeftNode.value,comparator());
+                        return RED(
+                                LEFT_BLACK(left,nestedLeftNode.left,key,value,comparator()),
+                                RIGHT_BLACK(nestedLeftNode.right,rightNode.right,rightNode.key,rightNode.value,comparator()),nestedLeftNode.key,nestedLeftNode.value,comparator());
+
                     }
-                    if(!rightNode.right.isBlack() && !rightNode.right.isEmpty()){
+                    if(rightNode.right.isRed() && !rightNode.right.isEmpty()){
                         Node<K,V> nestedRightNode = rightNode.right.fold(n->n, leaf->//unreachable
                                 null);
-                        return new Node(false,
-                                new Node(true,left,nestedRightNode.left,key,value,comparator()),
-                                new Node(true,nestedRightNode.left,nestedRightNode.right,nestedRightNode.key,nestedRightNode.value,comparator()),
+
+                        Node<K,V> res =  RED(
+                                LEFT_BLACK(left,rightNode.left,key,value,comparator()),
+                                RIGHT_BLACK(nestedRightNode.left,nestedRightNode.right,nestedRightNode.key,nestedRightNode.value,comparator()),
                                 rightNode.key,rightNode.value,comparator());
+
+                        return res;
                     }
                 }
 
@@ -125,6 +131,18 @@ public interface RedBlackTree extends Serializable{
         private static final long serialVersionUID = 1L;
 
 
+        static <K,V> Node<K,V> RED(Tree<K,V> left, Tree<K,V> right,K key, V value,Comparator<? super K> comp){
+            return new Node(false,left,right,key,value,comp);
+        }
+        static <K,V> Node<K,V> BLACK(Tree<K,V> left, Tree<K,V> right,K key, V value,Comparator<? super K> comp){
+            return new Node(true,left,right,key,value,comp);
+        }
+        static <K,V> Node<K,V> LEFT_BLACK(Tree<K,V> left, Tree<K,V> right,K key, V value,Comparator<? super K> comp){
+            return new Node(true,left,right,key,value,comp);
+        }
+        static <K,V> Node<K,V> RIGHT_BLACK(Tree<K,V> left, Tree<K,V> right,K key, V value,Comparator<? super K> comp){
+            return new Node(true,left,right,key,value,comp);
+        }
 
         public Tree<K, V> left() {
             return left;
@@ -184,7 +202,9 @@ public interface RedBlackTree extends Serializable{
             else if (compRes==0)
                 return new Node(isBlack, left,right, key, value,comp);
 
-            return balance(isBlack, left, right.plus(key, value),this.key, this.value);
+            Tree<K, V> n = balance(isBlack, left, right.plus(key, value), this.key, this.value);
+
+            return n;
         }
 
         @Override

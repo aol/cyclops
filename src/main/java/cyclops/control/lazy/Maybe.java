@@ -1384,7 +1384,6 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public int hashCode() {
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
-                System.out.println("New maybe calling get");
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
 
