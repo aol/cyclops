@@ -6,9 +6,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -19,15 +17,12 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
 import cyclops.control.Option;
-import cyclops.data.Comparators;
-import cyclops.data.ImmutableSortedSet;
 import cyclops.function.FluentFunctions;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -38,7 +33,6 @@ import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import cyclops.collectionx.mutable.SortedSetX;
-import cyclops.collectionx.AbstractCollectionXTest;
 
 public class SortedSetXTest extends AbstractSetTest {
 
@@ -66,7 +60,7 @@ public class SortedSetXTest extends AbstractSetTest {
         //ListX.of(1, 2, 3).combinations(2).transform(t->t.toListX()).printOut();
         CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
         st.toListX().printOut();
-       // assertThat(of(1, 2, 3).combinations(2).transform(s->s.toListX()).toListX().get(0).size(),
+       // assertThat(of(1, 2, 3).combinations(2).transform(s->s.toListX()).toListX().getValue(0).size(),
         //        equalTo(2));
     }
     @Test
@@ -175,22 +169,22 @@ public class SortedSetXTest extends AbstractSetTest {
     public void allCombinations3NoOrd() {
         ListX<SetX<Integer>> x = SortedSetX.of(1, 2, 3).combinations().map(s -> s.to().setX()).to().listX();
         System.out.println(x);
-        assertTrue(x.contains(SetX.empty()));
-        assertTrue(x.contains(SetX.of(1)));
-        assertTrue(x.contains(SetX.of(2)));
-        assertTrue(x.contains(SetX.of(3)));
-        assertTrue(x.contains(SetX.of(1,2)));
-        assertTrue(x.contains(SetX.of(1,3)));
-        assertTrue(x.contains(SetX.of(2,3)));
-        assertTrue(x.contains(SetX.of(1,2,3)));
+        assertTrue(x.containsValue(SetX.empty()));
+        assertTrue(x.containsValue(SetX.of(1)));
+        assertTrue(x.containsValue(SetX.of(2)));
+        assertTrue(x.containsValue(SetX.of(3)));
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
+        assertTrue(x.containsValue(SetX.of(1,2,3)));
 
     }
     @Test
     public void combinations2NoOrd() {
         SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
-        assertTrue(x.contains(SetX.of(1,2)));
-        assertTrue(x.contains(SetX.of(1,3)));
-        assertTrue(x.contains(SetX.of(2,3)));
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
     }
     @Test
     public void testOfTypeNoOrd() {
@@ -206,13 +200,13 @@ public class SortedSetXTest extends AbstractSetTest {
     public void slidingNoOrd() {
         SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
 
-        list.contains(VectorX.of(1,2));
+        list.containsValue(VectorX.of(1,2));
         VectorX<Integer> vec = list.get(0).orElse(null);
 
         System.out.println(vec);
         System.out.println("same" +vec.equals(VectorX.of(1,2)));
-        System.out.println(list.contains(VectorX.of(1,2)));
-        assertTrue(list.contains(VectorX.of(1,2)));
+        System.out.println(list.containsValue(VectorX.of(1,2)));
+        assertTrue(list.containsValue(VectorX.of(1,2)));
     }
 
 }

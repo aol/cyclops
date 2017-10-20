@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -39,7 +40,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.pcollections.HashTreePMap;
+
 
 import cyclops.async.adapters.Queue;
 import cyclops.collectionx.mutable.ListX;
@@ -211,7 +212,7 @@ public abstract class BaseSeqTest {
 		shards.put(5,new Queue());
 		shards.put(6,new Queue());
 		for(int i=0;i<100;i++)
-			assertThat(of(1,2,3,4,5,6).shard(HashTreePMap.from(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(PersistentMapX.fromMap(shards),Function.identity()).size(),is(6));
 	}
 	@Test
 	public void shardStreams(){
@@ -219,13 +220,13 @@ public abstract class BaseSeqTest {
 		//for(int index=0;index<100;index++)
 		{
 		
-			Map<Integer,Queue<Integer>> shards = HashTreePMap.singleton(0,new Queue<Integer>()).plus(1,new Queue());
+			Map<Integer,Queue<Integer>> shards = PersistentMapX.singleton(0,new Queue<Integer>()).plus(1,new Queue());
 					
 			Map<Integer, ? extends FutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards, i -> i%2);
 			sharded.get(0).forEach(next ->{
 				System.out.println ("next is " + next);
 			});
-			//assertThat(sharded.get(0).collect(CyclopsCollectors.toList()),hasItem(6));
+			//assertThat(sharded.getValue(0).collect(CyclopsCollectors.toList()),hasItem(6));
 		}
 	}
 	@Test
@@ -525,7 +526,7 @@ public abstract class BaseSeqTest {
 	    @Test
 	    public void testZipWithIndex() {
 	        assertEquals(asList(),of().zipWithIndex().toList());
-	     //   System.out.println( of("a").zipWithIndex().toList().get(0));
+	     //   System.out.println( of("a").zipWithIndex().toList().getValue(0));
 	       
 	      assertThat( of("a").zipWithIndex().map(t->t._2()).findFirst().get(),is(0l));
 	      assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());

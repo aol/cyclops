@@ -106,13 +106,13 @@ public class IntMapTest extends BaseImmutableListTest{
 
         IntMap<Integer> v = IntMap.of(1);
         for(int i=0;i<100_000_00;i++){
-            v =v.plus(i);
+            v =v.insertAt(i);
         }
         ArrayList<Integer> al = new ArrayList(v.size());
         long start = System.currentTimeMillis();
 
         for(int i=0;i<100_000_00;i++){
-            al.add(v.getOrElse(i,-1));
+            al.add(v.getValueOrElse(i,-1));
         }
         System.out.println(System.currentTimeMillis()-start);
         System.out.println(al.size());
@@ -124,12 +124,12 @@ public class IntMapTest extends BaseImmutableListTest{
 
         PVector<Integer> v = TreePVector.singleton(1);
         for(int i=0;i<100_000_00;i++){
-            v =v.plus(i);
+            v =v.insertAt(i);
         }
         long start = System.currentTimeMillis();
         ArrayList<Integer> al = new ArrayList(v.size());
         for(int i=0;i<100_000_00;i++){
-            al.add(v.get(i));
+            al.add(v.getValue(i));
         }
         System.out.println(System.currentTimeMillis()-start);
         System.out.println(al.size());
@@ -140,7 +140,7 @@ public class IntMapTest extends BaseImmutableListTest{
         long start = System.currentTimeMillis();
         PVector<Integer> v = TreePVector.singleton(1);
         for(int i=0;i<100_000_00;i++){
-            v =v.plus(i);
+            v =v.insertAt(i);
         }
         System.out.println(System.currentTimeMillis()-start);
         System.out.println(v.size());

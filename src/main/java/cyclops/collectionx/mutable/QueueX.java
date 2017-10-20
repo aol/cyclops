@@ -425,7 +425,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
-    default <T1> QueueX<T1> from(final Collection<T1> c) {
+    default <T1> QueueX<T1> from(final Iterable<T1> c) {
         return QueueX.<T1> fromIterable(getCollector(), c);
     }
 
@@ -465,7 +465,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default <R> QueueX<R> unit(final Collection<R> col) {
+    default <R> QueueX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -681,20 +681,24 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default QueueX<T> plusAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            add(next);
+        }
         return this;
     }
 
     @Override
-    default QueueX<T> minus(final Object e) {
-        remove(e);
+    default QueueX<T> removeValue(final Object e) {
+        removeValue(e);
         return this;
     }
 
     @Override
-    default QueueX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default QueueX<T> removeAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            removeValue(list);
+        }
         return this;
     }
 
@@ -1107,8 +1111,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<T> prepend(T... values) {
-        return (QueueX<T>)LazyCollectionX.super.prepend(values);
+    default QueueX<T> prependAll(T... values) {
+        return (QueueX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

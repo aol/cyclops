@@ -6,11 +6,9 @@ import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.POrderedSet;
+import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -75,10 +73,13 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     }
 
     @Override
-    public <T1> LazyPOrderedSetX<T1> from(Collection<T1> c) {
+    public <T1> LazyPOrderedSetX<T1> from(Iterable<T1> c) {
         if(c instanceof POrderedSet)
             return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+    public <T1> LazyPOrderedSetX<T1> from(POrderedSet<T1> c) {
+        return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
     }
     @Override
     public OrderedSetX<T> lazy() {
@@ -97,30 +98,30 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
     }
 
     @Override
-    public OrderedSetX<T> plusAll(Collection<? extends T> list) {
+    public OrderedSetX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public OrderedSetX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public OrderedSetX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
 
     @Override
-    public T get(int index) {
+    public Option<T> get(int index) {
         return get().get(index);
     }
-
+/**
     @Override
     public int indexOf(Object o) {
-        return get().indexOf(o);
+        return getValue().indexOf(o);
     }
-
+**/
 
     @Override
-    public OrderedSetX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public OrderedSetX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
 
@@ -134,7 +135,7 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
 
 
     @Override
-    public <R> LazyPOrderedSetX<R> unit(Collection<R> col) {
+    public <R> LazyPOrderedSetX<R> unit(Iterable<R> col) {
         return from(col);
     }
     @Override

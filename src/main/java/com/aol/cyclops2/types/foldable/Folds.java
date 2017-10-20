@@ -624,8 +624,8 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code
      * 
      *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -&gt; i % 2);
-     *  assertEquals(asList(2, 4), map1.get(0));
-     *  assertEquals(asList(1, 3), map1.get(1));
+     *  assertEquals(asList(2, 4), map1.getValue(0));
+     *  assertEquals(asList(1, 3), map1.getValue(1));
      *  assertEquals(2, map1.size());
      * 
      * }
@@ -641,7 +641,7 @@ public interface Folds<T> extends Iterable<T>  {
      * 
      * <pre>
      * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
      * 
      * //3
      * }
@@ -659,7 +659,7 @@ public interface Folds<T> extends Iterable<T>  {
      * 
      *         <pre>
      * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().getValue();
      * 
      * //3
      * }
@@ -807,7 +807,7 @@ public interface Folds<T> extends Iterable<T>  {
      * 
      * <pre>
      * {@code
-     *  assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+     *  assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
      * 

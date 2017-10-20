@@ -50,7 +50,7 @@ import static cyclops.data.tuple.Tuple.tuple;
  {@code
  Trampoline<Integer> looping = loop(500000,5);
  Trampoline<Integer> looping2 = loop2(500000,5);
- System.out.println(looping.zip(looping2).get());
+ System.out.println(looping.zip(looping2).getValue());
 
  }
     </pre>
@@ -180,7 +180,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
 
     /* (non-Javadoc)
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     @Override
     T get();

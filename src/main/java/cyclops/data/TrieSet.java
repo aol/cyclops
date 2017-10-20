@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import cyclops.control.Option;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
@@ -78,7 +79,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
         return ReactiveSeq.fromIterable(it).foldLeft(empty(),(m, t2)->m.plus(t2));
     }
 
-    public boolean contains(T value){
+    public boolean containsValue(T value){
         return map.get(value.hashCode(),value).isPresent();
     }
 
@@ -93,7 +94,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
     }
 
     @Override
-    public TrieSet<T> remove(T value) {
+    public TrieSet<T> removeValue(T value) {
         return null;
     }
 
@@ -135,7 +136,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
     public TrieSet<T> plus(T value){
         return new TrieSet<>(map.put(value.hashCode(),value,value));
     }
-    public TrieSet<T> minus(T value){
+    public TrieSet<T> remove(T value){
         return new TrieSet<>(map.minus(value.hashCode(),value));
     }
 
@@ -150,11 +151,11 @@ public class TrieSet<T> implements ImmutableSet<T> {
     }
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof ImmutableSet) || o==null)
+        if(!(o instanceof PSet) || o==null)
             return false;
-        ImmutableSet s = (ImmutableSet)o;
+        PSet s = (PSet)o;
         for(T next : this){
-            if(!s.contains(next))
+            if(!s.containsValue(next))
                 return false;
         }
         return size()==size();

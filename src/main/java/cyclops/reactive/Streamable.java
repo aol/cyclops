@@ -379,17 +379,17 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Remove all occurances of the specified element from the Streamable
      * <pre>
      * {@code
-     * 	Streamable.of(1,2,3,4,5,1,2,3).remove(1)
+     * 	Streamable.of(1,2,3,4,5,1,2,3).removeValue(1)
      * 
      *  //Streamable[2,3,4,5,2,3]
      * }
      * </pre>
      * 
-     * @param t element to remove
+     * @param t element to removeValue
      * @return Filtered Streamable
      */
-    default Streamable<T> remove(final T t) {
-        return Streamable.fromStream(reactiveSeq().remove(t));
+    default Streamable<T> removeValue(final T t) {
+        return Streamable.fromStream(reactiveSeq().removeValue(t));
     }
 
     /**
@@ -397,14 +397,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
-     * 									 .prepend(100,200,300)
+     * 									 .prependAll(100,200,300)
     									 .transform(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param t value to prepend
+     * @param t value to prependAll
      * @return Streamable with values prepended
      */
     default Streamable<T> prepend(final T t) {
@@ -623,7 +623,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
                 final Streamable<ReactiveSeq<T>> zero = Streamable.empty();
                 return distinct().foldLeft(zero, (xs, x) -> {
                     final Function<ReactiveSeq<T>, ReactiveSeq<T>> prepend = l -> l.prepend(x);
-                    return xs.appendAll(remove(x).permutations()
+                    return xs.appendAll(removeValue(x).permutations()
                                                  .map(prepend));
                 });
             }
@@ -656,7 +656,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * Streamable.of(1,2,3,4,5).get(2)
+     * Streamable.of(1,2,3,4,5).getValue(2)
      * //3
      * }
      * </pre>
@@ -750,7 +750,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Optional<List<String>> reactiveStream = Streamable.of("hello","world")
     											.optional();
     											
-    	assertThat(reactiveStream.get(),equalTo(Arrays.asList("hello","world")));
+    	assertThat(reactiveStream.getValue(),equalTo(Arrays.asList("hello","world")));
      * }
      * 
      * </pre>
@@ -1046,8 +1046,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     								.collect(CyclopsCollectors.toList());
     	
     
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * 
      * }
      * 
@@ -1071,8 +1071,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     								.collect(CyclopsCollectors.toList());
     	
     
-    	assertThat(list.get(0),hasItems(1,2,3));
-    	assertThat(list.get(1),hasItems(3,4,5));
+    	assertThat(list.getValue(0),hasItems(1,2,3));
+    	assertThat(list.getValue(1),hasItems(3,4,5));
      * 
      * }
      * 
@@ -1095,8 +1095,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  List<List<Integer>> list = monad(Stream.of(1, 2, 3, 4, 5, 6)).grouped(3)
      *          .collect(CyclopsCollectors.toList());
      * 
-     *  assertThat(list.get(0), hasItems(1, 2, 3));
-     *  assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
+     *  assertThat(list.getValue(1), hasItems(4, 5, 6));
      * 
      * }
      * </pre>
@@ -1115,8 +1115,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * Map<Integer, List<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-    	        assertEquals(asList(2, 4), map1.get(0));
-    	        assertEquals(asList(1, 3), map1.get(1));
+    	        assertEquals(asList(2, 4), map1.getValue(0));
+    	        assertEquals(asList(1, 3), map1.getValue(1));
     	        assertEquals(2, map1.size());
      * 
      * }
@@ -1422,7 +1422,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return First matching element in sequential order
      * <pre>
      * {@code
-     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
      * 
      * //3
      * }
@@ -1439,7 +1439,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return first matching element,  but order is not guaranteed
      * <pre>
      * {@code
-     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().getValue();
      * 
      * //3
      * }
@@ -1525,7 +1525,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /* 
      * <pre>
      * {@code 
-     * assertThat(Streamable.of(1,2,3,4,5).transform(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
+     * assertThat(Streamable.of(1,2,3,4,5).transform(it -> it*100).reduce( (acc,next) -> acc+next).getValue(),equalTo(1500));
      * }
      * </pre>
      * 
@@ -1884,18 +1884,18 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
-     * 									 .prepend(100,200,300)
+     * 									 .prependAll(100,200,300)
     									 .transform(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param values to prepend
+     * @param values to prependAll
      * @return Streamable with values prepended
      */
-    default Streamable<T> prepend(final T... values) {
-        return fromStream(reactiveSeq().prepend(values));
+    default Streamable<T> prependAll(final T... values) {
+        return fromStream(reactiveSeq().prependAll(values));
     }
 
     /**
@@ -2125,7 +2125,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Return the elementAt index or Optional.empty
      * <pre>
      * {@code
-     * 	assertThat(Streamable.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+     * 	assertThat(Streamable.of(1,2,3,4,5).elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
      * @param index to extract element from
@@ -2142,7 +2142,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * Streamable.of(1,2,3,4,5).get(2)._1
+     * Streamable.of(1,2,3,4,5).getValue(2)._1
      * //3
      * }
      * </pre>
@@ -2546,7 +2546,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *   assertThat(Streamable.of(1,1,1,1,1,1)
      *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
      *                       .toList()
-     *                       .get(0)
+     *                       .getValue(0)
      *                       .size(),is(1));
      * }
      * </pre>
@@ -2567,7 +2567,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * assertThat(Streamable.of(1,1,1,1,1,1)
      * 						.batchBySize(3,()->new TreeSet<>())
      * 						.toList()
-     * 						.get(0)
+     * 						.getValue(0)
      * 						.size(),is(1));
      * }
      * </pre>
@@ -2777,13 +2777,18 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * @param t element to check for
      */
-    default boolean contains(final T t) {
+    default boolean containsValue(final T t) {
         return stream().anyMatch(c -> t.equals(c));
     }
 
     @Override
     default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromIterable(this);
+    }
+
+    @Override
+    default boolean isEmpty() {
+        return ToStream.super.isEmpty();
     }
 
     @Override

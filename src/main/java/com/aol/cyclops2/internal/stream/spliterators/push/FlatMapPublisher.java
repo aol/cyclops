@@ -8,8 +8,7 @@ import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

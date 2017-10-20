@@ -51,7 +51,7 @@ public class FluentFunctions {
      * FluentFunctions.ofChecked(this::exceptionalFirstTime)
     					.recover(IOException.class, ()->"hello boo!")
     					.println()
-    					.get()
+    					.getValue()
      * 
      * }
      * </pre>
@@ -75,10 +75,10 @@ public class FluentFunctions {
     	called=0;
     	Supplier<Integer> fn = FluentFunctions.of(this::getOne)
     												  .name("myFunction")
-    												  .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
-    	fn.get();
-    	fn.get();
-    	fn.get();
+    												  .memoize((key,f)->cache.getValue(key,()->f.applyHKT(key)));
+    	fn.getValue();
+    	fn.getValue();
+    	fn.getValue();
     	
     	//called == 1
      * 
@@ -495,7 +495,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see java.util.function.Supplier#get()
+         * @see java.util.function.Supplier#getValue()
          */
         @Override
         public R get() {
@@ -1136,7 +1136,7 @@ public class FluentFunctions {
                    called=0;
             BiFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                                     .name("myFunction")
-                                                                     .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
+                                                                     .memoize((key,f)->cache.getValue(key,()->f.applyHKT(key)));
         
             fn.applyHKT(10,1);
             fn.applyHKT(10,1);
@@ -1539,7 +1539,7 @@ public class FluentFunctions {
                    called=0;
             TriFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                                      .name("myFunction")
-                                                                     .memoize3((key,f)->cache.get(key,()->f.applyHKT(key)));
+                                                                     .memoize3((key,f)->cache.getValue(key,()->f.applyHKT(key)));
 
             fn.applyHKT(10,1,4);
             fn.applyHKT(10,1,4);

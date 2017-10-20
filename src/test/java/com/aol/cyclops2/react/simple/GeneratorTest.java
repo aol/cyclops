@@ -39,7 +39,7 @@ public class GeneratorTest {
 				.then(it -> "*" + it)
 				.block();
 
-		System.out.println(strings.get(0));
+		System.out.println(strings.getValue(0));
 		System.out.println(count);
 		assertThat(strings.size(), is(1));
 		
@@ -54,7 +54,7 @@ public class GeneratorTest {
 		SimpleReactStream s = new SimpleReact()
 				.<Integer> react(() -> {
 					sleep(count.incrementAndGet());
-					return count.get();
+					return count.getValue();
 				} ,times(50))
 				.then(it -> it * 100)
 				.then(it -> {
@@ -66,11 +66,11 @@ public class GeneratorTest {
 				
 		//generation has not complete / but chain has complete for some flows
 		
-		while(count.get()<30){ }
-		assertThat(count.get(),lessThan(50)); 
-		assertThat(second.get(),greaterThan(0)); 
+		while(count.getValue()<30){ }
+		assertThat(count.getValue(),lessThan(50));
+		assertThat(second.getValue(),greaterThan(0));
 		
-		assertThat(count.get(),greaterThan(2));
+		assertThat(count.getValue(),greaterThan(2));
 		
 		s.block();
 		
@@ -97,7 +97,7 @@ public class GeneratorTest {
 
 		assertThat(results.size(), is(1));
 		
-		assertThat(results.get(0),is(1000));
+		assertThat(results.getValue(0),is(1000));
 
 	}
 	@Test
@@ -139,7 +139,7 @@ public class GeneratorTest {
 						}
 					},SimpleReact.times(400))
 				.<Integer>filter(it -> it.isPresent())
-				.<Integer>then(it ->  it.get())
+				.<Integer>then(it ->  it.getValue())
 				.then(it -> it * 100)
 				.then(it -> "*" + it)
 				.block();

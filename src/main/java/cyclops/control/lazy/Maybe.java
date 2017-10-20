@@ -83,7 +83,7 @@ import java.util.stream.Stream;
  * {@code
  *  @Test
 public void odd() {
-System.out.println(even(Maybe.just(200000)).get());
+System.out.println(even(Maybe.just(200000)).getValue());
 }
 
 public Maybe<String> odd(Maybe<Integer> n) {

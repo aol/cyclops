@@ -47,7 +47,7 @@ public interface IntPatriciaTrie<V>  {
 
         Option<V> get(int hash, int pos);
         V getOrElse(int hash, int pos, V value);
-        V getOrElseGet(int hash, int pos, Supplier<V> value);
+        V getOrElseGet(int hash, int pos, Supplier<? extends V> value);
 
         Node<V> minus(int hash, int pos);
 
@@ -101,7 +101,7 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, int pos, Supplier<V> value) {
+        public V getOrElseGet(int hash, int pos, Supplier<? extends V> value) {
             return value.get();
         }
 
@@ -179,7 +179,9 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, int pos, Supplier<V> value) {
+        public V getOrElseGet(int hash, int pos, Supplier<? extends V> value) {
+            if(hash==0)
+                return this.value;
             return value.get();
         }
 
@@ -237,8 +239,10 @@ public interface IntPatriciaTrie<V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, int pos, Supplier<V> value) {
-            return value.get();
+        public V getOrElseGet(int hash, int pos, Supplier<? extends V> value) {
+            int newHash = hash >>> BITS;
+            int index = hash & MASK;
+            return nodes[index].getOrElseGet(newHash, pos,value);
         }
 
         @Override

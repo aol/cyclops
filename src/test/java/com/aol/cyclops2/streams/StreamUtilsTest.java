@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.Streams;
 import org.junit.Test;
 
@@ -288,7 +289,7 @@ utilResultList:[1]
 	}
 	@Test
 	public void sliding(){
-		List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
+		List<VectorX<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
 												,2)
 									.collect(Collectors.toList());
 		

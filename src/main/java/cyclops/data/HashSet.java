@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import cyclops.control.Option;
 import cyclops.data.base.HAMT;
 import cyclops.data.tuple.Tuple;
@@ -10,8 +11,8 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -19,11 +20,17 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class HashSet<T> implements  ImmutableSet<T>{
+public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable {
+    private static final long serialVersionUID = 1L;
     private final HAMT.Node<T,T> map;
 
     public static <T> HashSet<T> empty(){
         return new HashSet<T>( HAMT.empty());
+    }
+    public static <T> HashSet<T> singleton(T value){
+        HAMT.Node<T, T> tree = HAMT.empty();
+        tree = tree.plus(0,value.hashCode(),value,value);
+        return new HashSet<>(tree);
     }
     public static <T> HashSet<T> of(T... values){
         HAMT.Node<T, T> tree = HAMT.empty();
@@ -80,7 +87,7 @@ public class HashSet<T> implements  ImmutableSet<T>{
     }
 
 
-    public boolean contains(T value){
+    public boolean containsValue(T value){
         return map.get(0,value.hashCode(),value).isPresent();
     }
 
@@ -89,13 +96,15 @@ public class HashSet<T> implements  ImmutableSet<T>{
         return map.size();
     }
 
+
+
     @Override
     public HashSet<T> add(T value) {
         return new HashSet<>(map.plus(0,value.hashCode(),value,value));
     }
 
     @Override
-    public HashSet<T> remove(T value) {
+    public HashSet<T> removeValue(T value) {
         return new HashSet<>(map.minus(0,value.hashCode(),value));
     }
 
@@ -137,8 +146,24 @@ public class HashSet<T> implements  ImmutableSet<T>{
     public HashSet<T> plus(T value){
         return new HashSet<>(map.plus(0,value.hashCode(),value,value));
     }
-    public HashSet<T> minus(T value){
-        return new HashSet<>(map.minus(0,value.hashCode(),value));
+
+    @Override
+    public HashSet<T> plusAll(Iterable<? extends T> list) {
+        HashSet<T> res = this;
+        for(T next : list){
+            res = res.plus(next);
+        }
+        return res;
+    }
+
+
+    @Override
+    public HashSet<T> removeAll(Iterable<? extends T> list) {
+        HashSet<T> res = this;
+        for(T next : list){
+            res = this.removeValue(next);
+        }
+        return res;
     }
 
     @Override
@@ -153,11 +178,11 @@ public class HashSet<T> implements  ImmutableSet<T>{
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof ImmutableSet) || o==null)
+        if(!(o instanceof PSet) || o==null)
             return false;
-        ImmutableSet s = (ImmutableSet)o;
+        PSet s = (PSet)o;
        for(T next : this){
-           if(!s.contains(next))
+           if(!s.containsValue(next))
                return false;
        }
        return size()==size();

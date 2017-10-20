@@ -1,6 +1,7 @@
 package cyclops.collectionx.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -8,6 +9,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.Either;
 import cyclops.control.Option;
+import cyclops.data.BankersQueue;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -36,8 +38,7 @@ import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.AmortizedPQueue;
-import org.pcollections.PQueue;
+import com.aol.cyclops2.data.collections.extensions.api.PQueue;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -56,10 +57,10 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
-                                    PQueue<T>,
-                                    LazyCollectionX<T>,
-                                    OnEmptySwitch<T, PQueue<T>>,
-                                    Higher<persistentQueueX,T>{
+                                             PQueue<T>,
+                                             LazyCollectionX<T>,
+                                             OnEmptySwitch<T, PQueue<T>>,
+                                             Higher<persistentQueueX,T>{
 
     PersistentQueueX<T> lazy();
     PersistentQueueX<T> eager();
@@ -252,7 +253,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
     public static <T> PersistentQueueX<T> empty() {
         return new LazyPQueueX<>(
-                                 AmortizedPQueue.empty(),null,Reducers.toPQueue(),Evaluation.LAZY);
+                                 BankersQueue.empty(),null,Reducers.toPQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> singleton(final T value) {
@@ -406,6 +407,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
 
     }
+
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
     @Override
     default PersistentQueueX<T> take(final long num) {
 
@@ -446,9 +452,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     default PersistentQueueX<T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
         return (PersistentQueueX<T>) LazyCollectionX.super.combine(op, predicate);
     }
-
     @Override
-    default <R> PersistentQueueX<R> unit(final Collection<R> col) {
+    default boolean isEmpty() {
+        return PQueue.super.isEmpty();
+    }
+    @Override
+    default <R> PersistentQueueX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -483,7 +492,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     @Override
-    default <X> PersistentQueueX<X> from(final Collection<X> col) {
+    default <X> PersistentQueueX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
@@ -503,28 +512,28 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     /*
      * (non-Javadoc)
      * 
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
+     * @see org.pcollections.PSet#insertAt(java.util.Collection)
      */
     @Override
-    public PersistentQueueX<T> plusAll(Collection<? extends T> list);
+    public PersistentQueueX<T> plusAll(Iterable<? extends T> list);
 
     @Override
     public PersistentQueueX<T> minus();
     /*
      * (non-Javadoc)
      * 
-     * @see org.pcollections.PSet#minus(java.lang.Object)
+     * @see org.pcollections.PSet#removeValue(java.lang.Object)
      */
     @Override
-    public PersistentQueueX<T> minus(Object e);
+    public PersistentQueueX<T> removeValue(T e);
 
     /*
      * (non-Javadoc)
      * 
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
+     * @see org.pcollections.PSet#removeAll(java.util.Collection)
      */
     @Override
-    public PersistentQueueX<T> minusAll(Collection<?> list);
+    public PersistentQueueX<T> removeAll(Iterable<? extends T> list);
 
     /*
      * (non-Javadoc)

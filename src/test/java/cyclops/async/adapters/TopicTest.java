@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import cyclops.async.SimpleReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -243,8 +244,8 @@ public class TopicTest {
 	@Test
 	public void disconnectStreams(){
 		Topic<Integer> topic = new Topic<>();
-		Stream s1 = topic.stream();
-		Stream s2 = topic.stream(); //3 Queues
+		ReactiveSeq s1 = topic.stream();
+		ReactiveSeq s2 = topic.stream(); //3 Queues
 		
 		
 		topic.disconnect(s1);
@@ -254,8 +255,8 @@ public class TopicTest {
 	@Test
 	public void disconnectAllStreams(){
 		Topic<Integer> topic = new Topic<>();
-		Stream s1 = topic.stream();
-		Stream s2 = topic.stream(); //3 Queues
+		ReactiveSeq s1 = topic.stream();
+		ReactiveSeq s2 = topic.stream(); //3 Queues
 		
 		
 		topic.disconnect(s1);
@@ -266,8 +267,8 @@ public class TopicTest {
 	@Test
 	public void disconnectAllStreamsAndReconnect(){
 		Topic<Integer> topic = new Topic<>();
-		Stream s1 = topic.stream();
-		Stream s2 = topic.stream(); //3 Queues
+		ReactiveSeq s1 = topic.stream();
+		ReactiveSeq s2 = topic.stream(); //3 Queues
 		
 		
 		topic.disconnect(s1);

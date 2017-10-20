@@ -15,26 +15,24 @@ public interface MutableSequenceX<T> extends CollectionX<T>, IndexedSequenceX<T>
     public MutableSequenceX<T> plus(T e);
 
     @Override
-    public MutableSequenceX<T> plusAll(Collection<? extends T> list);
+    public MutableSequenceX<T> plusAll(Iterable<? extends T> list);
 
     @Override
-    public MutableSequenceX<T> with(int i, T e);
+    public MutableSequenceX<T> insertAt(int i, T e);
+
 
     @Override
-    public MutableSequenceX<T> plus(int i, T e);
+    public MutableSequenceX<T> insertAt(int i, Iterable<? extends T> list);
 
     @Override
-    public MutableSequenceX<T> plusAll(int i, Collection<? extends T> list);
+    public MutableSequenceX<T> removeValue(T e);
+
 
     @Override
-    public MutableSequenceX<T> minus(Object e);
+    public MutableSequenceX<T> removeAll(Iterable<? extends T> list);
 
     @Override
-    public MutableSequenceX<T> minusAll(Collection<?> list);
+    public MutableSequenceX<T> removeAt(int i);
 
-    @Override
-    public MutableSequenceX<T> minus(int i);
 
-    @Override
-    public MutableSequenceX<T> subList(int start, int end);
 }

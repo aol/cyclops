@@ -26,10 +26,10 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     public IndexedSequenceX<T> plus(T e);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
      */
     @Override
-    public IndexedSequenceX<T> plusAll(Collection<? extends T> list);
+    public IndexedSequenceX<T> plusAll(Iterable<? extends T> list);
 
     /**
      * Replace the value at the specifed index with the supplied value
@@ -38,37 +38,21 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param e Value to use
      * @return FluentSequence with value replaced
      */
-    public IndexedSequenceX<T> with(int i, T e);
+    public IndexedSequenceX<T> insertAt(int i, T e);
 
-    /**
-     * Add the supplied element at the supplied index
-     *
-     * @param i Index to add element at
-     * @param e Element to add
-     * @return FluentSequence with element added
-     */
-    public IndexedSequenceX<T> plus(int i, T e);
 
-    /**
-     * Add all of the supplied elements at the supplied index
-     *
-     * @param i    Index to add element at
-     * @param list Collection of elements to add
-     * @return FluentSequence with elements added
-     */
-    public IndexedSequenceX<T> plusAll(int i, Collection<? extends T> list);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
      */
     @Override
-    public IndexedSequenceX<T> minus(Object e);
+    public IndexedSequenceX<T> removeValue(T e);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
      */
     @Override
-    public IndexedSequenceX<T> minusAll(Collection<?> list);
+    public IndexedSequenceX<T> removeAll(Iterable<? extends T> list);
 
     /**
      * Remove the element at the supplied index
@@ -76,7 +60,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param i Index at which to remvoe element
      * @return FluentSequence with element removed
      */
-    public IndexedSequenceX<T> minus(int i);
+    public IndexedSequenceX<T> removeAt(int i);
 
     /**
      * Create a sub sequence between the two supplied index
@@ -84,8 +68,9 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param start Index of our sub sequence (inclusive)
      * @param end   Index of our sub sequence (exclusive)
      * @return
-     */
+
     public IndexedSequenceX<T> subList(int start, int end);
+     */
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)

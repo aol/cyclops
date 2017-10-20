@@ -43,6 +43,7 @@ public interface CollectionX<T> extends IterableX<T>,
     CollectionX<T> eager();
 
 
+
     default <R> R toX(Function<? super CollectionX<T>,? extends R> fn){
         return fn.apply(this);
     }
@@ -273,7 +274,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @param c Collection to extend
      * @return Extended Collection
      */
-    <T1> CollectionX<T1> from(Collection<T1> c);
+    <T1> CollectionX<T1> from(Iterable<T1> c);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.traversable.Traversable#reverse()
@@ -344,7 +345,14 @@ public interface CollectionX<T> extends IterableX<T>,
         return stream().groupBy(classifier);
     }
     @Override
-    Object[] toArray();
+    default Object[] toArray(){
+        return stream().toArray();
+    }
+    @Override
+    default  <T1> T1[] toArray(T1[] a){
+        return stream().toArray(i->(T1[])java.lang.reflect.Array
+                        .newInstance(a.getClass().getComponentType(), i));
+    }
     @Override
     int size();
 

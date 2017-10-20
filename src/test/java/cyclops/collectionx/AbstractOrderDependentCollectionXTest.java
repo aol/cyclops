@@ -134,7 +134,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
     @Test
     public void slidingIncrement() {
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));

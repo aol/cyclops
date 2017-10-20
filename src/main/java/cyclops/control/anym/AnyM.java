@@ -340,7 +340,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      * {@code
      *    AnyM<String> monad;
      *    
-     *    monad.matchable().visit(v->handleValue(v.get()),s->handleSequence(s.toList()));
+     *    monad.matchable().visit(v->handleValue(v.getValue()),s->handleSequence(s.toList()));
      * }
      * </pre>
      * 

@@ -11,6 +11,7 @@ import cyclops.control.Ior;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
+import cyclops.data.Comparators;
 import cyclops.function.Monoid;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -168,7 +169,7 @@ public interface Monoids {
      * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
      */
     static <T> Monoid<OrderedSetX<T>> orderedSetXConcat() {
-        return Monoid.of(OrderedSetX.empty(),Semigroups.collectionXConcat());
+        return Monoid.of(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()),Semigroups.collectionXConcat());
     }
 
     /**

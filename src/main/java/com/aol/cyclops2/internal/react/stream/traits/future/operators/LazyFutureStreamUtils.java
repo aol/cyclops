@@ -84,7 +84,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -155,7 +155,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -224,7 +224,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -288,7 +288,7 @@ public class LazyFutureStreamUtils {
      * <pre>
      * @{code
      *     Subscription next = StreamUtils.forEachEvents(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
@@ -24,6 +25,19 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class IntMap<T> implements ImmutableList<T>{
 
+
+    @Override
+    public<R> IntMap<R> unitIterable(Iterable<R> it){
+        if(it instanceof IntMap){
+            return (IntMap<R>)it;
+        }
+        return fromIterable(it);
+    }
+
+
+    static <T> IntMap<T> narrow(IntMap<? extends T> list){
+        return (IntMap<T>)list;
+    }
 
     private final IntPatriciaTrie.Node<T> intMap;
     private final int size;
@@ -76,6 +90,9 @@ public class IntMap<T> implements ImmutableList<T>{
 
 
     public static <T> IntMap<T> fromIterable(Iterable<T> iterable){
+        if(iterable instanceof IntMap){
+            return (IntMap<T>)iterable;
+        }
         Iterator<T> it = iterable.iterator();
         IntPatriciaTrie.Node<T> tree = IntPatriciaTrie.empty();
         int count = 0;
@@ -129,7 +146,7 @@ public class IntMap<T> implements ImmutableList<T>{
     }
 
     @Override
-    public IntMap<T> prependAll(Iterable<T> value) {
+    public IntMap<T> prependAll(Iterable<? extends T> value) {
         return unitStream(stream().prepend(value));
     }
 
@@ -139,8 +156,8 @@ public class IntMap<T> implements ImmutableList<T>{
     }
 
     @Override
-    public IntMap<T> appendAll(Iterable<T> value) {
-        Iterator<T> it = value.iterator();
+    public IntMap<T> appendAll(Iterable<? extends T> value) {
+        Iterator<? extends  T> it = value.iterator();
         IntPatriciaTrie.Node<T> tree = this.intMap;
         int count = 0;
         while(it.hasNext()){
@@ -164,7 +181,7 @@ public class IntMap<T> implements ImmutableList<T>{
     }
 
     @Override
-    public T getOrElseGet(int pos, Supplier<T> alt) {
+    public T getOrElseGet(int pos, Supplier<? extends T> alt) {
         return intMap.getOrElseGet(pos,pos,alt);
     }
 
@@ -287,6 +304,14 @@ public class IntMap<T> implements ImmutableList<T>{
         }
 
         @Override
+        public<R> IntMap<R> unitIterable(Iterable<R> it){
+            if(it instanceof IntMap){
+                return (IntMap<R>)it;
+            }
+            return fromIterable(it);
+        }
+
+        @Override
         public ImmutableList<T> emptyUnit() {
             return empty();
         }
@@ -307,7 +332,7 @@ public class IntMap<T> implements ImmutableList<T>{
         }
 
         @Override
-        public ImmutableList<T> prependAll(Iterable<T> value) {
+        public ImmutableList<T> prependAll(Iterable<? extends T> value) {
             return empty();
         }
 
@@ -317,7 +342,7 @@ public class IntMap<T> implements ImmutableList<T>{
         }
 
         @Override
-        public ImmutableList<T> appendAll(Iterable<T> value) {
+        public ImmutableList<T> appendAll(Iterable<? extends T> value) {
             return empty();
         }
 
@@ -337,7 +362,7 @@ public class IntMap<T> implements ImmutableList<T>{
         }
 
         @Override
-        public T getOrElseGet(int pos, Supplier<T> alt) {
+        public T getOrElseGet(int pos, Supplier<? extends T> alt) {
             return alt.get();
         }
 
@@ -398,12 +423,16 @@ public class IntMap<T> implements ImmutableList<T>{
     }
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof ImmutableList) || o==null)
+        if(!(o instanceof PIndexed) || o==null)
             return false;
         return equalToDirectAccess((Iterable<T>)o);
 
     }
 
+    @Override
+    public String toString(){
+        return stream().join(",","[","]");
+    }
     private int calcHash() {
         int hashCode = 1;
         for (T e : this)

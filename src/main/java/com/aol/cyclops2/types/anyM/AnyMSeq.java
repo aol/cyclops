@@ -59,6 +59,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
 
+    @Override
+    default boolean isEmpty() {
+        return IterableX.super.isEmpty();
+    }
+
     /**
      * Perform a four level nested internal iteration over this monad and the
      * supplied monads
@@ -1027,8 +1032,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
     }
 
     @Override
-    default AnyMSeq<W,T> prepend(T... values) {
-        return fromIterable(IterableX.super.prepend(values));
+    default AnyMSeq<W,T> prependAll(T... values) {
+        return fromIterable(IterableX.super.prependAll(values));
     }
 
     @Override

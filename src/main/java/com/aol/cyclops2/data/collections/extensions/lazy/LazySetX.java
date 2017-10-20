@@ -93,7 +93,7 @@ public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements Set
     }
 
     @Override
-    public <T1> LazySetX<T1> from(Collection<T1> c) {
+    public <T1> LazySetX<T1> from(Iterable<T1> c) {
         if(c instanceof Set)
             return new LazySetX<T1>((Set)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
@@ -107,7 +107,7 @@ public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements Set
 
 
     @Override
-    public <R> LazySetX<R> unit(Collection<R> col) {
+    public <R> LazySetX<R> unit(Iterable<R> col) {
         return from(col);
     }
 

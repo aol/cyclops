@@ -234,7 +234,7 @@ public class Future<T> implements To<Future<T>>,
      * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
-        strings.get().size()
+        strings.getValue().size()
         //1
      *
      * }
@@ -267,7 +267,7 @@ public class Future<T> implements To<Future<T>>,
      * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
-    strings.get().size()
+    strings.getValue().size()
     //1
      *
      * }
@@ -299,7 +299,7 @@ public class Future<T> implements To<Future<T>>,
        Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
 
        ft.complete(10);
-       result.get() //1
+       result.getValue() //1
      * }
      * </pre>
      *
@@ -912,7 +912,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
 
     public T getOrElse(T alt) {

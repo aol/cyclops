@@ -28,7 +28,7 @@ import com.aol.cyclops2.types.stream.HeadAndTail;
 
 public interface OperationsOnFutures<T> {
     // Handle case where input is a FutureStream (zip, append, concat,
-    // prepend etc).
+    // prependAll etc).
     public FutureStream<T> fromStreamOfFutures(Stream<FastFuture<T>> stream);
 
     public LazyStreamWrapper<T> getLastActive();
@@ -476,8 +476,8 @@ public interface OperationsOnFutures<T> {
     									.collect(CyclopsCollectors.toList());
     		
     	
-    		assertThat(list.get(0),hasItems(1,2));
-    		assertThat(list.get(1),hasItems(2,3));
+    		assertThat(list.getValue(0),hasItems(1,2));
+    		assertThat(list.getValue(1),hasItems(2,3));
     
      *}
      *</pre>
@@ -510,9 +510,9 @@ public interface OperationsOnFutures<T> {
     									.collect(CyclopsCollectors.toList());
     		
     		
-    		System.out.println(list.get(0));
-    		assertThat(list.get(0),hasItems(1,2,3));
-    		assertThat(list.get(1),hasItems(3,4,5));
+    		System.out.println(list.getValue(0));
+    		assertThat(list.getValue(0),hasItems(1,2,3));
+    		assertThat(list.getValue(1),hasItems(3,4,5));
      * }
      * </pre>
      * @param windowSize
@@ -827,14 +827,14 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code 
      * List<String> result = 	FutureStream.of(1,2,3).actOnFutures()
-     * 									 				 .prepend(100,200,300)
+     * 									 				 .prependAll(100,200,300)
      * 													 .transform(it ->it+"!!")
      * 													 .collect(CyclopsCollectors.toList());
      * 
      * 						assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
-     * @param values to prepend
+     * @param values to prependAll
      * @return SequenceM with values prepended
      */
     default FutureStream<T> prepend(final T... values) {
@@ -1022,7 +1022,7 @@ public interface OperationsOnFutures<T> {
      * 
      * <pre>
      * {@code
-     * 	assertThat(FutureStream.of(1,2,3,4,5).actOnFutures().elementAt(2).get(),equalTo(3));
+     * 	assertThat(FutureStream.of(1,2,3,4,5).actOnFutures().elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
      * 
@@ -1045,7 +1045,7 @@ public interface OperationsOnFutures<T> {
      * 
      * <pre>
      * {@code 
-     * FutureStream.of(1,2,3,4,5).actOnFutures().get(2)._1
+     * FutureStream.of(1,2,3,4,5).actOnFutures().getValue(2)._1
      * //3
      * }
      * </pre>
@@ -1242,7 +1242,7 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code 
      *  CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
-            							.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).get();
+            							.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).getValue();
     
          assertThat(sum.join(),equalTo(6));
      * 
@@ -1265,9 +1265,9 @@ public interface OperationsOnFutures<T> {
     	CompletableFuture<String> identity = CompletableFuture.completedFuture("");
     	BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
     
-    	assertTrue(s.get().actOnFutures().foldRight(identity, concat).join().contains("a"));
-    	assertTrue(s.get().actOnFutures().foldRight(identity, concat).join().contains("b"));
-    	assertTrue(s.get().actOnFutures().foldRight(identity, concat).join().contains("c"));
+    	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("a"));
+    	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("b"));
+    	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("c"));
     	
      * 
      * }
@@ -1291,9 +1291,9 @@ public interface OperationsOnFutures<T> {
     
     	CompletableFuture<String> identity = CompletableFuture.completedFuture("");
     	BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
-    	assertTrue(s.get().actOnFutures().foldLeft(identity, concat).join().contains("a"));
-    	assertTrue(s.get().actOnFutures().foldLeft(identity, concat).join().contains("b"));
-    	assertTrue(s.get().actOnFutures().foldLeft(identity, concat).join().contains("c"));
+    	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("a"));
+    	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("b"));
+    	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("c"));
      * 
      * }
      * </pre>

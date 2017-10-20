@@ -52,6 +52,19 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
 
     @Test
+    public void testRemoveAt(){
+        assertThat(ReactiveSeq.of(1,2,3).removeAt(0).toList(),equalTo(asList(2,3)));
+        assertThat(ReactiveSeq.of(1,2,3).removeAt(1).toList(),equalTo(asList(1,3)));
+        assertThat(ReactiveSeq.of(1,2,3).removeAt(2).toList(),equalTo(asList(1,2)));
+        assertThat(ReactiveSeq.of(1,2,3).removeAt(3).toList(),equalTo(asList(1,2,3)));
+        assertThat(ReactiveSeq.of(1,2,3).removeAt(-1).toList(),equalTo(asList(1,2,3)));
+    }
+    @Test
+    public void removeFirst(){
+        assertThat(ReactiveSeq.of(1,2,3,2).removeFirst(i->i==2).toList(),equalTo(asList(1,3,2)));
+
+    }
+    @Test
     public void testEnums(){
 
         ReactiveSeq.enums(Days.class)

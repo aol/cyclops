@@ -21,7 +21,7 @@ public class Lambda {
      * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
     			action.accept(values[pos++]);
     			return tuple(true, this);
-    		}).get();
+    		}).getValue();
      * 
      * }
      * </pre>
@@ -40,7 +40,7 @@ public class Lambda {
      * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
                 action.accept(values[pos++]);
                 return tuple(true, this);
-            }).get();
+            }).getValue();
      * 
      * }
      * </pre>

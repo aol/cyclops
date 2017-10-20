@@ -63,8 +63,8 @@ public  class CoreStreamableTest {
     }
 	@Test
     public void testContains() {
-        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(3), equalTo(true));
-        assertThat(Streamable.of(1, 2, 3, 4, 5).contains(6), equalTo(false));
+        assertThat(Streamable.of(1, 2, 3, 4, 5).containsValue(3), equalTo(true));
+        assertThat(Streamable.of(1, 2, 3, 4, 5).containsValue(6), equalTo(false));
     }
 	
 	protected Object value() {

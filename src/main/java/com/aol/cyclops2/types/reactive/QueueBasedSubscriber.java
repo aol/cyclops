@@ -252,7 +252,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
 
         counter.active.decrementAndGet();
-        counter.subscription.minus(subscription);
+        counter.subscription.removeValue(subscription);
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {

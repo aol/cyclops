@@ -2,8 +2,9 @@ package com.aol.cyclops2.internal.stream.spliterators;
 
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.immutable.VectorX;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import cyclops.data.Vector;
+
 
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -20,7 +21,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
     private final Function<? super VectorX<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;
-    final Mutable<PVector<T>> list = Mutable.of(TreePVector.empty());
+    final Mutable<Vector<T>> list = Mutable.of(Vector.empty());
     public SlidingSpliterator(final Spliterator<T> source,  Function<? super VectorX<T>, ? extends R> finalizer,
                                 int windowSize, int increment) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
@@ -46,7 +47,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
         source.forEachRemaining(t->{
             if(data==false)
                  data = true;
-            list.mutate(var -> var.plus(Math.max(0, var.size()), t));
+            list.mutate(var -> var.insertAt(Math.max(0, var.size()), t));
             if(list.get().size()==windowSize){
 
                 action.accept(finalizer.apply(VectorX.fromIterable(list.get())));
@@ -54,7 +55,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
                 for (int i = 0; i < increment && list.get()
                         .size() > 0; i++)
-                list.mutate(var -> var.minus(0));
+                list.mutate(var -> var.removeAt(0));
             }else{
 
                 sent =false;
@@ -75,7 +76,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
        data = false;
         for (int i = 0; i < increment && list.get()
                 .size() > 0; i++)
-            list.mutate(var -> var.minus(0));
+            list.mutate(var -> var.removeAt(0));
         for (; list.get()
                 .size() < windowSize
                 && canAdvance;) {
@@ -86,7 +87,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
             });
             if (box.get()!=null) {
                 data =true;
-                list.mutate(var -> var.plus(Math.max(0, var.size()), box.get()));
+                list.mutate(var -> var.insertAt(Math.max(0, var.size()), box.get()));
             }
 
         }

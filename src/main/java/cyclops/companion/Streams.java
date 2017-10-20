@@ -2,6 +2,7 @@ package cyclops.companion;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import cyclops.typeclasses.Active;
@@ -40,8 +41,8 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;
@@ -515,7 +516,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -557,7 +558,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .transform(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -596,7 +597,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace());
+     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -631,7 +632,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     
@@ -1019,12 +1020,12 @@ public class Streams {
      * Prepend given values to the skip of the Stream
      * <pre>
      * {@code 
-     * List<String> result = 	of(1,2,3).prepend(100,200,300)
+     * List<String> result = 	of(1,2,3).prependAll(100,200,300)
     			.transform(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * @param values to prependAll
      * @return Stream with values prepended
      */
     public static final <T> Stream<T> prepend(final Stream<T> stream, final T... values) {
@@ -1576,9 +1577,9 @@ public class Streams {
     												(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
-    	assertThat(zip.get(0),equalTo(2));
-    	assertThat(zip.get(1),equalTo(3));
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(1);
+    	assertThat(zip.getValue(0),equalTo(2));
+    	assertThat(zip.getValue(1),equalTo(3));
      * }
      * </pre>
      * @param second
@@ -1617,9 +1618,9 @@ public class Streams {
     										(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(0);
-    	assertThat(zip.get(0),equalTo(1));
-    	assertThat(zip.get(1),equalTo(2));
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(0);
+    	assertThat(zip.getValue(0),equalTo(1));
+    	assertThat(zip.getValue(1),equalTo(2));
      * 
      * }
      * </pre>
@@ -1640,9 +1641,9 @@ public class Streams {
     												(a,b) -> Arrays.asList(a,b));
     	
     	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
-    	assertThat(zip.get(0),equalTo(2));
-    	assertThat(zip.get(1),equalTo(3));
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(1);
+    	assertThat(zip.getValue(0),equalTo(2));
+    	assertThat(zip.getValue(1),equalTo(3));
        }
        </pre>
      * 
@@ -1681,8 +1682,8 @@ public class Streams {
     								.collect(CyclopsCollectors.toList());
     	
     
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
      * </pre>
      * @param windowSize
@@ -1703,8 +1704,8 @@ public class Streams {
     								.collect(CyclopsCollectors.toList());
     	
     
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
      * </pre>
      * @param windowSize
@@ -1713,7 +1714,7 @@ public class Streams {
      */
     public final static <T> Stream<Streamable<T>> window(final Stream<T> stream, final int windowSize, final int increment) {
         final Iterator<T> it = stream.iterator();
-        final Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
+        final Mutable<PStack<T>> list = Mutable.of(Seq.empty());
         return Streams.stream(new Iterator<Streamable<T>>() {
 
             @Override
@@ -1725,12 +1726,12 @@ public class Streams {
             public Streamable<T> next() {
                 for (int i = 0; i < increment && list.get()
                                                      .size() > 0; i++)
-                    list.mutate(var -> var.minus(0));
+                    list.mutate(var -> var.removeAt(0));
                 for (; list.get()
                            .size() < windowSize
                         && it.hasNext();) {
                     if (it.hasNext()) {
-                        list.mutate(var -> var.plus(Math.max(0, var.size()), it.next()));
+                        list.mutate(var -> var.insertAt(Math.max(0, var.size()), it.next()));
                     }
 
                 }
@@ -1749,8 +1750,8 @@ public class Streams {
     								.collect(CyclopsCollectors.toList());
     	
     
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
      * </pre> 
      * 
@@ -1773,8 +1774,8 @@ public class Streams {
                                                     .collect(CyclopsCollectors.toList());
         
         
-        assertThat(list.get(0),hasItems(1,2,3));
-        assertThat(list.get(1),hasItems(4,5,6));
+        assertThat(list.getValue(0),hasItems(1,2,3));
+        assertThat(list.getValue(1),hasItems(4,5,6));
         }
      * </pre>
      * @param stream Stream to group
@@ -1800,8 +1801,8 @@ public class Streams {
                                                     .collect(CyclopsCollectors.toList());
         
         
-        assertThat(list.get(0),hasItems(1,2,3));
-        assertThat(list.get(1),hasItems(4,5,6));
+        assertThat(list.getValue(0),hasItems(1,2,3));
+        assertThat(list.getValue(1),hasItems(4,5,6));
         }
      * </pre>
      * 

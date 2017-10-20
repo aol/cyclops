@@ -4,13 +4,12 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.BagX;
 import cyclops.control.Option;
+import cyclops.data.Bag;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.PBag;
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -95,10 +94,16 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     }
 
     @Override
-    public <T1> LazyPBagX<T1> from(Collection<T1> c) {
+    public <T1> LazyPBagX<T1> from(Iterable<T1> c) {
         if(c instanceof PBag)
             return new LazyPBagX<T1>((PBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+
+    public <T1> LazyPBagX<T1> from(Bag<T1> c) {
+
+      return new LazyPBagX<T1>((PBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+
     }
 
 
@@ -108,20 +113,20 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     }
 
     @Override
-    public BagX<T> plusAll(Collection<? extends T> list) {
+    public BagX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public BagX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public BagX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
 
 
     @Override
-    public BagX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public BagX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
 
@@ -135,7 +140,7 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
 
 
     @Override
-    public <R> LazyPBagX<R> unit(Collection<R> col) {
+    public <R> LazyPBagX<R> unit(Iterable<R> col) {
         return from(col);
     }
 

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
-import org.pcollections.PStack;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 
 import java.util.Iterator;
 

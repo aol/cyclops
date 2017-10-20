@@ -1,14 +1,20 @@
 package cyclops.data;
 
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
+import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 
 public class SeqTest extends BaseImmutableListTest {
     @Override
@@ -49,5 +55,11 @@ public class SeqTest extends BaseImmutableListTest {
     @Override
     public <U, T> Seq<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return Seq.unfold(seed,unfolder);
+    }
+    @Test
+    public void plusAll(){
+        IterableX<Integer> vec = this.<Integer>empty().plusAll(Arrays.asList(1)).plusAll(Arrays.asList(2)).plusAll(Arrays.asList(5));
+
+        assertThat(vec,equalTo(of(5,2,1)));
     }
 }

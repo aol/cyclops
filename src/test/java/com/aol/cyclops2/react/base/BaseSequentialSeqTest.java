@@ -28,6 +28,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.MapX;
 import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -35,7 +38,6 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.pcollections.HashTreePMap;
 
 import cyclops.async.adapters.Queue;
 import cyclops.collectionx.mutable.ListX;
@@ -100,7 +102,7 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void sliding(){
-		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(2)
+		List<VectorX<Integer>> list = of(1,2,3,4,5,6).sliding(2)
 									.collect(Collectors.toList());
 		
 	
@@ -109,7 +111,7 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void slidingInc(){
-		List<List<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
+		List<VectorX<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
 									.collect(Collectors.toList());
 		
 	
@@ -220,14 +222,14 @@ public abstract class BaseSequentialSeqTest {
 			shards.put(4,new Queue());
 			shards.put(5,new Queue());
 			shards.put(6,new Queue());
-			assertThat(of(1,2,3,4,5,6).shard(HashTreePMap.from(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(MapX.fromMap(shards),Function.identity()).size(),is(6));
 		}
 	}
 	@Test
 	public void shardStreams(){
 		
 		for(int index=0;index<100;index++){
-			Map<Integer,Queue<Integer>> shards = HashTreePMap.singleton(0,new Queue<Integer>()).plus(1,new Queue());
+			Map<Integer,Queue<Integer>> shards = PersistentMapX.singleton(0,new Queue<Integer>()).plus(1,new Queue());
 			
 			assertThat(of(1,2,3,4,5,6).shard(shards,i -> 0).get(0).collect(Collectors.toList()),hasItem(6));
 		}
@@ -586,20 +588,20 @@ public abstract class BaseSequentialSeqTest {
 		        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 	
 		        
-		    //    assertEquals(asList(), s.get().splitAt(0).v1.toList());
-		     //   assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(0)._2.toList());
+		    //    assertEquals(asList(), s.getValue().splitAt(0).v1.toList());
+		     //   assertEquals(asList(1, 2, 3, 4, 5, 6), s.getValue().splitAt(0)._2.toList());
 	
-		    //    assertEquals(asList(1), s.get().splitAt(1).v1.toList());
-		     //   assertEquals(asList(2, 3, 4, 5, 6), s.get().splitAt(1)._2.toList());
+		    //    assertEquals(asList(1), s.getValue().splitAt(1).v1.toList());
+		     //   assertEquals(asList(2, 3, 4, 5, 6), s.getValue().splitAt(1)._2.toList());
 	
-		  //     assertEquals(asList(1, 2, 3), s.get().splitAt(3).v1.toList());
+		  //     assertEquals(asList(1, 2, 3), s.getValue().splitAt(3).v1.toList());
 		        assertEquals(asList(4, 5, 6), s.get().splitAt(3)._2().toList());
 	
-		    //   assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(6).v1.toList());
-		     //   assertEquals(asList(), s.get().splitAt(6)._2.toList());
+		    //   assertEquals(asList(1, 2, 3, 4, 5, 6), s.getValue().splitAt(6).v1.toList());
+		     //   assertEquals(asList(), s.getValue().splitAt(6)._2.toList());
 	
-		       // assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7).v1.toList());
-		       // assertEquals(asList(), s.get().splitAt(7)._2.toList());
+		       // assertEquals(asList(1, 2, 3, 4, 5, 6), s.getValue().splitAt(7).v1.toList());
+		       // assertEquals(asList(), s.getValue().splitAt(7)._2.toList());
 	    	}
 	    	for(int i=0;i<20;i++){
 		        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);

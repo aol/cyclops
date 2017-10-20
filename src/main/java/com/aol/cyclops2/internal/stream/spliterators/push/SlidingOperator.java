@@ -2,8 +2,8 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.immutable.VectorX;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import cyclops.data.Vector;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -17,6 +17,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
 
 
+    //@TODO Seq / list would be more efficent than a Vector
     private final Function<? super VectorX<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;
@@ -62,11 +63,11 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 super.cancel();
             }
         };
-        final Mutable<PVector<T>> list = com.aol.cyclops2.util.box.Mutable.of(TreePVector.empty());
+        final Mutable<Vector<T>> list = com.aol.cyclops2.util.box.Mutable.of(Vector.empty());
         boolean[] sent = {false};
         upstream[0] = source.subscribe(e-> {
                     try {
-                        list.mutate(var -> var.plus(Math.max(0, var.size()),e));
+                        list.mutate(var -> var.insertAt(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
                             onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
@@ -74,7 +75,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
-                                list.mutate(var -> var.minus(0));
+                                list.mutate(var -> var.removeAt(0));
                         }else if(sub.isOpen){
                             upstream[0].request(1l);
                             sent[0]=false;
@@ -102,18 +103,18 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        final Mutable<PVector<T>> list = com.aol.cyclops2.util.box.Mutable.of(TreePVector.empty());
+        final Mutable<Vector<T>> list = com.aol.cyclops2.util.box.Mutable.of(Vector.empty());
         boolean[] sent = {false};
         source.subscribeAll(e-> {
                     try {
-                        list.mutate(var -> var.plus(Math.max(0, var.size()),e));
+                        list.mutate(var -> var.insertAt(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
                             onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
-                                list.mutate(var -> var.minus(0));
+                                list.mutate(var -> var.removeAt(0));
                         }else{
                             sent[0]=false;
                         }

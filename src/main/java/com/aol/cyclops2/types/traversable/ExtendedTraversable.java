@@ -5,7 +5,7 @@ import cyclops.reactive.ReactiveSeq;
 /**
  * Represents a finite traversable type
  * 
- * @TODO - rename to FiniteTraversable in cyclops2-react 2.0
+ *
  * 
  * @author johnmcclean
  *

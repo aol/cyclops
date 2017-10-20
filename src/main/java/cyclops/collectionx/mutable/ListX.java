@@ -75,8 +75,15 @@ public interface ListX<T> extends To<ListX<T>>,
         return headAndTail().tail().to().listX(Evaluation.LAZY);
     }
 
+    @Override
+    default Object[] toArray(){
+        return LazyCollectionX.super.toArray();
+    }
 
-
+    @Override
+    default <T1> T1[] toArray(T1[] a){
+        return LazyCollectionX.super.toArray(a);
+    }
 
     public static <T> ListX<T> defer(Supplier<ListX<T>> s){
         return ListX.of(s)
@@ -854,11 +861,9 @@ public interface ListX<T> extends To<ListX<T>>,
     }
     
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
-     */
+
     @Override
-    default <R> ListX<R> unit(final Collection<R> col) {
+    default <R> ListX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -892,11 +897,9 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     public <T> Collector<T, ?, List<T>> getCollector();
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#from(java.util.Collection)
-     */
+
     @Override
-    default <T1> ListX<T1> from(final Collection<T1> c) {
+    default <T1> ListX<T1> from(final Iterable<T1> c) {
         return ListX.<T1> fromIterable(getCollector(), c);
     }
 
@@ -1149,7 +1152,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.aol.cyclops2.collections.extensions.standard.MutableSequenceX#with(int, java.lang.Object)
      */
     @Override
-    default ListX<T> with(final int i, final T element) {
+    default ListX<T> insertAt(final int i, final T element) {
         return from(stream().deleteBetween(i, i + 1)
                             .insertAtOrAppend(i, element)
                             .collect(getCollector()));
@@ -1170,57 +1173,47 @@ public interface ListX<T> extends To<ListX<T>>,
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#plusAll(java.util.Collection)
-     */
+
     @Override
-    default ListX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default ListX<T> plusAll(final Iterable<? extends T> list) {
+        for(T next : list)
+            add(next);
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX#minus(int)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX#removeAt(int)
      */
     @Override
-    default ListX<T> minus(final int pos) {
+    default ListX<T> removeAt(final int pos) {
         remove(pos);
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#removeValue(java.lang.Object)
      */
     @Override
-    default ListX<T> minus(final Object e) {
-        remove(e);
+    default ListX<T> removeValue(final Object e) {
+        this.removeValue(e);
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minusAll(java.util.Collection)
-     */
+
     @Override
-    default ListX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default ListX<T> removeAll(final Iterable<? extends T> list) {
+        for(T next : list){
+            this.removeValue(next);
+        }
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX#plus(int, java.lang.Object)
-     */
-    @Override
-    default ListX<T> plus(final int i, final T e) {
-        add(i, e);
-        return this;
-    }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX#plusAll(int, java.util.Collection)
-     */
+
     @Override
-    default ListX<T> plusAll(final int i, final Collection<? extends T> list) {
-        addAll(i, list);
+    default ListX<T> insertAt(final int i, final Iterable<? extends T> list) {
+
+        addAll(i, ListX.fromIterable(list));
         return this;
     }
 
@@ -1700,8 +1693,8 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> prepend(T... values) {
-        return (ListX<T>)LazyCollectionX.super.prepend(values);
+    default ListX<T> prependAll(T... values) {
+        return (ListX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

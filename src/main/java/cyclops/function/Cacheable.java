@@ -18,7 +18,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
        .build();
 
  * BiFunction<Integer,Integer,Integer> s = Memoize.memoizeBiFunction( (a,b)->a + ++called,
- * 													(key,fn)-> cache.get(key,()->fn.applyHKT(key));
+ * 													(key,fn)-> cache.getValue(key,()->fn.applyHKT(key));
  * }
  * </pre>
  *

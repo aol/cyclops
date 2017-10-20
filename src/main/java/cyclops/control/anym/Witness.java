@@ -244,7 +244,7 @@ public interface Witness {
         @Override
         public  FunctionalAdapter<orderedSetX> adapter() {
             return new CollectionXAdapter<orderedSetX>(OrderedSetX::empty,
-                    OrderedSetX::of, OrderedSetX::fromIterator,this);
+                    OrderedSetX::identityOrNatural, OrderedSetX::fromIterator,this);
         }
 
     }

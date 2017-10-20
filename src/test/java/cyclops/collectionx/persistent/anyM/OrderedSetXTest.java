@@ -5,6 +5,7 @@ import cyclops.collectionx.AbstractAnyMSeqTest;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
+import cyclops.data.Comparators;
 import org.junit.Test;
 
 import java.util.stream.Stream;
@@ -16,7 +17,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
 
 	@Override
 	public <T> AnyMSeq<Witness.orderedSetX,T> of(T... values) {
-		return AnyM.fromOrderedSetX(OrderedSetX.of(values));
+		return AnyM.fromOrderedSetX(OrderedSetX.of(Comparators.naturalOrderIdentityComparator(),values));
 	}
 
 	/* (non-Javadoc)
@@ -24,7 +25,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.orderedSetX,T> empty() {
-		return AnyM.fromOrderedSetX(OrderedSetX.empty());
+		return AnyM.fromOrderedSetX(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()));
 	}
 	 /* (non-Javadoc)
      * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
@@ -36,7 +37,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
     }
 	@Test
 	public void prependAppend(){
-		assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prepend(7,8).insertAt(4,9).deleteBetween(1,2)
+		assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
 				.insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
 	}
 	@Test

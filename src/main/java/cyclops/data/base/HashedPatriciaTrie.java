@@ -51,7 +51,7 @@ public interface HashedPatriciaTrie<K, V>  {
 
         Option<V> get(int hash, K key);
         V getOrElse(int hash, K key, V alt);
-        V getOrElseGet(int hash, K key, Supplier<V> alt);
+        V getOrElseGet(int hash, K key, Supplier<? extends V> alt);
 
         Node<K, V> minus(int hash, K key);
         ReactiveSeq<Tuple2<K,V>> stream();
@@ -102,7 +102,7 @@ public interface HashedPatriciaTrie<K, V>  {
             return alt;
         }
         @Override
-        public V getOrElseGet(int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int hash, K key, Supplier<? extends V> alt) {
             return alt.get();
         }
 
@@ -187,7 +187,7 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int hash, K key, Supplier<? extends V> alt) {
             if(hash==0 && this.key.equals(key))
                 return value;
             return alt.get();
@@ -273,7 +273,7 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int hash, K key, Supplier<? extends V> alt) {
             return (hash == 0)
                     ? bucket.filter(t2 -> t2._1().equals(key)).map(t->t._2()).getOrElseGet(0,alt)
                     : alt.get();
@@ -338,7 +338,7 @@ public interface HashedPatriciaTrie<K, V>  {
         }
 
         @Override
-        public V getOrElseGet(int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int hash, K key, Supplier<? extends V> alt) {
             int newHash = hash >>> BITS;
             int index = hash & MASK;
             return nodes[index].getOrElseGet(newHash, key,alt);

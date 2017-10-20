@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.anym.Witness;
 import cyclops.control.anym.function.AnyMFunction1;
 import cyclops.control.anym.function.AnyMFunction2;
@@ -252,7 +253,7 @@ public class AnyMTest {
 	
 	@Test
 	public void sliding(){
-		List<List<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
+		List<VectorX<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(2)
 									.collect(Collectors.toList());
@@ -263,7 +264,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void slidingIncrement(){
-		List<List<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
+		List<VectorX<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(3,2)
 									.collect(Collectors.toList());

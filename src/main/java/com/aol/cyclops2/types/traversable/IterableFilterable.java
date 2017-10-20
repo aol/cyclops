@@ -20,7 +20,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all elements in the supplied Stream from this filterable
      * 
-     * @param stream of elements to remove
+     * @param stream of elements to removeValue
      * @return Filters with all supplied elements removed
      */
     default Filters<T> removeAllS(final Stream<? extends T> stream) {
@@ -31,7 +31,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all elements in the supplied Iterable from this filterable 
      * 
-     * @param it  an Iterable of elements to remove
+     * @param it  an Iterable of elements to removeValue
      * @return Filters with all supplied elements removed
      */
     default Filters<T> removeAllI(final Iterable<? extends T> it) {
@@ -41,7 +41,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all supplied elements from this filterable   
      * 
-     * @param values to remove
+     * @param values to removeValue
      * @return Filters with all supplied values removed
      */
     default Filters<T> removeAll(final T... values) {

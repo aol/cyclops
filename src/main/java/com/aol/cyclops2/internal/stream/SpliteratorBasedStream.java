@@ -224,11 +224,11 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public ReactiveSeq<T> skip(final long num) {
        /** TODO future optimization so position of skip doesn't matter
         if(reversible.isPresent()){
-            ReversableSpliterator rev = reversible.get();
+            ReversableSpliterator rev = reversible.getValue();
             if(rev instanceof Indexable){
                 Indexable<T> indexable = (Indexable)rev;
                 Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).skip(num));
-                return createSeq(get(),newRev);
+                return createSeq(getValue(),newRev);
             }
         }**/
         if(this.stream instanceof Indexable){
@@ -609,7 +609,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public ReactiveSeq<T> prepend(final T... other) {
+    public ReactiveSeq<T> prependAll(final T... other) {
         return ReactiveSeq.concat(Stream.of(other).spliterator(),get());
     }
 

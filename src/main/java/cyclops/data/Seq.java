@@ -1,18 +1,17 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.anym.Witness;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.anym.DataWitness.seq;
@@ -25,11 +24,7 @@ import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -37,17 +32,65 @@ import java.util.stream.Stream;
 public interface Seq<T> extends ImmutableList<T>,
                                 Folds<T>,
                                 Filters<T>,
-                                Transformable<T>,
+                                Transformable<T>, PStack<T>,
                                 Higher<seq,T> {
 
 
+    @Override
+    default<R> Seq<R> unitIterable(Iterable<R> it){
+        if(it instanceof Seq){
+            return (Seq<R>)it;
+        }
+        return fromIterable(it);
+    }
+    default Seq<T> plusAll(Iterable<? extends T> t){
+        return prependAll((Iterable<T>)t);
+    }
+    Seq<T> updateAt(int i, T value);
+    Seq<T> removeAt(final int i);
+    default Seq<T> plus(T value){
+        return prepend(value);
+    }
+    default Seq<T> insertAt(final int i, final T e){
+        return (Seq<T>)ImmutableList.super.insertAt(i,e);
+    }
+
+    default Seq<T> insertAt(int i, Iterable<? extends T> list){
+        return (Seq<T>)ImmutableList.super.insertAt(i,list);
+    }
+
+    @Override
+    Seq<T> removeValue(T e);
+    @Override
+    default Seq<T> removeAll(Iterable<? extends T> list) {
+        return (Seq<T>)ImmutableList.super.removeAllI(list);
+    }
+
+    @Override
+    default Seq<T> removeFirst(Predicate<? super T> pred){
+        return (Seq<T>)ImmutableList.super.removeFirst(pred);
+    }
     @Override
     default <R> Seq<R> unitStream(Stream<R> stream){
         return fromStream(stream);
     }
 
 
-
+    @Override
+    default Seq<T> removeAt(long pos){
+        return (Seq<T>)ImmutableList.super.removeAt(pos);
+    }
+    @Override
+    default Seq<T> removeAllI(Iterable<? extends T> it) {
+        return (Seq<T>)ImmutableList.super.removeAllI(it);
+    }
+    @Override
+    default Seq<T> insertAt(int pos, T... values) {
+        return (Seq<T>)ImmutableList.super.insertAt(pos,values);
+    }
+    default Seq<T> removeAll(T... values){
+        return (Seq<T>)ImmutableList.super.removeAll(values);
+    }
 
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(iterable());
@@ -152,6 +195,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     default Option<T> get(final int pos){
+        if(pos<0)
+            return Option.none();
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
@@ -163,17 +208,22 @@ public interface Seq<T> extends ImmutableList<T>,
         return Option.ofNullable(l.visit(c->c.head, n->null));
     }
     default T getOrElse(int pos, T alt){
+        if(pos<0)
+            return alt;
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
             l = l.visit(c->c.tail,n->n);
-            if(l instanceof LazySeq.Nil){ //short circuit
+            if(l instanceof Seq.Nil){ //short circuit
                 return alt;
             }
+
         }
-        return l.visit(c->c.head,n->null);
+        return l.visit(c->c.head,n->alt);
     }
-    default T getOrElseGet(int pos, Supplier<T> alt){
+    default T getOrElseGet(int pos, Supplier<? extends T> alt){
+        if(pos<0)
+            return alt.get();
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
@@ -182,20 +232,20 @@ public interface Seq<T> extends ImmutableList<T>,
                 return alt.get();
             }
         }
-        return l.visit(c->c.head,n->null);
+        return l.visit(c->c.head,n->alt.get());
     }
     default Seq<T> append(T value){
         return Seq.of(value).prependAll(this);
     }
-    default Seq<T> appendAll(Iterable<T> it){
-        Seq<T> value = fromIterable(it);
+    default Seq<T> appendAll(Iterable<? extends T> it){
+        Seq<T> value = narrow(fromIterable(it));
         return value.prependAll(this);
     }
     default Seq<T> prepend(T value){
         return cons(value,this);
     }
-    default Seq<T> prependAll(Iterable<T> it){
-        Seq<T> value = fromIterable(it);
+    default Seq<T> prependAll(Iterable<? extends T> it){
+        Seq<T> value = narrow(fromIterable(it));
         return value.fold(cons->
                         cons.foldRight(this,(a,b)->b.prepend(a))
                 ,nil->this);
@@ -288,6 +338,11 @@ public interface Seq<T> extends ImmutableList<T>,
 
     int size();
 
+    @Override
+    default boolean containsValue(T value) {
+        return stream().filter(i->Objects.equals(i,value)).findFirst().isPresent();
+    }
+
     boolean isEmpty();
 
 
@@ -350,6 +405,64 @@ public interface Seq<T> extends ImmutableList<T>,
         public ImmutableList<T> tail() {
             return tail;
         }
+        public Seq<T> removeAt(final int i) {
+            if (size == 0)
+                return this;
+            if (i == 0)
+                return tail;
+
+            if(i>1000)
+                return fromStream(stream().removeAt(i));
+            Seq<T> removed = tail.removeAt(i-1);
+            return cons(head,removed);
+        }
+
+
+
+
+        @Override
+        public Seq<T> updateAt(int i, T value) {
+
+            if(i==0) {
+                if(Objects.equals(head,value))
+                    return this;
+                return cons(value, tail);
+            }
+            if(i>1000){
+                Seq<T> front = take(i);
+                Seq<T> back = drop(i);
+
+                return back.prepend(value).prependAll(front);
+            }
+            Seq<T> replaced = tail.updateAt(i-1, value);
+
+            return cons(head,replaced);
+        }
+
+        public Seq<T> insertAt(final int i, final T value) {
+            if(i==0)
+                return prepend(value);
+            if(i<1000)
+                return cons(head, tail.insertAt(i-1, value));
+            return Seq.super.insertAt(i,value);
+
+        }
+
+        @Override
+        public Seq<T> insertAt(int i, Iterable<? extends T> list) {
+            if(i==0)
+                return prependAll(list);
+            if(i<1000)
+                return cons(head, tail.insertAt(i-1, list));
+            return Seq.super.insertAt(i,list);
+
+
+        }
+
+        @Override
+        public Seq<T> removeValue(T e) {
+            return removeAll(e);
+        }
 
         @Override
         public T head() {
@@ -383,7 +496,7 @@ public interface Seq<T> extends ImmutableList<T>,
                      return false;
                  }
              }
-             if(obj instanceof ImmutableList) {
+             if(obj instanceof PIndexed) {
                  return equalToIteration((Iterable)obj);
              }
              return false;
@@ -471,6 +584,37 @@ public interface Seq<T> extends ImmutableList<T>,
         public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
             return fn2.apply(this);
         }
+
+        @Override
+        public Seq<T> plusAll(Iterable<? extends T> t) {
+            return fromIterable((Iterable<T>)t);
+        }
+
+        @Override
+        public Seq<T> updateAt(int i, T value) {
+            return this;
+        }
+
+        @Override
+        public Seq<T> removeAt(int i) {
+            return this;
+        }
+
+
+        public Seq<T> insertAt(final int i, final T e) {
+            return plus(e);
+        }
+
+        @Override
+        public Seq<T> insertAt(int i, Iterable<? extends T> list) {
+            return fromIterable((Iterable<T>)list);
+        }
+
+        @Override
+        public Seq<T> removeValue(T e) {
+            return this;
+        }
+
         @Override
         public String toString(){
             return "[]";
@@ -487,8 +631,8 @@ public interface Seq<T> extends ImmutableList<T>,
             if (obj == this)
                 return true;
 
-            if(obj instanceof ImmutableList) {
-                return ((ImmutableList)obj).size()==0;
+            if(obj instanceof PStack) {
+                return ((PStack)obj).size()==0;
             }
             return false;
         }

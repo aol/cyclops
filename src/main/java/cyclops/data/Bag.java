@@ -1,6 +1,8 @@
 package cyclops.data;
 
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import com.aol.cyclops2.types.traversable.IterableX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,10 +10,12 @@ import lombok.AllArgsConstructor;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Bag<T> implements IterableX<T>, Serializable {
+public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private final HashMap<T,Integer> map;
@@ -21,6 +25,9 @@ public class Bag<T> implements IterableX<T>, Serializable {
         return new Bag<>(HashMap.empty(), 0);
     }
 
+    public static <T> Bag<T> singleton(T value) {
+        return Bag.<T>empty().plus(value);
+    }
     public static <T> Bag<T> of(T... values){
         Bag<T> res = empty();
         for(T next : values){
@@ -32,26 +39,88 @@ public class Bag<T> implements IterableX<T>, Serializable {
     public static <T> Bag<T> fromStream(Stream<T> values){
         return ReactiveSeq.fromStream(values).foldLeft(empty(),(a,b)->a.plus(b));
     }
+    public static <T> Bag<T> fromIterable(Iterable<? extends T> values){
+        return ReactiveSeq.fromIterable(values).foldLeft(empty(),(a,b)->a.plus(b));
+    }
 
 
     public int instances(T type){
-        return map.getOrElse(type,0);
+        return map.getValueOrElse(type,0);
     }
     public int size() {
         return size;
     }
 
-    public boolean contains(final T e) {
-        return map.get(e).isPresent();
+    @Override
+    public Bag<T> add(T value) {
+        return plus(value);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return map.isEmpty();
+    }
+
+    @Override
+    public <R> Bag<R> map(Function<? super T, ? extends R> fn) {
+        return fromStream(stream().map(fn));
+    }
+
+    @Override
+    public <R> Bag<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn) {
+        return fromStream(stream().flatMap(fn.andThen(s->s.stream())));
+    }
+
+    @Override
+    public <R> Bag<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().flatMapI(fn));
+    }
+
+    @Override
+    public Bag<T> filter(Predicate<? super T> predicate) {
+        return fromStream(stream().filter(predicate));
+    }
+
+    @Override
+    public <R> Bag<R> unitStream(Stream<R> stream) {
+        return fromStream(stream);
+    }
+
+    @Override
+    public <U> Bag<U> unitIterator(Iterator<U> U) {
+        return fromIterable(()->U);
+    }
+
+    @Override
+    public boolean containsValue(final T e) {
+        return map.getValue(e).isPresent();
     }
 
     public Bag<T> plus(final T value) {
-        return new Bag<>(map.put(value, map.get(value).orElse(0)+1), size+1);
+        return new Bag<>(map.put(value, map.getValue(value).orElse(0)+1), size+1);
+    }
+
+    @Override
+    public Bag<T> plusAll(Iterable<? extends T> list) {
+        return fromIterable(list);
     }
 
 
-    public Bag<T> minus(final T value) {
-        int n = map.get(value).orElse(0);
+
+    @Override
+    public Bag<T> removeAll(Iterable<? extends T> list) {
+        Bag<T> res = this;
+        for(T next : list){
+            res = res.removeValue(next);
+        }
+        return res;
+    }
+
+
+
+    @Override
+    public Bag<T> removeValue(final T value) {
+        int n = map.getValue(value).orElse(0);
         if(n==0)
             return this;
         if(n==1)

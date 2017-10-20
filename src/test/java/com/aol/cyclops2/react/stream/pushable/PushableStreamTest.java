@@ -57,7 +57,7 @@ public class PushableStreamTest {
         
         System.out.println(Thread.currentThread().getId());
        System.out.println(bus.futureStream("reactor", new LazyReact(50,50))
-            .get()
+            .getValue()
            .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
            .toList());//.forEach(System.out::println);
         
@@ -127,12 +127,12 @@ public class PushableStreamTest {
 
 		System.out.println(events);
 		/**
-		 * non-deterministics assertThat(events.get(0),is("here!"));
-		 * assertThat(events.get(1),is(10));
-		 * assertThat(events.get(2),is("there!"));
-		 * assertThat(events.get(3),is(20));
-		 * assertThat(events.get(4),is("there2!"));
-		 * assertThat(events.get(5),is(30));
+		 * non-deterministics assertThat(events.getValue(0),is("here!"));
+		 * assertThat(events.getValue(1),is(10));
+		 * assertThat(events.getValue(2),is("there!"));
+		 * assertThat(events.getValue(3),is(20));
+		 * assertThat(events.getValue(4),is("there2!"));
+		 * assertThat(events.getValue(5),is(30));
 		 **/
 
 	}

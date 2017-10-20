@@ -38,6 +38,18 @@ public interface Traversable<T> extends Publisher<T>,
                                         TransformerTraversable<T>,
                                         Sequential<T>{
 
+    default Traversable<T> removeAt(long index){
+        return zipWithIndex().filterNot(t2->t2._2()==index).map(t->t._1());
+    }
+
+    @Override
+    <R> Traversable<R> map(Function<? super T, ? extends R> fn);
+
+    @Override
+    default Traversable<T> filterNot(final Predicate<? super T> predicate) {
+        return (Traversable<T>)FilterableTransformable.super.filterNot(predicate);
+    }
+
     default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
         return this.stream().mapToDouble(fn);
     }
@@ -260,7 +272,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code 
      * 	MutableInt count =MutableInt.of(0);
      * 		ReactiveSeq.of(1,2,2)
-     * 		 		.cycleUntil(next -> count.get()>6)
+     * 		 		.cycleUntil(next -> count.getValue()>6)
      * 		 		.peek(i-> count.mutate(i->i+1))
      * 		 		.collect(CyclopsCollectors.toList());
      * 
@@ -339,8 +351,8 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(CyclopsCollectors.toList());
      * 
-     *  assertThat(list.get(0), hasItems(1, 2));
-     *  assertThat(list.get(1), hasItems(2, 3));
+     *  assertThat(list.getValue(0), hasItems(1, 2));
+     *  assertThat(list.getValue(1), hasItems(2, 3));
      * 
      * }
      * 
@@ -361,8 +373,8 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(CyclopsCollectors.toList());
      * 
-     *  assertThat(list.get(0), hasItems(1, 2, 3));
-     *  assertThat(list.get(1), hasItems(3, 4, 5));     
+     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
+     *  assertThat(list.getValue(1), hasItems(3, 4, 5));
      * 
      * 
      * }
@@ -388,7 +400,7 @@ public interface Traversable<T> extends Publisher<T>,
      * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
      *                      .batchBySize(3,()->new TreeSet<>())
      *                      .toList()
-     *                      .get(0)
+     *                      .getValue(0)
      *                      .size(),is(1));
      * }
      * </pre>
@@ -533,8 +545,8 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(CyclopsCollectors.toList());
      * 
-     *  assertThat(list.get(0), hasItems(1, 2, 3));
-     *  assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
+     *  assertThat(list.getValue(1), hasItems(4, 5, 6));
      * 
      * }
      * </pre>
@@ -992,7 +1004,7 @@ public interface Traversable<T> extends Publisher<T>,
     /**
      * @return This Traversable converted to a Stream and type narrowed to Traversable
      */
-    //@TODO remove
+    //@TODO removeValue
     default Traversable<T> traversable() {
         return stream();
     }
@@ -1037,6 +1049,9 @@ public interface Traversable<T> extends Publisher<T>,
     default Traversable<T> append(T... values){
         return traversable().append(values);
     }
+    default Traversable<T> removeFirst(Predicate<? super T> pred){
+        return traversable().removeFirst(pred);
+    }
 
 
     default Traversable<T> append(T value){
@@ -1044,7 +1059,16 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
 
+    default Traversable<T> appendAll(Iterable<? extends T> value){
+        return traversable().appendAll(value);
+    }
+    default Traversable<T> prependAll(Iterable<? extends T> value){
+        return traversable().prependAll(value);
+    }
     default Traversable<T> prepend(T value){
+        return traversable().prepend(value);
+    }
+    default Traversable<T> prepend(Iterable<? extends T> value){
         return traversable().prepend(value);
     }
 
@@ -1054,17 +1078,17 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
-     * 									 .prepend(100,200,300)
+     * 									 .prependAll(100,200,300)
      * 										 .transform(it ->it+"!!")
      * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * @param values to prependAll
      * @return ReactiveSeq with values prepended
      */
-    default Traversable<T> prepend(T... values){
-        return traversable().prepend(values);
+    default Traversable<T> prependAll(T... values){
+        return traversable().prependAll(values);
     }
 
     /**
@@ -1088,6 +1112,18 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().insertAt(pos,values);
     }
 
+    default Traversable<T> insertAt(int pos,Iterable<? extends T> values){
+        return traversable().insertAt(pos,values);
+    }
+    default Traversable<T> insertAt(int pos,ReactiveSeq<? extends T> values){
+        return traversable().insertAt(pos,values);
+    }
+    default Traversable<T> updateAt(int i, T e){
+        return traversable().updateAt(i,e);
+    }
+    default Traversable<T> removeAt(int pos){
+        return traversable().removeAt(pos);
+    }
     /**
      * Delete elements between given indexes in a Stream
      *

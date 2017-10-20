@@ -1,16 +1,13 @@
 package com.aol.cyclops2.data.collections.extensions.persistent;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.*;
+import java.util.function.*;
 
 import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
-import org.pcollections.PMap;
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.SetX;
@@ -47,7 +44,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      * @see org.pcollections.PMap#plusAll(java.util.Map)
      */
     @Override
-    public PersistentMapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
+    public PersistentMapX<K, V> plusAll(final PMap<? extends K, ? extends V> map) {
         return withMap(this.map.plusAll(map));
     }
 
@@ -57,17 +54,13 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      * @see org.pcollections.PMap#minus(java.lang.Object)
      */
     @Override
-    public PersistentMapX<K, V> minus(final Object key) {
+    public PersistentMapX<K, V> minus(final K key) {
         return withMap(map.minus(key));
     }
 
-    /**
-     * @param keys
-     * @return
-     * @see org.pcollections.PMap#minusAll(java.util.Collection)
-     */
+
     @Override
-    public PersistentMapX<K, V> minusAll(final Collection<?> keys) {
+    public PersistentMapX<K, V> minusAll(final Iterable<? extends K> keys) {
         return withMap(map.minusAll(keys));
     }
 
@@ -81,7 +74,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Deprecated
     @Override
     public V put(final K k, final V v) {
-        return map.put(k, v);
+        return v;
     }
 
     /**
@@ -93,7 +86,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Deprecated
     @Override
     public V remove(final Object k) {
-        return map.remove(k);
+        return null;
     }
 
     /**
@@ -104,7 +97,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Deprecated
     @Override
     public void putAll(final Map<? extends K, ? extends V> m) {
-        map.putAll(m);
+
     }
 
     /**
@@ -113,8 +106,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Deprecated
     @Override
-    public void clear() {
-        map.clear();
+    public void clear(){
     }
 
     /**
@@ -142,7 +134,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public boolean containsKey(final Object key) {
-        return map.containsKey(key);
+        return map.containsKey((K)key);
     }
 
     /**
@@ -152,7 +144,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public boolean containsValue(final Object value) {
-        return map.containsValue(value);
+        return map.stream().filter(t2-> Objects.equals(t2._2(),value)).findFirst().isPresent();
     }
 
     /**
@@ -162,7 +154,8 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public V get(final Object key) {
-        return map.get(key);
+
+        return map.getValueOrElse((K)key,null);
     }
 
     /**
@@ -171,7 +164,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public SetX<K> keySet() {
-        return SetX.fromIterable(map.keySet());
+        return SetX.fromIterable(map.stream().map(t2-> t2._1()));
     }
 
     /**
@@ -180,7 +173,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public CollectionX<V> values() {
-        return CollectionX.fromCollection(map.values());
+        return ListX.fromIterable(map.stream().map(t2->t2._2()));
     }
 
     /**
@@ -189,7 +182,9 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public Set<java.util.Map.Entry<K, V>> entrySet() {
-        return map.entrySet();
+        Set<java.util.Map.Entry<K, V>> x = map.stream()
+                .map(t2 -> (java.util.Map.Entry<K, V>)new AbstractMap.SimpleEntry<>(t2._1(), t2._2())).toSet();
+        return x;
     }
 
     /**
@@ -219,7 +214,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public V getOrDefault(final Object key, final V defaultValue) {
-        return map.getOrDefault(key, defaultValue);
+        return map.getValueOrElse((K)key, defaultValue);
     }
 
     /**
@@ -228,7 +223,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public void forEach(final BiConsumer<? super K, ? super V> action) {
-        map.forEach(action);
+        map.stream().forEach(t2->action.accept(t2._1(),t2._2()));
     }
 
     /**
@@ -238,7 +233,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public void replaceAll(final BiFunction<? super K, ? super V, ? extends V> function) {
-        map.replaceAll(function);
+
     }
 
     /**
@@ -250,7 +245,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V putIfAbsent(final K key, final V value) {
-        return map.putIfAbsent(key, value);
+        return value;
     }
 
     /**
@@ -262,7 +257,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public boolean remove(final Object key, final Object value) {
-        return map.remove(key, value);
+        return false;
     }
 
     /**
@@ -275,7 +270,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public boolean replace(final K key, final V oldValue, final V newValue) {
-        return map.replace(key, oldValue, newValue);
+        return false;
     }
 
     /**
@@ -287,7 +282,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V replace(final K key, final V value) {
-        return map.replace(key, value);
+        return value;
     }
 
     /**
@@ -299,7 +294,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction) {
-        return map.computeIfAbsent(key, mappingFunction);
+        return mappingFunction.apply(key);
     }
 
     /**
@@ -311,7 +306,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V computeIfPresent(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-        return map.computeIfPresent(key, remappingFunction);
+        return remappingFunction.apply(key, getValueOrElse(key,null));
     }
 
     /**
@@ -323,7 +318,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-        return map.compute(key, remappingFunction);
+        return remappingFunction.apply(key, getValueOrElse(key,null));
     }
 
     /**
@@ -336,7 +331,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     @Deprecated
     public V merge(final K key, final V value, final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
-        return map.merge(key, value, remappingFunction);
+        return value;
     }
 
     @Override
@@ -371,12 +366,33 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
 
     @Override
     public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError) {
+        stream().forEach(t->{
+            consumerElement.accept(t);
+        },e->consumerError.accept(e));
 
     }
 
     @Override
     public <X extends Throwable> void forEach(Consumer<? super Tuple2<K, V>> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+        stream().forEach(t->{
+            consumerElement.accept(t);
+        },consumerError,onComplete);
 
+    }
+
+    @Override
+    public Option<V> getValue(K key) {
+        return map.getValue(key);
+    }
+
+    @Override
+    public V getValueOrElse(K key, V alt) {
+        return map.getValueOrElse(key,alt);
+    }
+
+    @Override
+    public V getValueOrElseGet(K key, Supplier<? extends V> alt) {
+        return map.getValueOrElseGet(key,alt);
     }
 
     @Override

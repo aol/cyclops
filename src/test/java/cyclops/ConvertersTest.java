@@ -1,11 +1,12 @@
 package cyclops;
 
+import com.aol.cyclops2.data.collections.extensions.api.*;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.*;
 import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
 import org.junit.Test;
-import org.pcollections.*;
+
 
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -29,7 +30,7 @@ public class ConvertersTest {
         assertThat(list1,equalTo(ListX.of(1,2,3)));
 
         PStack<Integer> pstack = LinkedListX.of(1,2,3).to(Converters::PStack);
-        PVector<Integer> pvector = VectorX.of(1,2,3).to(Converters::PVector);
+        PStack<Integer> pvector = VectorX.of(1,2,3).to(Converters::PVector);
         PSet<Integer> pset = PersistentSetX.of(1,2,3).to(Converters::PSet);
         POrderedSet<Integer> pOrderedSet = OrderedSetX.of(1,2,3).to(Converters::POrderedSet);
         PBag<Integer> pBag = BagX.of(1,2,3).to(Converters::PBag);

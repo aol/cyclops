@@ -125,18 +125,18 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
 
     ImmutableQueue<T> prepend(T value);
-    ImmutableQueue<T> prependAll(Iterable<T> value);
+    ImmutableQueue<T> prependAll(Iterable<? extends T> value);
 
     ImmutableQueue<T> append(T value);
-    ImmutableQueue<T> appendAll(Iterable<T> value);
+    ImmutableQueue<T> appendAll(Iterable<? extends T> value);
 
     ImmutableQueue<T> reverse();
 
     Option<T> get(int pos);
     T getOrElse(int pos, T alt);
-    T getOrElseGet(int pos, Supplier<T> alt);
+    T getOrElseGet(int pos, Supplier<? extends T> alt);
     int size();
-    default boolean contains(T value){
+    default boolean containsValue(T value){
         return stream().filter(o-> Objects.equals(value,o)).findFirst().isPresent();
     }
     boolean isEmpty();
@@ -709,7 +709,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<T> prepend(T... values) {
+    default ImmutableQueue<T> prependAll(T... values) {
         ImmutableQueue<T> res = this;
         for(T t : values){
             res = res.prepend(t);

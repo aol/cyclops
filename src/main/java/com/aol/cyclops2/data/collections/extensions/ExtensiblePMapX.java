@@ -7,7 +7,7 @@ import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import lombok.NonNull;
 import cyclops.data.tuple.Tuple2;
-import org.pcollections.PMap;
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
 
 import java.util.function.Supplier;
 

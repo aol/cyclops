@@ -78,7 +78,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * <pre>
      * {@code 
-     *   Maybe.none().coflatMap(m -> m.isPresent() ? m.get() : 10);
+     *   Maybe.none().coflatMap(m -> m.isPresent() ? m.getValue() : 10);
      *   //Maybe[10]
      * }
      * </pre>

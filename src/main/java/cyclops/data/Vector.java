@@ -1,18 +1,21 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Eval;
 import cyclops.data.base.BAMT;
+import cyclops.function.Memoize;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -20,13 +23,72 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class Vector<T> implements ImmutableList<T>{
+public class Vector<T> implements ImmutableList<T>,PStack<T> {
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
     private final int size;
-    private final Eval<Integer> hash = Eval.later(()->calcHash());
+    private final Supplier<Integer> hash = Memoize.memoizeSupplier(() -> calcHash());
+
+    @Override
+    public Vector<T> plusAll(Iterable<? extends T> list) {
+        return ( Vector<T>)appendAll((Iterable<T>)list);
+    }
+
+    @Override
+    public boolean containsValue(T value) {
+        return stream().filter(i->Objects.equals(i,value)).findFirst().isPresent();
+    }
+    @Override
+    public<R> Vector<R> unitIterable(Iterable<R> it){
+        if(it instanceof Vector){
+            return (Vector<R>)it;
+        }
+        return fromIterable(it);
+    }
 
 
+
+    @Override
+    public Vector<T> removeValue(T e) {
+        return removeFirst(i-> Objects.equals(i,e));
+    }
+
+    @Override
+    public Vector<T> removeAll(Iterable<? extends T> list) {
+        return removeAllI(list);
+    }
+    @Override
+    public Vector<T> removeAllI(Iterable<? extends T> it) {
+        return (Vector<T>)ImmutableList.super.removeAllI(it);
+    }
+    @Override
+    public Vector<T> removeAt(int i) {
+        return (Vector<T>)ImmutableList.super.removeAt(i);
+    }
+    @Override
+    public Vector<T> removeAt(long pos) {
+        return unitStream(stream().removeAt(pos));
+    }
+    @Override
+    public Vector<T> insertAt(int pos, T... values) {
+        return (Vector<T>)ImmutableList.super.insertAt(pos,values);
+    }
+    @Override
+    public Vector<T> insertAt(int i, T e){
+        return (Vector<T>)ImmutableList.super.insertAt(i,e);
+    }
+
+    @Override
+    public Vector<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (Vector<T>)ImmutableList.super.insertAt(pos,values);
+    }
+    @Override
+    public Vector<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (Vector<T>)ImmutableList.super.insertAt(pos,values);
+    }
+    public Vector<T> plusAll(int i, Iterable<? extends T> values){
+        return insertAt(i,values);
+    }
 
     public static <T> Vector<T> empty(){
         return new Vector<>(new BAMT.Zero<>(),BAMT.ActiveTail.emptyTail(),0);
@@ -79,6 +141,9 @@ public class Vector<T> implements ImmutableList<T>{
         return fromIterable(()->it.iterator());
     }
     public static <T> Vector<T> fromIterable(Iterable<T> it){
+        if(it instanceof Vector){
+            return (Vector<T>)it;
+        }
         Vector<T> res = empty();
         for(T next : it){
             res = res.plus(next);
@@ -137,6 +202,11 @@ public class Vector<T> implements ImmutableList<T>{
     }
 
     @Override
+    public Vector<T> updateAt(int pos, T value) {
+        return (Vector<T>)ImmutableList.super.updateAt(pos,value);
+    }
+
+    @Override
     public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
         if(size()!=0)
             return this;
@@ -166,6 +236,8 @@ public class Vector<T> implements ImmutableList<T>{
     public int size(){
         return size;
     }
+
+
 
     @Override
     public boolean isEmpty() {
@@ -251,7 +323,7 @@ public class Vector<T> implements ImmutableList<T>{
     }
 
     @Override
-    public ImmutableList<T> prependAll(Iterable<T> value) {
+    public ImmutableList<T> prependAll(Iterable<? extends T> value) {
         return unitStream(stream().prepend(value));
     }
 
@@ -261,13 +333,16 @@ public class Vector<T> implements ImmutableList<T>{
     }
 
     @Override
-    public Vector<T> appendAll(Iterable<T> value) {
+    public Vector<T> appendAll(Iterable<? extends T> value) {
         Vector<T> vec = this;
 
         for(T next : value){
             vec = vec.plus(next);
         }
         return vec;
+    }
+    public Vector<T> subList(int start, int end){
+        return drop(start).take(end-start);
     }
 
     @Override
@@ -300,7 +375,7 @@ public class Vector<T> implements ImmutableList<T>{
     }
 
     @Override
-    public T getOrElseGet(int pos, Supplier<T> alt) {
+    public T getOrElseGet(int pos, Supplier<? extends T> alt) {
         if(pos<0||pos>=size){
             return alt.get();
         }
@@ -344,6 +419,14 @@ public class Vector<T> implements ImmutableList<T>{
     static class VectorNone<T> implements ImmutableList.None<T>{
         static VectorNone Instance = new VectorNone();
 
+        @Override
+        public<R> Vector<R> unitIterable(Iterable<R> it){
+            if(it instanceof Vector){
+                return (Vector<R>)it;
+            }
+            return fromIterable(it);
+        }
+
         public static <T> VectorNone<T> empty(){
             return Instance;
         }
@@ -373,7 +456,7 @@ public class Vector<T> implements ImmutableList<T>{
         }
 
         @Override
-        public ImmutableList<T> prependAll(Iterable<T> value) {
+        public ImmutableList<T> prependAll(Iterable<? extends T> value) {
             return empty();
         }
 
@@ -383,7 +466,7 @@ public class Vector<T> implements ImmutableList<T>{
         }
 
         @Override
-        public ImmutableList<T> appendAll(Iterable<T> value) {
+        public ImmutableList<T> appendAll(Iterable<? extends T> value) {
             return empty();
         }
 
@@ -403,7 +486,7 @@ public class Vector<T> implements ImmutableList<T>{
         }
 
         @Override
-        public T getOrElseGet(int pos, Supplier<T> alt) {
+        public T getOrElseGet(int pos, Supplier<? extends T> alt) {
             return alt.get();
         }
 
@@ -470,7 +553,7 @@ public class Vector<T> implements ImmutableList<T>{
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof ImmutableList) || o==null)
+        if(!(o instanceof PIndexed) || o==null)
             return false;
         return equalToDirectAccess((Iterable<T>)o);
 

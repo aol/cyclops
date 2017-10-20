@@ -1,5 +1,6 @@
 package com.aol.cyclops2.types.traversable;
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Folds;
@@ -7,6 +8,8 @@ import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -26,6 +29,7 @@ import org.reactivestreams.Subscription;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -40,6 +44,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
                                                 ReactiveStreamsTerminalOperations<T> {
 
 
+
     default int size(){
         return (int)count();
     }
@@ -52,6 +57,10 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
                 return false;
         }
         return it2.hasNext() == it1.hasNext();
+    }
+
+    default boolean isEmpty(){
+        return !(iterator().hasNext());
     }
 
 
@@ -636,28 +645,38 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> prependS(Stream<? extends T> stream) {
         return (IterableX<T>)ExtendedTraversable.super.prependS(stream);
     }
-    //@TODO
-    default IterableX<T> plusAll(Collection<? extends T> list){
+
+    default IterableX<T> plusAll(Iterable<? extends T> list){
         IterableX<T> res = this;
         for(T next : list){
             res = append(next);
         }
         return res;
     }
-    //@TODO
+
+
     default IterableX<T> plus(T value){
         return append(value);
     }
-/**
-    //@TODO
-    default IterableX<T> minus(Object value){
-        return null;
+
+
+
+    default IterableX<T> removeValue(T value){
+        return unitIterator(stream().removeValue(value).iterator());
     }
-    //@TODO
-    default IterableX<T> minusAll(Collection<?> value){
-        return null;
+    default IterableX<T> removeAt(int pos){
+        return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
     }
-**/
+
+    //@TODO - collision with collection removeAll
+    default IterableX<T> removeAll(Iterable<? extends T> value){
+        return unitIterator(stream().removeAllI(value).iterator());
+    }
+    default IterableX<T> removeFirst(Predicate<? super T> pred){
+        return (IterableX<T>)ExtendedTraversable.super.removeFirst(pred);
+    }
+
+
     @Override
     default IterableX<T> append(T... values) {
         return (IterableX<T>)ExtendedTraversable.super.append(values);
@@ -667,20 +686,30 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> append(T value) {
         return (IterableX<T>)ExtendedTraversable.super.append(value);
     }
-
+    @Override
+    default IterableX<T> appendAll(Iterable<? extends T> value){
+        return (IterableX<T>)ExtendedTraversable.super.appendAll(value);
+    }
+    @Override
+    default IterableX<T> prependAll(Iterable<? extends T> value){
+        return (IterableX<T>)ExtendedTraversable.super.prependAll(value);
+    }
     @Override
     default IterableX<T> prepend(T value) {
         return (IterableX<T>)ExtendedTraversable.super.prepend(value);
     }
-
     @Override
-    default IterableX<T> prepend(T... values) {
-        return (IterableX<T>)ExtendedTraversable.super.prepend(values);
+    default IterableX<T> prepend(Iterable<? extends T> value) {
+        return (IterableX<T>)ExtendedTraversable.super.prepend(value);
     }
 
     @Override
-    default IterableX<T> insertAt(int pos, T... values) {
-        return (IterableX<T>)ExtendedTraversable.super.insertAt(pos,values);
+    default IterableX<T> prependAll(T... values) {
+        return (IterableX<T>)ExtendedTraversable.super.prependAll(values);
+    }
+    @Override
+    default IterableX<T> updateAt(int pos, T value) {
+        return (IterableX<T>)ExtendedTraversable.super.updateAt(pos,value);
     }
 
     @Override
@@ -735,14 +764,35 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
         return stream().flatMapI(mapper);
     }
-/**
-    default IterableComprehension<T> comprehension(){
-        return new IterableComprehension<>(this);
+    default IterableX<T> insertAt(int i, T value){
+        IterableX<T> front = take(i);
+        IterableX<T> back = drop(i);
+
+
+        return back.prepend(value).prepend(front);
     }
-**/
+    @Override
+    default IterableX<T> insertAt(int pos, T... values) {
+        IterableX<T> front = take(pos);
+        IterableX<T> back = drop(pos);
 
 
+        return back.prependAll(values).prepend(front);
+    }
 
+    @Override
+    default IterableX<T> insertAt(int pos, Iterable<? extends T> values) {
+        IterableX<T> front = take(pos);
+        IterableX<T> back = drop(pos);
+
+
+        return back.prependAll(values).prepend(front);
+    }
+
+
+    default boolean containsValue(T v){
+        return stream().filter(t->Objects.equals(t,v)).findFirst().isPresent();
+    }
 
 
 

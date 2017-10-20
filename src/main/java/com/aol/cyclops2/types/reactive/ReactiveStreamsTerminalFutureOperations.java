@@ -52,7 +52,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      * {@code
      *     ReactiveTask next = FutureStream.builder().of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations()
-     *                                  .map(Supplier::get)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
@@ -91,7 +91,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      * {@code
      *     ReactiveTask next = FutureStream.builder().of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations()
-     *                                  .map(Supplier::get)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
@@ -127,7 +127,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      * {@code
      *     ReactiveTask next = FutureStream.builder().of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations()
-     *                                  .map(Supplier::get)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
@@ -157,7 +157,7 @@ public interface ReactiveStreamsTerminalFutureOperations<T> {
      * {@code
      *     ReactiveTask next = FutureStream.builder().of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .futureOperations()
-     *                                  .map(Supplier::get)
+     *                                  .map(Supplier::getValue)
      *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");

@@ -56,7 +56,7 @@ public class StreamableSeqOpertationsTest {
 		
 		@Test
 		public void prepend(){
-		List<String> result = 	of(1,2,3).prepend(100,200,300)
+		List<String> result = 	of(1,2,3).prependAll(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));

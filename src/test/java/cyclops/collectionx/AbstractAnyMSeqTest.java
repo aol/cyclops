@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,10 +57,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 	public abstract <T> AnyMSeq<W,T> of(T... values);
 	
     public static final LazyReact r = new LazyReact(10,10);
-   // prependS, append,append,prepend,prepend,insertAt,deleteBetween,insertAtS,recover
+   // prependS, append,append,prependAll,prependAll,insertAt,deleteBetween,insertAtS,recover
     @Test
     public void prependAppend(){
-        assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prepend(7,8).insertAt(4,9).deleteBetween(1,2)
+        assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
                 .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
@@ -950,7 +949,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
             
             assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).get(0).toOptional().get().size(),is(3));
             
-           // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).get(1).get().size(),is(1));
+           // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
         }
         @Test
         public void batchBySizeInternalSize(){
@@ -1173,7 +1172,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
 
             @Test
             public void slidingIncrementNoOrder() {
-                List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
+                List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
                 System.out.println(list);
                

@@ -144,7 +144,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void prependPlay(){
-        System.out.println(of(1,2,3).prepend(100,200,300).collect(Collectors.toList()));
+        System.out.println(of(1,2,3).prependAll(100,200,300).collect(Collectors.toList()));
 
 
     }

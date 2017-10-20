@@ -1,13 +1,14 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+
 
 import java.util.*;
 import java.util.function.Function;
@@ -71,7 +72,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
          public PStack<T> from(final Iterator<T> i,int depth) {
 
             if(!i.hasNext())
-                return ConsPStack.empty();
+                return Seq.empty();
             T e = i.next();
             return  from(i,depth++).plus(e);
         }
@@ -122,31 +123,36 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
 
     @Override
-    public <T1> LazyLinkedListX<T1> from(Collection<T1> c) {
+    public <T1> LazyLinkedListX<T1> from(Iterable<T1> c) {
         if(c instanceof PStack)
             return new LazyLinkedListX<T1>((PStack)c,null,(Reducer)getCollectorInternal(),(FoldToList)generator, evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
+    public <T1> LazyLinkedListX<T1> from(PStack<T1> c) {
+
+            return new LazyLinkedListX<T1>(c,null,(Reducer)getCollectorInternal(),(FoldToList)generator, evaluation());
+
+    }
 
 
     @Override
-    public LinkedListX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public LinkedListX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
 
     @Override
-    public LinkedListX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public LinkedListX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
     @Override
-    public LinkedListX<T> with(int i, T e) {
-        return from(get().with(i,e));
+    public LinkedListX<T> updateAt(int i, T e) {
+        return from(get().updateAt(i,e));
     }
 
     @Override
-    public LinkedListX<T> plus(int i, T e) {
-        return from(get().plus(i,e));
+    public LinkedListX<T> insertAt(int i, T e) {
+        return from(get().insertAt(i,e));
     }
 
     @Override
@@ -155,74 +161,69 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
 
     @Override
-    public LinkedListX<T> plusAll(Collection<? extends T> list) {
+    public LinkedListX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
     @Override
-    public LinkedListX<T> plusAll(int i, Collection<? extends T> list) {
-        return from(get().plusAll(i,list));
+    public LinkedListX<T> insertAt(int i, Iterable<? extends T> list) {
+        return from(get().insertAt(i,list));
     }
 
     @Override
-    public LinkedListX<T> minus(int i) {
-        return from(get().minus(i));
+    public LinkedListX<T> removeAt(int i) {
+        return from(get().removeAt(i));
     }
 
-    @Override
-    public LinkedListX<T> subList(int start, int end) {
-        return from(get().subList(start,end));
-    }
 
+/**
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        return get().addAll(index,c);
+        return getValue().addAll(index,c);
     }
 
     @Override
-    public T get(int index) {
-        return get().get(index);
+    public T getValue(int index) {
+        return getValue().getValue(index);
     }
 
     @Override
     public T set(int index, T element) {
-        return get().set(index,element);
+        return getValue().set(index,element);
     }
 
     @Override
     public void add(int index, T element) {
-         get().add(index,element);
+         getValue().add(index,element);
     }
 
     @Override
-    public T remove(int index) {
-        return get().remove(index);
+    public T removeValue(int index) {
+        return getValue().removeValue(index);
     }
 
     @Override
     public int indexOf(Object o) {
-        return get().indexOf(o);
+        return getValue().indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return get().lastIndexOf(o);
+        return getValue().lastIndexOf(o);
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return get().listIterator();
+        return getValue().listIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return get().listIterator(index);
+        return getValue().listIterator(index);
     }
 
-    @Override
-    public PStack<T> subList(int start) {
-        return get().subList(start);
-    }
+**/
+
 
     @Override
     public <U> LazyLinkedListX<U> unitIterator(Iterator<U> it) {
@@ -232,7 +233,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
 
 
     @Override
-    public <R> LazyLinkedListX<R> unit(Collection<R> col) {
+    public <R> LazyLinkedListX<R> unit(Iterable<R> col) {
         return from(col);
     }
 
@@ -247,18 +248,24 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
 
     @Override
-    public T getOrElse(int index, T value) {
-        List<T> x = get();
-        if(index>x.size())
-            return value;
+    public Option<T> get(int index) {
+        PStack<T> x = get();
         return x.get(index);
     }
 
     @Override
+    public T getOrElse(int index, T value) {
+        PStack<T> x = get();
+        if(index>x.size())
+            return value;
+        return x.getOrElse(index,value);
+    }
+
+    @Override
     public T getOrElseGet(int index, Supplier<? extends T> supplier) {
-        List<T> x = get();
+        PStack<T> x = get();
         if(index>x.size())
             return supplier.get();
-        return x.get(index);
+        return x.getOrElseGet(index,supplier);
     }
 }

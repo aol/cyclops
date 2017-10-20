@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyCollection<T, C extends Collection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
+public abstract class AbstractLazyCollection<T, C extends Collection<T>> implements  LazyCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     private volatile C list;
     @Getter(AccessLevel.PROTECTED)
@@ -57,7 +57,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
     public Iterator<T> iterator() {
         return get().iterator();
     }
-    @Override
+
     public C get() {
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
@@ -149,6 +149,10 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         return get().isEmpty();
     }
 
+    @Override
+    public boolean containsValue(T o){
+        return get().contains(o);
+    }
     @Override
     public boolean contains(Object o){
         return get().contains(o);

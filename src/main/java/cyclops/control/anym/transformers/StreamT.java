@@ -838,8 +838,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> prepend(T... values) {
-        return (StreamT) FoldableTransformerSeq.super.prepend(values);
+    public StreamT<W,T> prependAll(T... values) {
+        return (StreamT) FoldableTransformerSeq.super.prependAll(values);
     }
 
     @Override

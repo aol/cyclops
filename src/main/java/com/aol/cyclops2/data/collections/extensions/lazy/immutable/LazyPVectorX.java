@@ -1,12 +1,12 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.PVector;
 
 import java.util.*;
 import java.util.function.Function;
@@ -39,8 +39,8 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<T>> implements VectorX<T> {
-    public static final <T> Function<ReactiveSeq<PVector<T>>, PVector<T>> asyncVector() {
+public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements VectorX<T> {
+    public static final <T> Function<ReactiveSeq<PStack<T>>, PStack<T>> asyncVector() {
         return r -> {
             CompletableVectorX<T> res = new CompletableVectorX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -49,7 +49,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     }
 
 
-    public LazyPVectorX(PVector<T> list, ReactiveSeq<T> seq, Reducer<PVector<T>> reducer,Evaluation strict) {
+    public LazyPVectorX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
         super(list, seq, reducer,strict,asyncVector());
     }
 
@@ -64,21 +64,27 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
 
     @Override
-    public VectorX<T> type(Reducer<? extends PVector<T>> reducer) {
+    public VectorX<T> type(Reducer<? extends PStack<T>> reducer) {
         return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPVectorX<X>((PVector)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPVectorX<X>((PStack)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
-    public <T1> LazyPVectorX<T1> from(Collection<T1> c) {
-        if(c instanceof PVector)
-            return new LazyPVectorX<T1>((PVector)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+    public <T1> LazyPVectorX<T1> from(Iterable<T1> c) {
+        if(c instanceof PStack)
+            return new LazyPVectorX<T1>((PStack)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+
+    public <T1> LazyPVectorX<T1> from(PStack<T1> c) {
+
+            return new LazyPVectorX<T1>((PStack)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+
     }
 
 
@@ -93,24 +99,15 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     }
 
     @Override
-    public VectorX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public VectorX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
 
     @Override
-    public VectorX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public VectorX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
-    @Override
-    public VectorX<T> with(int i, T e) {
-        return from(get().with(i,e));
-    }
-
-    @Override
-    public VectorX<T> plus(int i, T e) {
-        return from(get().plus(i,e));
-    }
 
     @Override
     public VectorX<T> plus(T e) {
@@ -118,20 +115,32 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     }
 
     @Override
-    public VectorX<T> plusAll(Collection<? extends T> list) {
+    public VectorX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
     @Override
-    public VectorX<T> plusAll(int i, Collection<? extends T> list) {
-        return from(get().plusAll(i,list));
+    public VectorX<T> insertAt(int i, T e) {
+        return from(get().insertAt(i,e));
+    }
+
+    /**
+    @Override
+    public VectorX<T> insertAt(int i, Iterable<? extends T> list) {
+        return from(getValue().insertAt(i,list));
+    }
+**/
+    @Override
+    public VectorX<T> removeAt(int i) {
+        return from(get().removeAt(i));
     }
 
     @Override
-    public VectorX<T> minus(int i) {
-        return from(get().minus(i));
+    public VectorX<T> updateAt(int i, T e) {
+        return from(get().updateAt(i,e));
     }
 
+    /**
     @Override
     public VectorX<T> subList(int start, int end) {
         return from(get().subList(start,end));
@@ -139,49 +148,49 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        return get().addAll(index,c);
+        return getValue().addAll(index,c);
     }
 
     @Override
-    public T get(int index) {
-        return get().get(index);
+    public T getValue(int index) {
+        return getValue().getValue(index);
     }
 
     @Override
     public T set(int index, T element) {
-        return get().set(index,element);
+        return getValue().set(index,element);
     }
 
     @Override
     public void add(int index, T element) {
-         get().add(index,element);
+         getValue().add(index,element);
     }
 
     @Override
-    public T remove(int index) {
-        return get().remove(index);
+    public T removeValue(int index) {
+        return getValue().removeValue(index);
     }
 
     @Override
     public int indexOf(Object o) {
-        return get().indexOf(o);
+        return getValue().indexOf(o);
     }
 
     @Override
     public int lastIndexOf(Object o) {
-        return get().lastIndexOf(o);
+        return getValue().lastIndexOf(o);
     }
 
     @Override
     public ListIterator<T> listIterator() {
-        return get().listIterator();
+        return getValue().listIterator();
     }
 
     @Override
     public ListIterator<T> listIterator(int index) {
-        return get().listIterator(index);
+        return getValue().listIterator(index);
     }
-
+**/
 
 
     @Override
@@ -192,7 +201,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
 
     @Override
-    public <R> LazyPVectorX<R> unit(Collection<R> col) {
+    public <R> LazyPVectorX<R> unit(Iterable<R> col) {
         return from(col);
     }
 
@@ -224,6 +233,10 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
 
     }
     @Override
+    public VectorX<T> insertAt(int i, Iterable<? extends T> list) {
+        return from(get().insertAt(i,list));
+    }
+    @Override
     public VectorX<T> plusLoop(int max, IntFunction<T> value) {
         return (VectorX<T>)super.plusLoop(max,value);
     }
@@ -234,18 +247,23 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PVector<
     }
 
     @Override
+    public Option<T> get(int index) {
+        return get().get(index);
+    }
+
+    @Override
     public T getOrElse(int index, T value) {
-        List<T> x = get();
-        if(index>x.size())
+        PStack<T> x = get();
+        if(index<0 || index>=x.size())
             return value;
-        return x.get(index);
+        return x.getOrElse(index,value);
     }
 
     @Override
     public T getOrElseGet(int index, Supplier<? extends T> supplier) {
-        List<T> x = get();
-        if(index>x.size())
+        PStack<T> x = get();
+        if(index <0 || index>=x.size())
             return supplier.get();
-        return x.get(index);
+        return x.getOrElseGet(index,supplier);
     }
 }

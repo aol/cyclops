@@ -100,29 +100,29 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     
 	@Test
     public void minusOne(){
-        assertThat(of().minus(1).size(),equalTo(0));
+        assertThat(of().removeAt(1).size(),equalTo(0));
     }
 	@Test
     public void minusOneNotEmpty(){
-        assertThat(of(1).minus(1).size(),equalTo(0));
+        assertThat(of(1).removeValue(1).size(),equalTo(0));
     }
 	@Test
     public void minusOneTwoValues(){
-        assertThat(of(1,2).minus(1),hasItem(2));
-        assertThat(of(1,2).minus(1),not(hasItem(1)));
+        assertThat(of(1,2).removeValue(1),hasItem(2));
+        assertThat(of(1,2).removeValue(1),not(hasItem(1)));
     }
 	@Test
     public void minusAllOne(){
-        assertThat(of().minusAll(of(1)).size(),equalTo(0));
+        assertThat(of().removeAll((Iterable)of(1)).size(),equalTo(0));
     }
     @Test
     public void minusAllOneNotEmpty(){
-        assertThat(of(1).minusAll(of(1)).size(),equalTo(0));
+        assertThat(of(1).removeAll((Iterable)of(1)).size(),equalTo(0));
     }
     @Test
     public void minusAllOneTwoValues(){
-        assertThat(of(1,2).minusAll(of(1)),hasItem(2));
-        assertThat(of(1,2).minusAll(of(1)),not(hasItem(1)));
+        assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),hasItem(2));
+        assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),not(hasItem(1)));
     }
 	
 	@Test

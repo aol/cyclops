@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.foldable.To;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.companion.Reducers;
-import org.pcollections.*;
+import com.aol.cyclops2.data.collections.extensions.api.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -68,9 +68,9 @@ public interface Converters {
         return vec.unwrapIfInstance(PStack.class,
                 ()->Reducers.<T>toPStack().mapReduce(vec.stream()));
     }
-    public static <T> PVector<T> PVector(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PVector.class,
-                ()-> Reducers.<T>toPVector().mapReduce(vec.stream()));
+    public static <T> PStack<T> PVector(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PStack.class,
+                ()-> Reducers.<T>toPStack().mapReduce(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 

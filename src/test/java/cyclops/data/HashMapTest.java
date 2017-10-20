@@ -1,8 +1,8 @@
 package cyclops.data;
 
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
 import org.junit.Test;
-import org.pcollections.HashTreePMap;
-import org.pcollections.PMap;
+
 
 import java.util.ArrayList;
 
@@ -37,7 +37,7 @@ public class HashMapTest {
         ArrayList<Integer> al = new ArrayList(v.size());
         long start = System.currentTimeMillis();
         for(int i=0;i<100_000_00;i++){
-            al.add(v.getOrElse(i,null));
+            al.add(v.getValueOrElse(i,null));
         }
 
         System.out.println(System.currentTimeMillis()-start);
@@ -47,14 +47,14 @@ public class HashMapTest {
     public void read100_000_00PC(){
         //2181
 
-        PMap<Integer,Integer> v = HashTreePMap.empty();
+        PMap<Integer,Integer> v = HashMap.empty();
         for(int i=0;i<100_000_00;i++){
             v =v.plus(i,i);
         }
         ArrayList<Integer> al = new ArrayList(v.size());
         long start = System.currentTimeMillis();
         for(int i=0;i<100_000_00;i++){
-            al.add(v.get(i));
+            al.add(v.getValueOrElse(i,null));
         }
 
         System.out.println(System.currentTimeMillis()-start);
@@ -65,7 +65,7 @@ public class HashMapTest {
     public void add10000PCol(){
         //26792
         long start = System.currentTimeMillis();
-        PMap<Integer,Integer> v = HashTreePMap.empty();
+        PMap<Integer,Integer> v = HashMap.empty();
         for(int i=0;i<100_000_00;i++){
             v =v.plus(i,i);
         }

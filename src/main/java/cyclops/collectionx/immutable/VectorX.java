@@ -1,12 +1,17 @@
 package cyclops.collectionx.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
+import cyclops.data.Vector;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.typeclasses.*;
@@ -39,8 +44,7 @@ import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -62,13 +66,21 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * @param <T> the type of elements held in this collection
  */
 public interface VectorX<T> extends To<VectorX<T>>,
-                                     PVector<T>,
+                                     PStack<T>,
                                      IndexedSequenceX<T>,
                                      LazyCollectionX<T>,
-                                     OnEmptySwitch<T, 
-                                     PVector<T>>,
+                                     OnEmptySwitch<T, PStack<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
+
+    @Override
+    VectorX<T> updateAt(int i, T e);
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return LazyCollectionX.super.stream();
+    }
+
     default Maybe<T> headMaybe(){
         return headAndTail().headMaybe();
     }
@@ -86,7 +98,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     static class CompletableVectorX<T> implements InvocationHandler {
         Future<VectorX<T>> future = Future.future();
-        public boolean complete(PVector<T> result){
+        public boolean complete(PStack<T> result){
             return future.complete(VectorX.fromIterable(result));
         }
 
@@ -305,7 +317,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
-                                  TreePVector.empty(),null,Reducers.toPVector(), LAZY);
+                                  Vector.empty(),null,Reducers.toPVector(), LAZY);
     }
 
     /**
@@ -326,7 +338,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  TreePVector.singleton(value),null,Reducers.toPVector(), LAZY);
+                                  Vector.of(value),null,Reducers.toPVector(), LAZY);
     }
 
     /**
@@ -344,15 +356,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public static <T> VectorX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof VectorX)
             return (VectorX) iterable;
-        if (iterable instanceof PVector)
+        if (iterable instanceof Vector)
             return new LazyPVectorX<>(
-                                      (PVector) iterable,null,Reducers.toPVector(), LAZY);
+                                      (Vector) iterable,null,Reducers.toPVector(), LAZY);
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
                 Reducers.toPVector(), LAZY);
     }
-    VectorX<T> type(Reducer<? extends PVector<T>> reducer);
+    VectorX<T> type(Reducer<? extends PStack<T>> reducer);
 
     /**
      *
@@ -536,12 +548,12 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
 
     @Override
-    default <X> VectorX<X> from(final Collection<X> col) {
+    default <X> VectorX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
     //@Override
-    default <T> Reducer<PVector<T>> monoid() {
+    default <T> Reducer<PStack<T>> monoid() {
         return Reducers.toPVector();
     }
 
@@ -571,7 +583,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default <R> VectorX<R> unit(final Collection<R> col) {
+    default boolean isEmpty() {
+        return PStack.super.isEmpty();
+    }
+    @Override
+    default <R> VectorX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -685,28 +701,28 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public VectorX<T> plus(T e);
 
     @Override
-    public VectorX<T> plusAll(Collection<? extends T> list);
+    public VectorX<T> plusAll(Iterable<? extends T> list);
 
     @Override
-    public VectorX<T> with(int i, T e);
+    public VectorX<T> insertAt(int i, T e);
+
 
     @Override
-    public VectorX<T> plus(int i, T e);
+    public VectorX<T> insertAt(int i, Iterable<? extends T> list);
 
     @Override
-    public VectorX<T> plusAll(int i, Collection<? extends T> list);
+    public VectorX<T> removeValue(T e);
 
     @Override
-    public VectorX<T> minus(Object e);
+    public VectorX<T> removeAll(Iterable<? extends T> list);
 
     @Override
-    public VectorX<T> minusAll(Collection<?> list);
+    public VectorX<T> removeAt(int i);
 
     @Override
-    public VectorX<T> minus(int i);
-
-    @Override
-    public VectorX<T> subList(int start, int end);
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
 
     @Override
     default VectorX<ListX<T>> grouped(final int groupSize) {
@@ -979,7 +995,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default VectorX<T> onEmptySwitch(final Supplier<? extends PVector<T>> supplier) {
+    default VectorX<T> onEmptySwitch(final Supplier<? extends PStack<T>> supplier) {
         if (this.isEmpty())
             return VectorX.fromIterable(supplier.get());
         return this;
@@ -1180,8 +1196,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<T> prepend(T... values) {
-        return (VectorX<T>)LazyCollectionX.super.prepend(values);
+    default VectorX<T> prependAll(T... values) {
+        return (VectorX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override
@@ -1600,7 +1616,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         }
 
-        private static  <T> VectorX<T> concat(PVector<T> l1, PVector<T> l2){
+        private static  <T> VectorX<T> concat(PStack<T> l1, PStack<T> l2){
 
             return VectorX.fromIterable(l1.plusAll(l2));
         }

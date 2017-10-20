@@ -83,7 +83,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     ImmutableSortedSet<T> add(T value);
 
     @Override
-    ImmutableSortedSet<T> remove(T value);
+    ImmutableSortedSet<T> removeValue(T value);
 
 
 
@@ -504,8 +504,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
     }
 
     @Override
-    default ImmutableSortedSet<T> prepend(T... values) {
-        return unitStream(stream().prepend(values),comparator());
+    default ImmutableSortedSet<T> prependAll(T... values) {
+        return unitStream(stream().prependAll(values),comparator());
     }
 
     @Override

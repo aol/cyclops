@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.aol.cyclops2.data.collections.extensions.api.PQueue;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
@@ -8,7 +9,9 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,7 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
-public interface BankersQueue<T> extends ImmutableQueue<T> {
+public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializable {
 
     static <T> BankersQueue<T> fromStream(Stream<T> stream){
         return fromIterable(ReactiveSeq.fromStream(stream));
@@ -38,6 +41,14 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         return Nil.Instance;
     }
     int size() ;
+
+    @Override
+    default boolean containsValue(T value) {
+        return PQueue.super.containsValue(value);
+    }
+
+
+
     boolean isEmpty();
     BankersQueue<T> enqueue(T value);
     <R> BankersQueue<R> map(Function<? super T, ? extends R> map);
@@ -108,9 +119,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
     @Override
     BankersQueue<T> prepend(T value);
     @Override
-    default BankersQueue<T> prependAll(Iterable<T> value){
+    default BankersQueue<T> prependAll(Iterable<? extends T> value){
 
-            Iterator<T> it = value.iterator();
+            Iterator<? extends T> it = value.iterator();
             BankersQueue<T> res= this;
             while(it.hasNext()){
                 res = res.prepend(it.next());
@@ -130,9 +141,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
     }
 
     @Override
-    default BankersQueue<T> appendAll(Iterable<T> value) {
+    default BankersQueue<T> appendAll(Iterable<? extends T> value) {
 
-        Iterator<T> it = value.iterator();
+        Iterator<? extends T> it = value.iterator();
         BankersQueue<T> res= this;
         while(it.hasNext()){
             res = res.enqueue(it.next());
@@ -150,8 +161,42 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         return unitStream(stream().filter(fn));
     }
 
+    @Override
+    default BankersQueue<T> minus() {
+        return dequeue(null)._2();
+    }
+
+    @Override
+    default BankersQueue<T> plusAll(Iterable<? extends T> list) {
+        return appendAll(list);
+    }
+
+    @Override
+    default BankersQueue<T> removeValue(T e) {
+        return removeAll(e);
+    }
+
+    @Override
+    default BankersQueue<T> removeAll(Iterable<? extends T> list){
+        return removeAllI(list);
+    }
+    @Override
+    default BankersQueue<T> removeAll(T... values) {
+        return (BankersQueue<T>)ImmutableQueue.super.removeAll(values);
+    }
+    @Override
+    default BankersQueue<T> removeAllI(Iterable<? extends T> it){
+        return (BankersQueue<T>)ImmutableQueue.super.removeAllI(it);
+    }
+
+    @Override
+    default BankersQueue<T> plus(T value){
+        return enqueue(value);
+    }
+
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Cons<T> implements  BankersQueue<T>, ImmutableQueue.Some<T> {
+    public static final class Cons<T> implements  BankersQueue<T>, ImmutableQueue.Some<T> {
+        private static final long serialVersionUID = 1L;
         private final int sizeFront;
         private final ImmutableList<T> front;
         private final int sizeBack;
@@ -286,7 +331,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         }
 
         @Override
-        public T getOrElseGet(int n, Supplier<T> alt) {
+        public T getOrElseGet(int n, Supplier<? extends T> alt) {
             if (n < sizeFront)
                 return front.getOrElse(sizeFront-n-1,alt.get());
             else if (n < sizeFront + sizeBack) {
@@ -322,7 +367,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
                 return false;
             if (obj == this)
                 return true;
-            if(obj instanceof ImmutableQueue) {
+            if(obj instanceof PQueue) {
                 return equalToIteration((Iterable)obj);
             }
             return false;
@@ -343,7 +388,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public class Nil<T> implements BankersQueue<T>,ImmutableQueue.None<T> {
+    public final class Nil<T> implements BankersQueue<T>,ImmutableQueue.None<T> {
+        private static final long serialVersionUID = 1L;
         static Nil Instance = new Nil();
 
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
@@ -430,7 +476,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
         }
 
         @Override
-        public T getOrElseGet(int pos, Supplier<T> alt) {
+        public T getOrElseGet(int pos, Supplier<? extends T> alt) {
             return alt.get();
         }
 
@@ -441,8 +487,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof ImmutableQueue){
-                return ((ImmutableQueue)obj).size()==0;
+            if(obj instanceof PQueue){
+                return ((PQueue)obj).size()==0;
             }
             return false;
         }

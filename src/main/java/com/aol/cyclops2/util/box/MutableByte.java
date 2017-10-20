@@ -99,7 +99,7 @@ public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byt
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableByte mutable = MutableByte.fromExternal(()->!this.value,val->!this.value);
@@ -113,8 +113,8 @@ public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byt
      * </pre>
      * 
      * 
-     * @param fn Map function to be applied to the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called to the return value
+     * @param fn Map function to be applied to the result when getValue is called
+     * @return Mutable that lazily applies the provided function when getValue is called to the return value
      */
     public <R> Mutable<R> mapOutputToObj(final Function<Byte, R> fn) {
         final MutableByte host = this;
@@ -128,7 +128,7 @@ public class MutableByte implements To<MutableByte>,Supplier<Byte>, Consumer<Byt
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableByte mutable = MutablByte.fromExternal(()->!this.value,val->!this.value);

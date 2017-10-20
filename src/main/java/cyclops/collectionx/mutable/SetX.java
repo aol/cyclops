@@ -275,6 +275,15 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                                 ReactiveSeq.fromIterable(it),
                                 collector, LAZY);
     }
+    @Override
+    default Object[] toArray(){
+        return LazyCollectionX.super.toArray();
+    }
+
+    @Override
+    default <T1> T1[] toArray(T1[] a){
+        return LazyCollectionX.super.toArray(a);
+    }
 
     @Override
     default SetX<T> materialize() {
@@ -421,7 +430,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default <R> SetX<R> unit(final Collection<R> col) {
+    default <R> SetX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -436,7 +445,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default <T1> SetX<T1> from(final Collection<T1> c) {
+    default <T1> SetX<T1> from(final Iterable<T1> c) {
         return SetX.<T1> fromIterable(getCollector(), c);
     }
 
@@ -638,20 +647,24 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default SetX<T> plusAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            add(next);
+        }
         return this;
     }
 
     @Override
-    default SetX<T> minus(final Object e) {
-        remove(e);
+    default SetX<T> removeValue(final T e) {
+        removeValue(e);
         return this;
     }
 
     @Override
-    default SetX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default SetX<T> removeAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            removeValue(next);
+        }
         return this;
     }
 
@@ -1079,8 +1092,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<T> prepend(T... values) {
-        return (SetX<T>)LazyCollectionX.super.prepend(values);
+    default SetX<T> prependAll(T... values) {
+        return (SetX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

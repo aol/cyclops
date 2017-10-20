@@ -16,7 +16,7 @@ import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import org.pcollections.PCollection;
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

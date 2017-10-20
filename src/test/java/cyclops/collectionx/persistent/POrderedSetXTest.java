@@ -18,6 +18,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.control.Option;
+import cyclops.data.Comparators;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
@@ -50,11 +51,11 @@ public class POrderedSetXTest extends AbstractSetTest {
 	}
 	@Override
 	public <T> FluentCollectionX<T> of(T... values) {
-		return OrderedSetX.of(values);
+		return OrderedSetX.of(Comparators.naturalOrderIdentityComparator(),values);
 	}
 	@Test
     public void onEmptySwitch(){
-            assertThat(OrderedSetX.empty().onEmptySwitch(()-> OrderedSetX.of(1,2,3)),equalTo(OrderedSetX.of(1,2,3)));
+            assertThat(OrderedSetX.<Integer>empty().onEmptySwitch(()-> OrderedSetX.of(1,2,3)),equalTo(OrderedSetX.of(1,2,3)));
     }
 	@Test
     public void coflatMap(){
@@ -68,7 +69,7 @@ public class POrderedSetXTest extends AbstractSetTest {
 	 */
 	@Override
 	public <T> FluentCollectionX<T> empty() {
-		return OrderedSetX.empty();
+		return OrderedSetX.empty(Comparators.naturalOrderIdentityComparator());
 	}
 	
     @Test

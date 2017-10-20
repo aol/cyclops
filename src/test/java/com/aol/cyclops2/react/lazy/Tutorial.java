@@ -3,11 +3,12 @@ package com.aol.cyclops2.react.lazy;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.data.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -23,7 +24,7 @@ import cyclops.control.lazy.Eval;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.pcollections.HashTreePMap;
+
 
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;
@@ -200,7 +201,7 @@ public class Tutorial {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shard() {
-		Map<Integer, Queue<User>> shards = new HashMap<>();
+		Map<Integer, Queue<User>> shards = new java.util.HashMap<>();
 		shards.put(0, new Queue<>());
 		shards.put(1, new Queue<>());
 		shards.put(2, new Queue<>());
@@ -284,7 +285,7 @@ public class Tutorial {
 		 SimpleReact.sequentialCommonBuilder().ofAsync(()->1,()->2,()->3)
 		 									 .then(it->it+100)
 		 									 .peek(System.out::println)
-		 									 .allOf(c-> HashTreePMap.singleton("numbers",c))
+		 									 .allOf(c-> cyclops.data.HashMap.of("numbers",c))
 		 									 .peek(System.out::println)
 		 									 .block();
 	}
@@ -779,12 +780,12 @@ public class Tutorial {
 
 	private Collection<Map> processOrders(Collection<Map> input) {
 		sleep(100);
-		return input.stream().map(m -> HashTreePMap.singleton("processed", m))
+		return input.stream().map(m -> PersistentMapX.singleton("processed", m))
 				.collect(Collectors.toList());
 	}
 
 	private Map parseJson(String json) {
-		return HashTreePMap.<Object,Object>singleton("id", count++).plus( "fold", "order").plus( "date",
+		return PersistentMapX.<Object,Object>singleton("id", count++).plus( "fold", "order").plus( "date",
 				new Date());
 	}
 

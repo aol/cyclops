@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import org.pcollections.PBag;
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

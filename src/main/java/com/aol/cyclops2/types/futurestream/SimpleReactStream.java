@@ -185,7 +185,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      *  [["takesALotOfTime",0],["veryQuick",1]]
      *
-     *  Where as with standard zipWithIndex you would get a new Stream ordered by completion
+     *  Where as with standard zipWithIndex you would getValue a new Stream ordered by completion
      *
      *  [["veryQuick",0],["takesALotOfTime",1]]
      * </code>

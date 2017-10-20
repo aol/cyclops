@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
@@ -12,7 +13,6 @@ import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
-import java.lang.reflect.Proxy;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +25,14 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
 
     private final T head;
     private final ImmutableList<T> tail;
+
+    @Override
+    public<R> ImmutableList<R> unitIterable(Iterable<R> it){
+        if(it instanceof NonEmptyList){
+            return (NonEmptyList<R>)it;
+        }
+        return unitIterator(it.iterator());
+    }
 
     public ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
@@ -67,11 +75,11 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     @Override
-    public T getOrElseGet(int pos, Supplier<T> alt) {
+    public T getOrElseGet(int pos, Supplier<? extends T> alt) {
         return get(pos).orElseGet(alt);
     }
 
-    public LazySeq<T> asList(){
+    public LazySeq<T> lazySeq(){
         return LazySeq.lazy(head,()->tail);
     }
 
@@ -110,12 +118,12 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     public NonEmptyList<T> prepend(T value){
-        return cons(value,asList());
+        return cons(value, lazySeq());
     }
 
     @Override
-    public NonEmptyList<T> prependAll(Iterable<T> value) {
-        LazySeq<T> list = asList().prependAll(value);
+    public NonEmptyList<T> prependAll(Iterable<? extends T> value) {
+        LazySeq<T> list = LazySeq.narrow(lazySeq().prependAll(value));
         return cons(list.fold(c->c.head(), nil->null),list.drop(1));
     }
 
@@ -125,7 +133,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     @Override
-    public NonEmptyList<T> appendAll(Iterable<T> value) {
+    public NonEmptyList<T> appendAll(Iterable<? extends T> value) {
         return of(head,tail.appendAll(value));
     }
 
@@ -149,7 +157,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     }
 
     public ImmutableList<T> filter(Predicate<? super T> pred){
-        return asList().filter(pred);
+        return lazySeq().filter(pred);
     }
 
 
@@ -205,12 +213,12 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
 
     @Override
     public <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
-        return asList().flatMap(fn);
+        return lazySeq().flatMap(fn);
     }
 
     @Override
     public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return asList().flatMapI(fn);
+        return lazySeq().flatMapI(fn);
     }
 
     public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
@@ -221,11 +229,11 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
 
 
     public <R> R foldRight(R zero,BiFunction<? super T, ? super R, ? extends R> f) {
-        return asList().foldRight(zero,f);
+        return lazySeq().foldRight(zero,f);
 
     }
     public <R> R foldLeft(R zero,BiFunction<R, ? super T, R> f) {
-        return asList().foldLeft(zero,f);
+        return lazySeq().foldLeft(zero,f);
     }
 
     public int size(){
@@ -255,8 +263,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if(o instanceof ImmutableList){
-            ImmutableList<T> im =(ImmutableList<T>)o;
+        if(o instanceof PStack){
+            PStack<T> im =(PStack<T>)o;
             return equalToIteration(im);
         }
         return false;

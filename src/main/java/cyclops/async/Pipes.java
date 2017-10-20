@@ -55,7 +55,7 @@ import java.util.concurrent.Executor;
         //on another thread
        
        //connect to our transfer queue
-       LazyFutureStream<Integer> futureStream =  bus.futureStream("reactor", new LazyReact(10,10)).get();
+       LazyFutureStream<Integer> futureStream =  bus.futureStream("reactor", new LazyReact(10,10)).getValue();
        
        
        //read data and print it out the console.
@@ -127,7 +127,7 @@ public class Pipes<K, V> {
             
            //on another thread 
            pipes.reactiveSeq("hello")
-                .get()
+                .getValue()
                 .forEach(System.out::println);
      * 
      * }
@@ -147,7 +147,7 @@ public class Pipes<K, V> {
      * <pre>
      * {@code 
      *    //close an adapter
-     *   pipes.get("adapter-key")
+     *   pipes.getValue("adapter-key")
      *        .transform(a->a.close())
      *        .orElse(false); //Maybe is lazy - trigger action
      *   
@@ -182,7 +182,7 @@ public class Pipes<K, V> {
         
         //on another thread
        List<String> res =  bus.futureStream("reactor")
-                              .get()
+                              .getValue()
                               .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
@@ -220,7 +220,7 @@ public class Pipes<K, V> {
         
         //on another thread
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
-                              .get()
+                              .getValue()
                               .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
@@ -331,7 +331,7 @@ public class Pipes<K, V> {
         pipes.push("hello", "world2");
         
        pipes.oneOrError("hello")
-            .get() //"world"
+            .getValue() //"world"
        
      * }
      * </pre>
@@ -360,7 +360,7 @@ public class Pipes<K, V> {
         pipes.push("hello", "world2");
       
         
-        pipes.oneValueOrError("hello",Throwable.class).get(); //Try["world"]
+        pipes.oneValueOrError("hello",Throwable.class).getValue(); //Try["world"]
        
      *  }
      *  </pre>
@@ -389,7 +389,7 @@ public class Pipes<K, V> {
         pipes.push("hello", "world2");
       
         
-        pipes.oneValueOrError("hello").get(); //Try["world"]
+        pipes.oneValueOrError("hello").getValue(); //Try["world"]
        
      *  }
      *  </pre>
@@ -447,7 +447,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called,
+     * Return an Eval that allows retrieval of the next value from the attached pipe when getValue() is called,
      * can be used as an Iterator over the future & present values in the Adapter
      * 
      * Maybe.some is returned if a value is present, Maybe.none is returned if the publisher is complete or an error occurs
@@ -461,7 +461,7 @@ public class Pipes<K, V> {
         q.close();
         Eval<Maybe<String>> nextValue = pipes.nextValue("hello");
         int values = 0;
-        while(nextValue.get().isPresent()){
+        while(nextValue.getValue().isPresent()){
             System.out.println(values++);
             
         }
@@ -495,7 +495,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Return an Eval that allows retrieval of the next value from the attached pipe when get() is called
+     * Return an Eval that allows retrieval of the next value from the attached pipe when getValue() is called
      * 
      * A value is returned if a value is present, otherwise null is returned if the publisher is complete or an error occurs
      * 
@@ -508,7 +508,7 @@ public class Pipes<K, V> {
         q.close();
         Eval<String> nextValue = pipes.nextOrNull("hello");
         int values = 0;
-        while(nextValue.get()!=null){
+        while(nextValue.getValue()!=null){
             System.out.println(values++);
             
         }
@@ -543,7 +543,7 @@ public class Pipes<K, V> {
     }
 
     /**
-     * Register a Queue, and get back a listening LazyFutureStream that runs on a singleUnsafe thread
+     * Register a Queue, and getValue back a listening LazyFutureStream that runs on a singleUnsafe thread
      * (not the calling thread)
      * 
      * <pre>
@@ -598,7 +598,7 @@ public class Pipes<K, V> {
         queue.offer("world");
         queue.close();
        
-        assertThat(reactiveSubscriber.reactiveStream().findAny().get(),equalTo("world"));
+        assertThat(reactiveSubscriber.reactiveStream().findAny().getValue(),equalTo("world"));
      *  
      *  
      *  }

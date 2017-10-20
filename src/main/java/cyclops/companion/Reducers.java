@@ -2,28 +2,26 @@ package cyclops.companion;
 
 
 import cyclops.collectionx.immutable.*;
+import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import org.pcollections.AmortizedPQueue;
-import org.pcollections.ConsPStack;
-import org.pcollections.HashTreePBag;
-import org.pcollections.HashTreePMap;
-import org.pcollections.HashTreePSet;
-import org.pcollections.OrderedPSet;
-import org.pcollections.PBag;
-import org.pcollections.PMap;
-import org.pcollections.POrderedSet;
-import org.pcollections.PQueue;
-import org.pcollections.PSet;
-import org.pcollections.PStack;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
+import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
+
 
 import cyclops.collectionx.immutable.BagX;
 
 
 import lombok.experimental.UtilityClass;
+
+import java.util.Comparator;
 
 /**
  * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a singleUnsafe value.
@@ -50,7 +48,7 @@ public class Reducers {
 
 
     private static <T> PQueue<T> queueOf(final T... values) {
-        PQueue<T> result = AmortizedPQueue.empty();
+        PQueue<T> result = BankersQueue.empty();
         for (final T value : values) {
             result = result.plus(value);
         }
@@ -85,8 +83,8 @@ public class Reducers {
      * @return Reducer to OrderedSetX
      */
     public static <T> Reducer<OrderedSetX<T>> toOrderedSetX() {
-        return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
-                                            (final T x) -> OrderedSetX.singleton(x));
+        return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(Comparators.naturalOrderIdentityComparator()), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
+                                            (final T x) -> OrderedSetX.singleton(Comparators.naturalOrderIdentityComparator(),x));
     }
 
     /**
@@ -147,7 +145,7 @@ public class Reducers {
     }
 
     private static <T> PQueue<T> queueSingleton(final T value) {
-        PQueue<T> result = AmortizedPQueue.empty();
+        PQueue<T> result = BankersQueue.empty();
         result = result.plus(value);
         return result;
     }
@@ -163,7 +161,7 @@ public class Reducers {
      * @return Reducer to PQueue types
      */
     public static <T> Reducer<PQueue<T>> toPQueue() {
-        return Reducer.<PQueue<T>> of(AmortizedPQueue.empty(), (final PQueue<T> a) -> b -> a.plusAll(b), (final T x) -> queueSingleton(x));
+        return Reducer.<PQueue<T>> of(BankersQueue.empty(), (final PQueue<T> a) -> b -> a.plusAll(b), (final T x) -> queueSingleton(x));
     }
     /**
      * <pre>
@@ -176,8 +174,12 @@ public class Reducers {
      * @return Reducer to POrderedSet
      */
     public static <T> Reducer<POrderedSet<T>> toPOrderedSet() {
-        return Reducer.<POrderedSet<T>> of(OrderedPSet.empty(), (final POrderedSet<T> a) -> b -> a.plusAll(b),
-                                           (final T x) -> OrderedPSet.singleton(x));
+        return Reducer.<POrderedSet<T>> of(TreeSet.empty(Comparators.naturalOrderIdentityComparator()), (final POrderedSet<T> a) -> b -> a.plusAll(b),
+                                           (final T x) -> TreeSet.of(Comparators.naturalOrderIdentityComparator(),x));
+    }
+    public static <T> Reducer<POrderedSet<T>> toPOrderedSet(Comparator<T> comp) {
+        return Reducer.<POrderedSet<T>> of(TreeSet.empty(comp), (final POrderedSet<T> a) -> b -> a.plusAll(b),
+                (final T x) -> TreeSet.of(comp,x));
     }
     /**
      * <pre>
@@ -190,7 +192,7 @@ public class Reducers {
      * @return Reducer for PBag
      */
     public static <T> Reducer<PBag<T>> toPBag() {
-        return Reducer.<PBag<T>> of(HashTreePBag.empty(), (final PBag<T> a) -> b -> a.plusAll(b), (final T x) -> HashTreePBag.singleton(x));
+        return Reducer.<PBag<T>> of(Bag.empty(), (final PBag<T> a) -> b -> a.plusAll(b), (final T x) -> Bag.singleton(x));
     }
     /**
      * <pre>
@@ -203,7 +205,7 @@ public class Reducers {
      * @return Reducer for PSet
      */
     public static <T> Reducer<PSet<T>> toPSet() {
-        return Reducer.<PSet<T>> of(HashTreePSet.empty(), (final PSet<T> a) -> b -> a.plusAll(b), (final T x) -> HashTreePSet.singleton(x));
+        return Reducer.<PSet<T>> of(HashSet.empty(), (final PSet<T> a) -> b -> a.plusAll(b), (final T x) -> HashSet.singleton(x));
     }
     /**
      * <pre>
@@ -215,8 +217,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for PVector
      */
-    public static <T> Reducer<PVector<T>> toPVector() {
-        return Reducer.<PVector<T>> of(TreePVector.empty(), (final PVector<T> a) -> b -> a.plusAll(b), (final T x) -> TreePVector.singleton(x));
+    public static <T> Reducer<PStack<T>> toPVector() {
+        return Reducer.<PStack<T>> of(Vector.empty(), (final PStack<T> a) -> b -> a.plusAll(b), (final T x) -> Vector.of(x));
     }
     /**
      * <pre>
@@ -229,7 +231,7 @@ public class Reducers {
      * @return Reducer for PStack
      */
     public static <T> Reducer<PStack<T>> toPStack() {
-        return Reducer.<PStack<T>> of(ConsPStack.empty(), (final PStack<T> a) -> b -> a.plusAll(a.size(), b), (final T x) -> ConsPStack.singleton(x));
+        return Reducer.<PStack<T>> of(Seq.empty(), (final PStack<T> a) -> b -> a.insertAt(a.size(), b), (final T x) -> Seq.of(x));
     }
     /**
      * <pre>
@@ -242,7 +244,7 @@ public class Reducers {
      * @return Reducer for PStack in reveresed order
      */
     public static <T> Reducer<PStack<T>> toPStackReversed() {
-        return Reducer.<PStack<T>> of(ConsPStack.empty(), (final PStack<T> a) -> b -> a.plusAll(b), (final T x) -> ConsPStack.singleton(x));
+        return Reducer.<PStack<T>> of(Seq.empty(), (final PStack<T> a) -> b -> a.plusAll(b), (final T x) -> Seq.of(x));
     }
     /**
      * <pre>
@@ -256,10 +258,10 @@ public class Reducers {
      */
     public static <K, V> Reducer<PMap<K, V>> toPMap() {
 //@TODO FIX THIS
-        return Reducer.<PMap<K, V>> of(HashTreePMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
+        return Reducer.<PMap<K, V>> of(HashMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
 
             final Tuple2 w = (Tuple2)in;
-            return HashTreePMap.singleton((K) w._1(), (V) w._2());
+            return HashMap.of((K) w._1(), (V) w._2());
 
         });
 

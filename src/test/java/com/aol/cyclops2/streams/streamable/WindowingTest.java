@@ -67,10 +67,10 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyWhile(){
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
 				);
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
 				
 				.toListX().size(),equalTo(2));
 		
@@ -85,7 +85,7 @@ public class WindowingTest {
 	}
 	@Test
 	public void sliding() {
-		List<List<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<VectorX<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -93,7 +93,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<List<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<VectorX<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));

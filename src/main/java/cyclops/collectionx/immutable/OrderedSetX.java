@@ -1,6 +1,9 @@
 package cyclops.collectionx.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import cyclops.data.Comparators;
+import cyclops.data.TreeSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -28,8 +31,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.OrderedPSet;
-import org.pcollections.POrderedSet;
+import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -164,18 +166,35 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     }
 
-    public static <T> OrderedSetX<T> of(final T... values) {
+    public static <T extends Comparable<? super T>> OrderedSetX<T> of(final T... values) {
+
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> of(final Comparator<T> comp,final T... values) {
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> identityOrNatural(final T... values) {
         return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
     }
 
-    public static <T> OrderedSetX<T> empty() {
+    public static <T extends Comparable<? super T>> OrderedSetX<T> empty() {
+        TreeSet<T> t = TreeSet.empty();
+        Reducer<POrderedSet<T>> r = Reducers.toPOrderedSet();
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.empty(),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                      t,null,r,Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> empty(Comparator<T> comp) {
+        return new LazyPOrderedSetX<>(
+                TreeSet.empty(comp),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+    }
+    public static <T extends Comparable<? super T>>OrderedSetX<T> singleton(final T value) {
+        return new LazyPOrderedSetX<>(
+                                      TreeSet.singleton(value),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
     }
 
-    public static <T> OrderedSetX<T> singleton(final T value) {
+    public static <T>OrderedSetX<T> singleton(Comparator<T> comp,final T value) {
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.singleton(value),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                TreeSet.singleton(comp,value),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
     }
     OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer);
 
@@ -361,6 +380,11 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
+
+    @Override
     default OrderedSetX<T> take(final long num) {
 
         return limit(num);
@@ -376,13 +400,13 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     @Override
-    default <R> OrderedSetX<R> unit(final Collection<R> col) {
+    default <R> OrderedSetX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
     @Override
     default <R> OrderedSetX<R> unit(final R value) {
-        return singleton(value);
+        return singleton(Comparators.naturalOrderIdentityComparator(),value);
     }
 
     @Override
@@ -392,13 +416,18 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     //@Override
     default <R> OrderedSetX<R> emptyUnit() {
-        return empty();
+        return empty(Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
     default ReactiveSeq<T> stream() {
 
         return ReactiveSeq.fromIterable(this);
+    }
+
+    @Override
+    default boolean isEmpty() {
+        return POrderedSet.super.isEmpty();
     }
 
     /**
@@ -429,7 +458,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     @Override
-    default <X> OrderedSetX<X> from(final Collection<X> col) {
+    default <X> OrderedSetX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
@@ -438,29 +467,21 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return Reducers.toPOrderedSet();
     }
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plus(java.lang.Object)
-     */
+
     @Override
     public OrderedSetX<T> plus(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
-     */
-    @Override
-    public OrderedSetX<T> plusAll(Collection<? extends T> list);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#minus(java.lang.Object)
-     */
     @Override
-    public OrderedSetX<T> minus(Object e);
+    public OrderedSetX<T> plusAll(Iterable<? extends T> list);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
-     */
+
     @Override
-    public OrderedSetX<T> minusAll(Collection<?> list);
+    public OrderedSetX<T> removeValue(T e);
+
+
+    @Override
+    public OrderedSetX<T> removeAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
@@ -1052,8 +1073,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     @Override
-    default OrderedSetX<T> prepend(T... values) {
-        return (OrderedSetX<T>)LazyCollectionX.super.prepend(values);
+    default OrderedSetX<T> prependAll(T... values) {
+        return (OrderedSetX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

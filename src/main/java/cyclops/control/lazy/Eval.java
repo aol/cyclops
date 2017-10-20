@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
 import cyclops.control.Either;
+import cyclops.data.Vector;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -28,11 +29,10 @@ import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.*;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+
 
 import java.util.*;
 import java.util.concurrent.Executor;
@@ -52,7 +52,7 @@ import java.util.stream.Stream;
  * {@code
  *
  * public void odd(){
-        System.out.println(even(Eval.now(200000)).get());
+        System.out.println(even(Eval.now(200000)).getValue());
     }
     public Eval<String> odd(Eval<Integer> n )  {
 
@@ -269,7 +269,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /**
-     * Lazily create an Eval from the specified Supplier. Supplier#get will only be called once. Return values of Eval operations will also
+     * Lazily create an Eval from the specified Supplier. Supplier#getValue will only be called once. Return values of Eval operations will also
      * be cached (later indicates maybe and caching - characteristics can be changed using flatMap).
      *
      * <pre>
@@ -293,7 +293,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /**
-     * Lazily create an Eval from the specified Supplier. Supplier#get will only be every time get is called on the resulting Eval.
+     * Lazily create an Eval from the specified Supplier. Supplier#getValue will only be every time getValue is called on the resulting Eval.
      *
      * <pre>
      * {@code
@@ -439,8 +439,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
 
-    default PVector<Function<Object, Object>> steps() {
-        return TreePVector.singleton(__ -> get());
+    default Vector<Function<Object, Object>> steps() {
+        return Vector.of(__ -> get());
     }
 
     /* (non-Javadoc)
@@ -495,7 +495,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     @Override
     public T get();
@@ -775,10 +775,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public static class Later<T> extends Rec<T> implements Eval<T> {
 
             Later(final Function<Object, ? extends T> s) {
-                super(TreePVector.singleton(Rec.raw(Memoize.memoizeFunction(s))));
+                super(Vector.of(Rec.raw(Memoize.memoizeFunction(s))));
             }
 
-            Later(final PVector<Function<Object, Object>> s) {
+            Later(final Vector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -794,7 +794,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
 
-                return new Later<R>(TreePVector.singleton(s));
+                return new Later<R>(Vector.of(s));
 
             }
 
@@ -842,10 +842,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         public static class Always<T> extends Rec<T> implements Eval<T> {
 
             Always(final Function<Object, ? extends T> s) {
-                super(TreePVector.singleton(Rec.raw(s)));
+                super(Vector.of(Rec.raw(s)));
             }
 
-            Always(final PVector<Function<Object, Object>> s) {
+            Always(final Vector<Function<Object, Object>> s) {
                 super(s);
 
             }
@@ -868,7 +868,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
 
                 return new Always<R>(
-                                     TreePVector.singleton(s));
+                                     Vector.of(s));
             }
 
             @Override
@@ -1060,10 +1060,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         }
 
         private static class Rec<T> {
-            final PVector<Function<Object, Object>> fns;
+            final Vector<Function<Object, Object>> fns;
             private final static Object VOID = new Object();
 
-            Rec(final PVector<Function<Object, Object>> s) {
+            Rec(final Vector<Function<Object, Object>> s) {
                 fns = s;
             }
 
@@ -1077,7 +1077,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
             }
 
-            public  PVector<Function<Object, Object>> steps() {
+            public  Vector<Function<Object, Object>> steps() {
                 return fns;
             }
             public Trampoline<T> toTrampoline(){
@@ -1096,11 +1096,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                         Object input = init();
                         for (int i=0; i< fns.size();i++) {
 
-                                final Function<Object, Object> next = fns.get(i);
+                                final Function<Object, Object> next = fns.getOrElse(i,null);
                                 if (next instanceof RecFunction) {
-                                    PVector<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
-                                    PVector<Function<Object, Object>> nextSteps = (PVector) ((RecFunction) next).apply(VOID);
-                                    nextSteps.addAll(remaining);
+                                    Vector<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
+                                    Vector<Function<Object, Object>> nextSteps = (Vector) ((RecFunction) next).apply(VOID);
+                                    nextSteps.appendAll(remaining);
                                    return new Later(nextSteps).toTrampoline();
                                 } else {
                                     input = next.apply(input);
@@ -1128,7 +1128,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                     while (newFns.size() > 0) {
                         final Function<Object, Object> next = newFns.pop();
                         if (next instanceof RecFunction) {
-                            newFns.addAll((List) ((RecFunction) next).apply(VOID));
+                            Vector v = (Vector) ((RecFunction) next).apply(VOID);
+                            for(Object t : v)
+                                newFns.add((Function)t);
                         } else
                             input = next.apply(input);
 

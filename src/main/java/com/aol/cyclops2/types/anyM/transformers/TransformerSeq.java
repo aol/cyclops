@@ -66,8 +66,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> prepend(T... values){
-        return unitAnyM(transformerStream().map(s -> s.prepend(values)));
+    default Traversable<T> prependAll(T... values){
+        return unitAnyM(transformerStream().map(s -> s.prependAll(values)));
     }
 
     @Override

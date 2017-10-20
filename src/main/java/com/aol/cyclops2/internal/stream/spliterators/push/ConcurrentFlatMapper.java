@@ -1,16 +1,13 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import cyclops.data.Vector;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.atomic.*;
 import java.util.function.Consumer;
@@ -19,9 +16,9 @@ import java.util.function.Function;
 
 public class ConcurrentFlatMapper<T, R> {
 
-    volatile PVector<ActiveSubscriber> activeList = TreePVector.empty();
-    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, PVector> queueUpdater =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, PVector.class, "activeList");
+    volatile Vector<ActiveSubscriber> activeList = Vector.empty();
+    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, PStack> queueUpdater =
+            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, PStack.class, "activeList");
 
     final Consumer<? super R> onNext;
     final Consumer<? super Throwable> onError;
@@ -88,7 +85,7 @@ public class ConcurrentFlatMapper<T, R> {
     }
 
     private boolean remove(ActiveSubscriber toRemove) {
-        queueUpdater.getAndUpdate(this, q -> q.minus(toRemove));
+        queueUpdater.getAndUpdate(this, q -> q.removeValue(toRemove));
         return true;
     }
 
@@ -116,7 +113,7 @@ public class ConcurrentFlatMapper<T, R> {
         populateFromQueuesAndCleanup();
     }
 
-    int incrementActiveIndex(int index, List<ActiveSubscriber> active){
+    int incrementActiveIndex(int index, Vector<ActiveSubscriber> active){
         return index > active.size() ? 0 : subscriberIndex;
     }
 
@@ -224,7 +221,7 @@ public class ConcurrentFlatMapper<T, R> {
 
         do {
 
-            List<ActiveSubscriber> localActiveSubs = activeList;
+            Vector<ActiveSubscriber> localActiveSubs = activeList;
             SubscriberRequests state = new SubscriberRequests(!running,0l,requested.get(),0L,false,null);
 
             if (state.complete(activeList.isEmpty()))
@@ -254,9 +251,9 @@ public class ConcurrentFlatMapper<T, R> {
         return state.requestedLocal != 0L && !activeList.isEmpty();
     }
 
-    private boolean cleanupSubsAndReqs(List<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
+    private boolean cleanupSubsAndReqs(Vector<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
         ActiveSubscriber active =null;
-        for (int i = 0; i < localActiveSubs.size() && (active=localActiveSubs.get(i)).queue.isEmpty() && sub.isOpen; i++) {
+        for (int i = 0; i < localActiveSubs.size() && (active=localActiveSubs.getOrElse(i,null)).queue.isEmpty() && sub.isOpen; i++) {
             if (!sub.isOpen) {
                 return true;
             }
@@ -266,11 +263,11 @@ public class ConcurrentFlatMapper<T, R> {
         return false;
     }
 
-    private boolean processRequests(List<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
+    private boolean processRequests(Vector<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
         int activeIndex = incrementActiveIndex(subscriberIndex,activeList);
 
         for (int i = 0; i < localActiveSubs.size() && state.requestedLocal !=0L && sub.isOpen; i++) {
-            state.setNextActive( localActiveSubs.get(activeIndex));
+            state.setNextActive( localActiveSubs.getOrElse(activeIndex,null));
             if(!state.populateRequestsFromQueue())
                 return true;
             state.handleComplete();

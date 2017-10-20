@@ -3,10 +3,11 @@ package com.aol.cyclops2.data.collections;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.data.Seq;
 import org.junit.Test;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+
 
 import cyclops.collectionx.mutable.ListX;
 
@@ -54,7 +55,7 @@ public class SimplePerfCheck {
 	@Test
 	public void pstackInsert(){
 		long start = System.currentTimeMillis();
-		PStack<Integer> list = ConsPStack.empty();
+		PStack<Integer> list = Seq.empty();
 		for(int i=0;i<1_000_000;i++){
 			list = list.plus(1);
 		}
@@ -81,7 +82,7 @@ public class SimplePerfCheck {
 		
 		LinkedListX<Integer> list = LinkedListX.zero();
 		for(int i=0;i<10_000;i++){
-			list = list.plus(1);
+			list = list.insertAt(1);
 		}
 		long skip = System.currentTimeMillis();
 		list = list.transform(i->i+1);
@@ -95,7 +96,7 @@ public class SimplePerfCheck {
 		
 		VectorX<Integer> list = VectorX.zero();
 		for(int i=0;i<1_000_000;i++){
-			list = list.plus(1);
+			list = list.insertAt(1);
 		}
 		long skip = System.currentTimeMillis();
 		list = list.transform(i->i+1);
@@ -127,7 +128,7 @@ public class SimplePerfCheck {
 		}
 		
 		
-		System.out.println("FJ List  prepend took " + (System.currentTimeMillis()- skip));
+		System.out.println("FJ List  prependAll took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		
@@ -137,10 +138,10 @@ public class SimplePerfCheck {
 		long skip = System.currentTimeMillis();
 		javaslang.toX.List<Integer> list = javaslang.toX.List.zero();
 		for(int i=0;i<1_000_000;i++){
-			list = list.prepend(i);
+			list = list.prependAll(i);
 		}
 		
-		System.out.println("Javaslang List  prepend took " + (System.currentTimeMillis()- skip));
+		System.out.println("Javaslang List  prependAll took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
 		
@@ -150,7 +151,7 @@ public class SimplePerfCheck {
 		
 		javaslang.toX.List<Integer> list = javaslang.toX.List.zero();
 		for(int i=0;i<10_000;i++){
-			list = list.prepend(i);
+			list = list.prependAll(i);
 		}
 		long skip = System.currentTimeMillis();
 		list = list.transform(i->i+1);

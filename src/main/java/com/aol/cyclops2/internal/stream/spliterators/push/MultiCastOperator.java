@@ -38,8 +38,8 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
         /**
         (source.forEachAsync(pendingRequests -> {
                         for(int i=0;i<subs.size();i++){
-                            if(subs.get(i).isActive())
-                                registeredOnNext.get(i).accept(pendingRequests);
+                            if(subs.getValue(i).isActive())
+                                registeredOnNext.getValue(i).accept(pendingRequests);
                         }
 
 

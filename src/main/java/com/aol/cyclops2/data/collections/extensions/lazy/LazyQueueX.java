@@ -99,7 +99,7 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
     }
 
     @Override
-    public <T1> LazyQueueX<T1> from(Collection<T1> c) {
+    public <T1> LazyQueueX<T1> from(Iterable<T1> c) {
         if(c instanceof Queue)
             return new LazyQueueX<T1>((Queue)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
@@ -113,7 +113,7 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
 
 
     @Override
-    public <R> LazyQueueX<R> unit(Collection<R> col) {
+    public <R> LazyQueueX<R> unit(Iterable<R> col) {
         return from(col);
     }
 

@@ -95,7 +95,7 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
     }
 
     @Override
-    public <T1> LazyDequeX<T1> from(Collection<T1> c) {
+    public <T1> LazyDequeX<T1> from(Iterable<T1> c) {
         if(c instanceof Deque)
             return new LazyDequeX<T1>((Deque)c,null,(Collector)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
@@ -109,7 +109,7 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
 
 
     @Override
-    public <R> LazyDequeX<R> unit(Collection<R> col) {
+    public <R> LazyDequeX<R> unit(Iterable<R> col) {
         return from(col);
     }
 

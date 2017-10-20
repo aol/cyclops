@@ -51,7 +51,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      *   
      *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
-     *   System.out.println(num.get());
+     *   System.out.println(num.getValue());
      *   //prints 120
      * } </pre>
      * 
@@ -99,7 +99,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -113,8 +113,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function to be applied to the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called to the return value
+     * @param fn Map function to be applied to the result when getValue is called
+     * @return Mutable that lazily applies the provided function when getValue is called to the return value
      */
     public <R> Mutable<R> mapOutputToObj(final Function<Double, R> fn) {
         final MutableDouble host = this;
@@ -128,7 +128,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -158,7 +158,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);
@@ -172,8 +172,8 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
      * </pre>
      * 
      * 
-     * @param fn Map function to be applied to the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called to the return value
+     * @param fn Map function to be applied to the result when getValue is called
+     * @return Mutable that lazily applies the provided function when getValue is called to the return value
      */
     public MutableDouble mapOutput(final DoubleUnaryOperator fn) {
         final MutableDouble host = this;
@@ -187,7 +187,7 @@ public class MutableDouble implements To<MutableDouble>, DoubleSupplier, DoubleC
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableDouble mutable = MutableDouble.fromExternal(()->!this.value,val->!this.value);

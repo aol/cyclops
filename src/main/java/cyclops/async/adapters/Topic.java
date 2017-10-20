@@ -9,11 +9,11 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.async.QueueFactories;
-import org.pcollections.HashTreePMap;
-import org.pcollections.PMap;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
 
+
+import cyclops.data.HashMap;
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.react.async.subscription.Continueable;
 
@@ -34,7 +34,7 @@ public class Topic<T> implements Adapter<T> {
     @Getter(AccessLevel.PACKAGE)
     private final DistributingCollection<T> distributor = new DistributingCollection<T>();
     @Getter(AccessLevel.PACKAGE)
-    private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashTreePMap.empty();
+    private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
     private final QueueFactory<T> factory;
@@ -69,9 +69,9 @@ public class Topic<T> implements Adapter<T> {
      * @param stream
      */
     @Synchronized("lock")
-    public void disconnect(final Stream<T> stream) {
+    public void disconnect(final ReactiveSeq<T> stream) {
 
-        distributor.removeQueue(streamToQueue.get(stream));
+        distributor.removeQueue(streamToQueue.getValueOrElse(stream, new Queue<>()));
 
         this.streamToQueue = streamToQueue.minus(stream);
         this.index--;
@@ -135,7 +135,7 @@ public class Topic<T> implements Adapter<T> {
 
         }
         return this.distributor.getSubscribers()
-                               .get(index++);
+                               .getOrElse(index++,null);
     }
 
     /**
@@ -156,13 +156,13 @@ public class Topic<T> implements Adapter<T> {
      */
     public Signal<Integer> getSizeSignal(final int index) {
         return this.distributor.getSubscribers()
-                               .get(index)
+                               .getOrElse(index,null)
                                .getSizeSignal();
     }
 
     public void setSizeSignal(final int index, final Signal<Integer> s) {
         this.distributor.getSubscribers()
-                        .get(index)
+                        .getOrElse(index, null)
                         .setSizeSignal(s);
     }
 
@@ -187,7 +187,7 @@ public class Topic<T> implements Adapter<T> {
 
         private static final long serialVersionUID = 1L;
         @Getter
-        private volatile PVector<Queue<T>> subscribers = TreePVector.empty();
+        private volatile Seq<Queue<T>> subscribers = Seq.empty();
 
         private final Object lock = new Object();
 
@@ -198,7 +198,7 @@ public class Topic<T> implements Adapter<T> {
 
         @Synchronized("lock")
         public void removeQueue(final Queue<T> q) {
-            subscribers = subscribers.minus(q);
+            subscribers = subscribers.removeValue(q);
 
         }
 

@@ -29,7 +29,7 @@ public class NQueensVectorTest {
         else {
             return placeQueens(k - 1).forEach2(queens -> range(1, num+1 ),
                                                (queens, column) -> isSafe(column, queens, 1),
-                                               (queens, column) -> queens.plus(0,column));
+                                               (queens, column) -> queens.insertAt(0,column));
         }
     }
     
@@ -49,7 +49,7 @@ public class NQueensVectorTest {
             solution.forEach(col->{
                 System.out.println(VectorX.range(0,solution.size())
                                            .map(i->"*")
-                                           .with(col-1, "X")
+                                           .insertAt(col-1, "X")
                                            .join(" "));
             });
         });

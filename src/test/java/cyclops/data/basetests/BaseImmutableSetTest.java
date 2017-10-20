@@ -124,7 +124,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
     @Test
     public void slidingIncrementNoOrd() {
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0).size(), greaterThan(1));
@@ -165,22 +165,22 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     public void allCombinations3NoOrd() {
         SetX<SetX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSetX()).toSetX();
         System.out.println(x);
-        assertTrue(x.contains(SetX.empty()));
-        assertTrue(x.contains(SetX.of(1)));
-        assertTrue(x.contains(SetX.of(2)));
-        assertTrue(x.contains(SetX.of(3)));
-        assertTrue(x.contains(SetX.of(1,2)));
-        assertTrue(x.contains(SetX.of(1,3)));
-        assertTrue(x.contains(SetX.of(2,3)));
-        assertTrue(x.contains(SetX.of(1,2,3)));
+        assertTrue(x.containsValue(SetX.empty()));
+        assertTrue(x.containsValue(SetX.of(1)));
+        assertTrue(x.containsValue(SetX.of(2)));
+        assertTrue(x.containsValue(SetX.of(3)));
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
+        assertTrue(x.containsValue(SetX.of(1,2,3)));
 
     }
     @Test
     public void combinations2NoOrd() {
         SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
-        assertTrue(x.contains(SetX.of(1,2)));
-        assertTrue(x.contains(SetX.of(1,3)));
-        assertTrue(x.contains(SetX.of(2,3)));
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
     }
     @Test
     public void testCycleTimesNoOrder() {
@@ -197,7 +197,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
 
         System.out.println(list);
-        assertTrue(list.contains(VectorX.of(1,2)));
+        assertTrue(list.containsValue(VectorX.of(1,2)));
     }
     @Test
     public void testCycleNoOrder() {

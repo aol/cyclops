@@ -416,7 +416,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
 
     /* (non-Javadoc)
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     Option<PT> get();
 

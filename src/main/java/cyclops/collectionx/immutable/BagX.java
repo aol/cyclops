@@ -1,5 +1,6 @@
 package cyclops.collectionx.immutable;
 
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.Zippable;
@@ -14,6 +15,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.lazy.Trampoline;
 import cyclops.control.Either;
+import cyclops.data.Bag;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -25,8 +27,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.HashTreePBag;
-import org.pcollections.PBag;
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -53,6 +54,16 @@ import java.util.stream.Stream;
 public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
     BagX<T> lazy();
     BagX<T> eager();
+
+    @Override
+    default boolean isEmpty() {
+        return PBag.super.isEmpty();
+    }
+
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
 
     static <T> CompletableBagX<T> completable(){
         return new CompletableBagX<>();
@@ -304,7 +315,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     public static <T> BagX<T> singleton(final T value) {
         //use concrete type for singleton as used in Reducers
         return new LazyPBagX<>(
-                HashTreePBag.singleton(value),null,Reducers.toPBag(),Evaluation.LAZY);
+                Bag.of(value),null,Reducers.toPBag(),Evaluation.LAZY);
     }
 
     /**
@@ -407,7 +418,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#unit(java.util.Collection)
      */
     @Override
-    default <R> BagX<R> unit(final Collection<R> col) {
+    default <R> BagX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -425,7 +436,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#from(java.util.Collection)
      */
     @Override
-    default <X> BagX<X> from(final Collection<X> col) {
+    default <X> BagX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
@@ -437,29 +448,23 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return Reducers.toPBag();
     }
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plus(java.lang.Object)
-     */
+
     @Override
     public BagX<T> plus(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
-     */
+
     @Override
-    public BagX<T> plusAll(Collection<? extends T> list);
+    public BagX<T> plusAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#minus(java.lang.Object)
+     * @see org.pcollections.PSet#removeValue(java.lang.Object)
      */
     @Override
-    public BagX<T> minus(Object e);
+    public BagX<T> removeValue(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
-     */
+
     @Override
-    public BagX<T> minusAll(Collection<?> list);
+    public BagX<T> removeAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
@@ -1048,8 +1053,8 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     @Override
-    default BagX<T> prepend(T... values) {
-        return (BagX<T>)LazyCollectionX.super.prepend(values);
+    default BagX<T> prependAll(T... values) {
+        return (BagX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

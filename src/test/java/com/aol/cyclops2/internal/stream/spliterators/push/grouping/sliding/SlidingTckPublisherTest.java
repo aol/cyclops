@@ -17,7 +17,7 @@ public class SlidingTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.concat(Spouts.of(1l,2l,3l,4l,5l),Spouts.iterate(0l, i->i+1l).sliding(2,1).skip(4).map(l->l.get(0))).limit(elements);
+		return Spouts.concat(Spouts.of(1l,2l,3l,4l,5l),Spouts.iterate(0l, i->i+1l).sliding(2,1).skip(4).map(l->l.getOrElse(0,-1l))).limit(elements);
 		
 	}
 

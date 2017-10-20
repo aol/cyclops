@@ -37,7 +37,7 @@ public class HAMT<K, V>  implements Serializable {
        public Node<K,V> plus(int bitShiftDepth, int hash, K key, V value);
        public Option<V> get(int bitShiftDepth, int hash, K key);
        public V getOrElse(int bitShiftDepth, int hash, K key, V alt);
-       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt);
+       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<? extends V> alt);
        public Node<K,V> minus(int bitShiftDepth, int hash, K key);
        int size();
        LazySeq<Tuple2<K,V>> lazyList();
@@ -45,6 +45,7 @@ public class HAMT<K, V>  implements Serializable {
    }
 
    public static class EmptyNode<K,V> implements Node<K,V>{
+       private static final long serialVersionUID = 1L;
      static final EmptyNode Instance = new EmptyNode();
        @Override
        public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
@@ -62,7 +63,7 @@ public class HAMT<K, V>  implements Serializable {
        }
 
        @Override
-       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt) {
+       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<? extends V> alt) {
            return alt.get();
        }
 
@@ -127,7 +128,7 @@ public class HAMT<K, V>  implements Serializable {
        }
 
        @Override
-       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt) {
+       public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<? extends V> alt) {
            return isMatch(hash, key) ? value : alt.get();
        }
 
@@ -211,7 +212,7 @@ public class HAMT<K, V>  implements Serializable {
         }
 
         @Override
-        public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<? extends V> alt) {
             return get(bitShiftDepth,hash,key).orElseGet(alt);
         }
 
@@ -278,7 +279,7 @@ public class HAMT<K, V>  implements Serializable {
         }
 
         @Override
-        public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<V> alt) {
+        public V getOrElseGet(int bitShiftDepth, int hash, K key, Supplier<? extends V> alt) {
             int pos = bitpos(hash, bitShiftDepth);
             return absent(pos)? alt.get() : findOrGet(bitShiftDepth,pos,hash,key,alt);
         }
@@ -286,7 +287,7 @@ public class HAMT<K, V>  implements Serializable {
         public boolean absent(int pos){
             return (bitset & pos)==0;
         }
-        private V findOrGet(int shift,int pos, int hash, K key,Supplier<V> alt) {
+        private V findOrGet(int shift,int pos, int hash, K key,Supplier<? extends V> alt) {
             return nodes[index(pos)].getOrElse(shift+BITS_IN_INDEX,hash,key,alt.get());
         }
         private V find(int shift,int pos, int hash, K key,V alt) {

@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
@@ -26,7 +27,7 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
     }
 
     @Override
-    public <R> FluentCollectionX<R> unit(final Collection<R> col) {
+    public <R> FluentCollectionX<R> unit(final Iterable<R> col) {
         return ListX.fromIterable(col);
     }
 
@@ -63,7 +64,11 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
      * @see java.util.Collection#contains(java.lang.Object)
      */
     @Override
-    public boolean contains(final Object o) {
+    public boolean containsValue(final Object o) {
+        return delegate.contains(o);
+    }
+    @Override
+    public boolean contains(Object o){
         return delegate.contains(o);
     }
 
@@ -254,11 +259,11 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
      * @see com.aol.cyclops2.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
-    public <T1> CollectionX<T1> from(final Collection<T1> c) {
+    public <T1> CollectionX<T1> from(final Iterable<T1> c) {
         if (c instanceof CollectionX)
             return (CollectionX) c;
         return new CollectionXImpl(
-                                   c);
+                                   ListX.fromIterable(c));
     }
 
     

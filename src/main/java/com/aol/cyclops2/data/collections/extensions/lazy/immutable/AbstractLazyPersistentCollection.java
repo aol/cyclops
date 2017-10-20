@@ -1,5 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
@@ -10,11 +11,10 @@ import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.pcollections.PCollection;
+
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -169,61 +169,62 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
 
     @Override
+    public boolean containsValue(T o){
+        return get().containsValue(o);
+    }
+    @Override
     public boolean contains(Object o){
-        return get().contains(o);
+        return get().containsValue((T)o);
     }
 
-
-
-    @Override
-    public Object[] toArray(){
-        return get().toArray();
-    }
-
-    @Override
-    public <T1> T1[] toArray(T1[] a){
-        return get().toArray(a);
-    }
 
     @Override
     public boolean add(T t){
-        return get().add(t);
+        return false;
     }
+
 
     @Override
     public boolean remove(Object o){
-        return get().remove(o);
+        return false;
     }
 
     @Override
     public boolean containsAll(Collection<?> c){
-        return get().containsAll(c);
+        boolean res = false;
+        for(Object next : c){
+            res = contains(next);
+            if(!res)
+                return false;
+        }
+        return true;
     }
 
     @Override
     public boolean addAll(Collection<? extends T> c){
-        return get().addAll(c);
+        return false;
     }
 
     @Override
     public boolean removeAll(Collection<?> c){
-        return get().removeAll(c);
+        return false;
     }
 
     @Override
     public boolean removeIf(Predicate<? super T> filter) {
-        return get().removeIf(filter);
+        return false;
     }
 
     @Override
     public boolean retainAll(Collection<?> c){
-        return get().retainAll(c);
+        return false;
     }
 
     @Override
     public void clear(){
-        get().clear();
+
     }
+
 
     @Override
     public boolean equals(Object o){
@@ -242,7 +243,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public Stream<T> parallelStream() {
-        return get().parallelStream();
+        return stream().parallel();
     }
 
     @Override

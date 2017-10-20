@@ -64,7 +64,7 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
         called=0;
         Fn3<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                         .name("myFunction")
-                                                        .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
+                                                        .memoize((key,f)->cache.getValue(key,()->f.applyHKT(key)));
 
         fn.applyHKT(10,1,4);
         fn.applyHKT(10,1,4);

@@ -9,6 +9,7 @@ import cyclops.async.Future;
 import cyclops.control.Either;
 
 import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -40,8 +41,7 @@ import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -68,6 +68,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+    @Override
+    default boolean isEmpty() {
+        return PStack.super.isEmpty();
+    }
     default Maybe<T> headMaybe(){
         return headAndTail().headMaybe();
     }
@@ -361,7 +365,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 ConsPStack.empty(),null,Reducers.toPStack(),Evaluation.LAZY);
+                                 Seq.empty(),null,Reducers.toPStack(),Evaluation.LAZY);
     }
 
     /**
@@ -382,7 +386,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 ConsPStack.singleton(value),null,Reducers.toPStack(),Evaluation.LAZY);
+                                 Seq.of(value),null,Reducers.toPStack(),Evaluation.LAZY);
     }
 
     /**
@@ -546,7 +550,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
     @Override
-    default <R> LinkedListX<R> unit(final Collection<R> col) {
+    default <R> LinkedListX<R> unit(final Iterable<R> col) {
 
         return fromIterable(col);
     }
@@ -571,7 +575,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default LinkedListX<T> plusInOrder(final T e) {
-        return plus(size(), e);
+        return insertAt(size(), e);
     }
 
     @Override
@@ -581,7 +585,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default <X> LinkedListX<X> from(final Collection<X> col) {
+    default <X> LinkedListX<X> from(final Iterable<X> col) {
 
         return fromIterable(col);
     }
@@ -597,10 +601,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     @Override
     default LinkedListX<T> reverse() {
-        PStack<T> reversed = ConsPStack.empty();
+        PStack<T> reversed = Seq.empty();
         final Iterator<T> it = iterator();
         while (it.hasNext())
-            reversed = reversed.plus(0, it.next());
+            reversed = reversed.insertAt(0, it.next());
         return fromIterable(reversed);
     }
 
@@ -720,10 +724,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    public LinkedListX<T> minusAll(Collection<?> list);
+    public LinkedListX<T> removeAll(Iterable<? extends T> list);
 
     @Override
-    public LinkedListX<T> minus(Object remove);
+    public LinkedListX<T> removeValue(T remove);
 
     /**
      * @param i
@@ -732,7 +736,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see org.pcollections.PStack#with(int, java.lang.Object)
      */
     @Override
-    public LinkedListX<T> with(int i, T e);
+    public LinkedListX<T> updateAt(int i, T e);
 
     /**
      * @param i
@@ -741,13 +745,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see org.pcollections.PStack#plus(int, java.lang.Object)
      */
     @Override
-    public LinkedListX<T> plus(int i, T e);
+    public LinkedListX<T> insertAt(int i, T e);
 
     @Override
     public LinkedListX<T> plus(T e);
 
     @Override
-    public LinkedListX<T> plusAll(Collection<? extends T> list);
+    public LinkedListX<T> plusAll(Iterable<? extends T> list);
 
     /**
      * @param i
@@ -756,7 +760,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see org.pcollections.PStack#plusAll(int, java.util.Collection)
      */
     @Override
-    public LinkedListX<T> plusAll(int i, Collection<? extends T> list);
+    public LinkedListX<T> insertAt(int i, Iterable<? extends T> list);
 
     /**
      * @param i
@@ -764,17 +768,19 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see org.pcollections.PStack#minus(int)
      */
     @Override
-    public LinkedListX<T> minus(int i);
+    public LinkedListX<T> removeAt(int i);
 
-    @Override
-    public LinkedListX<T> subList(int start, int end);
+
 
     @Override
     default LinkedListX<ListX<T>> grouped(final int groupSize) {
         return (LinkedListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
     @Override
     default <U> LinkedListX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return (LinkedListX) LazyCollectionX.super.zip(other);
@@ -1236,8 +1242,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> prepend(T... values) {
-        return (LinkedListX<T>)LazyCollectionX.super.prepend(values);
+    default LinkedListX<T> prependAll(T... values) {
+        return (LinkedListX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

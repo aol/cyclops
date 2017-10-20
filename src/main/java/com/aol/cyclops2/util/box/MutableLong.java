@@ -51,7 +51,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      *   
      *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
-     *   System.out.println(num.get());
+     *   System.out.println(num.getValue());
      *   //prints 120
      * } </pre>
      * 
@@ -99,7 +99,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
@@ -113,8 +113,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * </pre>
      * 
      * 
-     * @param fn Map function to be applied to the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called to the return value
+     * @param fn Map function to be applied to the result when getValue is called
+     * @return Mutable that lazily applies the provided function when getValue is called to the return value
      */
     public <R> Mutable<R> mapOutputToObj(final Function<Long, R> fn) {
         final MutableLong host = this;
@@ -128,7 +128,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
@@ -158,7 +158,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);
@@ -172,8 +172,8 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
      * </pre>
      * 
      * 
-     * @param fn Map function to be applied to the result when get is called
-     * @return Mutable that lazily applies the provided function when get is called to the return value
+     * @param fn Map function to be applied to the result when getValue is called
+     * @return Mutable that lazily applies the provided function when getValue is called to the return value
      */
     public MutableLong mapOutput(final LongUnaryOperator fn) {
         final MutableLong host = this;
@@ -187,7 +187,7 @@ public class MutableLong implements To<MutableLong>, LongSupplier, LongConsumer,
     }
 
     /**
-     * Use the supplied function to perform a lazy transform operation when get is called
+     * Use the supplied function to perform a lazy transform operation when getValue is called
      * <pre>
      * {@code 
      *  MutableLong mutable = MutableLong.fromExternal(()->!this.value,val->!this.value);

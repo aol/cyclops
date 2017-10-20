@@ -6,13 +6,15 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class LazyString implements ImmutableList<Character> {
+public final class LazyString implements ImmutableList<Character>, Serializable {
+    private static final long serialVersionUID = 1L;
     private final LazySeq<Character> string;
 
     private static final LazyString Nil = fromLazyList(LazySeq.empty());
@@ -23,6 +25,14 @@ public final class LazyString implements ImmutableList<Character> {
         return fromLazyList(LazySeq.fromStream( seq.chars().mapToObj(i -> (char) i)));
     }
 
+
+    @Override
+    public<R> LazySeq<R> unitIterable(Iterable<R> it){
+        if(it instanceof LazySeq){
+            return (LazySeq<R>)it;
+        }
+        return LazySeq.fromIterable(it);
+    }
     public static LazyString empty(){
         return Nil;
     }
@@ -134,7 +144,7 @@ public final class LazyString implements ImmutableList<Character> {
     }
 
     @Override
-    public Character getOrElseGet(int pos, Supplier<Character> alt) {
+    public Character getOrElseGet(int pos, Supplier<? extends Character> alt) {
         return string.getOrElseGet(pos,alt);
     }
 
@@ -143,7 +153,7 @@ public final class LazyString implements ImmutableList<Character> {
     }
 
     @Override
-    public LazyString prependAll(Iterable<Character> value) {
+    public LazyString prependAll(Iterable<? extends Character> value) {
         return fromLazyList(string.prependAll(value)) ;
     }
 
@@ -153,7 +163,7 @@ public final class LazyString implements ImmutableList<Character> {
     }
 
     @Override
-    public LazyString appendAll(Iterable<Character> value) {
+    public LazyString appendAll(Iterable<? extends Character> value) {
         return fromLazyList(string.appendAll(value)) ;
     }
 

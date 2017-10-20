@@ -882,7 +882,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     @Override
     Option<RT> get();
@@ -1229,7 +1229,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#get()
+         * @see com.aol.cyclops2.sum.types.Either#getValue()
          */
         @Override
         public Option<PT> get() {

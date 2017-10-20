@@ -24,14 +24,14 @@ public class MultiMapHK<W,K,V> {
     }
 
     public MultiMapHK<W,K, V> put(K key, V value) {
-        Higher<W,V> hkt = multiMap.get(key).map(v->appender.append(v,value)).orElseGet(()->pure.unit(value));
+        Higher<W,V> hkt = multiMap.getValue(key).map(v->appender.append(v,value)).orElseGet(()->pure.unit(value));
         return new MultiMapHK<>(multiMap.put(key,hkt),appender,pure);
     }
     public <R> Option<R> get(K key, Function<? super Higher<W,V>,? extends R> decoder){
-        return multiMap.get(key).map(decoder);
+        return multiMap.getValue(key).map(decoder);
     }
     public Option<Higher<W,V>> get(K key){
-        return multiMap.get(key);
+        return multiMap.getValue(key);
     }
 
     public boolean containsKey(K key){

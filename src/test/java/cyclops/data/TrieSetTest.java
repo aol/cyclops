@@ -7,7 +7,6 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -76,14 +75,14 @@ public class TrieSetTest extends BaseImmutableSetTest{
 
         ListX<ListX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toListX()).toListX();
         System.out.println(x);
-        assertTrue(x.contains(ListX.empty()));
-        assertTrue(x.contains(ListX.of(1)));
-        assertTrue(x.contains(ListX.of(2)));
-        assertTrue(x.contains(ListX.of(3)));
-        assertTrue(x.contains(ListX.of(1,2)));
-        assertTrue(x.contains(ListX.of(1,3)));
-        assertTrue(x.contains(ListX.of(2,3)));
-        assertTrue(x.contains(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.empty()));
+        assertTrue(x.containsValue(ListX.of(1)));
+        assertTrue(x.containsValue(ListX.of(2)));
+        assertTrue(x.containsValue(ListX.of(3)));
+        assertTrue(x.containsValue(ListX.of(1,2)));
+        assertTrue(x.containsValue(ListX.of(1,3)));
+        assertTrue(x.containsValue(ListX.of(2,3)));
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
 
 
     }

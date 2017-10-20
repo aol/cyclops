@@ -50,7 +50,7 @@ public interface RedBlackTree extends Serializable{
         }
         Option<V> get(K key);
         V getOrElse(K key, V alt);
-        V getOrElseGet(K key, Supplier<V> alt);
+        V getOrElseGet(K key, Supplier<? extends V> alt);
         Tree<K,V> plus(K key, V value);
         Tree<K,V> minus(K key);
         Comparator<? super K> comparator();
@@ -184,7 +184,7 @@ public interface RedBlackTree extends Serializable{
         }
 
         @Override
-        public V getOrElseGet(K key,Supplier<V> alt) {
+        public V getOrElseGet(K key,Supplier<? extends V> alt) {
             int compRes = comp.compare(this.key,key);
             if (compRes>0)
                 return left.getOrElseGet(key,alt);
@@ -292,7 +292,7 @@ public interface RedBlackTree extends Serializable{
         }
 
         @Override
-        public V getOrElseGet(K key, Supplier<V> alt) {
+        public V getOrElseGet(K key, Supplier<? extends V> alt) {
             return alt.get();
         }
 

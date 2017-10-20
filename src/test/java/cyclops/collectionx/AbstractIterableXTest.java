@@ -8,6 +8,7 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -247,35 +248,34 @@ public abstract class AbstractIterableXTest {
     public void plusAllTwo(){
         assertThat(of().plusAll(of(1).toList()).plus(2),hasItems(1,2));
     }
-    /**
-     * @TODO
+
 	@Test
     public void minusOne(){
-        assertThat(of().minus(1).size(),equalTo(0));
+        assertThat(of().removeValue(1).size(),equalTo(0));
     }
 	@Test
     public void minusOneNotEmpty(){
-        assertThat(of(1).minus(1).size(),equalTo(0));
+        assertThat(of(1).removeValue(1).size(),equalTo(0));
     }
 	@Test
     public void minusOneTwoValues(){
-        assertThat(of(1,2).minus(1),hasItem(2));
-        assertThat(of(1,2).minus(1),not(hasItem(1)));
+        assertThat(of(1,2).removeValue(1),hasItem(2));
+        assertThat(of(1,2).removeValue(1),not(hasItem(1)));
     }
 	@Test
     public void minusAllOne(){
-        assertThat(of().minusAll(of(1).toList()).size(),equalTo(0));
+        assertThat(of().removeAll(of(1).toList()).size(),equalTo(0));
     }
     @Test
     public void minusAllOneNotEmpty(){
-        assertThat(of(1).minusAll(of(1).toList()).size(),equalTo(0));
+        assertThat(of(1).removeAll(of(1).toList()).size(),equalTo(0));
     }
     @Test
     public void minusAllOneTwoValues(){
-        assertThat(of(1,2).minusAll(of(1).toList()),hasItem(2));
-        assertThat(of(1,2).minusAll(of(1).toList()),not(hasItem(1)));
+        assertThat(of(1,2).removeAll(of(1).toList()),hasItem(2));
+        assertThat(of(1,2).removeAll(of(1).toList()),not(hasItem(1)));
     }
-     **/
+
 	
 	@Test
     public void notNull(){
@@ -1237,10 +1237,13 @@ public abstract class AbstractIterableXTest {
 		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
-		assertTrue(asList(1, 2).contains(list.get(0)._1()));
+		assertTrue(of(1, 2).containsValue(list.get(0)._1()));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
 		assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
+		assertTrue(of("a", "b", "c", "d").containsValue(list.get(0)._2()));
+		assertTrue(of("a", "b", "c", "d").containsValue(list.get(1)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 	}
 
@@ -1337,6 +1340,13 @@ public abstract class AbstractIterableXTest {
 		
 		
 	}
+
+	@Test
+    public void bagXPresent(){
+	    System.out.println(of(1).to().bagX());
+	    assertTrue(of(1).to().bagX().size()>0);
+
+    }
 	@Test
 	public void presentConvert(){
 
@@ -1350,6 +1360,7 @@ public abstract class AbstractIterableXTest {
 		assertTrue(of(1).toSetX().size()>0);
 		assertTrue(of(1).to().sortedSetX().size()>0);
 		assertTrue(of(1).to().orderedSetX().size()>0);
+		System.out.println(of(1).to().bagX());
 		assertTrue(of(1).to().bagX().size()>0);
 		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
 		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
@@ -1369,7 +1380,7 @@ public abstract class AbstractIterableXTest {
 	        
 	        assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).get(0).toOptional().get().size(),is(3));
 	        
-	       // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).get(1).get().size(),is(1));
+	       // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
 	    }
 	    @Test
 	    public void batchBySizeInternalSize(){
@@ -1517,7 +1528,7 @@ public abstract class AbstractIterableXTest {
 	                assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
 	    
 	                
-	                assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
+	                assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 	            }
 	        }
 	        
@@ -1543,6 +1554,7 @@ public abstract class AbstractIterableXTest {
 	            
 	            
 	            assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+                assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
 	           
 	        }
@@ -1602,7 +1614,7 @@ public abstract class AbstractIterableXTest {
 
 	        @Test
 	        public void slidingIncrementNoOrder() {
-	            List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
+	            List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
 	            System.out.println(list);
 	           
@@ -1870,7 +1882,7 @@ public abstract class AbstractIterableXTest {
 
     @Test
     public void slidingIncrementNoOrd() {
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));
@@ -2076,8 +2088,168 @@ public abstract class AbstractIterableXTest {
         assertThat(of(10).trampoline(n ->sum(10_000,n)).findFirst().get(),greaterThan(0));
     }
 
+    @Test
+    public void plus(){
+        IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
+
+        assertThat(vec,equalTo(Vector.of(5,2,1)));
+    }
+    @Test
+    public void plusAll(){
+        IterableX<Integer> vec = this.<Integer>empty().plusAll(Arrays.asList(1)).plusAll(Arrays.asList(2)).plusAll(Arrays.asList(5));
+
+        assertThat(vec,equalTo(of(1,2,5)));
+    }
+    @Test
+    public void insertAt0(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec,equalTo(Vector.of(5,2,1)));
+    }
+    @Test
+    public void insertAtSize(){
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(Math.max(0,vec.size()),1);
+        vec = vec.insertAt(Math.max(0,vec.size()),2);
+
+        assertThat(vec,equalTo(Vector.of(1,2)));
+    }
+    @Test
+    public void insertAtAll0(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,Arrays.asList(1))
+                                     .insertAt(0,Arrays.asList(2))
+                                     .insertAt(0,Arrays.asList(5));
 
 
+        assertThat(vec,equalTo(of(5,2,1)));
+    }
+    @Test
+    public void plusAllSize(){
+
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(Math.max(0,vec.size()),Arrays.asList(1));
+        System.out.println("Vec1 " + vec);
+        vec = vec.insertAt(Math.max(0,vec.size()),Arrays.asList(2));
+
+        System.out.println("Vec " + vec);
+        assertThat(vec,equalTo(of(1,2)));
+    }
+
+    @Test
+    public void withTest(){
+
+        assertEquals(of("x", "b", "c"), of("a", "b", "c").updateAt(0, "x"));
+        assertEquals(of("a", "x", "c"), of("a", "b", "c").updateAt(1, "x"));
+        assertEquals(of("a", "b", "x"), of("a", "b", "c").updateAt(2, "x"));
+    }
+    @Test
+    public void withLarge(){
+        assertThat(range(0,2000).insertAt(1010,-1).containsValue(-1),equalTo(true));
+    }
+
+    @Test
+    public void minus(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec.removeValue(2),equalTo(of(5,1)));
+    }
+
+
+    @Test
+    public void insertAndRemove(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2,5);
+
+        assertThat(vec.removeValue(2),equalTo(of(5,1)));
+    }
+    @Test
+    public void removeAt(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        System.out.println("Remove at "+  vec.removeAt(1));
+        assertThat(vec.removeAt(1),equalTo(of(5,1)));
+    }
+    @Test
+    public void removeFirst(){
+        IterableX<Integer> vec = this.of(1,2,2,2,3);
+
+        assertThat(vec.removeFirst(i->i==2),equalTo(of(1,2,2,3)));
+    }
+    @Test
+    public void minusAt(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        System.out.println(vec.removeAt(1));
+        assertThat(vec.removeAt(1),equalTo(of(5,1)));
+    }
+    @Test
+    public void minusAtOutOfRange(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec.removeAt(-1),equalTo(of(5,2,1)));
+        assertThat(vec.removeAt(500),equalTo(of(5,2,1)));
+    }
+    @Test
+    public void updateAt(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec.updateAt(1,10),equalTo(of(5,10,1)));
+    }
+    @Test
+    public void updateAtEmpty(){
+        IterableX<Integer> vec = this.<Integer>empty();
+
+        assertThat(vec.updateAt(0,10),equalTo(of()));
+    }
+    @Test
+    public void updateAtOutOfRange(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec.updateAt(-1,10),equalTo(of(5,2,1)));
+    }
+    @Test
+    public void updateAtOutOfRange2(){
+        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+
+        assertThat(vec.updateAt(100,10),equalTo(of(5,2,1)));
+    }
+
+    @Test
+    public void largePlusAll(){
+        assertThat(range(0,2000).insertAt(1010,Arrays.asList(-1,-2,-3)).size(),equalTo(2003));
+        assertThat(range(0,2000).insertAt(10010,Arrays.asList(-1,-2,-3)).size(),equalTo(2003));
+    }
+    @Test
+    public void largePlus(){
+        assertThat(range(0,2_000).insertAt(20000,-1).size(),equalTo(2_001));
+        assertThat(range(0,2_000).insertAt(60000,-1).size(),equalTo(2_001));
+        assertThat(range(0,2_000).insertAt(20000,-1),hasItem(-1));
+    }
+
+    @Test
+    public void compareDifferentSizes(){
+        assertThat(empty(),not(equalTo(of(1))));
+        assertThat(of(1),not(equalTo(empty())));
+        assertThat(of(1),not(equalTo(of(1,2,3))));
+    }
+
+    @Test
+    public void isEmpty(){
+        assertThat(empty().isEmpty(),equalTo(true));
+        assertThat(of(1).isEmpty(),equalTo(false));
+    }
+
+
+    @Test
+    public void appendAll(){
+        assertThat(of(1,2,3,4).appendAll(ListX.of(10,20,30)),equalTo(of(1,2,3,4,10,20,30)));
+        assertThat(empty().appendAll(ListX.of(10,20,30)),equalTo(of(10,20,30)));
+    }
+
+    @Test
+    public void prependAll(){
+        assertThat(of(1,2,3,4).prependAll(ListX.of(10,20,30)),equalTo(of(10,20,30,1,2,3,4)));
+        assertThat(empty().prependAll(ListX.of(10,20,30)),equalTo(of(10,20,30)));
+    }
 
 	 
 }

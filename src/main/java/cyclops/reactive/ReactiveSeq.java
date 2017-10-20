@@ -5,7 +5,9 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
 
+import com.aol.cyclops2.types.traversable.ExtendedTraversable;
 import cyclops.control.Option;
+import cyclops.data.ImmutableList;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import cyclops.typeclasses.Active;
@@ -120,12 +122,31 @@ import java.util.stream.*;
 public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
                                         OnEmptySwitch<T, Stream<T>>,
-        IterableX<T>,
+                                        IterableX<T>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 
 
-
+    default ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
+        AtomicBoolean active = new AtomicBoolean(true);
+        return filter(i->{
+            if(active.get() && pred.test(i)){
+                active.set(false);
+                return false;
+            }
+            return true;
+        });
+    }
+    default ReactiveSeq<T> updateAt(int i, T e){
+        return zipWithIndex().map(t2->{
+            if(t2._2()==i)
+                return e;
+            return t2._1();
+        });
+    }
+    default ReactiveSeq<T> removeAt(int pos){
+        return zipWithIndex().filter(t2->pos!=t2._2()).map(Tuple2::_1);
+    }
     /**
      *
      * Stream over the values of an enum
@@ -1213,7 +1234,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      * 	MutableInt count =MutableInt.of(0);
      * 		ReactiveSeq.of(1,2,2)
-     * 		 		.cycleUntil(next -> count.get()>6)
+     * 		 		.cycleUntil(next -> count.getValue()>6)
      * 		 		.peek(i-> count.mutate(i->i+1))
      * 		 		.collect(CyclopsCollectors.toList());
      *
@@ -1365,8 +1386,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(CyclopsCollectors.toList());
      *
-     *  assertThat(list.get(0), hasItems(1, 2));
-     *  assertThat(list.get(1), hasItems(2, 3));
+     *  assertThat(list.getValue(0), hasItems(1, 2));
+     *  assertThat(list.getValue(1), hasItems(2, 3));
      *
      * }
      *
@@ -1388,8 +1409,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(CyclopsCollectors.toList());
      *
-     *  assertThat(list.get(0), hasItems(1, 2, 3));
-     *  assertThat(list.get(1), hasItems(3, 4, 5));
+     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
+     *  assertThat(list.getValue(1), hasItems(3, 4, 5));
      *
      * }
      *
@@ -1411,8 +1432,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).grouped(3).collect(CyclopsCollectors.toList());
      *
-     *  assertThat(list.get(0), hasItems(1, 2, 3));
-     *  assertThat(list.get(1), hasItems(4, 5, 6));
+     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
+     *  assertThat(list.getValue(1), hasItems(4, 5, 6));
      *
      * }
      * </pre>
@@ -1530,7 +1551,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
      *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
      *                       .toList()
-     *                       .get(0)
+     *                       .getValue(0)
      *                       .size(),is(1));
      * }
      * </pre>
@@ -1554,7 +1575,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
      *                      .batchBySize(3,()->new TreeSet<>())
      *                      .toList()
-     *                      .get(0)
+     *                      .getValue(0)
      *                      .size(),is(1));
      * }
      * </pre>
@@ -1665,8 +1686,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
-     *  assertEquals(asList(2, 4), map1.get(0));
-     *  assertEquals(asList(1, 3), map1.get(1));
+     *  assertEquals(asList(2, 4), map1.getValue(0));
+     *  assertEquals(asList(1, 3), map1.getValue(1));
      *  assertEquals(2, map1.size());
      *
      * }
@@ -2123,7 +2144,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().get();
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
      *
      * //3
      * }
@@ -2160,7 +2181,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *         <pre>
      * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().get();
+     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().getValue();
      *
      * //3
      * }
@@ -2281,7 +2302,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     /*
      * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
-     * (acc,next) -> acc+next).get(),equalTo(1500)); } </pre>
+     * (acc,next) -> acc+next).getValue(),equalTo(1500)); } </pre>
      */
     @Override
     Optional<T> reduce(BinaryOperator<T> accumulator);
@@ -2315,7 +2336,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * the state of the result rather than by replacing the result.  This
      * produces a result equivalent to:
      * <pre>{@code
-     *     R result = supplier.get();
+     *     R result = supplier.getValue();
      *     for (T element : this reactiveStream)
      *         accumulator.accept(result, element);
      *     return result;
@@ -2805,17 +2826,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
-     * 									 .prepend(100,200,300)
+     * 									 .prependAll(100,200,300)
      * 										 .transform(it ->it+"!!")
      * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * @param values to prependAll
      * @return ReactiveSeq with values prepended
      */
 
-    ReactiveSeq<T> prepend(T... values);
+    ReactiveSeq<T> prependAll(T... values);
+
 
     /**
      * Insert data into a ReactiveSeq at a given position
@@ -2836,7 +2858,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     default ReactiveSeq<T> insertAt(int pos, T... values){
         if(pos==0){
-            return prepend(values);
+            return prependAll(values);
         }
         long check =  new Long(pos);
         boolean added[] = {false};
@@ -2855,9 +2877,51 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
+    default ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
+        if(pos==0){
+            return prependS(ReactiveSeq.fromIterable(values));
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+
+
+        return zipWithIndex().flatMap(t-> {
+                    if (t._2() < check && !added[0])
+                        return ReactiveSeq.of(t._1());
+                    if (!added[0]) {
+                        added[0] = true;
+                        return ReactiveSeq.concat(ReactiveSeq.fromIterable(values),ReactiveSeq.of(t._1()));
+                    }
+                    return Stream.of(t._1());
+                }
+        );
+
+
+    }
+    default ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
+        if(pos==0){
+            return prependS(values);
+        }
+        long check =  new Long(pos);
+        boolean added[] = {false};
+
+
+        return zipWithIndex().flatMap(t-> {
+                    if (t._2() < check && !added[0])
+                        return ReactiveSeq.of(t._1());
+                    if (!added[0]) {
+                        added[0] = true;
+                        return ReactiveSeq.concat(values,ReactiveSeq.of(t._1()));
+                    }
+                    return Stream.of(t._1());
+                }
+        );
+
+
+    }
     default ReactiveSeq<T> insertAtOrAppend(int pos, T... values){
         if(pos==0){
-            return prepend(values);
+            return prependAll(values);
         }
         long check =  new Long(pos);
         boolean added[] = {false};
@@ -3167,6 +3231,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return first value in this Stream
      */
     @Override
+    //@TODO remove
     T firstValue();
 
     /**
@@ -3188,6 +3253,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *         in this Stream
      */
     @Override
+    //@TODO remove
     default T singleUnsafe() {
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
@@ -3259,7 +3325,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).get(),equalTo(3));
+     * 	assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
      *
@@ -3267,6 +3333,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to extract element from
      * @return elementAt index
      */
+    //@TODO rename elementAt
     @Override
     default Maybe<T> get(final long index) {
         return this.zipWithIndex()
@@ -3281,7 +3348,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of(1,2,3,4,5).get(2)._1
+     * ReactiveSeq.of(1,2,3,4,5).getValue(2)._1
      * //3
      * }
      * </pre>
@@ -3290,6 +3357,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to extract element from
      * @return Element and Sequence
      */
+    //@TODO REMOVE
     default Tuple2<T, ReactiveSeq<T>> elementAt(final long index) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicate();
         return tuple.map1(s -> s.zipWithIndex()
@@ -3983,18 +4051,23 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * 	ReactiveSeq.of(1,2,3,4,5,1,2,3).remove(1)
+     * 	ReactiveSeq.of(1,2,3,4,5,1,2,3).removeValue(1)
      *
      *  //Streamable[2,3,4,5,2,3]
      * }
      * </pre>
      *
      * @param t
-     *            element to remove
+     *            element to removeValue
      * @return Filtered Stream / ReactiveSeq
      */
-    default ReactiveSeq<T> remove(final T t) {
+    default ReactiveSeq<T> removeValue(final T t) {
         return this.filter(v -> v != t);
+    }
+
+    @Override
+    default ReactiveSeq<T> removeAt(long index) {
+        return zipWithIndex().filterNot(t2 -> t2._2() == index).map(t -> t._1());
     }
 
     /**
@@ -4557,7 +4630,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     ReactiveSeq<T> append(Iterable<? extends T> other);
 
-
+    @Override
+    default ReactiveSeq<T> appendAll(Iterable<? extends T> value){
+        return  appendS(ReactiveSeq.fromIterable(value));
+    }
+    @Override
+    default ReactiveSeq<T> prependAll(Iterable<? extends T> value){
+        return  prependS(ReactiveSeq.fromIterable(value));
+    }
     ReactiveSeq<T> prepend(Iterable<? extends T> other);
 
 

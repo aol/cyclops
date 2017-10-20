@@ -99,10 +99,10 @@ public class ExceptionSoftener {
      * <pre>
      * {@code 
      * 
-     * Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
-     * supplier.get(); //thows IOException but doesn't need to declare it
+     * Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::getValue);
+     * supplier.getValue(); //thows IOException but doesn't need to declare it
      * 
-     * private String get() throws IOException{
+     * private String getValue() throws IOException{
     	return "hello";
        }
     
@@ -131,7 +131,7 @@ public class ExceptionSoftener {
      * {@code 
      * 
      * Supplier<String> supplier = ExceptionSoftener.softenCallable(this);
-     * supplier.get(); //thows IOException but doesn't need to declare it
+     * supplier.getValue(); //thows IOException but doesn't need to declare it
      * 
      * public String call() throws IOException{
     	return "hello";
@@ -166,7 +166,7 @@ public class ExceptionSoftener {
     	
     	BooleanSupplier supplier = ExceptionSoftener.softenBooleanSupplier(()->{throw new IOException();});
     	
-    	supplier.get() //throws IOException but doesn't need to declare it
+    	supplier.getValue() //throws IOException but doesn't need to declare it
     
     
      * }

@@ -2,12 +2,13 @@ package com.aol.cyclops2.data.collections.extensions;
 
 import java.util.Collection;
 
+import cyclops.collectionx.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 
 
 /**
  * A Lazy Collection with a fluent api. Extended operators act eagerly, direct operations on a toX
- * to add, remove or retrieve elements should be eager unless otherwise stated.
+ * to add, removeValue or retrieve elements should be eager unless otherwise stated.
  *
  *
  * @author johnmcclean
@@ -91,8 +92,8 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /**
-     * Lazily remove an element from this Collection.
-     * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#minus(Object)}
+     * Lazily removeValue an element from this Collection.
+     * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#removeValue(Object)}
      * <pre>
      * {@code
      *    StreamX<Integer> lazy = StreamX.of(1,2,3)
@@ -114,7 +115,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * }
      * </pre>
      *
-     * @param e Element to remove
+     * @param e Element to removeValue
      * @return LazyFluentCollectionX with element removed
      */
     default LazyFluentCollectionX<T> minusLazy(Object e) {
@@ -123,7 +124,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /**
-     * Lazily remove the elements in the supplied Collection from this Collection.
+     * Lazily removeValue the elements in the supplied Collection from this Collection.
      * The Collection will not be materialized (unlike via @see {@link LazyFluentCollectionX#minusAll(Collection)}
      * <pre>
      * {@code
@@ -145,11 +146,11 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      *   //Lazy List that will contain [2,6] when triggered
      * }
      * </pre>
-     * @param list of elements to remove
+     * @param list of elements to removeValue
      * @return  LazyFluentCollectionX with elements removed
      */
-    default LazyFluentCollectionX<T> minusAllLazy(Collection<?> list) {
-        removeAll(list);
+    default LazyFluentCollectionX<T> minusAllLazy(Iterable<? extends T> list) {
+        removeAll((Iterable)(ListX.fromIterable(list)));
         return this;
     }
 
@@ -179,31 +180,31 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plusAll(
+     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(
      * java.util.Collection)
      */
     @Override
-    public FluentCollectionX<T> plusAll(Collection<? extends T> list);
+    public FluentCollectionX<T> plusAll(Iterable<? extends T> list);
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minus(java.
+     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.
      * lang.Object)
      */
     @Override
-    public FluentCollectionX<T> minus(Object e);
+    public FluentCollectionX<T> removeValue(T e);
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minusAll(
+     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(
      * java.util.Collection)
      */
     @Override
-    public FluentCollectionX<T> minusAll(Collection<?> list);
+    public FluentCollectionX<T> removeAll(Iterable<? extends T> list);
 
     /*
      * (non-Javadoc)
@@ -213,5 +214,5 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * util.Collection)
      */
     @Override
-    public <R> FluentCollectionX<R> unit(Collection<R> col);
+    public <R> FluentCollectionX<R> unit(Iterable<R> col);
 }

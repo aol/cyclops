@@ -30,7 +30,7 @@ public class SlidingOperatorTest extends AbstractOperatorTest {
     public Operator<Integer> createTwoAndError(){
 
         return new MapOperator<VectorX<Integer>,Integer>(new SlidingOperator(Fixtures.twoAndErrorSource,
-                i->i,1,1),i->i.get(0));
+                i->i,1,1),i->i.getOrElse(0,-1));
     }
     public Operator<Integer> createThreeErrors(){
         return new MapOperator<List<Integer>,Integer>(new SlidingOperator(Fixtures.threeErrorsSource

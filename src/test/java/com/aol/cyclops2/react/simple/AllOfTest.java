@@ -14,9 +14,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+import cyclops.data.HashMap;
 import org.junit.Test;
-import org.pcollections.HashPMap;
-import org.pcollections.HashTreePMap;
+
 
 import cyclops.async.SimpleReact;
 
@@ -25,12 +25,12 @@ public class AllOfTest {
 
 	@Test
 	public void allOf(){
-		List<HashPMap<String, List<Integer>>> result =
+		List<HashMap<String, List<Integer>>> result =
 		
 				SimpleReact.sequentialBuilder().ofAsync(()->1,()->2,()->3)
 		 									 .then(it->it+100)
 		 									 .peek(System.out::println)
-		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashTreePMap.singleton("numbers",c);})
+		 									 .allOf((List<Integer> c)-> { System.out.println(c);return HashMap.of("numbers",c);})
 		 									 .peek(map -> System.out.println(map))
 		 									 .block(Collectors.toList());
 		 

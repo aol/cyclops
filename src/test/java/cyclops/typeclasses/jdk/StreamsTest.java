@@ -114,7 +114,7 @@ public class StreamsTest {
         
         Monoid<StreamKind<Integer>> m = Monoid.of(StreamKind.widen(Stream.of()), (a,b)->a.isEmpty() ? b : a);
         StreamKind<Integer> list = Streams.<Integer>monadPlus(m)
-                                      .plus(StreamKind.widen(Stream.of(5)), StreamKind.widen(Stream.of(10)))
+                                      .insertAt(StreamKind.widen(Stream.of(5)), StreamKind.widen(Stream.of(10)))
                                       .convert(StreamKind::narrowK3);
         assertThat(list,equalTo(Arrays.asList(5)));
     }

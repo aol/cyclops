@@ -655,7 +655,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                             }
                             active = false;
 
-                            //  System.out.println("Sent " + sent + " x " + super.requested.get() + " " + completed + "  sent ? " + completeSent + " size " + data.size());
+                            //  System.out.println("Sent " + sent + " x " + super.requested.getValue() + " " + completed + "  sent ? " + completeSent + " size " + data.size());
                         }
                     });
 
@@ -751,7 +751,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> prepend(final T... other) {
+    public ReactiveSeq<T> prependAll(final T... other) {
         return Spouts.concat(Spouts.of(other), this);
     }
 

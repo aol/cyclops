@@ -1,12 +1,13 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.mutable.ListX;
@@ -22,7 +23,6 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
-import lombok.val;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -32,24 +32,27 @@ import java.util.stream.Stream;
 //safe LazyList (Stream) that does not support exceptional states
 public interface LazySeq<T> extends  ImmutableList<T>,
                                     Folds<T>,
-                                    Filters<T>,
+                                    Filters<T>,PStack<T>,
                                     Transformable<T>,
                                     Higher<lazySeq,T> {
 
 
+    @Override
+    default<R> LazySeq<R> unitIterable(Iterable<R> it){
+        if(it instanceof LazySeq){
+            return (LazySeq<R>)it;
+        }
+        return fromIterable(it);
+    }
+
+    @Override
+    default boolean containsValue(T value) {
+        return PStack.super.containsValue(value);
+    }
     static <R> LazySeq<R> narrow(LazySeq<? extends R> rs) {
         return (LazySeq<R>)rs;
     }
-    default <R> LazySeq<R> unitStream(Stream<R> stream){
-        return fromStream(stream);
-    }
 
-    default ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(this);
-    }
-    default LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(this);
-    }
 
     static  <T,R> LazySeq<R> tailRec(T initial, Function<? super T, ? extends LazySeq<? extends Either<T, R>>> fn) {
         LazySeq<Either<T, R>> next = LazySeq.of(Either.left(initial));
@@ -121,7 +124,51 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return LazySeq.fromStream(ReactiveSeq.rangeLong(start,end));
 
     }
+
+
+    @Override
+    default LazySeq<T> removeAll(Iterable<? extends T> list) {
+        return (LazySeq<T>)ImmutableList.super.removeAllI(list);
+    }
+
+    default <R> LazySeq<R> unitStream(Stream<R> stream){
+        return fromStream(stream);
+    }
+
+    default ReactiveSeq<T> stream(){
+        return ReactiveSeq.fromIterable(this);
+    }
+    default LinkedListX<T> linkedListX(){
+        return LinkedListX.fromIterable(this);
+    }
     LazySeq<T> append(Supplier<LazySeq<T>> list);
+    @Override
+    default LazySeq<T> removeAll(T... values) {
+        return (LazySeq<T>)ImmutableList.super.removeAll(values);
+    }
+
+
+    default LazySeq<T> plusAll(Iterable<? extends T> t){
+        return prependAll((Iterable<T>)t);
+    }
+
+    @Override
+    default LazySeq<T> insertAt(int pos, Iterable<? extends T> list) {
+        return (LazySeq<T>)ImmutableList.super.insertAt(pos,list);
+    }
+
+    LazySeq<T> updateAt(int i, T value);
+    LazySeq<T> removeAt(final int i);
+
+    default LazySeq<T> insertAt(final int i, final T e){
+        return (LazySeq<T>)ImmutableList.super.insertAt(i,e);
+    }
+
+    @Override
+    default LazySeq<T> removeValue(T value) {
+        return (LazySeq<T>) ImmutableList.super.removeValue(value);
+    }
+
     /**
      *
      * Stream over the values of an enum
@@ -339,6 +386,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
 
     default Option<T> get(int pos){
+        if(pos<0)
+            return Option.none();
         T result = null;
         ImmutableList<T> l = this;
         for(int i=0;i<pos;i++){
@@ -352,6 +401,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
 
     default T getOrElse(int pos, T alt){
+        if(pos<0)
+            return alt;
         T result = null;
         LazySeq<T> l = this;
         for(int i=0;i<pos;i++){
@@ -360,9 +411,11 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return alt;
             }
         }
-        return l.visit(c->c.head,n->null);
+        return l.visit(c->c.head,n->alt);
     }
-    default T getOrElseGet(int pos, Supplier<T> alt){
+    default T getOrElseGet(int pos, Supplier<? extends T> alt){
+        if(pos<0)
+            return alt.get();
         T result = null;
         LazySeq<T> l = this;
         for(int i=0;i<pos;i++){
@@ -371,7 +424,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return alt.get();
             }
         }
-        return l.visit(c->c.head,n->null);
+        return l.visit(c->c.head,n->alt.get());
     }
     default LazySeq<T> prepend(T value){
         return cons(value,()->this);
@@ -387,8 +440,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return prepend(value);
     }
 
-    default LazySeq<T> prependAll(Iterable<T> it){
-        LazySeq<T> value = fromIterable(it);
+    default LazySeq<T> prependAll(Iterable<? extends T> it){
+        LazySeq<T> value = narrow(fromIterable(it));
         return value.fold(cons->
                         cons.foldRight(this,(a,b)->b.prepend(a))
                 ,nil->this);
@@ -399,8 +452,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
 
-    default LazySeq<T> appendAll(Iterable<T> it) {
-        LazySeq<T> append = fromIterable(it);
+    default LazySeq<T> appendAll(Iterable<? extends T> it) {
+        LazySeq<T> append = narrow(fromIterable(it));
         return this.visit(cons->{
             return append.visit(c2->{
                 return cons(cons.head,()->cons.tail.get().appendAll(append));
@@ -554,7 +607,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return false;
             if (obj == this)
                 return true;
-            if(obj instanceof ImmutableList) {
+            if(obj instanceof PIndexed) {
                 return equalToIteration((Iterable)obj);
             }
             return false;
@@ -591,6 +644,57 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public String toString(){
             return "{"+head+"...}";
         }
+
+        public LazySeq<T> removeAt(final int i) {
+            if (i == 0)
+                return tail.get();
+
+            return cons(head,()->tail.get().removeAt(i));
+        }
+
+
+        @Override
+        public LazySeq<T> updateAt(int i, T value) {
+
+            if(i==0) {
+                if(Objects.equals(head,value))
+                    return this;
+                return cons(value, tail);
+            }
+            if(i>1000){
+                LazySeq<T> front = take(i);
+                LazySeq<T> back = drop(i);
+
+                return back.prepend(value).prependAll(front);
+            }
+
+
+            return cons(head, ()->tail.get().updateAt(i-1, value));
+        }
+
+        public LazySeq<T> insertAt(final int i, final T value) {
+            if(i==0)
+                return prepend(value);
+            if(i<1000)
+                return cons(head, ()->tail.get().insertAt(i-1, value));
+            return LazySeq.super.insertAt(i,value);
+        }
+
+        @Override
+        public LazySeq<T> insertAt(int i, Iterable<? extends T> list) {
+            if(i==0)
+                return prependAll(list);
+            if(i<1000)
+                return cons(head, ()->tail.get().insertAt(i-1, list));
+            return LazySeq.super.insertAt(i,list);
+
+        }
+
+        @Override
+        public LazySeq<T> removeValue(T e) {
+            return removeAll(e);
+        }
+
     }
 
     public class Nil<T> implements LazySeq<T>, ImmutableList.None<T> {
@@ -665,11 +769,42 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             if (obj == this)
                 return true;
 
-            if(obj instanceof ImmutableList) {
-                return ((ImmutableList)obj).size()==0;
+            if(obj instanceof PStack) {
+                return ((PStack)obj).size()==0;
             }
             return false;
         }
+
+        @Override
+        public LazySeq<T> plusAll(Iterable<? extends T> t) {
+            return fromIterable((Iterable<T>)t);
+        }
+
+        @Override
+        public LazySeq<T> updateAt(int i, T value) {
+            return this;
+        }
+
+        @Override
+        public LazySeq<T> removeAt(int i) {
+            return this;
+        }
+
+
+        public LazySeq<T> insertAt(final int i, final T e) {
+            return plus(e);
+        }
+
+        @Override
+        public LazySeq<T> insertAt(int i, Iterable<? extends T> list) {
+            return fromIterable((Iterable<T>)list);
+        }
+
+        @Override
+        public LazySeq<T> removeValue(T e) {
+            return this;
+        }
+
     }
 
 }

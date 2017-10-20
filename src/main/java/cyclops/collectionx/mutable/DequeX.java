@@ -464,7 +464,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.aol.cyclops2.data.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
-    default <T1> DequeX<T1> from(final Collection<T1> c) {
+    default <T1> DequeX<T1> from(final Iterable<T1> c) {
         return DequeX.<T1> fromIterable(getCollector(), c);
     }
 
@@ -531,7 +531,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#unit(java.util.Collection)
      */
     @Override
-    default <R> DequeX<R> unit(final Collection<R> col) {
+    default <R> DequeX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -796,29 +796,29 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#plusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#insertAt(java.util.Collection)
      */
     @Override
-    default DequeX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default DequeX<T> plusAll(final Iterable<? extends T> list) {
+        addAll(ListX.fromIterable(list));
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#removeValue(java.lang.Object)
      */
     @Override
-    default DequeX<T> minus(final Object e) {
-        remove(e);
+    default DequeX<T> removeValue(final T e) {
+        removeValue(e);
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX#removeAll(java.util.Collection)
      */
     @Override
-    default DequeX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default DequeX<T> removeAll(final Iterable<? extends T> list) {
+        removeAll((Iterable)ListX.fromIterable(list));
         return this;
     }
 
@@ -1259,8 +1259,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     @Override
-    default DequeX<T> prepend(T... values) {
-        return (DequeX<T>)LazyCollectionX.super.prepend(values);
+    default DequeX<T> prependAll(T... values) {
+        return (DequeX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

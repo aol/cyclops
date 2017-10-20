@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
@@ -30,6 +31,8 @@ import java.util.stream.Stream;
 
 public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
                                          IterableX<T>{
+
+
     @Override
     default <U> ImmutableSet<U> ofType(Class<? extends U> type) {
         return (ImmutableSet<U>)IterableX.super.ofType(type);
@@ -68,10 +71,10 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     default PersistentSetX<T> persistentSetX(){
         return stream().to().persistentSetX(Evaluation.LAZY);
     }
-    boolean contains(T value);
+    boolean containsValue(T value);
     int size();
     ImmutableSet<T> add(T value);
-    ImmutableSet<T> remove(T value);
+    ImmutableSet<T> removeValue(T value);
     boolean isEmpty();
 
     <R> ImmutableSet<R> map(Function<? super T, ? extends R> fn);
@@ -571,8 +574,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> prepend(T... values) {
-        return unitStream(stream().prepend(values));
+    default ImmutableSet<T> prependAll(T... values) {
+        return unitStream(stream().prependAll(values));
     }
 
     @Override

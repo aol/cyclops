@@ -1,16 +1,15 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.PSet;
 
-import java.util.Collection;
+
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -76,10 +75,16 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     }
 
     @Override
-    public <T1> LazyPSetX<T1> from(Collection<T1> c) {
+    public <T1> LazyPSetX<T1> from(Iterable<T1> c) {
         if(c instanceof PSet)
             return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
+    }
+
+    public <T1> LazyPSetX<T1> from(PSet<T1> c) {
+
+        return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+
     }
 
     @Override
@@ -97,20 +102,20 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     }
 
     @Override
-    public PersistentSetX<T> plusAll(Collection<? extends T> list) {
+    public PersistentSetX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public PersistentSetX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public PersistentSetX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
 
 
     @Override
-    public PersistentSetX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public PersistentSetX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
 
@@ -124,7 +129,7 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
 
 
     @Override
-    public <R> LazyPSetX<R> unit(Collection<R> col) {
+    public <R> LazyPSetX<R> unit(Iterable<R> col) {
         return from(col);
     }
 

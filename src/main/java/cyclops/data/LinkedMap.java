@@ -48,7 +48,7 @@ public class LinkedMap<K,V> implements ImmutableMap<K,V>{
     }
 
     @Override
-    public V getOrElseGet(K key, Supplier<V> alt) {
+    public V getOrElseGet(K key, Supplier<? extends V> alt) {
         return map.getOrElseGet(key,alt);
     }
 

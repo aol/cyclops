@@ -1,5 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions;
 
+import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import cyclops.control.Option;
 
 import java.util.Collection;
@@ -57,23 +58,23 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
      * @param list of elements to add
      * @return Collection with elements added
      */
-    public FluentCollectionX<T> plusAll(Collection<? extends T> list);
+    public FluentCollectionX<T> plusAll(Iterable<? extends T> list);
 
     /**
      * Remove the specified element from this toX
      * 
-     * @param e Element to remove
+     * @param e Element to removeValue
      * @return Collection with element removed
      */
-    public FluentCollectionX<T> minus(Object e);
+    public FluentCollectionX<T> removeValue(T e);
 
     /**
      * Remove all the specified elements from this toX
      * 
-     * @param list of elements to remove
+     * @param list of elements to removeValue
      * @return Collection with the elements removed
      */
-    public FluentCollectionX<T> minusAll(Collection<?> list);
+    public FluentCollectionX<T> removeAll(Iterable<? extends T> list);
 
     /**
      * Create a new instance of the same colleciton type from the supplied toX
@@ -81,5 +82,5 @@ public interface FluentCollectionX<T> extends CollectionX<T> {
      * @param col Collection data to populate the new toX
      * @return Collection as the same type as this toX
      */
-    public <R> FluentCollectionX<R> unit(Collection<R> col);
+    public <R> FluentCollectionX<R> unit(Iterable<R> col);
 }

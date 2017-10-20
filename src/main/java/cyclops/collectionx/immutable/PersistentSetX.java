@@ -1,6 +1,7 @@
 package cyclops.collectionx.immutable;
 
-
+import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import cyclops.data.HashSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Zippable;
@@ -37,8 +38,7 @@ import cyclops.typeclasses.monad.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import org.pcollections.HashTreePSet;
-import org.pcollections.PSet;
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -212,12 +212,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashTreePSet.empty(),null,Reducers.toPSet(), LAZY);
+                               HashSet.empty(),null,Reducers.toPSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashTreePSet.singleton(value),null,Reducers.toPSet(), LAZY);
+                               HashSet.of(value),null,Reducers.toPSet(), LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
     /**
@@ -411,7 +411,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         return (PersistentSetX<T>)LazyCollectionX.super.combine(op,predicate);
     }
     @Override
-    default <R> PersistentSetX<R> unit(final Collection<R> col) {
+    default boolean isEmpty() {
+        return PSet.super.isEmpty();
+    }
+    @Override
+    default <R> PersistentSetX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -441,10 +445,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         return ReactiveSeq.fromIterable(this);
     }
 
-
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
 
     @Override
-    default <X> PersistentSetX<X> from(final Collection<X> col) {
+    default <X> PersistentSetX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
@@ -460,22 +467,22 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     public PersistentSetX<T> plus(T e);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
+     * @see org.pcollections.PSet#insertAt(java.util.Collection)
      */
     @Override
-    public PersistentSetX<T> plusAll(Collection<? extends T> list);
+    public PersistentSetX<T> plusAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#minus(java.lang.Object)
+     * @see org.pcollections.PSet#removeValue(java.lang.Object)
      */
     @Override
-    public PersistentSetX<T> minus(Object e);
+    public PersistentSetX<T> removeValue(T e);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
+     * @see org.pcollections.PSet#removeAll(java.util.Collection)
      */
     @Override
-    public PersistentSetX<T> minusAll(Collection<?> list);
+    public PersistentSetX<T> removeAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
@@ -1070,8 +1077,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
     @Override
-    default PersistentSetX<T> prepend(T... values) {
-        return (PersistentSetX<T>)LazyCollectionX.super.prepend(values);
+    default PersistentSetX<T> prependAll(T... values) {
+        return (PersistentSetX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override
@@ -1469,7 +1476,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
-        private static  <T> PersistentSetX<T> concat(Set<T> l1, Set<T> l2){
+        private static  <T> PersistentSetX<T> concat(PSet<T> l1, PSet<T> l2){
             return PersistentSetX.persistentSetX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
         }
         private static <T> PersistentSetX<T> of(T value){

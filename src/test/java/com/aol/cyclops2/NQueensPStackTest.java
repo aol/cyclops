@@ -51,7 +51,7 @@ public class NQueensPStackTest {
             solution.forEach(col->{
                 System.out.println(VectorX.range(0,solution.size())
                                            .map(i->"*")
-                                           .with(col-1, "X")
+                                           .insertAt(col-1, "X")
                                            .join(" "));
             });
         });

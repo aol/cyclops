@@ -19,14 +19,14 @@ import java.util.stream.Stream;
 
 import cyclops.collectionx.immutable.*;
 import cyclops.control.lazy.Maybe;
+import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
 import cyclops.control.anym.Witness.maybe;
 import cyclops.typeclasses.functions.SemigroupK;
 
 import org.junit.Test;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.immutable.BagX;
@@ -280,21 +280,21 @@ public class SemigroupsTest {
     }
     @Test
     public void testCollectionConcatPVector() {
-        PVector<Integer> list = TreePVector.empty();
+        Vector<Integer> list = Vector.empty();
         list= list.plus(1);
         list = list.plus(2);
         list = list.plus(4);
         Semigroup<List<Integer>> combiner= Semigroups.collectionConcat();
-        assertThat(combiner.apply(list,Arrays.<Integer>asList(4,5,6)),equalTo(Arrays.asList(1,2,4,4,5,6)));
+        assertThat(combiner.apply(list.toListX(),Arrays.<Integer>asList(4,5,6)),equalTo(Arrays.asList(1,2,4,4,5,6)));
     }
     @Test
     public void testCollectionConcatPVector2() {
-        PVector<Integer> list = TreePVector.empty();
+        Vector<Integer> list = Vector.empty();
         list= list.plus(1);
         list = list.plus(2);
         list = list.plus(4);
         Semigroup<List<Integer>> combiner= Semigroups.collectionConcat();
-        assertThat(combiner.apply(Arrays.asList(4,5,6),list),equalTo(Arrays.asList(1,2,4,4,5,6)));
+        assertThat(combiner.apply(Arrays.asList(4,5,6),list.toListX()),equalTo(Arrays.asList(1,2,4,4,5,6)));
     }
     
     @Test

@@ -1,6 +1,8 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
+import com.aol.cyclops2.data.collections.extensions.api.PSet;
 import cyclops.control.Option;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.Generator;
@@ -18,7 +20,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 
-public final class TreeSet<T> implements ImmutableSortedSet<T>{
+public final class TreeSet<T> implements ImmutableSortedSet<T>, POrderedSet<T>{
     private final RedBlackTree.Tree<T,T> map;
     private final Comparator<? super T> comp;
 
@@ -28,7 +30,15 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
         this.map = RedBlackTree.rootIsBlack(map);
         this.comp = comp;
     }
-
+    public static <T extends Comparable<? super T>>  TreeSet<T> empty(){
+        return new TreeSet<T>( RedBlackTree.empty(Comparators.naturalComparator()),Comparators.naturalComparator());
+    }
+    public static <T extends Comparable<? super T>>  TreeSet<T> singleton(T value){
+        return new TreeSet<T>( RedBlackTree.empty(Comparators.naturalComparator()),Comparators.naturalComparator()).plus(value);
+    }
+    public static <T>  TreeSet<T> singleton(Comparator<? super T> comp,T value){
+        return new TreeSet<T>( RedBlackTree.empty(comp),comp).plus(value);
+    }
     public static <T> TreeSet<T> empty(Comparator<? super T> comp){
         return new TreeSet<T>( RedBlackTree.empty(comp),comp);
     }
@@ -96,7 +106,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
         return new TreeSet<T>(RedBlackTree.fromStream(set.comparator(),s),comp);
     }
 
-    public boolean contains(T value){
+    public boolean containsValue(T value){
         return map.get(value).isPresent();
     }
 
@@ -111,7 +121,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
     }
 
     @Override
-    public TreeSet<T> remove(T value) {
+    public TreeSet<T> removeValue(T value) {
         return new TreeSet<>(map.minus(value),comp);
     }
 
@@ -170,9 +180,31 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
 
         return new TreeSet<>(map.plus(value,value),comp);
     }
-    public TreeSet<T> minus(T value){
-        return new TreeSet<>(map.minus(value),comp);
+
+    @Override
+    public TreeSet<T> plusAll(Iterable<? extends T> list) {
+        TreeSet<T> res = this;
+        for(T next : list){
+            res = res.plus(next);
+        }
+        return res;
     }
+
+
+
+    @Override
+    public TreeSet<T> removeAll(Iterable<? extends T> list) {
+        RedBlackTree.Tree<T, T> local = map;
+        for(T next : list)
+            local = local.minus(next);
+        return new TreeSet<>(local,comp);
+    }
+
+    @Override
+    public Option<T> get(int index) {
+        return stream().get(index);
+    }
+
 
 
 
@@ -223,8 +255,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if(o instanceof ImmutableSet) {
-            ImmutableSet<T> set = (ImmutableSet<T>) o;
+        if(o instanceof PSet) {
+            PSet<T> set = (PSet<T>) o;
             return equalToIteration(set);
 
         }
@@ -244,4 +276,5 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>{
     public String toString() {
         return stream().join(",","[","]");
     }
+
 }

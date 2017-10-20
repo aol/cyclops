@@ -71,7 +71,7 @@ public class PMapXsTest {
     @Test
     public void onEmptySwitch(){
        
-        assertThat(PersistentMapX.<String,Integer>empty().onEmptySwitch(()-> PersistentMapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(10));
+        assertThat(PersistentMapX.<String,Integer>empty().onEmptySwitch(()-> PersistentMapX.fromMap(MapXs.of("hello",10))).getValue("hello"),equalTo(10));
     }
     @Test
     public void testOf() {

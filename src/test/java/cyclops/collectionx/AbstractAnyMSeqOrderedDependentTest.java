@@ -1,5 +1,6 @@
 package cyclops.collectionx;
 
+import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.Semigroups;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;
@@ -105,7 +106,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
         
        
         
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
       
         
@@ -115,7 +116,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 
     @Test
     public void slidingIncrement() {
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));

@@ -76,6 +76,15 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
             return method.invoke(target,args);
         }
     }
+    @Override
+    default Object[] toArray(){
+        return LazyCollectionX.super.toArray();
+    }
+
+    @Override
+    default <T1> T1[] toArray(T1[] a){
+        return LazyCollectionX.super.toArray(a);
+    }
     SortedSetX<T> lazy();
     SortedSetX<T> eager();
     static <T> Collector<T, ?, SortedSet<T>> defaultCollector() {
@@ -398,7 +407,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default <R> SortedSetX<R> unit(final Collection<R> col) {
+    default <R> SortedSetX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
@@ -414,7 +423,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default <T1> SortedSetX<T1> from(final Collection<T1> c) {
+    default <T1> SortedSetX<T1> from(final Iterable<T1> c) {
         return SortedSetX.<T1> fromIterable(getCollector(), c);
     }
 
@@ -614,20 +623,24 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default SortedSetX<T> plusAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            add(next);
+        }
         return this;
     }
 
     @Override
-    default SortedSetX<T> minus(final Object e) {
-        remove(e);
+    default SortedSetX<T> removeValue(final T e) {
+        removeValue(e);
         return this;
     }
 
     @Override
-    default SortedSetX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default SortedSetX<T> removeAll(final Iterable<? extends T> list) {
+        for(T next : list) {
+            remove(list);
+        }
         return this;
     }
 
@@ -1059,8 +1072,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<T> prepend(T... values) {
-        return (SortedSetX<T>)LazyCollectionX.super.prepend(values);
+    default SortedSetX<T> prependAll(T... values) {
+        return (SortedSetX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override

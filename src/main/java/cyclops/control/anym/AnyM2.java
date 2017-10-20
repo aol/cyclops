@@ -305,7 +305,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * {@code
      *    AnyM<String> monad;
      *    
-     *    monad.matchable().visit(v->handleValue(v.get()),s->handleSequence(s.toList()));
+     *    monad.matchable().visit(v->handleValue(v.getValue()),s->handleSequence(s.toList()));
      * }
      * </pre>
      * 

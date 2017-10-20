@@ -1,5 +1,6 @@
 package cyclops.collectionx.mutable;
 
+import com.aol.cyclops2.data.collections.extensions.api.PMap;
 import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
@@ -223,26 +224,26 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#insertAt(java.util.Map)
      */
     @Override
-    default MapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
+    default MapX<K, V> plusAll(final PMap<? extends K, ? extends V> map) {
         return (MapX<K, V>) FluentMapX.super.plusAll(map);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#removeValue(java.lang.Object)
      */
     @Override
-    default MapX<K, V> minus(final Object key) {
+    default MapX<K, V> minus(final K key) {
         return (MapX<K, V>) FluentMapX.super.minus(key);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#removeAll(java.util.Collection)
      */
     @Override
-    default MapX<K, V> minusAll(final Collection<?> keys) {
+    default MapX<K, V> minusAll(final Collection<? extends K> keys) {
         return (MapX<K, V>) FluentMapX.super.minusAll(keys);
     }
 

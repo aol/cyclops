@@ -769,7 +769,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     Option<PT> get();
 

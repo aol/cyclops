@@ -58,9 +58,6 @@ configurations {
 }
 dependencies {
 
-
-
-	compile 'org.pcollections:pcollections:'+pCollectionsVersion
 	compile 'org.agrona:Agrona:'+agronaVersion
 	compile 'org.reactivestreams:reactive-streams:'+reactiveStreamsVersion
 

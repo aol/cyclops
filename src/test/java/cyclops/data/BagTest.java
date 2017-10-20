@@ -20,7 +20,7 @@ public class BagTest {
     @Test
     public void minus(){
         Bag<Integer> bag1 = Bag.of(1,2,3,4,10,1,1,2);
-        assertThat(bag1.minus(1).instances(1),equalTo(2));
+        assertThat(bag1.removeValue(1).instances(1),equalTo(2));
         
     }
     

@@ -6,11 +6,9 @@ import cyclops.collectionx.immutable.PersistentQueueX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import org.pcollections.PQueue;
+import com.aol.cyclops2.data.collections.extensions.api.PQueue;
 
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -42,6 +40,7 @@ import java.util.function.Supplier;
  * @param <T> the type of elements held in this toX
  */
 public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
+
     public static final <T> Function<ReactiveSeq<PQueue<T>>, PQueue<T>> asyncQueue() {
         return r -> {
             CompletablePersistentQueueX<T> res = new CompletablePersistentQueueX<>();
@@ -74,10 +73,13 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public <T1> LazyPQueueX<T1> from(Collection<T1> c) {
-        if(c instanceof PQueue)
+    public <T1> LazyPQueueX<T1> from(Iterable<T1> c) {
+           return fromStream(ReactiveSeq.fromIterable(c));
+    }
+
+    public <T1> LazyPQueueX<T1> from(PQueue<T1> c) {
             return new LazyPQueueX<T1>((PQueue)c,null,(Reducer)this.getCollectorInternal(), evaluation());
-        return fromStream(ReactiveSeq.fromIterable(c));
+
     }
 
     @Override
@@ -101,44 +103,45 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     }
 
     @Override
-    public PersistentQueueX<T> plusAll(Collection<? extends T> list) {
+    public PersistentQueueX<T> plusAll(Iterable<? extends T> list) {
         return from(get().plusAll(list));
     }
 
 
     @Override
-    public PersistentQueueX<T> minusAll(Collection<?> list) {
-        return from(get().minusAll(list));
+    public PersistentQueueX<T> removeAll(Iterable<? extends T> list) {
+        return from(get().removeAll(list));
     }
-
+/**
     @Override
     public boolean offer(T o) {
-        return get().offer(o);
+        return getValue().offer(o);
     }
 
     @Override
     public T poll() {
-        return get().poll();
+        return getValue().poll();
     }
 
     @Override
     public T element() {
-        return get().element();
+        return getValue().element();
     }
 
     @Override
     public T peek() {
-        return get().peek();
+        return getValue().peek();
     }
 
     @Override
-    public T remove() {
-        return get().remove();
+    public T removeValue() {
+        return getValue().removeValue();
     }
 
+ **/
     @Override
-    public PersistentQueueX<T> minus(Object remove) {
-        return from(get().minus(remove));
+    public PersistentQueueX<T> removeValue(T remove) {
+        return from(get().removeValue(remove));
     }
 
 
@@ -152,7 +155,7 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
 
 
     @Override
-    public <R> LazyPQueueX<R> unit(Collection<R> col) {
+    public <R> LazyPQueueX<R> unit(Iterable<R> col) {
         return from(col);
     }
 
@@ -165,5 +168,19 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
     public PersistentQueueX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (PersistentQueueX<T>)super.plusLoop(supplier);
     }
-    
+
+    @Override
+    public Option<T> get(int index) {
+        return get().get(index);
+    }
+
+    @Override
+    public T getOrElse(int index, T alt) {
+        return get().getOrElse(index,alt);
+    }
+
+    @Override
+    public T getOrElseGet(int index, Supplier<? extends T> alt) {
+        return get().getOrElseGet(index,alt);
+    }
 }

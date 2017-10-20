@@ -352,29 +352,29 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
      */
     @Override
-    default LazyCollectionX<T> plusAll(final Collection<? extends T> list) {
-        addAll(list);
+    default LazyCollectionX<T> plusAll(final Iterable<? extends T> list) {
+        addAll(ListX.fromIterable(list));
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minus(java.lang.Object)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
      */
     @Override
-    default LazyCollectionX<T> minus(final Object e) {
-        remove(e);
+    default LazyCollectionX<T> removeValue(final T e) {
+        removeValue(e);
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#minusAll(java.util.Collection)
+     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
      */
     @Override
-    default LazyCollectionX<T> minusAll(final Collection<?> list) {
-        removeAll(list);
+    default LazyCollectionX<T> removeAll(final Iterable<? extends T> list) {
+        removeAll((Iterable)ListX.fromIterable(list));
         return this;
     }
 
@@ -787,8 +787,8 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default LazyCollectionX<T> prepend(T... values){
-        return fromStream(stream().prepend(values));
+    default LazyCollectionX<T> prependAll(T... values){
+        return fromStream(stream().prependAll(values));
     }
 
     @Override

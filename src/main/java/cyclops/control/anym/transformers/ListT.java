@@ -860,8 +860,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> prepend(T... values) {
-        return (ListT) FoldableTransformerSeq.super.prepend(values);
+    public ListT<W,T> prependAll(T... values) {
+        return (ListT) FoldableTransformerSeq.super.prependAll(values);
     }
 
     @Override

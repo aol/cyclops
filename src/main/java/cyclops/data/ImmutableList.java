@@ -38,6 +38,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                           To<ImmutableList<T>> {
 
     <R> ImmutableList<R> unitStream(Stream<R> stream);
+    <R> ImmutableList<R> unitIterable(Iterable<R> it);
 
 
     ImmutableList<T> emptyUnit();
@@ -80,25 +81,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return tail.fold(cons->cons.tail().prepend(newElement).prependAll(start), nil->this);
     }
     default ImmutableList<T> removeFirst(Predicate<? super T> pred){
-        ImmutableList<T> res[] = new ImmutableList[]{emptyUnit()};
-        ImmutableList<T> rem = this;
-        boolean[] found = {false};
-        do {
-            rem = MatchType(rem).of(Case(some->{
-                return Match(some).of(Case(head -> {
-                    found[0] = pred.test(head);
-                    if (!found[0]) {
-                        res[0] = res[0].prepend(head);
-
-                    }
-                    return true;
-                }, tail -> true, t -> t._2())).get();
-            }),Case(nil->nil));
-
-        }while(!rem.isEmpty() && !found[0]);
-
-        ImmutableList<T> ar = rem.fold(s -> s.fold((h, t) -> t), n -> n);
-        return res[0].foldLeft(ar, (a,b)->a.prepend(b));
+        return unitStream(stream().removeFirst(pred));
 
     }
     default LinkedListX<T> linkdedListX(){
@@ -149,18 +132,18 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> prepend(T value);
-    ImmutableList<T> prependAll(Iterable<T> value);
+    ImmutableList<T> prependAll(Iterable<? extends T> value);
 
     ImmutableList<T> append(T value);
-    ImmutableList<T> appendAll(Iterable<T> value);
+    ImmutableList<T> appendAll(Iterable<? extends T> value);
 
     ImmutableList<T> reverse();
 
     Option<T> get(int pos);
     T getOrElse(int pos, T alt);
-    T getOrElseGet(int pos, Supplier<T> alt);
+    T getOrElseGet(int pos, Supplier<? extends T> alt);
     int size();
-    default boolean contains(T value){
+    default boolean containsValue(T value){
         return stream().filter(o-> Objects.equals(value,o)).findFirst().isPresent();
     }
     boolean isEmpty();
@@ -212,7 +195,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
-    //@TODO remove
+    //@TODO removeValue
     <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
@@ -385,6 +368,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     default ImmutableList<T> removeAllI(Iterable<? extends T> it) {
         return unitStream(stream().removeAllI(it));
+    }
+    @Override
+    default ImmutableList<T> removeAt(long pos) {
+        return unitStream(stream().removeAt(pos));
     }
 
     @Override
@@ -740,7 +727,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<T> prepend(T... values) {
+    default ImmutableList<T> prependAll(T... values) {
         ImmutableList<T> res = this;
         for(T t : values){
             res = res.prepend(t);
@@ -750,6 +737,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<T> insertAt(int pos, T... values) {
+        if(pos==0)
+            return prependAll(values);
+        if(pos>=size())
+            return append(values);
         return unitStream(stream().insertAt(pos,values));
     }
 
@@ -771,5 +762,50 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     default <EX extends Throwable> ImmutableList<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
         return unitStream(stream().recover(exceptionClass,fn));
+    }
+
+    @Override
+    default ImmutableList<T> plusAll(Iterable<? extends T> list) {
+        return unitIterable(IterableX.super.plusAll(list));
+    }
+
+    @Override
+    default IterableX<T> plus(T value) {
+        return unitIterable(IterableX.super.plus(value));
+    }
+
+    @Override
+    default IterableX<T> removeValue(T value) {
+        return unitIterable(IterableX.super.removeValue(value));
+    }
+
+    @Override
+    default IterableX<T> removeAt(int pos) {
+        return unitIterable(IterableX.super.removeAt(pos));
+    }
+
+    @Override
+    default IterableX<T> removeAll(Iterable<? extends T> value) {
+        return unitIterable(IterableX.super.removeAll(value));
+    }
+
+    @Override
+    default IterableX<T> prepend(Iterable<? extends T> value) {
+        return unitIterable(IterableX.super.prepend(value));
+    }
+
+    @Override
+    default IterableX<T> updateAt(int pos, T value) {
+        return unitIterable(IterableX.super.updateAt(pos,value));
+    }
+
+    @Override
+    default IterableX<T> insertAt(int pos, Iterable<? extends T> values) {
+        return unitIterable(IterableX.super.insertAt(pos,values));
+    }
+
+    @Override
+    default IterableX<T> insertAt(int i, T value) {
+        return unitIterable(IterableX.super.insertAt(i,value));
     }
 }

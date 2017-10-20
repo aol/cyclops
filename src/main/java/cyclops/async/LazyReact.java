@@ -508,7 +508,7 @@ public class LazyReact implements ReactBuilder {
      * 
      * <pre>
      * {@code 
-     * new LazyReact(100,110).fromStream(Files.walk(Paths.get(".")))
+     * new LazyReact(100,110).fromStream(Files.walk(Paths.getValue(".")))
                              .transform(d->{ throw new RuntimeException("hello");})
                              .transform(Object::toString)
                              .recover(e->"hello world")

@@ -51,6 +51,7 @@ public interface Option<T> extends To<Option<T>>,
      */
     @SuppressWarnings("unchecked")
     static <T> Option<T> none() {
+
         return EMPTY;
     }
 

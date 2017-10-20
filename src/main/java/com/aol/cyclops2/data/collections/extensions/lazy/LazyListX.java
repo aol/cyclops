@@ -182,7 +182,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
 
     @Override
-    public <T1> LazyListX<T1> from(Collection<T1> c) {
+    public <T1> LazyListX<T1> from(Iterable<T1> c) {
         if(c instanceof List)
             return new LazyListX<T1>((List)c,null,(Collector)this.getCollectorInternal(),this.evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
@@ -197,7 +197,7 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
 
 
     @Override
-    public <R> LazyListX<R> unit(Collection<R> col) {
+    public <R> LazyListX<R> unit(Iterable<R> col) {
         return from(col);
     }
 }

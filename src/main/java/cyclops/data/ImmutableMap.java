@@ -51,7 +51,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     boolean contains(Tuple2<K, V> t);
     Option<V> get(K key);
     V getOrElse(K key, V alt);
-    V getOrElseGet(K key, Supplier<V> alt);
+    V getOrElseGet(K key, Supplier<? extends V> alt);
 
     int size();
 
@@ -112,7 +112,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
             @Override
             public V remove(Object key) {
-                throw new UnsupportedOperationException("Attempt to remove on an ImmutableMap");
+                throw new UnsupportedOperationException("Attempt to removeValue on an ImmutableMap");
             }
 
             @Override

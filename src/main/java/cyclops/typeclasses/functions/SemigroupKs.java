@@ -46,7 +46,7 @@ public class SemigroupKs{
      * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
 
     static <T> SemigroupK<sortedSet,T> sortedSetXConcat() {
-        return (a, b) -> SortedSetX.narrowK(a).plusAll(SortedSetX.narrowK(b));
+        return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
     }*/
 
     /**
@@ -81,14 +81,14 @@ public class SemigroupKs{
      * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
 
     static <T> SemigroupK<persistentSetX,T> persistentSetXConcat() {
-        return (a, b) -> PersistentSetX.narrowK(a).plusAll(PersistentSetX.narrowK(b));
+        return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
     }
      */
     /**
      * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
 
     static <T> SemigroupK<OrderedsetX,T> orderedSetXConcat() {
-        return (a, b) -> OrderedSetX.narrowK(a).plusAll(OrderedSetX.narrowK(b));
+        return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
     }*/
 
     /**

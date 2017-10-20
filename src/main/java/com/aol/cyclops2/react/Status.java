@@ -1,6 +1,6 @@
 package com.aol.cyclops2.react;
 
-import org.pcollections.PStack;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 
 import cyclops.collectionx.immutable.LinkedListX;
 

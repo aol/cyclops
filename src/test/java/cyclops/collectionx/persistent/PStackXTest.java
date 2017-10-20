@@ -14,7 +14,6 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,9 +32,9 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	@Test
 	public void withTest(){
 
-		assertEquals(of("x", "b", "c"), LinkedListX.of("a", "b", "c").with(0, "x"));
-		assertEquals(of("a", "x", "c"), LinkedListX.of("a", "b", "c").with(1, "x"));
-		assertEquals(of("a", "b", "x"), LinkedListX.of("a", "b", "c").with(2, "x"));
+		assertEquals(of("x", "b", "c"), LinkedListX.of("a", "b", "c").updateAt(0, "x"));
+		assertEquals(of("a", "x", "c"), LinkedListX.of("a", "b", "c").updateAt(1, "x"));
+		assertEquals(of("a", "b", "x"), LinkedListX.of("a", "b", "c").updateAt(2, "x"));
 	}
 
 	@Before
@@ -61,7 +60,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	public <T> FluentCollectionX<T> of(T... values) {
 		LinkedListX<T> list = LinkedListX.empty();
 		for(T next : values){
-			list = list.plus(list.size(),next);
+			list = list.insertAt(list.size(),next);
 		}
 		System.out.println("List " + list);
 		return list;
@@ -118,7 +117,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	public void remove(){
 	    /**
 	    LinkedListX.of(1,2,3)
-	            .minusAll(PBagX.of(2,3))
+	            .removeAll(PBagX.of(2,3))
                 .flatMapP(i->Flux.just(10+i,20+i,30+i));
 
 	    **/

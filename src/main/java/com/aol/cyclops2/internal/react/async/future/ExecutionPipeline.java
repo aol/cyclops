@@ -6,9 +6,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
 
+import cyclops.data.Seq;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Wither;
@@ -17,15 +16,15 @@ import lombok.experimental.Wither;
 @AllArgsConstructor
 @Wither
 public class ExecutionPipeline {
-    private final PStack<Function> functionList;
-    private final PStack<Executor> execList;
-    private final PStack<Function> firstRecover;
+    private final Seq<Function> functionList;
+    private final Seq<Executor> execList;
+    private final Seq<Function> firstRecover;
     private final Consumer<Throwable> onFail;
 
     public ExecutionPipeline() {
-        functionList = ConsPStack.empty();
-        execList = ConsPStack.empty();
-        firstRecover = ConsPStack.empty();
+        functionList = Seq.empty();
+        execList = Seq.empty();
+        firstRecover = Seq.empty();
         onFail = null;
     }
 
@@ -75,7 +74,7 @@ public class ExecutionPipeline {
 
     public <X extends Throwable, T> ExecutionPipeline exceptionally(final Function<? super X, ? extends T> fn) {
         if (functionList.size() > 0) {
-            final Function before = functionList.get(functionList.size() - 1);
+            final Function before = functionList.getOrElse(functionList.size() - 1,null);
             final Function except = t -> {
                 try {
                     return before.apply(t);
@@ -95,7 +94,7 @@ public class ExecutionPipeline {
 
     public <X extends Throwable, T> ExecutionPipeline whenComplete(final BiConsumer<? super T, ? super X> fn) {
 
-        final Function before = functionList.get(functionList.size() - 1);
+        final Function before = functionList.getOrElse(functionList.size() - 1,null);
 
         final Function except = t -> {
             T res = null;
@@ -118,7 +117,7 @@ public class ExecutionPipeline {
     public FinalPipeline toFinalPipeline() {
 
         return new FinalPipeline(
-                                 functionList.toArray(new Function[0]), execList.toArray(new Executor[0]), firstRecover.toArray(new Function[0]),
+                                 functionList.stream().toArray(i->new Function[i]), execList.stream().toArray(i->new Executor[i]), firstRecover.stream().toArray(i->new Function[i]),
                                  onFail);
     }
 
@@ -128,36 +127,36 @@ public class ExecutionPipeline {
         return pipeline;
     }
 
-    private PStack<Executor> addExec(final Executor exec) {
+    private Seq<Executor> addExec(final Executor exec) {
         if (execList.size() == 0)
             return execList.plus(exec);
-        return execList.plus(execList.size(), exec);
+        return execList.insertAt(execList.size(), exec);
     }
 
-    private PStack<Function> addFirstRecovery(final Function fn) {
+    private Seq<Function> addFirstRecovery(final Function fn) {
         if (firstRecover.size() == 0)
             return firstRecover.plus(fn);
 
-        return firstRecover.plus(firstRecover.size(), fn);
+        return firstRecover.insertAt(firstRecover.size(), fn);
     }
 
-    private PStack<Function> addFn(final Function fn) {
+    private Seq<Function> addFn(final Function fn) {
         if (functionList.size() == 0)
             return functionList.plus(fn);
 
-        return functionList.plus(functionList.size(), fn);
+        return functionList.insertAt(functionList.size(), fn);
     }
 
-    private PStack<Function> swapFn(final Function fn) {
+    private Seq<Function> swapFn(final Function fn) {
         if (functionList.size() == 0)
             return functionList.plus(fn);
         functionList.get(functionList.size() - 1);
-        final PStack<Function> removed = functionList.minus(functionList.size() - 1);
-        return removed.plus(removed.size(), fn);
+        final Seq<Function> removed = functionList.removeAt(functionList.size() - 1);
+        return removed.insertAt(removed.size(), fn);
 
     }
 
-    private PStack<Function> swapComposeFn(final Function fn) {
+    private Seq<Function> swapComposeFn(final Function fn) {
         if (functionList.size() == 0) {
             if (firstRecover.size() == 0) {
                 return functionList.plus(fn);
@@ -173,9 +172,9 @@ public class ExecutionPipeline {
             }
 
         }
-        final Function before = functionList.get(functionList.size() - 1);
-        final PStack<Function> removed = functionList.minus(functionList.size() - 1);
-        return removed.plus(removed.size(), fn.compose(before));
+        final Function before = functionList.getOrElse(functionList.size() - 1,null);
+        final Seq<Function> removed = functionList.removeAt(functionList.size() - 1);
+        return removed.insertAt(removed.size(), fn.compose(before));
     }
 
     private Function composeFirstRecovery() {

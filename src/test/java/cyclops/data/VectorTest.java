@@ -7,6 +7,7 @@ import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.lang.invoke.VolatileCallSite;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -228,6 +229,8 @@ public class VectorTest extends BaseImmutableListTest {
         }
 
     }
+
+
 
 
 }
