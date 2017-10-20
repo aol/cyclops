@@ -141,6 +141,11 @@ public class TrieSet<T> implements ImmutableSet<T> {
     }
 
     @Override
+    public <R> TrieSet<R> unitIterable(Iterable<R> it) {
+        return fromIterable(it);
+    }
+
+    @Override
     public ReactiveSeq<T> stream() {
         return map.stream().map(t->t._1());
     }

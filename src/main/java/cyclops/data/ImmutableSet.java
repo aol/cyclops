@@ -601,7 +601,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     default ImmutableSet<T> prependAll(T... values) {
         return unitStream(stream().prependAll(values));
     }
-    
+
     @Override
     default ImmutableSet<T> deleteBetween(int start, int end) {
         return unitStream(stream().deleteBetween(start,end));

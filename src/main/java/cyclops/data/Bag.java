@@ -75,6 +75,10 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
     public <R> Bag<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromStream(stream().flatMapI(fn));
     }
+    @Override
+    public <R> Bag<R> unitIterable(Iterable<R> it) {
+        return fromIterable(it);
+    }
 
     @Override
     public Bag<T> filter(Predicate<? super T> predicate) {

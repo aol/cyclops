@@ -86,6 +86,11 @@ public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable
         return ReactiveSeq.fromIterable(it).foldLeft(empty(),(m, t2)->m.plus(t2));
     }
 
+    @Override
+    public <R> HashSet<R> unitIterable(Iterable<R> it) {
+        return fromIterable(it);
+    }
+
 
     public boolean containsValue(T value){
         return map.get(0,value.hashCode(),value).isPresent();

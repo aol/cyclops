@@ -89,6 +89,10 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>, POrderedSet<T>{
 
     }
 
+    @Override
+    public <R> TreeSet<R> unitIterable(Iterable<R> it) {
+        return fromIterable(it,Comparators.naturalOrderIdentityComparator());
+    }
     public ReactiveSeq<T> stream(){
         return map.stream().map(t->t._1());
     }
