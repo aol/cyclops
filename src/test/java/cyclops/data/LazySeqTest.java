@@ -134,7 +134,7 @@ public class LazySeqTest extends BaseImmutableListTest {
     @Test
     public void toStringTest(){
         assertThat(of().toString(),equalTo("[]"));
-        assertThat(of(1).toString(),equalTo("{1..}"));
+        assertThat(of(1).toString(),equalTo("{1...}"));
     }
 
 }

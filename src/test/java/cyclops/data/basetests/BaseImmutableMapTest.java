@@ -60,7 +60,7 @@ public abstract  class BaseImmutableMapTest {
     public void toPVectorX(){
         ImmutableMap<String,Integer> maps = of("a",1,"b",2);
         VectorX<String> strs = maps.toVectorX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(ListX.of("a1","b2")));
+        assertThat(strs,equalTo(VectorX.of("a1","b2")));
     }
 
     @Test

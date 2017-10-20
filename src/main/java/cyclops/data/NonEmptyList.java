@@ -65,7 +65,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     public Option<T> get(int pos){
         if(pos==0)
             return Option.of(head);
-        return tail.get(pos);
+        return tail.get(pos-1);
 
     }
 

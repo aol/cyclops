@@ -640,4 +640,49 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     default ImmutableSet<ReactiveSeq<T>> combinations() {
         return unitStream(stream().combinations());
     }
+
+    @Override
+    default ImmutableSet<T> removeAt(long pos) {
+        return unitStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default ImmutableSet<T> removeAt(int pos) {
+        return unitStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default ImmutableSet<T> removeFirst(Predicate<? super T> pred) {
+        return unitStream(stream().removeFirst(pred));
+    }
+
+    @Override
+    default ImmutableSet<T> appendAll(Iterable<? extends T> value) {
+        return unitStream(stream().appendAll(value));
+    }
+
+    @Override
+    default ImmutableSet<T> prependAll(Iterable<? extends T> value) {
+        return unitStream(stream().prependAll(value));
+    }
+
+    @Override
+    default ImmutableSet<T> prepend(Iterable<? extends T> value) {
+        return unitStream(stream().prepend(value));
+    }
+
+    @Override
+    default ImmutableSet<T> updateAt(int pos, T value) {
+        return unitStream(stream().updateAt(pos,value));
+    }
+
+    @Override
+    default ImmutableSet<T> insertAt(int i, T value) {
+        return unitStream(stream().insertAt(i,value));
+    }
+
+    @Override
+    default ImmutableSet<T> insertAt(int pos, Iterable<? extends T> values) {
+        return unitStream(stream().insertAt(pos,values));
+    }
 }
