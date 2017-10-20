@@ -1,8 +1,10 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.collectionx.immutable.VectorX;
@@ -26,7 +28,33 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public interface ImmutableSortedSet<T> extends ImmutableSet<T> {
+public interface ImmutableSortedSet<T> extends ImmutableSet<T>, POrderedSet<T> {
+
+
+
+    @Override
+    default ReactiveSeq<T> stream() {
+        return ImmutableSet.super.stream();
+    }
+
+    @Override
+    default ImmutableSortedSet<T> plus(T e){
+        return append(e);
+    }
+
+    @Override
+    default ImmutableSortedSet<T> plusAll(Iterable<? extends T> list){
+        ImmutableSortedSet<T> set = this;
+        for(T next : list){
+            set = set.plus(next);
+        }
+        return set;
+    }
+
+    @Override
+    default ImmutableSortedSet<T> removeAll(Iterable<? extends T> list){
+        return unitStream(stream().removeAllI(list));
+    }
 
     default OrderedSetX<T> orderedSetX(){
         return stream().to().orderedSetX(Evaluation.LAZY);

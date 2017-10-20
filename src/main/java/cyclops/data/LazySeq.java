@@ -32,7 +32,7 @@ import java.util.stream.Stream;
 //safe LazyList (Stream) that does not support exceptional states
 public interface LazySeq<T> extends  ImmutableList<T>,
                                     Folds<T>,
-                                    Filters<T>,PStack<T>,
+                                    Filters<T>,
                                     Transformable<T>,
                                     Higher<lazySeq,T> {
 
@@ -47,7 +47,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     @Override
     default boolean containsValue(T value) {
-        return PStack.super.containsValue(value);
+        return ImmutableList.super.containsValue(value);
     }
     static <R> LazySeq<R> narrow(LazySeq<? extends R> rs) {
         return (LazySeq<R>)rs;

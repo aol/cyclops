@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
@@ -33,7 +34,7 @@ import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
-                                          IterableX<T>,
+                                          IterableX<T>,PStack<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                           To<ImmutableList<T>> {
 
@@ -235,6 +236,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
     @Override
     ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
+
 
     public static interface Some<T> extends Deconstruct2<T,ImmutableList<T>>, ImmutableList<T> {
         ImmutableList<T> tail();
@@ -770,42 +772,42 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default IterableX<T> plus(T value) {
+    default ImmutableList<T> plus(T value) {
         return unitIterable(IterableX.super.plus(value));
     }
 
     @Override
-    default IterableX<T> removeValue(T value) {
+    default ImmutableList<T> removeValue(T value) {
         return unitIterable(IterableX.super.removeValue(value));
     }
 
     @Override
-    default IterableX<T> removeAt(int pos) {
+    default ImmutableList<T> removeAt(int pos) {
         return unitIterable(IterableX.super.removeAt(pos));
     }
 
     @Override
-    default IterableX<T> removeAll(Iterable<? extends T> value) {
+    default ImmutableList<T> removeAll(Iterable<? extends T> value) {
         return unitIterable(IterableX.super.removeAll(value));
     }
 
     @Override
-    default IterableX<T> prepend(Iterable<? extends T> value) {
+    default ImmutableList<T> prepend(Iterable<? extends T> value) {
         return unitIterable(IterableX.super.prepend(value));
     }
 
     @Override
-    default IterableX<T> updateAt(int pos, T value) {
+    default ImmutableList<T> updateAt(int pos, T value) {
         return unitIterable(IterableX.super.updateAt(pos,value));
     }
 
     @Override
-    default IterableX<T> insertAt(int pos, Iterable<? extends T> values) {
+    default ImmutableList<T> insertAt(int pos, Iterable<? extends T> values) {
         return unitIterable(IterableX.super.insertAt(pos,values));
     }
 
     @Override
-    default IterableX<T> insertAt(int i, T value) {
+    default ImmutableList<T> insertAt(int i, T value) {
         return unitIterable(IterableX.super.insertAt(i,value));
     }
 }

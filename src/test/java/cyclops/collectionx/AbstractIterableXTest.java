@@ -2092,7 +2092,7 @@ public abstract class AbstractIterableXTest {
     public void plus(){
         IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
 
-        assertThat(vec,equalTo(Vector.of(5,2,1)));
+        assertThat(vec,equalTo(of(1,2,5)));
     }
     @Test
     public void plusAll(){
@@ -2104,7 +2104,7 @@ public abstract class AbstractIterableXTest {
     public void insertAt0(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
 
-        assertThat(vec,equalTo(Vector.of(5,2,1)));
+        assertThat(vec,equalTo(of(5,2,1)));
     }
     @Test
     public void insertAtSize(){
@@ -2112,7 +2112,7 @@ public abstract class AbstractIterableXTest {
         vec = vec.insertAt(Math.max(0,vec.size()),1);
         vec = vec.insertAt(Math.max(0,vec.size()),2);
 
-        assertThat(vec,equalTo(Vector.of(1,2)));
+        assertThat(vec,equalTo(of(1,2)));
     }
     @Test
     public void insertAtAll0(){
@@ -2165,6 +2165,7 @@ public abstract class AbstractIterableXTest {
     public void removeAt(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
 
+        System.out.println("Vec  "+  vec);
         System.out.println("Remove at "+  vec.removeAt(1));
         assertThat(vec.removeAt(1),equalTo(of(5,1)));
     }

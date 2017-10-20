@@ -2,7 +2,9 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
+import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
@@ -16,6 +18,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -23,7 +26,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IntMap<T> implements ImmutableList<T>{
+public class IntMap<T> implements ImmutableList<T> {
 
 
     @Override
@@ -159,13 +162,13 @@ public class IntMap<T> implements ImmutableList<T>{
     public IntMap<T> appendAll(Iterable<? extends T> value) {
         Iterator<? extends  T> it = value.iterator();
         IntPatriciaTrie.Node<T> tree = this.intMap;
-        int count = 0;
+        int count = size;
         while(it.hasNext()){
             T next = it.next();
-            tree.put(count,count,next);
+            tree =tree.put(count,count,next);
             count++;
         }
-        return new IntMap<T>(tree,count+size);
+        return new IntMap<T>(tree,count);
     }
 
     @Override
@@ -247,7 +250,7 @@ public class IntMap<T> implements ImmutableList<T>{
     }
 
     @Override
-    public <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier) {
+    public <X extends Throwable> IntMap<T> onEmptyThrow(Supplier<? extends X> supplier) {
         if(isEmpty()){
             throw ExceptionSoftener.throwSoftenedException(supplier.get());
         }
@@ -262,7 +265,43 @@ public class IntMap<T> implements ImmutableList<T>{
         return this;
     }
 
-    class IntMapSome extends IntMap<T> implements ImmutableList.Some<T>{
+    @Override
+    public IntMap<T> removeValue(T value) {
+        return  fromStream(stream().filter(i-> !Objects.equals(i,value)));
+    }
+
+
+    @Override
+    public IntMap<T> removeAt(int i) {
+        if(i<0 || i>=size())
+            return this;
+        return  new IntMap<>(intMap.minus(i,i),size-1);
+    }
+
+    @Override
+    public IntMap<T> removeAt(long pos) {
+        int i = (int)pos;
+        if(i<0 || i>=size())
+            return this;
+        return  new IntMap<>(intMap.minus(i,i),size-1);
+    }
+
+    @Override
+    public IntMap<T> insertAt(int pos, T... values) {
+        return (IntMap<T> )ImmutableList.super.insertAt(pos,values);
+    }
+
+    @Override
+    public IntMap<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (IntMap<T> )ImmutableList.super.insertAt(pos,values);
+    }
+
+    @Override
+    public IntMap<T> insertAt(int i, T value) {
+        return (IntMap<T> )ImmutableList.super.insertAt(i,value);
+    }
+
+    class IntMapSome extends IntMap<T> implements ImmutableList.Some<T>, PStack<T>{
 
         public IntMapSome(IntMap<T> vec) {
             super(vec.intMap, vec.size);
@@ -290,6 +329,7 @@ public class IntMap<T> implements ImmutableList<T>{
         public Tuple2<T, ImmutableList<T>> unapply() {
             return Tuple.tuple(head(),tail());
         }
+
     }
 
     static class IntMapNone<T> implements ImmutableList.None<T>{
@@ -420,6 +460,7 @@ public class IntMap<T> implements ImmutableList<T>{
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return supplier.get();
         }
+
     }
     @Override
     public boolean equals(Object o) {

@@ -29,9 +29,32 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,
+public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PSet<T>,
                                          IterableX<T>{
 
+    @Override
+    default ReactiveSeq<T> stream() {
+        return IterableX.super.stream();
+    }
+
+    @Override
+    default ImmutableSet<T> plus(T e){
+        return append(e);
+    }
+
+    @Override
+    default ImmutableSet<T> plusAll(Iterable<? extends T> list){
+        ImmutableSet<T> set = this;
+        for(T next : list){
+            set = set.plus(next);
+        }
+        return set;
+    }
+
+    @Override
+    default ImmutableSet<T> removeAll(Iterable<? extends T> list){
+        return unitStream(stream().removeAllI(list));
+    }
 
     @Override
     default <U> ImmutableSet<U> ofType(Class<? extends U> type) {

@@ -188,7 +188,7 @@ public interface IntPatriciaTrie<V>  {
 
         @Override
         public Node<V> minus(int hash, int key) {
-            if(hash==0)
+            if(hash==0 )
                 return EmptyNode.Instance;
             return this;
         }
@@ -256,7 +256,17 @@ public interface IntPatriciaTrie<V>  {
                 Node<V> newNode = node.minus(newHash, key);
                 if (newNode == node) {
                     return this;
-                } else {
+                } else if(newNode instanceof EmptyNode){
+                    Node<V>[] newNodes = new Node[nodes.length-1];
+                    int firstLength = Math.min(index,nodes.length);
+                    System.arraycopy(nodes,0,newNodes,0,firstLength);
+
+                    System.arraycopy(nodes,firstLength+1,newNodes,index,nodes.length-(firstLength+1));
+
+                    Node<V> branch = new ArrayNode<>(newNodes);
+                    return branch.isEmpty() ? EmptyNode.Instance : branch;
+
+                } else{
                     Node<V>[] newNodes = Arrays.copyOf(nodes, nodes.length);
                     newNodes[index] = newNode;
                     Node<V> branch = new ArrayNode<>(newNodes);
@@ -273,7 +283,7 @@ public interface IntPatriciaTrie<V>  {
 
         @Override
         public boolean isEmpty() {
-            return ReactiveSeq.of(nodes).anyMatch(Node::isEmpty);
+            return ReactiveSeq.of(nodes).allMatch(Node::isEmpty);
         }
 
         @Override

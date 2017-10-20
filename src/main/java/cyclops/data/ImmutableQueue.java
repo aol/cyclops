@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.aol.cyclops2.data.collections.extensions.api.PQueue;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
@@ -32,11 +33,36 @@ import java.util.stream.Stream;
 
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
                                             OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
-                                            IterableX<T>,
-                                            To<ImmutableQueue<T>> {
+                                            IterableX<T>, To<ImmutableQueue<T>>, PQueue<T> {
+
+
+
+    @Override
+    default ImmutableQueue<T> plus(T e){
+        return append(e);
+    }
+
+    @Override
+    default ImmutableQueue<T> removeValue(T value) {
+        return unitStream(stream().removeAll(value));
+    }
+
+    @Override
+    default ImmutableQueue<T> plusAll(Iterable<? extends T> list){
+        ImmutableQueue<T> set = this;
+        for(T next : list){
+            set = set.plus(next);
+        }
+        return set;
+    }
+
+    @Override
+    default ImmutableQueue<T> removeAll(Iterable<? extends T> list){
+        return unitStream(stream().removeAllI(list));
+    }
 
     <R> ImmutableQueue<R> unitStream(Stream<R> stream);
-
+    <R> ImmutableQueue<R> unitIterable(Iterable<R> it);
 
     ImmutableQueue<T> emptyUnit();
 
@@ -700,6 +726,23 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
+    default ImmutableQueue<T> insertAt(int pos, T... values) {
+        if(pos==0)
+            return prependAll(values);
+        if(pos>=size())
+            return append(values);
+        return unitStream(stream().insertAt(pos,values));
+    }
+    @Override
+    default ImmutableQueue<T> insertAt(int pos, T values) {
+        if(pos==0)
+            return prependAll(values);
+        if(pos>=size())
+            return append(values);
+        return unitStream(stream().insertAt(pos,values));
+    }
+
+    @Override
     default ImmutableQueue<T> append(T... values) {
         ImmutableQueue<T> res = this;
         for(T t : values){
@@ -717,10 +760,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return res;
     }
 
-    @Override
-    default ImmutableQueue<T> insertAt(int pos, T... values) {
-        return unitStream(stream().insertAt(pos,values));
-    }
 
     @Override
     default ImmutableQueue<T> deleteBetween(int start, int end) {
@@ -740,5 +779,35 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     @Override
     default <EX extends Throwable> ImmutableQueue<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
         return unitStream(stream().recover(exceptionClass,fn));
+    }
+
+    @Override
+    ImmutableQueue<T> minus();
+
+    @Override
+    default ImmutableQueue<T> removeAt(long pos) {
+        return unitStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default ImmutableQueue<T> removeAt(int pos) {
+        return unitStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default ImmutableQueue<T> prepend(Iterable<? extends T> value) {
+        return unitStream(stream().prepend(value));
+    }
+
+    @Override
+    default ImmutableQueue<T> updateAt(int pos, T value) {
+        return unitStream(stream().updateAt(pos,value));
+    }
+
+
+
+    @Override
+    default ImmutableQueue<T> insertAt(int pos, Iterable<? extends T> values) {
+        return unitIterable(IterableX.super.insertAt(pos,values));
     }
 }

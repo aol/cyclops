@@ -664,6 +664,9 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> removeValue(T value){
         return unitIterator(stream().removeValue(value).iterator());
     }
+    default IterableX<T> removeAt(long pos){
+        return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
+    }
     default IterableX<T> removeAt(int pos){
         return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
     }

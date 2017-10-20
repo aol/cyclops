@@ -34,6 +34,12 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializa
         }
         return res;
     }
+
+    @Override
+    default <R> BankersQueue<R> unitIterable(Iterable<R> it){
+        return fromIterable(it);
+    }
+
     default Tuple2<T,BankersQueue<T>> dequeue(T defaultValue){
         return visit(c->c.dequeue(),n->Tuple.tuple(defaultValue,this));
     }
@@ -44,7 +50,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializa
 
     @Override
     default boolean containsValue(T value) {
-        return PQueue.super.containsValue(value);
+        return ImmutableQueue.super.containsValue(value);
     }
 
 
@@ -76,7 +82,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializa
 
     @Override
     default BankersQueue<T> removeFirst(Predicate<? super T> pred) {
-        return fromStream(stream().filter(pred));
+        return fromStream(stream().removeFirst(pred));
     }
 
     public static <T> BankersQueue<T> cons(T value){
@@ -121,7 +127,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializa
     @Override
     default BankersQueue<T> prependAll(Iterable<? extends T> value){
 
-            Iterator<? extends T> it = value.iterator();
+            Iterator<? extends T> it = ReactiveSeq.fromIterable(value).reverse().iterator();
             BankersQueue<T> res= this;
             while(it.hasNext()){
                 res = res.prepend(it.next());
@@ -223,7 +229,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializa
 
         @Override
         public boolean isEmpty() {
-            return size()>0;
+            return size()==0;
         }
 
 

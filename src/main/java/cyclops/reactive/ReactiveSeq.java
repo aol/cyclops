@@ -2877,6 +2877,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
+    default ReactiveSeq<T> insertAt(int pos, T value){
+        return insertAt(pos,(T[])new Object[]{value});
+    }
     default ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
         if(pos==0){
             return prependS(ReactiveSeq.fromIterable(values));

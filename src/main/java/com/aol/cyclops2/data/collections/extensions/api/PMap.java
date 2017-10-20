@@ -14,7 +14,7 @@ public interface PMap<K,V> extends Iterable<Tuple2<K,V>> {
     PMap<K,V> minus(K key);
     PMap<K,V> minusAll(Iterable<? extends K> keys);
 
-    //@TODO try and resolve conflicts with Map
+
     Option<V> getValue(K key);
     V getValueOrElse(K key, V alt);
     V getValueOrElseGet(K key, Supplier<? extends V> alt);
