@@ -743,7 +743,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
             return prependAll(values);
         if(pos>=size())
             return append(values);
-        return unitStream(stream().insertAt(pos,values));
+        return unitIterable(IterableX.super.insertAt(pos,values));
     }
 
     @Override

@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PSet<T>,
                                          IterableX<T>{
 
+    <R> ImmutableSet<R> unitIterable(Iterable<R> it);
     @Override
     default ReactiveSeq<T> stream() {
         return IterableX.super.stream();
@@ -600,12 +601,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     default ImmutableSet<T> prependAll(T... values) {
         return unitStream(stream().prependAll(values));
     }
-
-    @Override
-    default ImmutableSet<T> insertAt(int pos, T... values) {
-        return unitStream(stream().insertAt(pos,values));
-    }
-
+    
     @Override
     default ImmutableSet<T> deleteBetween(int start, int end) {
         return unitStream(stream().deleteBetween(start,end));
@@ -676,13 +672,23 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().updateAt(pos,value));
     }
 
-    @Override
-    default ImmutableSet<T> insertAt(int i, T value) {
-        return unitStream(stream().insertAt(i,value));
-    }
 
     @Override
     default ImmutableSet<T> insertAt(int pos, Iterable<? extends T> values) {
-        return unitStream(stream().insertAt(pos,values));
+        return plusAll(values);
+    }
+
+    @Override
+    default ImmutableSet<T> insertAt(int i, T value) {
+        return plus(value);
+    }
+    @Override
+    default ImmutableSet<T> insertAt(int pos, T... values) {
+
+        ImmutableSet<T> res=  this;
+        for(T next : values){
+            res = res.plus(next);
+        }
+        return res;
     }
 }

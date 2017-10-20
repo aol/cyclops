@@ -1,8 +1,11 @@
 package cyclops.data;
 
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.MatcherAssert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -66,5 +69,17 @@ public class NonEmptyListTest extends BaseImmutableListTest {
         System.out.println("D"+of(1, 2, 3, 4, 5).drop(2).toList());
        assertThat(NonEmptyList.of(1,2,3).foldLeft(0,(a,b)->a+b),equalTo(6));
         NonEmptyList.of(1,2,3,4).takeRight(2).forEach(System.out::println);
+    }
+    @Test
+    public void plusAll(){
+        IterableX<Integer> vec = this.<Integer>empty().plusAll(Arrays.asList(1)).plusAll(Arrays.asList(2)).plusAll(Arrays.asList(5));
+
+        MatcherAssert.assertThat(vec,equalTo(of(5,2,1)));
+    }
+    @Test
+    public void plus(){
+        IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
+
+        Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
     }
 }
