@@ -266,7 +266,7 @@ public interface OperationsOnFutures<T> {
     				of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
     		
-    		List<Integer> lazyRight = list.reactiveStream().transform(t -> t._2).collect(CyclopsCollectors.toList());
+    		List<Integer> lazyRight = list.reactiveStream().map(t -> t._2).collect(CyclopsCollectors.toList());
     		assertThat(lazyRight,hasItem(100));
     		assertThat(lazyRight,hasItem(200));
     		assertThat(lazyRight,hasItem(300));
@@ -683,7 +683,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
     	List<String> result = 	of(1,2,3).actOnFutures()
     									.appendStream(of(100,200,300))
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -707,7 +707,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .appendStreamFutures(Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300)))
-    										 .transform(it ->it+"!!")
+    										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -732,7 +732,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStream(of(100,200,300))
-    										.transform(it ->it+"!!")
+    										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -756,7 +756,7 @@ public interface OperationsOnFutures<T> {
      *  	Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     		List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStreamFutures(streamOfFutures)
-    										.transform(it ->it+"!!")
+    										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -777,7 +777,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .append(100,200,300)
-    										 .transform(it ->it+"!!")
+    										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
     
     	assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -802,7 +802,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .appendFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
-    										 .transform(it ->it+"!!")
+    										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -828,7 +828,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	FutureStream.of(1,2,3).actOnFutures()
      * 									 				 .prependAll(100,200,300)
-     * 													 .transform(it ->it+"!!")
+     * 													 .map(it ->it+"!!")
      * 													 .collect(CyclopsCollectors.toList());
      * 
      * 						assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -849,7 +849,7 @@ public interface OperationsOnFutures<T> {
      * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
     										.prependFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
-    										.transform(it ->it+"!!")
+    										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -874,7 +874,7 @@ public interface OperationsOnFutures<T> {
        {@code 
        List<String> result = 	of(1,2,3).actOnFutures()
     									 .insertAt(1,100,200,300)
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     	assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -902,7 +902,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3,4,5,6).actOnFutures()
     											   .deleteBetween(2,4)
-    											   .transform(it ->it+"!!")
+    											   .map(it ->it+"!!")
     											   .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
@@ -929,7 +929,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      *   List<String> result = 	of(1,2,3).actOnFutures()
     									.insertAtS(1,of(100,200,300))
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -957,7 +957,7 @@ public interface OperationsOnFutures<T> {
     
     		List<String> result = 	of(1,2,3).actOnFutures()
     								.insertStreamFuturesAt(1,streamOfFutures)
-    								.transform(it ->it+"!!")
+    								.map(it ->it+"!!")
     								.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -1125,7 +1125,7 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures().concatFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
-    		.transform(it ->it+"!!").collect(CyclopsCollectors.toList());
+    		.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     	assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
      * }
@@ -1145,7 +1145,7 @@ public interface OperationsOnFutures<T> {
      * {@code 
      * List<String> result = 	of(1,2,3).actOnFutures()
      *                                   .concatStreamFutures(Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300)))
-    		                             .transform(it ->it+"!!")
+    		                             .map(it ->it+"!!")
     		                             .collect(CyclopsCollectors.toList());
     
     	assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));

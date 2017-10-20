@@ -102,7 +102,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *  <pre>
      *  {@code
      *    Future<Integer> sum =  ListX.of(1,2,3)
-     *                                 .transform(this::load)
+     *                                 .map(this::load)
      *                                 .foldFuture(exec,list->list.reduce(0,(a,b)->a+b))
      *
      *  }
@@ -127,7 +127,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *  <pre>
      *  {@code
      *    Eval<Integer> sum =  ListX.of(1,2,3)
-     *                                 .transform(this::load)
+     *                                 .map(this::load)
      *                                 .foldLazy(list->list.reduce(0,(a,b)->a+b))
      *
      *  }
@@ -150,7 +150,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *  <pre>
      *  {@code
      *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)
-     *                                       .transform(this::load)
+     *                                       .map(this::load)
      *                                       .foldLazy(list->list.reduce(0,(a,b)->a+b),IOException.class)
      *
      *  }
@@ -725,6 +725,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.insertAtS(pos,stream);
     }
 
+    //@TODO
     @Override
     default IterableX<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return (IterableX<T>)ExtendedTraversable.super.recover(fn);

@@ -79,7 +79,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
      *      ___Example 1___
      *
      *      CompletableEither<Integer,Integer> completable = Either3.lazyEither3();
-            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
                                                                   .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(5);
@@ -90,7 +90,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
             ___Example 2___
 
             CompletableEither<Integer,Integer> completable = Either3.lazyEither3();
-            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
                                                                   .flatMap(i->Eval.later(()->i+1));
 
 
@@ -101,7 +101,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
             ___Example 3___
 
             CompletableEither<Integer,Integer> completable = Either3.lazyEither3();
-            Either3<Throwable,String,Integer> mapped = completable.transform(i->i*2)
+            Either3<Throwable,String,Integer> mapped = completable.map(i->i*2)
                                                                  .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(new IllegalStateException());

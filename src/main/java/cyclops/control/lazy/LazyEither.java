@@ -65,7 +65,7 @@ import java.util.function.*;
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.lazyRight("hello").transform(v->v+" world")
+ *      Either.lazyRight("hello").map(v->v+" world")
  *    //Either.lazyRight["hello world"]
  *  }
  *  </pre>
@@ -73,7 +73,7 @@ import java.util.function.*;
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.lazyLeft("hello").transform(v->v+" world")
+ *      Either.lazyLeft("hello").map(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
@@ -151,7 +151,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *      ___Example 1___
      *
      *      CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(5);
@@ -162,7 +162,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             ___Example 2___
 
             CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
 
@@ -173,7 +173,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             ___Example 3___
 
             CompletableEither<Integer,Integer> completable = Either.lazy();
-            Either<Throwable,Integer> mapped = completable.transform(i->i*2)
+            Either<Throwable,Integer> mapped = completable.map(i->i*2)
                                                           .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(new IllegalStateException());
@@ -572,10 +572,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyLeft(10).transform(i->i+1);
+     *   Either.<Integer,Integer>lazyLeft(10).map(i->i+1);
      *   //Either.lazyLeft[10]
      *
-     *    Either.<Integer,Integer>lazyLeft(10).swap().transform(i->i+1);
+     *    Either.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
      *    //Either.lazyRight[11]
      * }
      * </pre>
@@ -594,7 +594,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyRight(10).transform(i->i+1);
+     *   Either.<Integer,Integer>lazyRight(10).map(i->i+1);
      *   //Either.lazyRight[11]
      *
      *
@@ -727,12 +727,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *  {@code
      *
      *    Either.lazyLeft("hello")
-     *       .transform(v->v+" world")
+     *       .map(v->v+" world")
      *    //Either.seconary["hello"]
      *
      *    Either.lazyLeft("hello")
      *       .swap()
-     *       .transform(v->v+" world")
+     *       .map(v->v+" world")
      *       .swap()
      *    //Either.seconary["hello world"]
      *  }

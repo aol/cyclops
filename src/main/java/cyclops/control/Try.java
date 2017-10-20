@@ -90,7 +90,7 @@ import org.reactivestreams.Subscription;
  * {@code
  *
  * Try.withCatch(()-> exceptional2())
-.transform(i->i+" woo!")
+.map(i->i+" woo!")
 .onFail(System.out::println)
 .orElse("public");
 
@@ -126,7 +126,7 @@ throw new IOException();
  *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
 .init(()->new BufferedReader(new FileReader("file.txt")))
 .tryWithResources(this::read)
-.transform(this::processData)
+.map(this::processData)
 .recover(e->"public);
  *
  * }
@@ -136,7 +136,7 @@ throw new IOException();
  * <pre>
  * {@code
  *  Try.of(2, RuntimeException.class)
-.transform(i->{throw new RuntimeException();});
+.map(i->{throw new RuntimeException();});
 
 //Failure[RuntimeException]
  *

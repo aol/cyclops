@@ -19,13 +19,13 @@ import lombok.AllArgsConstructor;
  * underlying Monadic Type (T) the Comprehender implementation supports.
  * 
  * E.g. To support mapping for the Functional Java Option type wrap the supplied JDK 8 Function in a Functional Java
- * fj.F type, call the make call to option.transform( ) and retun the result.
+ * fj.F type, call the make call to option.map( ) and retun the result.
  * 
  * <pre>{@code
  *  OptionComprehender<Option> {
  *    
  *     public Object transform(Option o, Function fn){
- *        return o.transform( a-> fn.applyHKT(a));
+ *        return o.map( a-> fn.applyHKT(a));
  *     }
  *     
  * }

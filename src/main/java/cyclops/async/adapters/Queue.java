@@ -50,14 +50,14 @@ import lombok.experimental.Wither;
                                                  .build();
         
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
-                                                      .transform(d->"emitted on " + Thread.currentThread().getId())
+                                                      .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();
         
 
         transferQueue.reactiveStream()
-                  .transform(e->"Consumed on " + Thread.currentThread().getId())
+                  .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);
         

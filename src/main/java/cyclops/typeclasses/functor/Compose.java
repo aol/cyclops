@@ -23,7 +23,7 @@ import cyclops.data.tuple.Tuple2;
  *    OptionalType<ListX<Integer>> nest;
  *    
  *    Compose.compose(Optionals.functor(),Lists.functor())
- *           .transform(i->i*2,nest);
+ *           .map(i->i*2,nest);
  *   
  * }
  * </pre>

@@ -107,7 +107,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
      * <pre>
      * {@code 
      *  MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //MaybeWT<AnyMSeq<Stream<Maybe[11]>>>
@@ -168,11 +168,11 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.transform(Maybe::completedMaybe);
+    	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
     	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
-    									.transform(Maybe::join)
+    									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -203,14 +203,14 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.transform(Maybe::completedMaybe);
+    	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
     	
     	Maybe<Maybe<Integer>> two = Maybe.completedMaybe(Maybe.completedMaybe(2));
     	AnyMSeq<Maybe<Integer>> Maybe=  AnyM.fromMaybeW(two);
     	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt),MaybeWT.of(Maybe))
     									.unwrap()
     									.<Stream<Maybe<Integer>>>unwrap()
-    									.transform(Maybe::join)
+    									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Maybe.completedMaybe(List[3,4,5]);

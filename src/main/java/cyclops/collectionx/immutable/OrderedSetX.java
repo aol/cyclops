@@ -362,7 +362,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
      * {@code 
      *   
      *     OrderedSetX.of(1,2,3)
-     *                 .transform(i->i*2)
+     *                 .map(i->i*2)
      *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //OrderedSetX[12]

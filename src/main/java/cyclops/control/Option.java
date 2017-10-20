@@ -173,7 +173,7 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *
      *    Option<Integer> some = Option.just(10);
-     *    some.transform(i->i*2);
+     *    some.map(i->i*2);
      * }
      * </pre>
      *
@@ -191,7 +191,7 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *
      *    Option<Integer> some = Option.of(10);
-     *    some.transform(i->i*2);
+     *    some.map(i->i*2);
      * }
      * </pre>
      *

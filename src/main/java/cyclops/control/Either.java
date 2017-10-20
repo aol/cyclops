@@ -77,7 +77,7 @@ import java.util.function.*;
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.lazyRight("hello").transform(v->v+" world")
+ *      Either.lazyRight("hello").map(v->v+" world")
  *    //Either.lazyRight["hello world"]
  *  }
  *  </pre>
@@ -85,7 +85,7 @@ import java.util.function.*;
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.lazyLeft("hello").transform(v->v+" world")
+ *      Either.lazyLeft("hello").map(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
@@ -282,10 +282,10 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyLeft(10).transform(i->i+1);
+     *   Either.<Integer,Integer>lazyLeft(10).map(i->i+1);
      *   //Either.lazyLeft[10]
      *
-     *    Either.<Integer,Integer>lazyLeft(10).swap().transform(i->i+1);
+     *    Either.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
      *    //Either.lazyRight[11]
      * }
      * </pre>
@@ -305,7 +305,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyRight(10).transform(i->i+1);
+     *   Either.<Integer,Integer>lazyRight(10).map(i->i+1);
      *   //Either.lazyRight[11]
      *
      *
@@ -461,12 +461,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *  {@code
      *
      *    Either.lazyLeft("hello")
-     *       .transform(v->v+" world")
+     *       .map(v->v+" world")
      *    //Either.seconary["hello"]
      *
      *    Either.lazyLeft("hello")
      *       .swap()
-     *       .transform(v->v+" world")
+     *       .map(v->v+" world")
      *       .swap()
      *    //Either.seconary["hello world"]
      *  }

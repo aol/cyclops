@@ -529,7 +529,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * {@code 
      *   
      *     VectorX.of(1,2,3)
-     *          .transform(i->i*2)
+     *          .map(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //VectorX[12]
@@ -1362,7 +1362,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          *
          * <pre>
          * {@code
-         *  VectorX<Integer> list = PVectors.functor().transform(i->i*2, Arrays.asPVector(1,2,3));
+         *  VectorX<Integer> list = PVectors.functor().map(i->i*2, Arrays.asPVector(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1375,7 +1375,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
          * {@code
          *   VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .applyHKT(h->PVectors.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
         .convert(VectorX::narrowK3);
          *
          * }
@@ -1431,7 +1431,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         VectorX<Integer> list = PVectors.unit()
         .unit("hello")
-        .applyHKT(h->PVectors.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
         .applyHKT(h->PVectors.zippingApplicative().ap(listFn, h))
         .convert(VectorX::narrowK3);
 

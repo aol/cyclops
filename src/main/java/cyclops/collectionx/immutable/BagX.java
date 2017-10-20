@@ -354,7 +354,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      * {@code 
      *   
      *     BagX.of(1,2,3)
-     *          .transform(i->i*2)
+     *          .map(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //BagX[12]

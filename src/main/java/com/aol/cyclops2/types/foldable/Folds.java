@@ -39,7 +39,13 @@ public interface Folds<T> extends Iterable<T>  {
 
     ReactiveSeq<T> stream();
 
+    default <R> R[] toArray(IntFunction<R[]> generator){
+        return stream().toArray(generator);
+    }
 
+    default  Object[] toArray(){
+        return stream().toArray();
+    }
 
     default <R> R iterableTo(Function<? super Iterable<? super T>,? extends R> fn){
         return fn.apply(this);
@@ -78,6 +84,9 @@ public interface Folds<T> extends Iterable<T>  {
     default <C extends Collection<T>> C toCollection(Supplier<C> collectionFactory){
 
        return stream().collect(Collectors.toCollection(collectionFactory));
+    }
+    default <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+        return stream().collect(supplier,accumulator,combiner);
     }
 
     default List<T> toList(){
@@ -370,7 +379,7 @@ public interface Folds<T> extends Iterable<T>  {
      *  
      *  <pre> {@code
      *  
-     *       ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
+     *       ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next)
      *        //Optional[1500]
      *  }
@@ -738,7 +747,7 @@ public interface Folds<T> extends Iterable<T>  {
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .transform(u->throw new RuntimeException())
+     *                  .map(u->throw new RuntimeException())
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }
@@ -826,7 +835,7 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code
      *  //run at 8PM every night
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .transform(this::processJob)
+     *             .map(this::processJob)
      *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -836,7 +845,7 @@ public interface Folds<T> extends Iterable<T>  {
      * <pre>
      * {@code
      *  
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -862,7 +871,7 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code
      *  //run every 60 seconds after last job completes
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .transform(this::processJob)
+     *             .map(this::processJob)
      *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -871,7 +880,7 @@ public interface Folds<T> extends Iterable<T>  {
      * 
      * <pre>
      * {@code 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -897,7 +906,7 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code
      *  //run every 60 seconds
      *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -907,7 +916,7 @@ public interface Folds<T> extends Iterable<T>  {
      * <pre>
      * {@code
      *  
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);

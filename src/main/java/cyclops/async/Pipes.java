@@ -59,7 +59,7 @@ import java.util.concurrent.Executor;
        
        
        //read data and print it out the console.
-       futureStream.transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+       futureStream.map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                    .forEach(System.out::println);
  * 
  * }
@@ -148,7 +148,7 @@ public class Pipes<K, V> {
      * {@code 
      *    //close an adapter
      *   pipes.getValue("adapter-key")
-     *        .transform(a->a.close())
+     *        .map(a->a.close())
      *        .orElse(false); //Maybe is lazy - trigger action
      *   
      * }
@@ -183,7 +183,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor")
                               .getValue()
-                              .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        
@@ -221,7 +221,7 @@ public class Pipes<K, V> {
         //on another thread
        List<String> res =  bus.futureStream("reactor", new LazyReact(10,10))
                               .getValue()
-                              .transform(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
+                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
                                .toList();
        System.out.println(res);
        

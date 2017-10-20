@@ -126,6 +126,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 
+    @Override
+    Object[] toArray();
+
+    @Override
+    <A> A[] toArray(IntFunction<A[]> generator);
 
     default ReactiveSeq<T> removeFirst(Predicate<? super T> pred) {
         AtomicBoolean active = new AtomicBoolean(true);
@@ -745,7 +750,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * ReactiveSeq.range(1, 1000)
-     *            .ints(i->i,s->s.transform(i->i*2).filter(i->i<500))
+     *            .ints(i->i,s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
      *
@@ -777,7 +782,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * ReactiveSeq.range(1, 1000)
-     *            .longs(i->i.longValue(),s->s.transform(i->i*2).filter(i->i<500))
+     *            .longs(i->i.longValue(),s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
      *
@@ -807,7 +812,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * ReactiveSeq.range(1, 1000)
-     *            .doubles(i->i.doubleValue(),s->s.transform(i->i*2).filter(i->i<500))
+     *            .doubles(i->i.doubleValue(),s->s.map(i->i*2).filter(i->i<500))
                   .size(),
        //249
      *
@@ -848,7 +853,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *
      *      ReactiveSeq.of(1,2,3)
-     *                 .transform(i->i*2)
+     *                 .map(i->i*2)
      *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *
      *      //ReactiveSeq[12]
@@ -1766,7 +1771,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * assertThat(of("a", "ab", "abc").transform(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+     * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
      *             is(asList(0, 3, 5, 6).size()));
      *
      * }
@@ -2301,7 +2306,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     T reduce(Monoid<T> reducer);
 
     /*
-     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
+     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next).getValue(),equalTo(1500)); } </pre>
      */
     @Override
@@ -2785,7 +2790,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
      *                                   .prependS(of(100, 200, 300))
-     *                                   .transform(it -> it + "!!")
+     *                                   .map(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
@@ -2803,7 +2808,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -2827,7 +2832,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
      * 									 .prependAll(100,200,300)
-     * 										 .transform(it ->it+"!!")
+     * 										 .map(it ->it+"!!")
      * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -2844,7 +2849,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
      * }
@@ -2950,7 +2955,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
@@ -2982,7 +2987,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -3225,7 +3230,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * 	assertThat(ReactiveSeq.of(1,2,3,4)
-     * 					.transform(u->{throw new RuntimeException();})
+     * 					.map(u->{throw new RuntimeException();})
      * 					.recover(e->"hello")
      * 					.firstValue(),equalTo("hello"));
      * }
@@ -3950,8 +3955,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 						   .transform(i->i+2)
-     * 						   .transform(u->{throw new RuntimeException();})
+     * 						   .map(i->i+2)
+     * 						   .map(u->{throw new RuntimeException();})
      * 						   .recover(e->"hello")
      * 						   .firstValue(),equalTo("hello"));
      * }
@@ -3970,8 +3975,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 					.transform(i->i+2)
-     * 					.transform(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+     * 					.map(i->i+2)
+     * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
      * 					.recover(IOException.class,e->"hello")
      * 					.firstValue(),equalTo("hello"));
      *
@@ -4172,7 +4177,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  //run at 8PM every night
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -4182,7 +4187,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4211,7 +4216,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  //run every 60 seconds after last job completes
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -4220,7 +4225,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4248,7 +4253,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *  //run every 60 seconds
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -4257,7 +4262,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4617,7 +4622,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).appendStream(ReactiveSeq.of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -5151,7 +5156,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * <pre>
          * {@code
-         *  ReactiveSeq<Integer> list = Lists.functor().transform(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
+         *  ReactiveSeq<Integer> list = Lists.functor().map(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -5164,7 +5169,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .applyHKT(h->Lists.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK3);
          *
          * }
@@ -5220,7 +5225,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .applyHKT(h->Lists.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK3);
 

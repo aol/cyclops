@@ -121,7 +121,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * <pre>
      * {@code 
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>
@@ -185,11 +185,11 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.transform(Future::completedFuture);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
-    									.transform(Future::join)
+    									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -220,14 +220,14 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.transform(Future::completedFuture);
+    	AnyMSeq<Future<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
     	
     	Future<Future<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<Future<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt),FutureT.of(future))
     									.unwrap()
     									.<Stream<Future<Integer>>>unwrap()
-    									.transform(Future::join)
+    									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Future.completedFuture(List[3,4,5]);

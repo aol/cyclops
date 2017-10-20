@@ -33,7 +33,7 @@ public class CompleteOperator<T> extends BaseOperator<T, T> {
     }
 
     /*public static void main(String[] args) {
-        Integer value = ReactiveSeq.of(1, 2, 3, 4).transform(i -> i + 2).complete(() -> {
+        Integer value = ReactiveSeq.of(1, 2, 3, 4).map(i -> i + 2).complete(() -> {
             System.out.println("Done.");
         }).firstValue();
         System.out.println(value);

@@ -241,7 +241,7 @@ public class Vector<T> implements ImmutableList<T>,PStack<T> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size==0;
     }
 
     public Vector<T> plus(T t){

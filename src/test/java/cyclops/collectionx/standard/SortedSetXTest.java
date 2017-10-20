@@ -57,10 +57,10 @@ public class SortedSetXTest extends AbstractSetTest {
     @Test
     public void combinations2NoOrder2() {
 
-        //ListX.of(1, 2, 3).combinations(2).transform(t->t.toListX()).printOut();
+        //ListX.of(1, 2, 3).combinations(2).map(t->t.toListX()).printOut();
         CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
         st.toListX().printOut();
-       // assertThat(of(1, 2, 3).combinations(2).transform(s->s.toListX()).toListX().getValue(0).size(),
+       // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().getValue(0).size(),
         //        equalTo(2));
     }
     @Test

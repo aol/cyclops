@@ -41,7 +41,7 @@ import static cyclops.data.tuple.Tuple.tuple;
  * <pre>
  *     {@code
  *       Active<list,Integer> active = Active.of(ListX.of(1,2,3),ListX.Instances.definitions());
- *       Active<list,Integer> doubled = active.transform(i->i*2);
+ *       Active<list,Integer> doubled = active.map(i->i*2);
  *       Active<list,Integer> doubledPlusOne = doubled.flatMap(i->ListX.of(i+1));
  *     }
  *

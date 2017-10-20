@@ -118,7 +118,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * <pre>
      * {@code 
      *  OptionalWT.of(AnyM.fromStream(Arrays.asOptionalW(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //OptionalWT<AnyMSeq<Stream<Optional[11]>>>
@@ -178,11 +178,11 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.transform(Optional::completedOptional);
+    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
-    									.transform(Optional::join)
+    									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -213,14 +213,14 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.transform(Optional::completedOptional);
+    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
     	
     	Optional<Optional<Integer>> two = Optional.completedOptional(Optional.completedOptional(2));
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
-    									.transform(Optional::join)
+    									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Optional.completedOptional(List[3,4,5]);

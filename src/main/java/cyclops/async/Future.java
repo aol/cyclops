@@ -1118,7 +1118,7 @@ public class Future<T> implements To<Future<T>>,
      * <pre>
      * {@code
      *  Future.ofResult(1)
-     *         .transform(i->i*2,e->-1);
+     *         .map(i->i*2,e->-1);
      * //Future[2]
      *
      * }</pre>
@@ -1489,7 +1489,7 @@ public class Future<T> implements To<Future<T>>,
          *
          * <pre>
          * {@code
-         *  Future<Integer> future = Futures.functor().transform(i->i*2, Future.widen(Future.ofResult(2));
+         *  Future<Integer> future = Futures.functor().map(i->i*2, Future.widen(Future.ofResult(2));
          *
          *  //[4]
          *
@@ -1502,7 +1502,7 @@ public class Future<T> implements To<Future<T>>,
          * {@code
          *   Future<Integer> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->Futures.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Futures.functor().map((String v) ->v.length(), h))
         .convert(Future::narrowK3);
          *
          * }
@@ -1558,7 +1558,7 @@ public class Future<T> implements To<Future<T>>,
 
         Future<Integer> future = Futures.unit()
         .unit("hello")
-        .applyHKT(h->Futures.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Futures.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Futures.applicative().ap(futureFn, h))
         .convert(Future::narrowK3);
 

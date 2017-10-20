@@ -48,7 +48,7 @@ public class MutableInt implements To<MutableInt>,IntSupplier, IntConsumer, Supp
      * <pre>{@code
      *   MutableInt num = MutableInt.of(20);
      *   
-     *   Stream.of(1,2,3,4).transform(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
+     *   Stream.of(1,2,3,4).map(i->i*10).peek(i-> num.mutate(n->n+i)).foreach(System.out::println);
      *   
      *   System.out.println(num.getValue());
      *   //prints 120

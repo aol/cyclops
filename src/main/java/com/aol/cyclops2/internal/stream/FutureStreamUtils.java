@@ -56,7 +56,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -96,7 +96,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .transform(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -175,7 +175,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = StreanUtils.forEach(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -209,7 +209,7 @@ public class FutureStreamUtils {
      * <pre>
      * {@code
      *     Subscription next = Streams.forEachEvents(Stream.of(()->1,()->2,()->throw new RuntimeException(),()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     

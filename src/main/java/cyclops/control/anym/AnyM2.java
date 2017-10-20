@@ -441,7 +441,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .transform(i -> AnyM.fromIterable(() -> i))
+                            .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/
 

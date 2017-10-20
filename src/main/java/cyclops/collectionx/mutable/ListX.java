@@ -221,7 +221,7 @@ public interface ListX<T> extends To<ListX<T>>,
          *
          * <pre>
          * {@code
-         *  ListX<Integer> list = Lists.functor().transform(i->i*2, ListX.widen(Arrays.asList(1,2,3));
+         *  ListX<Integer> list = Lists.functor().map(i->i*2, ListX.widen(Arrays.asList(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -234,7 +234,7 @@ public interface ListX<T> extends To<ListX<T>>,
          * {@code
          *   ListX<Integer> list = Lists.unit()
         .unit("hello")
-        .applyHKT(h->Lists.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ListX::narrowK3);
          *
          * }
@@ -290,7 +290,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
         ListX<Integer> list = Lists.unit()
         .unit("hello")
-        .applyHKT(h->Lists.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Lists.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ListX::narrowK3);
 
@@ -844,7 +844,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * {@code 
      *   
      *      ListX.of(1,2,3)
-     *           .transform(i->i*2)
+     *           .map(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //ListX[12]

@@ -140,8 +140,8 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
      * {@code 
      	new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    			.transform((it) -> it * 100)
-    			.transform((it) -> "*" + it)
+    			.map((it) -> it * 100)
+    			.map((it) -> "*" + it)
     			
     			}
     </pre>
@@ -295,14 +295,14 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
       {@code
     List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
-    				.transform(it -> {
+    				.map(it -> {
     					if (it == 100)
     						throw new RuntimeException("boo!");
     		
     					return it;
     				})
     				.onFail(e -> 1)
-    				.transform(it -> "*" + it)
+    				.map(it -> "*" + it)
     				.block();	  
       
       
@@ -364,16 +364,16 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
      * <pre>
      	{@code
     	List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-    		.transform(it -> it * 100)
-    		.transform(it -> {
+    		.map(it -> it * 100)
+    		.map(it -> {
     			if (it == 100)
     				throw new RuntimeException("boo!");
     
     			return it;
     		})
     		.onFail(e -> 1)
-    		.transform(it -> "*" + it)
-    		.transform(it -> {
+    		.map(it -> "*" + it)
+    		.map(it -> {
     			
     			if ("*200".equals(it))
     				throw new RuntimeException("boo!");

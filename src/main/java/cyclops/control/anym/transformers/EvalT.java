@@ -114,7 +114,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * <pre>
      * {@code 
      *  EvalWT.of(AnyM.fromStream(Arrays.asEvalW(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //EvalWT<AnyMSeq<Stream<Eval[11]>>>
@@ -175,11 +175,11 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.transform(Eval::completedEval);
+    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
-    									.transform(Eval::join)
+    									.map(Eval::join)
     									.collect(CyclopsCollectors.toList());
     	
     	
@@ -210,14 +210,14 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.transform(Eval::completedEval);
+    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
     	
     	Eval<Eval<Integer>> two = Eval.completedEval(Eval.completedEval(2));
     	AnyMSeq<Eval<Integer>> Eval=  AnyM.fromEvalW(two);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt),EvalWT.of(Eval))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
-    									.transform(Eval::join)
+    									.map(Eval::join)
     									.collect(CyclopsCollectors.toList());
     									
     		//Eval.completedEval(List[3,4,5]);

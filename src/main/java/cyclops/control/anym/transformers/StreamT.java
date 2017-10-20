@@ -106,7 +106,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * <pre>
      * {@code 
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //ListT<AnyM<Stream<List[11]>>>

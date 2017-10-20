@@ -623,7 +623,7 @@ public interface Traversable<T> extends Publisher<T>,
      * 
      * <pre>
      * {@code 
-     * assertThat(of("a", "ab", "abc").transform(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+     * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
      *             is(asList(0, 3, 5, 6).size()));
      * 
      * }
@@ -1016,7 +1016,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
      *                                   .prependS(of(100, 200, 300))
-     *                                   .transform(it -> it + "!!")
+     *                                   .map(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
@@ -1037,7 +1037,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
@@ -1079,7 +1079,7 @@ public interface Traversable<T> extends Publisher<T>,
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
      * 									 .prependAll(100,200,300)
-     * 										 .transform(it ->it+"!!")
+     * 										 .map(it ->it+"!!")
      * 										 .collect(CyclopsCollectors.toList());
      *
      * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -1096,7 +1096,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
      * }
@@ -1129,7 +1129,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
      * </pre>
@@ -1149,7 +1149,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).transform(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -1171,8 +1171,8 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 						   .transform(i->i+2)
-     * 						   .transform(u->{throw new RuntimeException();})
+     * 						   .map(i->i+2)
+     * 						   .map(u->{throw new RuntimeException();})
      * 						   .recover(e->"hello")
      * 						   .firstValue(),equalTo("hello"));
      * }
@@ -1193,8 +1193,8 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 					.transform(i->i+2)
-     * 					.transform(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+     * 					.map(i->i+2)
+     * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
      * 					.recover(IOException.class,e->"hello")
      * 					.firstValue(),equalTo("hello"));
      *

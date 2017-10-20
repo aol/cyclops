@@ -505,7 +505,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * {@code 
      *   
      *     LinkedListX.of(1,2,3)
-     *          .transform(i->i*2)
+     *          .map(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //LinkedListX[12]
@@ -1409,7 +1409,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          *
          * <pre>
          * {@code
-         *  LinkedListX<Integer> list = PStacks.functor().transform(i->i*2, LinkedListX.widen(Arrays.asPStack(1,2,3));
+         *  LinkedListX<Integer> list = PStacks.functor().map(i->i*2, LinkedListX.widen(Arrays.asPStack(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1422,7 +1422,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
          * {@code
          *   LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .applyHKT(h->PStacks.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
         .convert(LinkedListX::narrowK3);
          *
          * }
@@ -1478,7 +1478,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
         LinkedListX<Integer> list = PStacks.unit()
         .unit("hello")
-        .applyHKT(h->PStacks.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
         .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
         .convert(LinkedListX::narrowK3);
 

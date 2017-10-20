@@ -85,7 +85,7 @@ public class SimplePerfCheck {
 			list = list.insertAt(1);
 		}
 		long skip = System.currentTimeMillis();
-		list = list.transform(i->i+1);
+		list = list.map(i->i+1);
 		System.out.println("LinkedListX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
@@ -99,7 +99,7 @@ public class SimplePerfCheck {
 			list = list.insertAt(1);
 		}
 		long skip = System.currentTimeMillis();
-		list = list.transform(i->i+1);
+		list = list.map(i->i+1);
 		System.out.println("VectorX  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.size());
 		
@@ -113,7 +113,7 @@ public class SimplePerfCheck {
 			list = list.cons(i);
 		}
 		long skip = System.currentTimeMillis();
-		list = list.transform(i->i+1);
+		list = list.map(i->i+1);
 		System.out.println("FJ List  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		
@@ -154,7 +154,7 @@ public class SimplePerfCheck {
 			list = list.prependAll(i);
 		}
 		long skip = System.currentTimeMillis();
-		list = list.transform(i->i+1);
+		list = list.map(i->i+1);
 		System.out.println("Javaslang List  Map took " + (System.currentTimeMillis()- skip));
 		System.out.println(list.length());
 		

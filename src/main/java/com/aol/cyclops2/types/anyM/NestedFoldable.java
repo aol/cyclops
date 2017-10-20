@@ -112,7 +112,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /*
-     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).transform(it -> it*100).reduce(
+     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
      * (acc,next) -> acc+next).getValue(),equalTo(1500)); } </pre>
      */
     default AnyM<W,Optional<T>> reduce(final BinaryOperator<T> accumulator) {
@@ -449,7 +449,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code 
      *  assertThat(ReactiveSeq.of(1,2,3,4)
-     *                  .transform(u->{throw new RuntimeException();})
+     *                  .map(u->{throw new RuntimeException();})
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }
@@ -535,7 +535,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run at 8PM every night
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .transform(this::processJob)
+     *             .map(this::processJob)
      *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -545,7 +545,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      * 
      *  data.connect()
@@ -572,7 +572,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run every 60 seconds after last job completes
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .transform(this::processJob)
+     *             .map(this::processJob)
      *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -581,7 +581,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * 
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect().forEach(this::logToDB);
@@ -607,7 +607,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  //run every 60 seconds
      *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
@@ -617,7 +617,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      * 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).transform(this::processJob)
+     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      * 
      *  data.connect()

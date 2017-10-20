@@ -157,7 +157,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * <pre>
      *     {@code
      *      CompletableEval<Integer,Integer> completable = Eval.eval();
-            Eval<Integer> mapped = completable.transform(i->i*2)
+            Eval<Integer> mapped = completable.map(i->i*2)
                                               .flatMap(i->Eval.later(()->i+1));
 
             completable.complete(5);
@@ -275,7 +275,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.later(()->10)
-     *                         .transform(i->i*2);
+     *                         .map(i->i*2);
      *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      *
@@ -298,7 +298,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * <pre>
      * {@code
      *   Eval<Integer> e = Eval.always(()->10)
-     *                         .transform(i->i*2);
+     *                         .map(i->i*2);
      *   //Eval[20] - maybe so will not be executed until the value is accessed
      * }</pre>
      *
@@ -1226,7 +1226,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
          *
          * <pre>
          * {@code
-         *  Eval<Integer> list = Evals.functor().transform(i->i*2, Eval.widen(Arrays.asEval(1,2,3));
+         *  Eval<Integer> list = Evals.functor().map(i->i*2, Eval.widen(Arrays.asEval(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1239,7 +1239,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
          * {@code
          *   Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .applyHKT(h->Evals.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .convert(Eval::narrowK3);
          *
          * }
@@ -1296,7 +1296,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
         Eval<Integer> list = Evals.unit()
         .unit("hello")
-        .applyHKT(h->Evals.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Evals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Evals.applicative().ap(listFn, h))
         .convert(Eval::narrowK3);
 

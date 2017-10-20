@@ -51,8 +51,8 @@ import lombok.experimental.Wither;
  *<pre>
  *{@code 
  * new LazyReact(Executors.newFixedThreadPool(4)).of(6,5,2,1)
-                                                      .transform(this::loadData)
-                                                      .transform(e->e*100)
+                                                      .map(this::loadData)
+                                                      .map(e->e*100)
                                                       .filter(e->e<551)
                                                       .peek(e->{
                                                           System.out.println("e is " + e 
@@ -106,7 +106,7 @@ public class LazyReact implements ReactBuilder {
         LazyReact builder = new LazyReact().autoMemoizeOn((key,fn)-> cache.computeIfAbsent(key,fn));
         Set<Integer> result = builder.of(1,1,1,1)
                                      .capture(e->e.printStackTrace())
-                                     .transform(i->calc(i))
+                                     .map(i->calc(i))
                                      .peek(System.out::println)
                                      .toSet();
      * 
@@ -233,7 +233,7 @@ public class LazyReact implements ReactBuilder {
         CompletableFuture<String> future2 = CompletableFuture.supplyAsync(()->"hello2");
         new LazyReact().from(future1,future2)
                        .peek(System.out::println)
-                       .transform(action->"result")
+                       .map(action->"result")
                        .toList()
                        .size()
         //2               
@@ -284,7 +284,7 @@ public class LazyReact implements ReactBuilder {
      *  return new LazyReact()
     					.objectPoolingOn()
     					.range(0,5_000_000_000)
-    					.transform(this::process)
+    					.map(this::process)
     					.forEach(System.out::println);
        }
        </pre>
@@ -303,7 +303,7 @@ public class LazyReact implements ReactBuilder {
      *  
      *    react.objectPoolingOff()
     					.range(0,5_000)
-    					.transform(this::process)
+    					.map(this::process)
     					.forEach(System.out::println);
      * }
      * </pre>
@@ -327,8 +327,8 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * new LazyReact().autoOptimizeOn()
      *                  .range(0, 1_000_000)
-    					.transform(i->i+2)
-    					.transform(i->Thread.currentThread().getId())
+    					.map(i->i+2)
+    					.map(i->Thread.currentThread().getId())
     					.peek(System.out::println)
     					.runOnCurrent();
      * }
@@ -349,8 +349,8 @@ public class LazyReact implements ReactBuilder {
      *  
      *    react.autoOptimizeOff()
     				    .range(0, 1_000_000)
-    					.transform(i->i+2)
-    					.transform(i->Thread.currentThread().getId())
+    					.map(i->i+2)
+    					.map(i->Thread.currentThread().getId())
     					.peek(System.out::println)
     					.runOnCurrent();
      * }
@@ -483,9 +483,9 @@ public class LazyReact implements ReactBuilder {
      *  LazyReact.parallelCommonBuilder()
      *           .ofAsync(() -> loadFromDb(),() -> loadFromService1(),
                                                         () -> loadFromService2())
-                 .transform(this::convertToStandardFormat)
+                 .map(this::convertToStandardFormat)
                  .peek(System.out::println)
-                 .transform(this::saveData)
+                 .map(this::saveData)
                  .block();
      * 
      * }
@@ -509,8 +509,8 @@ public class LazyReact implements ReactBuilder {
      * <pre>
      * {@code 
      * new LazyReact(100,110).fromStream(Files.walk(Paths.getValue(".")))
-                             .transform(d->{ throw new RuntimeException("hello");})
-                             .transform(Object::toString)
+                             .map(d->{ throw new RuntimeException("hello");})
+                             .map(Object::toString)
                              .recover(e->"hello world")
                              .forEach(System.out::println);
      * 
@@ -538,7 +538,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *   LazyReact.parallelBuilder()
      *            .react(asList(this::load)
-                  .transform(list -> 1 + 2)
+                  .map(list -> 1 + 2)
                   .block();
      * 
      * }
@@ -630,7 +630,7 @@ public class LazyReact implements ReactBuilder {
      * Stream<Supplier<Data>> reactiveStream = Stream.of(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromStreamAsync(reactiveStream)
-     *            .transform(this::process)
+     *            .map(this::process)
      *            .forEach(this::save)
      * }
      * </pre>
@@ -653,7 +653,7 @@ public class LazyReact implements ReactBuilder {
      *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromIteratorAsync(list.iterator())
-     *            .transform(this::process)
+     *            .map(this::process)
      *            .forEach(this::save)
      *
      * 
@@ -683,7 +683,7 @@ public class LazyReact implements ReactBuilder {
      *  List<Supplier<Data>> list = Arrays.asList(this::load1,this::looad2,this::load3);
      * 
      * LazyReact().fromIterableAsync(list)
-     *            .transform(this::process)
+     *            .map(this::process)
      *            .forEach(this::save)
      *
      * 
@@ -791,7 +791,7 @@ public class LazyReact implements ReactBuilder {
      *  new LazyReact().objectPoolingOn()
                        .iterate(1,i->i+1)
                        .limit(1_000_000)
-                       .transform(this::process)
+                       .map(this::process)
                        .forEach(this::save);
      * 
      * }
@@ -904,7 +904,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      *  Iterator<Integer> iterator;
      *  new LazyReact(10,10).from(iterator)
-     *                       .transform(this::process);
+     *                       .map(this::process);
      * 
      * }
      * </pre>
@@ -925,7 +925,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * 
      *  new LazyReact(10,10).from(myList)
-     *                       .transform(this::process);
+     *                       .map(this::process);
      * 
      * }
      * </pre>
@@ -978,7 +978,7 @@ public class LazyReact implements ReactBuilder {
      * {@code 
      * 
      *  new LazyReact(10,10).of(1,2,3,4)
-     *                      .transform(this::process);
+     *                      .map(this::process);
      * 
      * }
      * </pre>

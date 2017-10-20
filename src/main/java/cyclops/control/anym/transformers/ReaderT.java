@@ -77,7 +77,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * <pre>
      * {@code 
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>

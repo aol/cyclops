@@ -195,7 +195,7 @@ public class Subscription implements Continueable {
     }
 }
 /**
-reactiveStream.transform().iterator().limit(4).flatMap(..).limit(2).transform(..).limit(8)
+reactiveStream.map().iterator().limit(4).flatMap(..).limit(2).map(..).limit(8)
 subscription
 
 reactiveStream no limit

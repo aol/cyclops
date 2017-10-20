@@ -419,7 +419,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code 
      *   
      *      FutureStream.of(1,2,3)
-     *                      .transform(i->i*2)
+     *                      .map(i->i*2)
      *                      .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //FutureStream[12]
@@ -853,9 +853,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *  FutureStream.of(1,2,3,4)
-     *  					.transform(this::loadFromDb)
+     *  					.map(this::loadFromDb)
      *  					.withTaskExecutor(parallelBuilder().getExecutor())
-     *  					.transform(this::processOnDifferentExecutor)
+     *  					.map(this::processOnDifferentExecutor)
      *  					.toList();
      * }
      * </pre>
@@ -1021,8 +1021,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * FutureStream reactiveStream = of(1,2,3,4).async()
-     *                                      .transform(this::doWorkOnSeparateThreads)
-     *                                      .transform(this::resubmitTaskForDistribution)
+     *                                      .map(this::doWorkOnSeparateThreads)
+     *                                      .map(this::resubmitTaskForDistribution)
      *                                      .forEach(System.out::println);
      *
      * }</pre>
@@ -1074,7 +1074,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *    	List<String> data = new LazyReact().react(urlFile)
      *    										.maxActive(100)
      *    										.flatMap(this::loadUrls)
-     *    										.transform(this::callUrls)
+     *    										.map(this::callUrls)
      *    										.block();
      *    }
      * </pre>
@@ -1113,7 +1113,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      * new LazyReact().withAutoOptimize(false)
      *                .of(1,2,3,4)
-                      .transform(this::performIO)
+                      .map(this::performIO)
                       .peekSync(this::cpuBoundTaskNoResult)
                       .run();
      *
@@ -1203,7 +1203,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *  LazyReact.sequentialBuilder().react(()->1,()->2,()->3)
-                                             .transform(it->it+100) //add 100
+                                             .map(it->it+100) //add 100
                                              .toList();
      * }
      * //results in [100,200,300]
@@ -1392,7 +1392,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * FutureStream.parallelCommonBuilder()
      * 						.of(IntStream.range(0, 100))
-     * 						.transform(it -> it*100)
+     * 						.map(it -> it*100)
      * 						.jitter(10l)
      * 						.peek(System.out::println)
      * 						.block();
@@ -1604,7 +1604,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * FutureStream.of(1,2,3,4,5,6)
-                .transform(i->i+2)
+                .map(i->i+2)
                 .copy(5)
                 .forEach(s -> System.out.println(s.toList()));
      *
@@ -3302,7 +3302,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
@@ -3345,7 +3345,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
@@ -3385,7 +3385,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue)
+     *                                  .map(Supplier::getValue)
      *          					    .forEach(System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
@@ -3417,7 +3417,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue)
+     *                                  .map(Supplier::getValue)
      *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");

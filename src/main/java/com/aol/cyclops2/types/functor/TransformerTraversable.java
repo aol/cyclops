@@ -31,7 +31,7 @@ public interface TransformerTraversable<T>{
      *   
      *   //ReactiveSeq[List[2,1,3,4],List[5,7,6,8],List[9,10]]
      *   
-     *  ListTSeq<ListX<Integer>> nested = transformer.transform(i->i*2)
+     *  ListTSeq<ListX<Integer>> nested = transformer.map(i->i*2)
      *                                               .sorted()
      *                                               .grouped(2);   
      *   

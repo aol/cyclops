@@ -379,7 +379,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * {@code 
      *   
      *     SetX.of(1,2,3)
-     *           .transform(i->i*2)
+     *           .map(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //SetX[12]
@@ -1273,7 +1273,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
          *
          * <pre>
          * {@code
-         *  SetX<Integer> set = Sets.functor().transform(i->i*2, SetX.widen(Arrays.asSet(1,2,3));
+         *  SetX<Integer> set = Sets.functor().map(i->i*2, SetX.widen(Arrays.asSet(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1286,7 +1286,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
          * {@code
          *   SetX<Integer> set = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
         .convert(SetX::narrowK3);
          *
          * }
@@ -1342,7 +1342,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
         SetX<Integer> set = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Sets.zippingApplicative().ap(setFn, h))
         .convert(SetX::narrowK3);
 

@@ -36,7 +36,7 @@ import java.util.stream.*;
  * <pre>
  * {@code 
  *   new SimpleReact().react(this:query,this:query,this:query,this:query)
-                .transform(this:process)
+                .map(this:process)
                 .block(status -> status.getAllCompleted() >2 && status.getElapsedMillis()>200);
 
      //short circuit if 2 results after 200ms 
@@ -52,7 +52,7 @@ import java.util.stream.*;
  *   
  *   new SimpleReact().from(files)
  *                    .thenAsync(FileUtils::load)
-                      .transform(this:process)
+                      .map(this:process)
                       .block();
 
  * 

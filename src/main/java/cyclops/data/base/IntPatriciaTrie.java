@@ -11,6 +11,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -51,7 +52,26 @@ public interface IntPatriciaTrie<V>  {
 
         Node<V> minus(int hash, int pos);
 
-        ReactiveSeq<V> stream();
+        default Iterator<V> iterator(){
+            return new Iterator<V>(){
+                int  size = size();
+                int pos = 0;
+                @Override
+                public boolean hasNext() {
+                    return pos<size;
+                }
+
+                @Override
+                public V next() {
+
+                    return getOrElse(pos,pos++,null);
+                }
+            };
+        }
+
+        default ReactiveSeq<V> stream(){
+            return ReactiveSeq.fromIterable(()->iterator());
+        }
 
 
     }
@@ -199,10 +219,10 @@ public interface IntPatriciaTrie<V>  {
             return fn2.apply(this);
         }
 
-        public ReactiveSeq<V> stream(){
+ /**       public ReactiveSeq<V> stream(){
             return ReactiveSeq.of(value);
         }
-
+**/
 
     }
 
@@ -275,12 +295,12 @@ public interface IntPatriciaTrie<V>  {
             }
 
         }
-
+/**
         @Override
         public ReactiveSeq<V> stream() {
             return ReactiveSeq.of(nodes).flatMap(n->n.stream());
         }
-
+**/
         @Override
         public boolean isEmpty() {
             return ReactiveSeq.of(nodes).allMatch(Node::isEmpty);

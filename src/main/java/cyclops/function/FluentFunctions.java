@@ -959,7 +959,7 @@ public class FluentFunctions {
 
         public FluentFunction<Option<T>, Option<R>> lift() {
             return new FluentFunction<>(
-                                        opt -> opt.transform(t -> fn.applyHKT(t)));
+                                        opt -> opt.map(t -> fn.applyHKT(t)));
         }*/
 
         /**

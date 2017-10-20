@@ -406,7 +406,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * {@code 
      *   
      *     QueueX.of(1,2,3)
-     *           .transform(i->i*2)
+     *           .map(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //QueueX[12]
@@ -1292,7 +1292,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          *
          * <pre>
          * {@code
-         *  QueueX<Integer> queue = Queues.functor().transform(i->i*2, QueueX.of(1,2,3));
+         *  QueueX<Integer> queue = Queues.functor().map(i->i*2, QueueX.of(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1305,7 +1305,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
          * {@code
          *   QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .applyHKT(h->Queues.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
         .convert(QueueX::narrowK3);
          *
          * }
@@ -1361,7 +1361,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         QueueX<Integer> queue = Queues.unit()
         .unit("hello")
-        .applyHKT(h->Queues.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Queues.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Queues.zippingApplicative().ap(queueFn, h))
         .convert(QueueX::narrowK3);
 

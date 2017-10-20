@@ -37,7 +37,7 @@ public class SeqUtils {
      * <pre>
      * {@code 
      * StreamUtils.reversedStream(asList(1,2,3))
-    			.transform(i->i*100)
+    			.map(i->i*100)
     			.forEach(System.out::println);
     	
     	

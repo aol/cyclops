@@ -71,7 +71,7 @@ import static cyclops.data.tuple.Tuple.tuple;
  * <pre>
  *     {@code
  *     Nested<list,optional,Integer> listOfOptionalInt;  //Nested[List[Optional[2]]]
- *     Nested<list,optional,Integer> doubled = listOfOptionalInt.transform(i->i*2);
+ *     Nested<list,optional,Integer> doubled = listOfOptionalInt.map(i->i*2);
  *      //Nested[List[Optional[4]]]
  *     }
  *

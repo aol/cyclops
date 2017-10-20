@@ -105,7 +105,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * <pre>
      * {@code 
-     *   Eval.now(1).transform(i->i+2).flatMap(i->Eval.later(()->i*3);
+     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
      *   //Eval[9]
      * 
      * }</pre>
@@ -408,7 +408,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * <pre>
      * {@code 
-     *   Eval.now(1).transform(i->i+2).flatMap(i->Eval.later(()->i*3);
+     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
      *   //Eval[9]
      * 
      * }</pre>
@@ -424,7 +424,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * 
      * <pre>
      * {@code 
-     *   Maybe.just(1).transform(i->i+2).flatMapI(i->Arrays.asList(()->i*3,20);
+     *   Maybe.just(1).map(i->i+2).flatMapI(i->Arrays.asList(()->i*3,20);
      *   //Maybe[9]
      * 
      * }</pre>
@@ -449,7 +449,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code 
-     *   Future.ofResult(1).transform(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
+     *   Future.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
      *   //Future[9]
      * 
      * }</pre>

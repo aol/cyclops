@@ -516,7 +516,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -558,7 +558,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("First batch processed!");
      *     
@@ -597,7 +597,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
      *          
      *     System.out.println("processed!");
      *     
@@ -632,7 +632,7 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .transform(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
      *          
      *     System.out.println("processed!");
      *     
@@ -668,7 +668,7 @@ public class Streams {
      * {@code
      *  //run at 8PM every night
      * Streams.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
@@ -678,7 +678,7 @@ public class Streams {
      * <pre>
      * {@code 
      * HotStream<Data> dataStream = Streams.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            							  .transform(this::processJob)
+     *            							  .map(this::processJob)
      *            							  ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
      * 
      * 
@@ -704,7 +704,7 @@ public class Streams {
      * {@code
      *  //run every 60 seconds after last job completes
      *  Streams.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob)
+     *            .map(this::processJob)
      *            ,60_000,Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
@@ -714,7 +714,7 @@ public class Streams {
      * <pre>
      * {@code 
      * HotStream<Data> dataStream = Streams.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            							  .transform(this::processJob)
+     *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
      * 
      * 
@@ -740,7 +740,7 @@ public class Streams {
      * {@code
      *  //run every 60 seconds
      *  Streams.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            .transform(this::processJob),
+     *            .map(this::processJob),
      *            60_000,Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
@@ -750,7 +750,7 @@ public class Streams {
      * <pre>
      * {@code 
      * HotStream<Data> dataStream = Streams.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
-     *            							  .transform(this::processJob)
+     *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
      * 
      * 
@@ -963,7 +963,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -983,7 +983,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = of(1,2,3).prependStream(of(100,200,300))
-    			.transform(it ->it+"!!").collect(CyclopsCollectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * 
@@ -1003,7 +1003,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).append(100,200,300)
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -1021,7 +1021,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).prependAll(100,200,300)
-    			.transform(it ->it+"!!").collect(CyclopsCollectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
@@ -1037,7 +1037,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
-    			.transform(it ->it+"!!").collect(CyclopsCollectors.toList());
+    			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * 
@@ -1057,7 +1057,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	Streams.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
-    										.transform(it ->it+"!!")
+    										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
@@ -1077,7 +1077,7 @@ public class Streams {
      * <pre>
      * {@code 
      * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
-    										.transform(it ->it+"!!")
+    										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -1328,7 +1328,7 @@ public class Streams {
      * <pre>
      * {@code 
      * Streams.reversedStream(asList(1,2,3))
-    			.transform(i->i*100)
+    			.map(i->i*100)
     			.forEach(System.out::println);
     	
     	
@@ -2299,9 +2299,9 @@ public class Streams {
      * {@code
      * 
     	List<String> result = Streams.liftAndBindFile(Stream.of("input.file")
-    							.transform(getClass().getClassLoader()::getResource)
+    							.map(getClass().getClassLoader()::getResource)
     							.peek(System.out::println)
-    							.transform(URL::getFile)
+    							.map(URL::getFile)
     							,File::new)
     							.toList();
     	
@@ -2354,8 +2354,8 @@ public class Streams {
      * 
      * <pre>
      * List<String> result = Streams.liftAndBindBufferedReader(Stream.of("input.file")
-    							.transform(getClass().getClassLoader()::getResourceAsStream)
-    							.transform(InputStreamReader::new)
+    							.map(getClass().getClassLoader()::getResourceAsStream)
+    							.map(InputStreamReader::new)
     							,BufferedReader::new)
     							.collect(CyclopsCollectors.toList();
     	
@@ -2944,7 +2944,7 @@ public class Streams {
          *
          * <pre>
          * {@code
-         *  StreamKind<Integer> list = Streams.functor().transform(i->i*2, StreamKind.widen(Stream.of(1,2,3));
+         *  StreamKind<Integer> list = Streams.functor().map(i->i*2, StreamKind.widen(Stream.of(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -2957,7 +2957,7 @@ public class Streams {
          * {@code
          *   StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .applyHKT(h->Streams.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
         .convert(StreamKind::narrow);
          *
          * }
@@ -3012,7 +3012,7 @@ public class Streams {
 
         StreamKind<Integer> list = Streams.unit()
         .unit("hello")
-        .applyHKT(h->Streams.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Streams.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Streams.zippingApplicative().ap(listFn, h))
         .convert(StreamKind::narrow);
 

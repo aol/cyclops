@@ -654,7 +654,7 @@ public interface Spouts {
          *
          * <pre>
          * {@code
-         *  ReactiveSeq<Integer> list = Lists.functor().transform(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
+         *  ReactiveSeq<Integer> list = Lists.functor().map(i->i*2, ReactiveSeq.widen(Arrays.asList(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -667,7 +667,7 @@ public interface Spouts {
          * {@code
          *   ReactiveSeq<Integer> list = ReactiveSeq.Instances.unit()
         .unit("hello")
-        .transform(h->Lists.functor().transform((String v) ->v.length(), h))
+        .map(h->Lists.functor().map((String v) ->v.length(), h))
         .convert(ReactiveSeq::narrowK3);
          *
          * }
@@ -723,8 +723,8 @@ public interface Spouts {
 
         ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.functor().transform((String v) ->v.length(), h))
-        .transform(h->Lists.zippingApplicative().ap(listFn, h))
+        .map(h->Lists.functor().map((String v) ->v.length(), h))
+        .map(h->Lists.zippingApplicative().ap(listFn, h))
         .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length()*2))
@@ -755,7 +755,7 @@ public interface Spouts {
          * {@code
          *    ReactiveSeq<Integer> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
+        .map(h->Lists.monad().flatMap((String v) ->Lists.unit().unit(v.length()), h))
         .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello".length())
@@ -776,7 +776,7 @@ public interface Spouts {
          * {@code
          *  ReactiveSeq<String> list = Lists.unit()
         .unit("hello")
-        .transform(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
+        .map(h->Lists.monadZero().filter((String t)->t.startsWith("he"), h))
         .convert(ReactiveSeq::narrowK3);
 
         //Arrays.asList("hello"));

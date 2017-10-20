@@ -369,7 +369,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
      * {@code 
      *   
      *     PersistentSetX.of(1,2,3)
-     *          .transform(i->i*2)
+     *          .map(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //PersistentSetX[12]
@@ -1246,7 +1246,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
          *
          * <pre>
          * {@code
-         *  PersistentSetX<Integer> persistentSetX = Sets.functor().transform(i->i*2, PersistentSetX.widen(Arrays.asSet(1,2,3));
+         *  PersistentSetX<Integer> persistentSetX = Sets.functor().map(i->i*2, PersistentSetX.widen(Arrays.asSet(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1259,7 +1259,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
          * {@code
          *   PersistentSetX<Integer> persistentSetX = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
         .convert(PersistentSetX::narrowK3);
          *
          * }
@@ -1315,7 +1315,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
         PersistentSetX<Integer> persistentSetX = Sets.unit()
         .unit("hello")
-        .applyHKT(h->Sets.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Sets.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Sets.zippingApplicative().ap(persistentSetXFn, h))
         .convert(PersistentSetX::narrowK3);
 

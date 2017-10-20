@@ -511,7 +511,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * {@code 
      *   
      *     DequeX.of(1,2,3)
-     *           .transform(i->i*2)
+     *           .map(i->i*2)
      *           .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *      //DequeX[12]
@@ -1437,7 +1437,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          *
          * <pre>
          * {@code
-         *  DequeX<Integer> list = Deques.functor().transform(i->i*2, DequeX.of(1,2,3));
+         *  DequeX<Integer> list = Deques.functor().map(i->i*2, DequeX.of(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1450,7 +1450,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
          * {@code
          *   DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .applyHKT(h->Deques.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
         .convert(DequeX::narrowK3);
          *
          * }
@@ -1506,7 +1506,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         DequeX<Integer> list = Deques.unit()
         .unit("hello")
-        .applyHKT(h->Deques.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Deques.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Deques.zippingApplicative().ap(listFn, h))
         .convert(DequeX::narrowK3);
 

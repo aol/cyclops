@@ -663,7 +663,7 @@ public class CompletableFutures {
          *
          * <pre>
          * {@code
-         *  CompletableFutureKind<Integer> future = CompletableFutures.functor().transform(i->i*2, CompletableFutureKind.widen(CompletableFuture.completedFuture(1,2,3));
+         *  CompletableFutureKind<Integer> future = CompletableFutures.functor().map(i->i*2, CompletableFutureKind.widen(CompletableFuture.completedFuture(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -676,7 +676,7 @@ public class CompletableFutures {
          * {@code
          *   CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
-        .applyHKT(h->CompletableFutures.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
         .convert(CompletableFutureKind::narrowK3);
          *
          * }
@@ -731,7 +731,7 @@ public class CompletableFutures {
 
         CompletableFutureKind<Integer> future = CompletableFutures.unit()
         .unit("hello")
-        .applyHKT(h->CompletableFutures.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->CompletableFutures.functor().map((String v) ->v.length(), h))
         .applyHKT(h->CompletableFutures.applicative().ap(futureFn, h))
         .convert(CompletableFutureKind::narrowK3);
 

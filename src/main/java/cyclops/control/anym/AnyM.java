@@ -1139,7 +1139,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      
     public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .transform(i -> AnyM.fromIterable(i))
+                            .map(i -> AnyM.fromIterable(i))
                             .collect(ListX.listXCollector());
     }
 */
@@ -1247,7 +1247,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
      
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .transform(i -> AnyM.fromIterable(() -> i))
+                            .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/
 

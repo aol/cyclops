@@ -26,7 +26,7 @@ public interface Transformable<T> {
      * {@code
      *
      *
-     *    of(1,2,3).transform(i->i*2)
+     *    of(1,2,3).map(i->i*2)
      *
      *    //[2,4,6]
      *
@@ -45,7 +45,7 @@ public interface Transformable<T> {
      * {@code
      *
      *
-     *    of(1,2,3).transform(System.out::println)
+     *    of(1,2,3).map(System.out::println)
      *
      *    1
      *    2

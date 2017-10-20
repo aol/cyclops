@@ -67,11 +67,11 @@ import java.util.stream.Stream;
  *
  *    //eagerly load data
  *    Optional.of(10)
- *            .transform(this::load);
+ *            .map(this::load);
  *
  *    //lazily tee up loading of data until needed
  *    Maybe.of(10)
- *         .transform(this::load);
+ *         .map(this::load);
  *            .
  *
  * }
@@ -164,7 +164,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * <pre>
      *     {@code
      *     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
-    Maybe<Integer> mapped = completable.transform(i->i*2)
+    Maybe<Integer> mapped = completable.map(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
     completable.complete(5);
@@ -172,7 +172,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     //11
 
     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
-    Maybe<Integer> mapped = completable.transform(i->i*2)
+    Maybe<Integer> mapped = completable.map(i->i*2)
     .flatMap(i->Eval.later(()->i+1));
 
     completable.complete(null);
@@ -477,7 +477,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * {@code
      *
      *    Maybe<Integer> some = Maybe.just(10);
-     *    some.transform(i->i*2);
+     *    some.map(i->i*2);
      * }
      * </pre>
      *
@@ -495,7 +495,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * {@code
      *
      *    Maybe<Integer> some = Maybe.of(10);
-     *    some.transform(i->i*2);
+     *    some.map(i->i*2);
      * }
      * </pre>
      *
@@ -1613,7 +1613,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * <pre>
          * {@code
-         *  Maybe<Integer> maybe = Maybes.functor().transform(i->i*2, Maybe.widen(Maybe.just(1));
+         *  Maybe<Integer> maybe = Maybes.functor().map(i->i*2, Maybe.widen(Maybe.just(1));
          *
          *  //[2]
          *
@@ -1626,7 +1626,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * {@code
          *   Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .applyHKT(h->Maybes.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
         .convert(Maybe::narrowK3);
          *
          * }
@@ -1682,7 +1682,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         Maybe<Integer> maybe = Maybes.unit()
         .unit("hello")
-        .applyHKT(h->Maybes.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Maybes.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Maybes.applicative().ap(maybeFn, h))
         .convert(Maybe::narrowK3);
 

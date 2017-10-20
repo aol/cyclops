@@ -398,7 +398,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .prependAll(100,200,300)
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -470,10 +470,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * 	Streamable.of(1,2,3).transform(i->i+2);
+     * 	Streamable.of(1,2,3).map(i->i+2);
      *  //Streamable[3,4,5]
      *  
-     *  Streamable.of(1,2,3).transform(i->"hello"+(i+2));
+     *  Streamable.of(1,2,3).map(i->"hello"+(i+2));
      *  
      *   //Streamable["hello3","hello4","hello5"]
      * }
@@ -494,7 +494,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code
      *    Streamable.of(1,2,3)
      *              .peek(System.out::println)
-     *              .transform(i->i+2);
+     *              .map(i->i+2);
      * }
      * </pre>
      * 
@@ -528,7 +528,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code
      *
      *      ReactiveSeq.of(1,2,3)
-     *                 .transform(i->i*2)
+     *                 .map(i->i*2)
      *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *
      *      //ReactiveSeq[12]
@@ -1181,7 +1181,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * 
      * <pre>
      * {@code 
-     * assertThat(of("a", "ab", "abc").transform(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
+     * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
             is(asList(0, 3, 5, 6).size()));
      * 
      * }
@@ -1525,7 +1525,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /* 
      * <pre>
      * {@code 
-     * assertThat(Streamable.of(1,2,3,4,5).transform(it -> it*100).reduce( (acc,next) -> acc+next).getValue(),equalTo(1500));
+     * assertThat(Streamable.of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).getValue(),equalTo(1500));
      * }
      * </pre>
      * 
@@ -1811,7 +1811,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
      *                                  .appendStream(Streamable.of(100,200,300))
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -1832,7 +1832,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = Streamable.of(1,2,3)
      * 								  .prependStream(of(100,200,300))
-    								  .transform(it ->it+"!!")
+    								  .map(it ->it+"!!")
     								  .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -1866,7 +1866,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = Streamable.of(1,2,3)
      * 								   .append(100,200,300)
-    									.transform(it ->it+"!!")
+    									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -1885,7 +1885,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .prependAll(100,200,300)
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -1904,7 +1904,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .insertAt(1,100,200,300)
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -1925,7 +1925,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3,4,5,6)
      * 									 .deleteBetween(2,4)
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
@@ -1945,7 +1945,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code 
      * List<String> result = 	Streamable.of(1,2,3)
      * 									 .insertAtS(1,of(100,200,300))
-    									 .transform(it ->it+"!!")
+    									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
     
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -2094,7 +2094,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * 	assertThat(Streamable.of(1,2,3,4)
-    				.transform(u->{throw new RuntimeException();})
+    				.map(u->{throw new RuntimeException();})
     				.recover(e->"hello")
     				.firstValue(),equalTo("hello"));
      * }
@@ -2705,8 +2705,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4)
-    					   .transform(i->i+2)
-    					   .transform(u->{throw new RuntimeException();})
+    					   .map(i->i+2)
+    					   .map(u->{throw new RuntimeException();})
     					   .recover(e->"hello")
     					   .firstValue(),equalTo("hello"));
      * }
@@ -2724,8 +2724,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4)
-    				.transform(i->i+2)
-    				.transform(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
+    				.map(i->i+2)
+    				.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
     				.recover(IOException.class,e->"hello")
     				.firstValue(),equalTo("hello"));
      * 

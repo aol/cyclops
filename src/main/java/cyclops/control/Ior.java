@@ -164,7 +164,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>lazyRight(10).transform(i->i+1);
+     *   Ior.<Integer,Integer>lazyRight(10).map(i->i+1);
      * //Ior.lazyRight[11]
      *
      *
@@ -185,10 +185,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>lazyLeft(10).transform(i->i+1);
+     *   Ior.<Integer,Integer>lazyLeft(10).map(i->i+1);
      *   //Ior.lazyLeft[10]
      *
-     *    Ior.<Integer,Integer>lazyLeft(10).swap().transform(i->i+1);
+     *    Ior.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
      *    //Ior.lazyRight[11]
      * }
      * </pre>

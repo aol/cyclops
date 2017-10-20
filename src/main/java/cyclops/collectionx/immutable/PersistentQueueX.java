@@ -317,7 +317,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * {@code 
      *   
      *     PersistentQueueX.of(1,2,3)
-     *            .transform(i->i*2)
+     *            .map(i->i*2)
      *            .coflatMap(s -> s.reduce(0,(a,b)->a+b))
      *      
      *     //PersistentQueueX[12]
@@ -1428,7 +1428,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          *
          * <pre>
          * {@code
-         *  PersistentQueueX<Integer> list = PQueues.functor().transform(i->i*2, Arrays.asPQueue(1,2,3));
+         *  PersistentQueueX<Integer> list = PQueues.functor().map(i->i*2, Arrays.asPQueue(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -1441,7 +1441,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * {@code
          *   PersistentQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .applyHKT(h->PQueues.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
         .convert(PersistentQueueX::narrowK3);
          *
          * }
@@ -1497,7 +1497,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         PersistentQueueX<Integer> list = PQueues.unit()
         .unit("hello")
-        .applyHKT(h->PQueues.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
         .applyHKT(h->PQueues.zippingApplicative().ap(listFn, h))
         .convert(PersistentQueueX::narrowK3);
 

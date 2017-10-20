@@ -477,8 +477,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
      * {@code
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-                .transform((it) -> it * 100)
-                .transform((it) -> "*" + it)
+                .map((it) -> it * 100)
+                .map((it) -> "*" + it)
     
                 }
     </pre>
@@ -745,7 +745,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * {@code
      * List<String> result = 	SimpleReactStream.of(1,2,3)
      * 											 .zip(FutureStream.of(100,200,300))
-                                                  .transform(it ->it+"!!")
+                                                  .map(it ->it+"!!")
                                                   .toList();
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      *
@@ -784,8 +784,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
      * {@code 
         List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-                                                .transform(it -> it * 100)
-                                                .transform(it -> "*" + it)
+                                                .map(it -> it * 100)
+                                                .map(it -> "*" + it)
                                                 .block(status -> status.getCompleted()->1);
                 
          }       
@@ -869,14 +869,14 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
       {@code
     List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 100, () -> 2, () -> 3)
-                    .transform(it -> {
+                    .map(it -> {
                         if (it == 100)
                             throw new RuntimeException("boo!");
     
                         return it;
                     })
                     .onFail(e -> 1)
-                    .transform(it -> "*" + it)
+                    .map(it -> "*" + it)
                     .block();
     
     
@@ -966,16 +966,16 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * <pre>
         {@code
         List<String> strings = new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
-            .transform(it -> it * 100)
-            .transform(it -> {
+            .map(it -> it * 100)
+            .map(it -> {
                 if (it == 100)
                     throw new RuntimeException("boo!");
     
                 return it;
             })
             .onFail(e -> 1)
-            .transform(it -> "*" + it)
-            .transform(it -> {
+            .map(it -> "*" + it)
+            .map(it -> {
     
                 if ("*200".equals(it))
                     throw new RuntimeException("boo!");
@@ -1021,7 +1021,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
       boolean blocked[] = {false};
         new SimpleReact().<Integer, Integer> react(() -> 1, () -> 2, () -> 3)
     
-                .transform(it -> {
+                .map(it -> {
                     try {
                         Thread.sleep(50000);
                     } catch (Exception e) {

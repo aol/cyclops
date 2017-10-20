@@ -707,7 +707,7 @@ public class Optionals {
          *
          * <pre>
          * {@code
-         *  OptionalKind<Integer> list = Optionals.functor().transform(i->i*2, OptionalKind.widen(Arrays.asOptional(1,2,3));
+         *  OptionalKind<Integer> list = Optionals.functor().map(i->i*2, OptionalKind.widen(Arrays.asOptional(1,2,3));
          *
          *  //[2,4,6]
          *
@@ -720,7 +720,7 @@ public class Optionals {
          * {@code
          *   OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
-        .applyHKT(h->Optionals.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
         .convert(OptionalKind::narrowK3);
          *
          * }
@@ -776,7 +776,7 @@ public class Optionals {
 
         OptionalKind<Integer> list = Optionals.unit()
         .unit("hello")
-        .applyHKT(h->Optionals.functor().transform((String v) ->v.length(), h))
+        .applyHKT(h->Optionals.functor().map((String v) ->v.length(), h))
         .applyHKT(h->Optionals.applicative().ap(listFn, h))
         .convert(OptionalKind::narrowK3);
 

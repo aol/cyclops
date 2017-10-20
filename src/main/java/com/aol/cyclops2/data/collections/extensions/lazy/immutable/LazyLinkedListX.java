@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * <pre>
  * {@code
  *    StreamX<Integer> q = StreamX.of(1,2,3)
- *                                      .transform(i->i*2);
+ *                                      .map(i->i*2);
  * }
  * </pre>
  * The transform operation above is not executed immediately. It will only be executed when (if) the data inside the
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
  * <pre>
  * {@code
  *    DequeX<Integer> q = DequeX.of(1,2,3)
- *                              .transform(i->i*2);
+ *                              .map(i->i*2);
  *                              .filter(i->i<5);
  * }
  * </pre>

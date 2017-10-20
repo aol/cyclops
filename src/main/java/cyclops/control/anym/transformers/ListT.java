@@ -45,7 +45,7 @@ import org.reactivestreams.Publisher;
  *       AnyM<optional, IndexedSequenceX<Integer>> anyM = listT.unwrap();
  *
          Optional<IndexedSequenceX<Integer>> opt = Witness.optional(anyM);
-         Optional<LinkedList<Integer>> list = opt.transform(s -> s.toX(Converters::LinkedList));
+         Optional<LinkedList<Integer>> list = opt.map(s -> s.toX(Converters::LinkedList));
  *     }
  *
  *
@@ -126,7 +126,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * <pre>
      * {@code 
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
-     *             .transform(t->t=t+1);
+     *             .map(t->t=t+1);
      *  
      *  
      *  //ListT<AnyM<Stream<List[11]>>>
