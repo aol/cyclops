@@ -2,6 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.control.Option;
@@ -119,7 +120,6 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
     }
 
 
-    
 
     @Override
     public <U> LazyPSetX<U> unitIterator(Iterator<U> it) {

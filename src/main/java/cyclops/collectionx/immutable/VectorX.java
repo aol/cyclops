@@ -1162,7 +1162,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     @Override
     default <R> VectorX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (VectorX<R>)LazyCollectionX.super.retry(fn);
+        return (VectorX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

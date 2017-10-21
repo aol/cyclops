@@ -150,6 +150,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         });
     }
     default ReactiveSeq<T> removeAt(int pos){
+
         return zipWithIndex().filter(t2->pos!=t2._2()).map(Tuple2::_1);
     }
     /**
@@ -2869,7 +2870,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         boolean added[] = {false};
 
 
-        return zipWithIndex().flatMap(t-> {
+
+        return ReactiveSeq.concat(zipWithIndex().flatMap(t-> {
                     if (t._2() < check && !added[0])
                         return ReactiveSeq.of(t._1());
                     if (!added[0]) {
@@ -2877,8 +2879,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         return ReactiveSeq.concat(ReactiveSeq.of(values),ReactiveSeq.of(t._1()));
                     }
                     return Stream.of(t._1());
-                }
-        );
+                }),ReactiveSeq.of(values).limitWhile(p->added[0]==false));
+
 
 
     }
@@ -2891,18 +2893,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
         long check =  new Long(pos);
         boolean added[] = {false};
+        return  ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
+            if (t._2() < check && !added[0])
+                return ReactiveSeq.of(t._1());
+            if (!added[0]) {
+                added[0] = true;
+                return ReactiveSeq.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
+            }
+            return Stream.of(t._1());
+        }), ReactiveSeq.fromIterable(values).limitWhile(p -> added[0] == false));
 
-
-        return zipWithIndex().flatMap(t-> {
-                    if (t._2() < check && !added[0])
-                        return ReactiveSeq.of(t._1());
-                    if (!added[0]) {
-                        added[0] = true;
-                        return ReactiveSeq.concat(ReactiveSeq.fromIterable(values),ReactiveSeq.of(t._1()));
-                    }
-                    return Stream.of(t._1());
-                }
-        );
 
 
     }
@@ -2914,40 +2914,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         boolean added[] = {false};
 
 
-        return zipWithIndex().flatMap(t-> {
-                    if (t._2() < check && !added[0])
-                        return ReactiveSeq.of(t._1());
-                    if (!added[0]) {
-                        added[0] = true;
-                        return ReactiveSeq.concat(values,ReactiveSeq.of(t._1()));
-                    }
-                    return Stream.of(t._1());
-                }
-        );
+        return  ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
+            if (t._2() < check && !added[0])
+                return ReactiveSeq.of(t._1());
+            if (!added[0]) {
+                added[0] = true;
+                return ReactiveSeq.concat(values, ReactiveSeq.of(t._1()));
+            }
+            return Stream.of(t._1());
+        }), values.limitWhile(p -> added[0] == false));
+
+
 
 
     }
-    default ReactiveSeq<T> insertAtOrAppend(int pos, T... values){
-        if(pos==0){
-            return prependAll(values);
-        }
-        long check =  new Long(pos);
-        boolean added[] = {false};
 
-        ReactiveSeq<T> vals = ReactiveSeq.of(values);
-        return  ReactiveSeq.concat(zipWithIndex().flatMap(t-> {
-                    if (t._2() < check && !added[0])
-                        return ReactiveSeq.of(t._1());
-                    if (!added[0]) {
-                        added[0] = true;
-                        return ReactiveSeq.concat(vals,ReactiveSeq.of(t._1()));
-                    }
-                    return Stream.of(t._1());
-                }
-        ),vals.filter(i->!added[0]));
-
-
-    }
 
 
     /**

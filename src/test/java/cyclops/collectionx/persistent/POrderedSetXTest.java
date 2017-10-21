@@ -4,7 +4,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,11 +16,16 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.OrderedSetX;
+import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.collectionx.mutable.SetX;
 import cyclops.control.Option;
 import cyclops.data.Comparators;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
@@ -34,6 +41,36 @@ public class POrderedSetXTest extends AbstractSetTest {
 	public void setup(){
 
 		counter = new AtomicLong(0);
+		super.setup();
+	}
+    @Test
+    public void permuations3() {
+        System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        CollectionX<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList()).toSetX();
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(3,2,1)));
+        assertTrue(x.containsValue(ListX.of(2,1,3)));
+        assertTrue(x.containsValue(ListX.of(2,3,1)));
+        assertTrue(x.containsValue(ListX.of(3,1,2)));
+        assertTrue(x.containsValue(ListX.of(1,3,2)));
+    }
+    @Test
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+        SetX<List<Integer>> s = x.toSetX();
+
+        assertTrue(s.containsValue(ListX.of(1,2,3)));
+        assertTrue(s.containsValue(ListX.of(4,5,6)));
+
+    }
+	@Override
+	protected <T> CollectionX<T> fromStream(Stream<T> s) {
+		return OrderedSetX.orderedSetX(ReactiveSeq.fromStream(s));
 	}
 	@Test
 	public void asyncTest() throws InterruptedException {

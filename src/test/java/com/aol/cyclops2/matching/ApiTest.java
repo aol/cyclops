@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 //import com.aol.cyclops2.matching.sample.Book;
 import com.aol.cyclops2.matching.sample.Pet.Dog;
 
+import cyclops.control.Option;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -22,13 +23,13 @@ public class ApiTest {
 
   @Test
   public void shouldMatchSimpleObject() {
-    Optional<String> of = Match("b").of(
+    Option<String> of = Match("b").of(
         Case(t -> t.equals("a"), () -> "a"),
         Case(t -> t.equals("b"), () -> "b"),
         Case(t -> t.equals("c"), () -> "c")
     );
     assertTrue(of.isPresent());
-    assertEquals("b", of.get());
+    assertEquals("b", of.orElse("c"));
   }
 
   @Test

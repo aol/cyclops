@@ -690,7 +690,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
     @Override
     default QueueX<T> removeValue(final Object e) {
-        removeValue(e);
+        remove(e);
         return this;
     }
 
@@ -1077,7 +1077,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
     @Override
     default <R> QueueX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (QueueX<R>)LazyCollectionX.super.retry(fn);
+        return (QueueX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

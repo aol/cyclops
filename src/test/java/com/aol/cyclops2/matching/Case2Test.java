@@ -13,7 +13,8 @@ public class Case2Test {
   @Test
   public void shouldMatchForAllPredicates() {
     Tuple2<String, Integer> tuple2 = new Tuple2<>("tuple", 2);
-    assertEquals("tuple2", new Case2<>((String t1) -> t1.equals("tuple"), (Integer t2) -> t2.equals(2), __ -> "tuple2").test(tuple2).get());
+    assertEquals("tuple2", new Case2<>((String t1) -> t1.equals("tuple"), (Integer t2) -> t2.equals(2), __ -> "tuple2").test(tuple2)
+            .orElse(null));
   }
 
   @Test

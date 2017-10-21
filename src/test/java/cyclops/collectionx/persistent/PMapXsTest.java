@@ -8,6 +8,7 @@ import java.util.Map;
 
 import cyclops.collectionx.immutable.*;
 import cyclops.companion.PersistentMapXs;
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import org.junit.Test;
 
@@ -71,7 +72,7 @@ public class PMapXsTest {
     @Test
     public void onEmptySwitch(){
        
-        assertThat(PersistentMapX.<String,Integer>empty().onEmptySwitch(()-> PersistentMapX.fromMap(MapXs.of("hello",10))).getValue("hello"),equalTo(10));
+        assertThat(PersistentMapX.<String,Integer>empty().onEmptySwitch(()-> PersistentMapX.fromMap(MapXs.of("hello",10))).getValue("hello"),equalTo(Option.some(10)));
     }
     @Test
     public void testOf() {

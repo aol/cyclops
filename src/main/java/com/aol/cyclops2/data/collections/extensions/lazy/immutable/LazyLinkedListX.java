@@ -71,11 +71,11 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     public class PStackGeneator<T> implements FoldToList<T> {
          public PStack<T> from(final Iterator<T> i,int depth) {
 
-            if(!i.hasNext())
-                return Seq.empty();
-            T e = i.next();
-            return  from(i,depth++).plus(e);
-        }
+             if (!i.hasNext())
+                 return Seq.empty();
+             return Seq.<T>empty().prependAll(() -> i);
+
+         }
     }
    
     public PStack<T> materializeList(ReactiveSeq<T> toUse){

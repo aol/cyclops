@@ -5,7 +5,7 @@ import cyclops.reactive.ReactiveSeq;
 import java.util.Collection;
 import java.util.Objects;
 
-public interface PCollection<T> extends Iterable<T>{//{, Collection<T> {
+public interface PCollection<T> extends Iterable<T>{
 
      PCollection<T> plus(T e);
 

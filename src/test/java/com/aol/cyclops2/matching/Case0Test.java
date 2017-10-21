@@ -10,7 +10,7 @@ public class Case0Test {
   @Test
   public void shouldMatchForAllPredicates() {
     String value = "value";
-    assertEquals("case0", new Case.Case0<>((String t1) -> t1.equals("value"), () -> "case0").test(value).get());
+    assertEquals("case0", new Case.Case0<>((String t1) -> t1.equals("value"), () -> "case0").test(value).orElse(null));
   }
 
   @Test

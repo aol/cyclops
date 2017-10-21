@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import cyclops.collectionx.immutable.BagX;
+import cyclops.data.Bag;
+import cyclops.data.Seq;
+import cyclops.function.Reducer;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
@@ -51,6 +54,11 @@ public class PBagsTest {
 				.collect(Collectors.toList()),
 				hasItems("a","b","c"));
 	}
+
+	@Test
+    public void testReducer(){
+	    System.out.println(Reducers.toPBag().mapReduce(Seq.of(1,2,3).stream()));
+    }
 	
 
 }

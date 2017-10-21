@@ -610,7 +610,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public ReactiveSeq<T> prependAll(final T... other) {
-        return ReactiveSeq.concat(Stream.of(other).spliterator(),get());
+        return ReactiveSeq.concat(ReactiveSeq.of(other).spliterator(),get());
     }
 
 

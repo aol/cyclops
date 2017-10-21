@@ -13,13 +13,13 @@ public class CaseOptionalTest {
   @Test
   public void shouldMatchOptionalPresent() {
     CaseOptional<String, Long> caseOptional = new CaseOptional<>(() -> 1L, () -> 2L);
-    assertEquals((Long) 1L, caseOptional.test(of("")).get());
+    assertEquals((Long) 1L, caseOptional.test(of("")).orElse(null));
   }
 
   @Test
   public void shouldMatchOptionalAbsent() {
     CaseOptional<String, Long> caseOptional = new CaseOptional<>(() -> 1L, () -> 2L);
-    assertEquals((Long) 2L, caseOptional.test(empty()).get());
+    assertEquals((Long) 2L, caseOptional.test(empty()).orElse(null));
   }
 
 }

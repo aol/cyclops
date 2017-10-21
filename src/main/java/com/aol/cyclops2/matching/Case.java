@@ -1,7 +1,9 @@
 package com.aol.cyclops2.matching;
 
+import static cyclops.control.Option.none;
 import static java.util.Optional.empty;
 
+import cyclops.control.Option;
 import cyclops.data.tuple.Tuple1;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -30,7 +32,7 @@ public interface Case<T, R> {
    * @param value the value to be tested.
    * @return the return, implementations may or not return null to determine success.
    */
-  Optional<R> test(T value);
+  Option<R> test(T value);
 
   /**
    * Return the test for this user case or for the other. there is no guarantee
@@ -41,7 +43,7 @@ public interface Case<T, R> {
    */
   default Case<T, R> or(Case<T, R> orCase) {
     return (t) -> {
-      Optional<R> val = test(t);
+      Option<R> val = test(t);
       return val.isPresent() ? val : orCase.test(t);
     };
   }
@@ -52,8 +54,8 @@ public interface Case<T, R> {
     final Function<? super T,? extends R> fn;
 
     @Override
-    public Optional<R> test(T value) {
-      return Optional.ofNullable(fn.apply(value));
+    public Option<R> test(T value) {
+      return Option.some(fn.apply(value));
     }
 
   }
@@ -64,8 +66,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier;
 
     @Override
-    public Optional<R> test(T value) {
-      return predicate.test(value) ? Optional.of(supplier.get()) : empty();
+    public Option<R> test(T value) {
+      return predicate.test(value) ? Option.some(supplier.get()) : none();
     }
 
   }
@@ -77,8 +79,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier;
 
     @Override
-    public Optional<R> test(Tuple1<T1> value) {
-      return predicate.test(value._1()) ? Optional.of(supplier.get()) : empty();
+    public Option<R> test(Tuple1<T1> value) {
+      return predicate.test(value._1()) ? Option.of(supplier.get()) : none();
     }
 
   }
@@ -91,8 +93,8 @@ public interface Case<T, R> {
     final Function<? super Tuple2<T1,T2>,? extends R> supplier;
 
     @Override
-    public Optional<R> test(Tuple2<T1, T2> value) {
-      return predicate1.test(value._1()) && predicate2.test(value._2()) ? Optional.of(supplier.apply(value)) : empty();
+    public Option<R> test(Tuple2<T1, T2> value) {
+      return predicate1.test(value._1()) && predicate2.test(value._2()) ? Option.some(supplier.apply(value)) : none();
     }
 
   }
@@ -107,8 +109,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier;
 
     @Override
-    public Optional<R> test(Tuple3<T1, T2, T3> value) {
-      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) ? Optional.of(supplier.get()) : empty();
+    public Option<R> test(Tuple3<T1, T2, T3> value) {
+      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) ? Option.some(supplier.get()) : none();
     }
 
   }
@@ -124,8 +126,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier;
 
     @Override
-    public Optional<R> test(Tuple4<T1, T2, T3, T4> value) {
-      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) && predicate4.test(value._4()) ? Optional.of(supplier.get()) : empty();
+    public Option<R> test(Tuple4<T1, T2, T3, T4> value) {
+      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) && predicate4.test(value._4()) ? Option.some(supplier.get()) : none();
     }
 
   }
@@ -142,8 +144,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier;
 
     @Override
-    public Optional<R> test(Tuple5<T1, T2, T3, T4, T5> value) {
-      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) && predicate4.test(value._4()) && predicate5.test(value._5()) ? Optional.of(supplier.get()) : empty();
+    public Option<R> test(Tuple5<T1, T2, T3, T4, T5> value) {
+      return predicate1.test(value._1()) && predicate2.test(value._2()) && predicate3.test(value._3()) && predicate4.test(value._4()) && predicate5.test(value._5()) ? Option.some(supplier.get()) : none();
     }
 
   }
@@ -156,8 +158,8 @@ public interface Case<T, R> {
     final Supplier<R> supplier1;
 
     @Override
-    public Optional<R> test(Optional<T> optional) {
-      return Optional.of(optional.isPresent() ? supplier0.get() : supplier1.get());
+    public Option<R> test(Optional<T> optional) {
+      return Option.some(optional.isPresent() ? supplier0.get() : supplier1.get());
     }
 
   }

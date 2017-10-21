@@ -22,7 +22,9 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.collectionx.AbstractSetTest;
+import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
@@ -42,6 +44,11 @@ public class SetXTest extends AbstractSetTest {
     public void setup(){
 
         counter = new AtomicLong(0);
+        super.setup();
+    }
+    @Override
+    protected <T> CollectionX<T> fromStream(Stream<T> s) {
+        return SetX.setX(ReactiveSeq.fromStream(s));
     }
     @Test
     public void asyncTest() throws InterruptedException {

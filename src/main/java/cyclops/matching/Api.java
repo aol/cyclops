@@ -17,7 +17,7 @@ public final class Api {
   }
 
   public static <T> OptionalMatching<T> Match(final Optional<T> value) {
-    return new OptionalMatching<>(value);
+    return new OptionalMatching<T>(value);
   }
 
   public static <T> PatternMatching<T> Match(T value) {

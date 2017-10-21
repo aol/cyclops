@@ -1822,11 +1822,12 @@ public abstract class AbstractIterableXTest {
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
         assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle(2).toListX());
     }
+    /**
     @Test
     public void testCycleTimesNoOrd() {
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
     }
-
+**/
     int count =0;
     @Test
     public void testCycleWhileNoOrd() {
@@ -2129,7 +2130,17 @@ public abstract class AbstractIterableXTest {
         assertThat(vec.removeValue(2),equalTo(of(5,1)));
     }
 
-
+    @Test
+    public void plusTests(){
+        assertThat(of(1,2,3,4,5),equalTo(empty().plusAll(of(1,2,3,4,5))));
+        assertThat(empty().plus(1).plus(2).plus(3)
+                .plus(4).plus(5).size(),equalTo(5));
+    }
+    @Test
+    public void prependAppend(){
+        assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
+                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+    }
     @Test
     public void insertAndRemove(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2,5);
@@ -2137,11 +2148,14 @@ public abstract class AbstractIterableXTest {
         assertThat(vec.removeValue(2),equalTo(of(5,1)));
     }
     @Test
+    public void insertAtChain(){
+        assertThat(this.<Integer>empty().insertAt(0,1).insertAt(0,2),equalTo(of(2,1)));
+    }
+    @Test
     public void removeAt(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
 
-        System.out.println("Vec  "+  vec);
-        System.out.println("Remove at "+  vec.removeAt(1));
+
         assertThat(vec.removeAt(1),equalTo(of(5,1)));
     }
     @Test
@@ -2154,15 +2168,22 @@ public abstract class AbstractIterableXTest {
     public void minusAt(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
 
-        System.out.println(vec.removeAt(1));
+
         assertThat(vec.removeAt(1),equalTo(of(5,1)));
     }
     @Test
     public void minusAtOutOfRange(){
-        IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(0,1)
+                 .insertAt(0,2)
+                 .insertAt(0,5);
+
+
+
 
         assertThat(vec.removeAt(-1),equalTo(of(5,2,1)));
         assertThat(vec.removeAt(500),equalTo(of(5,2,1)));
+
     }
     @Test
     public void updateAt(){
@@ -2657,7 +2678,7 @@ public abstract class AbstractIterableXTest {
         Function<Integer, Integer> fn = i -> i / 0;
 
         of(1)
-                .retry(fn, 0, 1, TimeUnit.SECONDS)
+                .retry(fn, 0, 1, TimeUnit.MILLISECONDS)
                 .firstValue();
 
         fail();

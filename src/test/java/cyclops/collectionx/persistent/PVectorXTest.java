@@ -31,6 +31,7 @@ public class PVectorXTest extends CollectionXTestsWithNulls{
 	public void setup(){
 
 		counter = new AtomicLong(0);
+		super.setup();
 	}
 	@Test
 	public void asyncTest() throws InterruptedException {

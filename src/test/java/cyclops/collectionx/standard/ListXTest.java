@@ -1,6 +1,7 @@
 package cyclops.collectionx.standard;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -34,9 +35,9 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void withTest(){
 
 
-        assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").insertAt(0, "x"));
-        assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").insertAt(1, "x"));
-        assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").insertAt(2, "x"));
+        assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").updateAt(0, "x"));
+        assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").updateAt(1, "x"));
+        assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").updateAt(2, "x"));
     }
 
     int times =0;
@@ -45,6 +46,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void setup(){
         times = 0;
         counter = new AtomicLong(0);
+        super.setup();
     }
     @Test
     public void asyncTest() throws InterruptedException {
@@ -257,6 +259,37 @@ public class ListXTest extends CollectionXTestsWithNulls {
     @Override
     public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ListX.unfold(seed, unfolder);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusAtOutOfRange(){
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(0,1)
+                .insertAt(0,2)
+                .insertAt(0,5);
+
+
+
+
+        assertThat(vec.removeAt(-1),equalTo(of(5,2,1)));
+
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusAtOutOfRange2(){
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(0,1)
+                .insertAt(0,2)
+                .insertAt(0,5);
+
+
+
+
+
+        assertThat(vec.removeAt(500),equalTo(of(5,2,1)));
+
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusOne(){
+        assertThat(of().removeAt(1).size(),equalTo(0));
     }
 
 }

@@ -1225,7 +1225,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     @Override
     default <R> DequeX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (DequeX<R>)LazyCollectionX.super.retry(fn);
+        return (DequeX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

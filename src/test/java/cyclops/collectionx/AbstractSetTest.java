@@ -1,18 +1,30 @@
 package cyclops.collectionx;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
+import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
+import cyclops.data.Bag;
+import cyclops.data.HashSet;
+import cyclops.data.ImmutableSet;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static cyclops.data.tuple.Tuple.tuple;
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
@@ -20,6 +32,8 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractSetTest extends AbstractCollectionXTest {
+    protected abstract <T> CollectionX<T> fromStream(Stream<T> s);
+
     @Test
     public void testMapA(){
         assertThat(of(1,2,3).map(i->i*2),equalTo(of(2,4,6)));
@@ -186,12 +200,208 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
         System.out.println(list);
         assertTrue(list.containsValue(VectorX.of(1,2)));
     }
+    @Test
+    public void duplicates(){
+
+        assertThat(of(1,2,1,2,1,2).size(),equalTo(2));
+    }
+
+
+
+    @Test
+    public void testFlatMapA(){
+        assertThat(of(1,2,3).flatMap(i-> of(i*2)),equalTo(of(2,4,6)));
+        assertThat(this.<Integer>empty().concatMap(i-> of(i*2)),equalTo(empty()));
+    }
+
+
+
+    @Test
+    public void testFoldRightA(){
+        assertThat(fromStream(ReactiveSeq.range(0,100_000)).materialize().foldRight(Monoids.intSum),equalTo(704982704));
+    }
+
     /**
+     @Test
+    public void testCycleNoOrd() {
+        assertEquals(asList(1, 2 ),of(1, 2).cycle(3).toListX());
+        assertEquals(asList(1, 2, 3), of(1, 2, 3).cycle(2).toListX());
+    }
+
+    @Test
+    public void testCycleTimesNoOrd() {
+        assertEquals(asList(1, 2),of(1, 2).cycle(3).toListX());
+    }
+    **/
+
+
+    int count =0;
+    /**
+    @Test
+    public void testCycleWhileNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
+
+    }
+    @Test
+    public void testCycleUntilNoOrd() {
+        count =0;
+        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+    }
+    @Test
+    public void testCycleUntil() {
+        count =0;
+        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+        count =0;
+        assertEquals(3,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
+
+    }
+    @Test
+    public void testCycleWhile() {
+        count =0;
+        assertEquals(3,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
+
+    }
+
+    @Test
+    public void testCycleTimesNoOrder() {
+        assertEquals(2,of(1, 2).cycle(3).toListX().size());
+    }
+
     @Test
     public void testCycleNoOrder() {
         assertEquals(2,of(1, 2).cycle(3).toListX().size());
         assertEquals(3, of(1, 2, 3).cycle(2).toListX().size());
     }
-    **/
+     **/
+    @Test
+    public void take2Reversed(){
+        range(0,10).reverse().limit(2).printOut();
+        assertThat(range(0,10).materialize().reverse(),equalTo(range(0,10)));
+    }
+    @Test
+    public void allCombinations3() {
+        assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toListX(),hasItems(ListX.of(), ListX.of(1), ListX.of(2),
+                ListX.of(3), ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3), ListX.of(1, 2, 3)));
+    }
+    @Test
+    public void rangeLongReversedSkip(){
+        System.out.println(rangeLong(0,5).reverse()
+                .skip(3));
+        assertThat(rangeLong(0,5).materialize().reverse(),equalTo(rangeLong(0,5)));
+    }
+    @Test @Ignore
+    public void longStreamCompare(){
+
+    }
+    @Test
+    public void negativeLong(){
+        assertThat(rangeLong(-1000L,200)
+                .count(),equalTo(1200L));
+    }
+    @Test
+    public void rangeIntReversedSkip2(){
+        assertThat(range(0,5).reverse()
+                .skip(3).toListX().size(),equalTo(2));
+    }
+    @Test
+    public void rangeIntReversedSkip(){
+
+        assertThat(range(0,20).reverse()
+                .limit(10).skip(8).size(),equalTo(2));
+    }
+    @Test
+    public void combinations2() {
+        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+                hasItems(ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3)));
+    }
+    @Test
+    public void rangeInt(){
+        System.out.println(range(0,150));
+        assertThat(range(0,150)
+                .limit(2).count(),equalTo(2l));
+    }
+    @Test
+    public void rangeIntReversed(){
+        assertThat(range(0,150).reverse()
+                .limit(2).size(),equalTo(2));
+    }
+    @Test
+    public void removeFirst(){
+        IterableX<Integer> vec = this.of(1,2,2,2,3);
+
+        assertThat(vec.removeFirst(i->i==2),equalTo(of(1,2,3)));
+    }
+    @Test
+    public void permuations3() {
+        System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        CollectionX<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList());
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(3,2,1)));
+        assertTrue(x.containsValue(ListX.of(2,1,3)));
+        assertTrue(x.containsValue(ListX.of(2,3,1)));
+        assertTrue(x.containsValue(ListX.of(3,1,2)));
+        assertTrue(x.containsValue(ListX.of(1,3,2)));
+    }
+    @Test
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(4,5,6)));
+
+    }
+    @Test
+    public void batchUntilCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        assertTrue(of(1,2,3,4,5,6)
+                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .toList().contains(ListX.of(1,2,3)));
+    }
+    @Test
+    public void batchBySizeSet(){
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+    }
+    @Test
+    public void combine(){
+        assertThat(of(1,1,2,3).materialize()
+                .combine((a, b)->a.equals(b),Semigroups.intSum).materialize()
+                .toSetX(),equalTo(SetX.of(1,2,3)));
+
+    }
+    @Test
+    public void intStreamCompareReversed(){
+
+
+        assertThat(0,
+                equalTo(range(-5,6).materialize().reverse().sumInt(i->i)));
+
+    }
+    @Test
+    public void longStreamCompareReversed(){
+        assertThat(0L,
+                equalTo(rangeLong(-5,6).materialize().reverse().sumLong(i->i)));
+    }
+    @Test
+    public void reduceWithMonoidJoin(){
+        String s = of("hello","2","world","4").join(",");
+        Arrays.asList("hello","2","world","4").forEach(c->{
+            assertTrue(s.contains(c));
+        });
+
+        String s2 =of("hello","2","world","4").reduce(Reducers.toString(","));
+        Arrays.asList("hello","2","world","4").forEach(c->{
+            assertTrue(s2.contains(c));
+        });
+    }
 
 }

@@ -3,10 +3,15 @@ package cyclops.collectionx.persistent;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.BagX;
+import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collectionx.mutable.SetX;
+import cyclops.companion.Semigroups;
 import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
@@ -38,6 +43,11 @@ public class PBagXTest extends AbstractSetTest {
     public void setup(){
 
         counter = new AtomicLong(0);
+        super.setup();
+    }
+    @Override
+    protected <T> CollectionX<T> fromStream(Stream<T> s) {
+        return BagX.bagX(ReactiveSeq.fromStream(s));
     }
     @Test
     public void asyncTest() throws InterruptedException {
@@ -146,6 +156,24 @@ public class PBagXTest extends AbstractSetTest {
     public void testCycleUntilNoOrd() {
         count =0;
         assertEquals(asList(1, 2,3, 1, 2,3).size(),of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
+
+    }
+    @Test
+    public void duplicates(){
+
+        assertThat(of(1,2,1,2,1,2).size(),equalTo(6));
+    }
+    @Test
+    public void removeFirst(){
+        IterableX<Integer> vec = this.of(1,2,2,2,3);
+
+        assertThat(vec.removeFirst(i->i==2),equalTo(of(1,2,2,3)));
+    }
+    @Test
+    public void combine(){
+        assertThat(of(1,1,2,3).materialize()
+                .combine((a, b)->a.equals(b), Semigroups.intSum).materialize()
+                .toSetX(),equalTo(SetX.of(3,4)));
 
     }
 }

@@ -632,14 +632,14 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
     @Override
     default SortedSetX<T> removeValue(final T e) {
-        removeValue(e);
+        remove(e);
         return this;
     }
 
     @Override
     default SortedSetX<T> removeAll(final Iterable<? extends T> list) {
         for(T next : list) {
-            remove(list);
+            remove(next);
         }
         return this;
     }
@@ -1038,7 +1038,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
     @Override
     default <R> SortedSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (SortedSetX<R>)LazyCollectionX.super.retry(fn);
+        return (SortedSetX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

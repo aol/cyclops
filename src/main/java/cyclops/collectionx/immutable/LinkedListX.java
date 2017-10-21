@@ -1208,7 +1208,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default <R> LinkedListX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (LinkedListX<R>)LazyCollectionX.super.retry(fn);
+        return (LinkedListX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

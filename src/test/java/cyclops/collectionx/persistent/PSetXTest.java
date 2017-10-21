@@ -8,10 +8,13 @@ import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.control.Option;
+import cyclops.data.ImmutableSet;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -39,6 +42,7 @@ public class PSetXTest extends AbstractSetTest {
     public void setup(){
 
         counter = new AtomicLong(0);
+        super.setup();
     }
     @Test
     public void asyncTest() throws InterruptedException {
@@ -53,6 +57,11 @@ public class PSetXTest extends AbstractSetTest {
         long current = counter.get();
         Thread.sleep(400);
         assertTrue(current<counter.get());
+    }
+
+    @Override
+    protected <T> CollectionX<T> fromStream(Stream<T> s) {
+        return PersistentSetX.persistentSetX(ReactiveSeq.fromStream(s));
     }
 
     @Test

@@ -656,7 +656,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
     @Override
     default SetX<T> removeValue(final T e) {
-        removeValue(e);
+        remove(e);
         return this;
     }
 
@@ -1058,7 +1058,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
     @Override
     default <R> SetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (SetX<R>)LazyCollectionX.super.retry(fn);
+        return (SetX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

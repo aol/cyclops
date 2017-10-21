@@ -1043,7 +1043,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
     @Override
     default <R> PersistentSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (PersistentSetX<R>)LazyCollectionX.super.retry(fn);
+        return (PersistentSetX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
@@ -1080,10 +1080,16 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     default PersistentSetX<T> prependAll(T... values) {
         return (PersistentSetX<T>)LazyCollectionX.super.prependAll(values);
     }
+    @Override
+    default PersistentSetX<T> insertAt(int pos, T values) {
+        LazyCollectionX<T> r = LazyCollectionX.super.insertAt(pos, values);
+        return (PersistentSetX<T>)r;
+    }
 
     @Override
     default PersistentSetX<T> insertAt(int pos, T... values) {
-        return (PersistentSetX<T>)LazyCollectionX.super.insertAt(pos,values);
+        LazyCollectionX<T> r = LazyCollectionX.super.insertAt(pos, values);
+        return (PersistentSetX<T>)r;
     }
 
     @Override

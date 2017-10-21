@@ -1153,9 +1153,8 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> insertAt(final int i, final T element) {
-        return from(stream().deleteBetween(i, i + 1)
-                            .insertAtOrAppend(i, element)
-                            .collect(getCollector()));
+        return from(stream()
+                            .insertAt(i, element));
     }
 
     /* (non-Javadoc)
@@ -1195,7 +1194,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     @Override
     default ListX<T> removeValue(final Object e) {
-        this.removeValue(e);
+        this.remove(e);
         return this;
     }
 
@@ -1212,9 +1211,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default ListX<T> insertAt(final int i, final Iterable<? extends T> list) {
-
-        addAll(i, ListX.fromIterable(list));
-        return this;
+        return fromStream(stream().insertAt(i,list));
     }
 
     @Override
@@ -1659,7 +1656,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default <R> ListX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ListX<R>)LazyCollectionX.super.retry(fn);
+        return (ListX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override

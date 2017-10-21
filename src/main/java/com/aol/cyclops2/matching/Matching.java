@@ -4,6 +4,8 @@ import static java.util.Arrays.stream;
 
 import com.aol.cyclops2.matching.Case.Any;
 
+import cyclops.control.Option;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple0;
@@ -19,8 +21,8 @@ public interface Matching {
     private final T value;
 
     @SafeVarargs
-    public final <R> Optional<R> of(Case<T, R>... cases) {
-      return stream(cases).reduce(Case::or).flatMap(c -> c.test(value));
+    public final <R> Option<R> of(Case<T, R>... cases) {
+      return ReactiveSeq.of(cases).foldLeft(Case::or).flatMap(c -> c.test(value));
     }
 
     public <R> R of(Case<T, R> case1, Any<R> any) {
@@ -62,7 +64,7 @@ public interface Matching {
     private final Sealed2<T1,T2> value;
 
     public <R> R of(Case<T1, R> case1, Case<T2, R> case2) {
-      return value.fold(a->case1.test(a), b->case2.test(b)).get();
+      return value.fold(a->case1.test(a), b->case2.test(b)).orElse(null);
     }
 
   }
@@ -72,7 +74,7 @@ public interface Matching {
     private final Sealed3<T1,T2,T3> value;
 
     public <R> R of(Case<T1, R> case1, Case<T2, R> case2,Case<T3, R> case3) {
-      return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c)).get();
+      return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c)).orElse(null);
     }
 
   }
@@ -82,7 +84,7 @@ public interface Matching {
         private final Sealed4<T1,T2,T3,T4> value;
 
         public <R> R of(Case<T1, R> case1, Case<T2, R> case2,Case<T3, R> case3,Case<T4, R> case4) {
-            return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c), d->case4.test(d)).get();
+            return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c), d->case4.test(d)).orElse(null);
         }
 
     }
@@ -92,7 +94,7 @@ public interface Matching {
         private final Sealed5<T1,T2,T3,T4,T5> value;
 
         public <R> R of(Case<T1, R> case1, Case<T2, R> case2,Case<T3, R> case3,Case<T4, R> case4, Case<T5, R> case5) {
-            return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c), d->case4.test(d), e->case5.test(e)).get();
+            return value.fold(a->case1.test(a), b->case2.test(b), c->case3.test(c), d->case4.test(d), e->case5.test(e)).orElse(null);
         }
 
     }
@@ -102,7 +104,7 @@ public interface Matching {
     private final Sealed1Or<T1> value;
 
     public <R> R of(Case<T1, R> case1, Case<Tuple0, R> case2) {
-      return value.fold(a->case1.test(a),()->case2.test(Tuple.empty())).get();
+      return value.fold(a->case1.test(a),()->case2.test(Tuple.empty())).orElse(null);
     }
 
   }
@@ -113,7 +115,7 @@ public interface Matching {
     private final Optional<T> value;
 
     public <R> R of(Case.CaseOptional<T, R> caseOptional) {
-      return caseOptional.test(value).get();
+      return caseOptional.test(value).orElse(null);
     }
 
   }

@@ -192,7 +192,9 @@ public class Reducers {
      * @return Reducer for PBag
      */
     public static <T> Reducer<PBag<T>> toPBag() {
-        return Reducer.<PBag<T>> of(Bag.empty(), (final PBag<T> a) -> b -> a.plusAll(b), (final T x) -> Bag.singleton(x));
+        return Reducer.<PBag<T>> of(Bag.empty(), (final PBag<T> a) -> b ->
+                                        a.plusAll(b),
+                (final T x) -> Bag.singleton(x));
     }
     /**
      * <pre>

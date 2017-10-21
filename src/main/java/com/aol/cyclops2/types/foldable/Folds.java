@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.stream.ConvertableToReactiveSeq;
+import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.HashSet;
 import cyclops.data.TreeSet;
@@ -389,6 +390,10 @@ public interface Folds<T> extends Iterable<T>  {
      */
     default Optional<T> reduce(final BinaryOperator<T> accumulator) {
         return stream().reduce(accumulator);
+    }
+
+    default Option<T> foldLeft(final BinaryOperator<T> accumulator) {
+        return Option.fromOptional(stream().reduce(accumulator));
     }
 
     /**

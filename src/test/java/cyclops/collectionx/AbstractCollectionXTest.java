@@ -5,6 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 
 import cyclops.async.LazyReact;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
@@ -357,6 +358,51 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
                 (a ,b) -> a + b).toList().size(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10).size()));
     }
 
+    @Test
+    public void take2Reversed(){
+        range(0,10).reverse().limit(2).printOut();
+        assertThat(range(0,10).materialize().reverse().limit(2).toListX(),equalTo(ListX.of(9,8)));
+    }
+    @Test
+    public void intStreamCompareReversed(){
 
-	 
+
+        assertThat(0,
+                equalTo(range(-5,6).materialize().reverse().sumInt(i->i)));
+
+    }
+    @Test
+    public void longStreamCompareReversed(){
+        assertThat(0L,
+                equalTo(rangeLong(-5,6).materialize().reverse().sumLong(i->i)));
+    }
+    @Test
+    public void rangeLongReversedSkip(){
+        System.out.println(rangeLong(0,5).materialize().reverse()
+                .skip(3));
+        assertThat(rangeLong(0,5).materialize().reverse()
+                .skip(3).toListX(),equalTo(ListX.of(1l,0l)));
+    }
+    @Test
+    public void rangeIntReversed(){
+        assertThat(range(0,150).materialize().reverse()
+                .limit(2).toListX(),equalTo(ListX.of(149, 148)));
+    }
+    @Test
+    public void rangeIntReversedSkip2(){
+        assertThat(range(0,5).materialize().reverse()
+                .skip(3).toListX(),equalTo(ListX.of(1,0)));
+    }
+    @Test
+    public void rangeIntReversedSkip(){
+
+        assertThat(range(0,20).materialize().reverse()
+                .limit(10).skip(8).toListX(),equalTo(ListX.of(11, 10)));
+    }
+    @Test
+    public void batchBySizeSet(){
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
+        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+    }
 }

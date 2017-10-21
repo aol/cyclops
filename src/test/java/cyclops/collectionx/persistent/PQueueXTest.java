@@ -31,6 +31,7 @@ public class PQueueXTest extends AbstractCollectionXTest {
 	public void setup(){
 
 		counter = new AtomicLong(0);
+		super.setup();
 	}
 	@Test
 	public void asyncTest() throws InterruptedException {

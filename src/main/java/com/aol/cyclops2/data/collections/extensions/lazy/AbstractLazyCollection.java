@@ -134,7 +134,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         return seq.get()==null;
     }
     @Override
-    public CollectionX<T> materialize() {
+    public LazyCollectionX<T> materialize() {
         get();
         return this;
     }

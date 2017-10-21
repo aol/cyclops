@@ -6,7 +6,9 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -19,6 +21,7 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collectionx.AbstractSetTest;
+import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
@@ -49,10 +52,15 @@ public class SortedSetXTest extends AbstractSetTest {
     }
 
     AtomicLong counter = new AtomicLong(0);
+    @Override
+    protected <T> CollectionX<T> fromStream(Stream<T> s) {
+        return SortedSetX.sortedSetX(ReactiveSeq.fromStream(s));
+    }
     @Before
     public void setup(){
 
         counter = new AtomicLong(0);
+        super.setup();
     }
     @Test
     public void combinations2NoOrder2() {
@@ -207,6 +215,18 @@ public class SortedSetXTest extends AbstractSetTest {
         System.out.println("same" +vec.equals(VectorX.of(1,2)));
         System.out.println(list.containsValue(VectorX.of(1,2)));
         assertTrue(list.containsValue(VectorX.of(1,2)));
+    }
+    @Test @Ignore
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+
+        assertTrue(x.toSetX().containsValue(ListX.of(1,2,3)));
+        assertTrue(x.toSetX().containsValue(ListX.of(4,5,6)));
+
     }
 
 }

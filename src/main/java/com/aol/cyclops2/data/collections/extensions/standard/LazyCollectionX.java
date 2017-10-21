@@ -13,6 +13,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.traversable.IterableX;
+import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
@@ -795,6 +797,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     default LazyCollectionX<T> insertAt(int pos, T... values){
         return fromStream(stream().insertAt(pos,values));
     }
+    @Override
+    default LazyCollectionX<T> insertAt(int pos, T value){
+        return fromStream(stream().insertAt(pos,value));
+    }
 
     @Override
     default LazyCollectionX<T> deleteBetween(int start, int end){
@@ -804,6 +810,60 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     @Override
     default LazyCollectionX<T> insertAtS(int pos, Stream<T> stream){
         return fromStream(stream().insertAtS(pos,stream));
+    }
 
+    @Override
+    default LazyCollectionX<T> materialize() {
+        return this;
+    }
+
+    @Override
+    default LazyCollectionX<T> removeAt(long pos) {
+        return fromStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default LazyCollectionX<T> removeAt(int pos) {
+        return fromStream(stream().removeAt(pos));
+    }
+
+    @Override
+    default LazyCollectionX<T> removeFirst(Predicate<? super T> pred) {
+        return fromStream(stream().removeFirst(pred));
+    }
+
+    @Override
+    default LazyCollectionX<T> appendAll(Iterable<? extends T> value) {
+        return fromStream(stream().appendAll(value));
+    }
+
+    @Override
+    default LazyCollectionX<T> prependAll(Iterable<? extends T> value) {
+        return fromStream(stream().prependAll(value));
+    }
+
+    @Override
+    default LazyCollectionX<T> prepend(Iterable<? extends T> value) {
+        return fromStream(stream().prepend(value));
+    }
+
+    @Override
+    default LazyCollectionX<T> updateAt(int pos, T value) {
+        return fromStream(stream().updateAt(pos,value));
+    }
+
+    @Override
+    default <R> LazyCollectionX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return fromStream(stream().flatMapI(mapper));
+    }
+
+    @Override
+    default LazyCollectionX<T> insertAt(int pos, Iterable<? extends T> values) {
+        return fromStream(stream().insertAt(pos,values));
+    }
+
+    @Override
+    default LazyCollectionX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return fromStream(stream().insertAt(pos,values));
     }
 }

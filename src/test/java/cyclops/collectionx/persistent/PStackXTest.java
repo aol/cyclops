@@ -1,6 +1,7 @@
 package cyclops.collectionx.persistent;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.CollectionXTestsWithNulls;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.LinkedListX;
@@ -41,7 +42,9 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	public void setup(){
 
 		counter = new AtomicLong(0);
+		super.setup();
 	}
+
 	@Test
 	public void asyncTest() throws InterruptedException {
 		Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
@@ -121,6 +124,18 @@ public class PStackXTest extends CollectionXTestsWithNulls {
                 .flatMapP(i->Flux.just(10+i,20+i,30+i));
 
 	    **/
+	}
+	@Test
+	public void plus(){
+		IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
+
+		assertThat(vec,equalTo(of(5,2,1)));
+	}
+	@Test
+	public void plusAll(){
+		IterableX<Integer> vec = this.<Integer>empty().plusAll(of(1)).plusAll(of(2)).plusAll(of(5));
+
+		assertThat(vec,equalTo(of(5,2,1)));
 	}
 	
 	 @Override

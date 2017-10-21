@@ -11,7 +11,7 @@ public class Case1Test {
   @Test
   public void shouldMatchForAllPredicates() {
     Tuple1<String> tuple1 = new Tuple1<>("tuple");
-    assertEquals("tuple1", new Case.Case1<>((String t1) -> t1.equals("tuple"), () -> "tuple1").test(tuple1).get());
+    assertEquals("tuple1", new Case.Case1<>((String t1) -> t1.equals("tuple"), () -> "tuple1").test(tuple1).orElse(null));
   }
 
   @Test

@@ -106,7 +106,11 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
 
     @Override
     public Bag<T> plusAll(Iterable<? extends T> list) {
-        return fromIterable(list);
+        Bag<T> res = this;
+        for(T next : list){
+            res = res.plus(next);
+        }
+        return res;
     }
 
 
