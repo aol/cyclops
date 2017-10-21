@@ -92,7 +92,8 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void insertAt(){
-        List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
+        List<String> result = 	of(1,2,3)
+                                .insertAt(1,100,200,300)
                 .map(it ->it+"!!").collect(Collectors.toList());
 
         assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -2104,9 +2105,23 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void withLarge(){
+        System.out.println(range(0,2000).insertAt(1010,-1).containsValue(-1));
         assertThat(range(0,2000).insertAt(1010,-1).containsValue(-1),equalTo(true));
     }
+    @Test
+    public void containsValueTests(){
 
+        assertThat(of(0,1,20).containsValue(-1),equalTo(false));
+        assertThat(range(0,64).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,128).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,256).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,512).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,1024).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,2000).insertAt(1010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,20000).insertAt(10010,-1).containsValue(-1),equalTo(true));
+        assertThat(range(0,2000).insertAt(1010,-10).containsValue(-1),equalTo(false));
+        assertThat(range(0,20000).insertAt(10010,-10).containsValue(-1),equalTo(false));
+    }
     @Test
     public void minus(){
         IterableX<Integer> vec = this.<Integer>empty().insertAt(0,1).insertAt(0,2).insertAt(0,5);

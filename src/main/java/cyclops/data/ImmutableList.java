@@ -731,9 +731,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     default ImmutableList<T> prependAll(T... values) {
         ImmutableList<T> res = this;
-        for(T t : values){
-            res = res.prepend(t);
+        for(int i=values.length-1;i>=0;i--){
+            res = res.prepend(values[i]);
         }
+
         return res;
     }
 

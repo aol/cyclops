@@ -12,11 +12,13 @@ import cyclops.data.HashSet;
 import cyclops.data.ImmutableSet;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static cyclops.data.tuple.Tuple.tuple;
@@ -33,6 +35,8 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
     @Override
     public abstract <T> ImmutableSet<T> of(T... values);
+
+
 
     @Test
     public void testMapA(){
@@ -204,5 +208,56 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         assertEquals(2,of(1, 2).cycle(3).toListX().size());
         assertEquals(3, of(1, 2, 3).cycle(2).toListX().size());
     }
+    @Test
+    public void take2Reversed(){
+        range(0,10).reverse().limit(2).printOut();
+        assertThat(range(0,10).reverse(),equalTo(range(0,10)));
+    }
+    @Test
+    public void allCombinations3() {
+        assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toListX(),hasItems(ListX.of(), ListX.of(1), ListX.of(2),
+                ListX.of(3), ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3), ListX.of(1, 2, 3)));
+    }
+    @Test
+    public void rangeLongReversedSkip(){
+        System.out.println(rangeLong(0,5).reverse()
+                .skip(3));
+        assertThat(rangeLong(0,5).reverse(),equalTo(rangeLong(0,5)));
+    }
+    @Test @Ignore
+    public void longStreamCompare(){
 
+    }
+    @Test
+    public void negativeLong(){
+        assertThat(rangeLong(-1000L,200)
+                .count(),equalTo(120L));
+    }
+    @Test
+    public void rangeIntReversedSkip2(){
+        assertThat(range(0,5).reverse()
+                .skip(3).toListX().size(),equalTo(2));
+    }
+    @Test
+    public void rangeIntReversedSkip(){
+
+        assertThat(range(0,20).reverse()
+                .limit(10).skip(8).size(),equalTo(2));
+    }
+    @Test
+    public void combinations2() {
+        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+                hasItems(ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3)));
+    }
+    @Test
+    public void rangeInt(){
+        System.out.println(range(0,150));
+        assertThat(range(0,150)
+                .limit(2).count(),equalTo(2));
+    }
+    @Test
+    public void rangeIntReversed(){
+        assertThat(range(0,150).reverse()
+                .limit(2).size(),equalTo(2));
+    }
 }

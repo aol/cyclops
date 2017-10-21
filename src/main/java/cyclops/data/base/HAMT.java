@@ -86,6 +86,9 @@ public class HAMT<K, V>  implements Serializable {
        public ReactiveSeq<Tuple2<K, V>> stream() {
            return ReactiveSeq.empty();
        }
+       public String toString(){
+           return "[]";
+       }
    }
    @AllArgsConstructor
    @EqualsAndHashCode
@@ -163,6 +166,9 @@ public class HAMT<K, V>  implements Serializable {
        public Tuple2<K, V> unapply() {
            return Tuple.tuple(key,value);
        }
+       public String toString(){
+           return "[h:"+hash+",k:"+key+",v:"+value+"]";
+       }
    }
     @AllArgsConstructor
     @EqualsAndHashCode
@@ -237,6 +243,10 @@ public class HAMT<K, V>  implements Serializable {
         @Override
         public ReactiveSeq<Tuple2<K, V>> stream() {
             return bucket.stream();
+        }
+
+        public String toString(){
+           return "[h:"+hash+","+bucket.toString()+"]";
         }
     }
     @AllArgsConstructor
@@ -332,7 +342,26 @@ public class HAMT<K, V>  implements Serializable {
             return (hash >>> shift) & (SIZE-1);
         }
         int index(int bit){
+            System.out.println("Bit " + bit);
+            System.out.println("Bitset " + bitset);
+            int index = Integer.bitCount(bitset & (bit - 1));
+            System.out.println("Bitset bits " + Integer.toBinaryString(bitset));
+            System.out.println("Target bits " + Integer.toBinaryString(bit));
+            if(index==0)
+                System.out.println("INDEX IS 0!");
+            System.out.println("Index " + Integer.bitCount(bitset & (bit - 1)));
+
             return Integer.bitCount(bitset & (bit - 1));
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder s = new StringBuilder("{b:" +  Integer.toBinaryString(bitset) + ",s:"+size);
+            for(Node<K,V> next : nodes){
+                s.append(","+next.toString());
+            }
+            return s.append("}").toString();
+
         }
     }
 
