@@ -52,7 +52,7 @@ import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.util.SimpleTimer;
 
-public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {
+public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO extends AbstractIterableXTest{
 	public abstract <T> AnyMSeq<W,T> empty();
 	public abstract <T> AnyMSeq<W,T> of(T... values);
 	
