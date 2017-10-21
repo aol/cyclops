@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -95,7 +96,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
 
     @Override
     public TrieSet<T> removeValue(T value) {
-        return null;
+        return fromStream(stream().filter(i->!Objects.equals(i,value)));
     }
 
     @Override
@@ -163,7 +164,7 @@ public class TrieSet<T> implements ImmutableSet<T> {
             if(!s.containsValue(next))
                 return false;
         }
-        return size()==size();
+        return size()==s.size();
     }
 
     @Override

@@ -648,8 +648,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public LazySeq<T> removeAt(final int i) {
             if (i == 0)
                 return tail.get();
-
-            return cons(head,()->tail.get().removeAt(i));
+            return cons(head,()->tail.get().removeAt(i-1));
         }
 
 

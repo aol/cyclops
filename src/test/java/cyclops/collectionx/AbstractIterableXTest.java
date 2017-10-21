@@ -2387,6 +2387,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void reversedRangeLong(){
+        System.out.println(rangeLong(10, -10));
         assertThat(rangeLong(10, -10).count(),equalTo(20L));
     }
     @Test

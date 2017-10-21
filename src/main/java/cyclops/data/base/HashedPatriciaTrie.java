@@ -149,7 +149,7 @@ public interface HashedPatriciaTrie<K, V>  {
         @Override
         public Node<K, V> put(int hash, K key, V value) {
             if (hash == 0) {
-                return new CollisionNode<>(bucket());
+                return new CollisionNode<>(bucket()).put(hash,key,value);
             } else {
                 int newHash = hash >>> BITS;
                 int index = hash & MASK;
@@ -372,7 +372,7 @@ public interface HashedPatriciaTrie<K, V>  {
 
         @Override
         public boolean isEmpty() {
-            return ReactiveSeq.of(nodes).anyMatch(Node::isEmpty);
+            return ReactiveSeq.of(nodes).allMatch(Node::isEmpty);
         }
 
         @Override

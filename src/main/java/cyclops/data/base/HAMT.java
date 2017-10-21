@@ -3,6 +3,7 @@ package cyclops.data.base;
 
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
+import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
@@ -107,7 +108,7 @@ public class HAMT<K, V>  implements Serializable {
        private Node<K,V> merge(int bitShiftDepth,  ValueNode<K, V> that) {
            //hash each merge into a collision node if hashes are the same, otherwise store in new location under a BitsetNode
            if(hash==that.hash)
-                return new CollisionNode<>(hash, Seq.of(Tuple.tuple(key,value),that.unapply()));
+                return new CollisionNode<>(hash, LazySeq.of(Tuple.tuple(key,value),that.unapply()));
            //create new BitsetNode
            int mask1 = BitsetNode.mask(hash,bitShiftDepth);
            int mask2 = BitsetNode.mask(that.hash,bitShiftDepth);
@@ -173,17 +174,24 @@ public class HAMT<K, V>  implements Serializable {
            return "[h:"+hash+",k:"+key+",v:"+value+"]";
        }
    }
-    @AllArgsConstructor
+
     @EqualsAndHashCode
    public static class CollisionNode<K,V> implements Node<K,V>{
 
        private final int hash;
-       private final Seq<Tuple2<K,V>> bucket;
+       private final int size;
+       private final ImmutableList<Tuple2<K,V>> bucket;
 
-       private static final long serialVersionUID = 1L;
+        public CollisionNode(int hash, ImmutableList<Tuple2<K, V>> bucket) {
+            this.hash = hash;
+            this.size = bucket.size();
+            this.bucket = bucket;
+        }
+
+        private static final long serialVersionUID = 1L;
        @Override
        public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
-           Seq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
+           ImmutableList<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
 
            if(this.hash==hash){
                return filtered.size()==0 ?  new ValueNode<>(hash,key,value) : new CollisionNode<>(hash,filtered.prepend(Tuple.tuple(key,value)));
@@ -272,17 +280,21 @@ public class HAMT<K, V>  implements Serializable {
                 System.arraycopy(nodes, 0, addedNodes, 0, arrayPos);
                 addedNodes[arrayPos] = node;
                 System.arraycopy(nodes, arrayPos, addedNodes, arrayPos + 1, nodes.length - arrayPos);
-                return new BitsetNode<>(addedBit, ReactiveSeq.of(addedNodes)
-                                                             .map(n->n.size())
-                                                            .reduce(0,(a,b)->a+b), addedNodes);
+                return new BitsetNode<>(addedBit, size(addedNodes), addedNodes);
             }else{
                 Node<K,V>[] updatedNodes = Arrays.copyOf(nodes, nodes.length);
                 updatedNodes[arrayPos] = node;
-                return new BitsetNode<>(bitset, ReactiveSeq.of(updatedNodes)
-                                                            .map(n->n.size())
-                                                            .reduce(0,(a,b)->a+b), updatedNodes);
+                return new BitsetNode<>(bitset, size(updatedNodes), updatedNodes);
             }
 
+        }
+
+        static int size(Node[] n){
+            int res =0;
+            for(Node next : n){
+                res = res + next.size();
+            }
+            return res;
         }
 
         @Override
@@ -328,9 +340,7 @@ public class HAMT<K, V>  implements Serializable {
             Node<K,V>[] removedNodes = new Node[nodes.length - 1];
             System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
             System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
-            return new BitsetNode<>(removedBit, ReactiveSeq.of(removedNodes)
-                                                           .map(n->n.size())
-                                                            .reduce(0,(a,b)->a+b), removedNodes);
+            return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
         }
 
         @Override
