@@ -1,18 +1,22 @@
 package cyclops.data.basetests;
 
 import cyclops.collectionx.AbstractIterableXTest;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Monoids;
-import cyclops.data.HashSet;
-import cyclops.data.ImmutableSortedSet;
+import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
 
@@ -50,4 +54,31 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
 
     }
 
+    @Test
+    public void permuations3() {
+        System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        Seq<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList()).seq();
+
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(3,2,1)));
+        assertTrue(x.containsValue(ListX.of(2,1,3)));
+        assertTrue(x.containsValue(ListX.of(2,3,1)));
+        assertTrue(x.containsValue(ListX.of(3,1,2)));
+        assertTrue(x.containsValue(ListX.of(1,3,2)));
+    }
+    @Test
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        ImmutableSet<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+
+        ImmutableList<List<Integer>> l = x.seq();
+
+        assertTrue(l.containsValue(ListX.of(1,2,3)));
+        assertTrue(l.containsValue(ListX.of(4,5,6)));
+
+    }
 }

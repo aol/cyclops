@@ -3,6 +3,7 @@ package cyclops.data.base;
 import cyclops.control.Option;
 import cyclops.data.base.HAMT.BitsetNode;
 import cyclops.data.base.HAMT.Node;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -95,7 +96,7 @@ public class HAMTTest {
         System.out.println(node);
     }
 
-    @Test
+    @Test @Ignore
     public void problemBitsetNode(){
         Node<Integer, Integer>[] nodes = new Node[2];
         nodes[0] = new HAMT.ValueNode<>(-1,-1,-1);
@@ -114,5 +115,25 @@ public class HAMTTest {
        // assertTrue(node.get(10,minusOne.hashCode(),minusOne).isPresent());
         assertTrue(node.get(10,thirtyOne.hashCode(),thirtyOne).isPresent());
     }
+
+    @Test
+    public void replace() throws Exception {
+        Node<Integer, Integer> node = HAMT.<Integer, Integer>empty().plus(0,1,1,1);
+        assertThat(node.size(),equalTo(1));
+        assertThat(node.get(0,1,1),equalTo(Option.some(1)));
+        node = node.plus(0,1,1,2);
+        assertThat(node.get(0,1,1),equalTo(Option.some(2)));
+    }
+    @Test
+    public void replace12() throws Exception {
+        Node<Integer, Integer> node = HAMT.<Integer, Integer>empty().plus(0,1,1,1)
+                .plus(0,2,2,2)
+                .plus(0,1,1,1)
+                .plus(0,2,2,2);
+        System.out.println(node);
+        assertThat(node.size(),equalTo(2));
+
+    }
+
 
 }

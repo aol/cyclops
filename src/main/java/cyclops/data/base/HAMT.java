@@ -4,6 +4,7 @@ package cyclops.data.base;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -106,7 +107,7 @@ public class HAMT<K, V>  implements Serializable {
        private Node<K,V> merge(int bitShiftDepth,  ValueNode<K, V> that) {
            //hash each merge into a collision node if hashes are the same, otherwise store in new location under a BitsetNode
            if(hash==that.hash)
-                return new CollisionNode<>(hash, LazySeq.of(Tuple.tuple(key,value),that.unapply()));
+                return new CollisionNode<>(hash, Seq.of(Tuple.tuple(key,value),that.unapply()));
            //create new BitsetNode
            int mask1 = BitsetNode.mask(hash,bitShiftDepth);
            int mask2 = BitsetNode.mask(that.hash,bitShiftDepth);
@@ -177,17 +178,17 @@ public class HAMT<K, V>  implements Serializable {
    public static class CollisionNode<K,V> implements Node<K,V>{
 
        private final int hash;
-       private final LazySeq<Tuple2<K,V>> bucket;
+       private final Seq<Tuple2<K,V>> bucket;
 
        private static final long serialVersionUID = 1L;
        @Override
        public Node<K, V> plus(int bitShiftDepth, int hash, K key, V value) {
-           LazySeq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
-           Node<K,V> newNode = filtered.size()==0 ?  new ValueNode<>(hash,key,value) : new CollisionNode<>(hash,filtered.prepend(Tuple.tuple(key,value)));
+           Seq<Tuple2<K, V>> filtered = bucket.filter(t -> !Objects.equals(key, t._1()));
+
            if(this.hash==hash){
-               return newNode;
+               return filtered.size()==0 ?  new ValueNode<>(hash,key,value) : new CollisionNode<>(hash,filtered.prepend(Tuple.tuple(key,value)));
            }
-           return merge(bitShiftDepth,hash,newNode);
+           return merge(bitShiftDepth,hash,new ValueNode<>(hash,key,value));
        }
 
         private Node<K,V> merge(int bitShiftDepth, int thatHash,Node<K, V> that) {
@@ -241,7 +242,7 @@ public class HAMT<K, V>  implements Serializable {
 
         @Override
         public LazySeq<Tuple2<K, V>> lazyList() {
-            return bucket;
+            return bucket.lazySeq();
         }
 
         @Override
@@ -271,11 +272,15 @@ public class HAMT<K, V>  implements Serializable {
                 System.arraycopy(nodes, 0, addedNodes, 0, arrayPos);
                 addedNodes[arrayPos] = node;
                 System.arraycopy(nodes, arrayPos, addedNodes, arrayPos + 1, nodes.length - arrayPos);
-                return new BitsetNode<>(addedBit, size +1, addedNodes);
+                return new BitsetNode<>(addedBit, ReactiveSeq.of(addedNodes)
+                                                             .map(n->n.size())
+                                                            .reduce(0,(a,b)->a+b), addedNodes);
             }else{
                 Node<K,V>[] updatedNodes = Arrays.copyOf(nodes, nodes.length);
                 updatedNodes[arrayPos] = node;
-                return new BitsetNode<>(bitset, size + 1, updatedNodes);
+                return new BitsetNode<>(bitset, ReactiveSeq.of(updatedNodes)
+                                                            .map(n->n.size())
+                                                            .reduce(0,(a,b)->a+b), updatedNodes);
             }
 
         }
@@ -283,8 +288,6 @@ public class HAMT<K, V>  implements Serializable {
         @Override
         public Option<V> get(int bitShiftDepth, int hash, K key) {
             int pos = bitpos(hash, bitShiftDepth);
-
-            System.out.println(absent(pos));
             return absent(pos)? Option.none() : find(bitShiftDepth,pos,hash,key);
         }
 
@@ -325,7 +328,9 @@ public class HAMT<K, V>  implements Serializable {
             Node<K,V>[] removedNodes = new Node[nodes.length - 1];
             System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
             System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
-            return new BitsetNode<>(removedBit, size -1, removedNodes);
+            return new BitsetNode<>(removedBit, ReactiveSeq.of(removedNodes)
+                                                           .map(n->n.size())
+                                                            .reduce(0,(a,b)->a+b), removedNodes);
         }
 
         @Override

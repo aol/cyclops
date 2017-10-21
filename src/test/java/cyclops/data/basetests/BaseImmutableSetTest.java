@@ -15,8 +15,10 @@ import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
@@ -36,6 +38,10 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Override
     public abstract <T> ImmutableSet<T> of(T... values);
 
+    @Test
+    public void duplicates(){
+        assertThat(of(1,2,1,2,1,2).size(),equalTo(2));
+    }
 
 
     @Test
@@ -231,7 +237,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void negativeLong(){
         assertThat(rangeLong(-1000L,200)
-                .count(),equalTo(120L));
+                .count(),equalTo(1200L));
     }
     @Test
     public void rangeIntReversedSkip2(){
@@ -253,11 +259,75 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     public void rangeInt(){
         System.out.println(range(0,150));
         assertThat(range(0,150)
-                .limit(2).count(),equalTo(2));
+                .limit(2).count(),equalTo(2l));
     }
     @Test
     public void rangeIntReversed(){
         assertThat(range(0,150).reverse()
                 .limit(2).size(),equalTo(2));
+    }
+    @Test
+    public void removeFirst(){
+        IterableX<Integer> vec = this.of(1,2,2,2,3);
+
+        assertThat(vec.removeFirst(i->i==2),equalTo(of(1,3)));
+    }
+    @Test
+    public void permuations3() {
+        System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        ImmutableSet<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList());
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(3,2,1)));
+        assertTrue(x.containsValue(ListX.of(2,1,3)));
+        assertTrue(x.containsValue(ListX.of(2,3,1)));
+        assertTrue(x.containsValue(ListX.of(3,1,2)));
+        assertTrue(x.containsValue(ListX.of(1,3,2)));
+    }
+    @Test
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        ImmutableSet<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+
+        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(ListX.of(4,5,6)));
+
+    }
+    @Test
+    public void batchUntilCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        assertTrue(of(1,2,3,4,5,6)
+                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .toList().contains(ListX.of(1,2,3)));
+    }
+    @Test
+    public void batchBySizeSet(){
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+    }
+    @Test
+    public void combine(){
+        assertThat(of(1,1,2,3)
+                .combine((a, b)->a.equals(b),Semigroups.intSum)
+                .toListX(),equalTo(ListX.of(1,2,3)));
+
+    }
+    @Test
+    public void reduceWithMonoidJoin(){
+        String s = of("hello","2","world","4").join(",");
+        Arrays.asList("hello","2","world","4").forEach(c->{
+            assertTrue(s.contains(c));
+        });
+
+        String s2 =of("hello","2","world","4").reduce(Reducers.toString(","));
+        Arrays.asList("hello","2","world","4").forEach(c->{
+            assertTrue(s2.contains(c));
+        });
     }
 }

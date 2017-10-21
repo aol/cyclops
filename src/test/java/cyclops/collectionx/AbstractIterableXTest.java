@@ -92,18 +92,18 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void insertAt(){
-        List<String> result = 	of(1,2,3)
+        IterableX<String> result = 	of(1,2,3)
                                 .insertAt(1,100,200,300)
-                .map(it ->it+"!!").collect(Collectors.toList());
+                .map(it ->it+"!!");
 
-        assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+        assertThat(result,equalTo(of("1!!","100!!","200!!","300!!","2!!","3!!")));
     }
     @Test
     public void insertAtStream(){
-        List<String> result = 	of(1,2,3).insertAtS(1,ReactiveSeq.of(100,200,300))
-                .map(it ->it+"!!").collect(Collectors.toList());
+        IterableX<String> result = 	of(1,2,3).insertAtS(1,ReactiveSeq.of(100,200,300))
+                .map(it ->it+"!!");
 
-        assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+        assertThat(result,equalTo(of("1!!","100!!","200!!","300!!","2!!","3!!")));
     }
 
     
@@ -2395,6 +2395,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void reversedRangeLongWithReverse(){
+        System.out.println(rangeLong(10, -10).reverse());
         assertThat(rangeLong(10, -10).reverse().count(),equalTo(20L));
     }
     @Test
@@ -2702,10 +2703,11 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void reduceWithMonoidJoin(){
-        of("hello","2","world","4").join(",");
+        assertThat(of("hello","2","world","4").join(","),equalTo("hello,2,world,4"));
         assertThat(of("hello","2","world","4").reduce(Reducers.toString(",")),
                 equalTo(",hello,2,world,4"));
     }
+
 
 
     @Test

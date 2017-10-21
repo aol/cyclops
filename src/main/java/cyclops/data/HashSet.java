@@ -10,6 +10,7 @@ import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -22,7 +23,9 @@ import java.util.stream.Stream;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable {
     private static final long serialVersionUID = 1L;
+    @Getter
     private final HAMT.Node<T,T> map;
+
 
     public static <T> HashSet<T> empty(){
         return new HashSet<T>( HAMT.empty());
@@ -39,42 +42,42 @@ public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable
         }
         return new HashSet<>(tree);
     }
-    static <U, T> HashSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
+    public static <U, T> HashSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
 
-    static <T> HashSet<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+    public static <T> HashSet<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
         return fromStream(ReactiveSeq.iterate(seed,pred,f));
 
     }
-    static <T> HashSet<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
+    public static <T> HashSet<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
         return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
 
     }
 
-    static <T, U> Tuple2<HashSet<T>, HashSet<U>> unzip(final HashSet<Tuple2<T, U>> sequence) {
+    public static <T, U> Tuple2<HashSet<T>, HashSet<U>> unzip(final HashSet<Tuple2<T, U>> sequence) {
         return ReactiveSeq.unzip(sequence.stream()).transform((a, b)-> Tuple.tuple(fromStream(a),fromStream(b)));
     }
-    static <T> HashSet<T> generate(Supplier<T> s, int max){
+    public static <T> HashSet<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    static <T> HashSet<T> generate(Generator<T> s){
+    public static <T> HashSet<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }
-    static HashSet<Integer> range(final int start, final int end) {
+    public static HashSet<Integer> range(final int start, final int end) {
         return HashSet.fromStream(ReactiveSeq.range(start,end));
 
     }
-    static HashSet<Integer> range(final int start, final int step, final int end) {
+    public static HashSet<Integer> range(final int start, final int step, final int end) {
         return HashSet.fromStream(ReactiveSeq.range(start,step,end));
 
     }
-    static HashSet<Long> rangeLong(final long start, final long step, final long end) {
+    public static HashSet<Long> rangeLong(final long start, final long step, final long end) {
         return HashSet.fromStream(ReactiveSeq.rangeLong(start,step,end));
     }
 
 
-    static HashSet<Long> rangeLong(final long start, final long end) {
+    public static HashSet<Long> rangeLong(final long start, final long end) {
         return HashSet.fromStream(ReactiveSeq.rangeLong(start, end));
 
     }
@@ -149,6 +152,7 @@ public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable
     }
 
     public HashSet<T> plus(T value){
+
         return new HashSet<>(map.plus(0,value.hashCode(),value,value));
     }
 
@@ -190,7 +194,7 @@ public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable
            if(!s.containsValue(next))
                return false;
        }
-       return size()==size();
+       return size()==s.size();
     }
 
     @Override
