@@ -1,25 +1,23 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
+import com.aol.cyclops2.util.box.Mutable;
+import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.async.LazyReact;
+import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
-import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Maybe.CompletableMaybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,35 +25,39 @@ import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static cyclops.control.lazy.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public class CompletableMaybeTest implements Printable {
+public class MaybeTest implements Printable {
 
     Maybe<Integer> just;
     Maybe<Integer> none;
-    public static <T> Maybe.CompletableMaybe<T,T> just(T value){
-        Maybe.CompletableMaybe<T,T> completable = Maybe.maybe();
-        completable.complete(value);
-        return completable;
-    }
-    public static <T> Maybe.CompletableMaybe<T,T> none(){
-        Maybe.CompletableMaybe<T,T> completable = Maybe.maybe();
-        completable.complete(null);
-        return completable;
-    }
+
     @Before
     public void setUp() throws Exception {
-        just = just(10);
-        none = none();
+        just = Maybe.just(10);
+        none = Maybe.nothing();
+        cap =0;
+
+    }
+
+    int cap =0;
+
+
+    @Test
+    public void lazy(){
+
+        Maybe.just(10)
+                .peek(i->cap=i);
+
+        assertThat(cap,equalTo(0));
 
     }
     @Test
@@ -67,7 +69,7 @@ public class CompletableMaybeTest implements Printable {
         completable.complete(5);
         System.out.println(mapped.getClass());
         mapped.printOut();
-        assertThat(mapped.orElse(-5),equalTo(11));
+        assertThat(mapped.toOptional().get(),equalTo(11));
 
 
     }
@@ -78,6 +80,19 @@ public class CompletableMaybeTest implements Printable {
                                            .flatMap(i->Eval.later(()->i+1));
 
         completable.complete(null);
+
+        mapped.printOut();
+        assertThat(mapped.isPresent(),equalTo(false));
+
+
+    }
+    @Test
+    public void completableErrorTest(){
+        CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
+        Maybe<Integer> mapped = completable.map(i->i*2)
+                .flatMap(i->Eval.later(()->i+1));
+
+        completable.completeExceptionally(new IllegalStateException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
@@ -109,24 +124,24 @@ public class CompletableMaybeTest implements Printable {
 
         assertFalse(result.isDone());
         System.out.println("Blocking?");
-        assertThat(result.get(),equalTo(Try.success(2000)));
+        assertThat(result.toOptional().get(),equalTo(2000));
 
     }
     
     @Test
     public void recoverWith(){
-        assertThat(none.recoverWith(()->CompletableMaybeTest.just(10)).orElse(null),equalTo(10));
-        assertThat(none.recoverWith(()->Maybe.nothing()).isPresent(),equalTo(false));
-        assertThat(just.recoverWith(()->CompletableMaybeTest.just(5)).orElse(null),equalTo(10));
+        assertThat(none.recoverWith(()->Maybe.just(10)).toOptional().get(),equalTo(10));
+        assertThat(none.recoverWith(()->Maybe.nothing()).toOptional().isPresent(),equalTo(false));
+        assertThat(just.recoverWith(()->Maybe.just(5)).toOptional().get(),equalTo(10));
     }
     
     boolean lazy = true;
 
     @Test
     public void lazyTest() {
-        CompletableMaybeTest.just(10)
-             .flatMap(i -> { lazy=false; return CompletableMaybeTest.just(15);})
-             .map(i -> { lazy=false; return   CompletableMaybeTest.just(15);})
+        Maybe.just(10)
+             .flatMap(i -> { lazy=false; return Maybe.just(15);})
+             .map(i -> { lazy=false; return   Maybe.just(15);})
              .map(i -> Maybe.of(20));
              
         
@@ -136,22 +151,10 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(CompletableMaybeTest.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
+        assertThat(Maybe.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
         
     }
 
-
-
-    @Test
-    public void testZip() {
-        assertThat(CompletableMaybeTest.just(10).zip(Eval.now(20), (a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zipP(Eval.now(20),(a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zipS(Stream.of(20), (a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zip(ReactiveSeq.of(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
-        assertThat(CompletableMaybeTest.just(10).zipS(Stream.of(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
-        assertThat(CompletableMaybeTest.just(10).zip(Eval.now(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
-    }
 
 
     @Test
@@ -174,19 +177,30 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void nest() {
-        assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(Maybe.just(10)));
-        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(Maybe.nothing()));
+        assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(just));
+        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(none));
     }
 
+    @Test
+    public void coFlatMap() {
+
+        Maybe.nothing().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
+
+        // Maybe[10]
+
+        assertThat(just.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(just));
+        assertThat(none.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(Maybe.of(50)));
+    }
 
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(just.combineEager(add, none), equalTo(Maybe.just(10)));
+        assertThat(just.combineEager(add, none), equalTo(just));
         assertThat(none.combineEager(add, just), equalTo(Maybe.of(0)));
         assertThat(none.combineEager(add, none), equalTo(Maybe.of(0)));
-        assertThat(just.combineEager(add, CompletableMaybeTest.just(10)), equalTo(Maybe.just(20)));
-
+        assertThat(just.combineEager(add, Maybe.just(10)), equalTo(Maybe.just(20)));
+        Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
+        assertThat(just.combineEager(firstNonNull, none), equalTo(just));
 
     }
 
@@ -195,36 +209,41 @@ public class CompletableMaybeTest implements Printable {
 
         Optional.of(10).map(i -> print("optional " + (i + 10)));
 
-        CompletableMaybeTest.just(10).map(i -> print("maybe " + (i + 10)));
+        Maybe.just(10).map(i -> print("maybe " + (i + 10)));
 
     }
 
     @Test
     public void odd() {
-        System.out.println(even(CompletableMaybeTest.just(200000)).orElse(null));
+        System.out.println(even(Maybe.just(200000)));
+
+    }
+    @Test
+    public void oddBug() {
+
+        even(Maybe.just(200000)).visit(i->{
+            System.out.println(i);
+            return null;
+        },()->null);
     }
 
     public Maybe<String> odd(Maybe<Integer> n) {
 
-        return n.flatMap(x -> even(CompletableMaybeTest.just(x - 1)));
+        return n.flatMap(x -> even(Maybe.just(x - 1)));
     }
 
     public Maybe<String> even(Maybe<Integer> n) {
         return n.flatMap(x -> {
-            return x <= 0 ? CompletableMaybeTest.just("done") : odd(CompletableMaybeTest.just(x - 1));
+            return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
         });
     }
 
 
-    @Test
-    public void testFilteringNoValue() {
-        assertThat(ReactiveSeq.of(1, 1).filter(i->i==1).toListX(), equalTo(ListX.of(1, 1)));
-    }
 
     @Test
     public void testToMaybe() {
-        assertThat(just.toMaybe(), equalTo(Maybe.just(10)));
-        assertThat(none.toMaybe(), equalTo(Maybe.nothing()));
+        assertThat(just.toMaybe(), equalTo(just));
+        assertThat(none.toMaybe(), equalTo(none));
     }
 
     private int add1(int i) {
@@ -233,11 +252,14 @@ public class CompletableMaybeTest implements Printable {
 
 
 
-
+    @Test
+    public void testFromOptional() {
+        assertThat(Maybe.fromOptional(Optional.of(10)), equalTo(just));
+    }
 
     @Test
     public void testFromEvalSome() {
-        assertThat(Maybe.fromEval(Eval.now(10)), equalTo(Maybe.just(10)));
+        assertThat(Maybe.fromEval(Eval.now(10)), equalTo(just));
     }
 
     @Test
@@ -261,7 +283,7 @@ public class CompletableMaybeTest implements Printable {
     public void testSequenceLazy() {
         Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
-        assertThat(maybes, equalTo(CompletableMaybeTest.just(1).flatMap(i -> Maybe.nothing())));
+        assertThat(maybes, equalTo(Maybe.just(1).flatMap(i -> Maybe.nothing())));
     }
 
     @Test
@@ -319,6 +341,7 @@ public class CompletableMaybeTest implements Printable {
         assertThat(none.recover(() -> 10), equalTo(Maybe.of(10)));
     }
 
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i -> i + 5), equalTo(Maybe.of(15)));
@@ -367,44 +390,42 @@ public class CompletableMaybeTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(ListX.of(10)));
     }
 
     @Test
     public void testIterate() {
-
-        assertThat(just.asSupplier(-100).iterate(i -> i + 1).limit(10).sumInt(i->i), equalTo(145));
+        assertThat(just.iterate(i -> i + 1,-1000).limit(10).sumInt(i->i), equalTo(145));
     }
 
     @Test
     public void testGenerate() {
-        assertThat(just.asSupplier(-100).generate().limit(10).sumInt(i->i), equalTo(100));
+        assertThat(just.generate(-10000).limit(10).sumInt(i->i), equalTo(100));
     }
-
 
 
     @Test
     public void testToXor() {
-        assertThat(just.toEither(-50), equalTo(Either.right(10)));
+        assertThat(just.toEither(-5000), equalTo(Either.right(10)));
 
     }
 
     @Test
     public void testToXorNone() {
-        Either<?, Integer> empty = none.toEither(-10);
+        Either<?, Integer> empty = none.toEither(-50000);
 
-        assertTrue(empty.swap().map(__ -> 10).orElse(6000) == 10);
+        assertTrue(empty.swap().map(__ -> 10).toOptional().get() == 10);
 
     }
 
     @Test
     public void testToXorSecondary() {
-        assertThat(just.toEither(-400).swap(), equalTo(Either.left(10)));
+        assertThat(just.toEither(-5000).swap(), equalTo(Either.left(10)));
     }
 
     @Test
     public void testToXorSecondaryNone() {
-        Either<Integer, ?> empty = none.toEither(-100).swap();
+        Either<Integer, ?> empty = none.toEither(-50000).swap();
         assertTrue(empty.isRight());
         assertThat(empty.map(__ -> 10), equalTo(Either.right(10)));
 
@@ -413,7 +434,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testToTry() {
         assertTrue(none.toTry().isFailure());
-        assertThat(just.toTry(), equalTo(Try.success(10)));
+        assertThat(just.toTry(),equalTo(Try.success(10)));
     }
 
     @Test
@@ -425,26 +446,21 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testToIorNone() {
-        Either<Integer, ?> empty = none.toEither(-400).swap();
+        Either<Integer, ?> empty = none.toEither(-50000).swap();
         assertTrue(empty.isRight());
         assertThat(empty.map(__ -> 10), equalTo(Either.right(10)));
 
     }
 
 
+
     @Test
     public void testMkString() {
-        assertThat(just.mkString(), equalTo("CompletableMaybe[10]"));
-        assertThat(none.mkString(), equalTo("CompletableMaybe[]"));
+        assertThat(just.mkString(), equalTo("Just[10]"));
+        assertThat(none.mkString(), equalTo("Nothing[]"));
     }
 
     LazyReact react = new LazyReact();
-
-
-    @Test
-    public void testGet() {
-        assertThat(just.orElse(-100), equalTo(10));
-    }
 
 
     @Test
@@ -508,13 +524,10 @@ public class CompletableMaybeTest implements Printable {
         assertThat(just.fold(Monoid.of(1, Semigroups.intMult)), equalTo(10));
     }
 
-
-
-
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 
-        String match = CompletableMaybeTest.just("data is present").visit(present -> "hello", () -> "missing");
+        String match = Maybe.just("data is present").visit(present -> "hello", () -> "missing");
 
         assertThat(just.visit(s -> "hello", () -> "world"), equalTo("hello"));
         assertThat(none.visit(s -> "hello", () -> "world"), equalTo("world"));
@@ -549,14 +562,6 @@ public class CompletableMaybeTest implements Printable {
 
 
 
-
-
-
-
-
-    static Executor exec = Executors.newFixedThreadPool(1);
-
-
     @Test
     public void testIterator1() {
         assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()), equalTo(Arrays.asList(10)));
@@ -577,6 +582,8 @@ public class CompletableMaybeTest implements Printable {
                 equalTo(Arrays.asList(10)));
     }
 
+
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i -> i + 5), equalTo(Maybe.of(15)));
@@ -588,7 +595,7 @@ public class CompletableMaybeTest implements Printable {
         just = just.peek(c -> capture.set(c));
         assertNull(capture.get());
 
-        just.orElse(20);
+        just.toOptional().get();
         assertThat(capture.get(), equalTo(10));
     }
 
@@ -603,18 +610,18 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testUnitT1() {
-        assertThat(none.unit(10), equalTo(Maybe.just(10)));
+        assertThat(none.unit(10), equalTo(just));
     }
 
 	@Test
 	public void testFlatMapIterable() {
 		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
-		assertThat(maybe.orElse(50), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 
 	@Test
 	public void testFlatMapPublisher() {
 		Maybe<Integer> maybe = Maybe.of(100).flatMapP(i -> Flux.just(10, i));
-		assertThat(maybe.orElse(500), equalTo(10));
+		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 }

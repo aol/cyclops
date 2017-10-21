@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.immutable.PersistentSetX;

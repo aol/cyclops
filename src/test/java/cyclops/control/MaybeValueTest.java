@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import com.aol.cyclops2.types.AbstractValueTest;
 import com.aol.cyclops2.types.Value;

@@ -1,56 +1,29 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.control.Ior;
 import cyclops.control.Option;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IorSecondaryTest {
+public class EitherLeftTest {
 
-	Ior<FileNotFoundException,Integer> failure;
+	Either<FileNotFoundException,Integer> failure;
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
-		failure = Ior.secondary(error);
+		failure = Either.left(error);
 	}
-	@Test
-    public void bimap(){
-       
-        Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
-        assertTrue(mapped.isSecondary());
-        assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
-    }
-    Throwable capT;
-    int capInt=0;
-    @Test
-    public void bipeek(){
-       capT =null;
-       capInt=0;
-         failure.bipeek(e->capT=e, d->capInt=d);
-        assertThat(capInt,equalTo(0));
-        assertThat(capT,instanceOf(FileNotFoundException.class));
-    }
-    @Test
-    public void bicast(){
-        Ior<Throwable,Number> mapped = failure.bicast(Throwable.class, Number.class);
-        assertTrue(mapped.isSecondary());
-        assertThat(mapped.swap().orElse(null),instanceOf(Throwable.class));
-    }
-
 
 
 	@Test
@@ -67,7 +40,7 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(failure.flatMap(x->Ior.primary(10)),equalTo(failure));
+		assertThat(failure.flatMap(x-> Either.right(10)),equalTo(failure));
 	}
 
 	@Test
@@ -101,12 +74,12 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertThat(failure.isPrimary(),equalTo(false));
+		assertThat(failure.isRight(),equalTo(false));
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertThat(failure.isSecondary(),equalTo(true));
+		assertThat(failure.isLeft(),equalTo(true));
 	}
 
 	Integer value = null;
@@ -122,7 +95,7 @@ public class IorSecondaryTest {
 	@Test
 	public void testForeachFailed() {
 		errorCaptured = null;
-		failure.secondaryPeek(e -> errorCaptured =e);
+		failure.peekLeft(e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));
 	}
 

@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;

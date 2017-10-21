@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.streams;
 
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;

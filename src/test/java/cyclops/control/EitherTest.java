@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.companion.Monoids;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-public class XorTest {
+public class EitherTest {
 
 	private String concat(String a,String b){
 		return a+b;

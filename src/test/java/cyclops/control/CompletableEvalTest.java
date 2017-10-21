@@ -1,15 +1,17 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
-import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.control.*;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import com.aol.cyclops2.util.box.Mutable;
+import cyclops.collectionx.mutable.ListX;
+import cyclops.control.lazy.Eval;
+import cyclops.control.lazy.Eval.CompletableEval;
+import cyclops.control.lazy.Eval.Module.Later;
 import cyclops.control.lazy.Maybe;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
@@ -23,56 +25,45 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 
+public class CompletableEvalTest {
 
-public class Ior2Test {
-
-	Ior<String,Integer> just;
-	Ior<String,Integer> none;
+	public static CompletableEval<Integer,Integer> now(Integer v){
+	    CompletableEval<Integer,Integer> completable = Eval.eval();
+	    completable.complete(v);
+	    return completable;
+    }
+	Eval<Integer> just;
+	Eval<Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Ior.primary(10);
-		none = Ior.secondary("none");
+		just = now(10);
+		none = now(null);
 	}
-	static class Base{ }
-	static class One extends XorTest.Base { }
-	static class Two extends XorTest.Base {}
-	@Test
-	public void visitAny(){
-
-		Ior<One,Two> test = Ior.primary(new Two());
-		test.to(Ior::applyAny).apply(b->b.toString());
-		Ior.primary(10).to(Ior::consumeAny).accept(System.out::println);
-		Ior.primary(10).to(e->Ior.visitAny(System.out::println,e));
-		Object value = Ior.primary(10).to(e->Ior.visitAny(e,x->x));
-		assertThat(value,equalTo(10));
-	}
+	
 
 
-	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
-       assertThat(none.nest().map(m->m.get()),equalTo(none));
-    }
     @Test
     public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Ior.primary(50)));
-    }
-
-	@Test
-    public void visit(){
-        assertThat(just.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("yes"));
-        assertThat(none.visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("no"));
-        assertThat(Ior.both(10, "eek").visit(secondary->"no", primary->"yes",(sec,pri)->"oops!"),equalTo("oops!"));
+        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(10)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(50)));
+        
     }
     @Test
-    public void visitIor(){
-        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
-        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
-        assertThat(Ior.both(10, "eek").bimap(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
+    public void combine(){
+     
+        
+        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        assertThat(just.combineEager(add,Eval.now(10)),equalTo(Eval.now(20)));
+      
+      
+      
+        Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
+        assertThat(just.combineEager(firstNonNull,none),equalTo(just));
+         
     }
 	@Test
 	public void testToMaybe() {
@@ -86,85 +77,96 @@ public class Ior2Test {
 
 	
 
-	
+	@Test
+	public void testFromOptional() {
+		assertThat(Maybe.fromOptional(Optional.of(10)),equalTo(just.toMaybe()));
+	}
+
+	@Test
+	public void testFromEvalSome() {
+		assertThat(Maybe.fromEval(CompletableEvalTest.now(10)),equalTo(just.toMaybe()));
+	}
+
 	@Test
 	public void testOfT() {
-		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+		assertThat(Maybe.of(1),equalTo(Maybe.of(1)));
 	}
 
 	
 
-	
+	@Test
+	public void testOfNullable() {
+		assertFalse(Maybe.ofNullable(null).isPresent());
+		assertThat(Maybe.ofNullable(1),equalTo(Maybe.of(1)));
+		
+	}
 
 	@Test
-    public void testSequenceSecondary() {
-        Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
-        assertThat(iors,equalTo(Ior.primary(ListX.of("none"))));
-    }
+	public void testNarrow() {
+		assertThat(Maybe.ofNullable(1),equalTo(Maybe.narrow(Maybe.of(1))));
+	}
 
-	@Test
-    public void testAccumulateSecondary() {
-        Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPersistentSetX());
-        assertThat(iors,equalTo(Ior.primary(PersistentSetX.of("none"))));
-    }
-
-	@Test
-    public void testAccumulateSecondarySemigroup() {
-        Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
-        assertThat(iors,equalTo(Ior.primary("none1")));
-    }
-	@Test
-    public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
-        assertThat(iors,equalTo(Ior.primary(3)));
-    }
 	@Test
 	public void testSequence() {
-		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
-		assertThat(maybes,equalTo(Ior.primary(ListX.of(10,1))));
+		Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(just,CompletableEvalTest.now(1)));
+		assertThat(maybes,equalTo(Eval.now(ListX.of(10,1))));
 	}
 
+	
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
-		assertThat(maybes,equalTo(Ior.primary(PersistentSetX.of(10,1))));
+	    
+	   
+		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Ior<?,String> maybes = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Ior.primary("101")));
+		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Ior<?,Integer> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Ior.primary(11)));
+		Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,CompletableEvalTest.now(1)));
+		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Ior.primary(20)));
+		assertThat(just.unit(20),equalTo(CompletableEvalTest.now(20)));
 	}
 
 	
 
 	@Test
-	public void testisPrimary() {
-		assertTrue(just.isPrimary());
-		assertFalse(none.isPrimary());
+	public void testIsPresent() {
+		assertTrue(just.toMaybe().isPresent());
+		assertFalse(none.toMaybe().isPresent());
 	}
 
-	
+	@Test
+	public void testRecoverSupplierOfT() {
+		assertThat(just.toMaybe().recover(20),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe().recover(10),equalTo(Maybe.of(10)));
+	}
+
+	@Test
+	public void testRecoverT() {
+		assertThat(just.toMaybe().recover(()->20),equalTo(Maybe.of(10)));
+		assertThat(none.toMaybe().recover(()->10),equalTo(Maybe.of(10)));
+	}
+
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
-		assertThat(none.map(i->i+5),equalTo(Ior.secondary("none")));
+		assertThat(just.map(i->i+5),equalTo(CompletableEvalTest.now(15)));
+		assertThat(none.toMaybe().map(i->i+5),equalTo(Maybe.nothing()));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Ior.primary(i+5)),equalTo(Ior.primary(15)));
-		assertThat(none.flatMap(i->Ior.primary(i+5)),equalTo(Ior.secondary("none")));
+		assertThat(just.flatMap(i->CompletableEvalTest.now(i+5)),equalTo(Eval.later(()->15)));
+		assertThat(none.toMaybe().flatMap(i->Maybe.of(i+5)),equalTo(Maybe.nothing()));
 	}
 
 	@Test
@@ -172,13 +174,12 @@ public class Ior2Test {
 		assertThat(just.visit(i->i+1,()->20),equalTo(11));
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
-
-
+	
 
 	@Test
 	public void testStream() {
 		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(none.stream().filter(i->i!=null).toListX(),equalTo(ListX.of()));
 	}
 
 	@Test
@@ -186,12 +187,11 @@ public class Ior2Test {
 		
 	}
 
-	@Test
+
     public void testConvertTo() {
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-
 
     @Test
     public void testConvertToAsync() {
@@ -200,15 +200,19 @@ public class Ior2Test {
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 	
+
 	@Test
 	public void testIterate() {
-		assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
+		assertThat(just.asSupplier(-10000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(
+						Stream.iterate(just.get(),i->i+1).limit(10).mapToInt(i->i).sum()));
+		assertThat(just.asSupplier(-10000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
 	}
 
 	@Test
 	public void testGenerate() {
-		assertThat(just.asSupplier(-1000).generate().limit(10).sumInt(i->i),equalTo(100));
+		assertThat(just.generate().limit(10).sumInt(i->i),equalTo(100));
 	}
+
 
 
 
@@ -219,12 +223,12 @@ public class Ior2Test {
 	}
 	@Test
 	public void testToXorNone(){
-		Either<String,Integer> xor = none.toEither();
-		assertTrue(xor.isLeft());
-		assertThat(xor,equalTo(Either.left("none")));
+	    Either<?,Integer> empty = none.toEither(-50000);
+	    
+	    
+        assertTrue(empty.swap().map(__->10).toOptional().get()==10);
 		
 	}
-
 
 
 	@Test
@@ -232,31 +236,59 @@ public class Ior2Test {
 		assertThat(just.toEither(-5000).swap(),equalTo(Either.left(10)));
 	}
 
-
+	@Test
+	public void testToXorSecondaryNone(){
+		Either<Integer,?> empty = none.toEither(-50000).swap();
+		assertTrue(empty.isRight());
+		assertThat(empty.map(__->10),equalTo(Either.right(10)));
+		
+		
+	}
 	@Test
 	public void testToTry() {
 		assertTrue(none.toTry().isFailure());
 		assertThat(just.toTry(),equalTo(Try.success(10)));
+		assertTrue(Try.fromPublisher(none).isFailure());
+        assertThat(Try.fromPublisher(just),equalTo(Try.success(10)));
 	}
 
 	@Test
 	public void testToTryClassOfXArray() {
-		assertTrue(none.toTry(Throwable.class).isFailure());
+		assertFalse(none.toTry(Throwable.class).isSuccess());
 	}
+
+
+	@Test
+	public void testToIorNone(){
+	    Either<Integer,?> empty = none.toEither(-50000).swap();
+        assertTrue(empty.isRight());
+        assertThat(empty.map(__->10),equalTo(Either.right(10)));
+		
+	}
+
+
+
 
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Ior.lazyRight[10]"));
-		assertThat(none.mkString(),equalTo("Ior.lazyLeft[none]"));
+		assertThat(just.mkString(),equalTo("CompletableEval[10]"));
+		assertThat(none.mkString(),equalTo("CompletableEval[]"));
 	}
 	LazyReact react = new LazyReact();
 
+
+
+
 	@Test
 	public void testGet() {
-		assertThat(just.orElse(-50),equalTo(10));
+		assertThat(just.get(),equalTo(10));
 	}
-
+	@Test
+	public void testGetNone() {
+		assertThat(none.get(),nullValue());
+		
+	}
 
 	@Test
 	public void testFilter() {
@@ -299,6 +331,23 @@ public class Ior2Test {
 	}
 
 
+	@Test
+    public void testZipEval() {
+        assertThat(just.zip(Eval.later(()->20),this::add),equalTo(CompletableEvalTest.now(30)));
+    }
+    @Test
+    public void testZipEvalLazy(){
+        assertTrue(Eval.later(()->10).zip(Eval.later(()->20),this::add) instanceof Later);
+    }
+    @Test
+    public void testZipPubEval() {
+        assertThat(just.zip(Eval.later(()->20),this::add),equalTo(CompletableEvalTest.now(30)));
+    }
+    @Test
+    public void testZipPubEvalLazy(){
+        assertTrue(Eval.later(()->10).zipP(Eval.later(()->20),this::add) instanceof Later);
+    }
+
 	private int add3(int a, int b, int c){
 		return a+b+c;
 	}
@@ -312,9 +361,15 @@ public class Ior2Test {
 	}
 
 
+	
+
+
+
+	
+
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.fold(Monoid.of(1, Semigroups.intMult)),equalTo(10));
+		assertThat(just.fold(Monoid.of(1,Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test
@@ -339,7 +394,7 @@ public class Ior2Test {
 
 	@Test
 	public void testToStream() {
-		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
+		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(1));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
 		
 	}
@@ -352,13 +407,14 @@ public class Ior2Test {
 	}
 
 
-
-
-
 	
-	
+	@Test
+	public void testToFuture() {
+		Future<Integer> cf = just.toFuture();
+		assertThat(cf.get(),equalTo(Try.success(10)));
+	}
 
-	
+
 
 	@Test
 	public void testIterator1() {
@@ -384,7 +440,7 @@ public class Ior2Test {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
+		assertThat(just.map(i->i+5),equalTo(CompletableEvalTest.now(15)));
 	}
 	
 	@Test
@@ -392,6 +448,8 @@ public class Ior2Test {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
 		
+		
+		just.get();
 		assertThat(capture.get(),equalTo(10));
 	}
 
@@ -400,7 +458,7 @@ public class Ior2Test {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Ior.primary(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(CompletableEvalTest.now(65)));
 	}
 
 	

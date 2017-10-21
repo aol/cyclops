@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -13,24 +13,24 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.control.Ior;
 import cyclops.control.Option;
+import cyclops.control.Either;
 import org.junit.Before;
 import org.junit.Test;
 
-public class IorPrimaryTest {
+public class EitherRightTest {
 
-	Ior<FileNotFoundException,Integer> success;
+	Either<FileNotFoundException,Integer> success;
 	final Integer value = 10;
 	
 	
-	public Ior<FileNotFoundException,String> load(String filename){
-		return Ior.primary("test-data");
+	public Either<FileNotFoundException,String> load(String filename){
+		return Either.right("test-data");
 	}
 	
 	public void process(){
 		
-		Ior<FileNotFoundException,String> attempt = load("data");
+		Either<FileNotFoundException,String> attempt = load("data");
 		
 		attempt.map(String::toUpperCase)
 				.peek(System.out::println);
@@ -39,31 +39,8 @@ public class IorPrimaryTest {
 	
 	@Before
 	public void setup(){
-		success = Ior.primary(10);
+		success = Either.right(10);
 	}
-	@Test
-    public void bimap(){
-       
-        Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
-        assertThat(mapped.get(),equalTo(Option.some(11)));
-        assertTrue(mapped.isPrimary());
-    }
-    Throwable capT;
-    int capInt=0;
-    @Test
-    public void bipeek(){
-       capT =null;
-       capInt=0;
-         success.bipeek(e->capT=e, d->capInt=d);
-        assertThat(capInt,equalTo(10));
-        assertThat(capT,nullValue());
-    }
-    @Test
-    public void bicast(){
-        Ior<Throwable,Number> mapped = success.bicast(Throwable.class, Number.class);
-        assertThat(mapped.get(),equalTo(Option.some(10)));
-        assertTrue(mapped.isPrimary());
-    }
 
 
 
@@ -79,12 +56,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Ior.primary(value+1)));
+		assertThat(success.map(x->x+1),equalTo(Either.right(value+1)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Ior.primary(x+1)),equalTo(Ior.primary(value+1)));
+		assertThat(success.flatMap(x-> Either.right(x+1)),equalTo(Either.right(value+1)));
 	}
 
 	@Test
@@ -121,12 +98,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertTrue(success.isPrimary());
+		assertTrue(success.isRight());
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertFalse(success.isSecondary());
+		assertFalse(success.isLeft());
 	}
 	Integer valueCaptured = null;
 	@Test

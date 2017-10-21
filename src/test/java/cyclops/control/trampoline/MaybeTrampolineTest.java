@@ -1,4 +1,4 @@
-package com.aol.cyclops2.trampoline;
+package cyclops.control.trampoline;
 
 import cyclops.control.lazy.Eval;
 import cyclops.control.lazy.Maybe;

@@ -1,4 +1,4 @@
-package com.aol.cyclops2.control;
+package cyclops.control;
 
 import cyclops.async.Future;
 import cyclops.async.LazyReact;

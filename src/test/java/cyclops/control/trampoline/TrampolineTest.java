@@ -1,4 +1,4 @@
-package com.aol.cyclops2.trampoline;
+package cyclops.control.trampoline;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
