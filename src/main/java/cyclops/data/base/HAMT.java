@@ -108,14 +108,16 @@ public class HAMT<K, V>  implements Serializable {
            if(hash==that.hash)
                 return new CollisionNode<>(hash, LazySeq.of(Tuple.tuple(key,value),that.unapply()));
            //create new BitsetNode
-           int posThis = BitsetNode.bitpos(hash,bitShiftDepth);
-           int posThat = BitsetNode.bitpos(that.hash,bitShiftDepth);
+           int mask1 = BitsetNode.mask(hash,bitShiftDepth);
+           int mask2 = BitsetNode.mask(that.hash,bitShiftDepth);
+           int posThis = BitsetNode.bitpos(mask1);
+           int posThat = BitsetNode.bitpos(mask2);
            int newBitset = posThis | posThat;
-           if(posThis==posThat) { //collision
+           if(mask1==mask2) { //collision
               Node<K,V> merged = merge(bitShiftDepth+BITS_IN_INDEX,that);
               return new BitsetNode<>(newBitset,2,new Node[]{merged});
            }
-           Node<K,V>[] ordered = posThis<posThat ? new Node[]{this,that} : new Node[]{that,this};
+           Node<K,V>[] ordered = mask1<mask2 ? new Node[]{this,that} : new Node[]{that,this};
            return new BitsetNode<>(newBitset,2,ordered);
        }
 
@@ -193,14 +195,16 @@ public class HAMT<K, V>  implements Serializable {
             if(hash==thatHash)
                 return new CollisionNode<>(hash,bucket.prependAll(that.lazyList()));
             //create new BitsetNode
-            int posThis = BitsetNode.bitpos(hash,bitShiftDepth);
-            int posThat = BitsetNode.bitpos(thatHash,bitShiftDepth);
+            int mask1 = BitsetNode.mask(hash,bitShiftDepth);
+            int mask2 = BitsetNode.mask(thatHash,bitShiftDepth);
+            int posThis = BitsetNode.bitpos(mask1);
+            int posThat = BitsetNode.bitpos(mask2);
             int newBitset = posThis | posThat;
-            if(posThis==posThat) { //collision
+            if(mask1==mask2) { //collision
                 Node<K,V> merged = merge(bitShiftDepth+BITS_IN_INDEX,thatHash,that);
                 return new BitsetNode<>(newBitset,2,new Node[]{merged});
             }
-            Node<K,V>[] ordered = posThis>posThat ? new Node[]{this,that} : new Node[]{that,this};
+            Node<K,V>[] ordered = mask1<mask2 ? new Node[]{this,that} : new Node[]{that,this};
             return new BitsetNode<>(newBitset,2,ordered);
         }
 
@@ -279,6 +283,8 @@ public class HAMT<K, V>  implements Serializable {
         @Override
         public Option<V> get(int bitShiftDepth, int hash, K key) {
             int pos = bitpos(hash, bitShiftDepth);
+
+            System.out.println(absent(pos));
             return absent(pos)? Option.none() : find(bitShiftDepth,pos,hash,key);
         }
 
@@ -338,19 +344,15 @@ public class HAMT<K, V>  implements Serializable {
         static int bitpos(int hash, int shift){
             return 1 << mask(hash, shift);
         }
+        static int bitpos(int mask){
+            return 1 << mask;
+        }
+
         static int mask(int hash, int shift){
             return (hash >>> shift) & (SIZE-1);
         }
-        int index(int bit){
-            System.out.println("Bit " + bit);
-            System.out.println("Bitset " + bitset);
-            int index = Integer.bitCount(bitset & (bit - 1));
-            System.out.println("Bitset bits " + Integer.toBinaryString(bitset));
-            System.out.println("Target bits " + Integer.toBinaryString(bit));
-            if(index==0)
-                System.out.println("INDEX IS 0!");
-            System.out.println("Index " + Integer.bitCount(bitset & (bit - 1)));
 
+        int index(int bit){
             return Integer.bitCount(bitset & (bit - 1));
         }
 
