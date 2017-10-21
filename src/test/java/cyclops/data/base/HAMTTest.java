@@ -52,4 +52,13 @@ public class HAMTTest {
         System.out.println(node);
     }
 
+    @Test
+    public void problemBitsetNode(){
+        HAMT.Node<Integer, Integer>[] nodes = new HAMT.Node[2];
+        nodes[0] = new HAMT.ValueNode<>(-1,-1,-1);
+        nodes[1] = new HAMT.ValueNode<>(31,31,31);
+        new HAMT.BitsetNode<Integer,Integer>( new Long(Long.parseLong("10000000000000000000000000000001", 2)).intValue(),
+                                            2,nodes);
+    }
+
 }
