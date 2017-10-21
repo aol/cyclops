@@ -67,7 +67,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     public C materializeList(ReactiveSeq<T> toUse){
         ReactiveSeq<C> mapped = ReactiveSeq.fromStream(collectorInternal.mapToType(toUse));
 
-        return toUse.visit(s -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)),
+        return toUse.visit(s -> mapped.reduce(collectorInternal.zero(), collectorInternal),
                             r -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)),
                             a -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)));
 
@@ -228,6 +228,10 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public boolean equals(Object o){
+        if(o instanceof PCollection){
+            return get().equals(o);
+        }
+
         return get().equals(o);
     }
 

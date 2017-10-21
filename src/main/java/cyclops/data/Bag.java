@@ -146,10 +146,17 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Bag<?> bag = (Bag<?>) o;
-        return size == bag.size &&
-                Objects.equals(map, bag.map);
+        if (o == null)
+            return false;
+        if(o instanceof ImmutableSet) {
+            ImmutableSet bag = (ImmutableSet) o;
+            return equalToIteration(bag);
+        }
+        if(o instanceof PBag) {
+            PBag bag = (PBag) o;
+            return equalToIteration(bag);
+        }
+        return false;
     }
 
     @Override

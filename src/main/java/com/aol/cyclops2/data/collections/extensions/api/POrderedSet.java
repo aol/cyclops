@@ -5,7 +5,7 @@ import cyclops.control.Option;
 import java.util.Collection;
 import java.util.Set;
 
-public interface POrderedSet<T> extends PCollection<T>{
+public interface POrderedSet<T> extends PSet<T>{
     public POrderedSet<T> plus(T e);
 
     public POrderedSet<T> plusAll(Iterable<? extends T> list);

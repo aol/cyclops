@@ -212,7 +212,9 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
     @Override
     public boolean equals(Object o){
-        return get().equals(o);
+        C c = get();
+        boolean res = c.equals(o);
+        return res;
     }
 
     @Override

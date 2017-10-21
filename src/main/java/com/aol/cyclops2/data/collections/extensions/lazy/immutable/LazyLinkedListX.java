@@ -176,53 +176,13 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,PStac
     }
 
 
-/**
     @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
-        return getValue().addAll(index,c);
+    public boolean equals(Object o) {
+       if(o instanceof List){
+           return equalToIteration((List)o);
+       }
+       return super.equals(o);
     }
-
-    @Override
-    public T getValue(int index) {
-        return getValue().getValue(index);
-    }
-
-    @Override
-    public T set(int index, T element) {
-        return getValue().set(index,element);
-    }
-
-    @Override
-    public void add(int index, T element) {
-         getValue().add(index,element);
-    }
-
-    @Override
-    public T removeValue(int index) {
-        return getValue().removeValue(index);
-    }
-
-    @Override
-    public int indexOf(Object o) {
-        return getValue().indexOf(o);
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        return getValue().lastIndexOf(o);
-    }
-
-    @Override
-    public ListIterator<T> listIterator() {
-        return getValue().listIterator();
-    }
-
-    @Override
-    public ListIterator<T> listIterator(int index) {
-        return getValue().listIterator(index);
-    }
-
-**/
 
 
     @Override

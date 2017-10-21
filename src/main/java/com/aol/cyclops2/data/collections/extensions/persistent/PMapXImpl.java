@@ -194,6 +194,10 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      */
     @Override
     public boolean equals(final Object o) {
+        if(o instanceof Map){
+            Map m = (Map)o;
+            return m.equals(this.toMap(t2-> t2._1(),t2->t2._2()));
+        }
         return map.equals(o);
     }
 

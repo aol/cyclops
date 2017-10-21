@@ -71,9 +71,15 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     static class CompletableBagX<T> implements InvocationHandler {
         Future<BagX<T>> future = Future.future();
+
+        public CompletableBagX(){
+            System.out.println("new!!");
+            new Exception().printStackTrace();
+        }
         public boolean complete(PBag<T> result){
             return future.complete(BagX.fromIterable(result));
         }
+
 
         public BagX<T> asBagX(){
             BagX f = (BagX) Proxy.newProxyInstance(BagX.class.getClassLoader(),

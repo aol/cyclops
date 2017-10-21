@@ -266,4 +266,11 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T
             return supplier.get();
         return x.getOrElseGet(index,supplier);
     }
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof List){
+            return equalToIteration((List)o);
+        }
+        return super.equals(o);
+    }
 }
