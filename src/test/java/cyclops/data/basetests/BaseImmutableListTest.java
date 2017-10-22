@@ -4,7 +4,6 @@ import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
-import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
@@ -21,7 +20,12 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
     @Override
     public abstract <T> ImmutableList<T> of(T... values);
-
+    @Test
+    public void getOrElseMulti(){
+        assertThat(of(1).getOrElse(0,null),equalTo(1));
+        assertThat(of(1,2).getOrElse(1,null),equalTo(2));
+        assertThat(of(1,2,3).getOrElse(1,null),equalTo(2));
+    }
     @Test
     public void get(){
         assertThat(of(1,2,3,4).get(2),equalTo(Option.some(3)));

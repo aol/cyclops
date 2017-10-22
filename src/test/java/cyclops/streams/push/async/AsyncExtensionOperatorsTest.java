@@ -248,8 +248,7 @@ public class AsyncExtensionOperatorsTest {
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
-		
-		
+
 		assertThat(result,equalTo(Arrays.asList()));
 	}
 	private int sleep(Integer i) {

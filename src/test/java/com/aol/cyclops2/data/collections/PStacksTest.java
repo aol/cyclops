@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
+import cyclops.data.Seq;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
@@ -40,7 +41,7 @@ public class PStacksTest {
 	@Test
 	public void testToPStackReversed() {
 		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStackReversed()),
-				equalTo(Arrays.asList("c","b","a")));
+				equalTo(Seq.of("c","b","a")));
 	}
 	@Test
 	public void testToPStackstreamOf() {
@@ -51,7 +52,7 @@ public class PStacksTest {
 	@Test
 	public void testToPStack() {
 		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStack()),
-				equalTo(Arrays.asList("a","b","c")));
+				equalTo(Seq.of("a","b","c")));
 	}
 	
 

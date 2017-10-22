@@ -68,6 +68,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                     Higher<linkedListX,T> {
 
 
+
+
     @Override
     default boolean isEmpty() {
         return PStack.super.isEmpty();

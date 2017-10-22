@@ -13,6 +13,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 /**
@@ -45,10 +46,11 @@ public class ConvertersTest {
 
         assertThat(pstack,equalTo(pvector));
         assertThat(pset,equalTo(pOrderedSet));
-        assertThat(pset,equalTo(pBag.stream().collect(Collectors.toSet())));
+        assertThat(pset,equalTo(pBag.stream().to().persistentSetX()));
         assertThat(pQueue.stream().collect(Collectors.toList()), equalTo(list1));
 
-        assertThat(pMap,equalTo(map));
+        assertThat(map,not(equalTo(pMap)));
+        assertThat(pMap,not(equalTo(map)));
         assertThat(set,equalTo(tset));
         assertThat(deque.stream().collect(Collectors.toList()),equalTo(list1));
         assertThat(queue.stream().collect(Collectors.toList()),equalTo(list1));

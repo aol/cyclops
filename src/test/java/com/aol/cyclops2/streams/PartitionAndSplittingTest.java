@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
@@ -96,17 +97,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), ReactiveSeq.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), ReactiveSeq.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), ReactiveSeq.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
@@ -117,17 +118,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), ReactiveSeq.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), ReactiveSeq.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), ReactiveSeq.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), ReactiveSeq.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), ReactiveSeq.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), ReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());

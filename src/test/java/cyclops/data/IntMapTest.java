@@ -7,7 +7,6 @@ import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import org.junit.Test;
 
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;

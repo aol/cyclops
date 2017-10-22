@@ -5,11 +5,9 @@ import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
 import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.intMap;
 import cyclops.control.lazy.Eval;
 import cyclops.data.base.IntPatriciaTrie;
@@ -182,7 +180,7 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
     public Option<T> get(int index){
         return intMap.get(index,index);
     }
-    public T getOrElse(int index,T value){
+    public T getOrElse(int index, T value){
         return intMap.getOrElse(index,index,value);
     }
 

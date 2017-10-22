@@ -3,7 +3,6 @@ package cyclops.data;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

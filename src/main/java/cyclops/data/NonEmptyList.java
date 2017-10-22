@@ -6,7 +6,6 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.nonEmptyList;
 import cyclops.control.lazy.Trampoline;
 import cyclops.reactive.ReactiveSeq;

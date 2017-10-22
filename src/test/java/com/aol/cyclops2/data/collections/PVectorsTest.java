@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.data.Vector;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
@@ -40,7 +41,7 @@ public class PVectorsTest {
 	@Test
 	public void testToPVector() {
 		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPVector()),
-				equalTo(Arrays.asList("a","b","c")));
+				equalTo(Vector.of("a","b","c")));
 	}
 
 }

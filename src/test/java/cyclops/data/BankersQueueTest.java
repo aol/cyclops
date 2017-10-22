@@ -11,7 +11,6 @@ import cyclops.reactive.Streamable;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;

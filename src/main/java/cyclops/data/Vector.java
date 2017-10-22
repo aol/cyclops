@@ -2,13 +2,11 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.vector;
 import cyclops.data.base.BAMT;
 import cyclops.function.Memoize;

@@ -241,15 +241,7 @@ public interface CollectionX<T> extends IterableX<T>,
         return reverse().materialize();
 
     }
-    /**
-     * Get the element at the specified index (if it exists)
-     * 
-     * @param index to look up element
-     * @return Optional.zero if the index does not exist, otherwise the element at the index supplied is returned
-     */
-    default Maybe<T> getAtIndex(final int index) {
-        return stream().get(index);
-    }
+
 
 
     /* (non-Javadoc)

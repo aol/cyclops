@@ -1,5 +1,6 @@
 package cyclops.streams.push.syncflux;
 
+import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
@@ -103,10 +104,10 @@ public class SyncPartitionAndSplittingTest {
         System.out.println("V2..");
         dup._2().printOut();
 
-        assertEquals(Optional.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-        assertEquals(Optional.of(2l), Spouts.rangeLong(1, 3).splitAtHead()._2().splitAtHead()._1());
-        assertEquals(Optional.of(2), Spouts.range(1, 3).splitAtHead()._2().splitAtHead()._1());
-        assertEquals(Optional.of(2), Spouts.fromIterable(Arrays.asList(1, 2, 3)).splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(2l), Spouts.rangeLong(1, 3).splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(2), Spouts.range(1, 3).splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(2), Spouts.fromIterable(Arrays.asList(1, 2, 3)).splitAtHead()._2().splitAtHead()._1());
     }
 
 	@Test
@@ -114,17 +115,17 @@ public class SyncPartitionAndSplittingTest {
 
 		assertEquals(asList(), of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
@@ -135,17 +136,17 @@ public class SyncPartitionAndSplittingTest {
 
 		assertEquals(asList(), of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());

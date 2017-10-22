@@ -793,7 +793,34 @@ public class BaseSequentialTest {
             List<String> result = of().insertAt(1, 100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
-            assertThat(result, equalTo(Arrays.asList()));
+            assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));
+        }
+    }
+    @Test
+    public void insertAtOutOfRangeEmptyValue() {
+        for(int k=0;k<ITERATIONS;k++) {
+            List<String> result = of().insertAt(1, 10)
+                    .map(it -> it + "!!").collect(Collectors.toList());
+
+            assertThat(result, equalTo(Arrays.asList("10!!")));
+        }
+    }
+    @Test
+    public void insertAtSOutOfRangeEmpty() {
+        for(int k=0;k<ITERATIONS;k++) {
+            List<String> result = of().insertAtS(1, Stream.of(100, 200, 300))
+                    .map(it -> it + "!!").collect(Collectors.toList());
+
+            assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));
+        }
+    }
+    @Test
+    public void insertAtIOutOfRangeEmpty() {
+        for(int k=0;k<ITERATIONS;k++) {
+            List<String> result = of().insertAt(1, Arrays.asList(100))
+                    .map(it -> it + "!!").collect(Collectors.toList());
+
+            assertThat(result, equalTo(Arrays.asList("100!!")));
         }
     }
 
@@ -822,7 +849,7 @@ public class BaseSequentialTest {
         List<String> result = of().insertAtS(1, Stream.of(100, 200, 300))
                 .map(it -> it + "!!").collect(Collectors.toList());
 
-        assertThat(result, equalTo(Arrays.asList()));
+        assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));
     }
 
     @Test

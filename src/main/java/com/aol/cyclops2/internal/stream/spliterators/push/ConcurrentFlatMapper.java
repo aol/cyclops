@@ -1,10 +1,8 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import cyclops.data.Seq;
-import cyclops.data.Vector;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

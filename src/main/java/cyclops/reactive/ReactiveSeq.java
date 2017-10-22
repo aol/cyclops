@@ -3008,7 +3008,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         long check =  new Long(pos);
         boolean added[] = {false};
 
-        return  zipWithIndex().flatMap(t-> {
+        return  ReactiveSeq.<T>concat(zipWithIndex().flatMap(t-> {
                     if (t._2() < check && !added[0])
                         return ReactiveSeq.of(t._1());
                     if (!added[0]) {
@@ -3017,7 +3017,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     }
                     return Stream.of(t._1());
                 }
-        );
+        ), ReactiveSeq.of(1)
+                    .limitWhile(p -> added[0] == false) //prevents stream already operated on errors
+                .flatMap(i->stream));
     }
 
 

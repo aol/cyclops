@@ -4,9 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.api.PQueue;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.bankersQueue;
-import cyclops.control.anym.DataWitness.vector;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +13,6 @@ import cyclops.data.tuple.Tuple2;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;

@@ -50,7 +50,14 @@ import static org.junit.Assert.fail;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
-
+    @Test
+    public void prependAppend(){
+        assertThat(of(1)
+                .prependS(Stream.of(2)).append(3).prepend(4).append(5,6)
+                .prependAll(7,8)
+                .insertAt(4,9).deleteBetween(1,2)
+                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+    }
     @Test
     public void testRemoveAt(){
         assertThat(ReactiveSeq.of(1,2,3).removeAt(0).toList(),equalTo(asList(2,3)));

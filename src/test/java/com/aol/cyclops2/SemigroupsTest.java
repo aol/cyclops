@@ -194,7 +194,7 @@ public class SemigroupsTest {
        
         
         LinkedListX<Integer> result = Semigroups.<Integer>linkedListXConcat().apply(one,two);
-        assertThat(result,equalTo(LinkedListX.of(6,5,4,1,2,3)));
+        assertThat(result,equalTo(LinkedListX.of(4,5,6,1,2,3)));
     }
     @Test
     public void testPVectorXConcat() {

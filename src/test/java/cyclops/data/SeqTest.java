@@ -70,10 +70,5 @@ public class SeqTest extends BaseImmutableListTest {
         Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
     }
 
-    @Test
-    public void getOrElseMulti(){
-        assertThat(of(1).getOrElse(0,null),equalTo(1));
-        assertThat(of(1,2).getOrElse(1,null),equalTo(2));
-        assertThat(of(1,2,3).getOrElse(1,null),equalTo(2));
-    }
+
 }
