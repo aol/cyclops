@@ -1,6 +1,7 @@
 package cyclops.collectionx.standard;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -101,4 +102,10 @@ public class QueueXTest extends CollectionXTestsWithNulls {
         return QueueX.unfold(seed, unfolder);
     }
 
+    @Test
+    public void compareDifferentSizes(){
+        assertThat(empty().size(),not(equalTo(of(1).size())));
+        assertThat(of(1).size(),not(equalTo(empty().size())));
+        assertThat(of(1).size(),not(equalTo(of(1,2,3).size())));
+    }
 }

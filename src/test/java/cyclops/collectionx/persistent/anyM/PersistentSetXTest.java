@@ -3,12 +3,14 @@ package cyclops.collectionx.persistent.anyM;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.AbstractAnyMSeqTest;
 import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSetX> {
@@ -53,4 +55,8 @@ public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSe
 
 
     }
+	@Test
+	public void testScanLeftStringConcatMonoid() {
+		assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), hasItems("", "a", "ab", "abc"));
+	}
 }

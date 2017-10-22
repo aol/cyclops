@@ -118,6 +118,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     }
     @Test
     public void minusAllOneNotEmpty(){
+        System.out.println(of(1)
+                .removeAll((Iterable)of(1)));
         assertThat(of(1).removeAll((Iterable)of(1)).size(),equalTo(0));
     }
     @Test

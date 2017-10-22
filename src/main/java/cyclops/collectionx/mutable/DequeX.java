@@ -809,7 +809,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     @Override
     default DequeX<T> removeValue(final T e) {
-        removeValue(e);
+        remove(e);
         return this;
     }
 
@@ -818,7 +818,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     @Override
     default DequeX<T> removeAll(final Iterable<? extends T> list) {
-        removeAll((Iterable)ListX.fromIterable(list));
+        Collection c = this;
+        c.removeAll(ListX.fromIterable(list));
         return this;
     }
 

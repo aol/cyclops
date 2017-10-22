@@ -1,6 +1,7 @@
 package cyclops.collectionx.standard;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -91,5 +92,12 @@ public class DequeXTest extends AbstractCollectionXTest{
 	    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
 	       return DequeX.unfold(seed, unfolder);
 	    }
+
+    @Test
+    public void compareDifferentSizes(){
+        assertThat(empty().size(),not(equalTo(of(1).size())));
+        assertThat(of(1).size(),not(equalTo(empty().size())));
+        assertThat(of(1).size(),not(equalTo(of(1,2,3).size())));
+    }
 
 }
