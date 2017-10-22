@@ -17,8 +17,8 @@ import java.util.function.Function;
 public class ConcurrentFlatMapper<T, R> {
 
     volatile Vector<ActiveSubscriber> activeList = Vector.empty();
-    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, PStack> queueUpdater =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, PStack.class, "activeList");
+    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, Vector> queueUpdater =
+            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, Vector.class, "activeList");
 
     final Consumer<? super R> onNext;
     final Consumer<? super Throwable> onError;

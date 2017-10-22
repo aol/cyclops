@@ -1,5 +1,6 @@
 package cyclops.streams.push;
 
+import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -94,17 +95,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), Spouts.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), Spouts.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Spouts.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), Spouts.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), Spouts.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Spouts.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), Spouts.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
@@ -115,17 +116,17 @@ public class PartitionAndSplittingTest {
 
 		assertEquals(asList(), Spouts.of(1).splitAtHead()._2().toList());
 
-		assertEquals(Optional.empty(), of().splitAtHead()._1());
+		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), Spouts.of().splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Spouts.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1).splitAtHead()._1());
 
-		assertEquals(Optional.of(1), Spouts.of(1, 2).splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1, 2).splitAtHead()._1());
 		assertEquals(asList(2), Spouts.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Optional.of(1), Spouts.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Optional.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Optional.of(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(1), Spouts.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
 		assertEquals(asList(2, 3), Spouts.of(1, 2, 3).splitAtHead()._2().toList());
 		assertEquals(asList(3), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
 		assertEquals(asList(), Spouts.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
