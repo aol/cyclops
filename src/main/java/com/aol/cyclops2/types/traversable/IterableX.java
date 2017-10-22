@@ -649,7 +649,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> plusAll(Iterable<? extends T> list){
         IterableX<T> res = this;
         for(T next : list){
-            res = append(next);
+            res = res.append(next);
         }
         return res;
     }
