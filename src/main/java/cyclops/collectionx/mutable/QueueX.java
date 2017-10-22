@@ -697,7 +697,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     @Override
     default QueueX<T> removeAll(final Iterable<? extends T> list) {
         for(T next : list) {
-            remove(list);
+            remove(next);
         }
         return this;
     }
