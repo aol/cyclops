@@ -142,6 +142,27 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return true;
         });
     }
+
+    @Override
+    default ReactiveSeq<T> plusAll(Iterable<? extends T> list) {
+        return appendAll(list);
+    }
+
+    @Override
+    default ReactiveSeq<T> plus(T value) {
+        return append(value);
+    }
+
+    @Override
+    default ReactiveSeq<T> removeAll(Iterable<? extends T> value) {
+        return removeAllI(value);
+    }
+
+    @Override
+    default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
     default ReactiveSeq<T> updateAt(int i, T e){
         return zipWithIndex().map(t2->{
             if(t2._2()==i)

@@ -3449,4 +3449,68 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().complete(fn));
     }
 
+    @Override
+    default FutureStream<U> removeFirst(Predicate<? super U> pred) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .removeFirst(pred));
+    }
+
+    @Override
+    default FutureStream<U> updateAt(int i, U e) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .updateAt(i,e));
+    }
+
+    @Override
+    default FutureStream<U> removeAt(int pos) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .removeAt(pos));
+    }
+
+    @Override
+    default FutureStream<U> insertAt(int pos, U value) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .insertAt(pos,value));
+    }
+
+    @Override
+    default FutureStream<U> insertAt(int pos, Iterable<? extends U> values) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .insertAt(pos,values));
+    }
+
+    @Override
+    default FutureStream<U> insertAt(int pos, ReactiveSeq<? extends U> values) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .insertAt(pos,values));
+    }
+
+    @Override
+    default FutureStream<U> removeAt(long index) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .removeAt(index));
+    }
+
+    @Override
+    default FutureStream<U> plusAll(Iterable<? extends U> list) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .plusAll(list));
+    }
+
+    @Override
+    default FutureStream<U> plus(U value) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .plus(value));
+    }
+
+    @Override
+    default FutureStream<U> removeAll(Iterable<? extends U> value) {
+        return fromStream(ReactiveSeq.oneShotStream(stream())
+                .removeAll(value));
+    }
+
+    @Override
+    default <R> FutureStream<R> concatMap(Function<? super U, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
 }

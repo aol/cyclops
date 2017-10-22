@@ -401,6 +401,6 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
 
     @Override
     public String toString() {
-        return "PersistentMapX[" + map.toString() + "]";
+        return "PersistentMapX" + map.toString() + "";
     }
 }

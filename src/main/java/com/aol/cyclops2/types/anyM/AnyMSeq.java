@@ -1038,7 +1038,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
 
     @Override
     default AnyMSeq<W,T> insertAt(int pos, T... values) {
-        return fromIterable(IterableX.super.insertAt(pos,values));
+        return fromIterable(stream().insertAt(pos,values));
     }
 
     @Override
@@ -1145,5 +1145,114 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
     }
 
 
+    @Override
+    default AnyMSeq<W,T> removeAllS(final Stream<? extends T> stream) {
+        return fromIterable(IterableX.super.removeAllS(stream));
+    }
 
+    @Override
+    default AnyMSeq<W,T> removeAllI(final Iterable<? extends T> it) {
+        return fromIterable(IterableX.super.removeAllI(it));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeAll(final T... values) {
+        return fromIterable(IterableX.super.removeAll(values));
+    }
+
+    @Override
+    default AnyMSeq<W,T> retainAllI(final Iterable<? extends T> it) {
+        return fromIterable(IterableX.super.retainAllI(it));
+    }
+
+    @Override
+    default AnyMSeq<W,T> retainAllS(final Stream<? extends T> stream) {
+        return fromIterable(IterableX.super.retainAllS(stream));
+    }
+
+    @Override
+    default AnyMSeq<W,T> retainAll(final T... values) {
+        return fromIterable(IterableX.super.retainAll(values));
+    }
+
+    @Override
+    default AnyMSeq<W,T> drop(final long num) {
+        return fromIterable(IterableX.super.drop(num));
+    }
+
+    @Override
+    default AnyMSeq<W,T> take(final long num) {
+        return fromIterable(IterableX.super.take(num));
+    }
+
+    @Override
+    default AnyMSeq<W,T> plusAll(Iterable<? extends T> list) {
+        return fromIterable(IterableX.super.plusAll(list));
+    }
+
+    @Override
+    default AnyMSeq<W,T> plus(T value) {
+        return fromIterable(IterableX.super.plus(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeValue(T value) {
+        return fromIterable(IterableX.super.removeValue(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeAt(long pos) {
+        return fromIterable(IterableX.super.removeAt(pos));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeAt(int pos) {
+        return fromIterable(IterableX.super.removeAt(pos));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeAll(Iterable<? extends T> value) {
+        return fromIterable(IterableX.super.removeAll(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> removeFirst(Predicate<? super T> pred) {
+        return fromIterable(IterableX.super.removeFirst(pred));
+    }
+
+    @Override
+    default AnyMSeq<W,T> appendAll(Iterable<? extends T> value) {
+        return fromIterable(IterableX.super.appendAll(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> prependAll(Iterable<? extends T> value) {
+        return fromIterable(IterableX.super.prependAll(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> prepend(Iterable<? extends T> value) {
+        return fromIterable(IterableX.super.prepend(value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> updateAt(int pos, T value) {
+        return fromIterable(stream().updateAt(pos,value));
+    }
+
+    @Override
+    default <R> AnyMSeq<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
+
+    @Override
+    default AnyMSeq<W,T> insertAt(int i, T value) {
+        return fromIterable(stream().insertAt(i,value));
+    }
+
+    @Override
+    default AnyMSeq<W,T> insertAt(int pos, Iterable<? extends T> values) {
+        return fromIterable(stream().insertAt(pos,values));
+    }
 }
