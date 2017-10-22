@@ -13,6 +13,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.data.tuple.Tuple2;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
@@ -41,7 +42,7 @@ public interface HashedPatriciaTrie<K, V>  {
 
 
 
-    interface Node<K, V> extends Sealed4<EmptyNode<K,V>,SingleNode<K,V>,CollisionNode<K,V>,ArrayNode<K,V>> {
+    interface Node<K, V> extends Sealed4<EmptyNode<K,V>,SingleNode<K,V>,CollisionNode<K,V>,ArrayNode<K,V>> ,Serializable{
 
         boolean isEmpty();
 
@@ -58,8 +59,9 @@ public interface HashedPatriciaTrie<K, V>  {
 
     }
 
-    static class EmptyNode<K,V> implements Node<K,V>{
+    static final class EmptyNode<K,V> implements Node<K,V>{
 
+        private static final long serialVersionUID = 1L;
         static EmptyNode Instance = new EmptyNode();
         @Override
         public boolean isEmpty() {
@@ -122,8 +124,9 @@ public interface HashedPatriciaTrie<K, V>  {
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class SingleNode<K, V> implements Node<K, V>, Deconstruct2<K,V> {
+    static final class SingleNode<K, V> implements Node<K, V>, Deconstruct2<K,V> {
 
+        private static final long serialVersionUID = 1L;
         private final K key;
         private final V value;
 
@@ -219,8 +222,9 @@ public interface HashedPatriciaTrie<K, V>  {
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    static class CollisionNode<K, V> implements Node<K, V>, Deconstruct1<LazySeq<Tuple2<K,V>>> {
+    static final class CollisionNode<K, V> implements Node<K, V>, Deconstruct1<LazySeq<Tuple2<K,V>>> {
 
+        private static final long serialVersionUID = 1L;
         private final LazySeq<Tuple2<K, V>> bucket;
 
         @Override
@@ -307,7 +311,8 @@ public interface HashedPatriciaTrie<K, V>  {
         }
     }
 
-    static class ArrayNode<K, V> implements Node<K, V>, Deconstruct1<Node<K,V>[]> {
+    static final class ArrayNode<K, V> implements Node<K, V>, Deconstruct1<Node<K,V>[]> {
+        private static final long serialVersionUID = 1L;
         private final Node<K, V>[] nodes;
 
         private ArrayNode(Node<K, V>[] nodes) {

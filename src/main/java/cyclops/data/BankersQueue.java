@@ -1,8 +1,12 @@
 package cyclops.data;
 
 import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.bankersQueue;
+import cyclops.control.anym.DataWitness.vector;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -19,7 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 
-public interface BankersQueue<T> extends ImmutableQueue<T>, PQueue<T>, Serializable {
+public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,T>, Serializable {
 
     static <T> BankersQueue<T> fromStream(Stream<T> stream){
         return fromIterable(ReactiveSeq.fromStream(stream));

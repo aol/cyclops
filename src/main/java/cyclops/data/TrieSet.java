@@ -2,7 +2,10 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.trieSet;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -11,6 +14,7 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.Function;
@@ -20,7 +24,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrieSet<T> implements ImmutableSet<T> {
+public final class TrieSet<T> implements ImmutableSet<T>,Higher<trieSet,T>, Serializable{
+    private static final long serialVersionUID = 1L;
     private final HashedPatriciaTrie.Node<T,T> map;
     public static <T> TrieSet<T> empty(){
         return new TrieSet<T>( HashedPatriciaTrie.empty());

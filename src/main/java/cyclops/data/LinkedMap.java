@@ -1,8 +1,11 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.linkedHashMap;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +21,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LinkedMap<K,V> implements ImmutableMap<K,V>{
+public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHashMap,K,V> {
 
     private final ImmutableMap<K, V> map;
     private final Vector<Tuple2<K, V>> order;

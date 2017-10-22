@@ -31,6 +31,8 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                             OnEmpty<Tuple2<K, V>>,
                                             OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
 
+    //@TODO extends PMap
+
     PersistentMapX<K,V> persistentMapX();
     ImmutableMap<K,V> put(K key, V value);
     ImmutableMap<K,V> put(Tuple2<K, V> keyAndValue);

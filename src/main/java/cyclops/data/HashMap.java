@@ -1,8 +1,11 @@
 package cyclops.data;
 
 import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
@@ -19,8 +22,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+
+
 @AllArgsConstructor
-public class HashMap<K,V> implements ImmutableMap<K,V>, PMap<K,V>, Serializable {
+public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<hashMap,K,V>, Serializable{
+
     private final HAMT.Node<K,V> map;
     private static final long serialVersionUID = 1L;
 

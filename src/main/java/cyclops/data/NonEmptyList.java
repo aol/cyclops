@@ -2,9 +2,12 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.nonEmptyList;
 import cyclops.control.lazy.Trampoline;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -21,7 +24,7 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"head,tail"})
-public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, ImmutableList<T>, ImmutableList.Some<T> {
+public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, ImmutableList<T>, ImmutableList.Some<T>, Higher<nonEmptyList,T> {
 
     private final T head;
     private final ImmutableList<T> tail;

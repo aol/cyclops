@@ -1,6 +1,9 @@
 package cyclops.data;
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.tree;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,7 +15,7 @@ import java.util.function.Supplier;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Tree<T> implements Deconstruct2<T,LazySeq<Tree<T>>> {
+public class Tree<T> implements Deconstruct2<T,LazySeq<Tree<T>>>,Higher<tree,T> {
 
     public final T head;
     private final LazySeq<Tree<T>> subForest;

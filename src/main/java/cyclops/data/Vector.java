@@ -3,10 +3,13 @@ package cyclops.data;
 
 import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
 import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.vector;
 import cyclops.data.base.BAMT;
 import cyclops.function.Memoize;
 import cyclops.reactive.Generator;
@@ -23,7 +26,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class Vector<T> implements ImmutableList<T>,PStack<T> {
+public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
+
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
     private final int size;
@@ -94,46 +98,46 @@ public class Vector<T> implements ImmutableList<T>,PStack<T> {
         return new Vector<>(new BAMT.Zero<>(),BAMT.ActiveTail.emptyTail(),0);
     }
 
-    static <T> Vector<T> fill(T t, int max){
+    public static <T> Vector<T> fill(T t, int max){
         return Vector.fromStream(ReactiveSeq.fill(t).take(max));
     }
 
-    static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
+    public static <U, T> Vector<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
 
-    static <T> Vector<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
+    public static <T> Vector<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
         return fromStream(ReactiveSeq.iterate(seed,pred,f));
 
     }
-    static <T> Vector<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
+    public static <T> Vector<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
         return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
 
     }
 
-    static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final Vector<Tuple2<T, U>> sequence) {
+    public static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final Vector<Tuple2<T, U>> sequence) {
         return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
     }
-    static <T> Vector<T> generate(Supplier<T> s, int max){
+    public static <T> Vector<T> generate(Supplier<T> s, int max){
         return fromStream(ReactiveSeq.generate(s).limit(max));
     }
-    static <T> Vector<T> generate(Generator<T> s){
+    public static <T> Vector<T> generate(Generator<T> s){
         return fromStream(ReactiveSeq.generate(s));
     }
-    static Vector<Integer> range(final int start, final int end) {
+    public static Vector<Integer> range(final int start, final int end) {
         return Vector.fromStream(ReactiveSeq.range(start,end));
 
     }
-    static Vector<Integer> range(final int start, final int step, final int end) {
+    public static Vector<Integer> range(final int start, final int step, final int end) {
         return Vector.fromStream(ReactiveSeq.range(start,step,end));
 
     }
-    static Vector<Long> rangeLong(final long start, final long step, final long end) {
+    public static Vector<Long> rangeLong(final long start, final long step, final long end) {
         return Vector.fromStream(ReactiveSeq.rangeLong(start,step,end));
     }
 
 
-    static Vector<Long> rangeLong(final long start, final long end) {
+    public static Vector<Long> rangeLong(final long start, final long end) {
         return Vector.fromStream(ReactiveSeq.rangeLong(start, end));
 
     }

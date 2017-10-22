@@ -2,7 +2,10 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.multiMapHK;
 import cyclops.typeclasses.Pure;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,7 +17,7 @@ import java.util.function.Function;
  Higher kinded multimap
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MultiMapHK<W,K,V> {
+public final class MultiMapHK<W,K,V> implements Higher2<multiMapHK,K,V> {
     private final HashMap<K,Higher<W,V>> multiMap;
     private final Appender<W,V> appender;
     private final Pure<W> pure;

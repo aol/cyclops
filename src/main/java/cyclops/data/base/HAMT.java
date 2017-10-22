@@ -46,7 +46,7 @@ public class HAMT<K, V>  implements Serializable {
        ReactiveSeq<Tuple2<K, V>> stream();
    }
 
-   public static class EmptyNode<K,V> implements Node<K,V>{
+   public static final class EmptyNode<K,V> implements Node<K,V>{
        private static final long serialVersionUID = 1L;
      static final EmptyNode Instance = new EmptyNode();
        @Override
@@ -94,7 +94,7 @@ public class HAMT<K, V>  implements Serializable {
    }
    @AllArgsConstructor
    @EqualsAndHashCode
-   public static class ValueNode<K,V> implements Node<K,V>, Deconstruct2<K,V> {
+   public static final class ValueNode<K,V> implements Node<K,V>, Deconstruct2<K,V> {
        private static final long serialVersionUID = 1L;
        private final int hash;
        public final K key;
@@ -176,7 +176,7 @@ public class HAMT<K, V>  implements Serializable {
    }
 
     @EqualsAndHashCode
-   public static class CollisionNode<K,V> implements Node<K,V>{
+   public static final class CollisionNode<K,V> implements Node<K,V>{
 
        private final int hash;
        private final int size;
@@ -264,7 +264,7 @@ public class HAMT<K, V>  implements Serializable {
     }
     @AllArgsConstructor
     @EqualsAndHashCode
-   public static class BitsetNode<K,V> implements Node<K,V>{
+   public static final class BitsetNode<K,V> implements Node<K,V>{
        private final int bitset;
        private final int size;
        private final Node<K,V>[] nodes;

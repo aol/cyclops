@@ -3,11 +3,14 @@ package cyclops.data;
 
 import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
 import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.intMap;
 import cyclops.control.lazy.Eval;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.reactive.Generator;
@@ -26,7 +29,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IntMap<T> implements ImmutableList<T> {
+public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
 
 
     @Override

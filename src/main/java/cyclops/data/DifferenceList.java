@@ -1,8 +1,11 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.differenceList;
 import cyclops.control.lazy.Trampoline;
 import cyclops.function.Function0;
 import cyclops.control.anym.Witness.supplier;
@@ -17,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DifferenceList<T> implements Folds<T>, Transformable<T> {
+public class DifferenceList<T> implements Folds<T>, Transformable<T>,Higher<differenceList,T> {
 
     private final Function<LazySeq<T>,Free<supplier, LazySeq<T>>> appending;
 

@@ -3,7 +3,10 @@ package cyclops.data;
 
 import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
 import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -12,6 +15,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -20,7 +24,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 
-public final class TreeSet<T> implements ImmutableSortedSet<T>, POrderedSet<T>{
+public final class TreeSet<T> implements ImmutableSortedSet<T>, Higher<treeSet,T>, Serializable {
+
     private final RedBlackTree.Tree<T,T> map;
     private final Comparator<? super T> comp;
 

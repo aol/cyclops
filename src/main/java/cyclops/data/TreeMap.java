@@ -1,7 +1,11 @@
 package cyclops.data;
 
+import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.treeMap;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -9,6 +13,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +25,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TreeMap<K,V> implements ImmutableMap<K,V> {
+public final class TreeMap<K,V> implements ImmutableMap<K,V> ,Higher2<treeMap,K,V>, Serializable{
+    private static final long serialVersionUID = 1L;
     private final RedBlackTree.Tree<K,V> map;
     private final Comparator<K> comp;
 

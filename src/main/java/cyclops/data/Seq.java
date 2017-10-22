@@ -293,6 +293,7 @@ public interface Seq<T> extends ImmutableList<T>,
             }
         };
     }
+
     default  T foldRight(Monoid<T> m){
         return foldRight(m.zero(),(T a,T b)->m.apply(a,b));
     }

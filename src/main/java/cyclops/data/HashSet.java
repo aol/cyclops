@@ -2,7 +2,10 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.hashSet;
 import cyclops.data.base.HAMT;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -21,7 +24,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class HashSet<T> implements  ImmutableSet<T>, PSet<T>, Serializable {
+public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Serializable {
     private static final long serialVersionUID = 1L;
     @Getter
     private final HAMT.Node<T,T> map;
