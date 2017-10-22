@@ -161,7 +161,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     default Function1<Long,T> asFunction(){
-        return index->this.get(index).orElse(null);
+        return index->this.elementAt(index).orElse(null);
     }
 
 

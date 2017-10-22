@@ -500,7 +500,7 @@ public abstract class AbstractTraversableTest {
         public void batchBySizeCollection(){
             
             
-            assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.<Integer>empty()).stream().get(0).toOptional().get().size(),is(3));
+            assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.<Integer>empty()).stream().elementAt(0).toOptional().get().size(),is(3));
             
            // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
         }

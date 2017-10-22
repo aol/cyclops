@@ -114,39 +114,39 @@ public class ExtensionOperatorsTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Spouts.of(1).elementAt(0)._1(),equalTo(1));
+		assertThat(Spouts.of(1).elementAtAndStream(0)._1(),equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(Spouts.of(1,2,3,4,5).elementAt(2)._1(),equalTo(3));
+		assertThat(Spouts.of(1,2,3,4,5).elementAtAndStream(2)._1(),equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(Spouts.of(1,2,3,4,5).elementAt(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(Spouts.of(1,2,3,4,5).elementAtAndStream(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		Spouts.of(1).elementAt(1);
+		Spouts.of(1).elementAtAndStream(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		Spouts.of().elementAt(0);
+		Spouts.of().elementAtAndStream(0);
 	}
 	@Test
 	public void get0(){
-		assertTrue(Spouts.of(1).get(0).isPresent());
+		assertTrue(Spouts.of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(Spouts.of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
+		assertThat(Spouts.of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
-		assertFalse(Spouts.of(1).get(1).isPresent());
+		assertFalse(Spouts.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(Spouts.of().get(0).isPresent());
+		assertFalse(Spouts.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){
@@ -244,7 +244,7 @@ public class ExtensionOperatorsTest {
 	    System.out.println("Hello world!");
         Future result = Future.future();
 
-        Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).forEachSubscribe(e -> {
+        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).forEachSubscribe(e -> {
             System.out.println("Value recieved " + e);
             result.complete(e);
           //  sub[0].cancel();
@@ -261,7 +261,7 @@ public class ExtensionOperatorsTest {
         }).request(1l);
 
         assertThat(result.orElse(null),equalTo(ListX.of(5)));
-        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).findFirst());
+        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
 
 
 		assertThat(Spouts.of(1,2,3,4,5)

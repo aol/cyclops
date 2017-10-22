@@ -103,7 +103,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector) {
+    public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector) {
         return createSeq(new CollectAllOperator<T, A, R>(source, collector));
     }
 
@@ -151,7 +151,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     static final Object UNSET = new Object();
 
     @Override
-    public Maybe<T> findOne() {
+    public Maybe<T> takeOne() {
         if (async == Type.NO_BACKPRESSURE) {
             Future<T> result = Future.future();
             source.subscribeAll(e -> {
@@ -1108,7 +1108,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public ReactiveSeq<T> cycle() {
 
-        ReactiveSeq<T> cycling = collectStream(Collectors.toList())
+        ReactiveSeq<T> cycling = collectAll(Collectors.toList())
                 .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                 .flatMap(i -> i);
         return createSeq(new IterableSourceOperator<T>(cycling), SYNC);
@@ -1321,7 +1321,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-        return findFirstCallAll((ReactiveStreamX<R>) collectStream(collector)).orElseGet(()->collector.finisher().apply(collector.supplier().get()));
+        return findFirstCallAll((ReactiveStreamX<R>) collectAll(collector)).orElseGet(()->collector.finisher().apply(collector.supplier().get()));
 
 
     }
@@ -1482,9 +1482,5 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return maybe;
     }
 
-    @Override
-    public Maybe<T> takeOne() {
-        return Maybe.fromPublisher(this);
 
-    }
 }

@@ -123,17 +123,17 @@ public interface Folds<T> extends Iterable<T>  {
     }
     default <U> Optional<T> maxBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
         return stream().sorted(function,comparator.reversed())
-                .get(0l)
+                .elementAt(0l)
                 .toOptional();
     }
     default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function){
         return stream().sorted(function,Comparator.reverseOrder())
-                .get(0l)
+                .elementAt(0l)
                 .toOptional();
     }
     default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
         return stream().sorted(function, Comparator.naturalOrder())
-                .get(0l)
+                .elementAt(0l)
                 .toOptional();
     }
     default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
@@ -228,12 +228,12 @@ public interface Folds<T> extends Iterable<T>  {
 
     default Optional<T> max(Comparator<? super T> comparator){
         return stream().sorted(comparator.reversed())
-                       .get(0l)
+                       .elementAt(0l)
                        .toOptional();
     }
     default Optional<T> min(Comparator<? super T> comparator){
         return stream().sorted(comparator)
-                .get(0l)
+                .elementAt(0l)
                 .toOptional();
     }
     default int sumInt(ToIntFunction<T> fn){
@@ -828,8 +828,8 @@ public interface Folds<T> extends Iterable<T>  {
      *            to extract element from
      * @return elementAt index
      */
-    default Maybe<T> get(final long index) {
-        return stream().get(index);
+    default Maybe<T> elementAt(final long index) {
+        return stream().elementAt(index);
     }
 
     /**

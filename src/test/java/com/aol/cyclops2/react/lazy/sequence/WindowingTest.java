@@ -159,7 +159,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(4).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(4).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(4).count(),equalTo(1l));
 
 		
@@ -168,14 +168,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 		
-		assertThat(of(5, 7, 9).grouped(3).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9).grouped(3).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9).grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5, 7, 9,10));
-		assertThat(of(5, 7, 9,10).grouped(3).elementAt(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(of(5, 7, 9,10).grouped(3).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
 		assertThat(of(5, 7, 9,10).grouped(3).count(),equalTo(2l));
 		
 	}
@@ -184,7 +184,7 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(of(5));
-		assertThat(fixed.reactiveSeq().grouped(3).get(0).toOptional().get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.reactiveSeq().grouped(3).elementAt(0).toOptional().get(),equalTo(Arrays.asList(5)));
 		assertThat(fixed.reactiveSeq().grouped(3).count(),equalTo(1l));
 	}
 
@@ -199,7 +199,7 @@ public class WindowingTest {
 		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 		
 		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.get(0).toOptional().get(),equalTo(Arrays.asList(1,2,3)));
+		assertThat(grouped.elementAt(0).toOptional().get(),equalTo(Arrays.asList(1,2,3)));
 	
 	}
 

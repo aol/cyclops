@@ -76,39 +76,39 @@ public class SequenceMTest {
 	}
 	@Test
 	public void get0(){
-		assertThat(LazyReact.sequentialBuilder().of(1).elementAt(0)._1(),equalTo(1));
+		assertThat(LazyReact.sequentialBuilder().of(1).elementAtAndStream(0)._1(),equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).elementAt(2)._1(),equalTo(3));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).elementAtAndStream(2)._1(),equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).elementAt(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).elementAtAndStream(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		LazyReact.sequentialBuilder().of(1).elementAt(1);
+		LazyReact.sequentialBuilder().of(1).elementAtAndStream(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		LazyReact.sequentialBuilder().of().elementAt(0);
+		LazyReact.sequentialBuilder().of().elementAtAndStream(0);
 	}
 	@Test
 	public void elementAt0(){
-		assertTrue(LazyReact.sequentialBuilder().of(1).get(0).isPresent());
+		assertTrue(LazyReact.sequentialBuilder().of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void elementAtMultple(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void elementAt1(){
-		assertFalse(LazyReact.sequentialBuilder().of(1).get(1).isPresent());
+		assertFalse(LazyReact.sequentialBuilder().of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(LazyReact.sequentialBuilder().of().get(0).isPresent());
+		assertFalse(LazyReact.sequentialBuilder().of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){

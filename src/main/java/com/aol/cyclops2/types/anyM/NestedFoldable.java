@@ -524,7 +524,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @return elementAt index
      */
     default AnyM<W,Maybe<T>> get(final long index) {
-        return nestedFoldables().map(s -> s.get(index));
+        return nestedFoldables().map(s -> s.elementAt(index));
         
     }
 

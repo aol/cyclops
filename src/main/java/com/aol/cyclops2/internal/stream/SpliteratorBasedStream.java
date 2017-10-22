@@ -92,7 +92,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Maybe<T> findOne(){
+    public Maybe<T> takeOne(){
         return Maybe.fromLazy(Eval.later(()->Maybe.fromOptional(findFirst())));
     }
 

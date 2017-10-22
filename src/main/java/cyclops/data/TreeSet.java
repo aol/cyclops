@@ -207,7 +207,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>, Higher<treeSet,T
 
     @Override
     public Option<T> get(int index) {
-        return stream().get(index);
+        return stream().elementAt(index);
     }
 
 
@@ -239,7 +239,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>, Higher<treeSet,T
 
     @Override
     public Option<T> last() {
-        return stream().limitLast(1).findOne();
+        return stream().limitLast(1).takeOne();
     }
 
     @Override

@@ -21,7 +21,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.collectionx.AbstractSetTest;
-import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
@@ -209,7 +208,7 @@ public class SortedSetXTest extends AbstractSetTest {
         SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
 
         list.containsValue(VectorX.of(1,2));
-        VectorX<Integer> vec = list.get(0).orElse(null);
+        VectorX<Integer> vec = list.elementAt(0).orElse(null);
 
         System.out.println(vec);
         System.out.println("same" +vec.equals(VectorX.of(1,2)));

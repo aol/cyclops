@@ -74,8 +74,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default Maybe<U> findOne(){
-        return stream().findOne();
+    default Maybe<U> takeOne(){
+        return stream().takeOne();
     }
 
     @Override
@@ -109,8 +109,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default <R, A> FutureStream<R> collectStream(Collector<? super U, A, R> collector) {
-        return fromStream(stream().collectStream(collector));
+    default <R, A> FutureStream<R> collectAll(Collector<? super U, A, R> collector) {
+        return fromStream(stream().collectAll(collector));
     }
 
     @Override

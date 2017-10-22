@@ -5,7 +5,6 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
-import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -220,7 +219,7 @@ public class HAMT<K, V>  implements Serializable {
         @Override
        public Option<V> get(int bitShiftDepth, int hash, K key) {
            if(this.hash==hash){
-               return bucket.stream().filter(t->Objects.equals(key,t._1())).findOne().map(Tuple2::_2);
+               return bucket.stream().filter(t->Objects.equals(key,t._1())).takeOne().map(Tuple2::_2);
            }
            return Option.none();
        }

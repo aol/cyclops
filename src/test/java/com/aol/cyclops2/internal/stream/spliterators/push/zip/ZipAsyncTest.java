@@ -232,19 +232,19 @@ public class ZipAsyncTest {
        Spouts.of(1, 2, 3, 4, 5)
                // .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectStream(Collectors.toList())
+                .collectAll(Collectors.toList())
                 .forEach(System.out::println);
 
        System.out.println(Spouts.of(1, 2, 3, 4, 5)
                                 .peek(System.out::println)
                                 .zipS(nextAsync())
-                                .collectStream(Collectors.toList())
+                                .collectAll(Collectors.toList())
                                 .singleUnsafe());
 
         System.out.println(Spouts.of(1, 2, 3, 4, 5)
                 .peek(System.out::println)
                 .zipS(nextAsync())
-                .collectStream(Collectors.toList())
+                .collectAll(Collectors.toList())
                 .findFirst().get());
 
 

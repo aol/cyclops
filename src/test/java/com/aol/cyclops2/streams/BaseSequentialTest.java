@@ -536,7 +536,7 @@ public class BaseSequentialTest {
     public void combine() {
         assertThat(of(1, 2, 3, 4, 5, 6, 7, 8)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(6)));
+                .takeOne(), Matchers.equalTo(Maybe.of(6)));
     }
 
     @Test
@@ -550,21 +550,21 @@ public class BaseSequentialTest {
     public void combineOne() {
         assertThat(of(1)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(1)));
+                .takeOne(), Matchers.equalTo(Maybe.of(1)));
     }
 
     @Test
     public void combineTwo() {
         assertThat(of(1, 2)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(3)));
+                .takeOne(), Matchers.equalTo(Maybe.of(3)));
     }
 
     @Test
     public void combineEmpty() {
         assertThat(this.<Integer>of()
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.nothing()));
+                .takeOne(), Matchers.equalTo(Maybe.nothing()));
     }
 
     @Test

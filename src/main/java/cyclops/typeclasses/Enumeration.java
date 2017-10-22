@@ -119,7 +119,7 @@ public interface Enumeration<E> {
         final Function1<E,Integer> memo = this::calcFromEnum;
         @Override
         public Option<E> toEnum(int e) {
-            return seq.get(e);
+            return seq.elementAt(e);
         }
 
         @Override
@@ -138,7 +138,7 @@ public interface Enumeration<E> {
         }
         public int calcFromEnum(E e) {
             for(int i=0;i<seq.size();i++){
-                if(seq.get(i)==e){
+                if(seq.elementAt(i)==e){
                     return i;
                 }
             }

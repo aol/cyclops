@@ -151,13 +151,13 @@ public class ReactiveSeqTest {
                               .takeOne().toOptional().get(),equalTo(1));
 
         assertThat(of(1,2,3)
-                              .get(0).toOptional().get(),equalTo(1));
+                              .elementAt(0).toOptional().get(),equalTo(1));
         assertThat(ListX.of(1,2,3)
-                              .get(0l).toOptional().get(),equalTo(1));
+                              .elementAt(0l).toOptional().get(),equalTo(1));
         assertThat(of(1,2,3)
-                .get(1).toOptional().get(),equalTo(2));
+                .elementAt(1).toOptional().get(),equalTo(2));
         assertThat(ListX.of(1,2,3)
-                        .get(1l).toOptional().get(),equalTo(2));
+                        .elementAt(1l).toOptional().get(),equalTo(2));
     }
 
     @Test

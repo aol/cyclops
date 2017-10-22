@@ -32,7 +32,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return !stream().isEmpty();
     }
     public Option<T> get(){
-        return stream().findOne();
+        return stream().takeOne();
     }
 
     public T orElse(T value){

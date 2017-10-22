@@ -651,22 +651,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return Streamable.fromStream(reactiveSeq().subStream(start, end));
     }
 
-    /**
-     * Gets the element at index (it must be present)
-     * 
-     * <pre>
-     * {@code 
-     * Streamable.of(1,2,3,4,5).getValue(2)
-     * //3
-     * }
-     * </pre>
-     * 
-     * @param index to extract element from
-     * @return Element and Sequence
-     */
-    default T elementAt(final int index) {
-        return reactiveSeq().elementAt(index)._1();
-    }
+
 
     /**
      * [equivalent to count]
@@ -2132,8 +2117,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return elementAt index
      */
     @Override
-    default Maybe<T> get(final long index) {
-        return reactiveSeq().get(index);
+    default Maybe<T> elementAt(final long index) {
+        return reactiveSeq().elementAt(index);
     }
 
     /**
@@ -2150,8 +2135,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param index to extract element from
      * @return Element and Sequence
      */
-    default Tuple2<T, Streamable<T>> elementAt(final long index) {
-        return reactiveSeq().elementAt(index)
+    default Tuple2<T, Streamable<T>> elementAtAndStream(final long index) {
+        return reactiveSeq().elementAtAndStream(index)
                             .map2(s -> fromStream(s));
     }
 

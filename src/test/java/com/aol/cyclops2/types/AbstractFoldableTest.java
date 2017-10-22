@@ -27,19 +27,19 @@ public abstract class AbstractFoldableTest {
     
     @Test
     public void get0(){
-        assertTrue(of(1).get(0).isPresent());
+        assertTrue(of(1).elementAt(0).isPresent());
     }
     @Test
     public void getAtMultple(){
-        assertThat(of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
+        assertThat(of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
     }
     @Test
     public void getAt1(){
-        assertFalse(of(1).get(1).isPresent());
+        assertFalse(of(1).elementAt(1).isPresent());
     }
     @Test
     public void elementAtEmpty(){
-        assertFalse(of().get(0).isPresent());
+        assertFalse(of().elementAt(0).isPresent());
     }
     @Test
     public void singleTest(){
@@ -68,11 +68,11 @@ public abstract class AbstractFoldableTest {
     
     @Test
     public void elementAt0(){
-        assertThat(of(1).get(0).toOptional().get(),equalTo(1));
+        assertThat(of(1).elementAt(0).toOptional().get(),equalTo(1));
     }
     @Test
     public void getMultple(){
-        assertThat(of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
+        assertThat(of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
     }
     @Test
     public void xMatch(){

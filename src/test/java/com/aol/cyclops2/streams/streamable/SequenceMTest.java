@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -100,7 +99,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Streamable.of(1).get(0).toOptional().get(),equalTo(1));
+		assertThat(Streamable.of(1).elementAt(0).toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void elementAtMultple(){
@@ -117,19 +116,19 @@ public class SequenceMTest {
 	}
 	@Test
 	public void get0(){
-		assertTrue(Streamable.of(1).get(0).isPresent());
+		assertTrue(Streamable.of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void getMultple(){
-		assertThat(Streamable.of(1,2,3,4,5).get(2).toOptional().get(),equalTo(3));
+		assertThat(Streamable.of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
-		assertFalse(Streamable.of(1).get(1).isPresent());
+		assertFalse(Streamable.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void getEmpty(){
-		assertFalse(Streamable.of().get(0).isPresent());
+		assertFalse(Streamable.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){

@@ -2187,8 +2187,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
      *
      * @return
-     */ //@TODO difference from takeOne ?
-    Maybe<T> findOne();
+     */
+    Maybe<T> takeOne();
 
     /**
      * Lazy / reactiveBuffer look up of first value , capturing the first error, if one occurs. If no values are
@@ -2408,10 +2408,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector){
         return coflatMap(s->s.collect(collector));
-    }
-    @Deprecated
-    default <R, A> ReactiveSeq<R> collectStream(Collector<? super T, A, R> collector){
-        return collectAll(collector);
     }
     /**
      * Performs a <a href="package-summary.html#MutableReduction">mutable
@@ -3325,9 +3321,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     }
-    default Maybe<T> takeOne() {
-        return Maybe.fromIterable(this);
-    }
+
 
     /**
      * Return the elementAt index or Optional.empty
@@ -3342,9 +3336,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to extract element from
      * @return elementAt index
      */
-    //@TODO rename elementAt
     @Override
-    default Maybe<T> get(final long index) {
+    default Maybe<T> elementAt(final long index) {
         return this.zipWithIndex()
                    .filter(t -> t._2() == index)
                    .takeOne()
@@ -3366,8 +3359,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to extract element from
      * @return Element and Sequence
      */
-    //@TODO REMOVE
-    default Tuple2<T, ReactiveSeq<T>> elementAt(final long index) {
+    default Tuple2<T, ReactiveSeq<T>> elementAtAndStream(final long index) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> tuple = this.duplicate();
         return tuple.map1(s -> s.zipWithIndex()
                                 .filter(t -> t._2() == index)
@@ -4628,7 +4620,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
      * </pre>
      *
-     * @param stream
+     * @param other
      *            to append
      * @return ReactiveSeq with Stream appended
      */
@@ -4756,15 +4748,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default <T2, T3, T4, R> ReactiveSeq<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ReactiveSeq<R>)IterableX.super.zip4(second,third,fourth,fn);
     }
-    /**
-     A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#mergePublisher(Collection, QueueFactory)}
-     * method to forEachAsync asynchronously also. Max concurrency is determined by the publishers toX size, along with a default limit of 5k queued values before
-     * backpressure is applied.
-     *
-     * @param publishers Publishers to merge
-     * @return Return Stream of merged data
-     */
+
     default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
         return mergeP(QueueFactories.boundedQueue(5_000),publishers);
     }
@@ -4846,7 +4830,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * This contrasts with
      *  {@link ReactiveSeq#duplicate}
-     *  {@link ReactiveSeq#triplate}
+     *  {@link ReactiveSeq#triplicate}
      *  {@link ReactiveSeq#quadruplicate()}
      * Which buffer all Stream types and produce a synchronous downstream stream.
      *
@@ -5428,7 +5412,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor to convert back into narrowed type
+         * @param completableList Type Constructor to convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<reactiveSeq, T> completableList) {

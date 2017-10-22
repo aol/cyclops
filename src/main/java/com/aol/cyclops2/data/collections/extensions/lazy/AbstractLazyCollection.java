@@ -69,8 +69,8 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
 
                         list = toUse.visit(s->toUse.collect(collectorInternal),
-                                            r->fn.apply(toUse.collectStream(collectorInternal)),
-                                                    a->fn.apply(toUse.collectStream(collectorInternal)));
+                                            r->fn.apply(toUse.collectAll(collectorInternal)),
+                                                    a->fn.apply(toUse.collectAll(collectorInternal)));
                         seq.set(null);
                     }
                 }catch(Throwable t){

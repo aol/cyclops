@@ -447,7 +447,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void combine() {
         assertThat(ofWait(1, 2, 3, 4, 5, 6, 7, 8).combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(6)));
+                .takeOne(), Matchers.equalTo(Maybe.of(6)));
     }
 
     @Test
@@ -461,14 +461,14 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
             assertThat(ofWait(1, 2)
                     .combine((a, b) -> a < 5, Semigroups.intSum)
-                    .findOne(), Matchers.equalTo(Maybe.of(3)));
+                    .takeOne(), Matchers.equalTo(Maybe.of(3)));
     }
 
     @Test
     public void combineOne() {
         assertThat(ofWait(1)
                 .combine((a, b) -> a < 5, Semigroups.intSum)
-                .findOne(), Matchers.equalTo(Maybe.of(1)));
+                .takeOne(), Matchers.equalTo(Maybe.of(1)));
     }
 
     protected <U> ReactiveSeq<U> ofWait(U... array){

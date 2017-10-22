@@ -28,7 +28,7 @@ public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements
         return !stream().isEmpty();
     }
     public Option<T> get(){
-        return stream().findOne();
+        return stream().takeOne();
     }
 
     public T orElse(T value){

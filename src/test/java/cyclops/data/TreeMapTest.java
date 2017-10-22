@@ -19,6 +19,6 @@ public class TreeMapTest {
         map.put(10,"boo!")
                 .put(20,"world").remove(10).stream().printOut();
 
-        System.out.println(map.put(10,"boo!").get(10).orElse(null));
+        System.out.println(map.put(10,"boo!").elementAt(10).orElse(null));
     }
 }
