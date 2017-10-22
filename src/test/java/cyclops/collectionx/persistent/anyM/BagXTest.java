@@ -3,14 +3,19 @@ package cyclops.collectionx.persistent.anyM;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.AbstractAnyMSeqTest;
 import cyclops.collectionx.immutable.BagX;
+import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static cyclops.data.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 
@@ -45,5 +50,9 @@ public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 
 
 
+	}
+	@Test
+	public void testScanLeftStringConcatMonoid() {
+		assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), hasItems("", "a", "ab", "abc"));
 	}
 }
