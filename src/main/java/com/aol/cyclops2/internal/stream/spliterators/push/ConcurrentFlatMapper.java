@@ -1,5 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
@@ -16,9 +17,9 @@ import java.util.function.Function;
 
 public class ConcurrentFlatMapper<T, R> {
 
-    volatile Vector<ActiveSubscriber> activeList = Vector.empty();
-    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, Vector> queueUpdater =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, Vector.class, "activeList");
+    volatile Seq<ActiveSubscriber> activeList = Seq.empty();
+    static final AtomicReferenceFieldUpdater<ConcurrentFlatMapper, Seq> queueUpdater =
+            AtomicReferenceFieldUpdater.newUpdater(ConcurrentFlatMapper.class, Seq.class, "activeList");
 
     final Consumer<? super R> onNext;
     final Consumer<? super Throwable> onError;
@@ -113,7 +114,7 @@ public class ConcurrentFlatMapper<T, R> {
         populateFromQueuesAndCleanup();
     }
 
-    int incrementActiveIndex(int index, Vector<ActiveSubscriber> active){
+    int incrementActiveIndex(int index, Seq<ActiveSubscriber> active){
         return index > active.size() ? 0 : subscriberIndex;
     }
 
@@ -221,7 +222,7 @@ public class ConcurrentFlatMapper<T, R> {
 
         do {
 
-            Vector<ActiveSubscriber> localActiveSubs = activeList;
+            Seq<ActiveSubscriber> localActiveSubs = activeList;
             SubscriberRequests state = new SubscriberRequests(!running,0l,requested.get(),0L,false,null);
 
             if (state.complete(activeList.isEmpty()))
@@ -251,7 +252,7 @@ public class ConcurrentFlatMapper<T, R> {
         return state.requestedLocal != 0L && !activeList.isEmpty();
     }
 
-    private boolean cleanupSubsAndReqs(Vector<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
+    private boolean cleanupSubsAndReqs(Seq<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
         ActiveSubscriber active =null;
         for (int i = 0; i < localActiveSubs.size() && (active=localActiveSubs.getOrElse(i,null)).queue.isEmpty() && sub.isOpen; i++) {
             if (!sub.isOpen) {
@@ -263,7 +264,7 @@ public class ConcurrentFlatMapper<T, R> {
         return false;
     }
 
-    private boolean processRequests(Vector<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
+    private boolean processRequests(Seq<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
         int activeIndex = incrementActiveIndex(subscriberIndex,activeList);
 
         for (int i = 0; i < localActiveSubs.size() && state.requestedLocal !=0L && sub.isOpen; i++) {

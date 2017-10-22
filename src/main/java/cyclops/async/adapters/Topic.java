@@ -128,6 +128,9 @@ public class Topic<T> implements Adapter<T> {
 
     private Queue<T> getNextQueue() {
 
+        System.out.println("Sub size " + this.distributor.getSubscribers()
+                .size());
+        System.out.println("Subs" + this.distributor.getSubscribers());
         if (index >= this.distributor.getSubscribers()
                                      .size()) {
 
@@ -193,13 +196,12 @@ public class Topic<T> implements Adapter<T> {
 
         @Synchronized("lock")
         public void addQueue(final Queue<T> q) {
-            subscribers = subscribers.plus(q);
+            subscribers = subscribers.append(q);
         }
 
         @Synchronized("lock")
         public void removeQueue(final Queue<T> q) {
             subscribers = subscribers.removeValue(q);
-
         }
 
         @Override
