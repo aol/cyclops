@@ -1,11 +1,9 @@
 package com.aol.cyclops2.data.collections.extensions;
 
-import java.util.Collection;
-
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
+import com.aol.cyclops2.types.persistent.PersistentCollection;
 import cyclops.reactive.ReactiveSeq;
 
-public interface LazyFluentCollection<T, C extends PCollection<T>> {
+public interface LazyFluentCollection<T, C extends PersistentCollection<T>> {
 
     C get();
 

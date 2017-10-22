@@ -1,9 +1,8 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.control.Either;
-import cyclops.control.lazy.Maybe.Nothing;
+import cyclops.control.Maybe.Nothing;
 import cyclops.control.anym.Witness;
 import cyclops.control.anym.Witness.state;
 import cyclops.control.anym.Witness.supplier;
@@ -414,13 +413,13 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.foldRight(narrowK(ds).eval(val));
+                    return monoid.fold(narrowK(ds).eval(val));
 
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.foldLeft(narrowK(ds).eval(val));
+                    return monoid.fold(narrowK(ds).eval(val));
                 }
 
                 @Override

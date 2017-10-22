@@ -1,7 +1,6 @@
 package cyclops.collectionx.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -14,14 +13,14 @@ import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.persistentQueueX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
@@ -38,7 +37,7 @@ import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.types.persistent.PersistentQueue;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -57,9 +56,9 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
-                                             PQueue<T>,
+        PersistentQueue<T>,
                                              LazyCollectionX<T>,
-                                             OnEmptySwitch<T, PQueue<T>>,
+                                             OnEmptySwitch<T, PersistentQueue<T>>,
                                              Higher<persistentQueueX,T>{
 
     PersistentQueueX<T> lazy();
@@ -71,7 +70,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
     static class CompletablePersistentQueueX<T> implements InvocationHandler {
         Future<PersistentQueueX<T>> future = Future.future();
-        public boolean complete(PQueue<T> result){
+        public boolean complete(PersistentQueue<T> result){
             return future.complete(PersistentQueueX.fromIterable(result));
         }
 
@@ -272,7 +271,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return Spouts.from((Publisher<T>) publisher).to()
                           .persistentQueueX(Evaluation.LAZY);
     }
-    PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer);
+    PersistentQueueX<T> type(Reducer<? extends PersistentQueue<T>,T> reducer);
 
     /**
      *
@@ -295,9 +294,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     public static <T> PersistentQueueX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentQueueX)
             return (PersistentQueueX) iterable;
-        if (iterable instanceof PQueue)
+        if (iterable instanceof PersistentQueue)
             return new LazyPQueueX<>(
-                                     (PQueue) iterable,null,Reducers.toPQueue(),Evaluation.LAZY);
+                                     (PersistentQueue) iterable,null,Reducers.toPQueue(),Evaluation.LAZY);
 
 
         return new LazyPQueueX<>(null,
@@ -454,7 +453,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
     @Override
     default boolean isEmpty() {
-        return PQueue.super.isEmpty();
+        return PersistentQueue.super.isEmpty();
     }
     @Override
     default <R> PersistentQueueX<R> unit(final Iterable<R> col) {
@@ -487,7 +486,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return ReactiveSeq.fromIterable(this);
     }
 
-    default PQueue<T> toPSet() {
+    default PersistentQueue<T> toPSet() {
         return this;
     }
 
@@ -497,7 +496,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
    // @Override
-    default <T> Reducer<PQueue<T>> monoid() {
+    default <T> Reducer<PersistentQueue<T>,T> monoid() {
         return Reducers.toPQueue();
     }
 
@@ -1069,7 +1068,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default PersistentQueueX<T> onEmptySwitch(final Supplier<? extends PQueue<T>> supplier) {
+    default PersistentQueueX<T> onEmptySwitch(final Supplier<? extends PersistentQueue<T>> supplier) {
         if (isEmpty())
             return PersistentQueueX.fromIterable(supplier.get());
         return this;
@@ -1658,7 +1657,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
-        private static  <T> PersistentQueueX<T> concat(PQueue<T> l1, PQueue<T> l2){
+        private static  <T> PersistentQueueX<T> concat(PersistentQueue<T> l1, PersistentQueue<T> l2){
 
             return PersistentQueueX.fromIterable(l1.plusAll(l2));
         }

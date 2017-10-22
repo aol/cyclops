@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
@@ -13,7 +13,7 @@ import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -34,7 +34,7 @@ import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
-                                          IterableX<T>,PStack<T>,
+                                          IterableX<T>,PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                           To<ImmutableList<T>> {
 

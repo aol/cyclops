@@ -11,7 +11,7 @@ import java.util.Optional;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;

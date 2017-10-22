@@ -1,7 +1,7 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
+import com.aol.cyclops2.types.persistent.PersistentIndexed;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -555,7 +555,7 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
 
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PIndexed) || o==null)
+        if(!(o instanceof PersistentIndexed) || o==null)
             return false;
         return equalToDirectAccess((Iterable<T>)o);
 

@@ -4,7 +4,7 @@ import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.adapters.Topic;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;

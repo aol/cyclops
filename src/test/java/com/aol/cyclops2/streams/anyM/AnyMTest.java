@@ -28,7 +28,7 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
 import lombok.val;

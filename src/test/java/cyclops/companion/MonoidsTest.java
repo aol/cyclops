@@ -1,6 +1,6 @@
 package cyclops.companion;
 
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.control.anym.Witness.maybe;
 import cyclops.typeclasses.functions.MonoidK;

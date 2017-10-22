@@ -2,7 +2,6 @@ package cyclops.control;
 
 import cyclops.companion.Monoids;
 import cyclops.data.tuple.Tuple;
-import cyclops.control.lazy.ReaderWriterState;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

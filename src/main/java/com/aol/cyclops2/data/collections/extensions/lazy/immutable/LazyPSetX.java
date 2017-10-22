@@ -1,8 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
-import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.types.persistent.PersistentSet;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.control.Option;
@@ -41,9 +40,9 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> implements PersistentSetX<T> {
+public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PersistentSet<T>> implements PersistentSetX<T> {
 
-    public static final <T> Function<ReactiveSeq<PSet<T>>, PSet<T>> asyncSet() {
+    public static final <T> Function<ReactiveSeq<PersistentSet<T>>, PersistentSet<T>> asyncSet() {
         return r -> {
             CompletablePersistentSetX<T> res = new CompletablePersistentSetX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -51,7 +50,7 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
         };
     }
 
-    public LazyPSetX(PSet<T> list, ReactiveSeq<T> seq, Reducer<PSet<T>> reducer,Evaluation strict) {
+    public LazyPSetX(PersistentSet<T> list, ReactiveSeq<T> seq, Reducer<PersistentSet<T>,T> reducer, Evaluation strict) {
         super(list, seq, reducer,strict,asyncSet());
 
 
@@ -65,26 +64,26 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PSet<T>> im
 
 
     @Override
-    public PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer) {
+    public PersistentSetX<T> type(Reducer<? extends PersistentSet<T>,T> reducer) {
         return new LazyPSetX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPSetX<X>((PSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPSetX<X>((PersistentSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPSetX<T1> from(Iterable<T1> c) {
-        if(c instanceof PSet)
-            return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+        if(c instanceof PersistentSet)
+            return new LazyPSetX<T1>((PersistentSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-    public <T1> LazyPSetX<T1> from(PSet<T1> c) {
+    public <T1> LazyPSetX<T1> from(PersistentSet<T1> c) {
 
-        return new LazyPSetX<T1>((PSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPSetX<T1>((PersistentSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
 
     }
 

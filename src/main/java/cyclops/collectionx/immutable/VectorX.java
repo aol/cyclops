@@ -1,11 +1,8 @@
 package cyclops.collectionx.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -18,14 +15,14 @@ import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.vectorX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.anym.transformers.ListT;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
@@ -66,10 +63,10 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * @param <T> the type of elements held in this collection
  */
 public interface VectorX<T> extends To<VectorX<T>>,
-                                     PStack<T>,
+        PersistentList<T>,
                                      IndexedSequenceX<T>,
                                      LazyCollectionX<T>,
-                                     OnEmptySwitch<T, PStack<T>>,
+                                     OnEmptySwitch<T, PersistentList<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
 
@@ -98,7 +95,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     static class CompletableVectorX<T> implements InvocationHandler {
         Future<VectorX<T>> future = Future.future();
-        public boolean complete(PStack<T> result){
+        public boolean complete(PersistentList<T> result){
             return future.complete(VectorX.fromIterable(result));
         }
 
@@ -364,7 +361,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 ReactiveSeq.fromIterable(iterable),
                 Reducers.toPVector(), LAZY);
     }
-    VectorX<T> type(Reducer<? extends PStack<T>> reducer);
+    VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
 
     /**
      *
@@ -553,7 +550,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     //@Override
-    default <T> Reducer<PStack<T>> monoid() {
+    default <T> Reducer<PersistentList<T>,T> monoid() {
         return Reducers.toPVector();
     }
 
@@ -584,7 +581,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     @Override
     default boolean isEmpty() {
-        return PStack.super.isEmpty();
+        return PersistentList.super.isEmpty();
     }
     @Override
     default <R> VectorX<R> unit(final Iterable<R> col) {
@@ -995,7 +992,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default VectorX<T> onEmptySwitch(final Supplier<? extends PStack<T>> supplier) {
+    default VectorX<T> onEmptySwitch(final Supplier<? extends PersistentList<T>> supplier) {
         if (this.isEmpty())
             return VectorX.fromIterable(supplier.get());
         return this;
@@ -1616,7 +1613,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         }
 
-        private static  <T> VectorX<T> concat(PStack<T> l1, PStack<T> l2){
+        private static  <T> VectorX<T> concat(PersistentList<T> l1, PersistentList<T> l2){
 
             return VectorX.fromIterable(l1.plusAll(l2));
         }

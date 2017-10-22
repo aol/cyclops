@@ -178,8 +178,8 @@ utilResultList:[1]
 	}
 	@Test
 	public void reducer2(){
-		Reducer<Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
-		Reducer<Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
+		Reducer<Integer,Integer> sum = Reducer.of(0,a->b->a+b,i->(int)i);
+		Reducer<Integer,Integer> mult = Reducer.of(1,a->b->a*b,i->(int)i);
 		val result = Streams.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
 				
 		 

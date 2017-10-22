@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.MapX;
+import cyclops.companion.MapXs;
 import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -229,7 +230,7 @@ public abstract class BaseSequentialSeqTest {
 	public void shardStreams(){
 		
 		for(int index=0;index<100;index++){
-			Map<Integer,Queue<Integer>> shards = PersistentMapX.singleton(0,new Queue<Integer>()).plus(1,new Queue());
+			Map<Integer,Queue<Integer>> shards = MapXs.of(0,new Queue<Integer>()).plus(1,new Queue());
 			
 			assertThat(of(1,2,3,4,5,6).shard(shards,i -> 0).get(0).collect(Collectors.toList()),hasItem(6));
 		}

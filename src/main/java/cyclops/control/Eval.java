@@ -1,9 +1,8 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
-import cyclops.control.Either;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
@@ -365,7 +364,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R,T> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 

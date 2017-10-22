@@ -1,6 +1,6 @@
 package cyclops.collectionx.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.foldable.To;
@@ -12,7 +12,7 @@ import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.FluentMapX;
 import com.aol.cyclops2.types.*;
 import cyclops.data.tuple.Tuple;
@@ -227,7 +227,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#insertAt(java.util.Map)
      */
     @Override
-    default MapX<K, V> plusAll(final PMap<? extends K, ? extends V> map) {
+    default MapX<K, V> plusAll(final PersistentMap<? extends K, ? extends V> map) {
         return (MapX<K, V>) FluentMapX.super.plusAll(map);
     }
 

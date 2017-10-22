@@ -6,7 +6,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
 import cyclops.control.anym.Witness.*;

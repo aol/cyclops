@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push.flatMap.iterable;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.hamcrest.Matchers;

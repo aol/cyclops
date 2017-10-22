@@ -373,7 +373,7 @@ public class SpoutsTest {
     public void ambMonoid(){
 
         for(int i=0;i<1000;i++) {
-            assertThat(Monoids.<Integer>ambReactiveSeq().reduce(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toListX(), isOneOf(ListX.of(100, 200, 300), ListX.of(1, 2, 3)));
+            assertThat(Monoids.<Integer>ambReactiveSeq().foldLeft(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toListX(), isOneOf(ListX.of(100, 200, 300), ListX.of(1, 2, 3)));
 
         }
 

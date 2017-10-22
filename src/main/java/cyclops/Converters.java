@@ -2,10 +2,10 @@ package cyclops;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.persistent.*;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.companion.Reducers;
-import com.aol.cyclops2.data.collections.extensions.api.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -44,33 +44,33 @@ public interface Converters {
         return vec.unwrapIfInstance(EnumMap.class,
                 ()-> new EnumMap<K,V>((Map<K,V>)vec.unwrap()));
     }
-    public static <T> PBag<T> PBag(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PBag.class,
+    public static <T> PersistentBag<T> PBag(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentBag.class,
                 ()->Reducers.<T>toPBag().mapReduce(vec.stream()));
     }
-    public static <K,V> PMap<K,V> PMap(PersistentMapX<K,V> vec){
+    public static <K,V> PersistentMap<K,V> PMap(PersistentMapX<K,V> vec){
         return vec.unwrapIfInstance(PersistentMapX.class,
                 ()-> Reducers.<K,V>toPMap().mapReduce(vec.stream()));
     }
-    public static <T> POrderedSet<T> POrderedSet(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentSortedSet<T> POrderedSet(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPOrderedSet().mapReduce(vec.stream()));
     }
-    public static <T> PQueue<T> PQueue(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentQueue<T> PQueue(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPQueue().mapReduce(vec.stream()));
     }
-    public static <T> PSet<T> PSet(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentSet<T> PSet(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPSet().mapReduce(vec.stream()));
     }
-    public static <T> PStack<T> PStack(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
-                ()->Reducers.<T>toPStack().mapReduce(vec.stream()));
+    public static <T> PersistentList<T> PStack(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
+                ()->Reducers.<T>toPList().mapReduce(vec.stream()));
     }
-    public static <T> PStack<T> PVector(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
-                ()-> Reducers.<T>toPStack().mapReduce(vec.stream()));
+    public static <T> PersistentList<T> PVector(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
+                ()-> Reducers.<T>toPList().mapReduce(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 

@@ -3,8 +3,8 @@ package cyclops.typeclasses.monad;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Constant;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.State;
+import cyclops.control.Maybe;
+import cyclops.control.State;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.data.tuple.Tuple;
@@ -15,7 +15,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.control.Constant.Instances.applicative;
-import static cyclops.control.lazy.State.state;
+import static cyclops.control.State.state;
 import static cyclops.data.tuple.Tuple.tuple;
 
 //HighJ Traverse, ScalaZ Traverse and Cats Traverse Influences

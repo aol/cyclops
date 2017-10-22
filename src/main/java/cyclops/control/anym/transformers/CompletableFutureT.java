@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.control.anym.AnyM;

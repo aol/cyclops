@@ -4,7 +4,7 @@ package cyclops.typeclasses.transformers;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.*;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.anym.Witness.*;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.monad.Monad;

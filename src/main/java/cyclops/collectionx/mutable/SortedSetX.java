@@ -14,7 +14,7 @@ import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.sortedSet;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Function3;

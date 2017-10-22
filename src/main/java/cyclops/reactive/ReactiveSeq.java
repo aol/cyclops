@@ -5,9 +5,7 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
 
-import com.aol.cyclops2.types.traversable.ExtendedTraversable;
 import cyclops.control.Option;
-import cyclops.data.ImmutableList;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import cyclops.typeclasses.Active;
@@ -38,11 +36,11 @@ import cyclops.async.adapters.Queue;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 
-import cyclops.control.lazy.LazyEither;
+import cyclops.control.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1228,7 +1226,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<T> cycle(Monoid<T> m, long times){
-        return unit(m.reduce(this)).cycle(times);
+        return unit(m.foldLeft(this)).cycle(times);
     }
 
     /**
@@ -2189,7 +2187,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * For pull based Streams (created via ReactiveSeq.XXX) the Stream will be executed when the Maybe is first accessed.
      *
      * @return
-     */
+     */ //@TODO difference from takeOne ?
     Maybe<T> findOne();
 
     /**
@@ -2275,7 +2273,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      */
     @Override
-    <R> R mapReduce(Reducer<R> reducer);
+    <R> R mapReduce(Reducer<R,T> reducer);
 
     /**
      * Attempt to transform this Monad to the same type as the supplied Monoid, using
@@ -2562,7 +2560,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      **/
     @Override
-    public <T> T foldRightMapToType(Reducer<T> reducer);
+    public <R> R foldRightMapToType(Reducer<R,T> reducer);
 
 
     /**
@@ -3329,7 +3327,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default Maybe<T> takeOne() {
         return Maybe.fromIterable(this);
-
     }
 
     /**

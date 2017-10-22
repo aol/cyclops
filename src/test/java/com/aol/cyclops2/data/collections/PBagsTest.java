@@ -57,7 +57,7 @@ public class PBagsTest {
 
 	@Test
     public void testReducer(){
-	    System.out.println(Reducers.toPBag().mapReduce(Seq.of(1,2,3).stream()));
+	    System.out.println(Reducers.<Integer>toPBag().mapReduce(Seq.of(1,2,3).stream()));
     }
 	
 

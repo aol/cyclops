@@ -12,7 +12,7 @@ import cyclops.control.anym.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -291,7 +291,7 @@ public class CompletableFutures {
      * @param reducer Reducer to accumulate results
      * @return CompletableFuture asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         CompletableFuture<R> result = new CompletableFuture<>();
         Stream<T> successes = fts.stream()
                                                     .filter(ft->!ft.isCompletedExceptionally())
@@ -378,7 +378,7 @@ public class CompletableFutures {
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).thenApply(s -> s.mapReduce(reducer));
     }
     /**

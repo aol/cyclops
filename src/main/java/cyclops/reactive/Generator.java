@@ -1,7 +1,7 @@
 package cyclops.reactive;
 
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.BooleanFunction0;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;

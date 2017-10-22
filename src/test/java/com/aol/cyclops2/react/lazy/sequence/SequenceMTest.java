@@ -25,7 +25,7 @@ import cyclops.async.LazyReact;
 import org.junit.Test;
 
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.reactive.Streamable;

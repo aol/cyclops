@@ -14,14 +14,14 @@ import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.linkedListX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.anym.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collectionx.mutable.ListX;
@@ -41,7 +41,7 @@ import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -61,10 +61,10 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
-                                    PStack<T>,
+        PersistentList<T>,
                                     LazyCollectionX<T>,
                                     IndexedSequenceX<T>,
-                                    OnEmptySwitch<T, PStack<T>>,
+                                    OnEmptySwitch<T, PersistentList<T>>,
                                     Higher<linkedListX,T> {
 
 
@@ -72,7 +72,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     @Override
     default boolean isEmpty() {
-        return PStack.super.isEmpty();
+        return PersistentList.super.isEmpty();
     }
     default Maybe<T> headMaybe(){
         return headAndTail().headMaybe();
@@ -91,7 +91,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     static class CompletableLinkedListX<T> implements InvocationHandler {
         Future<LinkedListX<T>> future = Future.future();
-        public boolean complete(PStack<T> result){
+        public boolean complete(PersistentList<T> result){
             return future.complete(LinkedListX.fromIterable(result));
         }
 
@@ -270,7 +270,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
 
-    LinkedListX<T> type(Reducer<? extends PStack<T>> reducer);
+    LinkedListX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
 
     /**
      *
@@ -287,7 +287,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyLinkedListX<T>(null,stream,Reducers.toPStack(),Evaluation.LAZY);
+        return new LazyLinkedListX<T>(null,stream,Reducers.toPList(),Evaluation.LAZY);
     }
 
 
@@ -314,7 +314,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyLinkedListX<>(null,
-                                 ReactiveSeq.of(values),Reducers.toPStack(), Evaluation.LAZY);
+                                 ReactiveSeq.of(values),Reducers.toPList(), Evaluation.LAZY);
     }
     /**
      * 
@@ -341,11 +341,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     public static <T> LinkedListX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof LinkedListX)
             return (LinkedListX) iterable;
-        if (iterable instanceof PStack)
+        if (iterable instanceof PersistentList)
             return new LazyLinkedListX<T>(
-                    (PStack) iterable,null,Reducers.toPStack(),Evaluation.LAZY);
+                    (PersistentList) iterable,null,Reducers.toPList(),Evaluation.LAZY);
 
-        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPStack(),Evaluation.LAZY);
+        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPList(),Evaluation.LAZY);
 
     }
 
@@ -367,7 +367,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 Seq.empty(),null,Reducers.toPStack(),Evaluation.LAZY);
+                                 Seq.empty(),null,Reducers.toPList(),Evaluation.LAZY);
     }
 
     /**
@@ -388,7 +388,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 Seq.of(value),null,Reducers.toPStack(),Evaluation.LAZY);
+                                 Seq.of(value),null,Reducers.toPList(),Evaluation.LAZY);
     }
 
     /**
@@ -593,8 +593,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     //@Override
-    default <T> Reducer<PStack<T>> monoid() {
-        return Reducers.toPStack();
+    default <T> Reducer<PersistentList<T>,T> monoid() {
+        return Reducers.toPList();
 
     }
 
@@ -603,7 +603,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     @Override
     default LinkedListX<T> reverse() {
-        PStack<T> reversed = Seq.empty();
+        PersistentList<T> reversed = Seq.empty();
         final Iterator<T> it = iterator();
         while (it.hasNext())
             reversed = reversed.insertAt(0, it.next());
@@ -1042,7 +1042,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default LinkedListX<T> onEmptySwitch(final Supplier<? extends PStack<T>> supplier) {
+    default LinkedListX<T> onEmptySwitch(final Supplier<? extends PersistentList<T>> supplier) {
         if (this.isEmpty())
             return LinkedListX.fromIterable(supplier.get());
         return this;
@@ -1644,7 +1644,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
-        private static  <T> LinkedListX<T> concat(PStack<T> l1, PStack<T> l2){
+        private static  <T> LinkedListX<T> concat(PersistentList<T> l1, PersistentList<T> l2){
 
             return LinkedListX.fromIterable(l1.plusAll(l2));
         }

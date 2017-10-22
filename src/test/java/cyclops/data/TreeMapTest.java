@@ -16,9 +16,9 @@ public class TreeMapTest {
 
         map.stream().printOut();
 
-        map.plus(10,"boo!")
-                .plus(20,"world").minus(10).stream().printOut();
+        map.put(10,"boo!")
+                .put(20,"world").remove(10).stream().printOut();
 
-        System.out.println(map.plus(10,"boo!").get(10).orElse(null));
+        System.out.println(map.put(10,"boo!").get(10).orElse(null));
     }
 }

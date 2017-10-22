@@ -2,7 +2,7 @@ package cyclops.function;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.anym.Witness.predicate;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;

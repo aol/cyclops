@@ -1,6 +1,5 @@
 package cyclops.collectionx.immutable;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -19,23 +18,20 @@ import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
 import cyclops.data.HashMap;
-import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
-import com.aol.cyclops2.data.collections.extensions.FluentMapX;
+import cyclops.control.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.functor.Transformable;
 
 
 public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
-                                                PMap<K, V>,
+        PersistentMap<K, V>,
                                                 Unwrapable,
-                                                FluentMapX<K, V>,
                                                 BiTransformable<K, V>,
                                                 Transformable<V>,
                                                 IterableFilterable<Tuple2<K, V>>,
@@ -47,6 +43,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
 
     public static <K, V> PersistentMapX<K, V> empty() {
+
         return new PMapXImpl<K, V>(
                                    HashMap.empty());
     }
@@ -59,6 +56,10 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     public static <K, V> PersistentMapX<K, V> fromMap(final Map<? extends K, ? extends V> map) {
         return new PMapXImpl<K, V>(
                                    HashMap.narrow(HashMap.fromMap(map)));
+    }
+    public static <K, V> PersistentMapX<K, V> fromMap(final PersistentMap<? extends K, ? extends V> map) {
+        return new PMapXImpl<K, V>(
+                HashMap.narrow(HashMap.fromMap(map)));
     }
 
     default PersistentMapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
@@ -82,31 +83,29 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
      * @see org.pcollections.PMap#plus(java.lang.Object, java.lang.Object)
      */
     @Override
-    PersistentMapX<K, V> plus(K key, V value);
+    PersistentMapX<K, V> put(K key, V value);
 
     /* (non-Javadoc)
      * @see org.pcollections.PMap#insertAt(java.util.Map)
      */
     @Override
-    PersistentMapX<K, V> plusAll(PMap<? extends K, ? extends V> map);
+    PersistentMapX<K, V> putAll(PersistentMap<? extends K, ? extends V> map);
 
     /* (non-Javadoc)
      * @see org.pcollections.PMap#removeValue(java.lang.Object)
      */
     @Override
-    PersistentMapX<K, V> minus(K key);
+    PersistentMapX<K, V> remove(K key);
 
     /* (non-Javadoc)
      * @see org.pcollections.PMap#removeAll(java.util.Collection)
      */
     @Override
-    PersistentMapX<K, V> minusAll(Iterable<? extends K> keys);
+    PersistentMapX<K, V> removeAll(Iterable<? extends K> keys);
 
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
-
-        return ReactiveSeq.fromIterable(entrySet())
-                          .map(e -> Tuple.tuple(e.getKey(), e.getValue()));
+        return ReactiveSeq.fromIterable(this);
     }
 
     /* (non-Javadoc)

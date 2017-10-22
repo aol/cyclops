@@ -3,7 +3,6 @@ package cyclops.control;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.lazy.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -407,13 +406,13 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
-                    return monoid.foldRight(narrowK(ds).getValue()._1());
+                    return monoid.fold(narrowK(ds).getValue()._1());
 
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<writer, W>, T> ds) {
-                    return monoid.foldLeft(narrowK(ds).getValue()._1());
+                    return monoid.fold(narrowK(ds).getValue()._1());
                 }
 
                 @Override

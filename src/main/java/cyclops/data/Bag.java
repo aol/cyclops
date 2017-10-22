@@ -1,8 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
-import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.collectionx.mutable.ListX;
+import com.aol.cyclops2.types.persistent.PersistentBag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
+public class Bag<T> implements ImmutableSet<T>, PersistentBag<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private final HashMap<T,Integer> map;
@@ -45,7 +43,7 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
 
 
     public int instances(T type){
-        return map.getValueOrElse(type,0);
+        return map.getOrElse(type,0);
     }
     public int size() {
         return size;
@@ -97,11 +95,11 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
 
     @Override
     public boolean containsValue(final T e) {
-        return map.getValue(e).isPresent();
+        return map.get(e).isPresent();
     }
 
     public Bag<T> plus(final T value) {
-        return new Bag<>(map.put(value, map.getValue(value).orElse(0)+1), size+1);
+        return new Bag<>(map.put(value, map.get(value).orElse(0)+1), size+1);
     }
 
     @Override
@@ -128,11 +126,11 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
 
     @Override
     public Bag<T> removeValue(final T value) {
-        int n = map.getValue(value).orElse(0);
+        int n = map.get(value).orElse(0);
         if(n==0)
             return this;
         if(n==1)
-            return new Bag<>(map.minus(value), size-1);
+            return new Bag<>(map.remove(value), size-1);
 
         return new Bag<>(map.put(value, n-1), size-1);
     }
@@ -156,8 +154,8 @@ public class Bag<T> implements ImmutableSet<T>, PBag<T>, Serializable {
             ImmutableSet bag = (ImmutableSet) o;
             return equalToIteration(bag);
         }
-        if(o instanceof PBag) {
-            PBag bag = (PBag) o;
+        if(o instanceof PersistentBag) {
+            PersistentBag bag = (PersistentBag) o;
             return equalToIteration(bag);
         }
         return false;

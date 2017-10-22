@@ -2,7 +2,7 @@ package cyclops.typeclasses;
 
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.anym.Witness.maybe;
 import cyclops.control.anym.Witness.stream;
 import org.junit.Test;

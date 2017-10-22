@@ -1,7 +1,7 @@
 package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

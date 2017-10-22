@@ -1,6 +1,5 @@
 package cyclops.collectionx.immutable;
 
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import cyclops.data.HashSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.aol.cyclops2.hkt.Higher;
@@ -12,7 +11,7 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.Option;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -20,7 +19,7 @@ import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.persistentSetX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
@@ -38,7 +37,7 @@ import cyclops.typeclasses.monad.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.types.persistent.PersistentSet;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -59,7 +58,7 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher<persistentSetX,T>,LazyCollectionX<T>, OnEmptySwitch<T, PSet<T>> {
+public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T>, Higher<persistentSetX,T>,LazyCollectionX<T>, OnEmptySwitch<T, PersistentSet<T>> {
 
     PersistentSetX<T> lazy();
     PersistentSetX<T> eager();
@@ -70,7 +69,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
 
     static class CompletablePersistentSetX<T> implements InvocationHandler {
         Future<PersistentSetX<T>> future = Future.future();
-        public boolean complete(PSet<T> result){
+        public boolean complete(PersistentSet<T> result){
             return future.complete(PersistentSetX.fromIterable(result));
         }
 
@@ -219,7 +218,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
         return new LazyPSetX<>(
                                HashSet.of(value),null,Reducers.toPSet(), LAZY);
     }
-    PersistentSetX<T> type(Reducer<? extends PSet<T>> reducer);
+    PersistentSetX<T> type(Reducer<? extends PersistentSet<T>,T> reducer);
     /**
     default ConvertableSequence<T> to(){
 
@@ -251,9 +250,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
-        if (iterable instanceof PSet)
+        if (iterable instanceof PersistentSet)
             return new LazyPSetX<>(
-                                   (PSet) iterable,null,Reducers.toPSet(), LAZY);
+                                   (PersistentSet) iterable,null,Reducers.toPSet(), LAZY);
 
 
         return new LazyPSetX<>(null,
@@ -412,7 +411,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
     @Override
     default boolean isEmpty() {
-        return PSet.super.isEmpty();
+        return PersistentSet.super.isEmpty();
     }
     @Override
     default <R> PersistentSetX<R> unit(final Iterable<R> col) {
@@ -456,7 +455,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
     }
 
  //   @Override
-    default <T> Reducer<PSet<T>> monoid() {
+    default <T> Reducer<PersistentSet<T>,T> monoid() {
         return Reducers.toPSet();
     }
 
@@ -876,7 +875,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default PersistentSetX<T> onEmptySwitch(final Supplier<? extends PSet<T>> supplier) {
+    default PersistentSetX<T> onEmptySwitch(final Supplier<? extends PersistentSet<T>> supplier) {
         if (this.isEmpty())
             return PersistentSetX.fromIterable(supplier.get());
         return this;
@@ -1482,7 +1481,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PSet<T>, Higher
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
-        private static  <T> PersistentSetX<T> concat(PSet<T> l1, PSet<T> l2){
+        private static  <T> PersistentSetX<T> concat(PersistentSet<T> l1, PersistentSet<T> l2){
             return PersistentSetX.persistentSetX(ReactiveSeq.fromStream(Stream.concat(l1.stream(),l2.stream())));
         }
         private static <T> PersistentSetX<T> of(T value){

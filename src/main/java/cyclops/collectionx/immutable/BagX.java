@@ -1,6 +1,5 @@
 package cyclops.collectionx.immutable;
 
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.Zippable;
@@ -13,7 +12,7 @@ import cyclops.async.Future;
 import cyclops.companion.Reducers;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.data.Bag;
 import cyclops.function.Function3;
@@ -27,7 +26,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import com.aol.cyclops2.types.persistent.PersistentBag;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -51,13 +50,13 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
+public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PersistentBag<T>> {
     BagX<T> lazy();
     BagX<T> eager();
 
     @Override
     default boolean isEmpty() {
-        return PBag.super.isEmpty();
+        return PersistentBag.super.isEmpty();
     }
 
     @Override
@@ -76,7 +75,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
             System.out.println("new!!");
             new Exception().printStackTrace();
         }
-        public boolean complete(PBag<T> result){
+        public boolean complete(PersistentBag<T> result){
             return future.complete(BagX.fromIterable(result));
         }
 
@@ -288,7 +287,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return ReactiveSeq.fromIterable(this);
     }
 
-    BagX<T> type(Reducer<? extends PBag<T>> reducer);
+    BagX<T> type(Reducer<? extends PersistentBag<T>,T> reducer);
     
     /**
      *
@@ -338,9 +337,9 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     public static <T> BagX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof BagX)
             return (BagX) iterable;
-        if (iterable instanceof PBag)
+        if (iterable instanceof PersistentBag)
             return new LazyPBagX<>(
-                                   (PBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
+                                   (PersistentBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
 
 
         return new LazyPBagX<>(null,
@@ -450,7 +449,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#monoid()
      */
  //   @Override
-    default <T> Reducer<PBag<T>> monoid() {
+    default <T> Reducer<PersistentBag<T>,T> monoid() {
         return Reducers.toPBag();
     }
 
@@ -858,7 +857,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default BagX<T> onEmptySwitch(final Supplier<? extends PBag<T>> supplier) {
+    default BagX<T> onEmptySwitch(final Supplier<? extends PersistentBag<T>> supplier) {
         if (isEmpty())
             return BagX.fromIterable(supplier.get());
         return this;

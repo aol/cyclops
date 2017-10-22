@@ -3,7 +3,7 @@ package cyclops.companion;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.factory.Unit;
 import cyclops.control.Option;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;

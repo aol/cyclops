@@ -2,7 +2,7 @@ package cyclops.async;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
@@ -11,8 +11,8 @@ import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.companion.Monoids;
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.control.*;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.control.anym.Witness.future;
@@ -45,7 +45,6 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -604,7 +603,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
        return Future.of(CompletableFutures.accumulateSuccess(fts.map(Future::getFuture), reducer));
     }
     /**
@@ -624,7 +623,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).map(s -> s.mapReduce(reducer));
     }
     /**

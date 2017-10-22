@@ -1,7 +1,6 @@
 package cyclops.control;
 
 import cyclops.data.tuple.Tuple;
-import cyclops.control.lazy.State;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;

@@ -10,7 +10,7 @@ import cyclops.collectionx.mutable.ListX;
 
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collectionx.immutable.*;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;

@@ -12,7 +12,7 @@ import cyclops.companion.Streams;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 
 public class StreamTest {
 	@Test

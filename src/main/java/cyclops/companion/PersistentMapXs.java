@@ -40,10 +40,11 @@ public class PersistentMapXs {
     }
 
     public static <K, V> PersistentMapX<K, V> toPMapX(final Stream<Tuple2<K, V>> stream) {
-        return (PersistentMapX<K, V>) toPMapX().mapReduce(stream);
+        Reducer<PersistentMapX<K, V>, Tuple2<K, V>> r = toPMapX();
+        return r.mapReduce(stream);
     }
 
-    public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
+    public static <K, V> Reducer<PersistentMapX<K, V>,Tuple2<K,V>> toPMapX() {
         return Reducers.toPMapX();
     }
 

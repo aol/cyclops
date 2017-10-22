@@ -1,19 +1,12 @@
 package cyclops.companion;
 
 
+import com.aol.cyclops2.types.persistent.*;
 import cyclops.collectionx.immutable.*;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
-import com.aol.cyclops2.data.collections.extensions.api.PMap;
-import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
-import com.aol.cyclops2.data.collections.extensions.api.PQueue;
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 
 
 import cyclops.collectionx.immutable.BagX;
@@ -47,8 +40,8 @@ public class Reducers {
 
 
 
-    private static <T> PQueue<T> queueOf(final T... values) {
-        PQueue<T> result = BankersQueue.empty();
+    private static <T> PersistentQueue<T> queueOf(final T... values) {
+        PersistentQueue<T> result = BankersQueue.empty();
         for (final T value : values) {
             result = result.plus(value);
         }
@@ -67,9 +60,8 @@ public class Reducers {
      * </pre>
      * @return Reducer to PersistentQueueX types
      */
-    public static <T> Reducer<PersistentQueueX<T>> toPersistentQueueX() {
-        
-        return Reducer.<PersistentQueueX<T>> of(PersistentQueueX.empty(), (final PersistentQueueX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentQueueX.singleton(x));
+    public static <T> Reducer<PersistentQueueX<T>,T> toPersistentQueueX() {
+        return Reducer.fromMonoid(Monoids.persistentQueueXConcat(), a -> PersistentQueueX.singleton(a));
     }
 
     /**
@@ -82,9 +74,9 @@ public class Reducers {
      * </pre>
      * @return Reducer to OrderedSetX
      */
-    public static <T> Reducer<OrderedSetX<T>> toOrderedSetX() {
-        return Reducer.<OrderedSetX<T>> of(OrderedSetX.<T> empty(Comparators.naturalOrderIdentityComparator()), (final OrderedSetX<T> a) -> b -> a.plusAll(b),
-                                            (final T x) -> OrderedSetX.singleton(Comparators.naturalOrderIdentityComparator(),x));
+    public static <T> Reducer<OrderedSetX<T>,T> toOrderedSetX() {
+        return Reducer.fromMonoid(Monoids.orderedSetXConcat(), a -> OrderedSetX.singleton(Comparators.naturalOrderIdentityComparator(),a));
+
     }
 
     /**
@@ -97,8 +89,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for PersistentSetX
      */
-    public static <T> Reducer<PersistentSetX<T>> toPersistentSetX() {
-        return Reducer.<PersistentSetX<T>> of(PersistentSetX.empty(), (final PersistentSetX<T> a) -> b -> a.plusAll(b), (final T x) -> PersistentSetX.singleton(x));
+    public static <T> Reducer<PersistentSetX<T>,T> toPersistentSetX() {
+        return Reducer.fromMonoid(Monoids.persistentSetXConcat(), a -> PersistentSetX.singleton(a));
     }
 
     /**
@@ -111,8 +103,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for LinkedListX
      */
-    public static <T> Reducer<LinkedListX<T>> toLinkedListX() {
-        return Reducer.<LinkedListX<T>> of(LinkedListX.empty(), (final LinkedListX<T> a) -> b -> a.plusAll(b), (final T x) -> LinkedListX.singleton(x));
+    public static <T> Reducer<LinkedListX<T>,T> toLinkedListX() {
+        return Reducer.fromMonoid(Monoids.linkedListXConcat(), a -> LinkedListX.singleton(a));
     }
 
     /**
@@ -125,8 +117,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for VectorX
      */
-    public static <T> Reducer<VectorX<T>> toVectorX() {
-        return Reducer.<VectorX<T>> of(VectorX.empty(), (final VectorX<T> a) -> b -> a.plusAll(b), (final T x) -> VectorX.singleton(x));
+    public static <T> Reducer<VectorX<T>,T> toVectorX() {
+        return Reducer.fromMonoid(Monoids.vectorXConcat(), a -> VectorX.singleton(a));
     }
 
 
@@ -140,12 +132,12 @@ public class Reducers {
      * </pre>
      * @return Reducer for BagX
      */
-    public static <T> Reducer<BagX<T>> toBagX() {
-        return Reducer.<BagX<T>> of(BagX.empty(), (final BagX<T> a) -> b -> a.plusAll(b), (final T x) -> BagX.singleton(x));
+    public static <T> Reducer<BagX<T>,T> toBagX() {
+        return Reducer.fromMonoid(Monoids.bagXConcat(), a -> BagX.singleton(a));
     }
 
-    private static <T> PQueue<T> queueSingleton(final T value) {
-        PQueue<T> result = BankersQueue.empty();
+    private static <T> PersistentQueue<T> queueSingleton(final T value) {
+        PersistentQueue<T> result = BankersQueue.empty();
         result = result.plus(value);
         return result;
     }
@@ -160,8 +152,8 @@ public class Reducers {
      * </pre>
      * @return Reducer to PQueue types
      */
-    public static <T> Reducer<PQueue<T>> toPQueue() {
-        return Reducer.<PQueue<T>> of(BankersQueue.empty(), (final PQueue<T> a) -> b -> a.plusAll(b), (final T x) -> queueSingleton(x));
+    public static <T> Reducer<PersistentQueue<T>,T> toPQueue() {
+        return Reducer.fromMonoid(Monoids.<T,PersistentQueue<T>>pcollectionConcat(BankersQueue.empty()), a -> BankersQueue.of(a));
     }
     /**
      * <pre>
@@ -173,13 +165,15 @@ public class Reducers {
      * </pre>
      * @return Reducer to POrderedSet
      */
-    public static <T> Reducer<POrderedSet<T>> toPOrderedSet() {
-        return Reducer.<POrderedSet<T>> of(TreeSet.empty(Comparators.naturalOrderIdentityComparator()), (final POrderedSet<T> a) -> b -> a.plusAll(b),
-                                           (final T x) -> TreeSet.of(Comparators.naturalOrderIdentityComparator(),x));
+    public static <T> Reducer<PersistentSortedSet<T>,T> toPOrderedSet() {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(TreeSet.empty(Comparators.naturalOrderIdentityComparator())),
+                a -> TreeSet.of(Comparators.naturalOrderIdentityComparator(),a));
+
     }
-    public static <T> Reducer<POrderedSet<T>> toPOrderedSet(Comparator<T> comp) {
-        return Reducer.<POrderedSet<T>> of(TreeSet.empty(comp), (final POrderedSet<T> a) -> b -> a.plusAll(b),
-                (final T x) -> TreeSet.of(comp,x));
+    public static <T> Reducer<PersistentSortedSet<T>,T> toPOrderedSet(Comparator<T> comp) {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(TreeSet.empty(comp)),
+                a -> TreeSet.of(comp,a));
+
     }
     /**
      * <pre>
@@ -191,10 +185,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for PBag
      */
-    public static <T> Reducer<PBag<T>> toPBag() {
-        return Reducer.<PBag<T>> of(Bag.empty(), (final PBag<T> a) -> b ->
-                                        a.plusAll(b),
-                (final T x) -> Bag.singleton(x));
+    public static <T> Reducer<PersistentBag<T>,T> toPBag() {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(Bag.empty()), a -> Bag.of(a));
     }
     /**
      * <pre>
@@ -206,8 +198,8 @@ public class Reducers {
      * </pre>
      * @return Reducer for PSet
      */
-    public static <T> Reducer<PSet<T>> toPSet() {
-        return Reducer.<PSet<T>> of(HashSet.empty(), (final PSet<T> a) -> b -> a.plusAll(b), (final T x) -> HashSet.singleton(x));
+    public static <T> Reducer<PersistentSet<T>,T> toPSet() {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(HashSet.empty()), a -> HashSet.of(a));
     }
     /**
      * <pre>
@@ -219,34 +211,34 @@ public class Reducers {
      * </pre>
      * @return Reducer for PVector
      */
-    public static <T> Reducer<PStack<T>> toPVector() {
-        return Reducer.<PStack<T>> of(Vector.empty(), (final PStack<T> a) -> b -> a.plusAll(b), (final T x) -> Vector.of(x));
+    public static <T> Reducer<PersistentList<T>,T> toPVector() {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(Vector.empty()), a -> Vector.of(a));
     }
     /**
      * <pre>
      * {@code 
-     * PStack<Integer> q = Reducers.<Integer>toPStack()
+     * PStack<Integer> q = Reducers.<Integer>toPList()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for PStack
      */
-    public static <T> Reducer<PStack<T>> toPStack() {
-        return Reducer.<PStack<T>> of(Seq.empty(), (final PStack<T> a) -> b -> a.insertAt(a.size(), b), (final T x) -> Seq.of(x));
+    public static <T> Reducer<PersistentList<T>,T> toPList() {
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(Seq.empty()), a -> Seq.of(a));
     }
     /**
      * <pre>
      * {@code 
-     * PStack<Integer> q = Reducers.<Integer>toPStackReversed()
+     * PStack<Integer> q = Reducers.<Integer>toPListReversed()
                                 .mapReduce(Stream.of(1,2,3,4));
      * 
      * }
      * </pre>
      * @return Reducer for PStack in reveresed order
      */
-    public static <T> Reducer<PStack<T>> toPStackReversed() {
-        return Reducer.<PStack<T>> of(Seq.empty(), (final PStack<T> a) -> b -> a.plusAll(b), (final T x) -> Seq.of(x));
+    public static <T> Reducer<PersistentList<T>,T> toPListReversed() {
+        return Reducer.<PersistentList<T>,T> of(Seq.empty(), (final PersistentList<T> a) -> b -> a.plusAll(b), (final T x) -> Seq.of(x));
     }
     /**
      * <pre>
@@ -258,11 +250,9 @@ public class Reducers {
      * </pre>
      * @return Reducer for PMap
      */
-    public static <K, V> Reducer<PMap<K, V>> toPMap() {
-//@TODO FIX THIS
-        return Reducer.<PMap<K, V>> of(HashMap.empty(), (final PMap<K, V> a) -> b -> a.plusAll(b), (in) -> {
-
-            final Tuple2 w = (Tuple2)in;
+    public static <K, V> Reducer<PersistentMap<K, V>,Tuple2<K,V>> toPMap() {
+        return Reducer.of(HashMap.empty(), (final PersistentMap<K, V> a) -> b -> a.putAll(b), (in) -> {
+            Tuple2<K, V> w = in;
             return HashMap.of((K) w._1(), (V) w._2());
 
         });
@@ -278,10 +268,9 @@ public class Reducers {
      * </pre>
      * @return Reducer for PersistentMapX
      */
-    public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
-//@TODO FIX THIS
-        return Reducer.<PersistentMapX<K, V>> of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.plusAll(b), (in) -> {
-            final Tuple2 w = (Tuple2)in;
+    public static <K, V> Reducer<PersistentMapX<K, V>,Tuple2<K,V>> toPMapX() {
+        return Reducer.of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.putAll(b), (in) -> {
+            Tuple2<K, V> w = in;
             return PersistentMapX.singleton((K) w._1(), (V) w._2());
         });
 
@@ -309,7 +298,7 @@ public class Reducers {
     /**
      * @return Reducer for counting number of values
      */
-    public static Reducer<Integer> toCountInt() {
+    public static <T> Reducer<Integer,T> toCountInt() {
 
         return Reducer.of(0, a -> b -> a + 1, (x) -> 1);
     }
@@ -324,7 +313,7 @@ public class Reducers {
     /**
      * @return Reducer for counting doubles by converting toString to Double.valueOf( )
      */
-    public static Reducer<Double> toCountDouble() {
+    public static <T> Reducer<Double,T> toCountDouble() {
         return Reducer.of(0.0, a -> b -> a + 1, (x) -> Double.valueOf("" + x));
     }
 

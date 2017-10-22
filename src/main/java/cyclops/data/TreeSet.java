@@ -1,17 +1,13 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.types.persistent.PersistentSet;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
@@ -264,8 +260,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>, Higher<treeSet,T
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if(o instanceof PSet) {
-            PSet<T> set = (PSet<T>) o;
+        if(o instanceof PersistentSet) {
+            PersistentSet<T> set = (PersistentSet<T>) o;
             return equalToIteration(set);
 
         }

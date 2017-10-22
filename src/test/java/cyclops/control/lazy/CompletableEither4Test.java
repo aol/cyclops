@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.LazyEither4.CompletableEither4;
+import cyclops.control.LazyEither4.CompletableEither4;
 import cyclops.function.Monoid;
 import org.junit.Before;
 import org.junit.Test;

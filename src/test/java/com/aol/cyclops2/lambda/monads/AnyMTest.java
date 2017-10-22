@@ -27,8 +27,8 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.QueueX;
 import cyclops.collectionx.mutable.SetX;

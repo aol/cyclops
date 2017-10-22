@@ -1,22 +1,21 @@
-package com.aol.cyclops2.data.collections.extensions.api;
+package com.aol.cyclops2.types.persistent;
 
 import cyclops.reactive.ReactiveSeq;
 
-import java.util.Collection;
 import java.util.Objects;
 
-public interface PCollection<T> extends Iterable<T>{
+public interface PersistentCollection<T> extends Iterable<T>{
 
-     PCollection<T> plus(T e);
+     PersistentCollection<T> plus(T e);
 
-     PCollection<T> plusAll(Iterable<? extends T> list);
+     PersistentCollection<T> plusAll(Iterable<? extends T> list);
 
 
-     PCollection<T> removeValue(T e);
+     PersistentCollection<T> removeValue(T e);
 
      int size();
 
-     PCollection<T> removeAll(Iterable<? extends T> list);
+     PersistentCollection<T> removeAll(Iterable<? extends T> list);
 
      default boolean isEmpty(){
          return size()==0;

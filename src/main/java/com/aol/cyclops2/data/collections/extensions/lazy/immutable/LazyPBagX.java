@@ -7,7 +7,7 @@ import cyclops.control.Option;
 import cyclops.data.Bag;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
+import com.aol.cyclops2.types.persistent.PersistentBag;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -40,9 +40,9 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> implements BagX<T> {
+public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PersistentBag<T>> implements BagX<T> {
 
-    public static final <T> Function<ReactiveSeq<PBag<T>>, PBag<T>> asyncBag() {
+    public static final <T> Function<ReactiveSeq<PersistentBag<T>>, PersistentBag<T>> asyncBag() {
         return r -> {
             CompletableBagX<T> res = new CompletableBagX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -50,7 +50,7 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
         };
     }
 
-    public LazyPBagX(PBag<T> list, ReactiveSeq<T> seq, Reducer<PBag<T>> reducer,Evaluation strict) {
+    public LazyPBagX(PersistentBag<T> list, ReactiveSeq<T> seq, Reducer<PersistentBag<T>,T> reducer, Evaluation strict) {
         super(list, seq, reducer,strict,asyncBag());
     }
 
@@ -71,8 +71,8 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
         return this;
     }
 
-    public BagX<T> type(Reducer<? extends PBag<T>> reducer){
-        Reducer<PBag<T>> narrow = Reducer.narrow(reducer);
+    public BagX<T> type(Reducer<? extends PersistentBag<T>,T> reducer){
+        Reducer<PersistentBag<T>,T> narrow = Reducer.narrow(reducer);
         return new LazyPBagX<T>(list,seq.get(),narrow, evaluation());
     }
 
@@ -90,19 +90,19 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PBag<T>> im
     @Override
     public <X> LazyPBagX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPBagX<X>((PBag)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPBagX<X>((PersistentBag)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPBagX<T1> from(Iterable<T1> c) {
-        if(c instanceof PBag)
-            return new LazyPBagX<T1>((PBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+        if(c instanceof PersistentBag)
+            return new LazyPBagX<T1>((PersistentBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
     public <T1> LazyPBagX<T1> from(Bag<T1> c) {
 
-      return new LazyPBagX<T1>((PBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+      return new LazyPBagX<T1>((PersistentBag)c,null,(Reducer)this.getCollectorInternal(), evaluation());
 
     }
 

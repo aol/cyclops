@@ -6,7 +6,7 @@ import com.aol.cyclops2.hkt.Higher2;
 import com.aol.cyclops2.types.foldable.EqualTo;
 import com.aol.cyclops2.types.foldable.OrderedBy;
 import com.aol.cyclops2.types.foldable.To;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Either;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
@@ -190,6 +190,10 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
             result = Comparators.naturalOrderIdentityComparator().compare(_2(),o._2());
         }
         return result;
+    }
+
+    public static <K, V> Tuple2< K, V> narrow(Tuple2<? extends K, ? extends V> t) {
+        return (Tuple2<K,V>)t;
     }
 
     public static class Instances {

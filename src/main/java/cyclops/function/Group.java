@@ -3,7 +3,6 @@ package cyclops.function;
 import cyclops.typeclasses.Cokleisli;
 import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.functions.GroupK;
-import cyclops.typeclasses.functions.MonoidK;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -16,7 +15,7 @@ public interface Group<T> extends Monoid<T> {
     T invert(T t);
 
     default T reduceReverse(final Stream<T> toReduce) {
-        return invert(reduce(toReduce));
+        return invert(foldLeft(toReduce));
     }
 
     public static <T> Group<T> fromCurried(UnaryOperator<T> inverse,final T zero, final Function<T, Function<T, T>> combiner){

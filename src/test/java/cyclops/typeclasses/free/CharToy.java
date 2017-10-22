@@ -1,7 +1,7 @@
 package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.lazy.LazyEither3;
+import cyclops.control.LazyEither3;
 import cyclops.function.Function1;
 import cyclops.function.Function2;
 import cyclops.typeclasses.functor.Functor;

@@ -1,4 +1,4 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
@@ -11,7 +11,6 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.*;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;

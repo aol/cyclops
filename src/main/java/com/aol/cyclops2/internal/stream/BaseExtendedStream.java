@@ -103,13 +103,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final <R> R mapReduce(final Reducer<R> reducer) {
+    public final <R> R mapReduce(final Reducer<R,T> reducer) {
         return reducer.mapReduce(unwrapStream());
     }
 
     @Override
     public final <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return reducer.reduce(map(mapper));
+        return reducer.foldLeft(map(mapper));
     }
 
     @Override
@@ -128,7 +128,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final T reduce(final Monoid<T> reducer) {
 
-        return reducer.reduce(this);
+        return reducer.foldLeft(this);
     }
 
     @Override
@@ -154,13 +154,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return unwrapStream().reduce(identity, accumulator);
     }
 
-    public final <T> T foldLeftMapToType(final Reducer<T> reducer) {
+    public final <R> R foldLeftMapToType(final Reducer<R,T> reducer) {
         return reducer.mapReduce(unwrapStream());
     }
 
     @Override
     public final T foldRight(final Monoid<T> reducer) {
-        return reducer.reduce(reverse());
+        return reducer.foldLeft(reverse());
     }
 
     @Override
@@ -170,7 +170,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final <T> T foldRightMapToType(final Reducer<T> reducer) {
+    public final <R> R foldRightMapToType(final Reducer<R,T> reducer) {
         return reducer.mapReduce(reverse());
     }
 

@@ -13,7 +13,7 @@ import cyclops.companion.CompletableFutures;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.control.anym.Witness.*;

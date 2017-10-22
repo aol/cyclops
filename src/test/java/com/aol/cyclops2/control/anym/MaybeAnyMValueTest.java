@@ -1,7 +1,7 @@
 package com.aol.cyclops2.control.anym;
 
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.control.anym.Witness;
 import org.junit.Before;

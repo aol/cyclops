@@ -8,7 +8,7 @@ import cyclops.async.Future;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.*;
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.function.Semigroup;
@@ -16,7 +16,7 @@ import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
+import com.aol.cyclops2.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
@@ -64,6 +64,11 @@ public interface Semigroups {
 
         return (a, b) -> (C) a.plusAll(b);
     }
+    static <T, C extends PersistentCollection<T>> Semigroup<C> pcollectionConcat() {
+
+        return (C a, C b) -> (C)a.plusAll(b);
+    }
+
 
     /**
      * Concatenate mutable collections
@@ -228,14 +233,14 @@ public interface Semigroups {
             if (a instanceof FluentCollectionX) {
                 return (C) ((FluentCollectionX) a).plusAll(b);
             }
-            if (a instanceof PCollection) {
-                return (C) ((PCollection) a).plusAll(b);
+            if (a instanceof PersistentCollection) {
+                return (C) ((PersistentCollection) a).plusAll(b);
             }
             if (b instanceof FluentCollectionX) {
                 return (C) ((FluentCollectionX) b).plusAll(a);
             }
-            if (b instanceof PCollection) {
-                return (C) ((PCollection) b).plusAll(a);
+            if (b instanceof PersistentCollection) {
+                return (C) ((PersistentCollection) b).plusAll(a);
             }
             a.addAll(b);
             return a;

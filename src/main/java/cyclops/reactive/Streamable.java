@@ -12,7 +12,7 @@ import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.control.anym.AnyM;
@@ -1468,7 +1468,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R mapReduce(final Reducer<R> reducer) {
+    default <R> R mapReduce(final Reducer<R,T> reducer) {
         return reactiveSeq().mapReduce(reducer);
     }
 
@@ -1653,7 +1653,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <T> T foldRightMapToType(final Reducer<T> reducer) {
+    default <R> R foldRightMapToType(final Reducer<R,T> reducer) {
         return reactiveSeq().foldRightMapToType(reducer);
     }
 

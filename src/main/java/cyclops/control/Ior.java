@@ -12,8 +12,6 @@ import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.Monoids;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
@@ -511,7 +509,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate lazyLeft operation
      */
-    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
+    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
         return sequenceSecondary(iors).map(s -> s.mapReduce(reducer));
     }
 
@@ -611,7 +609,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate lazyRight operation
      */
-    public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R> reducer) {
+    public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
         return sequencePrimary(iors).map(s -> s.mapReduce(reducer));
     }
 

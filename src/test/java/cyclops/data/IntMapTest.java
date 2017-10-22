@@ -111,7 +111,7 @@ public class IntMapTest extends BaseImmutableListTest{
         long start = System.currentTimeMillis();
 
         for(int i=0;i<100_000_00;i++){
-            al.add(v.getValueOrElse(i,-1));
+            al.add(v.getOrElse(i,-1));
         }
         System.out.println(System.currentTimeMillis()-start);
         System.out.println(al.size());

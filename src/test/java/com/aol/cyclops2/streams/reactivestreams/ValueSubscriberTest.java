@@ -10,8 +10,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import cyclops.control.*;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import org.junit.Test;
 
 import cyclops.async.Future;

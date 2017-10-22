@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.control.anym.AnyM;
@@ -55,7 +55,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> mapReduce(final Reducer<R> reducer) {
+    default <R> AnyM<W,R> mapReduce(final Reducer<R,T> reducer) {
         return nestedFoldables().map(s -> s.mapReduce(reducer));
     }
 
@@ -203,7 +203,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
     }
-    default <T> AnyM<W,T> foldLeftMapToType(final Reducer<T> reducer) {
+    default <R> AnyM<W,R> foldLeftMapToType(final Reducer<R,T> reducer) {
         return nestedFoldables().map(s -> s.mapReduce(reducer));
     }
     /**
@@ -275,7 +275,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <T> AnyM<W,T> foldRightMapToType(final Reducer<T> reducer) {
+    default <R> AnyM<W,R> foldRightMapToType(final Reducer<R,T> reducer) {
         return nestedFoldables().map(s -> s.foldRightMapToType(reducer));
     }
 

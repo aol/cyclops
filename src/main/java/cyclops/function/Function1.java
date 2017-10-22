@@ -10,8 +10,8 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.*;
 
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.control.anym.function.AnyMFunction1;
 
 import cyclops.control.anym.transformers.FutureT;

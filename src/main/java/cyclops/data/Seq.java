@@ -1,21 +1,20 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentIndexed;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.anym.DataWitness.seq;
 import cyclops.data.tuple.Tuple3;
@@ -40,7 +39,7 @@ import java.util.stream.Stream;
 public interface Seq<T> extends ImmutableList<T>,
                                 Folds<T>,
                                 Filters<T>,
-                                Transformable<T>, PStack<T>,
+                                Transformable<T>, PersistentList<T>,
                                 Higher<seq,T> {
 
 
@@ -914,7 +913,7 @@ public interface Seq<T> extends ImmutableList<T>,
                      return false;
                  }
              }
-             if(obj instanceof PIndexed) {
+             if(obj instanceof PersistentIndexed) {
                  return equalToIteration((Iterable)obj);
              }
              return false;
@@ -1049,8 +1048,8 @@ public interface Seq<T> extends ImmutableList<T>,
             if (obj == this)
                 return true;
 
-            if(obj instanceof PStack) {
-                return ((PStack)obj).size()==0;
+            if(obj instanceof PersistentList) {
+                return ((PersistentList)obj).size()==0;
             }
             return false;
         }

@@ -5,7 +5,7 @@ import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.anyM.transformers.NonEmptyTransformer;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.WitnessType;

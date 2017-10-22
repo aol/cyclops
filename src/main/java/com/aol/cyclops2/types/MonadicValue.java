@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Try;
 import cyclops.function.Monoid;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.function.Curry;
 import cyclops.function.Function3;

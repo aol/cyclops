@@ -1,7 +1,6 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.data.tuple.*;
 import lombok.AccessLevel;

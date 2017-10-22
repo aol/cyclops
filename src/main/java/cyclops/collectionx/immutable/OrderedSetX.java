@@ -1,7 +1,6 @@
 package cyclops.collectionx.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
 import cyclops.data.Comparators;
 import cyclops.data.TreeSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
@@ -21,7 +20,7 @@ import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.orderedSetX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
@@ -31,7 +30,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
+import com.aol.cyclops2.types.persistent.PersistentSortedSet;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -50,7 +49,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
+public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PersistentSortedSet<T>> {
 
     OrderedSetX<T> lazy();
     OrderedSetX<T> eager();
@@ -61,7 +60,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     static class CompletableOrderedSetX<T> implements InvocationHandler {
         Future<OrderedSetX<T>> future = Future.future();
-        public boolean complete(POrderedSet<T> result){
+        public boolean complete(PersistentSortedSet<T> result){
             return future.complete(OrderedSetX.fromIterable(result));
         }
 
@@ -179,7 +178,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     public static <T extends Comparable<? super T>> OrderedSetX<T> empty() {
         TreeSet<T> t = TreeSet.empty();
-        Reducer<POrderedSet<T>> r = Reducers.toPOrderedSet();
+        Reducer<PersistentSortedSet<T>,T> r = Reducers.toPOrderedSet();
         return new LazyPOrderedSetX<>(
                                       t,null,r,Evaluation.LAZY);
     }
@@ -196,7 +195,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return new LazyPOrderedSetX<>(
                 TreeSet.singleton(comp,value),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
     }
-    OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer);
+    OrderedSetX<T> type(Reducer<? extends PersistentSortedSet<T>,T> reducer);
 
     /**
      *
@@ -255,9 +254,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     public static <T> OrderedSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof OrderedSetX)
             return (OrderedSetX) iterable;
-        if (iterable instanceof POrderedSet)
+        if (iterable instanceof PersistentSortedSet)
             return new LazyPOrderedSetX<>(
-                                          (POrderedSet) iterable,null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                          (PersistentSortedSet) iterable,null,Reducers.toPOrderedSet(),Evaluation.LAZY);
 
 
         return new LazyPOrderedSetX<>(null,
@@ -427,7 +426,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     @Override
     default boolean isEmpty() {
-        return POrderedSet.super.isEmpty();
+        return PersistentSortedSet.super.isEmpty();
     }
 
     /**
@@ -463,7 +462,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
   //  @Override
-    default <T> Reducer<POrderedSet<T>> monoid() {
+    default <T> Reducer<PersistentSortedSet<T>,T> monoid() {
         return Reducers.toPOrderedSet();
     }
 
@@ -873,7 +872,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default OrderedSetX<T> onEmptySwitch(final Supplier<? extends POrderedSet<T>> supplier) {
+    default OrderedSetX<T> onEmptySwitch(final Supplier<? extends PersistentSortedSet<T>> supplier) {
         if (this.isEmpty())
             return OrderedSetX.fromIterable(supplier.get());
         return this;

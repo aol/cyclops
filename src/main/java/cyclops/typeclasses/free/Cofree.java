@@ -3,7 +3,7 @@ package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 
 import cyclops.control.anym.Witness.cofree;
 import cyclops.control.anym.Witness.eval;

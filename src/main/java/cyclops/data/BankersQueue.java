@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.types.persistent.PersistentQueue;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
@@ -374,7 +374,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
                 return false;
             if (obj == this)
                 return true;
-            if(obj instanceof PQueue) {
+            if(obj instanceof PersistentQueue) {
                 return equalToIteration((Iterable)obj);
             }
             return false;
@@ -494,8 +494,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
 
         @Override
         public boolean equals(Object obj) {
-            if(obj instanceof PQueue){
-                return ((PQueue)obj).size()==0;
+            if(obj instanceof PersistentQueue){
+                return ((PersistentQueue)obj).size()==0;
             }
             return false;
         }

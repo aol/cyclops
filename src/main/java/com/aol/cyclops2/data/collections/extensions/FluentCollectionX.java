@@ -1,10 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions;
 
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import cyclops.control.Option;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 

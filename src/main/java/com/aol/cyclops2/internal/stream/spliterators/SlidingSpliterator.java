@@ -2,7 +2,6 @@ package com.aol.cyclops2.internal.stream.spliterators;
 
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.immutable.VectorX;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import cyclops.data.Vector;
 
 

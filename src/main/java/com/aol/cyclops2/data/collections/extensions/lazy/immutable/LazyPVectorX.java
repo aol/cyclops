@@ -1,7 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
@@ -39,8 +39,8 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T>> implements VectorX<T> {
-    public static final <T> Function<ReactiveSeq<PStack<T>>, PStack<T>> asyncVector() {
+public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PersistentList<T>> implements VectorX<T> {
+    public static final <T> Function<ReactiveSeq<PersistentList<T>>, PersistentList<T>> asyncVector() {
         return r -> {
             CompletableVectorX<T> res = new CompletableVectorX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -49,7 +49,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T
     }
 
 
-    public LazyPVectorX(PStack<T> list, ReactiveSeq<T> seq, Reducer<PStack<T>> reducer,Evaluation strict) {
+    public LazyPVectorX(PersistentList<T> list, ReactiveSeq<T> seq, Reducer<PersistentList<T>,T> reducer, Evaluation strict) {
         super(list, seq, reducer,strict,asyncVector());
     }
 
@@ -64,26 +64,26 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T
 
 
     @Override
-    public VectorX<T> type(Reducer<? extends PStack<T>> reducer) {
+    public VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer) {
         return new LazyPVectorX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPVectorX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPVectorX<X>((PStack)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPVectorX<X>((PersistentList)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPVectorX<T1> from(Iterable<T1> c) {
-        if(c instanceof PStack)
-            return new LazyPVectorX<T1>((PStack)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+        if(c instanceof PersistentList)
+            return new LazyPVectorX<T1>((PersistentList)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-    public <T1> LazyPVectorX<T1> from(PStack<T1> c) {
+    public <T1> LazyPVectorX<T1> from(PersistentList<T1> c) {
 
-            return new LazyPVectorX<T1>((PStack)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+            return new LazyPVectorX<T1>((PersistentList)c,null,(Reducer)this.getCollectorInternal(), evaluation());
 
     }
 
@@ -253,7 +253,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T
 
     @Override
     public T getOrElse(int index, T value) {
-        PStack<T> x = get();
+        PersistentList<T> x = get();
         if(index<0 || index>=x.size())
             return value;
         return x.getOrElse(index,value);
@@ -261,7 +261,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,PStack<T
 
     @Override
     public T getOrElseGet(int index, Supplier<? extends T> supplier) {
-        PStack<T> x = get();
+        PersistentList<T> x = get();
         if(index <0 || index>=x.size())
             return supplier.get();
         return x.getOrElseGet(index,supplier);

@@ -6,7 +6,7 @@ import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
+import com.aol.cyclops2.types.persistent.PersistentSortedSet;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -39,8 +39,8 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrderedSet<T>> implements OrderedSetX<T> {
-    public static final <T> Function<ReactiveSeq<POrderedSet<T>>, POrderedSet<T>> asyncOrderedSet() {
+public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,PersistentSortedSet<T>> implements OrderedSetX<T> {
+    public static final <T> Function<ReactiveSeq<PersistentSortedSet<T>>, PersistentSortedSet<T>> asyncOrderedSet() {
         return r -> {
             CompletableOrderedSetX<T> res = new CompletableOrderedSetX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -48,7 +48,7 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
         };
     }
 
-    public LazyPOrderedSetX(POrderedSet<T> list, ReactiveSeq<T> seq, Reducer<POrderedSet<T>> reducer,Evaluation strict) {
+    public LazyPOrderedSetX(PersistentSortedSet<T> list, ReactiveSeq<T> seq, Reducer<PersistentSortedSet<T>,T> reducer, Evaluation strict) {
         super(list, seq, reducer,strict,asyncOrderedSet());
 
 
@@ -62,24 +62,24 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,POrd
 
 
     @Override
-    public OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer) {
+    public OrderedSetX<T> type(Reducer<? extends PersistentSortedSet<T>,T> reducer) {
         return new LazyPOrderedSetX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPOrderedSetX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPOrderedSetX<X>((POrderedSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPOrderedSetX<X>((PersistentSortedSet)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
     public <T1> LazyPOrderedSetX<T1> from(Iterable<T1> c) {
-        if(c instanceof POrderedSet)
-            return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+        if(c instanceof PersistentSortedSet)
+            return new LazyPOrderedSetX<T1>((PersistentSortedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
         return fromStream(ReactiveSeq.fromIterable(c));
     }
-    public <T1> LazyPOrderedSetX<T1> from(POrderedSet<T1> c) {
-        return new LazyPOrderedSetX<T1>((POrderedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+    public <T1> LazyPOrderedSetX<T1> from(PersistentSortedSet<T1> c) {
+        return new LazyPOrderedSetX<T1>((PersistentSortedSet)c,null,(Reducer)this.getCollectorInternal(), evaluation());
     }
     @Override
     public OrderedSetX<T> lazy() {

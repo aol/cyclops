@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.ListX;
@@ -463,7 +463,7 @@ public class Optionals {
      * @param reducer Reducer to accumulate values with
      * @return Optional with reduced value
      */
-    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R> reducer) {
+    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R,T> reducer) {
         return sequencePresent(optionals).map(s -> s.mapReduce(reducer));
     }
     /**

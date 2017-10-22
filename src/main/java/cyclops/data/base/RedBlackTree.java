@@ -5,7 +5,6 @@ import com.aol.cyclops2.matching.Deconstruct.Deconstruct5;
 import com.aol.cyclops2.matching.Sealed2;
 import cyclops.control.Option;
 
-import cyclops.control.lazy.Trampoline;
 import cyclops.matching.Api;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

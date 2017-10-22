@@ -1,6 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
+import com.aol.cyclops2.types.persistent.PersistentCollection;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import com.aol.cyclops2.data.collections.extensions.LazyFluentCollection;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
@@ -28,20 +28,20 @@ import java.util.stream.Stream;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
+public abstract class AbstractLazyPersistentCollection<T, C extends PersistentCollection<T>> implements LazyFluentCollection<T, C>, LazyCollectionX<T> {
     @Getter(AccessLevel.PROTECTED)
     protected volatile C list;
     @Getter(AccessLevel.PROTECTED)
     protected final AtomicReference<ReactiveSeq<T>> seq;
     @Getter(AccessLevel.PROTECTED)
-    private final Reducer<C> collectorInternal;
+    private final Reducer<C,T> collectorInternal;
 
     private final Evaluation strict;
     final AtomicBoolean updating = new AtomicBoolean(false);
     final AtomicReference<Throwable> error = new AtomicReference<>(null);
     private final Function<ReactiveSeq<C>,C> fn;
 
-    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C> collector,Evaluation strict,Function<ReactiveSeq<C>,C> fn) {
+    public AbstractLazyPersistentCollection(C list, ReactiveSeq<T> seq, Reducer<C,T> collector,Evaluation strict,Function<ReactiveSeq<C>,C> fn) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
@@ -49,7 +49,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
         this.fn = fn;
         handleStrict();
     }
-     AbstractLazyPersistentCollection(Evaluation strict,C list, ReactiveSeq<T> seq, Reducer<C> collector,Function<ReactiveSeq<C>,C> fn) {
+     AbstractLazyPersistentCollection(Evaluation strict,C list, ReactiveSeq<T> seq, Reducer<C,T> collector,Function<ReactiveSeq<C>,C> fn) {
         this.list = list;
         this.seq = new AtomicReference<>(seq);
         this.collectorInternal = collector;
@@ -139,7 +139,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
     }
     @Override
     public FluentCollectionX<T> plusLoop(int max, IntFunction<T> value) {
-        PCollection<T> toUse = get();
+        PersistentCollection<T> toUse = get();
         for(int i=0;i<max;i++){
             toUse = toUse.plus(value.apply(i));
         }
@@ -150,7 +150,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public FluentCollectionX<T> plusLoop(Supplier<Option<T>> supplier) {
-        PCollection<T> toUse = get();
+        PersistentCollection<T> toUse = get();
         Option<T> next =  supplier.get();
         while(next.isPresent()){
             toUse = toUse.plus(next.orElse(null));
@@ -228,7 +228,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PCollection<
 
     @Override
     public boolean equals(Object o){
-        if(o instanceof PCollection){
+        if(o instanceof PersistentCollection){
             return get().equals(o);
         }
 

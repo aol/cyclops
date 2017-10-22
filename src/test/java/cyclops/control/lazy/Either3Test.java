@@ -9,10 +9,10 @@ import cyclops.async.Future;
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.LazyEither3;
-import cyclops.control.lazy.LazyEither3.CompletableEither3;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.LazyEither3;
+import cyclops.control.LazyEither3.CompletableEither3;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 
 import org.junit.Before;

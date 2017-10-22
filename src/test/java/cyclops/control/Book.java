@@ -1,8 +1,6 @@
 package cyclops.control;
 
 
-import cyclops.control.lazy.LazyEither;
-
 import java.util.function.Function;
 
 public abstract class Book {

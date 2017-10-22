@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.api.PCollection;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;

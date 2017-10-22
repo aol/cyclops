@@ -1,7 +1,7 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.types.persistent.PersistentSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
@@ -11,7 +11,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PSet<T>,
+public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PersistentSet<T>,
                                          IterableX<T>{
 
     <R> ImmutableSet<R> unitIterable(Iterable<R> it);

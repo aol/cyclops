@@ -6,10 +6,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
 import cyclops.control.Either;
-import cyclops.control.lazy.LazyEither;
+import cyclops.control.LazyEither;
 import cyclops.function.Function1;
 import cyclops.control.anym.Witness.eval;
 import org.junit.Test;

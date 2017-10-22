@@ -8,7 +8,7 @@ import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.WitnessType;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;

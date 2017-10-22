@@ -13,8 +13,8 @@ import java.util.stream.Collector;
 
 import com.aol.cyclops2.types.foldable.Visitable;
 import cyclops.control.*;
-import cyclops.control.lazy.LazyEither;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.LazyEither;
+import cyclops.control.Maybe;
 import cyclops.function.Function0;
 import cyclops.function.Monoid;
 import org.reactivestreams.Publisher;

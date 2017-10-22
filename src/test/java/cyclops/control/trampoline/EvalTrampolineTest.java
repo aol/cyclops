@@ -1,6 +1,6 @@
 package cyclops.control.trampoline;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;

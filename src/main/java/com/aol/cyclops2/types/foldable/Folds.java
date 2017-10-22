@@ -11,7 +11,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.stream.ConvertableToReactiveSeq;
 import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.HashSet;
@@ -20,7 +19,7 @@ import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
@@ -318,7 +317,7 @@ public interface Folds<T> extends Iterable<T>  {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(final Reducer<R> reducer) {
+    default <R> R mapReduce(final Reducer<R,T> reducer) {
         return stream().mapReduce(reducer);
     }
 
@@ -555,7 +554,7 @@ public interface Folds<T> extends Iterable<T>  {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <T> T foldRightMapToType(final Reducer<T> reducer) {
+    default <R> R foldRightMapToType(final Reducer<R,T> reducer) {
         return stream().foldRightMapToType(reducer);
     }
 

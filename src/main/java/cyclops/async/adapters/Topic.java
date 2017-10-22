@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.futurestream.Continuation;
 import cyclops.async.QueueFactories;
-import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.types.persistent.PersistentMap;
 
 
 import cyclops.data.HashMap;
@@ -34,7 +34,7 @@ public class Topic<T> implements Adapter<T> {
     @Getter(AccessLevel.PACKAGE)
     private final DistributingCollection<T> distributor = new DistributingCollection<T>();
     @Getter(AccessLevel.PACKAGE)
-    private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
+    private volatile PersistentMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
     private final QueueFactory<T> factory;
@@ -71,9 +71,9 @@ public class Topic<T> implements Adapter<T> {
     @Synchronized("lock")
     public void disconnect(final ReactiveSeq<T> stream) {
 
-        distributor.removeQueue(streamToQueue.getValueOrElse(stream, new Queue<>()));
+        distributor.removeQueue(streamToQueue.getOrElse(stream, new Queue<>()));
 
-        this.streamToQueue = streamToQueue.minus(stream);
+        this.streamToQueue = streamToQueue.remove(stream);
         this.index--;
     }
 
@@ -82,7 +82,7 @@ public class Topic<T> implements Adapter<T> {
         final Queue<T> queue = this.getNextQueue();
         final ReactiveSeq<R> stream = streamCreator.apply(queue);
 
-        this.streamToQueue = streamToQueue.plus(stream, queue);
+        this.streamToQueue = streamToQueue.put(stream, queue);
         return stream;
     }
 

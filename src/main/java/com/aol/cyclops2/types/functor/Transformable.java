@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 
 /**
  * An interface that represents a type that can transform a value from one type to another

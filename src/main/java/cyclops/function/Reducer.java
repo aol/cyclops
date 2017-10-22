@@ -1,7 +1,5 @@
 package cyclops.function;
 
-import com.aol.cyclops2.data.collections.extensions.api.PBag;
-
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -15,7 +13,13 @@ import java.util.stream.Stream;
  *
  * @param <T> Type this Reducer operates on
  */
-public interface Reducer<T> extends Monoid<T> {
+public interface Reducer<T,U> extends Monoid<T> {
+
+    default BiFunction<T,? super U, T> reducer(){
+        return (a,b) -> apply(a,conversion().apply(b));
+    }
+    Function<? super U, T> conversion();
+
     /**
      * Map this reducer to the supported Type t.
      * 
@@ -24,8 +28,8 @@ public interface Reducer<T> extends Monoid<T> {
      * @param stream Stream to convert
      * @return Converted Stream
      */
-    default Stream<T> mapToType(final Stream<?> stream) {
-        return (Stream<T>)stream;
+    default Stream<T> mapToType(final Stream<U> stream){
+        return stream.map(conversion());
     }
 
     /**
@@ -45,24 +49,24 @@ public interface Reducer<T> extends Monoid<T> {
      * @param toReduce Stream to reduce
      * @return reduced value
      */
-    default T mapReduce(final Stream<?> toReduce) {
-        return reduce(mapToType(toReduce));
+    default T mapReduce(final Stream<U> toReduce) {
+        return foldLeft(mapToType(toReduce));
     }
 
-    public static <T> Reducer<T> fromMonoid(final Monoid<T> monoid, final Function<?, ? extends T> mapper) {
+    public static <T,U> Reducer<T,U> fromMonoid(final Monoid<T> monoid, final Function<? super U, T> mapper) {
         return of(monoid.zero(), monoid, mapper);
     }
 
-    public static <T> Reducer<T> of(final T zero, final BiFunction<T, T, T> combiner, final Function<?, ? extends T> mapToType) {
-        return new Reducer<T>() {
+    public static <T,U> Reducer<T,U> of(final T zero, final BiFunction<T, T, T> combiner, final Function<? super U, T> mapToType) {
+        return new Reducer<T,U>() {
             @Override
             public T zero() {
                 return zero;
             }
 
             @Override
-            public Stream<T> mapToType(final Stream stream) {
-                return stream.map(mapToType);
+            public Function<? super U, T> conversion(){
+                return mapToType;
             }
 
             @Override
@@ -72,8 +76,8 @@ public interface Reducer<T> extends Monoid<T> {
         };
     }
 
-    public static <T> Reducer<T> of(final T zero, final Function<T, Function<T, T>> combiner, final Function<?, T> mapToType) {
-        return new Reducer<T>() {
+    public static <T,U> Reducer<T,U> of(final T zero, final Function<T, Function<T, T>> combiner, final Function<? super U, T> mapToType) {
+        return new Reducer<T,U>() {
             @Override
             public T zero() {
                 return zero;
@@ -86,13 +90,13 @@ public interface Reducer<T> extends Monoid<T> {
             }
 
             @Override
-            public Stream<T> mapToType(final Stream stream) {
-                return stream.map(mapToType);
+            public Function<? super U, T> conversion(){
+                return mapToType;
             }
         };
     }
 
-    static <T> Reducer<T> narrow(Reducer<? extends T> reducer) {
-        return (Reducer<T>)reducer;
+    static <T,U> Reducer<T,U> narrow(Reducer<? extends T,U> reducer) {
+        return (Reducer<T,U>)reducer;
     }
 }

@@ -1,6 +1,6 @@
 package com.aol.cyclops2.react;
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 
 import cyclops.collectionx.immutable.LinkedListX;
 
@@ -46,7 +46,7 @@ public class Status<T> {
         return elapsedNanos;
     }
 
-    public PStack<T> getResultsSoFar() {
+    public PersistentList<T> getResultsSoFar() {
         return resultsSoFar;
     }
 }

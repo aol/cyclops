@@ -10,7 +10,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 
 import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
@@ -42,7 +42,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;
@@ -1113,7 +1113,7 @@ public class Streams {
      * @return Stream with reduced values repeated
      */
     public final static <T> Stream<T> cycle(final Stream<T> stream, final Monoid<T> m, final int times) {
-        return Streams.cycle(times, Streamable.fromObject(m.reduce(stream)));
+        return Streams.cycle(times, Streamable.fromObject(m.foldLeft(stream)));
 
     }
 
@@ -1714,7 +1714,7 @@ public class Streams {
      */
     public final static <T> Stream<Streamable<T>> window(final Stream<T> stream, final int windowSize, final int increment) {
         final Iterator<T> it = stream.iterator();
-        final Mutable<PStack<T>> list = Mutable.of(Seq.empty());
+        final Mutable<PersistentList<T>> list = Mutable.of(Seq.empty());
         return Streams.stream(new Iterator<Streamable<T>>() {
 
             @Override
@@ -1956,7 +1956,7 @@ public class Streams {
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R> reducer) {
+    public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(stream);
     }
 
@@ -1969,7 +1969,7 @@ public class Streams {
      * @return Reduce result
      */
     public final static <T, R> R mapReduce(final Stream<T> stream, final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return reducer.reduce(stream.map(mapper));
+        return reducer.foldLeft(stream.map(mapper));
     }
 
     /**
@@ -1979,7 +1979,7 @@ public class Streams {
      * @return Reduced result
      */
     public final static <T> T foldLeft(final Stream<T> stream, final Monoid<T> reducer) {
-        return reducer.reduce(stream);
+        return reducer.foldLeft(stream);
     }
 
     /**
@@ -1989,7 +1989,7 @@ public class Streams {
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T> T foldLeftMapToType(final Stream<T> stream, final Reducer<T> reducer) {
+    public final static <R,T> R foldLeftMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(stream);
     }
 
@@ -2000,7 +2000,7 @@ public class Streams {
      * @return Reduced result
      */
     public final static <T> T foldRight(final Stream<T> stream, final Monoid<T> reducer) {
-        return reducer.reduce(Streams.reverse(stream));
+        return reducer.foldLeft(Streams.reverse(stream));
     }
 
     /**
@@ -2010,7 +2010,7 @@ public class Streams {
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T> T foldRightMapToType(final Stream<T> stream, final Reducer<T> reducer) {
+    public final static <R,T> R foldRightMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(Streams.reverse(stream));
     }
 

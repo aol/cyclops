@@ -1,6 +1,6 @@
 package cyclops.data.tuple;
 
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import org.junit.Before;
 import org.junit.Test;
 

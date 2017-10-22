@@ -4,7 +4,7 @@ import com.aol.cyclops2.hkt.Higher;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Monoids;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Either;
 import cyclops.control.anym.Witness.list;
 import cyclops.control.anym.Witness.maybe;
@@ -15,7 +15,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.collectionx.mutable.ListX.kindKleisli;
-import static cyclops.control.lazy.Maybe.Instances.applicative;
+import static cyclops.control.Maybe.Instances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 

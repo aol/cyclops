@@ -1,6 +1,5 @@
 package com.aol.cyclops2.types.traversable;
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Folds;
@@ -8,14 +7,12 @@ import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
-import cyclops.data.ImmutableList;
-import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -29,7 +26,6 @@ import org.reactivestreams.Subscription;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
 

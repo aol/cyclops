@@ -23,9 +23,9 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
 
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface

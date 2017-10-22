@@ -1,13 +1,13 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.Option;
 import cyclops.control.anym.DataWitness.nonEmptyList;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -265,8 +265,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null) return false;
-        if(o instanceof PStack){
-            PStack<T> im =(PStack<T>)o;
+        if(o instanceof PersistentList){
+            PersistentList<T> im =(PersistentList<T>)o;
             return equalToIteration(im);
         }
         return false;

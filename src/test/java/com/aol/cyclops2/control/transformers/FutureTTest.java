@@ -16,8 +16,8 @@ import java.util.stream.StreamSupport;
 
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.control.anym.Witness.optional;
 import cyclops.control.anym.transformers.FutureT;
 import cyclops.control.anym.Witness;

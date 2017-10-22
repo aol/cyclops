@@ -12,7 +12,6 @@ import com.aol.cyclops2.internal.adapters.*;
 import cyclops.collectionx.immutable.*;
 import cyclops.control.*;
 import cyclops.async.Future;
-import cyclops.control.lazy.*;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;

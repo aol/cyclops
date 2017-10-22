@@ -27,9 +27,6 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.lazy.LazyEither;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
@@ -279,7 +276,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate failure operation
      */
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
         return sequenceFailures(xors).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -351,7 +348,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R> reducer) {
+    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R,PT> reducer) {
         return sequenceSuccess(xors).map(s -> s.mapReduce(reducer));
     }
 

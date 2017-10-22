@@ -9,9 +9,6 @@ import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.companion.Monoids;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
@@ -533,7 +530,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate lazyLeft operation
      */
-    public static <ST, PT, R> Either<ListX<PT>, R> accumulateLeft(final CollectionX<Either<ST, PT>> xors, final Reducer<R> reducer) {
+    public static <LT, RT, R> Either<ListX<RT>, R> accumulateLeft(final CollectionX<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
         return sequenceLeft(xors).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -607,7 +604,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate lazyRight operation
      */
-    public static <ST, PT, R> Either<ListX<ST>, R> accumulateRight(final CollectionX<Either<ST, PT>> xors, final Reducer<R> reducer) {
+    public static <LT, RT, R> Either<ListX<LT>, R> accumulateRight(final CollectionX<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
         return sequenceRight(xors).map(s -> s.mapReduce(reducer));
     }
 

@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.types.persistent.PersistentQueue;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
@@ -13,7 +13,7 @@ import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
                                             OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
-                                            IterableX<T>, To<ImmutableQueue<T>>, PQueue<T> {
+                                            IterableX<T>, To<ImmutableQueue<T>>, PersistentQueue<T> {
 
 
 

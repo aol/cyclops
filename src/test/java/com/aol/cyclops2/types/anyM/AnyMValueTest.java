@@ -8,7 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import cyclops.control.anym.AnyM;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collectionx.mutable.ListX;;
 

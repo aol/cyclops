@@ -1,8 +1,7 @@
 package cyclops.control;
 
 import cyclops.async.Future;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Eval.CompletableEval;
+import cyclops.control.Eval.CompletableEval;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;

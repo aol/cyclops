@@ -1,10 +1,10 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.linkedHashMap;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -153,13 +153,15 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
     }
 
     @Override
-    public ImmutableMap<K, V> putAll(ImmutableMap<K, V> map) {
-        ImmutableMap<K,V> res = map;
-        for(Tuple2<K,V> t : map){
+    public ImmutableMap<K, V> putAll(PersistentMap<? extends K,? extends V> map) {
+        PersistentMap< K,V> narrow = (PersistentMap<K,V>)map;
+        ImmutableMap<K,V> res = HashMap.empty();
+        Vector<Tuple2<K,V>> ordering =order;
+        for(Tuple2<K,V> t : narrow){
             res = res.put(t);
-            order.plus(t);
+            ordering= ordering.plus(t);
         }
-        return new LinkedMap<>(res,order);
+        return new LinkedMap<K,V>(res,ordering);
     }
 
     public LinkedMap<K, V> remove(K key) {

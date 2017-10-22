@@ -40,7 +40,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStackReversed() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStackReversed()),
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPListReversed()),
 				equalTo(Seq.of("c","b","a")));
 	}
 	@Test
@@ -51,7 +51,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStack() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPStack()),
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPList()),
 				equalTo(Seq.of("a","b","c")));
 	}
 	

@@ -1,6 +1,6 @@
 package cyclops.control.anym.transformers;
 
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.anym.Witness;
 import org.junit.Before;

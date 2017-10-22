@@ -4,7 +4,6 @@ package cyclops.data;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.multiMapHK;
 import cyclops.typeclasses.Pure;
 import lombok.AccessLevel;
@@ -27,14 +26,14 @@ public final class MultiMapHK<W,K,V> implements Higher2<multiMapHK,K,V> {
     }
 
     public MultiMapHK<W,K, V> put(K key, V value) {
-        Higher<W,V> hkt = multiMap.getValue(key).map(v->appender.append(v,value)).orElseGet(()->pure.unit(value));
+        Higher<W,V> hkt = multiMap.get(key).map(v->appender.append(v,value)).orElseGet(()->pure.unit(value));
         return new MultiMapHK<>(multiMap.put(key,hkt),appender,pure);
     }
     public <R> Option<R> get(K key, Function<? super Higher<W,V>,? extends R> decoder){
-        return multiMap.getValue(key).map(decoder);
+        return multiMap.get(key).map(decoder);
     }
     public Option<Higher<W,V>> get(K key){
-        return multiMap.getValue(key);
+        return multiMap.get(key);
     }
 
     public boolean containsKey(K key){

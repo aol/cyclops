@@ -1,10 +1,9 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PSet;
+import com.aol.cyclops2.types.persistent.PersistentSet;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.trieSet;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
@@ -162,9 +161,9 @@ public final class TrieSet<T> implements ImmutableSet<T>,Higher<trieSet,T>, Seri
     }
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PSet) || o==null)
+        if(!(o instanceof PersistentSet) || o==null)
             return false;
-        PSet s = (PSet)o;
+        PersistentSet s = (PersistentSet)o;
         for(T next : this){
             if(!s.containsValue(next))
                 return false;

@@ -1,10 +1,10 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.trieMap;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.reactive.ReactiveSeq;
@@ -61,7 +61,7 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,Higher2<trieMap,K,
     }
 
     @Override
-    public TrieMap<K, V> putAll(ImmutableMap<K, V> map) {
+    public TrieMap<K, V> putAll(PersistentMap<? extends K,? extends  V> map) {
         return map.stream().foldLeft(this,(m,next)->m.put(next._1(),next._2()));
     }
 
@@ -101,9 +101,6 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,Higher2<trieMap,K,
         return map.getOrElseGet(key.hashCode(),key,alt);
     }
 
-    public TrieMap<K,V> minus(K key){
-        return new TrieMap<>(map.minus(key.hashCode(),key));
-    }
     public int size(){
         return map.size();
     }

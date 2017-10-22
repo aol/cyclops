@@ -32,6 +32,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collectionx.mutable.MapX;
+import cyclops.companion.MapXs;
 import cyclops.control.Option;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -212,7 +214,7 @@ public abstract class BaseSeqTest {
 		shards.put(5,new Queue());
 		shards.put(6,new Queue());
 		for(int i=0;i<100;i++)
-			assertThat(of(1,2,3,4,5,6).shard(PersistentMapX.fromMap(shards),Function.identity()).size(),is(6));
+			assertThat(of(1,2,3,4,5,6).shard(MapX.fromMap(shards),Function.identity()).size(),is(6));
 	}
 	@Test
 	public void shardStreams(){
@@ -220,7 +222,7 @@ public abstract class BaseSeqTest {
 		//for(int index=0;index<100;index++)
 		{
 		
-			Map<Integer,Queue<Integer>> shards = PersistentMapX.singleton(0,new Queue<Integer>()).plus(1,new Queue());
+			Map<Integer,Queue<Integer>> shards = MapXs.of(0,new Queue<Integer>()).plus(1,new Queue());
 					
 			Map<Integer, ? extends FutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards, i -> i%2);
 			sharded.get(0).forEach(next ->{

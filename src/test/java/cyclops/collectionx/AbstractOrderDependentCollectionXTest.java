@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import cyclops.companion.Semigroups;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.stream.HeadAndTail;

@@ -2,9 +2,6 @@ package cyclops.control;
 
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import cyclops.control.*;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.util.box.Mutable;

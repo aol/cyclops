@@ -7,8 +7,6 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.recoverable.Recoverable;
 import cyclops.async.Future;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
@@ -21,7 +19,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -344,7 +341,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Reducer<R> reducer) {
+    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 

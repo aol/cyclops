@@ -32,7 +32,7 @@ import org.reactivestreams.Subscription;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import cyclops.function.Predicates;

@@ -6,7 +6,7 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Either;
-import cyclops.control.lazy.LazyEither4;
+import cyclops.control.LazyEither4;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
 import cyclops.control.anym.Witness.lazyEither4;

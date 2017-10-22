@@ -2,9 +2,9 @@ package cyclops.typeclasses.monad;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.control.Either;
-import cyclops.control.lazy.LazyEither;
+import cyclops.control.LazyEither;
 import cyclops.function.Function0;
 
 import java.util.function.Function;

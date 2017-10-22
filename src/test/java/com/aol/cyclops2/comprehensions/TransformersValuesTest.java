@@ -1,6 +1,6 @@
 package com.aol.cyclops2.comprehensions;
 
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.async.Future;
 import cyclops.control.anym.transformers.FutureT;
 import cyclops.collectionx.mutable.ListX;

@@ -13,8 +13,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.traversable.IterableX;
-import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
@@ -26,7 +24,7 @@ import cyclops.data.tuple.Tuple4;
 
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
 import org.reactivestreams.Publisher;

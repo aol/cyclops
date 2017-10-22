@@ -1,8 +1,7 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
-import cyclops.control.Either;
 import cyclops.control.anym.Witness.rws;
 import cyclops.control.anym.Witness.supplier;
 import cyclops.typeclasses.*;
@@ -323,13 +322,13 @@ public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> ds) {
                     ReaderWriterState<R1, W, S, T> rws =narrowK(ds);
-                    return rws.run(val1, val2).transform((a, b, t) -> monoid.foldRight(t));
+                    return rws.run(val1, val2).transform((a, b, t) -> monoid.fold(t));
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<Higher<Higher<rws, R1>, W>, S>, T> ds) {
                     ReaderWriterState<R1, W, S, T> rws =narrowK(ds);
-                    return rws.run(val1, val2).transform((a, b, t) -> monoid.foldLeft(t));
+                    return rws.run(val1, val2).transform((a, b, t) -> monoid.fold(t));
                 }
 
                 @Override

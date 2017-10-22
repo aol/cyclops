@@ -3,7 +3,7 @@ package cyclops.control.anym.transformers;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Reader;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.*;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.WitnessType;

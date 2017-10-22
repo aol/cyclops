@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
 
-import cyclops.control.lazy.State;
+import cyclops.control.State;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;

@@ -1,8 +1,8 @@
 package cyclops.control.computations;
 
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.lazy.Unrestricted;
-import cyclops.control.lazy.LazyEither3;
+import cyclops.control.Unrestricted;
+import cyclops.control.LazyEither3;
 import cyclops.function.Function1;
 import cyclops.function.Function2;
 

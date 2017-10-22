@@ -1,15 +1,15 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.PIndexed;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
+import com.aol.cyclops2.types.persistent.PersistentIndexed;
+import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.control.anym.DataWitness.intMap;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -302,7 +302,7 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
         return (IntMap<T> )ImmutableList.super.insertAt(i,value);
     }
 
-    class IntMapSome extends IntMap<T> implements ImmutableList.Some<T>, PStack<T>{
+    class IntMapSome extends IntMap<T> implements ImmutableList.Some<T>, PersistentList<T> {
 
         public IntMapSome(IntMap<T> vec) {
             super(vec.intMap, vec.size);
@@ -465,7 +465,7 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
     }
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof PIndexed) || o==null)
+        if(!(o instanceof PersistentIndexed) || o==null)
             return false;
         return equalToDirectAccess((Iterable<T>)o);
 

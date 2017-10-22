@@ -1,6 +1,7 @@
 package cyclops.companion;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.aol.cyclops2.types.persistent.PersistentCollection;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
@@ -8,7 +9,7 @@ import cyclops.async.SimpleReact;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.*;
 import cyclops.control.Ior;
-import cyclops.control.lazy.Maybe;
+import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.data.Comparators;
@@ -142,6 +143,10 @@ public interface Monoids {
      */
     static <T> Monoid<DequeX<T>> dequeXConcat() {
         return Monoid.of(DequeX.empty(),Semigroups.collectionXConcat());
+    }
+
+    static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
+        return Monoid.of(empty,Semigroups.pcollectionConcat());
     }
 
     /**

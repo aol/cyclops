@@ -3,7 +3,6 @@ package com.aol.cyclops2.internal.stream.spliterators.push;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import static com.oracle.jrockit.jfr.FlightRecorder.isActive;
 
 /**
  * Created by johnmcclean on 12/01/2017.

@@ -2,7 +2,7 @@ package com.aol.cyclops2.util.box;
 
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Zippable;
 import lombok.ToString;

@@ -1,9 +1,7 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Option;
-import cyclops.control.Either;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -44,8 +42,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -649,7 +645,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Reducer<R> reducer) {
+    public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 

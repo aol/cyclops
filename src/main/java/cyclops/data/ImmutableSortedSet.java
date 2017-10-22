@@ -1,16 +1,15 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.data.collections.extensions.api.POrderedSet;
+import com.aol.cyclops2.types.persistent.PersistentSortedSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -28,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-public interface ImmutableSortedSet<T> extends ImmutableSet<T>, POrderedSet<T> {
+public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSortedSet<T> {
 
 
 

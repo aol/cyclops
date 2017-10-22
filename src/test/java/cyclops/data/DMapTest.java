@@ -1,17 +1,14 @@
 package cyclops.data;
 
-import cyclops.control.Either;
-import cyclops.control.Option;
-import cyclops.control.lazy.LazyEither;
-import cyclops.control.lazy.LazyEither3;
-import cyclops.control.lazy.LazyEither4;
+import cyclops.control.LazyEither3;
+import cyclops.control.LazyEither4;
 import org.junit.Test;
 
 import java.util.Date;
 
 import static cyclops.control.Either.right;
 import static cyclops.control.Option.some;
-import static cyclops.control.lazy.LazyEither.left;
+import static cyclops.control.LazyEither.left;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 

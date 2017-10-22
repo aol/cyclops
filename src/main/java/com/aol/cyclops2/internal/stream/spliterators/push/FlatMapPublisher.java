@@ -1,17 +1,9 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.atomic.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import lombok.AllArgsConstructor;
-import org.agrona.concurrent.OneToOneConcurrentArrayQueue;
-import com.aol.cyclops2.data.collections.extensions.api.PStack;
 import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 
 public class FlatMapPublisher<T, R> extends BaseOperator<T, R> {

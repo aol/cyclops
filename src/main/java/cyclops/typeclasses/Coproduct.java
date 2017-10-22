@@ -17,10 +17,10 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
-import cyclops.control.lazy.LazyEither;
-import cyclops.control.lazy.Eval;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.LazyEither;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.control.anym.Witness.*;
 import cyclops.reactive.ReactiveSeq;
@@ -39,7 +39,6 @@ import cyclops.data.tuple.Tuple2;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;

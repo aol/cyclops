@@ -6,7 +6,7 @@ import cyclops.collectionx.immutable.PersistentQueueX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.api.PQueue;
+import com.aol.cyclops2.types.persistent.PersistentQueue;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -39,9 +39,9 @@ import java.util.function.Supplier;
  *
  * @param <T> the type of elements held in this toX
  */
-public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>> implements PersistentQueueX<T> {
+public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PersistentQueue<T>> implements PersistentQueueX<T> {
 
-    public static final <T> Function<ReactiveSeq<PQueue<T>>, PQueue<T>> asyncQueue() {
+    public static final <T> Function<ReactiveSeq<PersistentQueue<T>>, PersistentQueue<T>> asyncQueue() {
         return r -> {
             CompletablePersistentQueueX<T> res = new CompletablePersistentQueueX<>();
             r.forEachAsync(l -> res.complete(l));
@@ -49,7 +49,7 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
         };
     }
 
-    public LazyPQueueX(PQueue<T> list, ReactiveSeq<T> seq, Reducer<PQueue<T>> reducer,Evaluation strict) {
+    public LazyPQueueX(PersistentQueue<T> list, ReactiveSeq<T> seq, Reducer<PersistentQueue<T>,T> reducer, Evaluation strict) {
         super(list, seq, reducer,strict,asyncQueue());
     }
 
@@ -62,14 +62,14 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
 
 
     @Override
-    public PersistentQueueX<T> type(Reducer<? extends PQueue<T>> reducer) {
+    public PersistentQueueX<T> type(Reducer<? extends PersistentQueue<T>,T> reducer) {
         return new LazyPQueueX<T>(list,seq.get(),Reducer.narrow(reducer), evaluation());
     }
 
     //  @Override
     public <X> LazyPQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyPQueueX<X>((PQueue)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
+        return new LazyPQueueX<X>((PersistentQueue)getList(),ReactiveSeq.fromStream(stream),(Reducer)this.getCollectorInternal(), evaluation());
     }
 
     @Override
@@ -77,8 +77,8 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,PQueue<T>
            return fromStream(ReactiveSeq.fromIterable(c));
     }
 
-    public <T1> LazyPQueueX<T1> from(PQueue<T1> c) {
-            return new LazyPQueueX<T1>((PQueue)c,null,(Reducer)this.getCollectorInternal(), evaluation());
+    public <T1> LazyPQueueX<T1> from(PersistentQueue<T1> c) {
+            return new LazyPQueueX<T1>((PersistentQueue)c,null,(Reducer)this.getCollectorInternal(), evaluation());
 
     }
 

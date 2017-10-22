@@ -3,8 +3,8 @@ package com.aol.cyclops2.react.lazy;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import cyclops.collectionx.immutable.PersistentMapX;
-import cyclops.data.HashMap;
+import cyclops.companion.MapXs;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 
 import cyclops.async.*;
 import cyclops.async.adapters.Queue;
-import cyclops.control.lazy.Eval;
+import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -780,12 +780,12 @@ public class Tutorial {
 
 	private Collection<Map> processOrders(Collection<Map> input) {
 		sleep(100);
-		return input.stream().map(m -> PersistentMapX.singleton("processed", m))
+		return input.stream().map(m -> MapXs.of("processed", m))
 				.collect(Collectors.toList());
 	}
 
 	private Map parseJson(String json) {
-		return PersistentMapX.<Object,Object>singleton("id", count++).plus( "fold", "order").plus( "date",
+		return MapXs.<Object,Object>of("id", count++).plus( "fold", "order").plus( "date",
 				new Date());
 	}
 

@@ -1,10 +1,9 @@
 package cyclops.data;
 
-import com.aol.cyclops2.data.collections.extensions.api.PMap;
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collectionx.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
 import cyclops.control.anym.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 
 
 @AllArgsConstructor
-public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<hashMap,K,V>, Serializable{
+public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,Higher2<hashMap,K,V>, Serializable{
 
     private final HAMT.Node<K,V> map;
     private static final long serialVersionUID = 1L;
@@ -35,13 +34,24 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<h
     }
     public static <K,V> HashMap<K,V> of(K k,V v){
         HashMap<K,V> res = empty();
+
         return res.put(k,v);
     }
 
     public static <K,V> HashMap<K,V> fromMap(Map<K,V> map){
         HashMap<K,V> res = empty();
         for(Map.Entry<K,V> next : map.entrySet()){
-            res = res.plus(next.getKey(),next.getValue());
+            res = res.put(next.getKey(),next.getValue());
+        }
+        return res;
+    }
+    public static <K,V> HashMap<K,V> fromMap(PersistentMap<K,V> map){
+        if(map instanceof HashMap){
+            return (HashMap)map;
+        }
+        HashMap<K,V> res = empty();
+        for(Tuple2<K,V> next : map){
+            res = res.put(next._1(),next._2());
         }
         return res;
     }
@@ -129,6 +139,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<h
         return stream().to().persistentMapX(t->t._1(),t->t._2());
     }
 
+    @Override
     public HashMap<K,V> put(K key, V value){
         return new HashMap<K,V>(map.plus(0,key.hashCode(),key,value));
     }
@@ -138,10 +149,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<h
         return put(keyAndValue._1(),keyAndValue._2());
     }
 
-    @Override
-    public HashMap<K, V> putAll(ImmutableMap<K, V> map) {
-       return map.stream().foldLeft(this,(m,next)->m.put(next._1(),next._2()));
-    }
+
 
     @Override
     public HashMap<K, V> remove(K key) {
@@ -173,41 +181,27 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<h
 
     @Override
     public boolean contains(Tuple2<K, V> t) {
-        return getValue(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
+        return this.get(t._1()).filter(v-> Objects.equals(v,t._2())).isPresent();
     }
 
-    public Option<V> getValue(K key){
-        return map.get(0,key.hashCode(),key);
-    }
+
     public Option<V> get(K key){
         return map.get(0,key.hashCode(),key);
     }
 
     @Override
-    public V getValueOrElse(K key, V alt) {
-        return map.getOrElse(0,key.hashCode(),key,alt);
-    }
-    @Override
     public V getOrElse(K key, V alt) {
         return map.getOrElse(0,key.hashCode(),key,alt);
     }
 
-    @Override
-    public V getValueOrElseGet(K key, Supplier<? extends V> alt) {
-        return map.getOrElseGet(0,key.hashCode(),key,alt);
-    }
-    @Override
+       @Override
     public V getOrElseGet(K key, Supplier<? extends V> alt) {
         return map.getOrElseGet(0,key.hashCode(),key,alt);
     }
 
-    @Override
-    public HashMap<K, V> plus(K key, V value) {
-        return put(key,value);
-    }
 
     @Override
-    public HashMap<K, V> plusAll(PMap<? extends K, ? extends V> map) {
+    public HashMap<K, V> putAll(PersistentMap<? extends K, ? extends V> map) {
         HashMap<K,V> res = this;
         for(Tuple2<? extends K, ? extends V> e : map){
             res = res.put(e._1(),e._2());
@@ -215,15 +209,13 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PMap<K,V>,Higher2<h
         return res;
     }
 
-    public HashMap<K,V> minus(K key){
-        return new HashMap<K,V>(map.minus(0,key.hashCode(),key));
-    }
+
 
     @Override
-    public HashMap<K, V> minusAll(Iterable<? extends K> keys) {
+    public HashMap<K, V> removeAll(Iterable<? extends K> keys) {
         HashMap<K,V> res = this;
         for(K e : keys){
-            res = res.minus(e);
+            res = this.remove(e);
         }
         return res;
     }

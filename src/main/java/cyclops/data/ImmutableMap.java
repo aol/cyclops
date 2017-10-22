@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.BiTransformable;
@@ -11,7 +12,7 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
@@ -29,18 +30,27 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                             Transformable<V>,
                                             BiTransformable<K, V>,
                                             OnEmpty<Tuple2<K, V>>,
+        PersistentMap<K,V>,
                                             OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
 
-    //@TODO extends PMap
+
 
     PersistentMapX<K,V> persistentMapX();
     ImmutableMap<K,V> put(K key, V value);
     ImmutableMap<K,V> put(Tuple2<K, V> keyAndValue);
-    ImmutableMap<K,V> putAll(ImmutableMap<K, V> map);
+    ImmutableMap<K,V> putAll(PersistentMap<? extends K,? extends V> map);
 
     ImmutableMap<K,V> remove(K key);
     ImmutableMap<K,V> removeAll(K... keys);
 
+    @Override
+    default ImmutableMap<K, V> removeAll(Iterable<? extends K> keys){
+        ImmutableMap<K,V> res = this;
+        for(K key : keys){
+            res = res.remove(key);
+        }
+        return res;
+    }
 
     default boolean containsValue(V value){
         return stream().anyMatch(t-> Objects.equals(value,t._2()));

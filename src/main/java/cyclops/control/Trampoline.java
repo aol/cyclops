@@ -1,4 +1,4 @@
-package cyclops.control.lazy;
+package cyclops.control;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.Value;
-import cyclops.control.Either;
 import cyclops.function.Function0;
 import cyclops.function.Function3;
 import cyclops.data.tuple.Tuple;

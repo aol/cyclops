@@ -31,7 +31,6 @@ import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
-import cyclops.control.lazy.*;
 import cyclops.control.anym.function.AnyMFunction1;
 import cyclops.control.anym.function.AnyMFunction2;
 import cyclops.control.anym.transformers.FutureT;

@@ -8,8 +8,8 @@ import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.lazy.Maybe;
-import cyclops.control.lazy.Trampoline;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -276,14 +276,14 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return run.transform((a, b) -> {
             R r1 = def1.foldable().foldMap(mb, fn, a);
             R r2 = def2.foldable().foldMap(mb, fn, b);
-            return mb.foldRightI(Arrays.asList(r2, r1));
+            return mb.foldRight(Arrays.asList(r2, r1));
         });
     }
     public T foldRight(Monoid<T> monoid) {
         return run.transform((a, b) -> {
             T r1 = def1.foldable().foldRight(monoid, a);
             T r2 = def2.foldable().foldRight(monoid, b);
-            return monoid.foldRightI(Arrays.asList(r2, r1));
+            return monoid.foldRight(Arrays.asList(r2, r1));
         });
 
     }
@@ -322,7 +322,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return run.transform((a, b) -> {
             T r1 = def1.foldable().foldRight(monoid, a);
             T r2 = def2.foldable().foldRight(monoid, b);
-            return monoid.foldLeftI(Arrays.asList(r1, r2));
+            return monoid.foldLeft(Arrays.asList(r1, r2));
         });
     }
 
