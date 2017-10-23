@@ -129,7 +129,6 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *  }
      *  </pre>
      *
-     *  Similar to @see {@link ReactiveSeq#lazyOperations()}, but always returns Eval (e.g. with nested Optionals)
      *
      * @param fn Folding function
      * @return Eval that lazily performs the fold once

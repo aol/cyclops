@@ -1,26 +1,32 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentIndexed;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
+import cyclops.control.Trampoline;
 import cyclops.control.anym.DataWitness.vector;
 import cyclops.data.base.BAMT;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Memoize;
+import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -204,6 +210,393 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
     }
 
     @Override
+    public Vector<T> replace(T currentElement, T newElement) {
+        return (Vector<T>)ImmutableList.super.replace(currentElement,newElement);
+    }
+
+    @Override
+    public <U> Vector<U> ofType(Class<? extends U> type) {
+        return (Vector<U>)ImmutableList.super.ofType(type);
+    }
+
+    @Override
+    public Vector<T> filterNot(Predicate<? super T> predicate) {
+        return (Vector<T>)ImmutableList.super.filterNot(predicate);
+    }
+
+    @Override
+    public Vector<T> notNull() {
+        return (Vector<T>)ImmutableList.super.notNull();
+    }
+
+    @Override
+    public Vector<T> peek(Consumer<? super T> c) {
+        return (Vector<T>)ImmutableList.super.peek(c);
+    }
+
+    @Override
+    public <R> Vector<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (Vector<R>)ImmutableList.super.trampoline(mapper);
+    }
+
+    @Override
+    public Vector<T> removeAllS(Stream<? extends T> stream) {
+        return (Vector<T>)ImmutableList.super.removeAllS(stream);
+    }
+
+    @Override
+    public Vector<T> retainAllI(Iterable<? extends T> it) {
+        return (Vector<T>)ImmutableList.super.retainAllI(it);
+    }
+
+    @Override
+    public Vector<T> retainAllS(Stream<? extends T> stream) {
+        return (Vector<T>)ImmutableList.super.retainAllS(stream);
+    }
+
+    @Override
+    public Vector<T> retainAll(T... values) {
+        return (Vector<T>)ImmutableList.super.retainAll(values);
+    }
+
+    @Override
+    public Vector<ReactiveSeq<T>> permutations() {
+        return (Vector<ReactiveSeq<T>>)ImmutableList.super.permutations();
+    }
+
+    @Override
+    public Vector<ReactiveSeq<T>> combinations(int size) {
+        return (Vector<ReactiveSeq<T>>)ImmutableList.super.combinations(size);
+    }
+
+    @Override
+    public Vector<ReactiveSeq<T>> combinations() {
+        return (Vector<ReactiveSeq<T>>)ImmutableList.super.combinations();
+    }
+
+    @Override
+    public Vector<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (Vector<T>)ImmutableList.super.zip(combiner,app);
+    }
+
+    @Override
+    public <R> Vector<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (Vector<R>)ImmutableList.super.zipWith(fn);
+    }
+
+    @Override
+    public <R> Vector<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (Vector<R>)ImmutableList.super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> Vector<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (Vector<R>)ImmutableList.super.zipWithP(fn);
+    }
+
+    @Override
+    public <T2, R> Vector<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (Vector<R>)ImmutableList.super.zipP(publisher,fn);
+    }
+
+    @Override
+    public <U, R> Vector<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (Vector<R>)ImmutableList.super.zipS(other,zipper);
+    }
+
+    @Override
+    public <U> Vector<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (Vector)ImmutableList.super.zipP(other);
+    }
+
+    @Override
+    public <U> Vector<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (Vector)ImmutableList.super.zip(other);
+    }
+
+    @Override
+    public <S, U, R> Vector<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (Vector<R>)ImmutableList.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    public <T2, T3, T4, R> Vector<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (Vector<R>)ImmutableList.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    public <U> Vector<U> unitIterator(Iterator<U> it) {
+        return fromIterable(()->it);
+    }
+
+    @Override
+    public Vector<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return (Vector<T>)ImmutableList.super.combine(predicate,op);
+    }
+
+    @Override
+    public Vector<T> combine(Monoid<T> op, BiPredicate<? super T, ? super T> predicate) {
+        return (Vector<T>)ImmutableList.super.combine(op,predicate);
+    }
+
+    @Override
+    public Vector<T> cycle(long times) {
+        return (Vector<T>)ImmutableList.super.cycle(times);
+    }
+
+    @Override
+    public Vector<T> cycle(Monoid<T> m, long times) {
+        return (Vector<T>)ImmutableList.super.cycle(m,times);
+    }
+
+    @Override
+    public Vector<T> cycleWhile(Predicate<? super T> predicate) {
+        return (Vector<T>) ImmutableList.super.cycleWhile(predicate);
+    }
+
+    @Override
+    public Vector<T> cycleUntil(Predicate<? super T> predicate) {
+        return (Vector<T>) ImmutableList.super.cycleUntil(predicate);
+    }
+
+    @Override
+    public <U, R> Vector<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (Vector<R>) ImmutableList.super.zip(other,zipper);
+    }
+
+    @Override
+    public <S, U> Vector<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return (Vector) ImmutableList.super.zip3(second,third);
+    }
+
+    @Override
+    public <T2, T3, T4> Vector<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return (Vector) ImmutableList.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    public Vector<Tuple2<T, Long>> zipWithIndex() {
+        return (Vector<Tuple2<T,Long>>) ImmutableList.super.zipWithIndex();
+    }
+
+    @Override
+    public Vector<VectorX<T>> sliding(int windowSize) {
+        return (Vector<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    }
+
+    @Override
+    public Vector<VectorX<T>> sliding(int windowSize, int increment) {
+        return (Vector<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> Vector<C> grouped(int size, Supplier<C> supplier) {
+        return (Vector<C>) ImmutableList.super.grouped(size,supplier);
+    }
+
+    @Override
+    public Vector<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (Vector<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    }
+
+    @Override
+    public Vector<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return (Vector<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    }
+
+    @Override
+    public <U> Vector<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+        return (Vector) ImmutableList.super.zipS(other);
+    }
+
+    @Override
+    public Vector<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (Vector<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> Vector<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (Vector<C>) ImmutableList.super.groupedWhile(predicate,factory);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> Vector<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (Vector<C>) ImmutableList.super.groupedUntil(predicate,factory);
+    }
+
+    @Override
+    public Vector<ListX<T>> grouped(int groupSize) {
+        return (Vector<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    }
+
+    @Override
+    public Vector<T> distinct() {
+        return (Vector<T>) ImmutableList.super.distinct();
+    }
+
+    @Override
+    public Vector<T> scanLeft(Monoid<T> monoid) {
+        return (Vector<T>) ImmutableList.super.scanLeft(monoid);
+    }
+
+    @Override
+    public <U> Vector<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+        return (Vector<U>) ImmutableList.super.scanLeft(seed,function);
+    }
+
+    @Override
+    public Vector<T> scanRight(Monoid<T> monoid) {
+        return (Vector<T>) ImmutableList.super.scanRight(monoid);
+    }
+
+    @Override
+    public <U> Vector<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return (Vector<U>) ImmutableList.super.scanRight(identity,combiner);
+    }
+
+    @Override
+    public Vector<T> sorted() {
+        return (Vector<T>) ImmutableList.super.sorted();
+    }
+
+    @Override
+    public Vector<T> sorted(Comparator<? super T> c) {
+        return (Vector<T>) ImmutableList.super.sorted(c);
+    }
+
+    @Override
+    public Vector<T> takeWhile(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.takeWhile(p);
+    }
+
+    @Override
+    public Vector<T> dropWhile(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.dropWhile(p);
+    }
+
+    @Override
+    public Vector<T> takeUntil(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.takeUntil(p);
+    }
+
+    @Override
+    public Vector<T> dropUntil(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.dropUntil(p);
+    }
+
+
+    @Override
+    public Vector<T> skip(long num) {
+        return (Vector<T>) ImmutableList.super.skip(num);
+    }
+
+    @Override
+    public Vector<T> skipWhile(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.skipWhile(p);
+    }
+
+    @Override
+    public Vector<T> skipUntil(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.skipUntil(p);
+    }
+
+    @Override
+    public Vector<T> limit(long num) {
+        return (Vector<T>) ImmutableList.super.limit(num);
+    }
+
+    @Override
+    public Vector<T> limitWhile(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.limitWhile(p);
+    }
+
+    @Override
+    public Vector<T> limitUntil(Predicate<? super T> p) {
+        return (Vector<T>) ImmutableList.super.limitUntil(p);
+    }
+
+    @Override
+    public Vector<T> intersperse(T value) {
+        return (Vector<T>) ImmutableList.super.intersperse(value);
+    }
+
+    @Override
+    public Vector<T> shuffle() {
+        return (Vector<T>) ImmutableList.super.shuffle();
+    }
+
+    @Override
+    public Vector<T> skipLast(int num) {
+        return (Vector<T>) ImmutableList.super.skipLast(num);
+    }
+
+    @Override
+    public Vector<T> limitLast(int num) {
+        return (Vector<T>) ImmutableList.super.limitLast(num);
+    }
+
+    @Override
+    public Vector<T> shuffle(Random random) {
+        return (Vector<T>) ImmutableList.super.shuffle(random);
+    }
+
+    @Override
+    public Vector<T> slice(long from, long to) {
+        return (Vector<T>) ImmutableList.super.slice(from,to);
+    }
+
+
+    @Override
+    public <R> Vector<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
+    @Override
+    public Vector<T> prependS(Stream<? extends T> stream) {
+        return (Vector<T>) ImmutableList.super.prependS(stream);
+    }
+
+    @Override
+    public Vector<T> append(T... values) {
+        return (Vector<T>) ImmutableList.super.append(values);
+    }
+
+    @Override
+    public Vector<T> prependAll(T... values) {
+        return (Vector<T>) ImmutableList.super.prependAll(values);
+    }
+
+    @Override
+    public Vector<T> deleteBetween(int start, int end) {
+        return (Vector<T>) ImmutableList.super.deleteBetween(start,end);
+    }
+
+    @Override
+    public Vector<T> insertAtS(int pos, Stream<T> stream) {
+        return (Vector<T>) ImmutableList.super.insertAtS(pos,stream);
+    }
+
+    @Override
+    public Vector<T> recover(Function<? super Throwable, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public <EX extends Throwable> Vector<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public Vector<T> prepend(Iterable<? extends T> value) {
+        return (Vector<T>) ImmutableList.super.prepend(value);
+    }
+
+    @Override
+    public <U extends Comparable<? super U>> Vector<T> sorted(Function<? super T, ? extends U> function) {
+        return (Vector<T>) ImmutableList.super.sorted(function);
+    }
+
+    @Override
     public Vector<T> updateAt(int pos, T value) {
         return (Vector<T>)ImmutableList.super.updateAt(pos,value);
     }
@@ -220,7 +613,7 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
     }
 
     @Override
-    public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public <R> Vector<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromIterable(stream().flatMapI(fn));
     }
 
@@ -253,10 +646,7 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
             return new Vector<T>(root.append(tail),BAMT.ActiveTail.tail(t),size+1);
         }
     }
-    @Override
-    public Vector<T> replace(T currentElement, T newElement){
-        return (Vector<T>)ImmutableList.super.replace(currentElement,newElement);
-    }
+
 
     @Override
     public <R> Vector<R> unitStream(Stream<R> stream) {

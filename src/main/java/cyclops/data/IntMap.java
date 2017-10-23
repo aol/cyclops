@@ -1,29 +1,34 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentIndexed;
 import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
+import cyclops.control.Trampoline;
 import cyclops.control.anym.DataWitness.intMap;
 import cyclops.control.Eval;
 import cyclops.data.base.IntPatriciaTrie;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.*;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -226,6 +231,407 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
     @Override
     public <R> IntMap<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return unitStream(stream().flatMapI(fn));
+    }
+
+    @Override
+    public IntMap<T> replace(T currentElement, T newElement) {
+        return (IntMap<T>)ImmutableList.super.replace(currentElement,newElement);
+    }
+
+    @Override
+    public IntMap<T> subList(int start, int end) {
+        return (IntMap<T>)ImmutableList.super.subList(start,end);
+    }
+
+    @Override
+    public <U> IntMap<U> ofType(Class<? extends U> type) {
+        return (IntMap<U>)ImmutableList.super.ofType(type);
+    }
+
+    @Override
+    public IntMap<T> filterNot(Predicate<? super T> predicate) {
+        return (IntMap<T>)ImmutableList.super.filterNot(predicate);
+    }
+
+    @Override
+    public IntMap<T> notNull() {
+        return (IntMap<T>)ImmutableList.super.notNull();
+    }
+
+    @Override
+    public IntMap<T> peek(Consumer<? super T> c) {
+        return (IntMap<T>)ImmutableList.super.peek(c);
+    }
+
+    @Override
+    public <R> IntMap<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (IntMap<R>)ImmutableList.super.trampoline(mapper);
+    }
+
+    @Override
+    public IntMap<T> removeAllS(Stream<? extends T> stream) {
+        return (IntMap<T>)ImmutableList.super.removeAllS(stream);
+    }
+
+    @Override
+    public IntMap<T> retainAllI(Iterable<? extends T> it) {
+        return (IntMap<T>)ImmutableList.super.retainAllI(it);
+    }
+
+    @Override
+    public IntMap<T> retainAllS(Stream<? extends T> stream) {
+        return (IntMap<T>)ImmutableList.super.retainAllS(stream);
+    }
+
+    @Override
+    public IntMap<T> retainAll(T... values) {
+        return (IntMap<T>)ImmutableList.super.retainAll(values);
+    }
+
+    @Override
+    public IntMap<ReactiveSeq<T>> permutations() {
+        return (IntMap<ReactiveSeq<T>>)ImmutableList.super.permutations();
+    }
+
+    @Override
+    public IntMap<ReactiveSeq<T>> combinations(int size) {
+        return (IntMap<ReactiveSeq<T>>)ImmutableList.super.combinations(size);
+    }
+
+    @Override
+    public IntMap<ReactiveSeq<T>> combinations() {
+        return (IntMap<ReactiveSeq<T>>)ImmutableList.super.combinations();
+    }
+
+    @Override
+    public IntMap<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (IntMap<T>)ImmutableList.super.zip(combiner,app);
+    }
+
+    @Override
+    public <R> IntMap<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (IntMap<R>)ImmutableList.super.zipWith(fn);
+    }
+
+    @Override
+    public <R> IntMap<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (IntMap<R>)ImmutableList.super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> IntMap<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (IntMap<R>)ImmutableList.super.zipWithP(fn);
+    }
+
+    @Override
+    public <T2, R> IntMap<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (IntMap<R>)ImmutableList.super.zipP(publisher,fn);
+    }
+
+    @Override
+    public <U, R> IntMap<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (IntMap<R>)ImmutableList.super.zipS(other,zipper);
+    }
+
+    @Override
+    public <U> IntMap<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (IntMap)ImmutableList.super.zipP(other);
+    }
+
+    @Override
+    public <U> IntMap<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (IntMap)ImmutableList.super.zip(other);
+    }
+
+    @Override
+    public <S, U, R> IntMap<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (IntMap<R>)ImmutableList.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    public <T2, T3, T4, R> IntMap<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (IntMap<R>)ImmutableList.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    public <U> IntMap<U> unitIterator(Iterator<U> it) {
+        return fromIterable(()->it);
+    }
+
+    @Override
+    public IntMap<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return (IntMap<T>)ImmutableList.super.combine(predicate,op);
+    }
+
+    @Override
+    public IntMap<T> combine(Monoid<T> op, BiPredicate<? super T, ? super T> predicate) {
+        return (IntMap<T>)ImmutableList.super.combine(op,predicate);
+    }
+
+    @Override
+    public IntMap<T> cycle(long times) {
+        return (IntMap<T>)ImmutableList.super.cycle(times);
+    }
+
+    @Override
+    public IntMap<T> cycle(Monoid<T> m, long times) {
+        return (IntMap<T>)ImmutableList.super.cycle(m,times);
+    }
+
+    @Override
+    public IntMap<T> cycleWhile(Predicate<? super T> predicate) {
+        return (IntMap<T>) ImmutableList.super.cycleWhile(predicate);
+    }
+
+    @Override
+    public IntMap<T> cycleUntil(Predicate<? super T> predicate) {
+        return (IntMap<T>) ImmutableList.super.cycleUntil(predicate);
+    }
+
+    @Override
+    public <U, R> IntMap<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (IntMap<R>) ImmutableList.super.zip(other,zipper);
+    }
+
+    @Override
+    public <S, U> IntMap<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return (IntMap) ImmutableList.super.zip3(second,third);
+    }
+
+    @Override
+    public <T2, T3, T4> IntMap<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return (IntMap) ImmutableList.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    public IntMap<Tuple2<T, Long>> zipWithIndex() {
+        return (IntMap<Tuple2<T,Long>>) ImmutableList.super.zipWithIndex();
+    }
+
+    @Override
+    public IntMap<VectorX<T>> sliding(int windowSize) {
+        return (IntMap<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    }
+
+    @Override
+    public IntMap<VectorX<T>> sliding(int windowSize, int increment) {
+        return (IntMap<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> IntMap<C> grouped(int size, Supplier<C> supplier) {
+        return (IntMap<C>) ImmutableList.super.grouped(size,supplier);
+    }
+
+    @Override
+    public IntMap<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (IntMap<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    }
+
+    @Override
+    public IntMap<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return (IntMap<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    }
+
+    @Override
+    public <U> IntMap<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+        return (IntMap) ImmutableList.super.zipS(other);
+    }
+
+    @Override
+    public IntMap<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (IntMap<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> IntMap<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (IntMap<C>) ImmutableList.super.groupedWhile(predicate,factory);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> IntMap<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (IntMap<C>) ImmutableList.super.groupedUntil(predicate,factory);
+    }
+
+    @Override
+    public IntMap<ListX<T>> grouped(int groupSize) {
+        return (IntMap<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    }
+
+    @Override
+    public IntMap<T> distinct() {
+        return (IntMap<T>) ImmutableList.super.distinct();
+    }
+
+    @Override
+    public IntMap<T> scanLeft(Monoid<T> monoid) {
+        return (IntMap<T>) ImmutableList.super.scanLeft(monoid);
+    }
+
+    @Override
+    public <U> IntMap<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+        return (IntMap<U>) ImmutableList.super.scanLeft(seed,function);
+    }
+
+    @Override
+    public IntMap<T> scanRight(Monoid<T> monoid) {
+        return (IntMap<T>) ImmutableList.super.scanRight(monoid);
+    }
+
+    @Override
+    public <U> IntMap<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return (IntMap<U>) ImmutableList.super.scanRight(identity,combiner);
+    }
+
+    @Override
+    public IntMap<T> sorted() {
+        return (IntMap<T>) ImmutableList.super.sorted();
+    }
+
+    @Override
+    public IntMap<T> sorted(Comparator<? super T> c) {
+        return (IntMap<T>) ImmutableList.super.sorted(c);
+    }
+
+    @Override
+    public IntMap<T> takeWhile(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.takeWhile(p);
+    }
+
+    @Override
+    public IntMap<T> dropWhile(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.dropWhile(p);
+    }
+
+    @Override
+    public IntMap<T> takeUntil(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.takeUntil(p);
+    }
+
+    @Override
+    public IntMap<T> dropUntil(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.dropUntil(p);
+    }
+
+    @Override
+    public IntMap<T> dropRight(int num) {
+        return (IntMap<T>) ImmutableList.super.dropRight(num);
+    }
+
+    @Override
+    public IntMap<T> takeRight(int num) {
+        return (IntMap<T>) ImmutableList.super.takeRight(num);
+    }
+
+    @Override
+    public IntMap<T> skip(long num) {
+        return (IntMap<T>) ImmutableList.super.skip(num);
+    }
+
+    @Override
+    public IntMap<T> skipWhile(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.skipWhile(p);
+    }
+
+    @Override
+    public IntMap<T> skipUntil(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.skipUntil(p);
+    }
+
+    @Override
+    public IntMap<T> limit(long num) {
+        return (IntMap<T>) ImmutableList.super.limit(num);
+    }
+
+    @Override
+    public IntMap<T> limitWhile(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.limitWhile(p);
+    }
+
+    @Override
+    public IntMap<T> limitUntil(Predicate<? super T> p) {
+        return (IntMap<T>) ImmutableList.super.limitUntil(p);
+    }
+
+    @Override
+    public IntMap<T> intersperse(T value) {
+        return (IntMap<T>) ImmutableList.super.intersperse(value);
+    }
+
+    @Override
+    public IntMap<T> shuffle() {
+        return (IntMap<T>) ImmutableList.super.shuffle();
+    }
+
+    @Override
+    public IntMap<T> skipLast(int num) {
+        return (IntMap<T>) ImmutableList.super.skipLast(num);
+    }
+
+    @Override
+    public IntMap<T> limitLast(int num) {
+        return (IntMap<T>) ImmutableList.super.limitLast(num);
+    }
+
+    @Override
+    public IntMap<T> shuffle(Random random) {
+        return (IntMap<T>) ImmutableList.super.shuffle(random);
+    }
+
+    @Override
+    public IntMap<T> slice(long from, long to) {
+        return (IntMap<T>) ImmutableList.super.slice(from,to);
+    }
+
+
+    @Override
+    public <R> IntMap<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
+    @Override
+    public IntMap<T> prependS(Stream<? extends T> stream) {
+        return (IntMap<T>) ImmutableList.super.prependS(stream);
+    }
+
+    @Override
+    public IntMap<T> append(T... values) {
+        return (IntMap<T>) ImmutableList.super.append(values);
+    }
+
+    @Override
+    public IntMap<T> prependAll(T... values) {
+        return (IntMap<T>) ImmutableList.super.prependAll(values);
+    }
+
+    @Override
+    public IntMap<T> deleteBetween(int start, int end) {
+        return (IntMap<T>) ImmutableList.super.deleteBetween(start,end);
+    }
+
+    @Override
+    public IntMap<T> insertAtS(int pos, Stream<T> stream) {
+        return (IntMap<T>) ImmutableList.super.insertAtS(pos,stream);
+    }
+
+    @Override
+    public IntMap<T> recover(Function<? super Throwable, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public <EX extends Throwable> IntMap<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public IntMap<T> prepend(Iterable<? extends T> value) {
+        return (IntMap<T>) ImmutableList.super.prepend(value);
+    }
+
+    @Override
+    public <U extends Comparable<? super U>> IntMap<T> sorted(Function<? super T, ? extends U> function) {
+        return (IntMap<T>) ImmutableList.super.sorted(function);
     }
 
     @Override

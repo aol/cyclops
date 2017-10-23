@@ -2,6 +2,7 @@ package cyclops.collectionx;
 
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.aol.cyclops2.react.lazy.DuplicationTest;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -9,6 +10,7 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
+import cyclops.control.anym.Witness;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -21,15 +23,19 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
+import cyclops.function.Function1;
+import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.io.IOException;
@@ -49,6 +55,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static cyclops.reactive.ReactiveSeq.iterate;
@@ -886,8 +893,34 @@ public abstract class AbstractIterableXTest {
 
 		}	
 
-	
 
+    @Test
+    public void recoverTest(){
+		    assertThat(of(1,2,3).recover(i->10),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).recover(Throwable.class,i->10),equalTo(of(1,2,3)));
+    }
+    @Test
+    public void windowStatefullyUntil(){
+        System.out.println(of(1,2,3,4,5,6)
+                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+        System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
+                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+        System.out.println(Streamable.of(1,2,3,4,5,6)
+                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+        assertThat(of(1,2,3,4,5,6)
+                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
+                .toList().size(),equalTo(2));
+
+
+    }
+    @Test
+    public void windowStatefullyWhileEmpty(){
+
+        assertThat(of()
+                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+                .toList().size(),equalTo(0));
+
+    }
 
 	@Test
 	public void get0(){
@@ -917,6 +950,7 @@ public abstract class AbstractIterableXTest {
 	public void single2(){
 		assertNull(of(1,2).singleOrElse(null));
 	}
+
 	@Test
 	public void singleOptionalTest(){
 		assertThat(of(1).single().toOptional().get(),equalTo(1));
@@ -1206,6 +1240,85 @@ public abstract class AbstractIterableXTest {
         assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 	}
+    @Test
+    public void testZipPDifferingLength() {
+        List<Tuple2<Integer, String>> list = of(1, 2).zipP(Spouts.of("a", "b", "c", "d")).toList();
+
+        assertEquals(2, list.size());
+        assertTrue(of(1, 2).containsValue(list.get(0)._1()));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
+        assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(0)._2()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(1)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
+
+    }
+    @Test
+    public void testZipSDifferingLength() {
+        List<Tuple2<Integer, String>> list = of(1, 2).zipS(ReactiveSeq.of("a", "b", "c", "d")).toList();
+
+        assertEquals(2, list.size());
+        assertTrue(of(1, 2).containsValue(list.get(0)._1()));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
+        assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(0)._2()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(1)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
+
+    }
+    @Test
+    public void testZipPDifferingLengthT2() {
+        List<Tuple2<Integer, String>> list = of(1, 2).zipP(Spouts.of("a", "b", "c", "d"),Tuple2::of).toList();
+
+        assertEquals(2, list.size());
+        assertTrue(of(1, 2).containsValue(list.get(0)._1()));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
+        assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(0)._2()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(1)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
+
+    }
+    @Test
+    public void testZipSDifferingLengthT2() {
+        List<Tuple2<Integer, String>> list = of(1, 2).zipS(ReactiveSeq.of("a", "b", "c", "d"),Tuple2::of).toList();
+
+        assertEquals(2, list.size());
+        assertTrue(of(1, 2).containsValue(list.get(0)._1()));
+        assertTrue(asList(1, 2).contains(list.get(0)._1()));
+        assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(0)._2()));
+        assertTrue(of("a", "b", "c", "d").containsValue(list.get(1)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+        assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
+
+    }
+    @Test
+    public void testZipWithPDifferingLengthT2() {
+        Function<Integer, Tuple2<Integer, String>> f1 = i -> Tuple.tuple(i, "a");
+        Function<Integer, Tuple2<Integer, String>> f2 = i -> Tuple.tuple(i, "b");
+        Publisher<Function<? super Integer, ? extends Tuple2<Integer, String>>> s = Spouts.of(f1, f2);
+
+        List<Tuple2<Integer, String>> list = of(1, 2).<Tuple2<Integer, String>>zipWithP(s).toList();
+
+        assertEquals(2, list.size());
+
+
+    }
+    @Test
+    public void testZipWithSDifferingLengthT2() {
+        Function<Integer, Tuple2<Integer, String>> f1 = i -> Tuple.tuple(i, "a");
+        Function<Integer, Tuple2<Integer, String>> f2 = i -> Tuple.tuple(i, "b");
+        Stream<Function<? super Integer, ? extends Tuple2<Integer, String>>> s = Spouts.of(f1, f2);
+
+        List<Tuple2<Integer, String>> list = this.<Integer>of(1, 2).<Tuple2<Integer, String>>zipWithS(s).toList();
+
+        assertEquals(2, list.size());
+
+    }
 
 	
 	@Test
@@ -1398,6 +1511,20 @@ public abstract class AbstractIterableXTest {
 	        
 	        
 	    }
+    @Test
+    public void zip3(){
+        IterableX<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(ReactiveSeq.of(100, 200, 300, 400), ReactiveSeq.of('a', 'b'));
+
+        assertThat(list.size(),equalTo(2));
+
+    }
+    @Test
+    public void zip4(){
+        IterableX<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(ReactiveSeq.of(100, 200, 300, 400), ReactiveSeq.of('a', 'b'), ReactiveSeq.of("hello"));
+
+        assertThat(list.size(),equalTo(4));
+
+    }
 	    
 	    
 

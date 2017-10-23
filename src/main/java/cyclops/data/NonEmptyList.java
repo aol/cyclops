@@ -1,22 +1,30 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
 import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collectionx.immutable.VectorX;
+import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.anym.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -275,5 +283,268 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, Immuta
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), head, tail);
+    }
+
+    @Override
+    public NonEmptyList<ReactiveSeq<T>> permutations() {
+        return (NonEmptyList<ReactiveSeq<T>>)ImmutableList.Some.super.permutations();
+    }
+
+    @Override
+    public NonEmptyList<ReactiveSeq<T>> combinations(int size) {
+        return (NonEmptyList<ReactiveSeq<T>>)ImmutableList.Some.super.combinations(size);
+    }
+
+    @Override
+    public NonEmptyList<ReactiveSeq<T>> combinations() {
+        return (NonEmptyList<ReactiveSeq<T>>)ImmutableList.Some.super.combinations();
+    }
+
+    @Override
+    public NonEmptyList<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.zip(combiner,app);
+    }
+
+    @Override
+    public <R> NonEmptyList<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zipWith(fn);
+    }
+
+    @Override
+    public <R> NonEmptyList<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zipWithS(fn);
+    }
+
+    @Override
+    public <R> NonEmptyList<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zipWithP(fn);
+    }
+
+    @Override
+    public <T2, R> NonEmptyList<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zipP(publisher,fn);
+    }
+
+    @Override
+    public <U, R> NonEmptyList<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zipS(other,zipper);
+    }
+
+    @Override
+    public <U> NonEmptyList<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (NonEmptyList)ImmutableList.Some.super.zipP(other);
+    }
+
+    @Override
+    public <U> NonEmptyList<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (NonEmptyList)ImmutableList.Some.super.zip(other);
+    }
+
+    @Override
+    public <S, U, R> NonEmptyList<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    public <T2, T3, T4, R> NonEmptyList<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (NonEmptyList<R>)ImmutableList.Some.super.zip4(second,third,fourth,fn);
+    }
+
+
+    @Override
+    public NonEmptyList<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.combine(predicate,op);
+    }
+
+    @Override
+    public NonEmptyList<T> combine(Monoid<T> op, BiPredicate<? super T, ? super T> predicate) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.combine(op,predicate);
+    }
+
+    @Override
+    public NonEmptyList<T> cycle(long times) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.cycle(times);
+    }
+
+    @Override
+    public NonEmptyList<T> cycle(Monoid<T> m, long times) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.cycle(m,times);
+    }
+
+    @Override
+    public NonEmptyList<T> cycleWhile(Predicate<? super T> predicate) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.cycleWhile(predicate);
+    }
+
+    @Override
+    public NonEmptyList<T> cycleUntil(Predicate<? super T> predicate) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.cycleUntil(predicate);
+    }
+
+    @Override
+    public <U, R> NonEmptyList<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (NonEmptyList<R>) ImmutableList.Some.super.zip(other,zipper);
+    }
+
+    @Override
+    public <S, U> NonEmptyList<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return (NonEmptyList) ImmutableList.Some.super.zip3(second,third);
+    }
+
+    @Override
+    public <T2, T3, T4> NonEmptyList<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return (NonEmptyList) ImmutableList.Some.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    public NonEmptyList<Tuple2<T, Long>> zipWithIndex() {
+        return (NonEmptyList<Tuple2<T,Long>>) ImmutableList.Some.super.zipWithIndex();
+    }
+
+    @Override
+    public NonEmptyList<VectorX<T>> sliding(int windowSize) {
+        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize);
+    }
+
+    @Override
+    public NonEmptyList<VectorX<T>> sliding(int windowSize, int increment) {
+        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize,increment);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> NonEmptyList<C> grouped(int size, Supplier<C> supplier) {
+        return (NonEmptyList<C>) ImmutableList.Some.super.grouped(size,supplier);
+    }
+
+    @Override
+    public NonEmptyList<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedUntil(predicate);
+    }
+
+    @Override
+    public NonEmptyList<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedStatefullyUntil(predicate);
+    }
+
+    @Override
+    public <U> NonEmptyList<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+        return (NonEmptyList) ImmutableList.Some.super.zipS(other);
+    }
+
+    @Override
+    public NonEmptyList<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedWhile(predicate);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> NonEmptyList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (NonEmptyList<C>) ImmutableList.Some.super.groupedWhile(predicate,factory);
+    }
+
+    @Override
+    public <C extends Collection<? super T>> NonEmptyList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (NonEmptyList<C>) ImmutableList.Some.super.groupedUntil(predicate,factory);
+    }
+
+    @Override
+    public NonEmptyList<ListX<T>> grouped(int groupSize) {
+        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.grouped(groupSize);
+    }
+
+    @Override
+    public NonEmptyList<T> distinct() {
+        return (NonEmptyList<T>) ImmutableList.Some.super.distinct();
+    }
+
+    @Override
+    public NonEmptyList<T> scanLeft(Monoid<T> monoid) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.scanLeft(monoid);
+    }
+
+    @Override
+    public <U> NonEmptyList<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+        return (NonEmptyList<U>) ImmutableList.Some.super.scanLeft(seed,function);
+    }
+
+    @Override
+    public NonEmptyList<T> scanRight(Monoid<T> monoid) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.scanRight(monoid);
+    }
+
+    @Override
+    public <U> NonEmptyList<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return (NonEmptyList<U>) ImmutableList.Some.super.scanRight(identity,combiner);
+    }
+
+    @Override
+    public NonEmptyList<T> sorted() {
+        return (NonEmptyList<T>) ImmutableList.Some.super.sorted();
+    }
+
+    @Override
+    public NonEmptyList<T> sorted(Comparator<? super T> c) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.sorted(c);
+    }
+
+
+
+
+    @Override
+    public NonEmptyList<T> intersperse(T value) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.intersperse(value);
+    }
+
+    @Override
+    public NonEmptyList<T> shuffle() {
+        return (NonEmptyList<T>) ImmutableList.Some.super.shuffle();
+    }
+
+
+
+    @Override
+    public NonEmptyList<T> shuffle(Random random) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.shuffle(random);
+    }
+
+
+
+    @Override
+    public NonEmptyList<T> prependS(Stream<? extends T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.prependS(stream);
+    }
+
+    @Override
+    public NonEmptyList<T> append(T... values) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.append(values);
+    }
+
+    @Override
+    public NonEmptyList<T> prependAll(T... values) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.prependAll(values);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAtS(int pos, Stream<T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.insertAtS(pos,stream);
+    }
+
+    @Override
+    public NonEmptyList<T> recover(Function<? super Throwable, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public <EX extends Throwable> NonEmptyList<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    public NonEmptyList<T> prepend(Iterable<? extends T> value) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.prepend(value);
+    }
+
+    @Override
+    public <U extends Comparable<? super U>> NonEmptyList<T> sorted(Function<? super T, ? extends U> function) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.sorted(function);
     }
 }

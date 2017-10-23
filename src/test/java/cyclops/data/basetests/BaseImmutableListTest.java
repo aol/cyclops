@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
@@ -20,6 +21,10 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
     @Override
     public abstract <T> ImmutableList<T> of(T... values);
+    @Test
+    public void emptyUnit(){
+        assertTrue(of(1,2,3).emptyUnit().isEmpty());
+    }
     @Test
     public void getOrElseMulti(){
         assertThat(of(1).getOrElse(0,null),equalTo(1));
