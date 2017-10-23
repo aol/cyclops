@@ -27,7 +27,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
      * @param key
      * @param value
      * @return
-     * @see org.pcollections.PMap#plus(java.lang.Object, java.lang.Object)
+     * @see PersistentMap#put(java.lang.Object, java.lang.Object)
      */
     @Override
     public PersistentMapX<K, V> put(final K key, final V value) {
@@ -42,7 +42,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     /**
      * @param map
      * @return
-     * @see org.pcollections.PMap#plusAll(java.util.Map)
+     * @see PersistentMap#putAll(PersistentMap)
      */
     @Override
     public PersistentMapX<K, V> putAll(final PersistentMap<? extends K, ? extends V> map) {
@@ -52,7 +52,7 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     /**
      * @param key
      * @return
-     * @see org.pcollections.PMap#minus(java.lang.Object)
+     * @see PersistentMap#remove(K)
      */
     @Override
     public PersistentMapX<K, V> remove(final K key) {
@@ -83,6 +83,11 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
     @Override
     public boolean isEmpty() {
         return map.isEmpty();
+    }
+
+    @Override
+    public Iterator<Tuple2<K, V>> iterator() {
+        return this.map.iterator();
     }
 
     /**

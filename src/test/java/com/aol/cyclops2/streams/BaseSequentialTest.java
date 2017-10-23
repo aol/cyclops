@@ -641,6 +641,10 @@ public class BaseSequentialTest {
 
 
     @Test
+    public void convertPMap(){
+        assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
+    }
+    @Test
     public void presentConvert(){
 
         assertTrue(of(1).to().optional().isPresent());

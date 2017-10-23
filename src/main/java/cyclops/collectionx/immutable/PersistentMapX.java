@@ -30,7 +30,7 @@ import com.aol.cyclops2.types.functor.Transformable;
 
 
 public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
-        PersistentMap<K, V>,
+                                                PersistentMap<K, V>,
                                                 Unwrapable,
                                                 BiTransformable<K, V>,
                                                 Transformable<V>,
@@ -69,13 +69,9 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     @Override
     boolean isEmpty();
 
-    /* (non-Javadoc)
-         * @see java.lang.Iterable#iterator()
-         */
+
     @Override
-    default Iterator<Tuple2<K, V>> iterator() {
-        return stream().iterator();
-    }
+    Iterator<Tuple2<K, V>> iterator();
 
 
 
