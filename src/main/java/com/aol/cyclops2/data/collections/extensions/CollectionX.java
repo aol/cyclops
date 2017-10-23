@@ -286,8 +286,7 @@ public interface CollectionX<T> extends IterableX<T>,
             if (!it.hasNext())
                 return result;
         }
-        throw new UnsupportedOperationException(
-                                                "single only works for Streams with a single value");
+       return alt;
 
     }
 

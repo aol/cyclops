@@ -1444,9 +1444,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public T singleOrElse(T alt) {
-        return single().visit(s -> s, () -> {
-            throw new UnsupportedOperationException("single only works for Streams with a single value");
-        });
+        return single().visit(s -> s, () -> alt);
     }
 
     @Override

@@ -2104,7 +2104,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T singleOrElse(T alt) {
-        return reactiveSeq().singleOrElse(null);
+        return reactiveSeq().singleOrElse(alt);
 
     }
 
