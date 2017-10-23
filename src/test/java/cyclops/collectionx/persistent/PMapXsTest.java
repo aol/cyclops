@@ -59,11 +59,11 @@ public class PMapXsTest {
     
     @Test
     public void onEmpty(){
-        assertThat(PersistentMapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+        assertThat(PersistentMapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
     }
     @Test
     public void onEmptyGet(){
-        assertThat(PersistentMapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(10));
+        assertThat(PersistentMapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
     }
     @Test(expected=RuntimeException.class)
     public void onEmptyThrow(){

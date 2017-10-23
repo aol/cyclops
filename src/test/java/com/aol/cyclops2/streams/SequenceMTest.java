@@ -162,7 +162,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void single2(){
-		assertNotNull(ReactiveSeq.of(1,2).singleOrElse(null));
+		assertNull(ReactiveSeq.of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){

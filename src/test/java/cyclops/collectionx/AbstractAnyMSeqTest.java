@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -519,13 +520,13 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void singleTest(){
 		assertThat(of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		of().singleOrElse(null);
+		assertNull(of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		of(1,2).singleOrElse(null);
+		assertNull(of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){

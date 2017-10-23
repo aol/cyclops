@@ -282,7 +282,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
     @Override
     public U reduce(final Monoid<U> reducer) {
-        return reducer.foldLeft(this);
+        return reduce(reducer.zero(),reducer);
     }
 
     @Override

@@ -116,13 +116,14 @@ public class SequenceMTest {
 	public void singleTest(){
 		assertThat(LazyReact.sequentialBuilder().of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
 		assertNull(LazyReact.sequentialBuilder().of().singleOrElse(null));
 	}
 	@Test
 	public void single2(){
-		assertNotNull(LazyReact.sequentialBuilder().of(1,2).singleOrElse(null));
+
+		assertNull(LazyReact.sequentialBuilder().of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void limitTime(){

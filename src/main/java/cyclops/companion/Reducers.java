@@ -225,7 +225,8 @@ public class Reducers {
      * @return Reducer for PStack
      */
     public static <T> Reducer<PersistentList<T>,T> toPList() {
-        return Reducer.fromMonoid(Monoids.pcollectionConcat(Seq.empty()), a -> Seq.of(a));
+        return Reducer.<PersistentList<T>,T> of(Seq.empty(), (final PersistentList<T> a) -> b -> b.plusAll(a), (final T x) -> Seq.of(x));
+
     }
     /**
      * <pre>
@@ -238,7 +239,7 @@ public class Reducers {
      * @return Reducer for PStack in reveresed order
      */
     public static <T> Reducer<PersistentList<T>,T> toPListReversed() {
-        return Reducer.<PersistentList<T>,T> of(Seq.empty(), (final PersistentList<T> a) -> b -> a.plusAll(b), (final T x) -> Seq.of(x));
+        return Reducer.fromMonoid(Monoids.pcollectionConcat(Seq.empty()), a -> Seq.of(a));
     }
     /**
      * <pre>
