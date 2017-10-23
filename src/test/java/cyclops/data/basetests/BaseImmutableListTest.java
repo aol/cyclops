@@ -21,6 +21,7 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
     @Override
     public abstract <T> ImmutableList<T> of(T... values);
+    public abstract <T> ImmutableList<T> empty();
     @Test
     public void emptyUnit(){
         assertTrue(of(1,2,3).emptyUnit().isEmpty());
@@ -84,5 +85,11 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
     public void toStringTest(){
         assertThat(of().toString(),equalTo("[]"));
         assertThat(of(1).toString(),equalTo("[1]"));
+    }
+    @Test
+    public void replaceTest(){
+        assertThat(of(1,2,3).replace(2,3),equalTo(of(1,3,3)));
+        assertThat(of(1,2,2,3).replace(2,3),equalTo(of(1,3,3,3)));
+        assertThat(empty().replace(2,3),equalTo(of()));
     }
 }

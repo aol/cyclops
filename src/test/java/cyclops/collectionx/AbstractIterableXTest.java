@@ -1522,10 +1522,16 @@ public abstract class AbstractIterableXTest {
     public void zip4(){
         IterableX<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(ReactiveSeq.of(100, 200, 300, 400), ReactiveSeq.of('a', 'b'), ReactiveSeq.of("hello"));
 
-        assertThat(list.size(),equalTo(4));
+        assertThat(list.size(),equalTo(1));
 
     }
-	    
+
+
+
+    @Test
+    public void notEqualNull(){
+        assertFalse(empty().equals(null));
+    }
 	    
 
 	    @Test
