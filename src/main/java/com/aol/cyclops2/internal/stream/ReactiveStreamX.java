@@ -1325,6 +1325,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     }
+    @Override
+    public final ReactiveSeq<Tuple2<T,Integer>> occurances(){
+
+         return Spouts.deferred(() -> {
+            ReactiveSeq<Map<T, Integer>> map = collectAll(Collectors.toMap(k -> k, v -> 1, (a, b) -> a + b));
+            return map.flatMap(m->m.entrySet().stream());
+        }).map(e->Tuple.tuple(e.getKey(),e.getValue()));
+    }
 
     @Override
     public <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {

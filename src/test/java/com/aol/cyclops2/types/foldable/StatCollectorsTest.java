@@ -59,7 +59,7 @@ public class StatCollectorsTest {
     @Test
     public void mode(){
         ReactiveSeq<Integer> s = ReactiveSeq.of(1,2,2,2,3,3,3,3,3,4,4,4);
-        assertThat(s.mode().get(),equalTo(3));
+        assertThat(s.mode().orElse(-1),equalTo(3));
     }
     @Test
     public void maxBy(){

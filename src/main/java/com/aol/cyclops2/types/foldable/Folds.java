@@ -143,18 +143,19 @@ public interface Folds<T> extends Iterable<T>  {
             }
         }));
     }
-    default Optional<T> mode(){
+    default Option<T> mode(){
         Map<T,Integer> map = stream().collect(Collectors.toMap(k->k, v->1,(a, b)->a+b));
 
         return ReactiveSeq.fromIterable(map.entrySet())
                 .maxBy(k -> k.getValue())
-                .map(t -> t.getKey()).toOptional();
+                .map(t -> t.getKey());
     }
     default ReactiveSeq<Tuple2<T,Integer>> occurances(){
-        Map<T,Integer> map = stream().collect(Collectors.toMap(k->k,v->1,(a,b)->a+b));
 
-        return ReactiveSeq.fromIterable(map.entrySet())
-                .map(e->Tuple.tuple(e.getKey(),e.getValue()));
+        return ReactiveSeq.deferred(() -> {
+            Map<T, Integer> map = stream().collect(Collectors.toMap(k -> k, v -> 1, (a, b) -> a + b));
+            return map.entrySet().stream();
+        }).map(e->Tuple.tuple(e.getKey(),e.getValue()));
     }
 
     default double mean(ToDoubleFunction<T> fn){
