@@ -234,8 +234,8 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
     }
 
     @Override
-    public IntMap<T> replace(T currentElement, T newElement) {
-        return (IntMap<T>)ImmutableList.super.replace(currentElement,newElement);
+    public IntMap<T> replaceFirst(T currentElement, T newElement) {
+        return (IntMap<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
     }
 
     @Override

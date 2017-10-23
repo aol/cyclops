@@ -87,9 +87,9 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
         assertThat(of(1).toString(),equalTo("[1]"));
     }
     @Test
-    public void replaceTest(){
-        assertThat(of(1,2,3).replace(2,3),equalTo(of(1,3,3)));
-        assertThat(of(1,2,2,3).replace(2,3),equalTo(of(1,3,3,3)));
-        assertThat(empty().replace(2,3),equalTo(of()));
+    public void replaceFirstTest(){
+        assertThat(of(1,2,3).replaceFirst(2,3),equalTo(of(1,3,3)));
+        assertThat(of(1,2,2,3).replaceFirst(2,3),equalTo(of(1,3,2,3)));
+        assertThat(empty().replaceFirst(2,3),equalTo(of()));
     }
 }

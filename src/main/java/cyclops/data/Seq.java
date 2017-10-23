@@ -302,8 +302,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<T> replace(T currentElement, T newElement) {
-        return (Seq<T>)ImmutableList.super.replace(currentElement,newElement);
+    default Seq<T> replaceFirst(T currentElement, T newElement) {
+        return (Seq<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
     }
 
     @Override

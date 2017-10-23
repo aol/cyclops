@@ -366,7 +366,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return empty();
     }
 
-    default LazySeq<T> replace(T currentElement, T newElement) {
+    default LazySeq<T> replaceFirst(T currentElement, T newElement) {
         LazySeq<T> preceding = empty();
         LazySeq<T> tail = this;
         while(!tail.isEmpty()){

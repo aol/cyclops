@@ -140,7 +140,7 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
     }
 
     public LinkedMap<K, V> put(K key, V value) {
-        Vector<Tuple2<K, V>> newOrder = get(key).map(v -> order.replace(Tuple.tuple(key, v), Tuple.tuple(key, value)))
+        Vector<Tuple2<K, V>> newOrder = get(key).map(v -> order.replaceFirst(Tuple.tuple(key, v), Tuple.tuple(key, value)))
                 .orElseGet(() -> order.plus(Tuple.tuple(key, value)));
         return new LinkedMap<>(map.put(key,value),newOrder);
 

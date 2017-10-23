@@ -210,8 +210,8 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
     }
 
     @Override
-    public Vector<T> replace(T currentElement, T newElement) {
-        return (Vector<T>)ImmutableList.super.replace(currentElement,newElement);
+    public Vector<T> replaceFirst(T currentElement, T newElement) {
+        return (Vector<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
     }
 
     @Override

@@ -309,8 +309,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
 
         }
         public BankersQueue<T> replace(T currentElement, T newElement) {
-            ImmutableList<T> replaceF = front.replace(currentElement, newElement);
-            ImmutableList<T> replaceB = back.replace(currentElement, newElement);
+            ImmutableList<T> replaceF = front.replaceFirst(currentElement, newElement);
+            ImmutableList<T> replaceB = back.replaceFirst(currentElement, newElement);
             return  front==replaceF && back==replaceB ? this : new Cons<>(replaceF, replaceB);
         }
        public Option<T> get(int n) {

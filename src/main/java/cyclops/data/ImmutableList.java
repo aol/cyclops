@@ -59,7 +59,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
 
-    default ImmutableList<T> replace(T currentElement, T newElement){
+    default ImmutableList<T> replaceFirst(T currentElement, T newElement){
         ImmutableList<T> preceding = emptyUnit();
         ImmutableList<T> tail = this;
         while(!tail.isEmpty()){
