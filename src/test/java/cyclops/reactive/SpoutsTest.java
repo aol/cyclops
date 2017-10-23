@@ -107,7 +107,7 @@ public class SpoutsTest {
 
         }).forEach(2, in->count++);
 
-        Thread.sleep(500);
+        Thread.sleep(510);
         sub.request(30);
 
         assertThat(i,equalTo(30));
