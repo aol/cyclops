@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
+import cyclops.control.Option;
 import org.junit.Test;
 
 import cyclops.control.anym.AnyM;
@@ -103,16 +104,16 @@ public class SequenceMTest {
 	}
 	@Test
 	public void elementAtMultple(){
-		assertThat(Streamable.of(1,2,3,4,5).elementAt(2),equalTo(3));
+		assertThat(Streamable.of(1,2,3,4,5).elementAt(2),equalTo(Option.some(3)));
 	}
 	
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void elementAtMultiple1(){
-		Streamable.of(1).elementAt(1);
+		assertThat(Streamable.of(1).elementAt(1),equalTo(Option.none()));
 	}
-	@Test(expected=NoSuchElementException.class)
+	@Test
 	public void elementAtEmpty(){
-		Streamable.of().elementAt(0);
+		assertThat(Streamable.of().elementAt(0),equalTo(Option.none()));
 	}
 	@Test
 	public void get0(){
@@ -134,13 +135,13 @@ public class SequenceMTest {
 	public void singleTest(){
 		assertThat(Streamable.of(1).singleOrElse(-1),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		Streamable.of().singleOrElse(null);
+		assertThat(Streamable.of().singleOrElse(null),equalTo(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		Streamable.of(1,2).singleOrElse(null);
+		assertThat(Streamable.of(1,2).singleOrElse(null),equalTo(null));
 	}
 	@Test
 	public void limitTime(){
