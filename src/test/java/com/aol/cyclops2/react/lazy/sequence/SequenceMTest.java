@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
+import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -116,11 +118,11 @@ public class SequenceMTest {
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		LazyReact.sequentialBuilder().of().singleOrElse(null);
+		assertNull(LazyReact.sequentialBuilder().of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		LazyReact.sequentialBuilder().of(1,2).singleOrElse(null);
+		assertNotNull(LazyReact.sequentialBuilder().of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void limitTime(){

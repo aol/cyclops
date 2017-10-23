@@ -135,7 +135,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     @Override
     public final T reduce(final Monoid<T> reducer) {
 
-        return reducer.foldLeft(this);
+        return reduce(reducer.zero(),reducer);
     }
 
     @Override

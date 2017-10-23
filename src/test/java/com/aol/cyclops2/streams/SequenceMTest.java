@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
+import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -154,13 +156,13 @@ public class SequenceMTest {
 	public void singleTest(){
 		assertThat(ReactiveSeq.of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		ReactiveSeq.of().singleOrElse(null);
+		assertNull(ReactiveSeq.of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		ReactiveSeq.of(1,2).singleOrElse(null);
+		assertNotNull(ReactiveSeq.of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){
