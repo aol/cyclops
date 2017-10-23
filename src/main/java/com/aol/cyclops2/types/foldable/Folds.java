@@ -121,28 +121,27 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().distinct().count();
 
     }
-    default <U> Optional<T> maxBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
-        return stream().sorted(function,comparator.reversed())
-                .elementAt(0l)
-                .toOptional();
-    }
-    default <U extends Comparable<? super U>> Option<T> maxBy(Function<? super T, ? extends U> function){
+    default <U> Option<T> maxBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator){
         return foldLeft(BinaryOperator.maxBy(new Comparator<T>() {
             @Override
             public int compare(T o1, T o2) {
-                return Comparator.<U>naturalOrder().compare(function.apply(o1),function.apply(o2));
+                return comparator.compare(function.apply(o1),function.apply(o2));
             }
         }));
     }
-    default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
-        return stream().sorted(function, Comparator.naturalOrder())
-                .elementAt(0l)
-                .toOptional();
+    default <U extends Comparable<? super U>> Option<T> maxBy(Function<? super T, ? extends U> function){
+        return maxBy(function, Comparator.naturalOrder());
     }
-    default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function,Comparator<? super U> comparator){
-        return stream().sorted(function, Comparator.naturalOrder())
-                .takeRight(1)
-                .findFirst();
+    default <U extends Comparable<? super U>> Option<T> minBy(Function<? super T, ? extends U> function){
+        return minBy(function, Comparator.naturalOrder());
+    }
+    default <U extends Comparable<? super U>> Option<T> minBy(Function<? super T, ? extends U> function, Comparator<? super U> comparator){
+        return foldLeft(BinaryOperator.minBy(new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return comparator.compare(function.apply(o1),function.apply(o2));
+            }
+        }));
     }
     default Optional<T> mode(){
         Map<T,Integer> map = stream().collect(Collectors.toMap(k->k, v->1,(a, b)->a+b));
