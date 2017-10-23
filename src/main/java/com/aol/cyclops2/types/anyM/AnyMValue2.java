@@ -279,7 +279,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     @Override
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {
-        return null;
+        return AnyMValue.super.foldLeft(identity,accumulator);
     }
 
     @Override

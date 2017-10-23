@@ -2775,8 +2775,7 @@ public class Streams {
                     Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
 
                 } catch (final InterruptedException e) {
-                    ExceptionSoftener.throwSoftenedException(e);
-                    return null;
+                    throw ExceptionSoftener.throwSoftenedException(e);
                 }
                 return nextValue;
             }
@@ -2804,8 +2803,8 @@ public class Streams {
                     Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
 
                 } catch (final InterruptedException e) {
-                    ExceptionSoftener.throwSoftenedException(e);
-                    return null;
+                    throw ExceptionSoftener.throwSoftenedException(e);
+
                 }
                 return nextValue;
             }

@@ -1369,7 +1369,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
                 @Override
                 public <T, R> Monad<Higher<tryType, L>> monad() {
-                    return null;
+                    return Instances.monad();
                 }
 
                 @Override
