@@ -82,7 +82,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
     public void coflatMap(){
        assertThat(LinkedListX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
         
     }
 	@Test

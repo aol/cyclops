@@ -275,10 +275,10 @@ public interface CollectionX<T> extends IterableX<T>,
     CollectionX<T> reverse();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
+     * @see com.aol.cyclops2.types.foldable.Folds#single()
      */
     @Override
-    default T singleUnsafe() {
+    default T singleOrElse(T alt) {
 
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
@@ -287,12 +287,12 @@ public interface CollectionX<T> extends IterableX<T>,
                 return result;
         }
         throw new UnsupportedOperationException(
-                                                "singleUnsafe only works for Streams with a singleUnsafe value");
+                                                "single only works for Streams with a single value");
 
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe(java.util.function.Predicate)
+     * @see com.aol.cyclops2.types.foldable.Folds#single(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> single(final Predicate<? super T> predicate) {
@@ -302,7 +302,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#singleUnsafe()
+     * @see com.aol.cyclops2.types.foldable.Folds#single()
      */
     @Override
     default Maybe<T> single() {

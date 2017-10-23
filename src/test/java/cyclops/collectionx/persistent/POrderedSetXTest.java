@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,7 +19,6 @@ import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.OrderedSetX;
-import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
 import cyclops.control.Option;
@@ -32,7 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import cyclops.collectionx.AbstractCollectionXTest;
 
 public class POrderedSetXTest extends AbstractSetTest {
 
@@ -98,7 +95,7 @@ public class POrderedSetXTest extends AbstractSetTest {
     public void coflatMap(){
        assertThat(OrderedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
         
     }
 	/* (non-Javadoc)

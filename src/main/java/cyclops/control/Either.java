@@ -493,7 +493,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         return visit(s -> left(secondary), p -> right(p));
     }
     /**
-     *  Turn a toX of Eithers into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Eithers into a single Either with Lists of values.
      *  Right and lazyLeft types are swapped during this operation.
      *
      * <pre>

@@ -17,7 +17,7 @@ public class FastFutureConversionTest {
 		assertThat( new LazyReact().from(future)
 			                    .peek(System.out::println)
 			                    .then(action->"result")
-			                    .singleUnsafe(),equalTo("result"));
+			                    .singleOrElse(null),equalTo("result"));
 		
 		
 	}

@@ -38,7 +38,7 @@ public interface Adapter<T> {
     <R> R visit(Function<? super Queue<T>, ? extends R> caseQueue, Function<? super Topic<T>, ? extends R> caseTopic);
 
     /**
-     * Offer a singleUnsafe datapoint to this adapter
+     * Offer a single datapoint to this adapter
      * 
      * @param data data to add
      * @return self

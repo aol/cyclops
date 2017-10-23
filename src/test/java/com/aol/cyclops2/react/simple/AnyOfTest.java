@@ -71,7 +71,7 @@ public class AnyOfTest {
 				System.out.println(it))
 				.anyOf(data -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(urls,hasItem(result));
 	}
@@ -88,7 +88,7 @@ public class AnyOfTest {
 				System.out.println(it))
 				.anyOf(data -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(urls,hasItem(result));
 		
@@ -104,7 +104,7 @@ public class AnyOfTest {
 				System.out.println(it))
 				.anyOf(data -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(result,is(notNullValue()));
 		
@@ -121,7 +121,7 @@ public class AnyOfTest {
 				.peek(System.out::println)
 				.anyOf(data -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(urls,hasItem(result));
 		

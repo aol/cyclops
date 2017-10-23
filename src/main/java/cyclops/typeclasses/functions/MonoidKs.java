@@ -37,63 +37,63 @@ public class MonoidKs {
 
 
     /**
-     * @return A combiner for SetX (concatenates two SetX into a singleUnsafe SetX)
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
      */
     static <T> MonoidK<set,T> setXConcat() {
         return MonoidK.of(SetX.empty(),SemigroupKs.setXConcat());
     }
 
     /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
 
     static <T> MonoidK<sortedSet,T> sortedSetXConcat() {
         return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for QueueX (concatenates two QueueX into a singleUnsafe QueueX)
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
      */
     static <T> MonoidK<queue,T> queueXConcat() {
         return MonoidK.of(QueueX.empty(),SemigroupKs.queueXConcat());
     }
 
     /**
-     * @return A combiner for DequeX (concatenates two DequeX into a singleUnsafe DequeX)
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
      */
     static <T> MonoidK<deque,T> dequeXConcat() {
         return MonoidK.of(DequeX.empty(),SemigroupKs.dequeXConcat());
     }
 
     /**
-     * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
     static <T> MonoidK<linkedListX,T> linkedListXConcat() {
         return MonoidK.of(LinkedListX.empty(),SemigroupKs.linkedListXConcat());
     }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a singleUnsafe VectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
     static <T> MonoidK<vectorX,T> vectorXConcat() {
         return MonoidK.of(VectorX.empty(),SemigroupKs.vectorXConcat());
     }
 
     /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
 
     static <T> MonoidK<persistentSetX,T> persistentSetXConcat() {
         return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
     }
      */
     /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
 
     static <T> MonoidK<OrderedsetX,T> orderedSetXConcat() {
         return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a singleUnsafe PersistentQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
     static <T> MonoidK<persistentQueueX,T> persistentQueueXConcat() {
         return MonoidK.of(PersistentQueueX.empty(),SemigroupKs.persistentQueueXConcat());

@@ -1321,7 +1321,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * True if a singleUnsafe element matches when Monad converted to a Stream
+     * True if a single element matches when Monad converted to a Stream
      * <pre>
      * {@code 
      * assertThat(Streamable.of(1,2,3,4,5).anyMatch(it-> it.equals(3)),equalTo(true));
@@ -2085,24 +2085,26 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @return first value in this Stream
+     * @param alt
      */
     @Override
-    default T firstValue() {
-        return reactiveSeq().firstValue();
+    default T firstValue(T alt) {
+        return reactiveSeq().firstValue(null);
     }
 
     /**
      * <pre>
      * {@code 
-     * assertThat(Streamable.of(1).singleUnsafe(),equalTo(1));
+     * assertThat(Streamable.of(1).single(),equalTo(1));
      * }
      * </pre>
      * 
-     * @return a singleUnsafe value or an exception if 0/1 values in this Stream
+     * @return a single value or an exception if 0/1 values in this Stream
+     * @param alt
      */
     @Override
-    default T singleUnsafe() {
-        return reactiveSeq().singleUnsafe();
+    default T singleOrElse(T alt) {
+        return reactiveSeq().singleOrElse(null);
 
     }
 
@@ -2477,7 +2479,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      * 
      * @param size Max size of a batch
-     * @param time (Max) time period to build a singleUnsafe batch in
+     * @param time (Max) time period to build a single batch in
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
@@ -2495,7 +2497,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param size Max size of a batch
-     * @param time (Max) time period to build a singleUnsafe batch in
+     * @param time (Max) time period to build a single batch in
      * @param unit time unit for batch
      * @param factory Collection factory
      * @return Streamable batched by size and time
@@ -2515,7 +2517,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period to build a singleUnsafe batch in
+     * @param time - time period to build a single batch in
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
@@ -2536,7 +2538,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * 
-     * @param time - time period to build a singleUnsafe batch in
+     * @param time - time period to build a single batch in
      * @param unit time unit for batch
      * @param factory Collection factory
      * @return Streamable batched into toX types by time period

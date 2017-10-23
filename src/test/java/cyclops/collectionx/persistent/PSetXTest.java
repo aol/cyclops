@@ -6,20 +6,16 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.AbstractSetTest;
 import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.control.Option;
-import cyclops.data.ImmutableSet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -131,7 +127,7 @@ public class PSetXTest extends AbstractSetTest {
     public void coflatMap(){
        assertThat(PersistentSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
         
     }
     @Override

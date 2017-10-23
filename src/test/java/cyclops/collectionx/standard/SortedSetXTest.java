@@ -120,7 +120,7 @@ public class SortedSetXTest extends AbstractSetTest {
     public void coflatMap(){
        assertThat(SortedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
         
     }
    

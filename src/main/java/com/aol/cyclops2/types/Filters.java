@@ -3,7 +3,7 @@ package com.aol.cyclops2.types;
 import java.util.function.Predicate;
 
 /**
- * Trait that represents any class with a singleUnsafe argument Filter method
+ * Trait that represents any class with a single argument Filter method
  * Will coerce that method into accepting JDK 8 java.util.function.Predicates
  * 
  * @author johnmcclean

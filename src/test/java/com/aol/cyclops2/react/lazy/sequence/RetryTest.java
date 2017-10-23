@@ -43,7 +43,7 @@ public class RetryTest {
 		assertThat(of(1,2,3,4)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 
 	@Test
@@ -52,7 +52,7 @@ public class RetryTest {
 					.map(i->i+2)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test
 	public void recover3(){
@@ -61,14 +61,14 @@ public class RetryTest {
 					.map(u->{throw new RuntimeException();})
 					.map(i->"x!"+i)
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test
 	public void recoverIO(){
 		assertThat(of(1,2,3,4)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class RetryTest {
 					.map(i->i+2)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(IOException.class,e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void recoverIOUnhandledThrown(){
@@ -86,7 +86,7 @@ public class RetryTest {
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.map(i->"x!"+i)
 					.recover(IllegalStateException.class,e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class RetryTest {
 
 		String result = of( 1,  2, 3)
 				.retry(serviceMock)
-				.firstValue();
+				.firstValue(null);
 
 		assertThat(result, is("42"));
 	}

@@ -89,13 +89,13 @@ public class Functions {
     }
 
     public static final  <T> Function1<? super Iterable<T>,? extends T> head(){
-        return it -> ReactiveSeq.fromIterable(it).firstValue();
+        return it -> ReactiveSeq.fromIterable(it).firstValue(null);
     }
 
     public static final  <T> Function1<? super Iterable<T>,? extends T> tail(){
         return it -> ReactiveSeq.fromIterable(it)
                                 .limitLast(1)
-                                .firstValue();
+                                .firstValue(null);
     }
     public static final  <T> Function1<? super Iterable<T>,? extends T> reduce(Monoid<T> monoid){
         return it -> ReactiveSeq.fromIterable(it)

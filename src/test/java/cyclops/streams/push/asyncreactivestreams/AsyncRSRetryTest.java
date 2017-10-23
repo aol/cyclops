@@ -52,7 +52,7 @@ public class AsyncRSRetryTest {
 		assertThat(of(1,2,3,4)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class AsyncRSRetryTest {
 					.map(i->i+2)
 					.map(u->{throw new RuntimeException();})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test
 	public void recover3(){
@@ -70,14 +70,14 @@ public class AsyncRSRetryTest {
 					.map(u->{throw new RuntimeException();})
 					.map(i->"x!"+i)
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test
 	public void recoverIO(){
 		assertThat(of(1,2,3,4)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	
 	@Test
@@ -86,7 +86,7 @@ public class AsyncRSRetryTest {
 					.map(i->i+2)
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.recover(IOException.class,e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 	@Test(expected=IOException.class)
 	
@@ -96,7 +96,7 @@ public class AsyncRSRetryTest {
 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
 					.map(i->"x!"+i)
 					.recover(IllegalStateException.class,e->"hello")
-					.firstValue(),equalTo("hello"));
+					.firstValue(null),equalTo("hello"));
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class AsyncRSRetryTest {
 		long time = System.currentTimeMillis();
 		String result = of( 1,  2, 3)
 				.retry(serviceMock,7,200,TimeUnit.MILLISECONDS)
-				.firstValue();
+				.firstValue(null);
 		assertThat(System.currentTimeMillis()-time,greaterThan(200l));
 		assertThat(result, is("42"));
 	}

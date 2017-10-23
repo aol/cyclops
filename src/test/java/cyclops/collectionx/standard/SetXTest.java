@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,9 +19,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.AbstractCollectionXTest;
 import cyclops.collectionx.AbstractSetTest;
-import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -97,7 +94,7 @@ public class SetXTest extends AbstractSetTest {
     public void coflatMap(){
        assertThat(SetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
         
     }
     /*

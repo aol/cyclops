@@ -170,7 +170,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Add a singleUnsafe datapoint to this Queue
+     * Add a single datapoint to this Queue
      * 
      * @param data data to add
      * @return self

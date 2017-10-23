@@ -362,7 +362,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a ListX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -373,7 +373,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a PersistentSetX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return PersistentSetX of transformed values
      */
     default <T> PersistentSetX<T> toPersistentSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -384,7 +384,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a POrderdSetX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return OrderedSetX of transformed values
      */
     default <T> OrderedSetX<T> toOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -394,7 +394,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a QueueX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return QueueX of transformed values
      */
     default <T> PersistentQueueX<T> toPersistentQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -404,7 +404,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a LinkedListX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return LinkedListX of transformed values
      */
     default <T> LinkedListX<T> toLinkedListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -414,7 +414,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a VectorX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return VectorX of transformed values
      */
     default <T> VectorX<T> toVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -423,7 +423,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     /**
      * Convert this MapX to a BagX via the provided transformation function
      *
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return BagX of transformed values
      */
     default <T> BagX<T> toBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {

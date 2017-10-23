@@ -152,15 +152,15 @@ public class SequenceMTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(ReactiveSeq.of(1).singleUnsafe(),equalTo(1));
+		assertThat(ReactiveSeq.of(1).singleOrElse(null),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		ReactiveSeq.of().singleUnsafe();
+		ReactiveSeq.of().singleOrElse(null);
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		ReactiveSeq.of(1,2).singleUnsafe();
+		ReactiveSeq.of(1,2).singleOrElse(null);
 	}
 	@Test
 	public void singleOptionalTest(){

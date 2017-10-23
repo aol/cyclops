@@ -329,7 +329,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     final static Maybe EMPTY = new Nothing<>();
 
     /**
-     * @return Get the zero Maybe (singleUnsafe instance)
+     * @return Get the zero Maybe (single instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Maybe<T> nothing() {
@@ -360,7 +360,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
     /**
-     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Maybe  that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -380,7 +380,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
     /**
-     *  Construct a Maybe  that contains a singleUnsafe value extracted from the supplied Iterable
+     *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);

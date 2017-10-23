@@ -17,7 +17,7 @@ import lombok.experimental.UtilityClass;
 import java.util.Comparator;
 
 /**
- * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a singleUnsafe value.
+ * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a single value.
  * 
  * Primary use case is the reduction of Streams to persistent collections
  * 

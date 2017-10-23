@@ -727,7 +727,7 @@ public class ReactiveSeqTest {
 
 
        //LimitSpliterator only supports iteration
-        assertThat(res.singleUnsafe().size(),equalTo(3));
+        assertThat(res.single().size(),equalTo(3));
     }
  **/
 
@@ -954,35 +954,35 @@ public class ReactiveSeqTest {
     @Test
     public void ofTestInt(){
         assertThat(ReactiveSeq.ofInts(6)
-                             .singleUnsafe(),equalTo(6));
+                             .singleOrElse(null),equalTo(6));
     }
     @Test
     public void ofTestInteger(){
         assertThat(ReactiveSeq.ofInts(new Integer(6))
-                             .singleUnsafe(),equalTo(6));
+                             .singleOrElse(null),equalTo(6));
     }
     @Test
     public void ofDouble(){
         assertThat(ReactiveSeq.ofDoubles(6.0)
-                             .singleUnsafe(),equalTo(6.0));
+                             .singleOrElse(null),equalTo(6.0));
     }
 
     @Test
     public void ofTestObj(){
         assertThat(of("a")
-                             .singleUnsafe(),equalTo("a"));
+                             .singleOrElse(null),equalTo("a"));
     }
     @Test
     public void intOpsTest(){
         assertThat(ReactiveSeq.ofInts(6)
-                             .singleUnsafe(),equalTo(6));
+                             .singleOrElse(null),equalTo(6));
     }
     @Test
     public void coflatMap(){
 
        assertThat(of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
+                   .singleOrElse(null),equalTo(6));
 
     }
     @Test
@@ -1020,7 +1020,7 @@ public class ReactiveSeqTest {
 
         int result = of(1)
                                 .retry(fn, 0, 1, TimeUnit.SECONDS)
-                                .firstValue();
+                                .firstValue(null);
 
         assertEquals(2, result);
     }
@@ -1031,7 +1031,7 @@ public class ReactiveSeqTest {
 
         of(1)
                    .retry(fn, 0, 1, TimeUnit.SECONDS)
-                   .firstValue();
+                   .firstValue(null);
 
         fail();
     }
@@ -1046,7 +1046,7 @@ public class ReactiveSeqTest {
 
         of(1)
                    .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
-                   .firstValue();
+                   .firstValue(null);
 
         assertTrue(timings[1] - timings[0] < 5000);
     }

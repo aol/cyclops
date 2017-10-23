@@ -47,7 +47,7 @@ public class SimpleReactTest {
 	}
 	@Test
 	public void streamOfOne(){
-		Integer value = BaseSimpleReactStream.of(1).block().firstValue();
+		Integer value = BaseSimpleReactStream.of(1).block().firstValue(null);
 		assertThat(value,is(1));
 	}
 	@Test
@@ -100,7 +100,7 @@ public class SimpleReactTest {
 		String res = new SimpleReact().ofAsync(()->"hello")
 										.peek(it->{ found[0]=it;})
 										.then(it->it+"!")
-										.block().firstValue();
+										.block().firstValue(null);
 		assertThat(found[0],is("hello"));
 		assertThat(res,is("hello!"));
 	}

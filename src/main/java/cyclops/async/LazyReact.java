@@ -213,10 +213,10 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Construct a FutureStream containing a singleUnsafe Future
+     * Construct a FutureStream containing a single Future
      * 
      * @param cf CompletableFuture to create Stream from
-     * @return FutureStream of a singleUnsafe value
+     * @return FutureStream of a single value
      */
     public <U> FutureStream<U> from(final CompletableFuture<U> cf) {
 

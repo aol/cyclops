@@ -267,7 +267,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
 
     /**
-     *  Turn a toX of Either3 into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Either3 into a single Either with Lists of values.
      *
      * <pre>
      * {@code

@@ -227,7 +227,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
     public Maybe<T> firstValue() {
         return Eval.later(() -> listX(Evaluation.LAZY)).toMaybe()
-                                       .flatMap(l->l.size()==0? Maybe.nothing() : Maybe.just(l.firstValue()));
+                                       .flatMap(l->l.size()==0? Maybe.nothing() : Maybe.just(l.firstValue(null)));
     }
     /**
      * Lazily converts this ReactiveSeq into a Collection. This does not trigger

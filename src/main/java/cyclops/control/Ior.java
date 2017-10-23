@@ -113,7 +113,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     }
 
     /**
-     * Construct an Ior that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct an Ior that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
 
      * <pre>
      * {@code
@@ -137,7 +137,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     }
 
     /**
-     * Construct an Ior that contains a singleUnsafe value extracted from the supplied Iterable
+     * Construct an Ior that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
@@ -471,7 +471,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     public boolean isBoth();
 
     /**
-     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
+     *  Turn a toX of Iors into a single Ior with Lists of values.
      *  Primary and lazyLeft types are swapped during this operation.
      *
      * <pre>
@@ -569,7 +569,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     }
 
     /**
-     *  Turn a toX of Iors into a singleUnsafe Ior with Lists of values.
+     *  Turn a toX of Iors into a single Ior with Lists of values.
      *
      * <pre>
      * {@code

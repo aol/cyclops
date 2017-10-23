@@ -233,9 +233,9 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     <R> BaseSimpleReactStream<R> flatMapToCompletableFutureSync(Function<? super U, CompletableFuture<? extends R>> flatFn);
 
     /**
-     * Allows aggregate values in a Stream to be flatten into a singleUnsafe Stream.
+     * Allows aggregate values in a Stream to be flatten into a single Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a singleUnsafe flattened reactiveStream
+     * into a single flattened reactiveStream
      * 
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -426,7 +426,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     Queue<U> toQueue();
 
     /**
-     * Create a 'free threaded' asynchronous reactiveStream that runs on a singleUnsafe thread (not current)
+     * Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
      * 
      */
@@ -437,7 +437,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Create a 'free threaded' asynchronous reactiveStream that runs on a singleUnsafe thread (not current)
+     * Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      * The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator is invoked.
      * 
      */
@@ -540,7 +540,7 @@ public interface BaseSimpleReactStream<U> extends BlockingStream<U> {
     }
 
     /**
-     *  Create a 'free threaded' asynchronous reactiveStream that runs on a singleUnsafe thread (not current)
+     *  Create a 'free threaded' asynchronous reactiveStream that runs on a single thread (not current)
      *  The supplier will be executed asyncrhonously, subsequent tasks will be executed synchronously unless the async() operator
      *  is invoked.
      *  

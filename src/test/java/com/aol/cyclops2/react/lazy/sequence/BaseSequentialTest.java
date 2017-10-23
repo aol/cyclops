@@ -563,10 +563,10 @@ public class BaseSequentialTest {
 		    public void testMinByMaxBy() {
 		        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-		        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+		        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 		        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-		        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+		        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
 		        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 		    }
 

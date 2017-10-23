@@ -379,13 +379,13 @@ public  class CoreReactiveSeqTest {
 
        Thread t=  new Thread( ()-> {
             ReactiveSeq<Integer> stream2 = topic.stream();
-            assertThat(stream2.takeRight(1).singleUnsafe(), equalTo(99_999));
+            assertThat(stream2.takeRight(1).singleOrElse(-1), equalTo(99_999));
         });
        t.start();
 
         ReactiveSeq<Integer> stream1 = topic.stream();
 
-        assertThat(stream1.takeRight(1).singleUnsafe(),equalTo(99_999));
+        assertThat(stream1.takeRight(1).singleOrElse(-1),equalTo(99_999));
 
        t.join();
     }
@@ -829,10 +829,10 @@ public  class CoreReactiveSeqTest {
 	    public void testMinByMaxBy() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	    }
 

@@ -260,7 +260,7 @@ public class BlockingTest {
 		.then( it -> it*100)
 		.then( it -> sleep(it));
 		
-		int result = stage.block().firstValue();
+		int result = stage.block().firstValue(null);
 
 		assertThat(result,is(100));
 		
@@ -278,7 +278,7 @@ public class BlockingTest {
 		.<Set<Integer>,Set<Integer>>allOf(Collectors.toSet(), it -> {
 			assertThat (it,is( Set.class));
 			return it;
-		}).block().firstValue();
+		}).block().firstValue(null);
 
 		assertThat(result.size(),is(4));
 	}

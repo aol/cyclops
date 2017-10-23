@@ -81,7 +81,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     }
 
     /**
-     * Each nested value will be True if a singleUnsafe element matches when Monad converted to a Stream
+     * Each nested value will be True if a single element matches when Monad converted to a Stream
      * Nested analog to {@link ReactiveSeq#anyMatch}
      * <pre>
      * {@code 

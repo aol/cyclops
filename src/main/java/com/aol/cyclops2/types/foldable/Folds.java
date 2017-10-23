@@ -28,7 +28,7 @@ import cyclops.collectionx.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**
- * Represents a type that may be reducable (foldable) to a singleUnsafe value or toX
+ * Represents a type that may be reducable (foldable) to a single value or toX
  * 
  * @author johnmcclean
  *
@@ -126,10 +126,13 @@ public interface Folds<T> extends Iterable<T>  {
                 .elementAt(0l)
                 .toOptional();
     }
-    default <U extends Comparable<? super U>> Optional<T> maxBy(Function<? super T, ? extends U> function){
-        return stream().sorted(function,Comparator.reverseOrder())
-                .elementAt(0l)
-                .toOptional();
+    default <U extends Comparable<? super U>> Option<T> maxBy(Function<? super T, ? extends U> function){
+        return foldLeft(BinaryOperator.maxBy(new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return Comparator.<U>naturalOrder().compare(function.apply(o1),function.apply(o2));
+            }
+        }));
     }
     default <U extends Comparable<? super U>> Optional<T> minBy(Function<? super T, ? extends U> function){
         return stream().sorted(function, Comparator.naturalOrder())
@@ -146,7 +149,7 @@ public interface Folds<T> extends Iterable<T>  {
 
         return ReactiveSeq.fromIterable(map.entrySet())
                 .maxBy(k -> k.getValue())
-                .map(t -> t.getKey());
+                .map(t -> t.getKey()).toOptional();
     }
     default ReactiveSeq<Tuple2<T,Integer>> occurances(){
         Map<T,Integer> map = stream().collect(Collectors.toMap(k->k,v->1,(a,b)->a+b));
@@ -266,7 +269,7 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
     /**
-     * True if a singleUnsafe element matches when Monad converted to a Stream
+     * True if a single element matches when Monad converted to a Stream
      *
      * <pre>
      * {@code
@@ -357,7 +360,7 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
     /**
-     * Reduce this Folds to a singleUnsafe value, using the supplied Monoid. For example
+     * Reduce this Folds to a single value, using the supplied Monoid. For example
      * <pre>
      * {@code 
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
@@ -758,9 +761,10 @@ public interface Folds<T> extends Iterable<T>  {
      * </pre>
      * 
      * @return first value in this Stream
+     * @param alt
      */
-    default T firstValue() {
-        return stream().firstValue();
+    default T firstValue(T alt) {
+        return stream().firstValue(alt);
     }
 
     /**
@@ -768,21 +772,22 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code 
      *    
      *    //1
-     *    ReactiveSeq.of(1).singleUnsafe();
+     *    ReactiveSeq.of(1).single();
      *    
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().singleUnsafe();
+     *    ReactiveSeq.of().single();
      *     
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      * 
-     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
+     * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
+     * @param alt
      */
-    default T singleUnsafe() {
-        return stream().singleUnsafe();
+    default T singleOrElse(T alt) {
+        return stream().singleOrElse(alt);
 
     }
 
@@ -795,17 +800,17 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code 
      *    
      *    //Optional[1]
-     *    ReactiveSeq.of(1).singleUnsafe();
+     *    ReactiveSeq.of(1).single();
      *    
      *    //Optional.zero
      *    ReactiveSeq.of().singleOpional();
      *     
      *     //Optional.zero
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this Stream has exactly one
+     * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default Maybe<T> single() {

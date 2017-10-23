@@ -509,7 +509,7 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Add a singleUnsafe data point to the queue
+     * Add a single data point to the queue
      * 
      * If the queue is a bounded queue and is full, will return false
      * 
@@ -533,7 +533,7 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Offer a singleUnsafe datapoint to this Queue
+     * Offer a single datapoint to this Queue
      * 
      * If the queue is a bounded queue and is full it will block until space comes available or until
      * offer time out is reached (default is Integer.MAX_VALUE DAYS).

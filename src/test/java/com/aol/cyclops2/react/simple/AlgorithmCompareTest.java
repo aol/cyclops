@@ -40,7 +40,7 @@ public class AlgorithmCompareTest {
 				() -> Result.builder().name("approach2").result(retrieval(linkedList)).build())
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)
-		.block().firstValue();
+		.block().firstValue(null);
 
 		
 		assertThat(result.getName(),is("approach1"));
@@ -65,7 +65,7 @@ public class AlgorithmCompareTest {
 		.then(it -> it.withTime(timer.getElapsedNanoseconds()))
 		.filter(it -> it.getResult()==1000)
 		.block()
-		.firstValue();
+		.firstValue(null);
 
 		
 		assertThat(result.getName(),is("approach1 : arrayList"));

@@ -814,10 +814,10 @@ public abstract class AbstractIterableXTest {
 	    public void testMinByMaxBy() {
 	        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	    }
 
@@ -907,15 +907,15 @@ public abstract class AbstractIterableXTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(of(1).singleUnsafe(),equalTo(1));
+		assertThat(of(1).singleOrElse(null),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		of().singleUnsafe();
+		of().singleOrElse(null);
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		of(1,2).singleUnsafe();
+		of(1,2).singleOrElse(null);
 	}
 	@Test
 	public void singleOptionalTest(){
@@ -1466,10 +1466,10 @@ public abstract class AbstractIterableXTest {
 	        public void testMinByMaxBy2() {
 	            Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	            assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+	            assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 	            assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-	            assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+	            assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
 	            assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	        }
 
@@ -2578,7 +2578,7 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2,3,4)
                 .map(u->{throw new RuntimeException();})
                 .recover(e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
 
     @Test @Ignore
@@ -2587,7 +2587,7 @@ public abstract class AbstractIterableXTest {
                 .map(i->i+2)
                 .map(u->{throw new RuntimeException();})
                 .recover(e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
     @Test @Ignore
     public void recover3(){
@@ -2596,7 +2596,7 @@ public abstract class AbstractIterableXTest {
                 .map(u->{throw new RuntimeException();})
                 .map(i->"x!"+i)
                 .recover(e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
     @Test @Ignore
     public void recoverIO(){
@@ -2604,7 +2604,7 @@ public abstract class AbstractIterableXTest {
                 .map(u->{
                     ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
                 .recover(e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
 
     @Test @Ignore
@@ -2613,7 +2613,7 @@ public abstract class AbstractIterableXTest {
                 .map(i->i+2)
                 .map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
                 .recover(IOException.class,e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
     @Test(expected=IOException.class)
 
@@ -2623,7 +2623,7 @@ public abstract class AbstractIterableXTest {
                 .map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
                 .map(i->"x!"+i)
                 .recover(IllegalStateException.class,e->"hello")
-                .firstValue(),equalTo("hello"));
+                .firstValue(null),equalTo("hello"));
     }
     @Mock
     Function<Integer, String> serviceMock;
@@ -2642,7 +2642,7 @@ public abstract class AbstractIterableXTest {
         long start = System.currentTimeMillis();
         String result = of( 1,  2, 3)
                 .retry(serviceMock)
-                .firstValue();
+                .firstValue(null);
 
         assertThat((Long)System.currentTimeMillis()-start ,greaterThan(2000l));
         assertThat(result, is("42"));
@@ -2662,7 +2662,7 @@ public abstract class AbstractIterableXTest {
 
         int result = of(1)
                 .retry(fn, 0, 1, TimeUnit.SECONDS)
-                .firstValue();
+                .firstValue(null);
 
         assertEquals(2, result);
     }
@@ -2673,7 +2673,7 @@ public abstract class AbstractIterableXTest {
 
         of(1)
                 .retry(fn, 0, 1, TimeUnit.MILLISECONDS)
-                .firstValue();
+                .firstValue(null);
 
         fail();
     }
@@ -2688,7 +2688,7 @@ public abstract class AbstractIterableXTest {
 
         of(1)
                 .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
-                .firstValue();
+                .firstValue(null);
 
         assertTrue(timings[1] - timings[0] < 5000);
     }

@@ -61,7 +61,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(result.size(),is(2));
 	}
@@ -77,7 +77,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		assertThat(result.size(),is(3));
 	}
@@ -94,7 +94,7 @@ public class AllOfTest {
 				System.out.println(it))
 				.allOf((List<String> data) -> {
 					System.out.println(data);
-						return data; }).block().firstValue();
+						return data; }).block().firstValue(null);
 		
 		System.out.println(result);
 		assertThat(result.size(),is(2));
@@ -134,7 +134,7 @@ public class AllOfTest {
 		.allOf(Collectors.toSet(), it -> {
 			assertThat (it,instanceOf( Set.class));
 			return it;
-		}).block().firstValue();
+		}).block().firstValue(null);
 
 		assertThat(result.size(),is(4));
 	}
@@ -187,7 +187,7 @@ public class AllOfTest {
 				.allOf(it -> {
 					
 					return it.parallelStream().skip(1).limit(3).collect(Collectors.toList());
-				}).block().firstValue();
+				}).block().firstValue(null);
 
 	
 		assertThat(result.size(), is(3));

@@ -362,7 +362,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     /**
-     *  Turn a toX of Eithers into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Eithers into a single Either with Lists of values.
      *
      * <pre>
      * {@code

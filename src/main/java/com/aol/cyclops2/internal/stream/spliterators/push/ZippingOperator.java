@@ -33,7 +33,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
         StreamSubscription  leftSub[] = {null};
         StreamSubscription  rightSub[] = {null};
-        AtomicBoolean leftComplete = new AtomicBoolean(false); //lazyLeft & lazyRight compelte can be merged into singleUnsafe integer
+        AtomicBoolean leftComplete = new AtomicBoolean(false); //lazyLeft & lazyRight compelte can be merged into single integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
         AtomicLong leftActive = new AtomicLong(0);
         AtomicLong rightActive = new AtomicLong(0);
@@ -247,7 +247,7 @@ public class ZippingOperator<T1,T2,R> implements Operator<R>{
         OneToOneConcurrentArrayQueue<T2> rightQ = new OneToOneConcurrentArrayQueue<T2>(1024);
 
         StreamSubscription  rightSub[] = {null};
-        AtomicBoolean leftComplete = new AtomicBoolean(false); //lazyLeft & lazyRight compelte can be merged into singleUnsafe integer
+        AtomicBoolean leftComplete = new AtomicBoolean(false); //lazyLeft & lazyRight compelte can be merged into single integer
         AtomicBoolean rightComplete = new AtomicBoolean(false);
         AtomicLong leftActive = new AtomicLong(0);
         AtomicLong rightActive = new AtomicLong(0);

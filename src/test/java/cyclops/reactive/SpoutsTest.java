@@ -478,13 +478,13 @@ public class SpoutsTest {
 
         Thread t=  new Thread( ()-> {
             ReactiveSeq<Integer> stream2 = topic.stream();
-            assertThat(stream2.takeRight(1).singleUnsafe(), Matchers.equalTo(99_999));
+            assertThat(stream2.takeRight(1).singleOrElse(null), Matchers.equalTo(99_999));
         });
         t.start();
 
         ReactiveSeq<Integer> stream1 = topic.stream();
 
-        assertThat(stream1.takeRight(1).singleUnsafe(), Matchers.equalTo(99_999));
+        assertThat(stream1.takeRight(1).singleOrElse(null), Matchers.equalTo(99_999));
 
         t.join();
 

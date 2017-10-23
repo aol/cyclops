@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Streams;
+import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.control.anym.AnyM;
@@ -83,10 +84,16 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.min(this, comparator);
     }
 
-
-    public final <C extends Comparable<? super C>> Optional<T> maxBy(final Function<? super T, ? extends C> f) {
-        return Streams.maxBy(this, f);
+/**
+    public final <C extends Comparable<? super C>> Option<T> maxBy(final Function<? super T, ? extends C> f) {
+        return foldLeft(BinaryOperator.maxBy(new Comparator<T>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return Comparator.<C>naturalOrder().compare(f.apply(o1),f.apply(o2));
+            }
+        }));
     }
+ **/
 
     @Override
     public final Optional<T> max(final Comparator<? super T> comparator) {
@@ -445,7 +452,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.endsWith(this, () -> iterable.iterator());
     }
     @Override
-    public T firstValue() {
+    public T firstValue(T alt) {
         return findFirst().get();
     }
     @Override

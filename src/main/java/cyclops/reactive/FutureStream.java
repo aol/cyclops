@@ -1165,7 +1165,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /**
      * Convert between an Lazy and Eager SimpleReact Stream, can be used to take
-     * advantages of each approach during a singleUnsafe Stream
+     * advantages of each approach during a single Stream
      *
      * Allows callers to take advantage of functionality only available in
      * SimpleReactStreams such as allOf
@@ -1252,7 +1252,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Can be used to debounce (accept a singleUnsafe data point from a unit of time)
+     * Can be used to debounce (accept a single data point from a unit of time)
      * data. This drops data. For a method that slows emissions and keeps data
      * #see#onePer
      *
@@ -1619,7 +1619,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a single Stream where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -1643,7 +1643,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Merges this reactiveStream and the supplied Streams into a singleUnsafe Stream where the next value
+     * Merges this reactiveStream and the supplied Streams into a single Stream where the next value
      * is the next returned across any of the involved Streams. Suitable for merging infinite streams
      *
      * <pre>
@@ -3144,10 +3144,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.reactiveStream.ReactiveSeq#firstValue()
      */
     @Override
-    default U firstValue() {
+    default U firstValue(U alt) {
 
         return ReactiveSeq.oneShotStream(stream())
-                          .firstValue();
+                          .firstValue(null);
     }
 
     /*

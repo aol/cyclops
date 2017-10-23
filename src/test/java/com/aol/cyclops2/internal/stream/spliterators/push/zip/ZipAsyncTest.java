@@ -223,7 +223,7 @@ public class ZipAsyncTest {
                 .peek(System.out::println)
 
                 .reduceAll(0,(a,b)->a+b)
-                .singleUnsafe(),equalTo(15));
+                .singleOrElse(null),equalTo(15));
     }
     @Test
     public void asyncCollect(){
@@ -239,7 +239,7 @@ public class ZipAsyncTest {
                                 .peek(System.out::println)
                                 .zipS(nextAsync())
                                 .collectAll(Collectors.toList())
-                                .singleUnsafe());
+                                .singleOrElse(null));
 
         System.out.println(Spouts.of(1, 2, 3, 4, 5)
                 .peek(System.out::println)

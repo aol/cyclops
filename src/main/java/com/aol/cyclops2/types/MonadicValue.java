@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 import static cyclops.matching.Api.Case;
 
 /**
- * A type that represents a Monad that wraps a singleUnsafe value
+ * A type that represents a Monad that wraps a single value
  * 
  * @author johnmcclean
  *
@@ -74,7 +74,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     /**
      * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns
-     * a singleUnsafe value to be wrapped inside a Monad.
+     * a single value to be wrapped inside a Monad.
      * 
      * <pre>
      * {@code 

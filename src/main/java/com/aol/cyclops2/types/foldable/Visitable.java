@@ -4,7 +4,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
- * Data type that may contain a singleUnsafe visitable element
+ * Data type that may contain a single visitable element
  * 
  * @author johnmcclean
  *

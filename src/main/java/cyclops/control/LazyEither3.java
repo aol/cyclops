@@ -226,7 +226,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
                         .recover(t-> LazyEither3.<Throwable,LT2,RT>left1(t.getCause()))));
     }
     /**
-     *  Turn a toX of Either3 into a singleUnsafe Either with Lists of values.
+     *  Turn a toX of Either3 into a single Either with Lists of values.
      *
      * <pre>
      * {@code

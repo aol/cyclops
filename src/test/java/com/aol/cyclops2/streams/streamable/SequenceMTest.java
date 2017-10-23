@@ -132,15 +132,15 @@ public class SequenceMTest {
 	}
 	@Test
 	public void singleTest(){
-		assertThat(Streamable.of(1).singleUnsafe(),equalTo(1));
+		assertThat(Streamable.of(1).singleOrElse(-1),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		Streamable.of().singleUnsafe();
+		Streamable.of().singleOrElse(null);
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		Streamable.of(1,2).singleUnsafe();
+		Streamable.of(1,2).singleOrElse(null);
 	}
 	@Test
 	public void limitTime(){

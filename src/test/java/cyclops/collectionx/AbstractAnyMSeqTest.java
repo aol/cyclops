@@ -373,10 +373,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	    public void testMinByMaxBy() {
 	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
 	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
 	    }
 
@@ -517,15 +517,15 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	}
 	@Test
 	public void singleTest(){
-		assertThat(of(1).singleUnsafe(),equalTo(1));
+		assertThat(of(1).singleOrElse(null),equalTo(1));
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void singleEmpty(){
-		of().singleUnsafe();
+		of().singleOrElse(null);
 	}
 	@Test(expected=UnsupportedOperationException.class)
 	public void single2(){
-		of(1,2).singleUnsafe();
+		of(1,2).singleOrElse(null);
 	}
 	@Test
 	public void singleOptionalTest(){
@@ -1089,10 +1089,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void testMinByMaxBy2() {
                 Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-                assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
+                assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
                 assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
 
-                assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
+                assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
                 assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
             }
 

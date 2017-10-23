@@ -82,7 +82,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
     }
 
     /**
-     * FlatMap this Reader by applying the prodived function and unnesting to a singleUnsafe Reader
+     * FlatMap this Reader by applying the prodived function and unnesting to a single Reader
      * 
      * @param f Transformation function to be flattened
      * @return Transformed Reader

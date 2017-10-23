@@ -36,63 +36,63 @@ public class SemigroupKs{
 
 
     /**
-     * @return A combiner for SetX (concatenates two SetX into a singleUnsafe SetX)
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
      */
     static <T> SemigroupK<set,T> setXConcat() {
         return (a, b) -> SetX.narrowK(a).plusAll(SetX.narrowK(b));
     }
 
     /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
 
     static <T> SemigroupK<sortedSet,T> sortedSetXConcat() {
         return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for QueueX (concatenates two QueueX into a singleUnsafe QueueX)
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
      */
     static <T> SemigroupK<queue,T> queueXConcat() {
         return (a, b) -> QueueX.narrowK(a).plusAll(QueueX.narrowK(b));
     }
 
     /**
-     * @return A combiner for DequeX (concatenates two DequeX into a singleUnsafe DequeX)
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
      */
     static <T> SemigroupK<deque,T> dequeXConcat() {
         return (a, b) -> DequeX.narrowK(a).plusAll(DequeX.narrowK(b));
     }
 
     /**
-     * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
     static <T> SemigroupK<linkedListX,T> linkedListXConcat() {
         return (a, b) -> LinkedListX.narrowK(a).plusAll(LinkedListX.narrowK(b));
     }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a singleUnsafe VectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
     static <T> SemigroupK<vectorX,T> vectorXConcat() {
         return (a, b) -> VectorX.narrowK(a).plusAll(VectorX.narrowK(b));
     }
 
     /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
 
     static <T> SemigroupK<persistentSetX,T> persistentSetXConcat() {
         return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
     }
      */
     /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
 
     static <T> SemigroupK<OrderedsetX,T> orderedSetXConcat() {
         return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a singleUnsafe PersistentQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
     static <T> SemigroupK<persistentQueueX,T> persistentQueueXConcat() {
         return (a, b) -> PersistentQueueX.narrowK(a).plusAll(PersistentQueueX.narrowK(b));

@@ -153,9 +153,9 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
                 score ->
                         ReactiveSeq.fromIterable(shakespeareWords)
                                 .filter(scrabbleWords::contains)
-                                .filter(word -> checkBlanks.apply(word).singleUnsafe())
+                                .filter(word -> checkBlanks.apply(word).singleOrElse(null))
                                 .scanLeft(new TreeMap<Integer, List<String>>(Comparator.reverseOrder()), (map, word) -> {
-                                    Integer key = score.apply(word).singleUnsafe() ;
+                                    Integer key = score.apply(word).singleOrElse(null) ;
                                     List<String> list = map.get(key) ;
                                     if (list == null) {
                                         list = new ArrayList<>() ;
@@ -178,7 +178,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
                             return list;
                         })
                         .takeRight(1)
-                        .singleUnsafe() ;
+                        .singleOrElse(null) ;
 
 
 //        System.out.println(finalList2); 

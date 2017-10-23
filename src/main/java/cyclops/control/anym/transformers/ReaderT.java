@@ -270,6 +270,6 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
     @Override
     public R apply(T a) {
-        return run.firstValue().apply(a);
+        return run.firstValue(null).apply(a);
     }
 }

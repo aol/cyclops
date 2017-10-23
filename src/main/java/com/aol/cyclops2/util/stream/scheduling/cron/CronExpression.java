@@ -147,7 +147,7 @@ import java.util.TreeSet;
  * However if you specify &quot;1W&quot; as the value for day-of-month, and the
  * 1st is a Saturday, the trigger will fire on Monday the 3rd, as it will not 
  * 'jump' over the boundary of a month's days.  The 'W' character can only be 
- * specified when the day-of-month is a singleUnsafe day, not a range or list of days.
+ * specified when the day-of-month is a single day, not a range or list of days.
  * <P>
  * The 'L' and 'W' characters can also be combined for the day-of-month 
  * expression to yield 'LW', which translates to &quot;last weekday of the

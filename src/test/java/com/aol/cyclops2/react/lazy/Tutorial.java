@@ -534,7 +534,7 @@ public class Tutorial {
 	public void executeRestCallInPool() {
 		boolean success = SequentialElasticPools.lazyReact.react(er -> er
 				.ofAsync(() -> restGet()).map(Tutorial::transformData)
-				.then(Tutorial::saveToDb).block().firstValue());
+				.then(Tutorial::saveToDb).block().firstValue(null));
 	}
 
 	private static boolean saveToDb(Object o) {

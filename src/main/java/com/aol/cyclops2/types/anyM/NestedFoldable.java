@@ -458,7 +458,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @return first value in this Stream
      */
     default AnyM<W,T> firstValue() {
-        return nestedFoldables().map(s -> s.firstValue());
+        return nestedFoldables().map(s -> s.firstValue(null));
     }
 
     /**
@@ -466,21 +466,21 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code 
      *    
      *    //1
-     *    ReactiveSeq.of(1).singleUnsafe();
+     *    ReactiveSeq.of(1).single();
      *    
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().singleUnsafe();
+     *    ReactiveSeq.of().single();
      *     
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      * 
-     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
+     * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
-    default AnyM<W,T> singleUnsafe() {
-        return nestedFoldables().map(s -> s.singleUnsafe());
+    default AnyM<W,T> singleOrElse() {
+        return nestedFoldables().map(s -> s.singleOrElse(null));
 
     }
 
@@ -493,17 +493,17 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code 
      *    
      *    //Optional[1]
-     *    ReactiveSeq.of(1).singleUnsafe();
+     *    ReactiveSeq.of(1).single();
      *    
      *    //Optional.zero
      *    ReactiveSeq.of().singleOpional();
      *     
      *     //Optional.zero
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      * 
-     * @return An Optional with singleUnsafe value if this Stream has exactly one
+     * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default AnyM<W,Maybe<T>> single() {

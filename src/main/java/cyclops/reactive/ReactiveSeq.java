@@ -744,7 +744,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Efficiently construct a ReactiveSeq from a singleUnsafe value
+     * Efficiently construct a ReactiveSeq from a single value
      *
      * @param value Value to construct ReactiveSeq from
      * @return ReactiveSeq of one value
@@ -857,11 +857,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Construct a Stream consisting of a singleUnsafe value repeatedly infinitely (use take / drop etc to
+     * Construct a Stream consisting of a single value repeatedly infinitely (use take / drop etc to
      * switch to a finite Stream)
      *
      * @param t Value to fill Stream with
-     * @return Infinite ReactiveSeq consisting of a singleUnsafe value
+     * @return Infinite ReactiveSeq consisting of a single value
      */
     public static <T> ReactiveSeq<T> fill(T t){
         return ReactiveSeq.fromSpliterator(new FillSpliterator<T>(t));
@@ -1512,7 +1512,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param size Max size of a batch
-     * @param time (Max) time period to build a singleUnsafe batch in
+     * @param time (Max) time period to build a single batch in
      * @param t time unit for batch
      * @return ReactiveSeq batched by size and time
      */
@@ -1534,7 +1534,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param size
      *            Max size of a batch
      * @param time
-     *            (Max) time period to build a singleUnsafe batch in
+     *            (Max) time period to build a single batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -1561,7 +1561,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period to build a singleUnsafe batch in
+     *            - time period to build a single batch in
      * @param t
      *            time unit for batch
      * @return ReactiveSeq batched into lists by time period
@@ -1582,7 +1582,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param time
-     *            - time period to build a singleUnsafe batch in
+     *            - time period to build a single batch in
      * @param unit
      *            time unit for batch
      * @param factory
@@ -2086,7 +2086,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     boolean allMatch(Predicate<? super T> c);
 
     /**
-     * True if a singleUnsafe element matches when Monad converted to a Stream
+     * True if a single element matches when Monad converted to a Stream
      *
      * <pre>
      * {@code
@@ -2395,7 +2395,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }</pre>
      * <p>
      * <p>The following will take a reactiveStream of strings and concatenates them into a
-     * singleUnsafe string:
+     * single string:
      * <pre>{@code
      *     String concat = stringStream.collect(StringBuilder::new, StringBuilder::append,
      *                                          StringBuilder::append)
@@ -3235,10 +3235,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @return first value in this Stream
+     * @param alt
      */
     @Override
-    //@TODO remove
-    T firstValue();
+    T firstValue(T alt);
 
     /**
      * <pre>
@@ -3248,28 +3248,26 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *    ReactiveSeq.of(1).singleUsafe();
      *
      *    //UnsupportedOperationException
-     *    ReactiveSeq.of().singleUnsafe();
+     *    ReactiveSeq.of().single();
      *
      *     //UnsupportedOperationException
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      *
-     * @return a singleUnsafe value or an UnsupportedOperationException if 0/1 values
+     * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
+     * @param alt
      */
     @Override
-    //@TODO remove
-    default T singleUnsafe() {
+    default T singleOrElse(T alt) {
         final Iterator<T> it = iterator();
         if (it.hasNext()) {
             final T result = it.next();
             if (!it.hasNext())
                 return result;
         }
-        throw new UnsupportedOperationException(
-                                                "singleUnsafe only works for Streams with a singleUnsafe value");
-
+        return alt;
     }
 
     @Override
@@ -3284,17 +3282,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * {@code
      *
      *    //Maybe[1]
-     *    ReactiveSeq.of(1).singleUnsafe();
+     *    ReactiveSeq.of(1).single();
      *
      *    //Maybe.none
-     *    ReactiveSeq.of().singleUnsafe();
+     *    ReactiveSeq.of().single();
      *
      *     //Maybe.none
-     *    ReactiveSeq.of(1,2,3).singleUnsafe();
+     *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
      *
-     * @return An Maybe with singleUnsafe value if this Stream has exactly one
+     * @return An Maybe with single value if this Stream has exactly one
      *         element, otherwise Maybe.none
      */
     @Override

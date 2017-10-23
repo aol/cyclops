@@ -34,7 +34,7 @@ public interface ComonadByPure<CRE> extends Comonad<CRE>,Pure<CRE>, Functor<CRE>
     /**
      * Contra-variant flatMap
      * Transform the supplied data structure with the supplied transformation function
-     * Datastructure is provided to the function which returns a singleUnsafe value
+     * Datastructure is provided to the function which returns a single value
      * 
      * @param mapper Transformation function
      * @param ds Datastructure

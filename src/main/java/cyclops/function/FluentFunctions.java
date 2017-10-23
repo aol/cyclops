@@ -1088,7 +1088,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially applyHKT the provided parameter as the first parameter to this BiFunction to generate a Function (singleUnsafe input value)
+         * Partially applyHKT the provided parameter as the first parameter to this BiFunction to generate a Function (single input value)
          * 
          * @param param Input parameter to Partially Applied
          * @return A Function generated from the BiFunction with the first parameter already applied
@@ -1455,7 +1455,7 @@ public class FluentFunctions {
                                                                      t1, t2, t3, fn)));
         }
         /**
-         * Partially applyHKT the provided parameter as the first parameter to this TriFunction to generate a Function (singleUnsafe input value)
+         * Partially applyHKT the provided parameter as the first parameter to this TriFunction to generate a Function (single input value)
          * 
          * @param param Input parameter to Partially Applied
          * @return A BiFunction generated from the BiFunction with the first parameter already applied
@@ -1465,7 +1465,7 @@ public class FluentFunctions {
                                           PartialApplicator.partial3(param, fn));
         }
         /**
-         * Partially applyHKT the provided parameters to this BiFunction to generate a Function (singleUnsafe input)
+         * Partially applyHKT the provided parameters to this BiFunction to generate a Function (single input)
          * 
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
@@ -1490,7 +1490,7 @@ public class FluentFunctions {
         }
         /**
          * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters to a 'chain'
-         * of three Functions that accept a singleUnsafe parameter
+         * of three Functions that accept a single parameter
          * 
          * <pre>
          * {@code 
@@ -1763,7 +1763,7 @@ public class FluentFunctions {
         }
 
         /**
-         * Compose this TriFunction with the provided function into a singleUnsafe TriFunction.
+         * Compose this TriFunction with the provided function into a single TriFunction.
          * This TriFunction would be executed first and the result passed to the provided Function and applied there.
          * 
          * @param after Function to execute after this one in a chain
