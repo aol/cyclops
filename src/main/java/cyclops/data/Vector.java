@@ -27,12 +27,14 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
 public class Vector<T> implements ImmutableList<T>,
+                                  Serializable,
                                  Higher<vector,T> {
 
     private final BAMT.NestedArray<T> root;
@@ -187,7 +189,12 @@ public class Vector<T> implements ImmutableList<T>,
         return fromIterable(stream().map(fn));
     }
 
-
+    private Object writeReplace() {
+        return new Proxy(this);
+    }
+    private Object readResolve() throws InvalidObjectException {
+        throw new InvalidObjectException("Use Serialization Proxy instead.");
+    }
 
     @Override
     public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
@@ -642,7 +649,35 @@ public class Vector<T> implements ImmutableList<T>,
             return new Vector<T>(root.append(tail),BAMT.ActiveTail.tail(t),size+1);
         }
     }
+    @AllArgsConstructor
+    private static final class Proxy<T> implements Serializable {
 
+        private static final long serialVersionUID = 1L;
+        Vector<T> v;
+
+        private void writeObject(ObjectOutputStream s) throws IOException {
+            s.defaultWriteObject();
+            s.writeInt(v.size());
+            Iterator<T> it = v.iterator();
+            while(it.hasNext()){
+                s.writeObject(it.next());
+            }
+        }
+        private Object readResolve() {
+            return v;
+        }
+
+        private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException {
+            s.defaultReadObject();
+            final int size = s.readInt();
+            Vector<T> res = empty();
+            for (int i = 0; i < size; i++) {
+                T n = (T) s.readObject();
+                res = res.append(n);
+            }
+            v=res;
+        }
+    }
 
     @Override
     public <R> Vector<R> unitStream(Stream<R> stream) {

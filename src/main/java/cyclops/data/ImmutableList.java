@@ -26,6 +26,8 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Delegate;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -260,6 +262,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
             return fn1.apply(this);
         }
     }
+
+
     public interface None<T> extends ImmutableList<T> {
         @Override
         default <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2){

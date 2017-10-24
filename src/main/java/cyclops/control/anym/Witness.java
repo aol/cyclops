@@ -446,6 +446,15 @@ public interface Witness {
         }
 
     }
+    public static enum coreader implements WitnessType<coreader>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<coreader> adapter() {
+            return null;
+        }
+
+    }
     public static enum kleisli implements WitnessType<kleisli>{
         INSTANCE;
 

@@ -19,6 +19,7 @@ import lombok.Getter;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -26,8 +27,8 @@ import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
 @Getter
-public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2<writer,W,T> {
-
+public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2<writer,W,T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Tuple2<T,W> value;
     private final Monoid<W> monoid;

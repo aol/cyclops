@@ -33,6 +33,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import org.reactivestreams.Publisher;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -42,6 +43,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                                     Folds<T>,
                                     Filters<T>,
                                     Transformable<T>,
+                                    Serializable,
                                     Higher<lazySeq,T> {
 
 
@@ -921,13 +923,14 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Cons<T>  implements LazySeq<T>, ImmutableList.Some<T> {
-
+        private static final long serialVersionUID = 1L;
         public final T head;
         public final Supplier<LazySeq<T>> tail;
 
         public static <T> Cons<T> cons(T value, Supplier<LazySeq<T>> tail){
             return new Cons<>(value,Memoize.memoizeSupplier(tail));
         }
+
 
         @Override
         public Tuple2<T, ImmutableList<T>> unapply() {
@@ -1099,7 +1102,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     public class Nil<T> implements LazySeq<T>, ImmutableList.None<T> {
         static Nil Instance = new Nil();
-
+        private static final long serialVersionUID = 1L;
         @Override
         public LazySeq<T> append(Supplier<LazySeq<T>> list) {
             return list.get();

@@ -34,6 +34,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -42,7 +43,9 @@ import java.util.stream.Stream;
 public interface Seq<T> extends ImmutableList<T>,
                                 Folds<T>,
                                 Filters<T>,
-                                Transformable<T>, PersistentList<T>,
+                                Transformable<T>,
+                                PersistentList<T>,
+                                 Serializable,
                                 Higher<seq,T> {
 
 
@@ -777,8 +780,8 @@ public interface Seq<T> extends ImmutableList<T>,
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(of={"head,tail"})
-    public static class Cons<T> implements ImmutableList.Some<T>, Seq<T> {
-
+    public static final class Cons<T> implements ImmutableList.Some<T>, Seq<T>, Serializable {
+        private static final long serialVersionUID = 1L;
         public final T head;
         public final Seq<T> tail;
         private final int size;
@@ -956,7 +959,7 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public class Nil<T> implements Seq<T>, ImmutableList.None<T> {
+    public final class Nil<T> implements Seq<T>, ImmutableList.None<T> {
         static Nil Instance = new Nil();
         @Override
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
@@ -977,6 +980,7 @@ public interface Seq<T> extends ImmutableList<T>,
         public Seq<T> onEmpty(T value) {
             return Seq.of(value);
         }
+
 
         @Override
         public Seq<T> onEmptyGet(Supplier<? extends T> supplier) {

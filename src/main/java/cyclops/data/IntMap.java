@@ -29,12 +29,13 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
+public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T> {
 
 
     @Override
@@ -881,6 +882,41 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
     @Override
     public int hashCode() {
         return hash.get();
+    }
+    private Object writeReplace() {
+        return new Proxy(this);
+    }
+    private Object readResolve() throws InvalidObjectException {
+        throw new InvalidObjectException("Use Serialization Proxy instead.");
+    }
+    @AllArgsConstructor
+    private static final class Proxy<T> implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+        IntMap<T> v;
+
+        private void writeObject(ObjectOutputStream s) throws IOException {
+            s.defaultWriteObject();
+            s.writeInt(v.size());
+            Iterator<T> it = v.iterator();
+            while(it.hasNext()){
+                s.writeObject(it.next());
+            }
+        }
+        private Object readResolve() {
+            return v;
+        }
+
+        private void readObject(ObjectInputStream s) throws ClassNotFoundException, IOException {
+            s.defaultReadObject();
+            final int size = s.readInt();
+            IntMap<T> res = empty();
+            for (int i = 0; i < size; i++) {
+                T n = (T) s.readObject();
+                res = res.append(n);
+            }
+            v=res;
+        }
     }
 
 }

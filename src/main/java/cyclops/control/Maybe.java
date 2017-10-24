@@ -2,6 +2,7 @@ package cyclops.control;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -42,6 +43,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.io.InvalidObjectException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -192,7 +194,12 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         public final Completable.CompletablePublisher<ORG> complete;
         public final Maybe<T2> maybe;
 
-
+        private Object writeReplace() {
+            return toOption();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
 
         @Override
         public boolean isPresent() {
@@ -1084,14 +1091,14 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         private final Eval<T> lazy;
 
-        /**
+
         private Object writeReplace() {
             return toOption();
         }
-        private Object readResolve() {
-            return new ConvenientPoint(x, y, name);
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
         }
-         **/
+
 
         @Override
         public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
@@ -1218,6 +1225,12 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
         private final Eval<Maybe<T>> lazy;
 
+        private Object writeReplace() {
+            return toOption();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         @Override
         public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
             return flatMap(t -> Maybe.just(mapper.apply(t)));
@@ -1433,6 +1446,12 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     public static class Nothing<T> implements Maybe<T> {
 
+        private Object writeReplace() {
+            return toOption();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         @Override
         public <R> Maybe<R> map(final Function<? super T, ? extends R> mapper) {
             return EMPTY;

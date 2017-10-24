@@ -33,6 +33,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -121,6 +122,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
                                      Sealed2<ST,PT>,Value<PT>,
                                      OrElseValue<PT,Either<ST,PT>>,
                                      Unit<PT>, Transformable<PT>, Filters<PT>,
+                                     Serializable,
                                      Higher2<either,ST,PT> {
 
 
@@ -916,7 +918,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Right<L, RT> implements Either<L, RT> {
         private final RT value;
-
+        private static final long serialVersionUID = 1L;
         @Override
         public Either<L, RT> mapLeftToRight(final Function<? super L, ? extends RT> fn) {
             return this;
@@ -1070,7 +1072,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Left<L, R> implements Either<L, R> {
         private final L value;
-
+        private static final long serialVersionUID = 1L;
         @Override
         public boolean isLeft() {
             return true;

@@ -18,12 +18,14 @@ import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct.Deconstruct1<T>{
+public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct.Deconstruct1<T>, Serializable {
+    private static final long serialVersionUID = 1L;
     private final T value;
 
 

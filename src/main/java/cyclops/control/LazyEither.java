@@ -19,6 +19,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.io.InvalidObjectException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -189,12 +190,22 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
 
+    default Either<LT,RT> toEither(){
+        return visit(Either::left,Either::right);
+    }
+
     @AllArgsConstructor
     static class CompletableEither<ORG,RT> implements LazyEither<Throwable,RT>, Completable<ORG> {
 
         public final Completable.CompletablePublisher<ORG> complete;
         public final LazyEither<Throwable,RT> either;
 
+        private Object writeReplace() {
+            return toEither();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         @Override
         public boolean isFailed() {
             return complete.isFailed();
@@ -1010,6 +1021,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         private final Eval<LazyEither<ST, PT>> lazy;
 
+        private Object writeReplace() {
+            return toEither();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         public Eval<Either<ST, PT>> nestedEval(){
             return (Eval)lazy;
         }
@@ -1379,6 +1396,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     static class Right<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<PT> value;
 
+        private Object writeReplace() {
+            return toEither();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         @Override
         public LazyEither<ST, PT> mapLeftToRight(final Function<? super ST, ? extends PT> fn) {
             return this;
@@ -1557,6 +1580,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     static class Left<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<ST> value;
 
+        private Object writeReplace() {
+            return toEither();
+        }
+        private Object readResolve() throws InvalidObjectException {
+            throw new InvalidObjectException("Use Serialization Proxy instead.");
+        }
         @Override
         public boolean isLeft() {
             return true;

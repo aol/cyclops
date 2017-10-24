@@ -19,6 +19,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +36,8 @@ public interface Option<T> extends To<Option<T>>,
                                    MonadicValue<T>,
                                    Recoverable<T>,
                                    Sealed2<T,Option.None<T>>,
-                                   Iterable<T>{
+                                   Iterable<T>,
+                                     Serializable{
 
 
 

@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
@@ -20,7 +21,9 @@ import java.util.function.Function;
 import static cyclops.data.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Range<T> implements Iterable<T>, Higher<range,T> {
+public final class Range<T> implements Iterable<T>, Higher<range,T>, Serializable{
+
+    private static final long serialVersionUID = 1L;
 
     public final T start;
     public final T end;

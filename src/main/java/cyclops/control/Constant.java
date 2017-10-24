@@ -15,6 +15,7 @@ import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -23,7 +24,8 @@ import java.util.function.Supplier;
  * @param <P> Phantom type
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T>, Deconstruct.Deconstruct1<T> {
+public final class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T>, Deconstruct.Deconstruct1<T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final T value;
 

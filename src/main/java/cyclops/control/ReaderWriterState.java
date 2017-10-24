@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple3;
 
+import java.io.Serializable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -24,7 +25,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T> {
+public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
 
     private final Monoid<W> monoid;
     private final BiFunction<R,S, Free<supplier,Tuple3<W, S, T>>> runState;
