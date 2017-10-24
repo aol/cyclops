@@ -5,11 +5,13 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentIndexed;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.vector;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple3;
@@ -202,12 +204,6 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
         return size()==0? Vector.of(supplier.get()) : this;
     }
 
-    @Override
-    public <X extends Throwable> Vector<T> onEmptyThrow(Supplier<? extends X> supplier) {
-        if(size()!=0)
-            return this;
-        throw ExceptionSoftener.throwSoftenedException(supplier.get());
-    }
 
     @Override
     public Vector<T> replaceFirst(T currentElement, T newElement) {
@@ -927,10 +923,6 @@ public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
             return Vector.of(supplier.get());
         }
 
-        @Override
-        public <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier) {
-             throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }
 
         @Override
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {

@@ -51,7 +51,7 @@ public class BagTest extends BaseImmutableSetTest {
     }
 
     @Override
-    public <T> IterableX<T> empty() {
+    public <T> Bag<T> empty() {
         return Bag.empty();
     }
 

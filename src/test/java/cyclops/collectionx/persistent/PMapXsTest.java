@@ -65,10 +65,7 @@ public class PMapXsTest {
     public void onEmptyGet(){
         assertThat(PersistentMapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
     }
-    @Test(expected=RuntimeException.class)
-    public void onEmptyThrow(){
-       PersistentMapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
-    }
+
     @Test
     public void onEmptySwitch(){
        

@@ -2,7 +2,9 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.control.Option;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -102,10 +104,6 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return string.onEmptyGet(supplier);
     }
 
-    @Override
-    public <X extends Throwable> ImmutableList<Character> onEmptyThrow(Supplier<? extends X> supplier) {
-        return string.onEmptyThrow(supplier);
-    }
 
     @Override
     public ImmutableList<Character> onEmptySwitch(Supplier<? extends ImmutableList<Character>> supplier) {

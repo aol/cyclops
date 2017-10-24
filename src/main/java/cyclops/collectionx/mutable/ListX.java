@@ -4,10 +4,10 @@ import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Either;
-import cyclops.control.Option;
+import cyclops.control.*;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
@@ -15,8 +15,6 @@ import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1463,12 +1461,12 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> ListX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> ListX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (ListX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (ListX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

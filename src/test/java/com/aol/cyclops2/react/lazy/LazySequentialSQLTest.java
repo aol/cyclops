@@ -47,7 +47,7 @@ public class LazySequentialSQLTest extends BaseSequentialSQLTest {
 	public void testOnEmptyThrows() {
 
 		ex = null;
-		of().capture(e -> ex = e).onEmptyThrow(() -> new X()).toList();
+		of().capture(e -> ex = e).onEmptyError(() -> new X()).toList();
 
 		fail("Exception expected");
 	}

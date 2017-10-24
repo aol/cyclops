@@ -6,6 +6,8 @@ import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptyError;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -14,6 +16,7 @@ import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -33,6 +36,7 @@ import java.util.stream.Stream;
 
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
                                             OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
+                                            OnEmptyError<T, ImmutableQueue<T>>,
                                             IterableX<T>, To<ImmutableQueue<T>>, PersistentQueue<T> {
 
 
@@ -249,7 +253,9 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     ImmutableQueue<T> onEmptyGet(Supplier<? extends T> supplier);
 
     @Override
-    <X extends Throwable> ImmutableQueue<T> onEmptyThrow(Supplier<? extends X> supplier);
+    default <X extends Throwable> Try<ImmutableQueue<T>, X> onEmptyTry(Supplier<? extends X> supplier){
+        return isEmpty() ? Try.failure(supplier.get()) : Try.success(this);
+    }
 
     @Override
     ImmutableQueue<T> onEmptySwitch(Supplier<? extends ImmutableQueue<T>> supplier);

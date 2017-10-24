@@ -8,10 +8,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops2.types.*;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.*;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
@@ -654,14 +656,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(transformerStream().map(s -> s.onEmptyGet(supplier)));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return unitAnyM(transformerStream().map(s -> s.onEmptyThrow(supplier)));
-
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.traversable.Traversable#shuffle(java.util.Random)

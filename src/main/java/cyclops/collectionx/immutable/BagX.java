@@ -4,6 +4,7 @@ import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
@@ -14,6 +15,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
+import cyclops.control.Try;
 import cyclops.data.Bag;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -882,12 +884,12 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> BagX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> BagX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (BagX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (BagX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

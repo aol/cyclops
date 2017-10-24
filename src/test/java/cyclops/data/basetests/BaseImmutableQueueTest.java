@@ -2,10 +2,7 @@ package cyclops.data.basetests;
 
 import cyclops.collectionx.AbstractIterableXTest;
 import cyclops.companion.Monoids;
-import cyclops.data.BankersQueue;
-import cyclops.data.ImmutableList;
-import cyclops.data.ImmutableQueue;
-import cyclops.data.Seq;
+import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
@@ -13,12 +10,16 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
 
     protected abstract <T> ImmutableQueue<T> fromStream(Stream<T> s);
 
+    @Override
+    public abstract <T> ImmutableQueue<T> empty();
     @Override
     public abstract <T> ImmutableQueue<T> of(T... values);
 
@@ -50,5 +51,11 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
 
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toList().size(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10).size()));
+    }
+    @Test
+    public void onEmptyThrow(){
+
+        assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
+        assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
 }

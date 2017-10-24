@@ -15,6 +15,7 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.futurestream.*;
 import com.aol.cyclops2.types.reactive.FutureStreamSynchronousPublisher;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.async.Future;
@@ -28,12 +29,9 @@ import cyclops.async.adapters.Queue.QueueTimeoutException;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.Option;
+import cyclops.control.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Lambda;
@@ -2429,7 +2427,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * <pre>
      * {@code
-     *   FutureStream.of().capture(e -> ex = e).onEmptyThrow(() -> new RuntimeException()).toList();
+     *   FutureStream.of().capture(e -> ex = e).onEmptyError(() -> new RuntimeException()).toList();
      *
      *   //throws RuntimeException
      * }
@@ -2437,8 +2435,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      */
     @Override
-    default <X extends Throwable> FutureStream<U> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).onEmptyThrow(supplier));
+    default <X extends Throwable> FutureStream<U> onEmptyError(final Supplier<? extends X> supplier) {
+        return fromStream(ReactiveSeq.oneShotStream(stream()).onEmptyError(supplier));
     }
 
 
@@ -3445,8 +3443,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> complete(final Runnable fn) {
-        return fromStream(stream().complete(fn));
+    default FutureStream<U> onComplete(final Runnable fn) {
+        return fromStream(stream().onComplete(fn));
     }
 
     @Override

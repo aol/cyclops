@@ -5,6 +5,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.functor.FilterableTransformable;
 import com.aol.cyclops2.types.functor.TransformerTraversable;
 import cyclops.collectionx.immutable.VectorX;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -964,15 +965,7 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().onEmptyGet(supplier);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> Traversable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return traversable().onEmptyThrow(supplier);
-    }
+
 
     /*
      * (non-Javadoc)

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -91,5 +92,11 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
         assertThat(of(1,2,3).replaceFirst(2,3),equalTo(of(1,3,3)));
         assertThat(of(1,2,2,3).replaceFirst(2,3),equalTo(of(1,3,2,3)));
         assertThat(empty().replaceFirst(2,3),equalTo(of()));
+    }
+    @Test
+    public void onEmptyThrow(){
+
+        assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
+        assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
 }

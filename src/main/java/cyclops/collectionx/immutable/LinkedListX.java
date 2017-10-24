@@ -4,24 +4,22 @@ package cyclops.collectionx.immutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Either;
+import cyclops.control.*;
 
-import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.linkedListX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.control.anym.transformers.ListT;
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import cyclops.collectionx.mutable.ListX;
@@ -1067,12 +1065,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> LinkedListX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> LinkedListX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (LinkedListX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

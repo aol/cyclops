@@ -103,7 +103,7 @@ public class TryTest {
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
-		assertThat(none.map(i->i+5).toXor(),equalTo(Either.left(exception)));
+		assertThat(none.map(i->i+5).toEither(),equalTo(Either.left(exception)));
 	}
 
 	@Test
@@ -165,7 +165,7 @@ public class TryTest {
 	}
 	@Test
 	public void testToXorNone(){
-		Either<RuntimeException,Integer> xor = none.toXor();
+		Either<RuntimeException,Integer> xor = none.toEither();
 		assertTrue(xor.isLeft());
 		assertThat(xor,equalTo(Either.left(exception)));
 		
@@ -180,7 +180,7 @@ public class TryTest {
 	@Test
 	public void testToXorSecondaryNone(){
 
-		Either<Integer,RuntimeException> xorNone = none.toXor().swap();
+		Either<Integer,RuntimeException> xorNone = none.toEither().swap();
 		assertThat(xorNone,equalTo(Either.right(exception)));
 		
 	}
@@ -382,7 +382,7 @@ public class TryTest {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).toXor(),equalTo(Either.right(65)));
+		assertThat(just.trampoline(n ->sum(10,n)).toEither(),equalTo(Either.right(65)));
 	}
 
 	

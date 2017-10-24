@@ -2,8 +2,10 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.persistent.PersistentQueue;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.bankersQueue;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -276,11 +278,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
 
         @Override
-        public <X extends Throwable> ImmutableQueue<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            return this;
-        }
-
-        @Override
         public ImmutableQueue<T> onEmptySwitch(Supplier<? extends ImmutableQueue<T>> supplier) {
             return this;
         }
@@ -456,10 +453,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
             return BankersQueue.of(supplier.get());
         }
 
-        @Override
-        public <X extends Throwable> ImmutableQueue<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }
 
         @Override
         public ImmutableQueue<T> onEmptySwitch(Supplier<? extends ImmutableQueue<T>> supplier) {

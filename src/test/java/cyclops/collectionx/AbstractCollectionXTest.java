@@ -39,6 +39,17 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 	static Executor ex = Executors.newFixedThreadPool(1);
     boolean set = false;
     @Test
+    public void testOnEmpty() throws AbstractIterableXTest.X {
+        assertEquals(asList(1), of().onEmpty(1).toListX());
+        assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());
+
+        assertEquals(asList(2), of(2).onEmpty(1).toListX());
+        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
+        assertEquals(asList(2), of(2).onEmptyError(() -> new AbstractIterableXTest.X()).toListX());
+
+
+    }
+    @Test
     public void isLazy(){
         of(1,2,3).filterNot(i->{
             set = true;
@@ -341,7 +352,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 
         assertEquals(asList(2), of(2).onEmpty(1).toListX());
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
+        assertEquals(asList(2), of(2).onEmptyError(() -> new X()).toListX());
 
         
     }

@@ -6,10 +6,12 @@ import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Option;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.sortedSet;
@@ -855,12 +857,12 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> SortedSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> SortedSetX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (SortedSetX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

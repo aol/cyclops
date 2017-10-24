@@ -13,9 +13,7 @@ import cyclops.async.adapters.Topic;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.companion.Streams;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.control.LazyEither;
+import cyclops.control.*;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness;
@@ -709,13 +707,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-
-        return createSeq(new OnEmptyOperator<T>(source, () -> {
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }));
+    public <X extends Throwable> ReactiveSeq<T> onEmptyError(final Supplier<? extends X> supplier) {
+        return createSeq(new OnEmptyErrorOperator<T,X>(source, supplier));
     }
-
     @Override
     public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
         return Spouts.concat(this, (Stream<T>) other);
@@ -861,7 +855,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> complete(final Runnable fn) {
+    public ReactiveSeq<T> onComplete(final Runnable fn) {
         return createSeq(new CompleteOperator<>(source, fn));
     }
 

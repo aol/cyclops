@@ -13,7 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public abstract  class BaseImmutableMapTest {
 
@@ -71,9 +73,11 @@ public abstract  class BaseImmutableMapTest {
     public void onEmptyGet(){
         assertThat(empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
     }
-    @Test(expected=RuntimeException.class)
+    @Test
     public void onEmptyThrow(){
-        empty().onEmptyThrow(()->new RuntimeException("hello"));
+
+        assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
+        assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
     @Test
     public void onEmptySwitch(){

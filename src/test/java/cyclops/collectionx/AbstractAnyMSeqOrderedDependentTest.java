@@ -45,11 +45,10 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 
         assertEquals(asList(2), of(2).onEmpty(1).toListX());
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
 
         assertEquals(asList(2, 3), of(2, 3).onEmpty(1).toListX());
         assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toListX());
+
     }
     @SuppressWarnings("serial")
     public static class X extends Exception {

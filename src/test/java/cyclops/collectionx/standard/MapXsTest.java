@@ -61,10 +61,7 @@ public class MapXsTest {
     public void onEmptyGet(){
         assertThat(MapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(10));
     }
-    @Test(expected=RuntimeException.class)
-    public void onEmptyThrow(){
-       MapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
-    }
+
     @Test
     public void onEmptySwitch(){
        

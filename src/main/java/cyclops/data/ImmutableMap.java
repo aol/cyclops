@@ -7,12 +7,14 @@ import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.BiTransformable;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptyError;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.*;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
@@ -30,7 +32,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                             Transformable<V>,
                                             BiTransformable<K, V>,
                                             OnEmpty<Tuple2<K, V>>,
-        PersistentMap<K,V>,
+                                            PersistentMap<K,V>,
                                             OnEmptySwitch<Tuple2<K, V>,ImmutableMap<K, V>> {
 
 
@@ -241,11 +243,8 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
         return onEmpty(supplier.get());
     }
 
-    @Override
-    default <X extends Throwable> ImmutableMap<K, V> onEmptyThrow(Supplier<? extends X> supplier){
-        if(size()==0)
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        return this;
+    default <X extends Throwable> Try<ImmutableMap<K,V>, X> onEmptyTry(Supplier<? extends X> supplier){
+        return isEmpty() ? Try.failure(supplier.get()) : Try.success(this);
     }
 
     @Override

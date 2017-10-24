@@ -2,9 +2,11 @@ package com.aol.cyclops2.data.collections.extensions;
 
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Maybe;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
@@ -215,11 +217,8 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     CollectionX<T> onEmptyGet(Supplier<? extends T> supplier);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    <X extends Throwable> CollectionX<T> onEmptyThrow(Supplier<? extends X> supplier);
+
+    <X extends Throwable> CollectionX<T> onEmptyError(Supplier<? extends X> supplier);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.traversable.ExtendedTraversable#reactiveStream()

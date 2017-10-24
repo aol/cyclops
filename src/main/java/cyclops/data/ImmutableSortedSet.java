@@ -4,12 +4,14 @@ package cyclops.data;
 import com.aol.cyclops2.types.persistent.PersistentSortedSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.collectionx.immutable.OrderedSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -167,10 +169,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return (ImmutableSortedSet<T>)ImmutableSet.super.onEmptyGet(supplier);
     }
 
-    @Override
-    default <X extends Throwable> ImmutableSortedSet<T> onEmptyThrow(Supplier<? extends X> supplier) {
-        return (ImmutableSortedSet<T>)ImmutableSet.super.onEmptyThrow(supplier);
-    }
 
 
     @Override

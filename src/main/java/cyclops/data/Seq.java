@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
@@ -16,6 +17,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.seq;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -657,8 +659,6 @@ public interface Seq<T> extends ImmutableList<T>,
     @Override
     Seq<T> onEmptyGet(Supplier<? extends T> supplier);
 
-    @Override
-    <X extends Throwable> Seq<T> onEmptyThrow(Supplier<? extends X> supplier);
 
     @Override
     default <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -947,11 +947,6 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
-        public <X extends Throwable> Cons<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            return this;
-        }
-
-        @Override
         public Cons<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return this;
         }
@@ -985,11 +980,6 @@ public interface Seq<T> extends ImmutableList<T>,
         @Override
         public Seq<T> onEmptyGet(Supplier<? extends T> supplier) {
             return Seq.of(supplier.get());
-        }
-
-        @Override
-        public <X extends Throwable> Seq<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
         }
 
         @Override

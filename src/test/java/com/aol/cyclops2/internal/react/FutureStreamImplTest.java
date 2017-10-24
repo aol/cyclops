@@ -27,7 +27,7 @@ public class FutureStreamImplTest {
             final Topic<Integer> topic = new Topic<>();
 
             Thread t2 = new Thread(() -> {
-                ((FutureStreamImpl) new LazyReact(10, 10).fromAdapter(topic)).complete(() -> {
+                ((FutureStreamImpl) new LazyReact(10, 10).fromAdapter(topic)).onComplete(() -> {
                     completed.value = true;
                 }).forEach(x -> {
                     assertFalse(completed.value);

@@ -9,6 +9,7 @@ import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
@@ -16,6 +17,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.lazySeq;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
@@ -820,8 +822,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @Override
     LazySeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
-    @Override
-    <X extends Throwable> LazySeq<T> onEmptyThrow(Supplier<? extends X> supplier);
+
 
     @Override
     default <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -1031,10 +1032,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return this;
         }
 
-        @Override
-        public <X extends Throwable> Cons<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            return this;
-        }
+
 
         @Override
         public Cons<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
@@ -1137,10 +1135,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return LazySeq.of(supplier.get());
         }
 
-        @Override
-        public <X extends Throwable> LazySeq<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }
 
         @Override
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {

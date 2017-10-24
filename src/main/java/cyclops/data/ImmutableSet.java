@@ -4,6 +4,8 @@ package cyclops.data;
 import com.aol.cyclops2.types.persistent.PersistentSet;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptyError;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -12,6 +14,7 @@ import cyclops.collectionx.immutable.PersistentSetX;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -30,6 +33,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PersistentSet<T>,
+                                        OnEmptyError<T, ImmutableSet<T>>,
                                          IterableX<T>{
 
     <R> ImmutableSet<R> unitIterable(Iterable<R> it);
@@ -229,10 +233,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default <X extends Throwable> ImmutableSet<T> onEmptyThrow(Supplier<? extends X> supplier){
-        if(size()==0)
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        return this;
+    default <X extends Throwable> Try<ImmutableSet<T>, X> onEmptyTry(Supplier<? extends X> supplier){
+        return isEmpty() ? Try.failure(supplier.get()) : Try.success(this);
     }
 
     @Override

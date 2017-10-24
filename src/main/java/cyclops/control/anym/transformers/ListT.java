@@ -12,9 +12,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.traversable.IterableX;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.control.anym.Witness.reactiveSeq;
@@ -729,14 +731,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT<W,T>) FoldableTransformerSeq.super.onEmptyGet(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    public <X extends Throwable> ListT<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (ListT<W,T>) FoldableTransformerSeq.super.onEmptyThrow(supplier);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#shuffle(java.util.Random)

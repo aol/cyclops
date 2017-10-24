@@ -2,7 +2,6 @@ package cyclops.collectionx;
 
 
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.react.lazy.DuplicationTest;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -10,7 +9,6 @@ import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
-import cyclops.control.anym.Witness;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -23,8 +21,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
-import cyclops.function.Function1;
-import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.reactive.ReactiveSeq;
@@ -55,7 +51,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops2.react.lazy.DuplicationTest.of;
 import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static cyclops.reactive.ReactiveSeq.iterate;
@@ -546,9 +541,7 @@ public abstract class AbstractIterableXTest {
 
         assertEquals(asList(2), of(2).onEmpty(1).toListX());
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
 
-        
     }
     @Test
     public void visit(){
@@ -664,8 +657,6 @@ public abstract class AbstractIterableXTest {
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()).size(),is(2));
 	}
-	
-
 	
 
 	
@@ -1180,7 +1171,45 @@ public abstract class AbstractIterableXTest {
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
-	@Test
+    @Test
+    public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyStream() throws Exception {
+
+
+        final IterableX<Integer> zipped = of(1,2,3).zipS(ReactiveSeq.<Integer>empty(), (a, b) -> a + b);
+
+
+        assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
+    }
+    @Test
+    public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyPublisherWith() throws Exception {
+
+
+        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithP(ReactiveSeq.empty());
+
+
+        assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyStreamWith() throws Exception {
+
+
+        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithS(ReactiveSeq.empty());
+
+
+        assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
+    }
+    @Test
+    public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyPublisher() throws Exception {
+
+
+        final IterableX<Integer> zipped = of(1,2,3).zipP(ReactiveSeq.<Integer>empty(), (a, b) -> a + b);
+
+
+        assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
+    }
+
+    @Test
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
 		
 		

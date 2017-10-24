@@ -1,5 +1,7 @@
 package cyclops.collectionx.immutable;
 
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.aol.cyclops2.hkt.Higher;
@@ -10,16 +12,12 @@ import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Option;
-import cyclops.control.Maybe;
-import cyclops.control.Either;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.persistentSetX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.collectionx.mutable.ListX;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
@@ -900,12 +898,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> PersistentSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> PersistentSetX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (PersistentSetX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

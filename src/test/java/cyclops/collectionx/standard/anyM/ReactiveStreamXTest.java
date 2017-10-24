@@ -168,7 +168,7 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
     public void testOnComplete() {
         BooleanProxy completed = new BooleanProxy(false);
 
-        ReactiveSeq.ofInts(1, 2, 3, 4).complete(() -> {
+        ReactiveSeq.ofInts(1, 2, 3, 4).onComplete(() -> {
             completed.value = true;
         }).forEach(x -> {
             assertFalse(completed.value);

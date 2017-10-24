@@ -3,21 +3,19 @@ package cyclops.collectionx.mutable;
 import com.aol.cyclops2.data.collections.extensions.lazy.LazyQueueX;
 import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
 import com.aol.cyclops2.hkt.Higher;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.control.Either;
-import cyclops.control.Option;
+import cyclops.control.*;
 import cyclops.typeclasses.*;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
-import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.control.anym.AnyM;
 import cyclops.control.anym.Witness.queue;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.foldable.To;
 import cyclops.function.Function3;
@@ -916,12 +914,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> QueueX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> QueueX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (QueueX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (QueueX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

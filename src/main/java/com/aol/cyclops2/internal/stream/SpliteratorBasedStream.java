@@ -6,6 +6,7 @@ import com.aol.cyclops2.types.futurestream.Continuation;
 import com.aol.cyclops2.types.reactive.QueueBasedSubscriber;
 import com.aol.cyclops2.types.reactive.QueueBasedSubscriber.Counter;
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;
@@ -17,6 +18,7 @@ import cyclops.companion.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.control.anym.Witness;
@@ -68,7 +70,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public SpliteratorBasedStream<T> complete(final Runnable fn) {
+    public SpliteratorBasedStream<T> onComplete(final Runnable fn) {
         return (SpliteratorBasedStream<T>) this.createSeq(new CompleteSpliterator<>(stream, fn));
     }
 
@@ -560,9 +562,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-
-        return createSeq(new OnEmptyThrowSpliterator<>(stream,supplier));
+    public <X extends Throwable> ReactiveSeq<T> onEmptyError(final Supplier<? extends X> supplier) {
+            return createSeq(new OnEmptyThrowSpliterator<>(stream,supplier));
     }
 
     private Spliterator<? extends T> avoidCopy(Stream<? extends T> stream ){

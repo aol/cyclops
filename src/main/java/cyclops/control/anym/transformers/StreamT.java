@@ -2,6 +2,7 @@ package cyclops.control.anym.transformers;
 
 
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -9,6 +10,7 @@ import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Maybe;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -708,14 +710,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,T>) FoldableTransformerSeq.super.onEmptyGet(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    public <X extends Throwable> StreamT<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return (StreamT<W,T>) FoldableTransformerSeq.super.onEmptyThrow(supplier);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#shuffle(java.util.Random)

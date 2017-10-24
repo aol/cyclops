@@ -4,6 +4,7 @@ import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.SetX;
@@ -615,10 +616,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.onEmptyGet(supplier);
     }
 
-    @Override
-    default <X extends Throwable> IterableX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return (IterableX<T>)ExtendedTraversable.super.onEmptyThrow(supplier);
-    }
+
 
     @Override
     default IterableX<T> shuffle(final Random random) {

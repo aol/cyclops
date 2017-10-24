@@ -13,9 +13,11 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collectionx.mutable.ListX;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
@@ -568,11 +570,11 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> LazyCollectionX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return fromStream(stream().onEmptyThrow(supplier));
+    default <X extends Throwable> LazyCollectionX<T> onEmptyError(final Supplier<? extends X> supplier) {
+        return fromStream(stream().onEmptyError(supplier));
     }
 
     /* (non-Javadoc)

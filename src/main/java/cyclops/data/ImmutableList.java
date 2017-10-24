@@ -6,6 +6,8 @@ import com.aol.cyclops2.matching.Sealed2;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptyError;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
@@ -14,6 +16,7 @@ import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -36,6 +39,7 @@ import static cyclops.matching.Api.*;
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
                                           IterableX<T>,PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
+                                            OnEmptyError<T, ImmutableList<T>>,
                                           To<ImmutableList<T>> {
 
     <R> ImmutableList<R> unitStream(Stream<R> stream);
@@ -229,7 +233,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     ImmutableList<T> onEmptyGet(Supplier<? extends T> supplier);
 
     @Override
-    <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier);
+    default <X extends Throwable> Try<ImmutableList<T>, X> onEmptyTry(Supplier<? extends X> supplier){
+        return isEmpty() ? Try.failure(supplier.get()) : Try.success(this);
+    }
 
     default T last(T alt){
         return getOrElse(size()-1,alt);

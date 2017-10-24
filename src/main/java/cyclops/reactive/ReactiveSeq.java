@@ -5,9 +5,10 @@ import com.aol.cyclops2.data.collections.extensions.LazyFluentCollectionX;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.react.ThreadPools;
 
-import cyclops.control.Option;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.recoverable.OnEmptyError;
+import cyclops.control.*;
 import cyclops.typeclasses.*;
-import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.Enumeration;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -36,11 +37,7 @@ import cyclops.async.adapters.Queue;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.collectionx.immutable.VectorX;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 
-import cyclops.control.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -3803,13 +3800,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    <X extends Throwable> ReactiveSeq<T> onEmptyThrow(final Supplier<? extends X> supplier);
+
+    <X extends Throwable> ReactiveSeq<T> onEmptyError(final Supplier<? extends X> supplier);
 
 
 
@@ -3938,7 +3930,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Function that accepts and returns completed value
      * @return ReactiveSeq that can handle stream or async operations simpler
      */
-    ReactiveSeq<T> complete(final Runnable fn);
+    ReactiveSeq<T> onComplete(final Runnable fn);
 
     /**
      * Recover from an exception with an alternative value

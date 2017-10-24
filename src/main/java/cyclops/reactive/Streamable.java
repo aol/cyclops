@@ -4,6 +4,7 @@ import com.aol.cyclops2.internal.stream.SeqUtils;
 import com.aol.cyclops2.internal.stream.StreamableImpl;
 import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.To;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.stream.HotStream;
 import com.aol.cyclops2.types.stream.ToStream;
 import com.aol.cyclops2.types.traversable.IterableX;
@@ -13,6 +14,7 @@ import cyclops.collectionx.mutable.ListX;
 import cyclops.collectionx.mutable.MapX;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
+import cyclops.control.Try;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.control.anym.AnyM;
@@ -2360,9 +2362,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(reactiveSeq().onEmptyGet(supplier));
     }
 
-    @Override
-    default <X extends Throwable> Streamable<T> onEmptyThrow(final Supplier<? extends X> supplier) {
-        return fromStream(reactiveSeq().onEmptyThrow(supplier));
+
+    default <X extends Throwable> Streamable<T> onEmptyError(final Supplier<? extends X> supplier) {
+        return fromStream(reactiveSeq().onEmptyError(supplier));
     }
 
     default Streamable<T> concat(final Streamable<T> other) {

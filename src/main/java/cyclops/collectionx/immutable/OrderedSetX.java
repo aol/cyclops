@@ -1,6 +1,8 @@
 package cyclops.collectionx.immutable;
 
 
+import com.aol.cyclops2.types.recoverable.OnEmpty;
+import cyclops.control.Try;
 import cyclops.data.Comparators;
 import cyclops.data.TreeSet;
 import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
@@ -897,12 +899,12 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> OrderedSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> OrderedSetX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (OrderedSetX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)

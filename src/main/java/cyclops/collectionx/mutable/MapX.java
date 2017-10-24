@@ -10,6 +10,7 @@ import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
+import cyclops.control.Try;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
@@ -403,14 +404,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return fromStream(stream().onEmptyGet(supplier));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> MapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return fromStream(stream().onEmptyThrow(supplier));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)

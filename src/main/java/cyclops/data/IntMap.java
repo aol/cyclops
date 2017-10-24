@@ -6,11 +6,13 @@ import com.aol.cyclops2.types.persistent.PersistentIndexed;
 import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Evaluation;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.VectorX;
 import cyclops.collectionx.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.control.Try;
 import cyclops.control.anym.DataWitness.intMap;
 import cyclops.control.Eval;
 import cyclops.data.base.IntPatriciaTrie;
@@ -656,13 +658,6 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
         return this;
     }
 
-    @Override
-    public <X extends Throwable> IntMap<T> onEmptyThrow(Supplier<? extends X> supplier) {
-        if(isEmpty()){
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }
-        return this;
-    }
 
     @Override
     public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
@@ -858,10 +853,6 @@ public class IntMap<T> implements ImmutableList<T>,Higher<intMap,T> {
             return IntMap.of(supplier.get());
         }
 
-        @Override
-        public <X extends Throwable> ImmutableList<T> onEmptyThrow(Supplier<? extends X> supplier) {
-            throw ExceptionSoftener.throwSoftenedException(supplier.get());
-        }
 
         @Override
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {

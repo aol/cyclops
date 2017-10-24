@@ -17,6 +17,7 @@ import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalOperations;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
 import com.aol.cyclops2.types.traversable.IterableFilterable;
+import cyclops.control.Try;
 import cyclops.data.HashMap;
 import cyclops.data.tuple.Tuple2;
 import com.aol.cyclops2.types.persistent.PersistentMap;
@@ -281,14 +282,6 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
         return fromStream(stream().onEmptyGet(supplier));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> PersistentMapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
-
-        return fromStream(stream().onEmptyThrow(supplier));
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)

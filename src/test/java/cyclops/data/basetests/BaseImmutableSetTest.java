@@ -27,9 +27,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
@@ -37,6 +35,8 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
     @Override
     public abstract <T> ImmutableSet<T> of(T... values);
+    @Override
+    public abstract <T> ImmutableSet<T> empty();
 
     @Test
     public void duplicates(){
@@ -329,5 +329,11 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         Arrays.asList("hello","2","world","4").forEach(c->{
             assertTrue(s2.contains(c));
         });
+    }
+    @Test
+    public void onEmptyThrow(){
+
+        assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
+        assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
 }

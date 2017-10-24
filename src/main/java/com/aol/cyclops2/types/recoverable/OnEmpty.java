@@ -1,5 +1,7 @@
 package com.aol.cyclops2.types.recoverable;
 
+import cyclops.control.Try;
+
 import java.util.function.Supplier;
 
 /**
@@ -27,12 +29,6 @@ public interface OnEmpty<T> {
      */
     OnEmpty<T> onEmptyGet(Supplier<? extends T> supplier);
 
-    /**
-     * If this container instance is zero, throw the exception returned by the provided Supplier
-     * 
-     * @param supplier to create exception from
-     * @return Throw exception if zero, otherwise this container
-     */
-    <X extends Throwable> OnEmpty<T> onEmptyThrow(Supplier<? extends X> supplier);
+
 
 }

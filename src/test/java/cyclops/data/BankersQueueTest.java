@@ -120,7 +120,7 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
     }
 
     @Override
-    public <T> IterableX<T> empty() {
+    public <T> ImmutableQueue<T> empty() {
         return BankersQueue.empty();
     }
 

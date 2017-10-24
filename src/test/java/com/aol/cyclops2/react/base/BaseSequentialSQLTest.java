@@ -87,11 +87,11 @@ public abstract class BaseSequentialSQLTest {
 
 	        assertEquals(asList(2), of(2).onEmpty(1).toList());
 	        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toList());
-	        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toList());
+	        assertEquals(asList(2), of(2).onEmptyError(() -> new X()).toList());
 
 	        assertEquals(asList(2, 3), of(2, 3).onEmpty(1).toList());
 	        assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toList());
-	        assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toList());
+	        assertEquals(asList(2, 3), of(2, 3).onEmptyError(() -> new X()).toList());
 	    }
 	   
 

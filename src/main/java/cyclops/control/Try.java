@@ -37,6 +37,7 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
+import lombok.experimental.Wither;
 import org.reactivestreams.Publisher;
 
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -155,10 +156,15 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     final Either<X,T> xor;
+    @Wither(AccessLevel.PRIVATE)
     private final Class<? extends Throwable>[] classes;
 
     public Either<X,T> asXor(){
         return xor;
+    }
+
+    public Try<T,X> withExceptions(Class<? extends X>... toCatch){
+        return withClasses(toCatch);
     }
 
     public static  <X extends Throwable,T,R> Try<R,X> tailRec(T initial, Function<? super T, ? extends Try<? extends Either<T, R>,X>> fn){
@@ -326,7 +332,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      *
      *
      *
-     * @param iors Trys to sequence
+     * @param xors Trys to sequence
      * @return Try Sequenced
      */
     public static <ST extends Throwable, PT> Either<ListX<ST>, ListX<PT>> sequenceSuccess(final CollectionX<Try<PT,ST>> xors) {
@@ -344,7 +350,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     //Primary[PersistentSetX[10,1]]
      * }
      * </pre>
-     * @param Trys Collection of Iors to accumulate success values
+     * @param xors Collection of Trys to accumulate success values
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
@@ -430,7 +436,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-    public static <T, X extends Throwable> Try<T, X> fromXor(final Either<X,T> pub) {
+    public static <T, X extends Throwable> Try<T, X> fromEither(final Either<X,T> pub) {
         return new Try<>(pub,new Class[0]);
     }
     /**
@@ -596,7 +602,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    public Either<X, T> toXor(){
+    public Either<X, T> toEither(){
         return xor;
     }
 
@@ -769,13 +775,16 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public <R> Try<R, X> map(Function<? super T, ? extends R> fn){
         return new Try<>(xor.flatMap(i->safeApply(i, fn)),classes);
     }
+    public <XR extends Throwable> Try<T, XR> mapFailure(Function<? super X, ? extends XR> fn){
+        return new Try<>(xor.mapLeft(i->fn.apply(i)),new Class[0]);
+    }
 
     /**
      * @param fn FlatMap success value or Do nothing if Failure (return this)
      * @return Try returned from FlatMap fn
      */
     public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<? extends R,X>> fn){
-        return new Try<>(xor.flatMap(i->safeApplyM(i, fn).toXor()),classes);
+        return new Try<>(xor.flatMap(i->safeApplyM(i, fn).toEither()),classes);
     }
 
     /**
@@ -919,10 +928,10 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
     public <T2, R> Try<R,X> zip(final Either<X,T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
-        return Try.fromXor(xor.zip(app,fn));
+        return Try.fromEither(xor.zip(app,fn));
     }
     public <T2, R> Try<R,X> zip(final Ior<X,T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn){
-        return Try.fromXor(xor.zip(app,fn));
+        return Try.fromEither(xor.zip(app,fn));
     }
     /**
      * @param consumer Accept value if Success
@@ -1281,7 +1290,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                             .map(c -> t)
                             .findFirst(),
                     t));
-           return (Try<R,X>)Try.fromXor(x);
+           return (Try<R,X>)Try.fromEither(x);
 
         }
     }
@@ -1297,6 +1306,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
         }
     }
+
 
     private Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
         if (findFirst.isPresent())

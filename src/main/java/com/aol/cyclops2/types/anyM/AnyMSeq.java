@@ -16,11 +16,13 @@ import com.aol.cyclops2.types.*;
 
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
+import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.collectionx.mutable.*;
 import cyclops.collectionx.immutable.*;
+import cyclops.control.Try;
 import cyclops.control.anym.WitnessType;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -375,16 +377,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Iterable
         return fromIterable(IterableX.super.onEmptyGet(supplier));
     }
     FunctionalAdapter<W> adapter();
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> AnyMSeq<W,T> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return fromIterable(IterableX.super.onEmptyThrow(supplier));
-    }
-
-    
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
