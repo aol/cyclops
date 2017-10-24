@@ -40,6 +40,20 @@ public class LazySeqTest extends BaseImmutableListTest {
     public <T> LazySeq<T> of(T... values) {
         return LazySeq.of(values);
     }
+
+    @Test
+    public void split(){
+        assertThat(of(1,2,3,2,3,2).split(i->i==2),equalTo(of(of(1),of(3),of(3))));
+        assertThat(of(2,2,2,2,1,2,3,2,3,2).split(i->i==2),equalTo(of(of(1),of(3),of(3))));
+        assertThat(of(1,10,2,3,10,2,3,10,2).split(i->i==2),equalTo(of(of(1,10),of(3,10),of(3,10))));
+    }
+
+    @Test
+    public void splitLarge(){
+        fromStream(ReactiveSeq.range(0,100_000)).split(i->i==2).printOut();
+
+    }
+
     @Test
     public void testScanRightSumMonoid() {
         assertThat(of("a", "ab", "abc").peek(System.out::println)

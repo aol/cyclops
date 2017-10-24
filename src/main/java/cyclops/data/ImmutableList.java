@@ -37,7 +37,8 @@ import static cyclops.matching.Api.*;
 
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
-                                          IterableX<T>,PersistentList<T>,
+                                          IterableX<T>,
+                                          PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                             OnEmptyError<T, ImmutableList<T>>,
                                           To<ImmutableList<T>> {
@@ -242,7 +243,12 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
     @Override
     ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
-
+    default Tuple2<ImmutableList<T>, ImmutableList<T>> span(Predicate<? super T> pred) {
+        return Tuple.tuple(takeWhile(pred), dropWhile(pred));
+    }
+    default Tuple2<ImmutableList<T>,ImmutableList<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
 
     public static interface Some<T> extends Deconstruct2<T,ImmutableList<T>>, ImmutableList<T> {
         ImmutableList<T> tail();

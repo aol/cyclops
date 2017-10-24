@@ -58,7 +58,6 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
 
-
     @Override
     public Vector<T> removeValue(T e) {
         return removeFirst(i-> Objects.equals(i,e));

@@ -295,15 +295,15 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return Nil.Instance;
     }
 
-    default Tuple2<LazySeq<T>, LazySeq<T>> span(Predicate<? super T> pred) {
+    default Tuple2<ImmutableList<T>, ImmutableList<T>> span(Predicate<? super T> pred) {
         return Tuple.tuple(takeWhile(pred), dropWhile(pred));
     }
-    default Tuple2<LazySeq<T>,LazySeq<T>> splitBy(Predicate<? super T> test) {
+    default Tuple2<ImmutableList<T>,ImmutableList<T>> splitBy(Predicate<? super T> test) {
         return span(test.negate());
     }
     default LazySeq<LazySeq<T>> split(Predicate<? super T> test) {
         LazySeq<T> next = dropWhile(test);
-        Tuple2<LazySeq<T>, LazySeq<T>> split = next.splitBy(test);
+        Tuple2<LazySeq<T>, LazySeq<T>> split = next.splitBy(test).bimap(ImmutableList::lazySeq,ImmutableList::lazySeq);
         return next.visit(c->cons(split._1(),()->split._2().split(test)),n->n);
     }
     default LazySeq<T> take(final long n) {

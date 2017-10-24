@@ -10,6 +10,7 @@ import com.aol.cyclops2.types.foldable.Evaluation;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.OnEmpty;
+import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.collectionx.immutable.LinkedListX;
 import cyclops.collectionx.immutable.VectorX;
@@ -660,6 +661,11 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> onEmptyGet(Supplier<? extends T> supplier);
 
 
+    default Seq<Seq<T>> split(Predicate<? super T> test) {
+        Seq<T> next = dropWhile(test);
+        Tuple2<Seq<T>, Seq<T>> split = next.splitBy(test).bimap(ImmutableList::seq,ImmutableList::seq);
+        return next.visit(c->cons(split._1(),split._2().split(test)),n->n);
+    }
     @Override
     default <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return flatMapI(mapper);
