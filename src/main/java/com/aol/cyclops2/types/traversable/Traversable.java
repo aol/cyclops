@@ -72,12 +72,12 @@ public interface Traversable<T> extends Publisher<T>,
 
     @Override
     default <R> Traversable<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return traversable().zipWithS(fn);
+        return zipS(fn,(a,b)->b.apply(a));
     }
 
     @Override
     default <R> Traversable<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return traversable().zipWithP(fn);
+        return zipP(fn,(a,b)->b.apply(a));
     }
 
     @Override

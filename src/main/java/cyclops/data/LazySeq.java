@@ -281,6 +281,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         Iterator<T> t = stream.iterator();
         return t.hasNext() ? cons(t.next(),()->fromIterator(t)) : empty();
     }
+    @SafeVarargs
     static <T> LazySeq<T> of(T... value){
         LazySeq<T> result = empty();
         for(int i=value.length;i>0;i--){
