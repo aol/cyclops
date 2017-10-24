@@ -71,18 +71,7 @@ public class SeqTest extends BaseImmutableListTest {
         Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
     }
 
-    @Test
-    public void split(){
-        Assert.assertThat(of(1,2,3,2,3,2).split(i->i==2),equalTo(of(of(1),of(3),of(3))));
-        Assert.assertThat(of(2,2,2,2,1,2,3,2,3,2).split(i->i==2),equalTo(of(of(1),of(3),of(3))));
-        Assert.assertThat(of(1,10,2,3,10,2,3,10,2).split(i->i==2),equalTo(of(of(1,10),of(3,10),of(3,10))));
-    }
 
-    @Test
-    public void splitLarge(){
-        fromStream(ReactiveSeq.range(0,100_000)).split(i->i==2).printOut();
-
-    }
 
 
 }

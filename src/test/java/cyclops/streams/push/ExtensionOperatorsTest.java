@@ -152,13 +152,13 @@ public class ExtensionOperatorsTest {
 	public void singleTest(){
 		assertThat(Spouts.of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		Spouts.of().singleOrElse(null);
+		assertNull(Spouts.of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		Spouts.of(1,2).singleOrElse(null);
+		assertNull(Spouts.of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){

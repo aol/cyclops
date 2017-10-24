@@ -51,7 +51,7 @@ public class LazySeqTest extends BaseImmutableListTest {
     @Test
     public void splitLarge(){
         fromStream(ReactiveSeq.range(0,100_000)).split(i->i==2).printOut();
-
+        fromStream(ReactiveSeq.range(0,15_000).intersperse(0)).split(i->i==0).printOut();
     }
 
     @Test

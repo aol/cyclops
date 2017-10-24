@@ -661,11 +661,6 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> onEmptyGet(Supplier<? extends T> supplier);
 
 
-    default Seq<Seq<T>> split(Predicate<? super T> test) {
-        Seq<T> next = dropWhile(test);
-        Tuple2<Seq<T>, Seq<T>> split = next.splitBy(test).bimap(ImmutableList::seq,ImmutableList::seq);
-        return next.visit(c->cons(split._1(),split._2().split(test)),n->n);
-    }
     @Override
     default <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return flatMapI(mapper);

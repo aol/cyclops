@@ -192,13 +192,13 @@ public class AsyncExtensionOperatorsTest {
 	public void singleTest(){
 		assertThat(of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		of().singleOrElse(null);
+		assertNull(of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		of(1,2).singleOrElse(null);
+		assertNull(of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){
