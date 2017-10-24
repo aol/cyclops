@@ -33,7 +33,10 @@ import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(of={"head,tail"})
-public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>, ImmutableList<T>, ImmutableList.Some<T>, Higher<nonEmptyList,T> {
+public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
+                                        ImmutableList<T>,
+                                        ImmutableList.Some<T>,
+                                        Higher<nonEmptyList,T> {
 
     private final T head;
     private final ImmutableList<T> tail;

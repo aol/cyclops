@@ -23,7 +23,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TrieMap<K,V> implements  ImmutableMap<K,V>,Higher2<trieMap,K,V>, Serializable{
+public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
+                                            Higher2<trieMap,K,V>,
+                                            Serializable{
 
     private static final long serialVersionUID = 1L;
     HashedPatriciaTrie.Node<K,V> map;

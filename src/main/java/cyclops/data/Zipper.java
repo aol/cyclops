@@ -22,7 +22,8 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 @Getter
 @Wither
-public class Zipper<T> implements Iterable<T>,Higher<zipper,T> {
+public class Zipper<T> implements Iterable<T>,
+                                    Higher<zipper,T> {
 
     private final ImmutableList<T> left;
     private final T point;

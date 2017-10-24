@@ -19,7 +19,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class DifferenceList<T> implements Folds<T>, Transformable<T>,Higher<differenceList,T> {
+public class DifferenceList<T> implements Folds<T>,
+                                          Transformable<T>,
+                                          Higher<differenceList,T> {
 
     private final Function<LazySeq<T>,Free<supplier, LazySeq<T>>> appending;
 

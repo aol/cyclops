@@ -23,7 +23,9 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TrieSet<T> implements ImmutableSet<T>,Higher<trieSet,T>, Serializable{
+public final class TrieSet<T> implements ImmutableSet<T>,
+                                         Higher<trieSet,T>,
+                                         Serializable{
     private static final long serialVersionUID = 1L;
     private final HashedPatriciaTrie.Node<T,T> map;
     public static <T> TrieSet<T> empty(){

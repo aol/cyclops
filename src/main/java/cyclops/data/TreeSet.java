@@ -20,7 +20,9 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 
-public final class TreeSet<T> implements ImmutableSortedSet<T>, Higher<treeSet,T>, Serializable {
+public final class TreeSet<T> implements ImmutableSortedSet<T>,
+                                         Higher<treeSet,T>,
+                                         Serializable {
 
     private final RedBlackTree.Tree<T,T> map;
     private final Comparator<? super T> comp;

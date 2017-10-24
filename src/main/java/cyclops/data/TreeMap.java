@@ -25,7 +25,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public final class TreeMap<K,V> implements ImmutableMap<K,V> ,Higher2<treeMap,K,V>, Serializable{
+public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
+                                            Higher2<treeMap,K,V>,
+                                            Serializable{
+
     private static final long serialVersionUID = 1L;
     private final RedBlackTree.Tree<K,V> map;
     @Wither()

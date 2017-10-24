@@ -32,7 +32,8 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
-public class Vector<T> implements ImmutableList<T>,Higher<vector,T> {
+public class Vector<T> implements ImmutableList<T>,
+                                 Higher<vector,T> {
 
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;

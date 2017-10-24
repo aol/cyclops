@@ -1,6 +1,9 @@
 package cyclops.data;
 
+import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.persistent.PersistentBag;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.bag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +16,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Bag<T> implements ImmutableSet<T>, PersistentBag<T>, Serializable {
+public final class Bag<T> implements ImmutableSet<T>,
+                                PersistentBag<T>,
+                                Higher<bag,T>,
+                                Serializable {
 
     private static final long serialVersionUID = 1L;
     private final HashMap<T,Integer> map;

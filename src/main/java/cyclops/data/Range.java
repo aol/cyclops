@@ -1,7 +1,10 @@
 package cyclops.data;
 
 
+import com.aol.cyclops2.hkt.Higher;
 import cyclops.control.Option;
+import cyclops.control.anym.DataWitness;
+import cyclops.control.anym.DataWitness.range;
 import cyclops.function.Ordering;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
@@ -11,12 +14,14 @@ import cyclops.data.tuple.Tuple2;
 import lombok.ToString;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.Function;
 
 import static cyclops.data.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Range<T> {
+public class Range<T> implements Iterable<T>, Higher<range,T> {
+
     public final T start;
     public final T end;
     private final Enumeration<T> enm;
@@ -159,4 +164,8 @@ public class Range<T> {
         return stream().join(",","[","]");
     }
 
+    @Override
+    public Iterator<T> iterator() {
+        return lazySeq().iterator();
+    }
 }
