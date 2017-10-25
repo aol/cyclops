@@ -120,16 +120,16 @@ modifyPom {
   project {
     name 'cyclops-react'
     description 'Platform for Functional Reactive Programming with Java 8'
-    url 'https://github.com/aol/simple-react'
+    url 'https://github.com/aol/cyclops-react'
     inceptionYear '2015'
 
-    groupId 'com.aol.simplereact'
-    artifactId 'cyclops-react'
+    groupId 'com.oath.cyclops'
+    artifactId 'cyclops'
     version "$version"
 
     scm {
-      url 'scm:git@github.com:aol/simple-react.git'
-      connection 'scm:git@github.com:aol/simple-react.git'
+      url 'scm:git@github.com:aol/cyclops-react.git'
+      connection 'scm:git@github.com:aol/cyclops-react.git'
       developerConnection 'scm:git@github.com:aol/simple-react.git'
     }
 
