@@ -1,19 +1,17 @@
 package com.aol.cyclops2.types.foldable;
 
-import com.sun.org.apache.regexp.internal.RE;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 import cyclops.collections.mutable.ListX;
 import cyclops.stream.ReactiveSeq;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jooq.lambda.tuple.Tuple;
 import org.jooq.lambda.tuple.Tuple2;
 import org.jooq.lambda.tuple.Tuple3;
 import org.junit.Test;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.*;
 
 
 public class StatCollectorsTest {
