@@ -924,6 +924,35 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
 
+  @Override
+  default <R1, R2, R3, R> BankersQueue<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach4(iterable1,iterable2,iterable3,yieldingFunction);
+  }
+
+  @Override
+  default <R1, R2, R3, R> BankersQueue<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach4(iterable1,iterable2,iterable3,filterFunction,yieldingFunction);
+  }
+
+  @Override
+  default <R1, R2, R> BankersQueue<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach3(iterable1,iterable2,yieldingFunction);
+  }
+
+  @Override
+  default <R1, R2, R> BankersQueue<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach3(iterable1,iterable2,filterFunction,yieldingFunction);
+  }
+
+  @Override
+  default <R1, R> BankersQueue<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach2(iterable1,yieldingFunction);
+  }
+
+  @Override
+  default <R1, R> BankersQueue<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+    return (BankersQueue< R>) ImmutableQueue.super.forEach2(iterable1,filterFunction,yieldingFunction);
+  }
 
     @Override
     default BankersQueue<T> removeAt(long pos) {

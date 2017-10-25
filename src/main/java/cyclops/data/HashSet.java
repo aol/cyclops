@@ -145,6 +145,35 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     public <R> HashSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromStream(stream().flatMapI(fn));
     }
+  @Override
+  public <R1, R2, R3, R> HashSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach4(iterable1,iterable2,iterable3,yieldingFunction);
+  }
+
+  @Override
+  public <R1, R2, R3, R> HashSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach4(iterable1,iterable2,iterable3,filterFunction,yieldingFunction);
+  }
+
+  @Override
+  public <R1, R2, R> HashSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach3(iterable1,iterable2,yieldingFunction);
+  }
+
+  @Override
+  public <R1, R2, R> HashSet<R> forEach3(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach3(iterable1,iterable2,filterFunction,yieldingFunction);
+  }
+
+  @Override
+  public <R1, R> HashSet<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach2(iterable1,yieldingFunction);
+  }
+
+  @Override
+  public <R1, R> HashSet<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+    return (HashSet< R>) ImmutableSet.super.forEach2(iterable1,filterFunction,yieldingFunction);
+  }
 
     @Override
     public HashSet<T> filter(Predicate<? super T> predicate) {

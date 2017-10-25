@@ -4,6 +4,10 @@ import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.control.Try;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.monads.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
@@ -15,10 +19,8 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.concurrent.TimeUnit;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 
@@ -246,4 +248,95 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
     public static <K, V> HashMap<K,V> narrow(HashMap<? extends K, ? extends V> map) {
         return (HashMap<K,V>)map;
     }
+
+  @Override
+  public HashMap<K, V> filterNot(Predicate<? super Tuple2<K, V>> predicate) {
+    return (HashMap<K, V>)ImmutableMap.super.filterNot(predicate);
+  }
+
+  @Override
+  public HashMap<K, V> notNull() {
+    return (HashMap<K, V>)ImmutableMap.super.notNull();
+  }
+
+  @Override
+  public HashMap<K, V> peek(Consumer<? super V> c) {
+    return (HashMap<K, V>)ImmutableMap.super.peek(c);
+  }
+
+  @Override
+  public <R> HashMap<K, R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
+    return (HashMap<K, R>)ImmutableMap.super.trampoline(mapper);
+  }
+
+  @Override
+  public <R> HashMap<K, R> retry(Function<? super V, ? extends R> fn) {
+    return (HashMap<K, R>)ImmutableMap.super.retry(fn);
+  }
+
+  @Override
+  public <R> HashMap<K, R> retry(Function<? super V, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+    return (HashMap<K, R>)ImmutableMap.super.retry(fn,retries,delay,timeUnit);
+  }
+
+  @Override
+  public HashMap<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
+    return (HashMap<K, V>)ImmutableMap.super.bipeek(c1,c2);
+  }
+
+
+
+  @Override
+  public <R1, R2> HashMap<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1, Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
+    return (HashMap<R1, R2>)ImmutableMap.super.bitrampoline(mapper1,mapper2);
+  }
+
+  @Override
+  public HashMap<K, V> onEmpty(Tuple2<K, V> value) {
+    return (HashMap<K, V>)ImmutableMap.super.onEmpty(value);
+  }
+
+  @Override
+  public HashMap<K, V> onEmptyGet(Supplier<? extends Tuple2<K, V>> supplier) {
+    return (HashMap<K, V>)ImmutableMap.super.onEmptyGet(supplier);
+  }
+
+
+
+  @Override
+  public HashMap<K, V> onEmptySwitch(Supplier<? extends ImmutableMap<K, V>> supplier) {
+    return (HashMap<K, V>) ImmutableMap.super.onEmptySwitch(supplier);
+  }
+
+  @Override
+  public <K1, K2, K3, K4, R1, R2, R3, R> HashMap<K4, R> forEach4(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2, Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3, Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
+    return (HashMap<K4, R>) ImmutableMap.super.forEach4(iterable1,iterable2,iterable3,yieldingFunction);
+  }
+
+  @Override
+  public <K1, K2, K3, K4, R1, R2, R3, R> HashMap<K4, R> forEach4(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2, Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3, Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, Boolean> filterFunction, Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
+    return (HashMap<K4, R>) ImmutableMap.super.forEach4(iterable1,iterable2,iterable3,filterFunction,yieldingFunction);
+  }
+
+  @Override
+  public <K1, K2, K3, R1, R2, R> HashMap<K3, R> forEach3(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2, Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
+    return (HashMap<K3, R>) ImmutableMap.super.forEach3(iterable1,iterable2,yieldingFunction);
+  }
+
+  @Override
+  public <K1, K2, K3, R1, R2, R> HashMap<K3, R> forEach3(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2, Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, Boolean> filterFunction, Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
+    return (HashMap<K3, R>) ImmutableMap.super.forEach3(iterable1,iterable2,filterFunction,yieldingFunction);
+
+  }
+
+  @Override
+  public <K1, K2, R1, R> HashMap<K2, R> forEach2(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
+    return (HashMap<K2, R>) ImmutableMap.super.forEach2(iterable1,yieldingFunction);
+
+  }
+
+  @Override
+  public <K1, K2, R1, R> HashMap<K2, R> forEach2(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, Boolean> filterFunction, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
+    return (HashMap<K2, R>) ImmutableMap.super.forEach2(iterable1,filterFunction,yieldingFunction);
+  }
 }

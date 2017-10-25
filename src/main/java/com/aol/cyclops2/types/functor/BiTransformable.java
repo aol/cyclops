@@ -5,10 +5,10 @@ import java.util.function.Function;
 
 import cyclops.control.Trampoline;
 
-/* 
- * A type that can perform transformations across a domain with two types. 
+/*
+ * A type that can perform transformations across a domain with two types.
  * For example a BiTransformable for Java Map may allow both the Keys and Values to be transformed together (via the bimap operator).
- * 
+ *
  * @author johnmcclean
  *
  * @param <T1> The first input type this BiTransformable accepts
@@ -18,7 +18,7 @@ public interface BiTransformable<T1, T2> {
 
     /**
      * Transform this BiTransformable, changing two value types at once.
-     * 
+     *
      * <pre>
      * {@code
      *     MapX<String,Integer> map = MapXs.of("hello",2);
@@ -26,7 +26,7 @@ public interface BiTransformable<T1, T2> {
      *     //["hello world",8]
      * }
      * </pre>
-     * 
+     *
      * @param fn1 transformation function for the first type
      * @param fn2 transformation function for the second type
      * @return New BiTransformable containing transformed data
@@ -35,14 +35,14 @@ public interface BiTransformable<T1, T2> {
 
     /**
      * Peek at two data types simulatanously (typically to perform a side-effect with each data point)
-     * 
+     *
      * <pre>
      * {@code
      *     MapX<String,Integer> map = MapXs.of("hello",2);
      *     map.bipeek(s->System.out.pritnln("key = " + s),System.out::println);
      * }
      * </pre>
-     * 
+     *
      * @param c1 consumer for the first type
      * @param c2 consumer for the second type
      * @return New BiTransformable with the same data
@@ -57,25 +57,11 @@ public interface BiTransformable<T1, T2> {
         });
     }
 
-    /**
-     * Cast two data types simulatanously.
-     * <pre>
-     * {@code
-     *     MapX<Animal,Food> map = MapXs.of(cow,grass);
-     *     MapX<Mamaml,Vegitation> herbervoreMammals = map.bicast(Mammal.class,Vegitation.class);
-     * }
-     * </pre>
-     * @param type1
-     * @param type2
-     * @return
-     */
-    default <U1, U2> BiTransformable<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-        return bimap(type1::cast, type2::cast);
-    }
+
 
     /**
      * Perform a tail-call optimized recursive transformation operation across two data points simultaneously
-     * 
+     *
      * @param mapper1 transformation function for the first type
      * @param mapper2 transformation function for the second type
      * @return New BiTransformable containing transformed data

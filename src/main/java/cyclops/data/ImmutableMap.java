@@ -218,10 +218,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
         return (ImmutableMap<K,V>)BiTransformable.super.bipeek(c1,c2);
     }
 
-    @Override
-    default <U1, U2> ImmutableMap<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
-        return (ImmutableMap<U1,U2>)BiTransformable.super.bicast(type1,type2);
-    }
+
 
     @Override
     default <R1, R2> ImmutableMap<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1, Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
