@@ -402,7 +402,24 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return (NonEmptyList<T>) ImmutableList.Some.super.shuffle(random);
     }
 
+    @Override
+    public Iterator<T> iterator(){
+        return new Iterator<T>() {
+            ImmutableList<T> current= NonEmptyList.this;
+            @Override
+            public boolean hasNext() {
+                return current.fold(c->true, n->false);
+            }
 
+            @Override
+            public T next() {
+                return current.fold(c->{
+                    current = c.tail();
+                    return c.head();
+                },n->null);
+            }
+        };
+    }
 
     @Override
     public NonEmptyList<T> prependS(Stream<? extends T> stream) {

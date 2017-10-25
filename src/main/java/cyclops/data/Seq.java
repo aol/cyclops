@@ -32,6 +32,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -102,10 +103,10 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     default ReactiveSeq<T> stream(){
-        return ReactiveSeq.fromIterable(iterable());
+        return ReactiveSeq.fromIterable(this);
     }
     default LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(iterable());
+        return LinkedListX.fromIterable(this);
     }
 
     static <T> Seq<T> fromIterable(Iterable<T> it){
@@ -266,7 +267,7 @@ public interface Seq<T> extends ImmutableList<T>,
         if(num<1000) {
             return this.visit(cons -> cons(cons.head, cons.take(num - 1)), nil -> nil);
         }
-        return fromStream(ReactiveSeq.fromIterable(this.iterable()).take(num));
+        return fromStream(ReactiveSeq.fromIterable(this).take(num));
 
     }
     default Seq<T> drop(final long num) {
@@ -279,14 +280,15 @@ public interface Seq<T> extends ImmutableList<T>,
     }
     default Seq<T> reverse() {
         Seq<T> res = empty();
-        for (T a : iterable()) {
+        for (T a : this) {
             res = res.prepend(a);
         }
         return res;
     }
 
-    default Iterable<T> iterable(){
-        return ()->new Iterator<T>() {
+    @Override
+    default Iterator<T> iterator(){
+        return new Iterator<T>() {
             Seq<T> current= Seq.this;
             @Override
             public boolean hasNext() {
@@ -720,7 +722,7 @@ public interface Seq<T> extends ImmutableList<T>,
 
     default <R> R foldLeft(R zero, BiFunction<R, ? super T, R> f){
         R acc= zero;
-        for(T next : iterable()){
+        for(T next : this){
             acc= f.apply(acc,next);
         }
         return acc;
@@ -772,6 +774,19 @@ public interface Seq<T> extends ImmutableList<T>,
     default Seq<T> emptyUnit() {
         return empty();
     }
+
+    @Override
+    default <R> Seq<R> retry(Function<? super T, ? extends R> fn) {
+        return (Seq<R>) ImmutableList.super.retry(fn);
+    }
+
+    @Override
+    default <R> Seq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (Seq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+
 
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -1045,5 +1060,7 @@ public interface Seq<T> extends ImmutableList<T>,
             return false;
         }
     }
+
+
 
 }

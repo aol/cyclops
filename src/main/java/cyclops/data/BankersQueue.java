@@ -1,21 +1,32 @@
 package cyclops.data;
 
+import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentQueue;
 import com.aol.cyclops2.hkt.Higher;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
+import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.function.Monoid;
 import cyclops.monads.DataWitness.bankersQueue;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 
@@ -250,7 +261,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
 
         @Override
-        public <R> ImmutableQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        public <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
             return check(new Cons(sizeFront,front.flatMapI(fn),sizeBack,back.flatMapI(fn)));
 
         }
@@ -289,9 +300,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
             return front.fold(s->s.fold((h, t)->h), n->back.fold(s2->s2.fold( (h2, t2) ->h2), nil->{throw new RuntimeException("Unreachable!");}));
         }
         public BankersQueue<T> tail() {
-        /**    return front.fold(s->  check(new Cons(sizeFront - 1, s.tail(), sizeBack, back)) ,
-                    n->empty());
-           **/if(size()==1)
+           if(size()==1)
                 return empty();
             if(sizeFront==0){
                 return BankersQueue.ofAll(back.fold(s->s.fold((h, t)->t), n->n));
@@ -423,7 +432,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
 
         @Override
-        public <R> ImmutableQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        public <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
             return Instance;
         }
         @Override
@@ -497,4 +506,453 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
 
     }
 
+
+    default BankersQueue<T> takeWhile(Predicate<? super T> p) {
+        return (BankersQueue<T>)ImmutableQueue.super.takeWhile(p);
+    }
+    default BankersQueue<T> dropWhile(Predicate<? super T> p) {
+        return (BankersQueue<T>)ImmutableQueue.super.dropWhile(p);
+    }
+
+    default Tuple2<BankersQueue<T>,BankersQueue<T>> duplicate(){
+        return Tuple.tuple(this,this);
+    }
+    default <R1, R2> Tuple2<BankersQueue<R1>, BankersQueue<R2>> unzip(Function<? super T, Tuple2<? extends R1, ? extends R2>> fn) {
+        Tuple2<BankersQueue<R1>, BankersQueue<Tuple2<? extends R1, ? extends R2>>> x = map(fn).duplicate().map1(s -> s.map(Tuple2::_1));
+        return x.map2(s -> s.map(Tuple2::_2));
+    }
+
+
+
+    default <R> R foldLeft(R zero, BiFunction<R, ? super T, R> f){
+        R acc= zero;
+        for(T next : this){
+            acc= f.apply(acc,next);
+        }
+        return acc;
+    }
+    <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    @Override
+    default <U> BankersQueue<U> ofType(Class<? extends U> type) {
+        return (BankersQueue<U>)ImmutableQueue.super.ofType(type);
+    }
+
+    @Override
+    default BankersQueue<T> filterNot(Predicate<? super T> predicate) {
+        return (BankersQueue<T>)ImmutableQueue.super.filterNot(predicate);
+    }
+
+    @Override
+    default BankersQueue<T> notNull() {
+        return (BankersQueue<T>)ImmutableQueue.super.notNull();
+    }
+
+    @Override
+    default BankersQueue<T> peek(Consumer<? super T> c) {
+        return (BankersQueue<T>)ImmutableQueue.super.peek(c);
+    }
+
+    @Override
+    default <R> BankersQueue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
+        return (BankersQueue<R>)ImmutableQueue.super.trampoline(mapper);
+    }
+
+    @Override
+    default BankersQueue<T> removeAllS(Stream<? extends T> stream) {
+        return (BankersQueue<T>)ImmutableQueue.super.removeAllS(stream);
+    }
+
+    @Override
+    default BankersQueue<T> retainAllI(Iterable<? extends T> it) {
+        return (BankersQueue<T>)ImmutableQueue.super.retainAllI(it);
+    }
+
+    @Override
+    default BankersQueue<T> retainAllS(Stream<? extends T> stream) {
+        return (BankersQueue<T>)ImmutableQueue.super.retainAllS(stream);
+    }
+
+    @Override
+    default BankersQueue<T> retainAll(T... values) {
+        return (BankersQueue<T>)ImmutableQueue.super.retainAll(values);
+    }
+
+    @Override
+    default BankersQueue<ReactiveSeq<T>> permutations() {
+        return (BankersQueue<ReactiveSeq<T>>)ImmutableQueue.super.permutations();
+    }
+
+    @Override
+    default BankersQueue<ReactiveSeq<T>> combinations(int size) {
+        return (BankersQueue<ReactiveSeq<T>>)ImmutableQueue.super.combinations(size);
+    }
+
+    @Override
+    default BankersQueue<ReactiveSeq<T>> combinations() {
+        return (BankersQueue<ReactiveSeq<T>>)ImmutableQueue.super.combinations();
+    }
+
+    @Override
+    default BankersQueue<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
+        return (BankersQueue<T>)ImmutableQueue.super.zip(combiner,app);
+    }
+
+    @Override
+    default <R> BankersQueue<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipWith(fn);
+    }
+
+    @Override
+    default <R> BankersQueue<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipWithS(fn);
+    }
+
+    @Override
+    default <R> BankersQueue<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipWithP(fn);
+    }
+
+    @Override
+    default <T2, R> BankersQueue<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipP(publisher,fn);
+    }
+
+    @Override
+    default <U, R> BankersQueue<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipS(other,zipper);
+    }
+
+    @Override
+    default <U> BankersQueue<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+        return (BankersQueue)ImmutableQueue.super.zipP(other);
+    }
+
+    @Override
+    default <U> BankersQueue<Tuple2<T, U>> zip(Iterable<? extends U> other) {
+        return (BankersQueue)ImmutableQueue.super.zip(other);
+    }
+
+    @Override
+    default <S, U, R> BankersQueue<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+        return (BankersQueue<R>)ImmutableQueue.super.zip3(second,third,fn3);
+    }
+
+    @Override
+    default <T2, T3, T4, R> BankersQueue<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+        return (BankersQueue<R>)ImmutableQueue.super.zip4(second,third,fourth,fn);
+    }
+
+    @Override
+    default BankersQueue<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
+        return (BankersQueue<T>)ImmutableQueue.super.combine(predicate,op);
+    }
+
+    @Override
+    default BankersQueue<T> combine(Monoid<T> op, BiPredicate<? super T, ? super T> predicate) {
+        return (BankersQueue<T>)ImmutableQueue.super.combine(op,predicate);
+    }
+
+    @Override
+    default BankersQueue<T> cycle(long times) {
+        return (BankersQueue<T>)ImmutableQueue.super.cycle(times);
+    }
+
+    @Override
+    default BankersQueue<T> cycle(Monoid<T> m, long times) {
+        return (BankersQueue<T>)ImmutableQueue.super.cycle(m,times);
+    }
+
+    @Override
+    default BankersQueue<T> cycleWhile(Predicate<? super T> predicate) {
+        return (BankersQueue<T>) ImmutableQueue.super.cycleWhile(predicate);
+    }
+
+    @Override
+    default BankersQueue<T> cycleUntil(Predicate<? super T> predicate) {
+        return (BankersQueue<T>) ImmutableQueue.super.cycleUntil(predicate);
+    }
+
+    @Override
+    default <U, R> BankersQueue<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (BankersQueue<R>) ImmutableQueue.super.zip(other,zipper);
+    }
+
+    @Override
+    default <S, U> BankersQueue<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+        return (BankersQueue) ImmutableQueue.super.zip3(second,third);
+    }
+
+    @Override
+    default <T2, T3, T4> BankersQueue<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+        return (BankersQueue) ImmutableQueue.super.zip4(second,third,fourth);
+    }
+
+    @Override
+    default BankersQueue<Tuple2<T, Long>> zipWithIndex() {
+        return (BankersQueue<Tuple2<T,Long>>) ImmutableQueue.super.zipWithIndex();
+    }
+
+    @Override
+    default BankersQueue<VectorX<T>> sliding(int windowSize) {
+        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize);
+    }
+
+    @Override
+    default BankersQueue<VectorX<T>> sliding(int windowSize, int increment) {
+        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize,increment);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> BankersQueue<C> grouped(int size, Supplier<C> supplier) {
+        return (BankersQueue<C>) ImmutableQueue.super.grouped(size,supplier);
+    }
+
+    @Override
+    default BankersQueue<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedUntil(predicate);
+    }
+
+    @Override
+    default BankersQueue<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedStatefullyUntil(predicate);
+    }
+
+    @Override
+    default <U> BankersQueue<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+        return (BankersQueue) ImmutableQueue.super.zipS(other);
+    }
+
+    @Override
+    default BankersQueue<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedWhile(predicate);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> BankersQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (BankersQueue<C>) ImmutableQueue.super.groupedWhile(predicate,factory);
+    }
+
+    @Override
+    default <C extends Collection<? super T>> BankersQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+        return (BankersQueue<C>) ImmutableQueue.super.groupedUntil(predicate,factory);
+    }
+
+    @Override
+    default BankersQueue<ListX<T>> grouped(int groupSize) {
+        return (BankersQueue<ListX<T>>) ImmutableQueue.super.grouped(groupSize);
+    }
+
+    @Override
+    default BankersQueue<T> distinct() {
+        return (BankersQueue<T>) ImmutableQueue.super.distinct();
+    }
+
+    @Override
+    default BankersQueue<T> scanLeft(Monoid<T> monoid) {
+        return (BankersQueue<T>) ImmutableQueue.super.scanLeft(monoid);
+    }
+
+    @Override
+    default <U> BankersQueue<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function) {
+        return (BankersQueue<U>) ImmutableQueue.super.scanLeft(seed,function);
+    }
+
+    @Override
+    default BankersQueue<T> scanRight(Monoid<T> monoid) {
+        return (BankersQueue<T>) ImmutableQueue.super.scanRight(monoid);
+    }
+
+    @Override
+    default <U> BankersQueue<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner) {
+        return (BankersQueue<U>) ImmutableQueue.super.scanRight(identity,combiner);
+    }
+
+    @Override
+    default BankersQueue<T> sorted() {
+        return (BankersQueue<T>) ImmutableQueue.super.sorted();
+    }
+
+    @Override
+    default BankersQueue<T> sorted(Comparator<? super T> c) {
+        return (BankersQueue<T>) ImmutableQueue.super.sorted(c);
+    }
+
+
+
+    @Override
+    default BankersQueue<T> takeUntil(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.takeUntil(p);
+    }
+
+    @Override
+    default BankersQueue<T> dropUntil(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.dropUntil(p);
+    }
+
+    @Override
+    default BankersQueue<T> dropRight(int num) {
+        return (BankersQueue<T>) ImmutableQueue.super.dropRight(num);
+    }
+
+    @Override
+    default BankersQueue<T> takeRight(int num) {
+        return (BankersQueue<T>) ImmutableQueue.super.takeRight(num);
+    }
+
+    @Override
+    default BankersQueue<T> skip(long num) {
+        return (BankersQueue<T>) ImmutableQueue.super.skip(num);
+    }
+
+    @Override
+    default BankersQueue<T> skipWhile(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.skipWhile(p);
+    }
+
+    @Override
+    default BankersQueue<T> skipUntil(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.skipUntil(p);
+    }
+
+    @Override
+    default BankersQueue<T> limit(long num) {
+        return (BankersQueue<T>) ImmutableQueue.super.limit(num);
+    }
+
+    @Override
+    default BankersQueue<T> limitWhile(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.limitWhile(p);
+    }
+
+    @Override
+    default BankersQueue<T> limitUntil(Predicate<? super T> p) {
+        return (BankersQueue<T>) ImmutableQueue.super.limitUntil(p);
+    }
+
+    @Override
+    default BankersQueue<T> intersperse(T value) {
+        return (BankersQueue<T>) ImmutableQueue.super.intersperse(value);
+    }
+
+    @Override
+    default BankersQueue<T> shuffle() {
+        return (BankersQueue<T>) ImmutableQueue.super.shuffle();
+    }
+
+    @Override
+    default BankersQueue<T> skipLast(int num) {
+        return (BankersQueue<T>) ImmutableQueue.super.skipLast(num);
+    }
+
+    @Override
+    default BankersQueue<T> limitLast(int num) {
+        return (BankersQueue<T>) ImmutableQueue.super.limitLast(num);
+    }
+
+    @Override
+    default BankersQueue<T> shuffle(Random random) {
+        return (BankersQueue<T>) ImmutableQueue.super.shuffle(random);
+    }
+
+    @Override
+    default BankersQueue<T> slice(long from, long to) {
+        return (BankersQueue<T>) ImmutableQueue.super.slice(from,to);
+    }
+
+
+    @Override
+    default <R> BankersQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return flatMapI(mapper);
+    }
+
+    @Override
+    default BankersQueue<T> prependS(Stream<? extends T> stream) {
+        return (BankersQueue<T>) ImmutableQueue.super.prependS(stream);
+    }
+
+    @Override
+    default BankersQueue<T> append(T... values) {
+        return (BankersQueue<T>) ImmutableQueue.super.append(values);
+    }
+
+    @Override
+    default BankersQueue<T> prependAll(T... values) {
+        return (BankersQueue<T>) ImmutableQueue.super.prependAll(values);
+    }
+
+    @Override
+    default BankersQueue<T> deleteBetween(int start, int end) {
+        return (BankersQueue<T>) ImmutableQueue.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default BankersQueue<T> insertAtS(int pos, Stream<T> stream) {
+        return (BankersQueue<T>) ImmutableQueue.super.insertAtS(pos,stream);
+    }
+
+    @Override
+    default BankersQueue<T> recover(Function<? super Throwable, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    default <EX extends Throwable> BankersQueue<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
+        return this;
+    }
+
+    @Override
+    default BankersQueue<T> prepend(Iterable<? extends T> value) {
+        return (BankersQueue<T>) ImmutableQueue.super.prepend(value);
+    }
+
+    @Override
+    default <U extends Comparable<? super U>> BankersQueue<T> sorted(Function<? super T, ? extends U> function) {
+        return (BankersQueue<T>) ImmutableQueue.super.sorted(function);
+    }
+    default String mkString(){
+        return stream().join(",","[","]");
+    }
+
+    @Override
+    default <R> BankersQueue<R> retry(Function<? super T, ? extends R> fn) {
+        return (BankersQueue<R>) ImmutableQueue.super.retry(fn);
+    }
+
+    @Override
+    default <R> BankersQueue<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (BankersQueue<R>) ImmutableQueue.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+
+    @Override
+    default BankersQueue<T> removeAt(long pos) {
+        return (BankersQueue<T>) ImmutableQueue.super.removeAt(pos);
+    }
+
+    @Override
+    default BankersQueue<T> removeAt(int pos) {
+        return (BankersQueue<T>) ImmutableQueue.super.removeAt(pos);
+    }
+
+
+    @Override
+    default BankersQueue<T> updateAt(int pos, T value) {
+        return (BankersQueue<T>) ImmutableQueue.super.updateAt(pos,value);
+    }
+
+    @Override
+    default BankersQueue<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (BankersQueue<T>) ImmutableQueue.super.insertAt(pos,values);
+    }
+
+    @Override
+    default BankersQueue<T> insertAt(int i, T value) {
+        return (BankersQueue<T>) ImmutableQueue.super.insertAt(i,value);
+    }
+
+    @Override
+    default BankersQueue<T> insertAt(int pos, T... values) {
+        return (BankersQueue<T>) ImmutableQueue.super.insertAt(pos,values);
+    }
 }

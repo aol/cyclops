@@ -32,6 +32,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -458,6 +459,36 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return appendAll(LazySeq.of(append));
 
     }
+    @Override
+    default Iterator<T> iterator(){
+        return new Iterator<T>() {
+            LazySeq<T> current= LazySeq.this;
+            @Override
+            public boolean hasNext() {
+                return current.fold(c->true, n->false);
+            }
+
+            @Override
+            public T next() {
+                return current.visit(c->{
+                    current = c.tail.get();
+                    return c.head;
+                },n->null);
+            }
+        };
+    }
+
+    @Override
+    default <R> LazySeq<R> retry(Function<? super T, ? extends R> fn) {
+        return (LazySeq<R>) ImmutableList.super.retry(fn);
+    }
+
+    @Override
+    default <R> LazySeq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (LazySeq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
 
 
     default LazySeq<T> appendAll(Iterable<? extends T> it) {

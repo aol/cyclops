@@ -26,6 +26,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -56,7 +57,20 @@ public class Vector<T> implements ImmutableList<T>,
         return fromIterable(it);
     }
 
+    @Override
+    public Iterator<T> iterator(){
+        return stream().iterator();
+    }
 
+    @Override
+    public <R> Vector<R> retry(Function<? super T, ? extends R> fn) {
+        return (Vector<R>) ImmutableList.super.retry(fn);
+    }
+
+    @Override
+    public <R> Vector<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (Vector<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
+    }
     @Override
     public Vector<T> removeValue(T e) {
         return removeFirst(i-> Objects.equals(i,e));

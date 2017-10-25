@@ -28,6 +28,7 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -125,6 +126,10 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         }
         return new IntMap<T>(tree,values.length);
     }
+    @Override
+    public Iterator<T> iterator(){
+        return stream().iterator();
+    }
     public IntMap<T> plus(T value){
         return new IntMap<>(intMap.put(size,size,value),size+1);
     }
@@ -213,6 +218,15 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return intMap.stream();
     }
 
+    @Override
+    public <R> IntMap<R> retry(Function<? super T, ? extends R> fn) {
+        return (IntMap<R>) ImmutableList.super.retry(fn);
+    }
+
+    @Override
+    public <R> IntMap<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (IntMap<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
+    }
     @Override
     public IntMap<T> filter(Predicate<? super T> fn) {
         return unitStream(stream().filter(fn));
