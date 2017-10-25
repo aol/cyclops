@@ -1,28 +1,39 @@
 package cyclops.async;
 
+import com.aol.cyclops2.data.collections.extensions.CollectionX;
 import com.aol.cyclops2.hkt.Higher;
+
 import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import cyclops.control.Trampoline;
-import cyclops.typeclasses.*;
-import com.aol.cyclops2.types.*;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.reactive.Completable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
+import cyclops.control.Trampoline;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.future;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.FutureT;
+import cyclops.typeclasses.*;
+import com.aol.cyclops2.types.*;
+
+import com.aol.cyclops2.react.Status;
+import com.aol.cyclops2.react.collectors.lazy.Blocker;
+import com.aol.cyclops2.react.threads.SequentialElasticPools;
+import com.aol.cyclops2.types.MonadicValue;
+import com.aol.cyclops2.types.Value;
+import com.aol.cyclops2.types.Zippable;
+
 import cyclops.companion.Monoids;
 import com.aol.cyclops2.util.box.Mutable;
 import cyclops.control.*;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.function.Monoid;
-import cyclops.function.Reducer;
-import cyclops.monads.Witness.future;
-import cyclops.monads.transformers.FutureT;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+
+import com.aol.cyclops2.util.ExceptionSoftener;
+
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.react.Status;
-import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import cyclops.monads.Witness;
-import cyclops.monads.WitnessType;
+import cyclops.companion.CompletableFutures;
+import cyclops.companion.Monoids;
+
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
 import cyclops.companion.CompletableFutures;
 import com.aol.cyclops2.util.ExceptionSoftener;
@@ -30,12 +41,34 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
+
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
@@ -43,6 +76,7 @@ import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -52,9 +86,12 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static cyclops.monads.Witness.future.*;
+
+
 /**
  * A Wrapper around CompletableFuture that implements cyclops2-react interfaces and provides a more standard api
- * 
+ *
  * e.g.
  *   transform instead of thenApply
  *   flatMap instead of thenCompose
@@ -577,7 +614,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future with a Stream
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromFuture), Witness.future.INSTANCE)
+        return AnyM.sequence(fts.map(AnyM::fromFuture), INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::future);
     }
@@ -1684,7 +1721,7 @@ public class Future<T> implements To<Future<T>>,
             return new Traverse<future>() {
 
                 @Override
-                public <T> Higher<Witness.future, T> unit(T value) {
+                public <T> Higher<future, T> unit(T value) {
                     return Instances.<T>unit().unit(value);
                 }
 

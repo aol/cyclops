@@ -1,15 +1,13 @@
 package com.aol.cyclops2.react.collectors.lazy;
 
+import com.aol.cyclops2.internal.react.async.future.FastFuture;
+import com.aol.cyclops2.types.futurestream.BlockingStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.aol.cyclops2.internal.react.async.future.FastFuture;
-import com.aol.cyclops2.types.futurestream.BlockingStream;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Builder;
@@ -18,7 +16,7 @@ import lombok.experimental.Wither;
 /**
  * This class allows a Batch of completable futures to be processed before collecting their results, to increase
  * parallelism.
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Result type
@@ -28,7 +26,6 @@ import lombok.experimental.Wither;
 @Builder
 public class BatchingCollector<T> implements LazyResultConsumer<T> {
 
-    @Getter
     private final Collection<FastFuture<T>> results;
     private final List<FastFuture<T>> active = new ArrayList<>();
     @Getter
@@ -95,11 +92,10 @@ public class BatchingCollector<T> implements LazyResultConsumer<T> {
      */
     @Override
     public Collection<FastFuture<T>> getResults() {
-
         return results;
     }
 
-    /* 
+    /*
      *	@return all results (including active)
      * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getAllResults()
      */

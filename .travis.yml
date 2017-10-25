@@ -1,5 +1,5 @@
 language: java
-install: gradle clean build jacoco
+install: travis_wait ./gradlew clean build jacoco
 jdk:
   - oraclejdk8
 before_install:
