@@ -293,9 +293,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
 
-
-
-
     @Override
     public NonEmptyList<Tuple2<T, Long>> zipWithIndex() {
         return (NonEmptyList<Tuple2<T,Long>>) ImmutableList.Some.super.zipWithIndex();
