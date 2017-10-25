@@ -33,16 +33,16 @@ import java.util.function.*;
 
 /**
  * A lazyRight biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
- * 
- * 
+ *
+ *
  * Can be one of 4 types
  * Left1
  * Left2
  * Left3
  * Right
- * 
- * 
- * 
+ *
+ *
+ *
  * @author johnmcclean
  *
  * @param <LT1> First type (Left type)
@@ -219,12 +219,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
 
         /**
-     * Static method useful as a method reference for fluent consumption of any value type stored in this Either 
+     * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *   myEither.to(Either4::consumeAny)
                  .accept(System.out::println);
      * }
@@ -287,7 +287,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      *
      *
      *
-     * @param Either3 Either3 to sequence
+     * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
     public static <LT1,LT2,LT3, PT> LazyEither4<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<PT>> sequence(final CollectionX<LazyEither4<LT1, LT2, LT3, PT>> xors) {
@@ -442,7 +442,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /**
      * Construct a Either4#Second from an Eval
      *
-     * @param second Eval to construct Either4#middle from
+     * @param middle Eval to construct Either4#middle from
      * @return Either4 second instance
      */
     public static <LT, M1, B, RT> LazyEither4<LT, M1, B, RT> left2Eval(final Eval<M1> middle) {
@@ -452,7 +452,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /**
      * Construct a Either4#Third from an Eval
      *
-     * @param third Eval to construct Either4#middle from
+     * @param middle Eval to construct Either4#middle from
      * @return Either4 third instance
      */
     public static <LT, M1, B, RT> LazyEither4<LT, M1, B, RT> left3Eval(final Eval<B> middle) {
@@ -687,17 +687,6 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return (LazyEither4<LT1, LT2, LT3, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
-     * java.lang.Class)
-     */
-    @Override
-    default <U1, U2> LazyEither4<LT1, LT2,U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-
-        return (LazyEither4<LT1, LT2,U1, U2>) BiTransformable.super.bicast(type1, type2);
-    }
 
     /*
      * (non-Javadoc)
@@ -1489,7 +1478,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public <R> R visit(final Function<? super ST, ? extends R> secondary,
                 final Function<? super M, ? extends R> mid1,
-                final Function<? super M2, ? extends R> mid2, 
+                final Function<? super M2, ? extends R> mid2,
                 final Function<? super PT, ? extends R> primary) {
             return mid2.apply(value.get());
         }
@@ -1526,7 +1515,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         public LazyEither4<ST, M, PT,M2> swap3() {
             return new Right<>(
                     value);
-            
+
         }
         @Override
         public LazyEither4<ST, PT,M2, M> swap2() {
@@ -1579,7 +1568,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
             result = prime * result + ((value == null) ? 0 : value.hashCode());
             return result;
         }
-        
+
 
     }
 

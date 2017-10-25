@@ -22,28 +22,28 @@ public class IorPrimaryTest {
 
 	Ior<FileNotFoundException,Integer> success;
 	final Integer value = 10;
-	
-	
+
+
 	public Ior<FileNotFoundException,String> load(String filename){
 		return Ior.primary("test-data");
 	}
-	
+
 	public void process(){
-		
+
 		Ior<FileNotFoundException,String> attempt = load("data");
-		
+
 		attempt.map(String::toUpperCase)
 				.peek(System.out::println);
-	
+
 	}
-	
+
 	@Before
 	public void setup(){
 		success = Ior.primary(10);
 	}
 	@Test
     public void bimap(){
-       
+
         Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
         assertThat(mapped.get(),equalTo(Option.some(11)));
         assertTrue(mapped.isPrimary());
@@ -58,14 +58,6 @@ public class IorPrimaryTest {
         assertThat(capInt,equalTo(10));
         assertThat(capT,nullValue());
     }
-    @Test
-    public void bicast(){
-        Ior<Throwable,Number> mapped = success.bicast(Throwable.class, Number.class);
-        assertThat(mapped.get(),equalTo(Option.some(10)));
-        assertTrue(mapped.isPrimary());
-    }
-
-
 
 	@Test
 	public void testGet() {
@@ -96,7 +88,7 @@ public class IorPrimaryTest {
 		assertThat(success.filter(x->x>15),equalTo(Option.none()));
 	}
 
-	
+
 
 	@Test
 	public void testOrElse() {
@@ -135,6 +127,6 @@ public class IorPrimaryTest {
 		assertThat(valueCaptured,is(10));
 	}
 	Exception errorCaptured;
-	
+
 
 }

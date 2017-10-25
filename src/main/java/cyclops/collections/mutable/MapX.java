@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 /**
  * An eXtended Map type, that offers additional eagerly executed functional style operators such as bimap, filter and more
- * 
+ *
  * @author johnmcclean
  *
  * @param <K> Key type
@@ -39,7 +39,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
 
     /**
-     * 
+     *
      * @return A Collector that generates a mutable Map from a Collection of Tuple2
      */
     static <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> defaultCollector() {
@@ -86,7 +86,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Wrap a Map in a MapX
-     * 
+     *
      * @param map to wrap
      * @return MapX wrapping the supplied Map
      */
@@ -96,7 +96,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Wrap a transform in a MapX, also supplying a Collector for use in operations
-     * 
+     *
      * @param collector To generate new MapX's from
      * @param map to wrap
      * @return MapX wrapping the supplied Map
@@ -117,7 +117,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Construct a new MapX with the same collector from the supplied Stream
-     * 
+     *
      * @param stream ot Tuples to convert into a MapX
      * @return MapX
      */
@@ -357,14 +357,6 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return (MapX<K, V>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class, java.lang.Class)
-     */
-    @Override
-    default <U1, U2> MapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-
-        return (MapX<U1, U2>) BiTransformable.super.bicast(type1, type2);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
@@ -417,7 +409,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a ListX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return ListX of transformed values
      */
@@ -428,7 +420,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a SetX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return SetX of transformed values
      */
@@ -439,7 +431,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a SortedSetX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return SortedSetX of transformed values
      */
@@ -450,7 +442,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a QueueX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return QueueX of transformed values
      */
@@ -461,7 +453,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a DequeX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return DequeX of transformed values
      */

@@ -583,11 +583,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      *
      *
-     * @param iors Eithers to sequence
+     * @param eithers Eithers to sequence
      * @return Either Sequenced
      */
-    public static <ST, PT> Either<ListX<ST>, ListX<PT>> sequenceRight(final CollectionX<Either<ST, PT>> xors) {
-        return AnyM.sequence(xors.stream().filter(Either::isRight).map(AnyM::fromLazyEither).toListX(), either.INSTANCE)
+    public static <ST, PT> Either<ListX<ST>, ListX<PT>> sequenceRight(final CollectionX<Either<ST, PT>> eithers) {
+        return AnyM.sequence(eithers.stream().filter(Either::isRight).map(AnyM::fromLazyEither).toListX(), either.INSTANCE)
                     .to(Witness::either);
     }
     /**
@@ -602,7 +602,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         //Either.lazyRight(PersistentSetX.of(10,1))));
      * }
      * </pre>
-     * @param Eithers Collection of Iors to accumulate lazyRight values
+     * @param xors Collection of Iors to accumulate lazyRight values
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate lazyRight operation
      */
@@ -720,15 +720,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * @param secondary Function to execute if this is a Left Either
      * @param primary Function to execute if this is a Right Ior
-     * @param both Function to execute if this Ior contains both types
      * @return Result of executing the appropriate function
      */
     <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary);
 
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
-     */
     @Override
     default <R1, R2> Either<R1, R2> bimap(Function<? super ST, ? extends R1> secondary, Function<? super PT, ? extends R2> primary) {
         if (isLeft())
@@ -746,14 +742,6 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         return (Either<ST, PT>)BiTransformable.super.bipeek(c1, c2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class, java.lang.Class)
-     */
-    @Override
-    default <U1, U2> Either<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
-
-        return (Either<U1, U2>)BiTransformable.super.bicast(type1, type2);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
@@ -779,13 +767,10 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     ST leftOrElse(ST alt);
 
     /**
-     * @return A Stream containing the lazyLeft value if present, otherwise an zero Stream
+     * @return A Stream containing the Either Left value if present, otherwise an zero Stream
      */
     ReactiveSeq<ST> leftToStream();
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
-     */
 
     <RT1> Either<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST,? extends RT1>> mapper);
     /**
@@ -821,9 +806,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     default <T2, R> Either<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
-    /**
-     * @return An Either with the lazyLeft type converted to a persistent list, for use with accumulating app function  {@link Either#combine(Either,BiFunction)}
-     */
+
     default Either<LinkedListX<ST>, PT> list() {
         return mapLeft(LinkedListX::of);
     }

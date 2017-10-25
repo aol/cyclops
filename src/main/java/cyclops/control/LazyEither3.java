@@ -34,11 +34,11 @@ import java.util.function.*;
 
 /**
  * A lazyRight biased Lazy Either3 type. transform / flatMap operators are tail-call optimized
- * 
+ *
  * Can be one of 3 types
- * 
- * 
- * 
+ *
+ *
+ *
  * @author johnmcclean
  *
  * @param <LT1> Left1 type
@@ -242,7 +242,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
      *
      *
      *
-     * @param Either3 Either3 to sequence
+     * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
     public static <LT1,LT2, PT> LazyEither3<ListX<LT1>,ListX<LT2>,ListX<PT>> sequence(final CollectionX<LazyEither3<LT1, LT2, PT>> xors) {
@@ -407,7 +407,7 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
     /**
      * Construct a Either3#Left2
      *
-     * @param left2 Value to store
+     * @param middle Value to store
      * @return Left2 instance
      */
     public static <LT, B, RT> LazyEither3<LT, B, RT> left2(final B middle) {
@@ -637,18 +637,6 @@ public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
     default LazyEither3<LT1, LT2, RT> bipeek(final Consumer<? super LT2> c1, final Consumer<? super RT> c2) {
 
         return (LazyEither3<LT1, LT2, RT>) BiTransformable.super.bipeek(c1, c2);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
-     * java.lang.Class)
-     */
-    @Override
-    default <U1, U2> LazyEither3<LT1, U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-
-        return (LazyEither3<LT1, U1, U2>) BiTransformable.super.bicast(type1, type2);
     }
 
     /*

@@ -37,14 +37,14 @@ import java.util.function.*;
 
 /**
  * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
- * 
+ *
  * An Either or Union type, but lazyRight biased. Primary and Secondary are used instead of Right & Left.
  * 'Right' (or lazyRight type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
- *  
- *  
+ *
+ *
  *  For eXclusive Ors @see Xor
- * 
+ *
  * @author johnmcclean
  *
  * @param <ST> Secondary type
@@ -170,7 +170,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * </pre>
      *
      *
-     * @param value To construct an Ior from
+     * @param primary To construct an Ior from
      * @return Primary type instanceof Ior
      */
     public static <ST, PT> Ior<ST, PT> primary(final PT primary) {
@@ -192,7 +192,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * </pre>
      *
      *
-     * @param value to wrap
+     * @param secondary to wrap
      * @return Secondary instance of Ior
      */
     public static <ST, PT> Ior<ST, PT> secondary(final ST secondary) {
@@ -717,14 +717,6 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         return (Ior<ST, PT>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bicast(java.lang.Class, java.lang.Class)
-     */
-    @Override
-    default <U1, U2> Ior<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-
-        return (Ior<U1, U2>) BiTransformable.super.bicast(type1, type2);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)

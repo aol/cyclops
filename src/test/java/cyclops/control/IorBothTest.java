@@ -23,28 +23,28 @@ public class IorBothTest {
 
 	Ior<FileNotFoundException,Integer> success;
 	final Integer value = 10;
-	
-	
+
+
 	public Ior<FileNotFoundException,String> load(String filename){
 		return Ior.both(new FileNotFoundException(),"test-data");
 	}
-	
+
 	public void process(){
-		
+
 		Ior<FileNotFoundException,String> attempt = load("data");
-		
+
 		attempt.map(String::toUpperCase)
 				.peek(System.out::println);
-	
+
 	}
-	
+
 	@Before
 	public void setup(){
 		success = Ior.both(new FileNotFoundException(),10);
 	}
 	@Test
 	public void bimap(){
-	   
+
 	    Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
 	    assertThat(mapped.orElse(-10),equalTo(11));
 	    assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
@@ -59,13 +59,6 @@ public class IorBothTest {
         assertThat(capInt,equalTo(10));
         assertThat(capT,instanceOf(FileNotFoundException.class));
     }
-	@Test
-    public void bicast(){
-        Ior<Throwable,Number> mapped = success.bicast(Throwable.class, Number.class);
-        assertThat(mapped.orElse(-10),equalTo(10));
-        assertThat(mapped.swap().orElse(null),instanceOf(Throwable.class));
-    }
-
 
 	@Test
 	public void testGet() {
@@ -96,7 +89,7 @@ public class IorBothTest {
 		assertThat(success.filter(x->x>15),equalTo(Option.none()));
 	}
 
-	
+
 
 	@Test
 	public void testOrElse() {
@@ -105,7 +98,7 @@ public class IorBothTest {
 
 	@Test
 	public void testOrElseGet() {
-	   
+
 		assertThat(success.orElseGet(()->30),equalTo(value));
 	}
 
@@ -137,6 +130,6 @@ public class IorBothTest {
 		assertThat(valueCaptured,is(10));
 	}
 	Exception errorCaptured;
-	
+
 
 }

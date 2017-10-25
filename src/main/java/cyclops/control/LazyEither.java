@@ -31,11 +31,11 @@ import java.util.function.*;
 /**
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
  the monadic chain of computations will only be executed once data arrives).
- * 
+ *
  * 'Right' (or lazyRight type) biased disjunct union.
- 
+
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
- *  
+ *
  *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
  *
@@ -860,17 +860,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return (LazyEither<LT, RT>) Either.super.bipeek(c1, c2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class,
-     * java.lang.Class)
-     */
-    @Override
-    default <U1, U2> LazyEither<U1, U2> bicast(Class<U1> type1, Class<U2> type2) {
 
-        return (LazyEither<U1, U2>) Either.super.bicast(type1, type2);
-    }
 
     /*
      * (non-Javadoc)
@@ -1549,8 +1539,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
                 return true;
             if (obj == null)
                 return false;
-            
-           
+
+
             if(obj instanceof Lazy){
                 return ((Lazy)obj).equals(this);
             }
@@ -1672,7 +1662,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
                 final Function<? super ST, ? extends Either<LT1, PT>> mapper) {
             Eval<? extends Either<LT1,? extends PT>> ret = value.map(mapper);
             Eval<? extends LazyEither<? extends LT1,  ? extends PT>> et = ret.map(LazyEither::fromXor);
-            
+
            final Eval<LazyEither<LT1, PT>> e3 =  (Eval<LazyEither<LT1,  PT>>)et;
            return new Lazy<>(
                              e3);

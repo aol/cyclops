@@ -29,7 +29,7 @@ public class IorSecondaryTest {
 	}
 	@Test
     public void bimap(){
-       
+
         Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
         assertTrue(mapped.isSecondary());
         assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
@@ -44,21 +44,12 @@ public class IorSecondaryTest {
         assertThat(capInt,equalTo(0));
         assertThat(capT,instanceOf(FileNotFoundException.class));
     }
-    @Test
-    public void bicast(){
-        Ior<Throwable,Number> mapped = failure.bicast(Throwable.class, Number.class);
-        assertTrue(mapped.isSecondary());
-        assertThat(mapped.swap().orElse(null),instanceOf(Throwable.class));
-    }
-
 
 
 	@Test
 	public void testOf() {
 		assertNotNull(failure);
 	}
-
-
 
 	@Test
 	public void testMap() {
@@ -75,9 +66,7 @@ public class IorSecondaryTest {
 		assertThat(failure.filter(x->x==10),equalTo(Option.none()));
 	}
 
-	
-
-	
+  
 	@Test
 	public void testOrElse() {
 		assertThat(failure.orElse(10),equalTo(10));
@@ -112,12 +101,12 @@ public class IorSecondaryTest {
 	Integer value = null;
 	@Test
 	public void testForeach() {
-		
+
 		failure.forEach(v -> value = v);
 		assertThat(value,is(nullValue()));
 	}
 
-	
+
 	Object errorCaptured;
 	@Test
 	public void testForeachFailed() {
@@ -126,6 +115,6 @@ public class IorSecondaryTest {
 		assertThat(error,equalTo(errorCaptured));
 	}
 
-	
+
 
 }

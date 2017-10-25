@@ -133,14 +133,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
         return (PersistentMapX<K, V>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bicast(java.lang.Class, java.lang.Class)
-     */
-    @Override
-    default <U1, U2> PersistentMapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
 
-        return (PersistentMapX<U1, U2>) BiTransformable.super.bicast(type1, type2);
-    }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
@@ -293,7 +286,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
     /**
      * Convert this MapX to a ListX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return ListX of transformed values
      */
@@ -304,7 +297,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
     /**
      * Convert this MapX to a PersistentSetX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return PersistentSetX of transformed values
      */
@@ -315,7 +308,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
     /**
      * Convert this MapX to a POrderdSetX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return OrderedSetX of transformed values
      */
@@ -325,7 +318,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
     /**
      * Convert this MapX to a QueueX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return QueueX of transformed values
      */
@@ -335,7 +328,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
     /**
      * Convert this MapX to a LinkedListX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return LinkedListX of transformed values
      */
@@ -345,7 +338,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
     /**
      * Convert this MapX to a VectorX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return VectorX of transformed values
      */
@@ -354,7 +347,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
     /**
      * Convert this MapX to a BagX via the provided transformation function
-     * 
+     *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return BagX of transformed values
      */
