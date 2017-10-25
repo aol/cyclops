@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.monads;
 
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 
 import lombok.AccessLevel;

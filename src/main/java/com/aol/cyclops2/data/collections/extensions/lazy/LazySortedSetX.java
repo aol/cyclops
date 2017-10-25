@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.mutable.SortedSetX;
+import cyclops.collections.mutable.SortedSetX;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;

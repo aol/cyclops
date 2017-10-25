@@ -1,14 +1,14 @@
 package cyclops.typeclasses.functions;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
-import cyclops.control.anym.Witness.list;
-import cyclops.control.anym.Witness.maybe;
-import cyclops.control.anym.Witness.optional;
-import cyclops.control.anym.Witness.reactiveSeq;
+import cyclops.monads.Witness.list;
+import cyclops.monads.Witness.maybe;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.NaturalTransformation;

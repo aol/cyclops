@@ -1,6 +1,6 @@
 package com.aol.cyclops2.types.foldable;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

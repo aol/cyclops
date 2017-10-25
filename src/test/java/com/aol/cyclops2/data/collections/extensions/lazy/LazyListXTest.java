@@ -1,6 +1,6 @@
 package com.aol.cyclops2.data.collections.extensions.lazy;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
 import java.util.Arrays;

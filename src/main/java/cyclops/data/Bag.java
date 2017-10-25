@@ -2,8 +2,7 @@ package cyclops.data;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.persistent.PersistentBag;
-import cyclops.control.anym.DataWitness;
-import cyclops.control.anym.DataWitness.bag;
+import cyclops.monads.DataWitness.bag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

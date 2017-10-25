@@ -9,18 +9,17 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import cyclops.control.Option;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentBiFunction;
 import cyclops.function.FluentFunctions.FluentFunction;

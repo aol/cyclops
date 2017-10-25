@@ -10,7 +10,7 @@ import cyclops.data.Comparators;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.control.anym.Witness.tuple3;
+import cyclops.monads.Witness.tuple3;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;

@@ -2,10 +2,8 @@ package cyclops.data;
 
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
 import cyclops.control.Option;
-import cyclops.control.Try;
-import cyclops.control.anym.DataWitness.lazyString;
+import cyclops.monads.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

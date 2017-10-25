@@ -1,13 +1,13 @@
 package com.aol.cyclops2.sum.types;
 
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.LazyEither.CompletableEither;

@@ -22,7 +22,7 @@ import java.util.stream.IntStream;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.util.SimpleTimer;
 
 import lombok.Value;

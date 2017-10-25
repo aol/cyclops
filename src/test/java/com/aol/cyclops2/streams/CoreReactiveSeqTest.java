@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import org.hamcrest.CoreMatchers;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

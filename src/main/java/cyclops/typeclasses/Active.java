@@ -5,7 +5,7 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.Filters;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

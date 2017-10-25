@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 import cyclops.async.LazyReact;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.async.future.FastFuture;
 import com.aol.cyclops2.internal.react.async.future.PipelineBuilder;
 import com.aol.cyclops2.internal.react.exceptions.FilteredExecutionPathException;

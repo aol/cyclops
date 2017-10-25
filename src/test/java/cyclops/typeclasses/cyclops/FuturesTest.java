@@ -7,7 +7,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.control.anym.Witness.future;
+import cyclops.monads.Witness.future;
 import org.junit.Test;
 
 import static cyclops.function.Lambda.l1;

@@ -5,7 +5,7 @@ import cyclops.async.LazyReact;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import org.junit.Before;
 import org.junit.Test;

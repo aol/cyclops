@@ -1,9 +1,9 @@
 package cyclops.control;
 
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
 import cyclops.async.Future;

@@ -2,7 +2,7 @@ package cyclops.control;
 
 import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -10,7 +10,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;

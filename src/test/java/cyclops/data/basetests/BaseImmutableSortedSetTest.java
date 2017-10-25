@@ -1,7 +1,6 @@
 package cyclops.data.basetests;
 
-import cyclops.collectionx.AbstractIterableXTest;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;

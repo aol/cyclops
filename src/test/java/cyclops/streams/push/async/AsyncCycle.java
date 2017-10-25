@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;

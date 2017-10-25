@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Try;
 
 

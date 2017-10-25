@@ -11,9 +11,9 @@ import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 import cyclops.function.Function4;
 import cyclops.function.Function3;
 

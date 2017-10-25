@@ -2,7 +2,7 @@ package com.aol.cyclops2.internal.monads;
 
 import com.aol.cyclops2.types.anyM.AnyMValue2;
 import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 
 import java.util.Objects;
 

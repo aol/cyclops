@@ -3,7 +3,7 @@ package com.aol.cyclops2.internal.stream.spliterators.push.spliterator;
 import com.aol.cyclops2.internal.stream.ReactiveStreamX;
 import com.aol.cyclops2.internal.stream.spliterators.push.FilterOperator;
 import com.aol.cyclops2.internal.stream.spliterators.push.SpliteratorToOperator;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Before;

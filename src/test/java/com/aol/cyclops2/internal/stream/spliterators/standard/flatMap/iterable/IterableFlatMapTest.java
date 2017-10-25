@@ -2,7 +2,7 @@ package com.aol.cyclops2.internal.stream.spliterators.standard.flatMap.iterable;
 
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

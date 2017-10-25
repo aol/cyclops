@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
 

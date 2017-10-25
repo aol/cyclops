@@ -2,9 +2,9 @@ package com.aol.cyclops2.comprehensions;
 
 import cyclops.control.Eval;
 import cyclops.async.Future;
-import cyclops.control.anym.transformers.FutureT;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.control.anym.Witness;
+import cyclops.monads.transformers.FutureT;
+import cyclops.collections.mutable.ListX;
+import cyclops.monads.Witness;
 import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
 import org.junit.Test;
 

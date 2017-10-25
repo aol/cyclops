@@ -5,12 +5,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.control.anym.Witness.vectorX;
+import cyclops.monads.Witness.vectorX;
 import org.junit.Test;
 
 

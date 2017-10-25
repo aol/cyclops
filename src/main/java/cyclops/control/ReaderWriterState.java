@@ -2,8 +2,8 @@ package cyclops.control;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher4;
-import cyclops.control.anym.Witness.rws;
-import cyclops.control.anym.Witness.supplier;
+import cyclops.monads.Witness.rws;
+import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -17,7 +17,6 @@ import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple3;
 
-import java.io.Serializable;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 

@@ -7,10 +7,8 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import cyclops.collectionx.immutable.BagX;
-import cyclops.data.Bag;
+import cyclops.collections.immutable.BagX;
 import cyclops.data.Seq;
-import cyclops.function.Reducer;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;

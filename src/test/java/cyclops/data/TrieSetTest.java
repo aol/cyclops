@@ -1,7 +1,7 @@
 package cyclops.data;
 
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;

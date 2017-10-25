@@ -6,7 +6,7 @@ import java.util.function.Function;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.function.*;
-import cyclops.control.anym.Witness.reader;
+import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

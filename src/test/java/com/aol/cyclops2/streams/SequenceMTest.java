@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.control.Maybe;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 public class SequenceMTest {
 	

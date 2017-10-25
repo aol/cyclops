@@ -2,10 +2,9 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.collections.mutable.SetX;
 import cyclops.reactive.ReactiveSeq;
 
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;

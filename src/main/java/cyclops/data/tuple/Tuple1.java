@@ -14,7 +14,7 @@ import cyclops.control.Either;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import cyclops.control.anym.Witness.tuple1;
+import cyclops.monads.Witness.tuple1;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;

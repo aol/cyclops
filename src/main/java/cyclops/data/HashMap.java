@@ -2,9 +2,9 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness.hashMap;
+import cyclops.monads.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

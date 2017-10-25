@@ -3,9 +3,9 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness.trieMap;
+import cyclops.monads.DataWitness.trieMap;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

@@ -3,8 +3,8 @@ package cyclops.streams.push;
 
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
-import cyclops.collectionx.immutable.*;
-import cyclops.collectionx.mutable.*;
+import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;

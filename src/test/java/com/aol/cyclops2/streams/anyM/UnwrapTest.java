@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.monads.AnyM;
+import cyclops.collections.mutable.ListX;
 
 public class UnwrapTest {
 

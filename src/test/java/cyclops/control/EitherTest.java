@@ -1,10 +1,9 @@
 package cyclops.control;
 
-import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.control.Either;
+import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

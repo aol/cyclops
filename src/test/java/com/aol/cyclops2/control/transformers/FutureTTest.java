@@ -14,16 +14,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import cyclops.control.anym.Witness.optional;
-import cyclops.control.anym.transformers.FutureT;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.Witness;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +31,7 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.mixins.Printable;
 

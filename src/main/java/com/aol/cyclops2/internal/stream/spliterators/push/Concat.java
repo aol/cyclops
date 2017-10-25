@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import org.reactivestreams.Subscription;
 
 import java.util.concurrent.atomic.AtomicInteger;

@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.stream.spliterators.push;
 
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.data.Vector;
 
 import java.util.Collection;

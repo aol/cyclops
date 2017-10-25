@@ -7,7 +7,7 @@ import cyclops.async.SimpleReact;
 import cyclops.companion.Streams;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.exceptions.FilteredExecutionPathException;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.react.SimpleReactFailedStageException;

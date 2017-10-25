@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.control.anym.AnyM.fromCompletableFuture;
-import static cyclops.control.anym.Witness.completableFuture;
+import static cyclops.monads.AnyM.fromCompletableFuture;
+import static cyclops.monads.Witness.completableFuture;
 import static cyclops.companion.CompletableFutures.combine;
 
 import java.util.Iterator;
@@ -10,10 +10,10 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import cyclops.control.Option;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.async.Future;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.companion.CompletableFutures;

@@ -2,7 +2,7 @@ package com.aol.cyclops2.control.transformers.seq.convertable;
 
 import com.aol.cyclops2.types.AbstractConvertableSequenceTest;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 
 

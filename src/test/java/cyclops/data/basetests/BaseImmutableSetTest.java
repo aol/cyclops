@@ -1,10 +1,10 @@
 package cyclops.data.basetests;
 
 import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.collectionx.AbstractIterableXTest;
-import cyclops.collectionx.immutable.VectorX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.collections.AbstractIterableXTest;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 import static cyclops.data.tuple.Tuple.tuple;

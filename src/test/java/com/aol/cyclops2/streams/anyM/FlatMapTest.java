@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 public class FlatMapTest {
 
 

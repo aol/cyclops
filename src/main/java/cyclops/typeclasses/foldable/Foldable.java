@@ -1,6 +1,6 @@
 package cyclops.typeclasses.foldable;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import com.aol.cyclops2.hkt.Higher;

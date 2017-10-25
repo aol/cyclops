@@ -1,7 +1,7 @@
 package cyclops.typeclasses;
 
 import cyclops.async.Future;
-import cyclops.control.anym.Witness.future;
+import cyclops.monads.Witness.future;
 import cyclops.typeclasses.monad.Monad;
 import org.junit.Test;
 

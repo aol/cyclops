@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 
 import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
 import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.async.Future;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.anym.transformers.FutureT;
-import cyclops.control.anym.transformers.ListT;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.transformers.ListT;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 
 
 /**

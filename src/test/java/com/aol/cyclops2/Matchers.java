@@ -3,8 +3,8 @@ package com.aol.cyclops2;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
 
 public class Matchers {
  

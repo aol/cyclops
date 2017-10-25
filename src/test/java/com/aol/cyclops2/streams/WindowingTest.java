@@ -12,13 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 public class WindowingTest {
 	ReactiveSeq<Integer> empty;

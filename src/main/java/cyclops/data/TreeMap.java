@@ -2,9 +2,9 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.persistent.PersistentMap;
 import com.aol.cyclops2.hkt.Higher2;
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness.treeMap;
+import cyclops.monads.DataWitness.treeMap;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

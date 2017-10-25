@@ -3,9 +3,9 @@ package cyclops.function;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.util.SimpleTimer;
 import cyclops.control.Maybe;
-import cyclops.control.anym.Witness.predicate;
+import cyclops.monads.Witness.predicate;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 

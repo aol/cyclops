@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import cyclops.async.LazyReact;
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;

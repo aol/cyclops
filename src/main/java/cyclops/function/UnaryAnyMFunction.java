@@ -1,8 +1,8 @@
 package cyclops.function;
 
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.WitnessType;
-import cyclops.control.anym.function.AnyMFunction1;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
+import cyclops.monads.function.AnyMFunction1;
 
 import java.util.function.UnaryOperator;
 

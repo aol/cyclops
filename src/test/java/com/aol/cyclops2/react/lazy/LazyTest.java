@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import cyclops.companion.Semigroups;
 import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 public class LazyTest implements Printable {
 

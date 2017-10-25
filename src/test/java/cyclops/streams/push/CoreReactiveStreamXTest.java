@@ -2,7 +2,7 @@ package cyclops.streams.push;
 
 import cyclops.companion.Streams;
 import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;

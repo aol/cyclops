@@ -2,7 +2,7 @@ package cyclops.streams.future;
 
 import com.aol.cyclops2.streams.BaseSequentialTest;
 import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;

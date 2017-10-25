@@ -9,16 +9,16 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.control.anym.Witness.supplier;
-import cyclops.control.anym.function.AnyMFunction0;
+import cyclops.monads.Witness.supplier;
+import cyclops.monads.function.AnyMFunction0;
 import cyclops.typeclasses.free.Free;
-import cyclops.control.anym.WitnessType;
-import cyclops.control.anym.transformers.FutureT;
-import cyclops.control.anym.transformers.ListT;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.transformers.ListT;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
 

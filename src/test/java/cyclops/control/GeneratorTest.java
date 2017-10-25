@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;

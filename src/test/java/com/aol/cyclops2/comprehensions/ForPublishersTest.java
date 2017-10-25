@@ -1,15 +1,15 @@
 package com.aol.cyclops2.comprehensions;
 
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.Witness.reactiveSeq;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.anym.transformers.ListT;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.monads.transformers.ListT;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 
 public class ForPublishersTest {
 

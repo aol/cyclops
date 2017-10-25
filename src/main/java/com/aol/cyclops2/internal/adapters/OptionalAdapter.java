@@ -1,7 +1,7 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.control.anym.AnyM.fromOptional;
-import static cyclops.control.anym.Witness.optional;
+import static cyclops.monads.AnyM.fromOptional;
+import static cyclops.monads.Witness.optional;
 import static cyclops.companion.Optionals.combine;
 
 import java.util.Iterator;
@@ -11,10 +11,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import cyclops.control.Option;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.companion.Optionals;

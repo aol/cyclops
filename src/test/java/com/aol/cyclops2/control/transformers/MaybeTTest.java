@@ -2,19 +2,19 @@ package com.aol.cyclops2.control.transformers;
 
 
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.transformers.MaybeT;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.transformers.MaybeT;
 import org.junit.Before;
 import org.junit.Test;
 

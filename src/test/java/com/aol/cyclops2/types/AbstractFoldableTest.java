@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;

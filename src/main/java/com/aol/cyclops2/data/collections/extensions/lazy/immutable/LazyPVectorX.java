@@ -3,7 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;

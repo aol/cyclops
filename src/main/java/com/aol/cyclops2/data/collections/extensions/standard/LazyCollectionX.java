@@ -13,11 +13,9 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.control.Try;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;

@@ -11,7 +11,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Either;
 import cyclops.control.LazyEither;
 import cyclops.function.Function1;
-import cyclops.control.anym.Witness.eval;
+import cyclops.monads.Witness.eval;
 import org.junit.Test;
 
 

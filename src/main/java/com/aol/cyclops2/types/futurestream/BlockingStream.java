@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collector;
 
 import cyclops.companion.CyclopsCollectors;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.internal.react.stream.EagerStreamWrapper;
 import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
 import com.aol.cyclops2.util.ThrowsSoftened;

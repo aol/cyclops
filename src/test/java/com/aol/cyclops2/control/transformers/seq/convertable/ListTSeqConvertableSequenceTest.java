@@ -1,8 +1,8 @@
 package com.aol.cyclops2.control.transformers.seq.convertable;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.AbstractConvertableSequenceTest;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 
 

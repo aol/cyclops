@@ -2,8 +2,8 @@ package com.aol.cyclops2.types.extensability;
 
 import java.util.function.Function;
 
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
 
 
 public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  implements FunctionalAdapter<W>{

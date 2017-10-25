@@ -3,15 +3,15 @@ package cyclops.streams;
 import com.aol.cyclops2.types.reactive.AsyncSubscriber;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.google.common.collect.Lists;
-import cyclops.collectionx.immutable.BagX;
+import cyclops.collections.immutable.BagX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;

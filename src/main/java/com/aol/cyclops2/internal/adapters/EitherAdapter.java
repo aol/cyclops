@@ -6,9 +6,9 @@ import com.aol.cyclops2.types.extensability.FunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Either;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.Witness.either;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.either;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;

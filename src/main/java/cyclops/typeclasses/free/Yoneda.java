@@ -1,7 +1,7 @@
 package cyclops.typeclasses.free;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.anym.Witness.yoneda;
+import cyclops.monads.Witness.yoneda;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.Function;

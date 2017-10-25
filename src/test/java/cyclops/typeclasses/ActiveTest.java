@@ -1,20 +1,20 @@
 package cyclops.typeclasses;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collectionx.immutable.VectorX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Either;
-import cyclops.control.anym.Witness.list;
-import cyclops.control.anym.Witness.maybe;
-import cyclops.control.anym.Witness.reactiveSeq;
+import cyclops.monads.Witness.list;
+import cyclops.monads.Witness.maybe;
+import cyclops.monads.Witness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import static cyclops.collectionx.mutable.ListX.kindKleisli;
+import static cyclops.collections.mutable.ListX.kindKleisli;
 import static cyclops.control.Maybe.Instances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;

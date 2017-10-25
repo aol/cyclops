@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.mutable.QueueX;
+import cyclops.collections.mutable.QueueX;
 import cyclops.reactive.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 

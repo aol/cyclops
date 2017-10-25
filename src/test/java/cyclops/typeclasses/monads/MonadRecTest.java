@@ -2,14 +2,14 @@ package cyclops.typeclasses.monads;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
-import cyclops.control.anym.Witness.*;
+import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;

@@ -4,7 +4,7 @@ import com.aol.cyclops2.internal.stream.spliterators.CopyableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.IteratableSpliterator;
 import com.aol.cyclops2.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;

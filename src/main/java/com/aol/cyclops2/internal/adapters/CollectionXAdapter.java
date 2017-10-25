@@ -1,16 +1,16 @@
 package com.aol.cyclops2.internal.adapters;
 
-import static cyclops.control.anym.AnyM.fromCollectionX;
-import static cyclops.control.anym.Witness.collectionX;
+import static cyclops.monads.AnyM.fromCollectionX;
+import static cyclops.monads.Witness.collectionX;
 
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;

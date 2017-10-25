@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions.lazy.immutable;
 
 
 import com.aol.cyclops2.types.foldable.Evaluation;
-import cyclops.collectionx.immutable.BagX;
+import cyclops.collections.immutable.BagX;
 import cyclops.control.Option;
 import cyclops.data.Bag;
 import cyclops.function.Reducer;

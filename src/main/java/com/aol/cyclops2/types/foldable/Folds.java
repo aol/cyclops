@@ -23,8 +23,8 @@ import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.MapX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.MapX;
 import com.aol.cyclops2.types.stream.HotStream;
 
 /**

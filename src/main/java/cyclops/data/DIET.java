@@ -7,8 +7,7 @@ import com.aol.cyclops2.types.foldable.Folds;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 
-import cyclops.control.anym.DataWitness;
-import cyclops.control.anym.DataWitness.diet;
+import cyclops.monads.DataWitness.diet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;

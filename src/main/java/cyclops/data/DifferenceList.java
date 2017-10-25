@@ -4,10 +4,10 @@ package cyclops.data;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.anym.DataWitness.differenceList;
+import cyclops.monads.DataWitness.differenceList;
 import cyclops.control.Trampoline;
 import cyclops.function.Function0;
-import cyclops.control.anym.Witness.supplier;
+import cyclops.monads.Witness.supplier;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.free.Free;
 import lombok.AccessLevel;
@@ -23,6 +23,7 @@ public class DifferenceList<T> implements Folds<T>,
                                           Transformable<T>,
                                           Higher<differenceList,T> {
 
+    //@TODO try generalizing using ImmutableList and make DifferenceList implement ImmutableList
     private final Function<LazySeq<T>,Free<supplier, LazySeq<T>>> appending;
 
 

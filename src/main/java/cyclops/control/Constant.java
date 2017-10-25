@@ -8,7 +8,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
-import cyclops.control.anym.Witness.constant;
+import cyclops.monads.Witness.constant;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;

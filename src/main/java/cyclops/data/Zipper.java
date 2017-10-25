@@ -1,10 +1,8 @@
 package cyclops.data;
 
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.traversable.IterableX;
 import cyclops.control.Option;
-import cyclops.control.anym.DataWitness;
-import cyclops.control.anym.DataWitness.zipper;
+import cyclops.monads.DataWitness.zipper;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

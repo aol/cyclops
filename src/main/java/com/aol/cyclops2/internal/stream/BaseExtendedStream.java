@@ -4,13 +4,12 @@ import com.aol.cyclops2.types.Unwrapable;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.stream.HeadAndTail;
 import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
-import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 
 import java.io.BufferedReader;

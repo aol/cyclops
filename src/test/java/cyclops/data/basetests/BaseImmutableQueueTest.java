@@ -1,6 +1,6 @@
 package cyclops.data.basetests;
 
-import cyclops.collectionx.AbstractIterableXTest;
+import cyclops.collections.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;

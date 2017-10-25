@@ -2,7 +2,7 @@ package com.aol.cyclops2.control.transformers.seq.nestedfoldable;
 
 import com.aol.cyclops2.types.AbstractNestedFoldableTest;
 import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 
 

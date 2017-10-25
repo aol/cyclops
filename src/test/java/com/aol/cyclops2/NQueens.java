@@ -1,7 +1,7 @@
 package com.aol.cyclops2;
 
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
 import org.junit.Test;
 
 public class NQueens {

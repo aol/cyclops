@@ -1,8 +1,8 @@
 package cyclops;
 
 import com.aol.cyclops2.types.persistent.*;
-import cyclops.collectionx.immutable.*;
-import cyclops.collectionx.mutable.*;
+import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
 import org.junit.Test;

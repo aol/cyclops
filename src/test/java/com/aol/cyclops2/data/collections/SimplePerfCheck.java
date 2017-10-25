@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.aol.cyclops2.types.persistent.PersistentList;
-import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.data.Seq;
 import org.junit.Test;
 
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 //simple sanity check to make sure performance is in the ballpark not a proper benchmark!

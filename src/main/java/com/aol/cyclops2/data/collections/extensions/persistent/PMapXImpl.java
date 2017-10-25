@@ -3,7 +3,7 @@ package com.aol.cyclops2.data.collections.extensions.persistent;
 import java.util.*;
 import java.util.function.*;
 
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import com.aol.cyclops2.types.persistent.PersistentMap;

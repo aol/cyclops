@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -35,9 +35,9 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 
 public abstract class AbstractTraversableTest {

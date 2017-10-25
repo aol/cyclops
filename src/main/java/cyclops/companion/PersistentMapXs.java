@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.data.tuple.Tuple2;
 
 import cyclops.function.Reducer;

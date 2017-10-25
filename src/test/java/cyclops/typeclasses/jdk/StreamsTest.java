@@ -12,11 +12,11 @@ import java.util.stream.Stream;
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.control.anym.Witness.stream;
+import cyclops.monads.Witness.stream;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

@@ -17,9 +17,9 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.control.anym.Witness.optional;
-import cyclops.control.anym.WitnessType;
-import cyclops.control.anym.transformers.OptionalT;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -30,13 +30,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.Value;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
 

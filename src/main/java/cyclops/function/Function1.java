@@ -7,22 +7,22 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.aol.cyclops2.hkt.Higher;
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.control.anym.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction1;
 
-import cyclops.control.anym.transformers.FutureT;
-import cyclops.control.anym.transformers.ListT;
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.mutable.DequeX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.transformers.FutureT;
+import cyclops.monads.transformers.ListT;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
+import cyclops.monads.WitnessType;
 import cyclops.async.Future;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.typeclasses.functor.Functor;

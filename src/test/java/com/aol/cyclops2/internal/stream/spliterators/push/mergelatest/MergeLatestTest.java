@@ -1,6 +1,6 @@
 package com.aol.cyclops2.internal.stream.spliterators.push.mergelatest;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;

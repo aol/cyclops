@@ -7,9 +7,9 @@ import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.Folds;
 import com.aol.cyclops2.types.functor.Transformable;
 import cyclops.control.Option;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.WitnessType;
-import cyclops.control.anym.transformers.StreamT;
+import cyclops.monads.AnyM;
+import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.StreamT;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

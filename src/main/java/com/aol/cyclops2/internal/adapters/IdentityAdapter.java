@@ -5,9 +5,9 @@ import com.aol.cyclops2.types.extensability.AbstractFunctionalAdapter;
 import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Identity;
 import cyclops.control.Option;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.Witness.identity;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.identity;
 
 import java.util.Iterator;
 import java.util.function.Function;

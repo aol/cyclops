@@ -8,12 +8,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.collectionx.immutable.*;
+import cyclops.collections.immutable.*;
 import cyclops.control.Trampoline;
-import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
@@ -23,11 +21,11 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.control.anym.WitnessType;
+import cyclops.collections.mutable.ListX;
+import cyclops.monads.WitnessType;
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
 import com.aol.cyclops2.types.stream.ToStream;
 

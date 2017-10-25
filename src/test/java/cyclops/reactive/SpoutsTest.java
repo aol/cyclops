@@ -6,7 +6,7 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Topic;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
 import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;

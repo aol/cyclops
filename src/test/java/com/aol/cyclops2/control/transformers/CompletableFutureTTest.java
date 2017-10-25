@@ -3,21 +3,21 @@ package com.aol.cyclops2.control.transformers;
 
 import com.aol.cyclops2.types.anyM.AnyMValue;
 import com.aol.cyclops2.types.mixins.Printable;
-import cyclops.collectionx.immutable.LinkedListX;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.Witness.optional;
-import cyclops.control.anym.transformers.CompletableFutureT;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.transformers.CompletableFutureT;
 import org.junit.Before;
 import org.junit.Test;
 

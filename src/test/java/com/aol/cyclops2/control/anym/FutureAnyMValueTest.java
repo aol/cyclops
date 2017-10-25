@@ -3,10 +3,10 @@ package com.aol.cyclops2.control.anym;
 import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
-import cyclops.control.anym.Witness.future;
+import cyclops.monads.Witness.future;
 import org.junit.Before;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import org.junit.Test;
 
 import java.util.NoSuchElementException;

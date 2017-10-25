@@ -1,13 +1,13 @@
 package cyclops.control;
 
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.val;

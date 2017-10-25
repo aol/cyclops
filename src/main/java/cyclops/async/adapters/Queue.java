@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
 
 import com.aol.cyclops2.react.async.subscription.Subscription;
 import cyclops.async.QueueFactories;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.async.wait.WaitStrategy;

@@ -7,8 +7,8 @@ import com.aol.cyclops2.types.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Try;
 
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness.tryType;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness.tryType;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;

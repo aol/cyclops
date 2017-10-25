@@ -17,24 +17,24 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collectionx.immutable.*;
+import cyclops.collections.immutable.*;
 import cyclops.control.Maybe;
 import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
-import cyclops.control.anym.Witness.maybe;
+import cyclops.monads.Witness.maybe;
 import cyclops.typeclasses.functions.SemigroupK;
 
 import org.junit.Test;
 
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.immutable.BagX;
-import cyclops.collectionx.mutable.DequeX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.QueueX;
-import cyclops.collectionx.mutable.SetX;
-import cyclops.collectionx.mutable.SortedSetX;
+import cyclops.collections.immutable.BagX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
+import cyclops.collections.mutable.SetX;
+import cyclops.collections.mutable.SortedSetX;
 public class SemigroupsTest {
 
     @Test

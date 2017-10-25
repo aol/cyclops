@@ -2,11 +2,8 @@ package cyclops.data;
 
 import com.aol.cyclops2.types.persistent.PersistentQueue;
 import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
-import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.control.Option;
-import cyclops.control.Try;
-import cyclops.control.anym.DataWitness.bankersQueue;
+import cyclops.monads.DataWitness.bankersQueue;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

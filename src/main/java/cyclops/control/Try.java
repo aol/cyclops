@@ -1,7 +1,7 @@
 
 package cyclops.control;
 
-import static cyclops.control.anym.Witness.*;
+import static cyclops.monads.Witness.*;
 
 import java.io.Closeable;
 import java.util.Iterator;
@@ -26,9 +26,9 @@ import com.aol.cyclops2.types.factory.Unit;
 import com.aol.cyclops2.types.foldable.To;
 import com.aol.cyclops2.types.functor.Transformable;
 import com.aol.cyclops2.types.recoverable.RecoverableFrom;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;

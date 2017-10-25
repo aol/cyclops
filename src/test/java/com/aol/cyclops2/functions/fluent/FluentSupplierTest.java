@@ -1,9 +1,9 @@
 package com.aol.cyclops2.functions.fluent;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.control.Try;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.junit.Before;

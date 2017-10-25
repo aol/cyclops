@@ -1,7 +1,7 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import com.aol.cyclops2.util.SimpleTimer;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;

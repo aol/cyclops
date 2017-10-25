@@ -11,7 +11,7 @@ import cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 
 public class FlatMapSequenceMTest {
 

@@ -1,8 +1,7 @@
 package com.aol.cyclops2.data.collections.extensions;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;

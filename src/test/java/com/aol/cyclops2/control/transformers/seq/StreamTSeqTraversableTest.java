@@ -2,7 +2,7 @@ package com.aol.cyclops2.control.transformers.seq;
 
 import com.aol.cyclops2.types.AbstractTraversableTest;
 import com.aol.cyclops2.types.traversable.Traversable;
-import cyclops.control.anym.Witness;
+import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 
 

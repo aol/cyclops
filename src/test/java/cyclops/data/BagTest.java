@@ -1,8 +1,8 @@
 package cyclops.data;
 
 import com.aol.cyclops2.types.traversable.IterableX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.SetX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
 import cyclops.companion.Semigroups;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableSetTest;

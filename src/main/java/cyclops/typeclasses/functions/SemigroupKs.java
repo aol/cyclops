@@ -2,8 +2,8 @@ package cyclops.typeclasses.functions;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.async.Future;
-import cyclops.collectionx.immutable.*;
-import cyclops.collectionx.mutable.*;
+import cyclops.collections.immutable.*;
+import cyclops.collections.mutable.*;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
@@ -11,9 +11,9 @@ import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
-import cyclops.control.anym.Witness.*;
-import cyclops.control.anym.Witness.list;
-import cyclops.control.anym.Witness.optional;
+import cyclops.monads.Witness.*;
+import cyclops.monads.Witness.list;
+import cyclops.monads.Witness.optional;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 

@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import cyclops.collectionx.immutable.PersistentSetX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -8,7 +8,7 @@ import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Eval.CompletableEval;
 import cyclops.control.Eval.Module.Later;
 import cyclops.function.Monoid;

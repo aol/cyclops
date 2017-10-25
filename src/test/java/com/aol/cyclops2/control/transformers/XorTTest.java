@@ -3,8 +3,8 @@ package com.aol.cyclops2.control.transformers;
 
 import com.aol.cyclops2.types.mixins.Printable;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
@@ -13,9 +13,9 @@ import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness.optional;
-import cyclops.control.anym.transformers.EitherT;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.transformers.EitherT;
 import org.junit.Before;
 import org.junit.Test;
 

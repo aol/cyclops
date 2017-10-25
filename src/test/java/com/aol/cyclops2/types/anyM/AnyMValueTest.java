@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;;
+import cyclops.collections.mutable.ListX;;
 
 public class AnyMValueTest {
 

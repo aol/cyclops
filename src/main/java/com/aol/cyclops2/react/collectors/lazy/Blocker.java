@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.util.SimpleTimer;
 import com.aol.cyclops2.util.ThrowsSoftened;

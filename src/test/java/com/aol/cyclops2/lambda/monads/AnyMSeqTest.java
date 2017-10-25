@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static cyclops.control.anym.Witness.*;
+import static cyclops.monads.Witness.*;
 
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.function.AnyMFunction1;
-import cyclops.control.anym.function.AnyMFunction2;
+import cyclops.monads.Witness;
+import cyclops.monads.function.AnyMFunction1;
+import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 
 

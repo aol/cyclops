@@ -16,14 +16,12 @@ import com.aol.cyclops2.types.*;
 
 
 import com.aol.cyclops2.types.foldable.ConvertableSequence;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
 import com.aol.cyclops2.types.traversable.IterableX;
 import com.aol.cyclops2.types.traversable.Traversable;
 import cyclops.async.adapters.QueueFactory;
-import cyclops.collectionx.mutable.*;
-import cyclops.collectionx.immutable.*;
-import cyclops.control.Try;
-import cyclops.control.anym.WitnessType;
+import cyclops.collections.mutable.*;
+import cyclops.collections.immutable.*;
+import cyclops.monads.WitnessType;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -32,7 +30,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import cyclops.function.Monoid;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;

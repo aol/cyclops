@@ -5,8 +5,8 @@ import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher2;
 import cyclops.control.Eval;
 
-import cyclops.control.anym.Witness.cofree;
-import cyclops.control.anym.Witness.eval;
+import cyclops.monads.Witness.cofree;
+import cyclops.monads.Witness.eval;
 import cyclops.typeclasses.NaturalTransformation;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.functor.Functor;

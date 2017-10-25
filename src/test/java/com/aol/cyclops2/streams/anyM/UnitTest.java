@@ -5,11 +5,11 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Optional;
 
-import cyclops.collectionx.mutable.ListX;
-import cyclops.control.anym.Witness;
+import cyclops.collections.mutable.ListX;
+import cyclops.monads.Witness;
 import org.junit.Test;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 
 public class UnitTest {
 	@Test

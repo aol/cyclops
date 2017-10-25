@@ -6,9 +6,9 @@ import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.function.*;
-import cyclops.control.anym.AnyM;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.Monad;
 

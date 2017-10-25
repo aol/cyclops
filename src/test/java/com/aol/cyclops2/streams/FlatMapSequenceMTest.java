@@ -1,6 +1,6 @@
 package com.aol.cyclops2.streams;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;

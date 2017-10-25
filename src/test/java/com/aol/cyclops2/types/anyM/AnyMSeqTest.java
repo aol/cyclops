@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
 
 import cyclops.async.QueueFactories;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.reactive.FutureStream;
 
 public class AnyMSeqTest {

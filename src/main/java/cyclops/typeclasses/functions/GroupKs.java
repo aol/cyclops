@@ -1,14 +1,14 @@
 package cyclops.typeclasses.functions;
 
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.immutable.PersistentQueueX;
-import cyclops.collectionx.immutable.VectorX;
-import cyclops.collectionx.mutable.DequeX;
-import cyclops.collectionx.mutable.ListX;
-import cyclops.collectionx.mutable.QueueX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.DequeX;
+import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.QueueX;
 import cyclops.companion.Streams;
-import cyclops.control.anym.Witness;
-import cyclops.control.anym.Witness.*;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 
 

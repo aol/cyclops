@@ -12,11 +12,11 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import com.aol.cyclops2.util.box.Mutable;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 import cyclops.companion.Streams;
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import org.junit.Test;
 
 import java.util.Arrays;

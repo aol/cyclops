@@ -1,22 +1,15 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.Zippable;
 import com.aol.cyclops2.types.persistent.PersistentList;
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
-import cyclops.collectionx.immutable.LinkedListX;
-import cyclops.collectionx.immutable.VectorX;
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.immutable.LinkedListX;
+import cyclops.collections.immutable.VectorX;
+import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Try;
-import cyclops.control.anym.DataWitness.nonEmptyList;
+import cyclops.monads.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -24,7 +17,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;

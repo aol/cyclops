@@ -2,7 +2,7 @@ package com.aol.cyclops2.data.collections.extensions;
 
 
 import com.aol.cyclops2.data.collections.extensions.persistent.PMapXImpl;
-import cyclops.collectionx.immutable.PersistentMapX;
+import cyclops.collections.immutable.PersistentMapX;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import lombok.NonNull;

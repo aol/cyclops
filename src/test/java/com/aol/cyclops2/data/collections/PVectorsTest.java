@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
-import cyclops.collectionx.immutable.VectorX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.data.Vector;
 import org.junit.Test;
 

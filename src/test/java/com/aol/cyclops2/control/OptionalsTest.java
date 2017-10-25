@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.junit.Test;
 
-import cyclops.collectionx.mutable.ListX;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 
 public class OptionalsTest {

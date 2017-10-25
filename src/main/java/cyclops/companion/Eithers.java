@@ -1,13 +1,13 @@
 package cyclops.companion;
 
-import cyclops.control.anym.AnyM;
+import cyclops.monads.AnyM;
 import cyclops.control.Either;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
 import com.aol.cyclops2.types.anyM.AnyMSeq;
 import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.control.anym.WitnessType;
+import cyclops.monads.WitnessType;
 
 import java.util.concurrent.BlockingQueue;
 
