@@ -1,4 +1,4 @@
-package cyclops.typeclasses.free;
+package cyclops.free;
 
 import com.aol.cyclops2.hkt.Higher;
 import cyclops.monads.Witness.yoneda;

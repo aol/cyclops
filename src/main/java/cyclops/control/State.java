@@ -10,7 +10,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.free.Free;
+import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;

@@ -1,4 +1,4 @@
-package cyclops.typeclasses.free;
+package cyclops.free;
 
 import com.aol.cyclops2.hkt.Higher;
 import com.aol.cyclops2.hkt.Higher3;
@@ -44,9 +44,9 @@ public class Coyoneda<F, T, R> implements Higher3<coyoneda, F, T, R> {
     public <R2> Coyoneda<F, T, R2> map(Function<? super R, ? extends R2> f){
         return new Coyoneda<F, T, R2>(i->f.apply(function.apply(i)), higher);
     }
-    
+
     public static class Instances{
-        
+
         public static <F, T1, R> Functor<Higher<Higher<coyoneda, F>, T1>> functor(){
             return new Functor<Higher<Higher<coyoneda, F>, T1>>() {
                 @Override

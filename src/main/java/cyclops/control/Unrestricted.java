@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 /**
  * Java friendly version of Free (as in Unrestricted) monad for cyclops2
- * also see {@link cyclops.typeclasses.free.Free} for a more advanced type safe version
+ * also see {@link cyclops.free.Free} for a more advanced type safe version
  *
  * Inspiration and heavily influenced by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
  * Other influences incl :- http://www.slideshare.net/kenbot/running-free-with-the-monads

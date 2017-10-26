@@ -9,7 +9,7 @@ import cyclops.control.Trampoline;
 import cyclops.function.Function0;
 import cyclops.monads.Witness.supplier;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.free.Free;
+import cyclops.free.Free;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 

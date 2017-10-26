@@ -8,7 +8,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.free.Free;
+import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -89,7 +89,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
 
 
         return this.flatMap(in -> {
-            
+
             ReaderWriterState<R,W,S,R1> a = value2.apply(in);
             return a.flatMap(ina -> {
                 ReaderWriterState<R,W,S,R2> b = value3.apply(in,ina);

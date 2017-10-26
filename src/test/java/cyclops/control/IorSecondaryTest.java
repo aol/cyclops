@@ -66,7 +66,7 @@ public class IorSecondaryTest {
 		assertThat(failure.filter(x->x==10),equalTo(Option.none()));
 	}
 
-  
+
 	@Test
 	public void testOrElse() {
 		assertThat(failure.orElse(10),equalTo(10));

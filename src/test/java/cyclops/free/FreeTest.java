@@ -1,9 +1,9 @@
-package cyclops.typeclasses.free;
+package cyclops.free;
 
 
-import static cyclops.typeclasses.free.CharToy.bell;
-import static cyclops.typeclasses.free.CharToy.done;
-import static cyclops.typeclasses.free.CharToy.output;
+import static cyclops.free.CharToy.bell;
+import static cyclops.free.CharToy.done;
+import static cyclops.free.CharToy.output;
 
 import cyclops.control.Either;
 import cyclops.function.Function0;
@@ -11,7 +11,7 @@ import cyclops.monads.Witness.supplier;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import cyclops.typeclasses.free.CharToy.*;
+import cyclops.free.CharToy.*;
 import static cyclops.function.Lambda.*;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;

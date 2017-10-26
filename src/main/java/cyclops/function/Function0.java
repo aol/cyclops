@@ -15,7 +15,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.monads.Witness.supplier;
 import cyclops.monads.function.AnyMFunction0;
-import cyclops.typeclasses.free.Free;
+import cyclops.free.Free;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
@@ -65,7 +65,7 @@ public interface Function0<R> extends Supplier<R>{
     default <W extends WitnessType<W>> AnyMFunction0<W,R> liftF(W witness){
         return ()-> witness.adapter().unit(this.get());
     }
-    
+
     default Function0<R> memoize(){
         return Memoize.memoizeSupplier(this);
     }
