@@ -39,29 +39,29 @@ import java.util.stream.*;
 import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
 
 /**
- * 
+ *
  * Wrapper for Any Monad type
- * 
- * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}. 
+ *
+ * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}.
  * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior}, {@link FeatureToggle}
  * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
- * 
+ *
  * Use AnyM to create your monad wrapper.
  * AnyM.fromXXXX methods can create the appropriate AnyM type for a range of known monad types.
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  *    AnyMValue<optional,String> monad1 = AnyM.fromOptional(Optional.of("hello"));
- *    
+ *
  *    AnyMSeq<stream,String> monad2 = AnyM.fromStream(Stream.of("hello","world"));
- *  
+ *
  * }
  * </pre>
- * 
- * Wrapped monads can be unwrapped via the unwrap method, or converted to the desired type via toXXXX methods
- * 
  *
- * 
+ * Wrapped monads can be unwrapped via the unwrap method, or converted to the desired type via toXXXX methods
+ *
+ *
+ *
  * @author johnmcclean
  *
  * @param <T> type data wrapped by the underlying monad
@@ -108,7 +108,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return adapter().toIterable(this).iterator();
 
     }
-    
+
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
         return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
@@ -179,14 +179,14 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad
-     * 
+     *
      * <pre>
      * {@code
      *   AnyM<Integer> ints = AnyM.fromList(Arrays.asList(1,2,3);
      *   AnyM<String> string = ints.unit("hello");
      * }
      * </pre>
-     * 
+     *
      * @param t to embed inside the monad wrapped by AnyM
      * @return Newly instantated AnyM
      */
@@ -194,21 +194,21 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     default <T> AnyM2<W,T2,T> unit(T t){
         return (AnyM2<W,T2,T>)adapter().unit(t);
     }
-    
+
     /**
      * Applicative 'ap' method to use fluently
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    AnyM<optional,Function<Integer,Integer>> add = AnyM.fromNullable(this::add2);
      *    add.to(AnyM::ap)
      *       .applyHKT(AnyM.ofNullable(10));
-     *   
+     *
      *    //AnyM[12] //add 2
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn Function inside an Applicative
      * @return Function to applyHKT an Applicative's value to function
      */
@@ -218,13 +218,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     /**
      * Applicative ap2 method to use fluently to applyHKT to a curried function
      * <pre>
-     * {@code 
+     * {@code
      *    AnyM<optional,Function<Integer,Function<Integer,Integer>>> add = AnyM.fromNullable(Curry.curry2(this::add));
      *    add.to(AnyM::ap2)
      *       .applyHKT(AnyM.ofNullable(10),AnyM.ofNullable(20));
-     *   
+     *
      *    //AnyM[30] //add together
-     * 
+     *
      * }
      * </pre>
      * @param fn Curried function inside an Applicative
@@ -236,21 +236,21 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Perform a filter operation on the wrapped monad instance e.g.
-     * 
+     *
      * <pre>
      * {@code
      *   AnyM.fromOptional(Optional.of(10)).filter(i->i<10);
-     * 
+     *
      *   //AnyM[Optional.zero()]
-     *   
+     *
      *   AnyM.fromStream(Stream.of(5,10)).filter(i->i<10);
-     *   
+     *
      *   //AnyM[Stream[5]]
      * }
-     * 
-     * 
+     *
+     *
      * </pre>
-     * 
+     *
      * @param fn Filtering predicate
      * @return Filtered AnyM
      */
@@ -262,12 +262,12 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     default <R> AnyM2<W,T2,R> coflatMapA(final Function<? super AnyM<W, T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }
-    
-    
+
+
     default AnyM2<W,T2,AnyM<W,T>> nestA() {
         return unit(this);
     }
-    
+
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.factory.EmptyUnit#emptyUnit()
      */
@@ -278,7 +278,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Tests for equivalency between two AnyM types
-     * 
+     *
      * <pre>
      * {@code
      *    boolean eqv = AnyM.fromOptional(Optional.of(1)).eqv(AnyM.fromStream(Stream.of(1)));
@@ -287,7 +287,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      *    //false
      * }
      * </pre>
-     * 
+     *
      * @param t AnyM to check for equivalence with this AnyM
      * @return true if monads are equivalent
      */
@@ -298,18 +298,18 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Allows structural matching on the value / seq nature of this AnyM.
-     * If this AnyM can only store a single value an Xor.lazyLeft with type AnyMValue is returned
-     * If this AnyM can  store one or many values an Xor.lazyRight with type AnyMSeq is returned
-     * 
+     * If this AnyM can only store a single value an Xor.left with type AnyMValue is returned
+     * If this AnyM can  store one or many values an Xor.right with type AnyMSeq is returned
+     *
      * <pre>
      * {@code
      *    AnyM<String> monad;
-     *    
+     *
      *    monad.matchable().visit(v->handleValue(v.getValue()),s->handleSequence(s.toList()));
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @return An Xor for pattern matching lazy an AnyMValue or AnyMSeq
      */
     Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable();
@@ -317,36 +317,36 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
 
 
-    /* 
+    /*
      * Convert this AnyM to an extended Stream (ReactiveSeq)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
-     *    
+     *
      *    Stream<Integer> reactiveStream = monad.reactiveStream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
-     * 
+     *
      */
     @Override
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
 
-    
+
 
     /**
      * Perform a peek operation on the wrapped monad e.g.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   AnyM.fromCompletableFuture(CompletableFuture.supplyAsync(()->loadData())
      *       .peek(System.out::println)
      * }
      * </pre>
-     * 
+     *
      * @param c Consumer to accept current data
      * @return AnyM after peek operation
      */
@@ -359,9 +359,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * join / flatten one level of a nest hierarchy
-     * 
+     *
      * @return Flattened / joined one level
-     */ 
+     */
     static <W extends WitnessType<W>,T1,T2> AnyM2<W,T2,T1> flatten(AnyM2<W, T2,? extends AnyM2<W, T2,T1>> nested){
         return nested.flatMapA(Function.identity());
     }
@@ -369,26 +369,26 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return nested.flatMapI(Function.identity());
     }
 
-   
+
     /**
-     * Aggregate the contents of this Monad and the supplied Monad 
-     * 
-     * <pre>{@code 
-     * 
+     * Aggregate the contents of this Monad and the supplied Monad
+     *
+     * <pre>{@code
+     *
      * AnyM.fromStream(Stream.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
-     * 
+     *
      * AnyM[Stream[List[1,2,3,4,5]]
-     * 
+     *
      * List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
      * 							.aggregate(fromEither5(Optional.of(5)))
      * 							.toSequence()
      *                          .flatten()
      * 							.toList();
-    	
+
     	assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
     	}</pre>
-     * 
+     *
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
@@ -399,15 +399,15 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                     .collect(Collectors.toList()));
     }
 
-   
-    
+
+
 
     /**
      * Construct an AnyM wrapping a new zero instance of the wrapped type
-     * 
+     *
      * e.g.
      * <pre>
-     * {@code 
+     * {@code
      * Any<Integer> ints = AnyM.fromStream(Stream.of(1,2,3));
      * AnyM<Integer> zero=ints.zero();
      * }
@@ -418,7 +418,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return (AnyM2<W,T2,T>)adapter().empty();
     }
 
-    
+
     /**
      * @return String representation of this AnyM
      */
@@ -430,15 +430,15 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     /**
      * Take an iterable containing Streamables and convert them into a List of AnyMs
      * e.g.
-     * {@code 
+     * {@code
      *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Arrays.asList(1,2,3).iterator(),Arrays.asList(10,20,30)).iterator();
-     *     
+     *
      *     //List[AnyM[Stream[1,2,3],Stream[10,20,30]]]
      * }
-     * 
+     *
      * @param fromEither5 Iterable containing Iterators
      * @return List of AnyMs
-     
+
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
         return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
@@ -447,16 +447,16 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Convert a Collection of Monads to a Monad with a List
-     * 
+     *
      * <pre>
      * {@code
         List<CompletableFuture<Integer>> futures = createFutures();
         AnyM<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-    
+
        //where AnyM wraps  CompletableFuture<List<Integer>>
       }</pre>
-     * 
-     * 
+     *
+     *
      * @param seq Collection of monads to convert
      * @return Monad with a List
      */
@@ -466,14 +466,14 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     /**
      * Convert a Collection of Monads to a Monad with a List applying the supplied function in the process
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
        List<CompletableFuture<Integer>> futures = createFutures();
        AnyM<List<String>> futureList = AnyMonads.traverse(AsAnyMList.anyMList(futures), (Integer i) -> "hello" +i);
         }
         </pre>
-     * 
+     *
      * @param seq Collection of Monads
      * @param fn Function to applyHKT
      * @return Monad with a list
@@ -482,13 +482,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return sequence(seq,w).map(l->l.map(fn));
     }
 
-    
+
 
 
     public static  <W extends WitnessType<W>,T2,T> AnyM2<W,T2,Stream<T>> sequence(Stream<? extends AnyM2<W, T2,T>> stream, W witness) {
         FunctionalAdapter<W> c = witness.adapter();
         AnyM2<W,T2,Stream<T>> identity = ( AnyM2)c.unit(ReactiveSeq.empty());
-       
+
         BiFunction<AnyM2<W,T2,Stream<T>>,AnyM2<W,T2,T>,AnyM2<W,T2,Stream<T>>> combineToStream = (acc, next) -> (AnyM2)c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
 
         BinaryOperator<AnyM2<W,T2,Stream<T>>> combineStreams = (a, b)-> (AnyM2<W,T2,Stream<T>>)a.zip(b,(z1, z2)->(Stream<T>)ReactiveSeq.concat(z1,z2)); // a.applyHKT(b, (s1,s2)->s1);
@@ -503,11 +503,11 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     public static <W extends WitnessType<W>,T2,T> AnyM2<W, T2,T> narrow(AnyM2<W, ? extends T,? extends T2> anyM){
         return (AnyM2<W,T2,T>)anyM;
     }
-    
+
     /**
    * Lift a function so it accepts an AnyM and returns an AnyM (any monad)
    * AnyM view simplifies type related challenges.
-   * 
+   *
    * @param fn
    * @return
    */
@@ -518,21 +518,21 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
   /**
    * Lift a function so it accepts a Monad and returns a Monad (simplex view of a wrapped Monad)
    * AnyM view simplifies type related challenges. The actual native type is not specified here.
-   * 
+   *
    * e.g.
-   * 
+   *
    * <pre>{@code
    *  BiFunction<AnyM<Integer>,AnyM<Integer>,AnyM<Integer>> add = Monads.liftF2(this::add);
-   *   
+   *
    *  Optional<Integer> result = add.applyHKT(getBase(),getIncrease());
-   *  
+   *
    *   private Integer add(Integer a, Integer b){
               return a+b;
       }
    * }</pre>
    * The add method has no null handling, but we can lift the method to Monadic form, and use Optionals to automatically handle null / zero value cases.
-   * 
-   * 
+   *
+   *
    * @param fn BiFunction to lift
    * @return Lifted BiFunction
    */
@@ -545,16 +545,16 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a TriFunction into Monadic form. A good use case it to take an existing method and lift it so it can accept and return monads
-   * 
+   *
    * <pre>
    * {@code
    * TriFunction<AnyM<Double>,AnyM<Entity>,AnyM<W,String>,AnyM<Integer>> fn = liftF3(this::myMethod);
-   *    
+   *
    * }
    * </pre>
-   * 
+   *
    * Now we can execute the Method with Streams, Optional, Futures, Try's etc to transparently inject iteration, null handling, async execution and / or error handling
-   * 
+   *
    * @param fn Function to lift
    * @return Lifted function
    */
@@ -566,7 +566,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a QuadFunction into Monadic form.
-   * 
+   *
    * @param fn Quad funciton to lift
    * @return Lifted Quad function
    */
@@ -578,7 +578,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a  jOOλ Function5 (5 parameters) into Monadic form
-   * 
+   *
    * @param fn Function to lift
    * @return Lifted Function
    */
@@ -590,13 +590,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                                                                                                                        input4, input5))))));
   }
 
-  
+
 
   /**
    * Lift a Curried Function {@code(2 levels a->b->fn.applyHKT(a,b) )} into Monadic form
-   * 
+   *
    * @param fn Function to lift
-   * @return Lifted function 
+   * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, R, T2> Function<AnyM2<W,T2,U1>, Function<AnyM2<W,T2,U2>, AnyM2<W,T2,R>>> liftF2(final Function<U1, Function<U2, R>> fn) {
       return u1 -> u2 -> u1.flatMapA(input1 -> u2.map(input2 -> fn.apply(input1)
@@ -606,9 +606,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a Curried Function {@code(3 levels a->b->c->fn.applyHKT(a,b,c) )} into Monadic form
-   * 
+   *
    * @param fn Function to lift
-   * @return Lifted function 
+   * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, R, T2> Function<AnyM2<W,T2,U1>, Function<AnyM2<W,T2,U2>, Function<AnyM2<W,T2,U3>, AnyM2<W,T2,R>>>> liftF3(
           final Function<? super U1, Function<? super U2, Function<? super U3, ? extends R>>> fn) {
@@ -619,9 +619,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a Curried Function {@code(4 levels a->b->c->d->fn.applyHKT(a,b,c,d) )} into Monadic form
-   * 
+   *
    * @param fn Function to lift
-   * @return Lifted function 
+   * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, T2,R> Function<AnyM2<W,T2,U1>, Function<AnyM2<W,T2,U2>, Function<AnyM2<W,T2,U3>, Function<AnyM2<W,T2,U4>, AnyM2<W,T2,R>>>>> liftF4(
           final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, ? extends R>>>> fn) {
@@ -634,9 +634,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
   /**
    * Lift a Curried Function {@code (5 levels a->b->c->d->e->fn.applyHKT(a,b,c,d,e) ) }into Monadic form
-   * 
+   *
    * @param fn Function to lift
-   * @return Lifted function 
+   * @return Lifted function
    */
   public static <W extends WitnessType<W>,U1, U2, U3, U4, U5, R, T2> Function<AnyM2<W,T2,U1>, Function<AnyM2<W,T2,U2>, Function<AnyM2<W,T2,U3>, Function<AnyM2<W,T2,U4>, Function<AnyM2<W,T2,U5>, AnyM2<W,T2,R>>>>>> liftF5(
           final Function<? super U1, Function<? super U2, Function<? super U3, Function<? super U4, Function<? super U5, ? extends R>>>>> fn) {

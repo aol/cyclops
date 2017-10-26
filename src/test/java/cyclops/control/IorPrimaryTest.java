@@ -13,8 +13,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.control.Ior;
-import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +23,7 @@ public class IorPrimaryTest {
 
 
 	public Ior<FileNotFoundException,String> load(String filename){
-		return Ior.primary("test-data");
+		return Ior.right("test-data");
 	}
 
 	public void process(){
@@ -39,14 +37,14 @@ public class IorPrimaryTest {
 
 	@Before
 	public void setup(){
-		success = Ior.primary(10);
+		success = Ior.right(10);
 	}
 	@Test
     public void bimap(){
 
         Ior<RuntimeException,Integer> mapped = success.bimap(e->new RuntimeException(), d->d+1);
         assertThat(mapped.get(),equalTo(Option.some(11)));
-        assertTrue(mapped.isPrimary());
+        assertTrue(mapped.isRight());
     }
     Throwable capT;
     int capInt=0;
@@ -71,12 +69,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1),equalTo(Ior.primary(value+1)));
+		assertThat(success.map(x->x+1),equalTo(Ior.right(value+1)));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Ior.primary(x+1)),equalTo(Ior.primary(value+1)));
+		assertThat(success.flatMap(x->Ior.right(x+1)),equalTo(Ior.right(value+1)));
 	}
 
 	@Test
@@ -113,12 +111,12 @@ public class IorPrimaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertTrue(success.isPrimary());
+		assertTrue(success.isRight());
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertFalse(success.isSecondary());
+		assertFalse(success.isLeft());
 	}
 	Integer valueCaptured = null;
 	@Test

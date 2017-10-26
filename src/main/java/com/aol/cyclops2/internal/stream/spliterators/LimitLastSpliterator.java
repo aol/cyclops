@@ -13,15 +13,15 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
         if(limit==0){
             return Spliterators.emptySpliterator();
         }
-        if(limit==source.getExactSizeIfKnown()){ //lazyRight sized already
+        if(limit==source.getExactSizeIfKnown()){ //right sized already
             return source;
         }
         if(limit==1)
             return new LimitLastOneSpliterator<T>(source);
         return new LimitLastSpliterator<T>(source,limit);
     }
-  
-    
+
+
     private final ArrayDeque<T> buffer;
     private final int limit;
     private final Spliterator<T> source;
@@ -34,7 +34,7 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
         this.limit = limit;
     }
 
-    
+
      boolean requestedAll =false;
      @Override
      public boolean tryAdvance(Consumer<? super T> action) {
@@ -47,7 +47,7 @@ public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements C
              });
          }
             requestedAll=true;
-         
+
             if(buffer.size()>0){
                 action.accept(buffer.pop());
             }

@@ -30,8 +30,8 @@ public class Ior2Test {
 	Ior<String,Integer> none;
 	@Before
 	public void setUp() throws Exception {
-		just = Ior.primary(10);
-		none = Ior.secondary("none");
+		just = Ior.right(10);
+		none = Ior.left("none");
 	}
 	static class Base{ }
 	static class One extends EitherTest.Base { }
@@ -39,11 +39,11 @@ public class Ior2Test {
 	@Test
 	public void visitAny(){
 
-		Ior<One,Two> test = Ior.primary(new Two());
+		Ior<One,Two> test = Ior.right(new Two());
 		test.to(Ior::applyAny).apply(b->b.toString());
-		Ior.primary(10).to(Ior::consumeAny).accept(System.out::println);
-		Ior.primary(10).to(e->Ior.visitAny(System.out::println,e));
-		Object value = Ior.primary(10).to(e->Ior.visitAny(e,x->x));
+		Ior.right(10).to(Ior::consumeAny).accept(System.out::println);
+		Ior.right(10).to(e->Ior.visitAny(System.out::println,e));
+		Object value = Ior.right(10).to(e->Ior.visitAny(e, x->x));
 		assertThat(value,equalTo(10));
 	}
 
@@ -56,7 +56,7 @@ public class Ior2Test {
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Ior.primary(50)));
+        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Ior.right(50)));
     }
 
 	@Test
@@ -67,8 +67,8 @@ public class Ior2Test {
     }
     @Test
     public void visitIor(){
-        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.primary("yes")));
-        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.secondary("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(Ior.right("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(Ior.left("no")));
         assertThat(Ior.both(10, "eek").bimap(secondary->"no", primary->"yes"),equalTo(Ior.both("no","yes")));
     }
 	@Test
@@ -81,87 +81,87 @@ public class Ior2Test {
 		return i+1;
 	}
 
-	
 
-	
+
+
 	@Test
 	public void testOfT() {
-		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+		assertThat(Ior.right(1),equalTo(Ior.right(1)));
 	}
 
-	
 
-	
+
+
 
 	@Test
     public void testSequenceSecondary() {
-        Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceSecondary(ListX.of(just,none,Ior.primary(1)));
-        assertThat(iors,equalTo(Ior.primary(ListX.of("none"))));
+        Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.right(1)));
+        assertThat(iors,equalTo(Ior.right(ListX.of("none"))));
     }
 
 	@Test
     public void testAccumulateSecondary() {
-        Ior<?,PersistentSetX<String>> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.primary(1)), Reducers.<String>toPersistentSetX());
-        assertThat(iors,equalTo(Ior.primary(PersistentSetX.of("none"))));
+        Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.right(1)), Reducers.<String>toPersistentSetX());
+        assertThat(iors,equalTo(Ior.right(PersistentSetX.of("none"))));
     }
 
 	@Test
     public void testAccumulateSecondarySemigroup() {
-        Ior<?,String> iors = Ior.accumulateSecondary(ListX.of(just,none,Ior.secondary("1")),i->""+i,Monoids.stringConcat);
-        assertThat(iors,equalTo(Ior.primary("none1")));
+        Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.left("1")), i->""+i,Monoids.stringConcat);
+        assertThat(iors,equalTo(Ior.right("none1")));
     }
 	@Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
-        assertThat(iors,equalTo(Ior.primary(3)));
+        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+        assertThat(iors,equalTo(Ior.right(3)));
     }
 	@Test
 	public void testSequence() {
-		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequencePrimary(ListX.of(just,none,Ior.primary(1)));
-		assertThat(maybes,equalTo(Ior.primary(ListX.of(10,1))));
+		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
+		assertThat(maybes,equalTo(Ior.right(ListX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Reducers.toPersistentSetX());
-		assertThat(maybes,equalTo(Ior.primary(PersistentSetX.of(10,1))));
+		Ior<?,PersistentSetX<Integer>> maybes =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
+		assertThat(maybes,equalTo(Ior.right(PersistentSetX.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Ior<?,String> maybes = Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),i->""+i,Semigroups.stringConcat);
-		assertThat(maybes,equalTo(Ior.primary("101")));
+		Ior<?,String> maybes = Ior.accumulateRight(ListX.of(just,none,Ior.right(1)), i->""+i,Semigroups.stringConcat);
+		assertThat(maybes,equalTo(Ior.right("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Ior<?,Integer> maybes =Ior.accumulatePrimary(ListX.of(just,none,Ior.primary(1)),Semigroups.intSum);
-		assertThat(maybes,equalTo(Ior.primary(11)));
+		Ior<?,Integer> maybes =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),Semigroups.intSum);
+		assertThat(maybes,equalTo(Ior.right(11)));
 	}
 
 	@Test
 	public void testUnitT() {
-		assertThat(just.unit(20),equalTo(Ior.primary(20)));
+		assertThat(just.unit(20),equalTo(Ior.right(20)));
 	}
 
-	
+
 
 	@Test
 	public void testisPrimary() {
-		assertTrue(just.isPrimary());
-		assertFalse(none.isPrimary());
+		assertTrue(just.isRight());
+		assertFalse(none.isRight());
 	}
 
-	
+
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
-		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
-		assertThat(none.map(i->i+5),equalTo(Ior.secondary("none")));
+		assertThat(just.map(i->i+5),equalTo(Ior.right(15)));
+		assertThat(none.map(i->i+5),equalTo(Ior.left("none")));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(just.flatMap(i->Ior.primary(i+5)),equalTo(Ior.primary(15)));
-		assertThat(none.flatMap(i->Ior.primary(i+5)),equalTo(Ior.secondary("none")));
+		assertThat(just.flatMap(i->Ior.right(i+5)),equalTo(Ior.right(15)));
+		assertThat(none.flatMap(i->Ior.right(i+5)),equalTo(Ior.left("none")));
 	}
 
 	@Test
@@ -180,7 +180,7 @@ public class Ior2Test {
 
 	@Test
 	public void testOfSupplierOfT() {
-		
+
 	}
 
 	@Test
@@ -193,10 +193,10 @@ public class Ior2Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-	
+
 	@Test
 	public void testIterate() {
 		assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -212,14 +212,14 @@ public class Ior2Test {
 	@Test
 	public void testToXor() {
 		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
-		
+
 	}
 	@Test
 	public void testToXorNone(){
 		Either<String,Integer> xor = none.toEither();
 		assertTrue(xor.isLeft());
 		assertThat(xor,equalTo(Either.left("none")));
-		
+
 	}
 
 
@@ -261,7 +261,7 @@ public class Ior2Test {
 		assertTrue(just.filter(i->i>5).isPresent());
 		assertFalse(none.filter(i->i<5).isPresent());
 		assertFalse(none.filter(i->i>5).isPresent());
-		
+
 	}
 
 	@Test
@@ -284,10 +284,10 @@ public class Ior2Test {
 	public void testNotNull() {
 		assertTrue(just.notNull().isPresent());
 		assertFalse(none.notNull().isPresent());
-		
+
 	}
 
-	
+
 
 
 
@@ -320,7 +320,7 @@ public class Ior2Test {
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
 
-	
+
 	@Test
 	public void testOrElseGet() {
 		assertThat(none.orElseGet(()->2),equalTo(2));
@@ -338,7 +338,7 @@ public class Ior2Test {
 	public void testToStream() {
 		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-		
+
 	}
 
 
@@ -352,10 +352,10 @@ public class Ior2Test {
 
 
 
-	
-	
 
-	
+
+
+
 
 	@Test
 	public void testIterator1() {
@@ -381,14 +381,14 @@ public class Ior2Test {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5),equalTo(Ior.primary(15)));
+		assertThat(just.map(i->i+5),equalTo(Ior.right(15)));
 	}
-	
+
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		
+
 		assertThat(capture.get(),equalTo(10));
 	}
 
@@ -397,10 +397,10 @@ public class Ior2Test {
 	}
 	@Test
 	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Ior.primary(65)));
+		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Ior.right(65)));
 	}
 
-	
+
 
 	@Test
 	public void testUnitT1() {

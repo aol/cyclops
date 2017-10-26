@@ -47,7 +47,7 @@ public class TryTest {
         Try.withCatch(() -> "hello", RuntimeException.class)
            .recover(()->"world");
 	}
-	
+
 
 
 
@@ -63,7 +63,7 @@ public class TryTest {
         assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Try.success(50)));
     }
 
-	
+
 	@Test
 	public void testToMaybe() {
 		assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -76,22 +76,22 @@ public class TryTest {
 
 	@Test
 	public void testOfT() {
-		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+		assertThat(Ior.right(1),equalTo(Ior.right(1)));
 	}
 
-	
 
-	
 
-	
 
-	
+
+
+
+
 	@Test
 	public void testUnitT() {
 		assertThat(just.unit(20),equalTo(Try.success(20)));
 	}
 
-	
+
 
 	@Test
 	public void testisPrimary() {
@@ -99,7 +99,7 @@ public class TryTest {
 		assertFalse(none.isSuccess());
 	}
 
-	
+
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
@@ -128,7 +128,7 @@ public class TryTest {
 
 	@Test
 	public void testOfSupplierOfT() {
-		
+
 	}
 
 	@Test
@@ -140,11 +140,11 @@ public class TryTest {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
-	
+
 	@Test
 	public void testIterate() {
 		assertThat(just.asSupplier(-100).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -161,14 +161,14 @@ public class TryTest {
 	@Test
 	public void testToXor() {
 		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
-		
+
 	}
 	@Test
 	public void testToXorNone(){
 		Either<RuntimeException,Integer> xor = none.toEither();
 		assertTrue(xor.isLeft());
 		assertThat(xor,equalTo(Either.left(exception)));
-		
+
 	}
 
 
@@ -182,7 +182,7 @@ public class TryTest {
 
 		Either<Integer,RuntimeException> xorNone = none.toEither().swap();
 		assertThat(xorNone,equalTo(Either.right(exception)));
-		
+
 	}
 	@Test
 	public void testToTry() {
@@ -197,30 +197,30 @@ public class TryTest {
 
 	@Test
 	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Ior.primary(10)));
-		
+		assertThat(just.toIor(),equalTo(Ior.right(10)));
+
 	}
 	@Test
 	public void testToIorNone(){
 		Ior<RuntimeException,Integer> ior = none.toIor();
-		assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary(exception)));
-		
+		assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left(exception)));
+
 	}
 
 
 	@Test
 	public void testToIorSecondary() {
-		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+		assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
 	}
-	
+
 
 	@Test
 	public void testToIorSecondaryNone(){
 	    Ior<Integer,RuntimeException> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary(exception)));
-		
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right(exception)));
+
 	}
 
 
@@ -247,7 +247,7 @@ public class TryTest {
 		assertTrue(just.filter(i->i>5).isPresent());
 		assertFalse(none.filter(i->i<5).isPresent());
 		assertFalse(none.filter(i->i>5).isPresent());
-		
+
 	}
 
 	@Test
@@ -270,10 +270,10 @@ public class TryTest {
 	public void testNotNull() {
 		assertTrue(just.notNull().isPresent());
 		assertFalse(none.notNull().isPresent());
-		
+
 	}
 
-	
+
 	private int add(int a, int b){
 		return a+b;
 	}
@@ -292,7 +292,7 @@ public class TryTest {
 	}
 
 
-	
+
 
 	@Test
 	public void testFoldRightMonoidOfT() {
@@ -301,15 +301,15 @@ public class TryTest {
 
 
 
-	
-	
+
+
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
 
-	
+
 	@Test
 	public void testOrElseGet() {
 		assertThat(none.orElseGet(()->2),equalTo(2));
@@ -327,7 +327,7 @@ public class TryTest {
 	public void testToStream() {
 		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-		
+
 	}
 
 
@@ -368,12 +368,12 @@ public class TryTest {
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5),equalTo(Try.success(15)));
 	}
-	
+
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		
+
 		assertThat(capture.get(),equalTo(10));
 	}
 
@@ -385,7 +385,7 @@ public class TryTest {
 		assertThat(just.trampoline(n ->sum(10,n)).toEither(),equalTo(Either.right(65)));
 	}
 
-	
+
 
 	@Test
 	public void testUnitT1() {

@@ -44,7 +44,7 @@ public class FutureTest {
         just = Future.of(CompletableFuture.completedFuture(10));
         none = Future.ofError(exception);
     }
-    
+
     private void sleep(long time){
         try {
             Thread.sleep(time);
@@ -71,10 +71,10 @@ public class FutureTest {
 
         f.complete(10);
     }
-    
+
     @Test
     public void testVisitAsync(){
-       
+
       int r =  Future.ofResult(10)
                       .visitAsync(i->i*2, e->-1).toOptional()
                       .get();
@@ -82,7 +82,7 @@ public class FutureTest {
     }
     @Test
     public void testVisitFailAsync(){
-        
+
       int r =  Future.<Integer>ofError(new RuntimeException())
                       .visitAsync(i->i*2, e->-1).toOptional()
                       .get();
@@ -90,48 +90,48 @@ public class FutureTest {
     }
     @Test
     public void testVisit(){
-       
+
       int r =  Future.ofResult(10)
                       .visit(i->i*2, e->-1);
         assertThat(20,equalTo(r));
     }
     @Test
     public void testVisitFail(){
-        
+
       int r =  Future.<Integer>ofError(new RuntimeException())
                       .visit(i->i*2, e->-1);
         assertThat(-1,equalTo(r));
     }
     @Test
     public void testBreakout(){
-        
+
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 1, Future.of(()->1), Future.of(()->1), Future.of(()->1));
-               
+
 
         assertThat(strings.toCompletableFuture().join().size(), is(greaterThan(1)));
     }
     @Test
     public void testBreakoutAll(){
-        
+
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 2, Future.of(()->1), Future.of(()->1), Future.of(()->1));
-               
+
 
         assertThat(strings.toCompletableFuture().join().size(), is(equalTo(3)));
     }
     @Test
     public void testFirstSuccess(){
-        
+
         Future<Integer> ft = Future.future();
         Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
-               
+
         ft.complete(10);
         assertThat(result.get(), is(equalTo(Try.success(1))));
     }
     @Test
     public void testBreakoutOne(){
-        
+
         Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1), Future.future(), Future.future());
-               
+
 
         assertThat(strings.toCompletableFuture().join().size(), is(equalTo(1)));
     }
@@ -146,22 +146,22 @@ public class FutureTest {
         assertThat(Future.ofResult(10).zipS(Stream.of(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
         assertThat(Future.ofResult(10).zip(Eval.now(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
     }
-   
 
-     
+
+
     @Test
     public void apNonBlocking(){
-        
+
       val f =  Future.of(()->{ sleep(1000l); return "hello";},ex)
                       .combine(Future.of(()->" world",ex),String::concat);
-      
-      
+
+
       System.out.println("hello");
       long start=System.currentTimeMillis();
       System.out.println(f.get());
       assertThat(System.currentTimeMillis()-start,greaterThan(400l));
     }
-    
+
     @Test
     public void FutureFromIterableTest() {
 
@@ -184,29 +184,29 @@ public class FutureTest {
 
     @Test
     public void scheduleDelay(){
-        
+
         long start = System.currentTimeMillis();
         String res = Future.schedule(100, Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                             .get();
-        
+
         assertThat(100l,lessThan(System.currentTimeMillis()-start));
         assertThat(res,equalTo("hello"));
-        
+
     }
     @Test
     public void scheduleCron(){
-        
+
         long start = System.currentTimeMillis();
         Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                             .get();
-        
+
         String res = Future.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello").toOptional()
                 .get();
         assertThat(1000l,lessThan(System.currentTimeMillis()-start));
         assertThat(res,equalTo("hello"));
-        
+
     }
-    
+
 
     @Test
     public void nest(){
@@ -218,15 +218,15 @@ public class FutureTest {
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(just.get()));
         assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(Try.success(50)));
     }
-    
+
     @Test
     public void combine2(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
-        
+
         assertThat(just.combineEager(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
-         
+
     }
     @Test
     public void testToMaybe() {
@@ -239,14 +239,14 @@ public class FutureTest {
     }
 
 
-    
 
-    
+
+
     @Test
     public void testOfT() {
-        assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+        assertThat(Ior.right(1),equalTo(Ior.right(1)));
     }
-    
+
 
     @Test
     public void testSequence() {
@@ -257,25 +257,25 @@ public class FutureTest {
     public void testSequenceCF() {
         CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
- 
+
     }
     @Test
     public void testAccumulateSuccessSemigroup() {
         Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),ListX.of(just,none, Future.ofResult(1)));
-        
+
         assertThat(maybes.get(),equalTo(Try.success(2)));
     }
     @Test
     public void testAccumulateSuccess() {
         Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPersistentSetX());
-        
+
         assertThat(maybes.get(),equalTo(Try.success(PersistentSetX.of(10,1))));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
         Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.of(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
         System.out.println("not blocked");
-       
+
     }
     @Test
     public void testAccumulateNoValue() {
@@ -302,14 +302,14 @@ public class FutureTest {
         Future<Integer> maybes = Future.accumulate(Monoids.intSum,ListX.of(none, Future.ofResult(1)));
         assertTrue(maybes.isFailed());
     }
-    
+
 
     @Test
     public void testUnitT() {
         assertThat(just.unit(20).get(),equalTo(Future.ofResult(20).get()));
     }
 
-    
+
 
     @Test
     public void testisPrimary() {
@@ -317,7 +317,7 @@ public class FutureTest {
         assertTrue(none.isFailed());
     }
 
-    
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5).get(),equalTo(Try.success(15)));
@@ -332,7 +332,7 @@ public class FutureTest {
 
     @Test
     public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
-       
+
         assertThat(just.visit(i->i+1,()->20),equalTo(11));
         assertThat(none.visit(i->i+1,()->20),equalTo(20));
     }
@@ -346,7 +346,7 @@ public class FutureTest {
 
     @Test
     public void testOfSupplierOfT() {
-        
+
     }
 
     @Test
@@ -358,11 +358,11 @@ public class FutureTest {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
 
-    
+
     @Test
     public void testIterate() {
         assertThat(just.asSupplier(-100).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -378,14 +378,14 @@ public class FutureTest {
     @Test
     public void testToXor() {
         assertThat(just.toEither(-5000),equalTo(Either.right(10)));
-        
+
     }
     @Test
     public void testToXorNone(){
         Either<Throwable,Integer> xor = none.toXor();
         assertTrue(xor.isLeft());
         assertThat(xor,equalTo(Either.left(exception)));
-        
+
     }
 
 
@@ -398,7 +398,7 @@ public class FutureTest {
     public void testToXorSecondaryNone(){
         Either<Integer, Throwable> xorNone = none.toXor().swap();
         assertThat(xorNone,equalTo(Either.right(exception)));
-        
+
     }
     @Test
     public void testToTry() {
@@ -413,30 +413,30 @@ public class FutureTest {
 
     @Test
     public void testToIor() {
-        assertThat(just.toIor(),equalTo(Ior.primary(10)));
-        
+        assertThat(just.toIor(),equalTo(Ior.right(10)));
+
     }
     @Test
     public void testToIorNone(){
         Ior<Integer, Throwable> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary(exception)));
-        
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right(exception)));
+
     }
 
 
     @Test
     public void testToIorSecondary() {
-        assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+        assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
     }
-    
+
 
     @Test
     public void testToIorSecondaryNone(){
         Ior<Integer,Throwable> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary(exception)));
-        
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right(exception)));
+
     }
 
 
@@ -460,7 +460,7 @@ public class FutureTest {
         assertTrue(just.filter(i->i>5).isPresent());
         assertFalse(none.filter(i->i<5).isPresent());
         assertFalse(none.filter(i->i>5).isPresent());
-        
+
     }
 
     @Test
@@ -483,10 +483,10 @@ public class FutureTest {
     public void testNotNull() {
         assertTrue(just.notNull().isPresent());
         assertFalse(none.notNull().isPresent());
-        
+
     }
 
-    
+
 
 
     private int add(int a, int b){
@@ -514,14 +514,14 @@ public class FutureTest {
         assertThat(just.fold(Monoid.of(1, Semigroups.intMult)),equalTo(10));
     }
 
-    
+
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
         assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
         assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
     }
 
-    
+
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(()->2),equalTo(2));
@@ -539,7 +539,7 @@ public class FutureTest {
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
         assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-        
+
     }
 
     @Test
@@ -561,7 +561,7 @@ public class FutureTest {
 
 
 
-    
+
 
     @Test
     public void testIterator1() {
@@ -589,12 +589,12 @@ public class FutureTest {
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5).get(),equalTo(Try.success(15)));
     }
-    
+
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
-        
+
         assertThat(capture.get(),equalTo(10));
     }
 
@@ -606,7 +606,7 @@ public class FutureTest {
         assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Either.right(65).toTry()));
     }
 
-    
+
     @Test
     public void mapBoth(){
         assertThat(Future.ofResult(1).map(i->i*2, e->-1).get(),equalTo(Try.success(2)));
@@ -624,7 +624,7 @@ public class FutureTest {
     public void testRecoverSupplier() {
         assertThat(Future.ofError(new RuntimeException()).recover(() -> true).get(), equalTo(Try.success(true)));
     }
-    
+
     @Test
     public void testFlatMapIterable() {
         Future<Integer> f = just.flatMapI(i -> Arrays.asList(i, 20, 30));
@@ -633,7 +633,7 @@ public class FutureTest {
         f = just.flatMapI(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
         assertThat(f.orElse(-50), equalTo(20));
     }
-    
+
     @Test
     public void testFlatMapPublisher() {
         Future<Integer> f = just.flatMapP(i -> Flux.just(100, i));

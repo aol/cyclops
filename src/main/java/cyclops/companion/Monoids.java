@@ -27,12 +27,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * 
+ *
  * A static class with a large number of Monoids  or Combiners with identity elements.
- * 
+ *
  * A Monoid is an Object that can be used to combine objects of the same type inconjunction with it's
  * identity element which leaves any element it is combined with unchanged.
- * 
+ *
  * @author johnmcclean
  */
 public interface Monoids {
@@ -41,12 +41,12 @@ public interface Monoids {
      * To manage javac type inference first assign the monoid
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<ListX<Integer>> listX = Monoid.of(identity,Semigroups.collectionXConcat(ListX.zero());
      *    Monoid<SetX<Integer>> setX = Monoid.of(identity,Semigroups.collectionXConcat(SetX.zero());
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
      * </pre>
      * @return A Monoid that can combine any cyclops2-react extended Collection type
@@ -57,18 +57,18 @@ public interface Monoids {
 
     /**
      * Concatenate mutable collections
-     * 
+     *
      * To manage javac type inference first assign the Monoid
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<List<Integer>> list =  Monoid.of(identity,Semigroups.collectionConcat(Arrays.asList());
      *    Monoid<Set<Integer>> set =  Monoid.of(identity,Semigroups.collectionConcat(new HashSet());
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
-     * </pre> 
+     * </pre>
      * @return A  Monoid that can combine any mutable toX type
      */
     static <T, C extends Collection<T>> Monoid<C> mutableCollectionConcat(C identity) {
@@ -195,17 +195,17 @@ public interface Monoids {
      * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
      * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
-     * 
-     * 
+     *
+     *
      * To manage javac type inference to assign the semigroup
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<List<Integer>> list = Monoids.collectionConcat();
      *    Monoid<Set<Integer>> set = Monoids.collectionConcat();
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
      * </pre>
      * @return A Semigroup that attempts to combine the supplied Collections
@@ -216,33 +216,33 @@ public interface Monoids {
     /**
      * Example sum integer Maybes
      * <pre>
-     * {@code 
+     * {@code
      *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineScalarFunctors(Maybe::just,Monoids.intSum);
      * }
      * </pre>
-     * 
+     *
      * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
      * @param monoid Monoid to combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
     static <T,A extends Zippable<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
-       
+
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
     }
     /**
      * Example sum integer Lists
      * <pre>
-     * {@code 
+     * {@code
      *      Monoid<ListX<Integer>> sumLists = Monoids.combineZippables(ListX::of,Monoids.intSum);
      * }
      * </pre>
-     * 
+     *
      * @param zeroFn Function to lift the Identity value into a Zippable
      * @param monoid Monoid to combine the values inside the Zippables
-     * @return Combination of two Applicatives 
+     * @return Combination of two Applicatives
      */
     static <T,A extends Zippable<T>> Monoid<A> combineZippables(Function<T,A> zeroFn,Monoid<T> monoid) {
-       
+
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
     }
     /**
@@ -324,76 +324,76 @@ public interface Monoids {
         return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the first lazyRight
+     * @return Combine two Xor's by taking the first right
      */
     static <ST,PT> Monoid<Either<ST,PT>> firstRightEither(ST zero) {
         return Monoid.of(Either.left(zero), Semigroups.firstPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the first lazyLeft
+     * @return Combine two Xor's by taking the first left
      */
     static <ST,PT> Monoid<Either<ST,PT>> firstSecondaryXor(PT zero) {
         return Monoid.of(Either.right(zero), Semigroups.firstSecondaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last lazyRight
+     * @return Combine two Xor's by taking the last right
      */
     static <ST,PT> Monoid<Either<ST,PT>> lastPrimaryXor(ST zero) {
         return Monoid.of(Either.left(zero), Semigroups.lastPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last lazyLeft
+     * @return Combine two Xor's by taking the last left
      */
     static <ST,PT> Monoid<Either<ST,PT>> lastSecondaryXor(PT zero) {
         return Monoid.of(Either.right(zero), Semigroups.lastSecondaryXor());
     }
     /**
-     * @return Combine two Try's by taking the first lazyRight
+     * @return Combine two Try's by taking the first right
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.firstTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the first lazyLeft
+     * @return Combine two Try's by taking the first left
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.firstTryFailure());
     }
     /**
-     * @return Combine two Tryr's by taking the last lazyRight
+     * @return Combine two Tryr's by taking the last right
      */
     static<T,X extends Throwable> Monoid<Try<T,X>> lastTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.lastTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the last lazyLeft
+     * @return Combine two Try's by taking the last left
      */
     static <T,X extends Throwable> Monoid<Try<T,X>>lastTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.lastTryFailure());
     }
     /**
-     * @return Combine two Ior's by taking the first lazyRight
+     * @return Combine two Ior's by taking the first right
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstPrimaryIor(ST zero) {
-        return Monoid.of(Ior.secondary(zero), Semigroups.firstPrimaryIor());
+        return Monoid.of(Ior.left(zero), Semigroups.firstPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the first lazyLeft
+     * @return Combine two Ior's by taking the first left
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstSecondaryIor(PT zero) {
-        return Monoid.of(Ior.primary(zero), Semigroups.firstSecondaryIor());
+        return Monoid.of(Ior.right(zero), Semigroups.firstSecondaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last lazyRight
+     * @return Combine two Ior's by taking the last right
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastPrimaryIor(ST zero) {
-        return Monoid.of(Ior.secondary(zero), Semigroups.lastPrimaryIor());
+        return Monoid.of(Ior.left(zero), Semigroups.lastPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last lazyLeft
+     * @return Combine two Ior's by taking the last left
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastSecondaryIor(PT zero) {
-        return Monoid.of(Ior.primary(zero), Semigroups.lastSecondaryIor());
+        return Monoid.of(Ior.right(zero), Semigroups.lastSecondaryIor());
     }
     /**
      * @return Combine two Maybe's by taking the first present

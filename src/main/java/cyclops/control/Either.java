@@ -42,9 +42,9 @@ import java.util.function.*;
 /**
  * eXclusive Or (Either)
  *
- * 'Right' (or lazyRight type) biased disjunct union. Often called Either, but in a generics heavy Java world Either is half the length of Either.
+ * 'Right' (or right type) biased disjunct union. Often called Either, but in a generics heavy Java world Either is half the length of Either.
  *
- *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
+ *  No 'projections' are provided, swap() and leftXXXX alternative methods can be used instead.
  *
  *  Either is used to represent values that can be one of two states (for example a validation result, lazy everything is ok - or we have an error).
  *  It can be used to avoid a common design anti-pattern where an Object has two fields one of which is always null (or worse, both are defined as Optionals).
@@ -68,22 +68,22 @@ import java.util.function.*;
  *  </pre>
  *
  *  Either's have two states
- *  Right : Most methods operate naturally on the lazyRight type, if it is present. If it is not, nothing happens.
- *  Left : Most methods do nothing to the lazyLeft type if it is present.
- *              To operate on the Left type first call swap() or use lazyLeft analogs of the main operators.
+ *  Right : Most methods operate naturally on the right type, if it is present. If it is not, nothing happens.
+ *  Left : Most methods do nothing to the left type if it is present.
+ *              To operate on the Left type first call swap() or use left analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.lazyRight("hello").map(v->v+" world")
- *    //Either.lazyRight["hello world"]
+ *      Either.right("hello").map(v->v+" world")
+ *    //Either.right["hello world"]
  *  }
  *  </pre>
  *
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.lazyLeft("hello").map(v->v+" world")
+ *      Either.left("hello").map(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
@@ -93,17 +93,17 @@ import java.util.function.*;
  *   Values can be accumulated via
  *  <pre>
  *  {@code
- *  Either.accumulateLeft(ListX.of(Either.lazyLeft("failed1"),
-                                                    Either.lazyLeft("failed2"),
-                                                    Either.lazyRight("success")),
+ *  Either.accumulateLeft(ListX.of(Either.left("failed1"),
+                                                    Either.left("failed2"),
+                                                    Either.right("success")),
                                                     SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
- *   Either<String,String> fail1 = Either.lazyLeft("failed1");
+ *   Either<String,String> fail1 = Either.left("failed1");
      fail1.swap().combine((a,b)->a+b)
-                 .combine(Either.lazyLeft("failed2").swap())
-                 .combine(Either.<String,String>lazyRight("success").swap())
+                 .combine(Either.left("failed2").swap())
+                 .combine(Either.<String,String>right("success").swap())
  *
  *  //failed1failed2
  *  }
@@ -276,16 +276,16 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /**
-     * Create an instance of the lazyLeft type. Most methods are biased to the lazyRight type,
-     * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
+     * Create an instance of the left type. Most methods are biased to the right type,
+     * so you will need to use swap() or leftXXXX to manipulate the wrapped value
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyLeft(10).map(i->i+1);
-     *   //Either.lazyLeft[10]
+     *   Either.<Integer,Integer>left(10).map(i->i+1);
+     *   //Either.left[10]
      *
-     *    Either.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
-     *    //Either.lazyRight[11]
+     *    Either.<Integer,Integer>left(10).swap().map(i->i+1);
+     *    //Either.right[11]
      * }
      * </pre>
      *
@@ -299,13 +299,13 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /**
-     * Create an instance of the lazyRight type. Most methods are biased to the lazyRight type,
-     * which means, for example, that the transform method operates on the lazyRight type but does nothing on lazyLeft Eithers
+     * Create an instance of the right type. Most methods are biased to the right type,
+     * which means, for example, that the transform method operates on the right type but does nothing on left Eithers
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyRight(10).map(i->i+1);
-     *   //Either.lazyRight[11]
+     *   Either.<Integer,Integer>right(10).map(i->i+1);
+     *   //Either.right[11]
      *
      *
      * }
@@ -421,8 +421,8 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * If this Either contains the Left type, transform it's value so that it contains the Right type
      *
      *
-     * @param fn Function to transform lazyLeft type to lazyRight
-     * @return Either with lazyLeft type mapped to lazyRight
+     * @param fn Function to transform left type to right
+     * @return Either with left type mapped to right
      */
     Either<ST, PT> mapLeftToRight(Function<? super ST, ? extends PT> fn);
 
@@ -459,11 +459,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *<pre>
      *  {@code
      *
-     *    Either.lazyLeft("hello")
+     *    Either.left("hello")
      *       .map(v->v+" world")
      *    //Either.seconary["hello"]
      *
-     *    Either.lazyLeft("hello")
+     *    Either.left("hello")
      *       .swap()
      *       .map(v->v+" world")
      *       .swap()
@@ -472,7 +472,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *  </pre>
      *
      *
-     * @return Swap the lazyRight and lazyLeft types, allowing operations directly on what was the Left type
+     * @return Swap the right and left types, allowing operations directly on what was the Left type
      */
     Either<PT, ST> swap();
 
@@ -491,19 +491,19 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
-    default <ST2> Either<ST2, PT> toEither(final ST2 secondary) {
-        return visit(s -> left(secondary), p -> right(p));
+    default <ST2> Either<ST2, PT> toEither(final ST2 left) {
+        return visit(s -> left(left), p -> right(p));
     }
     /**
      *  Turn a toX of Eithers into a single Either with Lists of values.
-     *  Right and lazyLeft types are swapped during this operation.
+     *  Right and left types are swapped during this operation.
      *
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
-     *  Either<ListX<Integer>,ListX<String>> xors =Either.sequenceLeft(ListX.of(just,none,Either.lazyRight(1)));
-        //Either.lazyRight(ListX.of("none")))
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
+     *  Either<ListX<Integer>,ListX<String>> xors =Either.sequenceLeft(ListX.of(just,none,Either.right(1)));
+        //Either.right(ListX.of("none")))
      *
      * }
      * </pre>
@@ -521,16 +521,16 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
 
-     *  Either<?,PersistentSetX<String>> xors = Either.accumulateLeft(ListX.of(just,none,Either.lazyRight(1)),Reducers.<String>toPersistentSetX());
-      //Either.lazyRight(PersistentSetX.of("none"))));
+     *  Either<?,PersistentSetX<String>> xors = Either.accumulateLeft(ListX.of(just,none,Either.right(1)),Reducers.<String>toPersistentSetX());
+      //Either.right(PersistentSetX.of("none"))));
       * }
      * </pre>
-     * @param xors Collection of Iors to accumulate lazyLeft values
+     * @param xors Collection of Iors to accumulate left values
      * @param reducer Reducer to accumulate results
-     * @return Either populated with the accumulate lazyLeft operation
+     * @return Either populated with the accumulate left operation
      */
     public static <LT, RT, R> Either<ListX<RT>, R> accumulateLeft(final CollectionX<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
         return sequenceLeft(xors).map(s -> s.mapReduce(reducer));
@@ -542,19 +542,19 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
 
-     *  Either<?,String> xors = Either.accumulateLeft(ListX.of(just,none,Either.lazyLeft("1")),i->""+i,Monoids.stringConcat);
+     *  Either<?,String> xors = Either.accumulateLeft(ListX.of(just,none,Either.left("1")),i->""+i,Monoids.stringConcat);
 
-        //Either.lazyRight("none1")
+        //Either.right("none1")
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Iors to accumulate lazyLeft values
+     * @param xors Collection of Iors to accumulate left values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Semigroup to combine values from each Ior
      * @return Either populated with the accumulate Left operation
@@ -572,12 +572,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * <pre>
      * {@code
      *
-     * Either<String,Integer> just  = Either.lazyRight(10);
-       Either<String,Integer> none = Either.lazyLeft("none");
+     * Either<String,Integer> just  = Either.right(10);
+       Either<String,Integer> none = Either.left("none");
 
 
-     * Either<ListX<String>,ListX<Integer>> xors =Either.sequenceRight(ListX.of(just,none,Either.lazyRight(1)));
-       //Either.lazyRight(ListX.of(10,1)));
+     * Either<ListX<String>,ListX<Integer>> xors =Either.sequenceRight(ListX.of(just,none,Either.right(1)));
+       //Either.right(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -595,16 +595,16 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
 
-     *  Either<?,PersistentSetX<Integer>> xors =Either.accumulateRight(ListX.of(just,none,Either.lazyRight(1)),Reducers.toPersistentSetX());
-        //Either.lazyRight(PersistentSetX.of(10,1))));
+     *  Either<?,PersistentSetX<Integer>> xors =Either.accumulateRight(ListX.of(just,none,Either.right(1)),Reducers.toPersistentSetX());
+        //Either.right(PersistentSetX.of(10,1))));
      * }
      * </pre>
-     * @param xors Collection of Iors to accumulate lazyRight values
+     * @param xors Collection of Iors to accumulate right values
      * @param reducer Reducer to accumulate results
-     * @return Either populated with the accumulate lazyRight operation
+     * @return Either populated with the accumulate right operation
      */
     public static <LT, RT, R> Either<ListX<LT>, R> accumulateRight(final CollectionX<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
         return sequenceRight(xors).map(s -> s.mapReduce(reducer));
@@ -617,19 +617,19 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
 
-     * Either<?,String> iors = Either.accumulateRight(ListX.of(just,none,Either.lazyRight(1)),i->""+i,Monoids.stringConcat);
-       //Either.lazyRight("101"));
+     * Either<?,String> iors = Either.accumulateRight(ListX.of(just,none,Either.right(1)),i->""+i,Monoids.stringConcat);
+       //Either.right("101"));
      * }
      * </pre>
      *
      *
-     * @param xors Collection of Iors to accumulate lazyRight values
+     * @param xors Collection of Iors to accumulate right values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Reducer to accumulate results
-     * @return Either populated with the accumulate lazyRight operation
+     * @return Either populated with the accumulate right operation
      */
     public static <ST, PT, R> Either<ListX<ST>, R> accumulateRight(final CollectionX<Either<ST, PT>> xors, final Function<? super PT, R> mapper,
                                                                    final Monoid<R> reducer) {
@@ -642,20 +642,20 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * <pre>
      * {@code
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
      *
-     *  Either<?,Integer> xors XIor.accumulateRight(Monoids.intSum,ListX.of(just,none,Ior.lazyRight(1)));
-        //Ior.lazyRight(11);
+     *  Either<?,Integer> xors XIor.accumulateRight(Monoids.intSum,ListX.of(just,none,Ior.right(1)));
+        //Ior.right(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Eithers to accumulate lazyRight values
+     * @param xors Collection of Eithers to accumulate right values
      * @param reducer  Reducer to accumulate results
-     * @return  Either populated with the accumulate lazyRight operation
+     * @return  Either populated with the accumulate right operation
      */
     public static <ST, PT> Either<ListX<ST>, PT> accumulateRight(final Monoid<PT> reducer, final CollectionX<Either<ST, PT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
@@ -667,9 +667,9 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
      * <pre>
      * {@code
-     * Either.accumulateLeft(ListX.of(Either.lazyLeft("failed1"),
-    												Either.lazyLeft("failed2"),
-    												Either.lazyRight("success")),
+     * Either.accumulateLeft(ListX.of(Either.left("failed1"),
+    												Either.left("failed2"),
+    												Either.right("success")),
     												SemigroupK.stringConcat)
 
 
@@ -679,17 +679,17 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * <pre>
      * {@code
      *
-     *  Either<String,Integer> just  = Either.lazyRight(10);
-        Either<String,Integer> none = Either.lazyLeft("none");
+     *  Either<String,Integer> just  = Either.right(10);
+        Either<String,Integer> none = Either.left("none");
 
-     * Either<?,Integer> iors = Either.accumulateLeft(Monoids.intSum,ListX.of(Either.both(2, "boo!"),Either.lazyLeft(1)));
-       //Either.lazyRight(3);  2+1
+     * Either<?,Integer> iors = Either.accumulateLeft(Monoids.intSum,ListX.of(Either.both(2, "boo!"),Either.left(1)));
+       //Either.right(3);  2+1
      *
      *
      * }
      * </pre>
      *
-     * @param xors Collection of Eithers to accumulate lazyLeft values
+     * @param xors Collection of Eithers to accumulate left values
      * @param reducer  Semigroup to combine values from each Either
      * @return Either populated with the accumulate Left operation
      */
@@ -699,18 +699,18 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
     /**
      * Visitor pattern for this Ior.
-     * Execute the lazyLeft function if this Either contains an element of the lazyLeft type
-     * Execute the lazyRight function if this Either contains an element of the lazyRight type
+     * Execute the left function if this Either contains an element of the left type
+     * Execute the right function if this Either contains an element of the right type
      *
      *
      * <pre>
      * {@code
-     *  Either.lazyRight(10)
-     *     .visit(lazyLeft->"no", lazyRight->"yes")
+     *  Either.right(10)
+     *     .visit(left->"no", right->"yes")
      *  //Either["yes"]
 
-        Either.lazyLeft(90)
-           .visit(lazyLeft->"no", lazyRight->"yes")
+        Either.left(90)
+           .visit(left->"no", right->"yes")
         //Either["no"]
 
 
@@ -718,19 +718,19 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * }
      * </pre>
      *
-     * @param secondary Function to execute if this is a Left Either
-     * @param primary Function to execute if this is a Right Ior
+     * @param left Function to execute if this is a Left Either
+     * @param right Function to execute if this is a Right Ior
      * @return Result of executing the appropriate function
      */
-    <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary);
+    <R> R visit(Function<? super ST, ? extends R> left, Function<? super PT, ? extends R> right);
 
 
     @Override
-    default <R1, R2> Either<R1, R2> bimap(Function<? super ST, ? extends R1> secondary, Function<? super PT, ? extends R2> primary) {
+    default <R1, R2> Either<R1, R2> bimap(Function<? super ST, ? extends R1> left, Function<? super PT, ? extends R2> right) {
         if (isLeft())
-            return (Either<R1, R2>) swap().map(secondary)
+            return (Either<R1, R2>) swap().map(left)
                                        .swap();
-        return (Either<R1, R2>) map(primary);
+        return (Either<R1, R2>) map(right);
     }
 
     /* (non-Javadoc)
@@ -766,6 +766,10 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     Option<ST> getLeft();
     ST leftOrElse(ST alt);
 
+    Either<ST,PT> recover(Supplier<? extends PT> value);
+    Either<ST,PT> recover(PT value);
+    Either<ST,PT> recoverWith(Supplier<? extends Either<ST,PT>> fn);
+
     /**
      * @return A Stream containing the Either Left value if present, otherwise an zero Stream
      */
@@ -791,11 +795,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     @Deprecated //use bipeek
     void peek(Consumer<? super ST> stAction, Consumer<? super PT> ptAction);
     /**
-     * @return True if this is a lazyRight Either
+     * @return True if this is a right Either
      */
     public boolean isRight();
     /**
-     * @return True if this is a lazyLeft Either
+     * @return True if this is a left Either
      */
     public boolean isLeft();
 
@@ -812,11 +816,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /**
-     * Accumulate secondarys into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
-     * Right accumulation only occurs if all phases are lazyRight
+     * Accumulate lefts into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
+     * Right accumulation only occurs if all phases are right
      *
      * @param app Value to combine with
-     * @param fn Combiner function for lazyRight values
+     * @param fn Combiner function for right values
      * @return Combined Either
      */
     default <T2, R> Either<LinkedListX<ST>, R> combineToList(final Either<ST, ? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
@@ -824,28 +828,28 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /**
-     * Accumulate lazyLeft values with the provided BinaryOperator / Semigroup {@link Semigroups}
-     * Right accumulation only occurs if all phases are lazyRight
+     * Accumulate left values with the provided BinaryOperator / Semigroup {@link Semigroups}
+     * Right accumulation only occurs if all phases are right
      *
      * <pre>
      * {@code
-     *  Either<String,String> fail1 =  Either.lazyLeft("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.lazyLeft("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
+     *  Either<String,String> fail1 =  Either.left("failed1");
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
      *
      * @param app Value to combine with
-     * @param semigroup to combine lazyLeft types
-     * @param fn To combine lazyRight types
+     * @param semigroup to combine left types
+     * @param fn To combine right types
      * @return Combined Either
      */
 
     default <T2, R> Either<ST, R> combine(final Either<? extends ST, ? extends T2> app, final BinaryOperator<ST> semigroup,
                                           final BiFunction<? super PT, ? super T2, ? extends R> fn) {
-        return this.visit(secondary -> app.visit(s2 -> Either.left(semigroup.apply(s2, secondary)), p2 -> Either.left(secondary)),
-                          primary -> app.visit(s2 -> Either.left(s2), p2 -> Either.right(fn.apply(primary, p2))));
+        return this.visit(left -> app.visit(s2 -> Either.left(semigroup.apply(s2, left)), p2 -> Either.left(left)),
+                          right -> app.visit(s2 -> Either.left(s2), p2 -> Either.right(fn.apply(right, p2))));
     }
 
 
@@ -902,7 +906,23 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     public static class Right<L, RT> implements Either<L, RT> {
         private final RT value;
         private static final long serialVersionUID = 1L;
-        @Override
+
+      @Override
+      public Either<L, RT> recover(Supplier<? extends RT> value) {
+        return this;
+      }
+
+      @Override
+      public Either<L, RT> recover(RT value) {
+        return this;
+      }
+
+      @Override
+      public Either<L, RT> recoverWith(Supplier<? extends Either<L, RT>> fn) {
+        return this;
+      }
+
+      @Override
         public Either<L, RT> mapLeftToRight(final Function<? super L, ? extends RT> fn) {
             return this;
         }
@@ -1004,12 +1024,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
         @Override
         public Ior<L, RT> toIor() {
-            return Ior.primary(value);
+            return Ior.right(value);
         }
 
         @Override
-        public <R> R visit(final Function<? super L, ? extends R> secondary, final Function<? super RT, ? extends R> primary) {
-            return primary.apply(value);
+        public <R> R visit(final Function<? super L, ? extends R> left, final Function<? super RT, ? extends R> right) {
+            return right.apply(value);
         }
 
 
@@ -1056,6 +1076,21 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     public static class Left<L, R> implements Either<L, R> {
         private final L value;
         private static final long serialVersionUID = 1L;
+
+        @Override
+        public Either<L, R> recover(Supplier<? extends R> value) {
+          return right(value.get());
+        }
+
+        @Override
+        public Either<L, R> recover(R value) {
+          return right(value);
+        }
+
+        @Override
+        public Either<L, R> recoverWith(Supplier<? extends Either<L, R>> fn) {
+          return fn.get();
+        }
         @Override
         public boolean isLeft() {
             return true;
@@ -1149,8 +1184,8 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         }
 
         @Override
-        public <R2> R2 visit(final Function<? super L, ? extends R2> secondary, final Function<? super R, ? extends R2> primary) {
-            return secondary.apply(value);
+        public <R2> R2 visit(final Function<? super L, ? extends R2> left, final Function<? super R, ? extends R2> right) {
+            return left.apply(value);
         }
 
         @Override
@@ -1179,7 +1214,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
         @Override
         public Ior<L, R> toIor() {
-            return Ior.secondary(value);
+            return Ior.left(value);
         }
 
 

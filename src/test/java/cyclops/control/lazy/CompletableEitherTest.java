@@ -76,7 +76,7 @@ public class CompletableEitherTest {
 
 
 
-    
+
     boolean lazy = true;
     @Test
     public void lazyTest() {
@@ -84,10 +84,10 @@ public class CompletableEitherTest {
              .flatMap(i -> { lazy=false; return  CompletableEitherTest.right(15);})
              .map(i -> { lazy=false; return  CompletableEitherTest.right(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
     @Test
     public void mapFlatMapTest(){
@@ -125,8 +125,8 @@ public class CompletableEitherTest {
 
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
-        assertThat(iors,equalTo(Ior.primary(3)));
+        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+        assertThat(iors,equalTo(Ior.right(3)));
     }
 
 
@@ -134,7 +134,7 @@ public class CompletableEitherTest {
 
     @Test
     public void visit(){
-        
+
         assertThat(just.visit(secondary->"no", primary->"yes"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", primary->"yes"),equalTo("no"));
     }
@@ -155,20 +155,20 @@ public class CompletableEitherTest {
 
     @Test
     public void testOfT() {
-        assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+        assertThat(Ior.right(1),equalTo(Ior.right(1)));
     }
 
-    
 
-    
 
-    
+
+
+
 
 
 
     @Test @Ignore  //pending https://github.com/aol/cyclops-react/issues/390
     public void hashCodeTest(){
-       
+
         System.out.println(new Integer(10).hashCode());
         System.out.println("Xor " + Either.right(10).hashCode());
         assertThat(Either.right(10).hashCode(),equalTo(CompletableEitherTest.right(10).hashCode()));
@@ -183,7 +183,7 @@ public class CompletableEitherTest {
         assertThat(just.unit(20),equalTo(LazyEither.right(20)));
     }
 
-    
+
 
     @Test
     public void testisPrimary() {
@@ -191,7 +191,7 @@ public class CompletableEitherTest {
         assertFalse(none.isRight());
     }
 
-    
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
@@ -219,12 +219,12 @@ public class CompletableEitherTest {
 
     @Test
     public void testOfSupplierOfT() {
-        
+
     }
 
     @Test
     public void testConvertTo() {
-       
+
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -233,10 +233,10 @@ public class CompletableEitherTest {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-    
+
     @Test
     public void testIterate() {
         assertThat(just.iterate(i->i+1,-1000).limit(10).sumInt(i->i),equalTo(145));
@@ -267,23 +267,23 @@ public class CompletableEitherTest {
 
     @Test
     public void testToIor() {
-        assertThat(just.toIor(),equalTo(Ior.primary(10)));
-        
+        assertThat(just.toIor(),equalTo(Ior.right(10)));
+
     }
     @Test
     public void testToIorNone(){
         Ior<Throwable,Integer> ior = none.toIor();
-        assertTrue(ior.isSecondary());
+        assertTrue(ior.isLeft());
 
-        
+
     }
 
 
     @Test
     public void testToIorSecondary() {
-        assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+        assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
     }
-    
+
 
 
 
@@ -291,7 +291,7 @@ public class CompletableEitherTest {
       @Test
     public void testMkString() {
         assertThat(just.mkString(),equalTo("CompletableEither[10]"));
-        assertThat(none.mkString(),equalTo("Either.lazyLeft[java.util.NoSuchElementException: none]"));
+        assertThat(none.mkString(),equalTo("Either.left[java.util.NoSuchElementException: none]"));
     }
 
 
@@ -302,7 +302,7 @@ public class CompletableEitherTest {
         assertTrue(just.filter(i->i>5).isPresent());
         assertFalse(none.filter(i->i<5).isPresent());
         assertFalse(none.filter(i->i>5).isPresent());
-        
+
     }
 
     @Test
@@ -325,14 +325,14 @@ public class CompletableEitherTest {
     public void testNotNull() {
         assertTrue(just.notNull().isPresent());
         assertFalse(none.notNull().isPresent());
-        
+
     }
 
-    
 
 
 
-    
+
+
 
 
     @Test
@@ -341,14 +341,14 @@ public class CompletableEitherTest {
     }
 
 
-    
+
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
         assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
         assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
     }
 
-    
+
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(()->2),equalTo(2));
@@ -366,7 +366,7 @@ public class CompletableEitherTest {
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
         assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-        
+
     }
 
 
@@ -404,13 +404,13 @@ public class CompletableEitherTest {
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither.right(15)));
     }
-    
+
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
         just.orElse(null);
-        
+
         assertThat(capture.get(),equalTo(10));
     }
 

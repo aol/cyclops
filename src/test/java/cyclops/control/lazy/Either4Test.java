@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package cyclops.control.lazy;
 
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -33,12 +33,12 @@ public class Either4Test {
              .flatMap(i -> { lazy=false; return  LazyEither4.right(15);})
              .map(i -> { lazy=false; return  LazyEither4.right(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
-    
+
     @Test
     public void mapFlatMapTest(){
         assertThat(LazyEither4.right(10)
@@ -71,7 +71,7 @@ public class Either4Test {
         none = LazyEither4.left1("none");
         left2 = LazyEither4.left2("left2");
         left3 = LazyEither4.left3("left3");
-        
+
     }
     @Test
     public void isLeftRight(){
@@ -79,7 +79,7 @@ public class Either4Test {
         assertTrue(none.isLeft1());
         assertTrue(left2.isLeft2());
         assertTrue(left3.isLeft3());
-        
+
         assertFalse(just.isLeft1());
         assertFalse(just.isLeft2());
         assertFalse(just.isLeft3());
@@ -94,7 +94,7 @@ public class Either4Test {
         assertFalse(left3.isRight());
     }
 
-   
+
 
     @Test
     public void testTraverseLeft1() {
@@ -135,13 +135,13 @@ public class Either4Test {
 
     @Test
     public void visit(){
-        
+
         assertThat(just.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("no"));
         assertThat(left2.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left2"));
         assertThat(left3.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left3"));
     }
-    
+
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -154,23 +154,23 @@ public class Either4Test {
 
     @Test
     public void testOfT() {
-        assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+        assertThat(Ior.right(1),equalTo(Ior.right(1)));
     }
 
-    
 
-    
 
-    
 
-   
+
+
+
+
 
     @Test
     public void testUnitT() {
         assertThat(just.unit(20),equalTo(LazyEither4.right(20)));
     }
 
-    
+
 
     @Test
     public void testisPrimary() {
@@ -178,7 +178,7 @@ public class Either4Test {
         assertFalse(none.isRight());
     }
 
-    
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(LazyEither4.right(15)));
@@ -206,12 +206,12 @@ public class Either4Test {
 
     @Test
     public void testOfSupplierOfT() {
-        
+
     }
 
     @Test
     public void testConvertTo() {
-       
+
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -220,10 +220,10 @@ public class Either4Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-    
+
     @Test
     public void testIterate() {
         assertThat(just.iterate(i->i+1,-1000).limit(10).sumInt(i->i),equalTo(145));
@@ -243,7 +243,7 @@ public class Either4Test {
 
 
 
-   
+
     @Test
     public void testToTry() {
         assertTrue(none.toTry().isFailure());
@@ -257,30 +257,30 @@ public class Either4Test {
 
     @Test
     public void testToIor() {
-        assertThat(just.toIor(),equalTo(Ior.primary(10)));
-        
+        assertThat(just.toIor(),equalTo(Ior.right(10)));
+
     }
     @Test
     public void testToIorNone(){
         Ior<String,Integer> ior = none.toIor();
-        assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary("none")));
-        
+        assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left("none")));
+
     }
 
 
     @Test
     public void testToIorSecondary() {
-        assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+        assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
     }
-    
+
 
     @Test
     public void testToIorSecondaryNone(){
         Ior<Integer,String> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary("none")));
-        
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right("none")));
+
     }
 
 
@@ -288,7 +288,7 @@ public class Either4Test {
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either4.lazyRight[10]"));
+        assertThat(just.mkString(),equalTo("Either4.right[10]"));
         assertThat(none.mkString(),equalTo("Either4.left1[none]"));
     }
 
@@ -304,7 +304,7 @@ public class Either4Test {
         assertTrue(just.filter(i->i>5).isPresent());
         assertFalse(none.filter(i->i<5).isPresent());
         assertFalse(none.filter(i->i>5).isPresent());
-        
+
     }
 
     @Test
@@ -327,10 +327,10 @@ public class Either4Test {
     public void testNotNull() {
         assertTrue(just.notNull().isPresent());
         assertFalse(none.notNull().isPresent());
-        
+
     }
 
-    
+
 
 
 
@@ -349,7 +349,7 @@ public class Either4Test {
         assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
     }
 
-    
+
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(()->2),equalTo(2));
@@ -367,7 +367,7 @@ public class Either4Test {
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
         assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-        
+
     }
 
 
@@ -380,7 +380,7 @@ public class Either4Test {
 
 
 
- 
+
     @Test
     public void testIterator1() {
         assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()),
@@ -406,13 +406,13 @@ public class Either4Test {
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither4.right(15)));
     }
-    
+
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
         just.get();
-        
+
         assertThat(capture.get(),equalTo(10));
     }
 
@@ -424,12 +424,12 @@ public class Either4Test {
         assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither4.right(65)));
     }
 
-    
+
 
     @Test
     public void testUnitT1() {
         assertThat(none.unit(10),equalTo(just));
     }
 
-  
+
 }

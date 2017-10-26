@@ -19,7 +19,6 @@ import com.aol.cyclops2.types.*;
 
 import com.aol.cyclops2.react.Status;
 import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
 import com.aol.cyclops2.types.MonadicValue;
 import com.aol.cyclops2.types.Value;
 import com.aol.cyclops2.types.Zippable;
@@ -32,11 +31,8 @@ import com.aol.cyclops2.util.ExceptionSoftener;
 
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.Monoids;
 
 import com.aol.cyclops2.types.reactive.ValueSubscriber;
-import cyclops.companion.CompletableFutures;
-import com.aol.cyclops2.util.ExceptionSoftener;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
@@ -53,7 +49,7 @@ import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.MonadRec;
 import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -78,13 +74,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static cyclops.monads.Witness.future.*;
 
@@ -1101,9 +1091,9 @@ public class Future<T> implements To<Future<T>>,
      */
     public Ior<Throwable, T> toIor() {
         try {
-            return Ior.primary(future.join());
+            return Ior.right(future.join());
         } catch (final Throwable t) {
-            return Ior.<Throwable, T> secondary(t.getCause());
+            return Ior.<Throwable, T>left(t.getCause());
         }
     }
 

@@ -38,19 +38,19 @@ import java.util.function.*;
 /**
  * Inclusive Or (can be one of Primary, Secondary or Both Primary and Secondary)
  *
- * An Either or Union type, but lazyRight biased. Primary and Secondary are used instead of Right & Left.
- * 'Right' (or lazyRight type) biased disjunct union.
+ * An Either or Union type, but right biased. Primary and Secondary are used instead of Right & Left.
+ * 'Right' (or right type) biased disjunct union.
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *
  *
- *  For eXclusive Ors @see Xor
+ *  For exclusive or @see Either
  *
  * @author johnmcclean
  *
- * @param <ST> Secondary type
- * @param <PT> Primary type
+ * @param <LT> Left type
+ * @param <RT> Right type
  */
-public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,Ior<ST,PT>>,Unit<PT>, Transformable<PT>, Filters<PT>,  BiTransformable<ST, PT> ,Higher2<ior,ST,PT> {
+public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,Ior<LT, RT>>,Unit<RT>, Transformable<RT>, Filters<RT>,  BiTransformable<LT, RT> ,Higher2<ior, LT, RT> {
 
     public static  <L,T> Kleisli<Higher<ior,L>,Ior<L,T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Ior::widen);
@@ -64,18 +64,22 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(nested, Instances.definitions(),def2);
     }
-    default <W1> Product<Higher<ior,ST>,W1,PT> product(Active<W1,PT> active){
+    default <W1> Product<Higher<ior, LT>,W1, RT> product(Active<W1, RT> active){
         return Product.of(allTypeclasses(),active);
     }
-    default <W1> Coproduct<W1,Higher<ior,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
+    default <W1> Coproduct<W1,Higher<ior, LT>, RT> coproduct(InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2, Instances.definitions());
     }
-    default Active<Higher<ior,ST>,PT> allTypeclasses(){
+    default Active<Higher<ior, LT>, RT> allTypeclasses(){
         return Active.of(this, Ior.Instances.definitions());
     }
-    default <W2,R> Nested<Higher<ior,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    default <W2,R> Nested<Higher<ior, LT>,W2,R> mapM(Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
+
+    Ior<LT,RT> recover(Supplier<? extends RT> value);
+    Ior<LT,RT> recover(RT value);
+    Ior<LT,RT> recoverWith(Supplier<? extends Ior<LT,RT>> fn);
 
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either
@@ -153,57 +157,57 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      */
     public static <ST, T> Ior<ST, T> fromIterable(final Iterable<T> iterable, T alt) {
         final Iterator<T> it = iterable.iterator();
-        return Ior.primary(it.hasNext() ? it.next() : alt);
+        return Ior.right(it.hasNext() ? it.next() : alt);
     }
 
     /**
-     * Create an instance of the lazyRight type. Most methods are biased to the lazyRight type,
-     * which means, for example, that the transform method operates on the lazyRight type but does nothing on lazyLeft Iors
+     * Create an instance of the right type. Most methods are biased to the right type,
+     * which means, for example, that the transform method operates on the right type but does nothing on left Iors
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>lazyRight(10).map(i->i+1);
-     * //Ior.lazyRight[11]
+     *   Ior.<Integer,Integer>right(10).map(i->i+1);
+     * //Ior.right[11]
      *
      *
      * }
      * </pre>
      *
      *
-     * @param primary To construct an Ior from
+     * @param right To construct an Ior from
      * @return Primary type instanceof Ior
      */
-    public static <ST, PT> Ior<ST, PT> primary(final PT primary) {
+    public static <LT, RT> Ior<LT, RT> right(final RT right) {
         return new Primary<>(
-                             primary);
+                             right);
     }
     /**
-     * Create an instance of the lazyLeft type. Most methods are biased to the lazyRight type,
-     * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
+     * Create an instance of the left type. Most methods are biased to the right type,
+     * so you will need to use swap() or leftXXXX to manipulate the wrapped value
      *
      * <pre>
      * {@code
-     *   Ior.<Integer,Integer>lazyLeft(10).map(i->i+1);
-     *   //Ior.lazyLeft[10]
+     *   Ior.<Integer,Integer>left(10).map(i->i+1);
+     *   //Ior.left[10]
      *
-     *    Ior.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
-     *    //Ior.lazyRight[11]
+     *    Ior.<Integer,Integer>left(10).swap().map(i->i+1);
+     *    //Ior.right[11]
      * }
      * </pre>
      *
      *
-     * @param secondary to wrap
+     * @param left to wrap
      * @return Secondary instance of Ior
      */
-    public static <ST, PT> Ior<ST, PT> secondary(final ST secondary) {
+    public static <LT, RT> Ior<LT, RT> left(final LT left) {
         return new Secondary<>(
-                               secondary);
+                               left);
     }
 
 
 
     /**
-     * Create an Ior instance that contains both lazyLeft and lazyRight types
+     * Create an Ior instance that contains both left and right types
      *
      * <pre>
      * {@code
@@ -212,29 +216,29 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * }
      * </pre>
      *
-     * @param secondary Secondary value
-     * @param primary Primary value
-     * @return Ior that contains both the lazyLeft and the lazyRight value
+     * @param left Secondary value
+     * @param right Primary value
+     * @return Ior that contains both the left and the right value
      */
-    public static <ST, PT> Ior<ST, PT> both(final ST secondary, final PT primary) {
+    public static <ST, PT> Ior<ST, PT> both(final ST left, final PT right) {
         return new Both<ST, PT>(
-                               secondary, primary);
+                               left, right);
     }
 
 
 
 
-    default <T2, R1, R2, R3, R> Ior<ST,R> forEach4(Function<? super PT, ? extends Ior<ST,R1>> value1,
-            BiFunction<? super PT, ? super R1, ? extends Ior<ST,R2>> value2,
-            Function3<? super PT, ? super R1, ? super R2, ? extends Ior<ST,R3>> value3,
-            Function4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R3, R> Ior<LT,R> forEach4(Function<? super RT, ? extends Ior<LT,R1>> value1,
+                                                   BiFunction<? super RT, ? super R1, ? extends Ior<LT,R2>> value2,
+                                                   Function3<? super RT, ? super R1, ? super R2, ? extends Ior<LT,R3>> value3,
+                                                   Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in-> {
 
-            Ior<ST,R1> a = value1.apply(in);
+            Ior<LT,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Ior<ST,R2> b = value2.apply(in,ina);
+                Ior<LT,R2> b = value2.apply(in,ina);
                 return b.flatMap(inb-> {
-                    Ior<ST,R3> c= value3.apply(in,ina,inb);
+                    Ior<LT,R3> c= value3.apply(in,ina,inb);
                     return c.map(in2->yieldingFunction.apply(in,ina,inb,in2));
                 });
 
@@ -243,15 +247,15 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         });
     }
 
-    default <T2, R1, R2, R> Ior<ST,R> forEach3(Function<? super PT, ? extends Ior<ST,R1>> value1,
-            BiFunction<? super PT, ? super R1, ? extends Ior<ST,R2>> value2,
-            Function3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R> Ior<LT,R> forEach3(Function<? super RT, ? extends Ior<LT,R1>> value1,
+                                               BiFunction<? super RT, ? super R1, ? extends Ior<LT,R2>> value2,
+                                               Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
 
-            Ior<ST,R1> a = value1.apply(in);
+            Ior<LT,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Ior<ST,R2> b = value2.apply(in,ina);
+                Ior<LT,R2> b = value2.apply(in,ina);
                 return b.map(in2->yieldingFunction.apply(in,ina, in2));
             });
 
@@ -259,11 +263,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     }
 
 
-    default <R1, R> Ior<ST,R> forEach2(Function<? super PT, ? extends Ior<ST,R1>> value1,
-            BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+    default <R1, R> Ior<LT,R> forEach2(Function<? super RT, ? extends Ior<LT,R1>> value1,
+                                       BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
-            Ior<ST,R1> b = value1.apply(in);
+            Ior<LT,R1> b = value1.apply(in);
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
     }
@@ -273,7 +277,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
      */
-    default AnyMValue<ior,PT> anyM() {
+    default AnyMValue<ior, RT> anyM() {
         return AnyM.fromIor(this);
     }
 
@@ -281,86 +285,67 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
-    default <T> Ior<ST, T> unit(final T unit) {
-        return Ior.primary(unit);
+    default <T> Ior<LT, T> unit(final T unit) {
+        return Ior.right(unit);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
-    Option<PT> filter(Predicate<? super PT> test);
+    Option<RT> filter(Predicate<? super RT> test);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#toLazyEither()
      */
-    Either<ST, PT> toEither();
+    Either<LT, RT> toEither();
 
     /**
      * @return Convert to an Either, dropping the right type if this Ior contains both
      */
-    Either<ST, PT> toEitherDropRight(); //drop PT
+    Either<LT, RT> toEitherDropRight(); //drop PT
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
-    default <ST2> Either<ST2, PT> toEither(final ST2 secondary) {
+    default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
         return visit(s -> Either.left(secondary), p -> Either.right(p), (s, p) -> Either.right(p));
     }
 
 
 
-    /**
-     * If this Ior contains the Secondary type only, transform it's value so that it contains the Primary type only
-     * If this Ior contains both types, this method has no effect in the default implementations
-     *
-     * @param fn Function to transform lazyLeft type to lazyRight
-     * @return Ior with lazyLeft type mapped to lazyRight
-     */
-    Ior<ST, PT> secondaryToPrimayMap(Function<? super ST, ? extends PT> fn);
 
-    /**
-     * Always transform the Secondary type of this Ior if it is present using the provided transformation function
-     *
-     * @param fn Transformation function for Secondary types
-     * @return Ior with Secondary type transformed
-     */
-    <R> Ior<R, PT> secondaryMap(Function<? super ST, ? extends R> fn);
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
-     */
+
+    <R> Ior<R, RT> mapLeft(Function<? super LT, ? extends R> fn);
+
+
     @Override
-    <R> Ior<ST, R> map(Function<? super PT, ? extends R> fn);
+    <R> Ior<LT, R> map(Function<? super RT, ? extends R> fn);
 
-    /**
-     * Peek at the Secondary type value if present
-     *
-     * @param action Consumer to peek at the Secondary type value
-     * @return Ior with the same values as before
-     */
-    Ior<ST, PT> secondaryPeek(Consumer<? super ST> action);
+
+    Ior<LT, RT> peekLeft(Consumer<? super LT> action);
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
-    Ior<ST, PT> peek(Consumer<? super PT> action);
+    Ior<LT, RT> peek(Consumer<? super RT> action);
 
     /**
      * @return Ior with Primary and Secondary types and value swapped
      */
-    Ior<PT, ST> swap();
+    Ior<RT, LT> swap();
 
 
-    default <R> Ior<ST, R> coflatMap(final Function<? super Ior<ST,PT>, R> mapper) {
+    default <R> Ior<LT, R> coflatMap(final Function<? super Ior<LT, RT>, R> mapper) {
         return mapper.andThen(r -> unit(r))
                 .apply(this);
     }
 
     //cojoin
-    default Ior<ST, Ior<ST,PT>> nest() {
+    default Ior<LT, Ior<LT, RT>> nest() {
         return this.map(t -> unit(t));
     }
 
@@ -369,7 +354,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @return An zero Option if this Ior only has lazy the Secondary or Primary type. Or an Optional containing a Tuple2
      * with both the Secondary and Primary types if they are both present.
      */
-    Option<Tuple2<ST, PT>> both();
+    Option<Tuple2<LT, RT>> both();
 
 
 
@@ -378,26 +363,26 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
-     <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2);
+     <R1, R2> Ior<R1, R2> bimap(final Function<? super LT, ? extends R1> fn1, final Function<? super RT, ? extends R2> fn2);
 
     /**
      * Visitor pattern for this Ior.
-     * Execute the lazyLeft function if this Ior contains an element of the lazyLeft type only
-     * Execute the lazyRight function if this Ior contains an element of the lazyRight type only
+     * Execute the left function if this Ior contains an element of the left type only
+     * Execute the right function if this Ior contains an element of the right type only
      * Execute the both function if this Ior contains an element of both type
      *
      * <pre>
      * {@code
-     *  Ior.lazyRight(10)
-     *     .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
+     *  Ior.right(10)
+     *     .visit(left->"no", right->"yes",(sec,pri)->"oops!")
      *  //Ior["yes"]
 
-        Ior.lazyLeft(90)
-           .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
+        Ior.left(90)
+           .visit(left->"no", right->"yes",(sec,pri)->"oops!")
         //Ior["no"]
 
         Ior.both(10, "eek")
-           .visit(lazyLeft->"no", lazyRight->"yes",(sec,pri)->"oops!")
+           .visit(left->"no", right->"yes",(sec,pri)->"oops!")
         //Ior["oops!"]
      *
      *
@@ -409,34 +394,31 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param both Function to execute if this Ior contains both types
      * @return Result of executing the appropriate function
      */
-     <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-            final BiFunction<? super ST, ? super PT, ? extends R> both) ;
+     <R> R visit(final Function<? super LT, ? extends R> secondary, final Function<? super RT, ? extends R> primary,
+                 final BiFunction<? super LT, ? super RT, ? extends R> both) ;
 
 
     /* (non-Javadoc)
      * @see java.util.function.Supplier#getValue()
      */
-    Option<PT> get();
+    Option<RT> get();
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
-        return isPrimary() || isBoth();
+        return isRight() || isBoth();
     }
 
 
 
-    /**
-     * @return The Secondary Value if present, otherwise null
-     */
-    Option<ST> secondaryGet();
+    Option<LT> getLeft();
 
 
 
 
-    public <RT1> Ior<ST, RT1> flatMap(final Function<? super PT, ? extends Ior<? extends ST, ? extends RT1>> mapper);
+    public <RT1> Ior<LT, RT1> flatMap(final Function<? super RT, ? extends Ior<? extends LT, ? extends RT1>> mapper);
 
 
     /**
@@ -445,41 +427,34 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param mapper Flattening transformation function
      * @return Ior containing the value inside the result of the transformation function as the Secondary value, if the Secondary type was present
      */
-    <LT1> Ior<LT1, PT> secondaryFlatMap(Function<? super ST, ? extends Ior<LT1,PT>> mapper);
+    <LT1> Ior<LT1, RT> flatMapLeft(Function<? super LT, ? extends Ior<LT1, RT>> mapper);
+
 
     /**
-     * A flatMap operation that keeps the Secondary and Primary types the same
-     *
-     * @param fn Transformation function
-     * @return Ior
+     * @return True if this is a right (only) Ior
      */
-    Ior<ST, PT> secondaryToPrimayFlatMap(Function<? super ST, ? extends Ior<ST, PT>> fn);
+    public boolean isRight();
 
     /**
-     * @return True if this is a lazyRight (only) Ior
+     * @return True if this was a left (only) Ior
      */
-    public boolean isPrimary();
+    public boolean isLeft();
 
     /**
-     * @return True if this was a lazyLeft (only) Ior
-     */
-    public boolean isSecondary();
-
-    /**
-     * @return True if this Ior has both lazyLeft and lazyRight types
+     * @return True if this Ior has both left and right types
      */
     public boolean isBoth();
 
     /**
      *  Turn a toX of Iors into a single Ior with Lists of values.
-     *  Primary and lazyLeft types are swapped during this operation.
+     *  Primary and left types are swapped during this operation.
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
-     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.lazyRight(1)));
-        //Ior.lazyRight(ListX.of("none")))
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
+     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.right(1)));
+        //Ior.right(ListX.of("none")))
      *
      * }
      * </pre>
@@ -488,8 +463,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param iors Iors to sequence
      * @return Ior sequenced and swapped
      */
-    public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceSecondary(final CollectionX<? extends Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.stream().filterNot(Ior::isPrimary).map(i->AnyM.fromIor(i.swap())).toListX(), ior.INSTANCE)
+    public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceLeft(final CollectionX<? extends Ior<ST, PT>> iors) {
+        return AnyM.sequence(iors.stream().filterNot(Ior::isRight).map(i->AnyM.fromIor(i.swap())).toListX(), ior.INSTANCE)
                    .to(Witness::ior);
 
     }
@@ -499,18 +474,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
-     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.lazyRight(1)),Reducers.<String>toPersistentSetX());
-      //Ior.lazyRight(PersistentSetX.of("none"))));
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
+      //Ior.right(PersistentSetX.of("none"))));
       * }
      * </pre>
-     * @param iors Collection of Iors to accumulate lazyLeft values
+     * @param iors Collection of Iors to accumulate left values
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate lazyLeft operation
+     * @return Ior populated with the accumulate left operation
      */
-    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
-        return sequenceSecondary(iors).map(s -> s.mapReduce(reducer));
+    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateLeft(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
+        return sequenceLeft(iors).map(s -> s.mapReduce(reducer));
     }
 
     /**
@@ -520,25 +495,25 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
 
-     *  Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.lazyLeft("1")),i->""+i,Monoids.stringConcat);
-        //Ior.lazyRight("none1")
+     *  Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.left("1")),i->""+i,Monoids.stringConcat);
+        //Ior.right("none1")
      *
      * }
      * </pre>
      *
      *
      *
-     * @param iors Collection of Iors to accumulate lazyLeft values
+     * @param iors Collection of Iors to accumulate left values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Semigroup to combine values from each Ior
      * @return Ior populated with the accumulate Secondary operation
      */
-    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateSecondary(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
-            final Monoid<R> reducer) {
-        return sequenceSecondary(iors).map(s -> s.map(mapper)
+    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateLeft(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
+                                                               final Monoid<R> reducer) {
+        return sequenceLeft(iors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
     }
 
@@ -549,23 +524,23 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * <pre>
      * {@code
      *
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.lazyLeft(1)));
-       //Ior.lazyRight(3);  2+1
+     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+       //Ior.right(3);  2+1
      *
      *
      * }
      * </pre>
      *
      *
-     * @param iors Collection of Iors to accumulate lazyLeft values
+     * @param iors Collection of Iors to accumulate left values
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
      */
-    public static <ST, PT> Ior<ListX<PT>, ST> accumulateSecondary(final Monoid<ST> reducer,final CollectionX<Ior<ST, PT>> iors) {
-        return sequenceSecondary(iors).map(s -> s.reduce(reducer));
+    public static <ST, PT> Ior<ListX<PT>, ST> accumulateLeft(final Monoid<ST> reducer, final CollectionX<Ior<ST, PT>> iors) {
+        return sequenceLeft(iors).map(s -> s.reduce(reducer));
     }
 
     /**
@@ -574,12 +549,12 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * <pre>
      * {@code
      *
-     * Ior<String,Integer> just  = Ior.lazyRight(10);
-       Ior<String,Integer> none = Ior.lazyLeft("none");
+     * Ior<String,Integer> just  = Ior.right(10);
+       Ior<String,Integer> none = Ior.left("none");
 
 
-     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.lazyRight(1)));
-       //Ior.lazyRight(ListX.of(10,1)));
+     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
+       //Ior.right(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -588,8 +563,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @param iors Iors to sequence
      * @return Ior Sequenced
      */
-    public static <ST, PT> Ior<ListX<ST>, ListX<PT>> sequencePrimary(final CollectionX<Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.stream().filterNot(Ior::isSecondary).map(AnyM::fromIor).toListX(), ior.INSTANCE)
+    public static <ST, PT> Ior<ListX<ST>, ListX<PT>> sequenceRight(final CollectionX<Ior<ST, PT>> iors) {
+        return AnyM.sequence(iors.stream().filterNot(Ior::isLeft).map(AnyM::fromIor).toListX(), ior.INSTANCE)
                    .to(Witness::ior);
     }
 
@@ -598,19 +573,19 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),Reducers.toPersistentSetX());
-        //Ior.lazyRight(PersistentSetX.of(10,1))));
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
+        //Ior.right(PersistentSetX.of(10,1))));
      * }
      * </pre>
-     * @param iors Collection of Iors to accumulate lazyRight values
+     * @param iors Collection of Iors to accumulate right values
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate lazyRight operation
+     * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
-        return sequencePrimary(iors).map(s -> s.mapReduce(reducer));
+    public static <ST, PT, R> Ior<ListX<ST>, R> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
+        return sequenceRight(iors).map(s -> s.mapReduce(reducer));
     }
 
     /**
@@ -620,23 +595,23 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,String> iors = Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),i->""+i,SemigroupK.stringConcat);
-       //Ior.lazyRight("101"));
+     * Ior<?,String> iors = Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),i->""+i,SemigroupK.stringConcat);
+       //Ior.right("101"));
      * }
      * </pre>
      *
      *
-     * @param iors Collection of Iors to accumulate lazyRight values
+     * @param iors Collection of Iors to accumulate right values
      * @param mapper Mapping function to be applied to the result of each Ior
      * @param reducer Reducer to accumulate results
-     * @return Ior populated with the accumulate lazyRight operation
+     * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ListX<ST>, R> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
-            final Semigroup<R> reducer) {
-        return sequencePrimary(iors).map(s -> s.map(mapper)
+    public static <ST, PT, R> Ior<ListX<ST>, R> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
+                                                                final Semigroup<R> reducer) {
+        return sequenceRight(iors).map(s -> s.map(mapper)
                                                .reduce(reducer)
                                                .get());
     }
@@ -647,23 +622,23 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      *
      * <pre>
      * {@code
-     *  Ior<String,Integer> just  = Ior.lazyRight(10);
-        Ior<String,Integer> none = Ior.lazyLeft("none");
+     *  Ior<String,Integer> just  = Ior.right(10);
+        Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,Integer> iors =Ior.accumulateRight(ListX.of(just,none,Ior.lazyRight(1)),SemigroupK.intSum);
-        //Ior.lazyRight(11);
+     *  Ior<?,Integer> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),SemigroupK.intSum);
+        //Ior.right(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param iors Collection of Iors to accumulate lazyRight values
+     * @param iors Collection of Iors to accumulate right values
      * @param reducer  Reducer to accumulate results
-     * @return  Ior populated with the accumulate lazyRight operation
+     * @return  Ior populated with the accumulate right operation
      */
-    public static <ST, PT> Ior<ListX<ST>, PT> accumulatePrimary(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
-        return sequencePrimary(iors).map(s -> s.reduce(reducer)
+    public static <ST, PT> Ior<ListX<ST>, PT> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
+        return sequenceRight(iors).map(s -> s.reduce(reducer)
                                                .get());
     }
 
@@ -683,18 +658,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
-    default Option< PT> filterNot(final Predicate<? super PT> fn) {
+    default Option<RT> filterNot(final Predicate<? super RT> fn) {
 
-        return (Option<PT>) Filters.super.filterNot(fn);
+        return (Option<RT>) Filters.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
-     */
-    @Override
-    default Option< PT> notNull() {
 
-        return (Option<PT>) Filters.super.notNull();
+    @Override
+    default Option<RT> notNull() {
+
+        return (Option<RT>) Filters.super.notNull();
     }
 
 
@@ -703,18 +676,18 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> Ior<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Ior<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Ior<ST, R>) Transformable.super.trampoline(mapper);
+        return (Ior<LT, R>) Transformable.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
-    default Ior<ST, PT> bipeek(final Consumer<? super ST> c1, final Consumer<? super PT> c2) {
+    default Ior<LT, RT> bipeek(final Consumer<? super LT> c1, final Consumer<? super RT> c2) {
 
-        return (Ior<ST, PT>) BiTransformable.super.bipeek(c1, c2);
+        return (Ior<LT, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
 
@@ -722,16 +695,16 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
      * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
-            final Function<? super PT, ? extends Trampoline<? extends R2>> mapper2) {
+    default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
+            final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
         return (Ior<R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
 
-    default <T2, R> Ior<ST, R> zip(final Ior<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+    default <T2, R> Ior<LT, R> zip(final Ior<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
-    default <T2, R> Ior<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+    default <T2, R> Ior<LT, R> zip(final Either<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)).toIor());
     }
 
@@ -751,13 +724,24 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             return Either.right(value);
         }
 
-        @Override
-        public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-            return this;
-        }
 
-        @Override
-        public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
+      @Override
+      public Ior<ST, PT> recover(Supplier<? extends PT> value) {
+        return this;
+      }
+
+      @Override
+      public Ior<ST, PT> recover(PT value) {
+        return this;
+      }
+
+      @Override
+      public Ior<ST, PT> recoverWith(Supplier<? extends Ior<ST, PT>> fn) {
+        return this;
+      }
+
+      @Override
+        public <R> Ior<R, PT> mapLeft(final Function<? super ST, ? extends R> fn) {
             return (Ior<R, PT>) this;
         }
 
@@ -768,7 +752,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @Override
-        public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
+        public Ior<ST, PT> peekLeft(final Consumer<? super ST> action) {
             return this;
         }
 
@@ -793,7 +777,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
         @Override
         public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-            return Ior.<R1, R2>primary(fn2.apply(value));
+            return Ior.<R1, R2>right(fn2.apply(value));
         }
 
         @Override
@@ -808,7 +792,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @Override
-        public Option<ST> secondaryGet() {
+        public Option<ST> getLeft() {
             return Option.none();
         }
 
@@ -821,14 +805,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @Override
-        public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
+        public <LT1> Ior<LT1, PT> flatMapLeft(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
             return (Ior<LT1, PT>) this;
         }
 
-        @Override
-        public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-            return this;
-        }
 
         @Override
         public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
@@ -842,12 +822,12 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @Override
-        public boolean isPrimary() {
+        public boolean isRight() {
             return true;
         }
 
         @Override
-        public boolean isSecondary() {
+        public boolean isLeft() {
             return false;
         }
 
@@ -865,7 +845,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
         @Override
         public String mkString() {
-            return "Ior.lazyRight[" + value + "]";
+            return "Ior.right[" + value + "]";
         }
 
 
@@ -879,13 +859,28 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         public static class Secondary<ST, PT> implements Ior<ST, PT> {
             private final ST value;
 
-            @Override
-            public boolean isSecondary() {
+          @Override
+          public Ior<ST, PT> recover(Supplier<? extends PT> value) {
+            return Ior.both(this.value,value.get());
+          }
+
+          @Override
+          public Ior<ST, PT> recover(PT value) {
+            return Ior.both(this.value,value);
+          }
+
+          @Override
+          public Ior<ST, PT> recoverWith(Supplier<? extends Ior<ST, PT>> fn) {
+            return fn.get();
+          }
+
+          @Override
+            public boolean isLeft() {
                 return true;
             }
 
             @Override
-            public boolean isPrimary() {
+            public boolean isRight() {
                 return false;
             }
 
@@ -899,14 +894,9 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
                 return Either.left(value);
             }
 
-            @Override
-            public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-                return new Primary<ST, PT>(
-                        fn.apply(value));
-            }
 
             @Override
-            public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
+            public <R> Ior<R, PT> mapLeft(final Function<? super ST, ? extends R> fn) {
                 return new Secondary<R, PT>(
                         fn.apply(value));
             }
@@ -917,8 +907,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
-                return secondaryMap((Function) FluentFunctions.expression(action));
+            public Ior<ST, PT> peekLeft(final Consumer<? super ST> action) {
+                return mapLeft((Function) FluentFunctions.expression(action));
             }
 
             @Override
@@ -938,7 +928,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             @Override
             public <R1, R2> Ior<R1, R2> bimap(final Function<? super ST, ? extends R1> fn1, final Function<? super PT, ? extends R2> fn2) {
-                return Ior.<R1, R2>secondary(fn1.apply(value));
+                return Ior.<R1, R2>left(fn1.apply(value));
             }
 
             @Override
@@ -953,7 +943,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Option<ST> secondaryGet() {
+            public Option<ST> getLeft() {
                 return Option.some(value);
             }
 
@@ -965,14 +955,10 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
+            public <LT1> Ior<LT1, PT> flatMapLeft(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
                 return mapper.apply(value);
             }
 
-            @Override
-            public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-                return fn.apply(value);
-            }
 
             @Override
             public Ior<ST, PT> bipeek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
@@ -1011,7 +997,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
             @Override
             public String mkString() {
-                return "Ior.lazyLeft[" + value + "]";
+                return "Ior.left[" + value + "]";
             }
 
 
@@ -1024,7 +1010,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
         }
 
         @AllArgsConstructor(access = AccessLevel.PACKAGE)
-        @EqualsAndHashCode(of = {"lazyLeft", "lazyRight"})
+        @EqualsAndHashCode(of = {"left", "right"})
         public static class Both<ST, PT> implements Ior<ST, PT> {
             private final ST secondary;
             private final PT primary;
@@ -1038,6 +1024,21 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             public ReactiveSeq<PT> stream() {
                 return ReactiveSeq.of(primary);
             }
+          @Override
+          public Ior<ST, PT> recover(Supplier<? extends PT> value) {
+            return this;
+          }
+
+          @Override
+          public Ior<ST, PT> recover(PT value) {
+            return this;
+          }
+
+          @Override
+          public Ior<ST, PT> recoverWith(Supplier<? extends Ior<ST, PT>> fn) {
+            return this;
+          }
+
 
             @Override
             public Iterator<PT> iterator() {
@@ -1055,12 +1056,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Ior<ST, PT> secondaryToPrimayMap(final Function<? super ST, ? extends PT> fn) {
-                return this;
-            }
-
-            @Override
-            public <R> Ior<R, PT> secondaryMap(final Function<? super ST, ? extends R> fn) {
+            public <R> Ior<R, PT> mapLeft(final Function<? super ST, ? extends R> fn) {
                 return Both.both(fn.apply(secondary), primary);
             }
 
@@ -1070,7 +1066,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public Ior<ST, PT> secondaryPeek(final Consumer<? super ST> action) {
+            public Ior<ST, PT> peekLeft(final Consumer<? super ST> action) {
                 action.accept(secondary);
                 return this;
             }
@@ -1110,7 +1106,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
 
             @Override
-            public Option<ST> secondaryGet() {
+            public Option<ST> getLeft() {
                 return Option.of(secondary);
             }
 
@@ -1123,15 +1119,11 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public <LT1> Ior<LT1, PT> secondaryFlatMap(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
+            public <LT1> Ior<LT1, PT> flatMapLeft(final Function<? super ST, ? extends Ior<LT1, PT>> mapper) {
                 return mapper.apply(secondary);
 
             }
 
-            @Override
-            public Ior<ST, PT> secondaryToPrimayFlatMap(final Function<? super ST, ? extends Ior<ST, PT>> fn) {
-                return fn.apply(secondary);
-            }
 
             @Override
             public Ior<ST, PT> bipeek(final Consumer<? super ST> actionA, final Consumer<? super PT> actionB) {
@@ -1146,13 +1138,13 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
             }
 
             @Override
-            public boolean isPrimary() {
+            public boolean isRight() {
 
                 return false;
             }
 
             @Override
-            public boolean isSecondary() {
+            public boolean isLeft() {
 
                 return false;
             }
@@ -1268,7 +1260,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
                 @Override
                 public <T> Higher<Higher<ior, L>, T> unit(T value) {
-                    return Ior.primary(value);
+                    return Ior.right(value);
                 }
             };
         }
@@ -1336,8 +1328,8 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
                 public <C2, T, R> Higher<C2, Higher<Higher<ior, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<ior, L>, T> ds) {
                     Ior<L,T> maybe = Ior.narrowK(ds);
 
-                    return maybe.visit(left->  applicative.unit(Ior.<L,R>secondary(left)),
-                            right->applicative.map(m->Ior.primary(m), fn.apply(right)),
+                    return maybe.visit(left->  applicative.unit(Ior.<L,R>left(left)),
+                            right->applicative.map(m->Ior.right(m), fn.apply(right)),
                             (l,r)-> applicative.map(m->Ior.both(l,m), fn.apply(r)));
                 }
 
@@ -1392,7 +1384,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
 
                 @Override
                 public Higher<Higher<ior, L>, ?> zero() {
-                    return Ior.secondary(null);
+                    return Ior.left(null);
                 }
 
                 @Override
@@ -1424,7 +1416,7 @@ public interface Ior<ST, PT> extends To<Ior<ST, PT>>, Value<PT>,OrElseValue<PT,I
                 @Override
                 public <T, R> Higher<Higher<ior, X>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<ior, X>, ? extends Either<T, R>>> fn) {
                     Ior<X,? extends Either<T, R>> next[] = new Ior[1];
-                    next[0] = Ior.primary(Either.left(initial));
+                    next[0] = Ior.right(Either.left(initial));
                     boolean cont = true;
                     do {
                         cont = next[0].visit(p -> p.visit(s -> {

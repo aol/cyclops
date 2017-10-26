@@ -695,7 +695,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @return Convert this Try to an Xor with the error type as the lazyLeft value
+     * @return Convert this Try to an Xor with the error type as the left value
      */
     public Either<X, T> toXorWithError() {
         return xor;

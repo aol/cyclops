@@ -42,16 +42,16 @@ public interface OperationsOnFutures<T> {
     /**
      * Reverse this Stream, by reversing the order in which the underlying Futures will be processed
      * <pre>
-     * {@code 
+     * {@code
      * FutureStream.of(1, 2, 3).actOnFutures()
             						.reverse()
             						.toList();
-            						
-         //3,2,1   						
+
+         //3,2,1
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @return reversed Stream
      */
     default FutureStream<T> reverse() {
@@ -62,19 +62,19 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Convert to a Stream with the values repeated specified times
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 		assertThat(FutureStream.of(1,2,2)
      *                              .actOnFutures()
      * 								.cycle(3)
      * 								.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
-     * 
+     *
      * @param times
      *            Times values should be repeated within a Stream
      * @return Stream with values repeated
@@ -87,16 +87,16 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Convert to a Stream with the values infinitely cycled
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   assertEquals(asList(1, 1, 1, 1, 1,1),FutureStream.of(1)
      *   												.actOnFutures()
      *   												.cycle()
      *   												.limit(6).toList());
      *   }
      * </pre>
-     * 
+     *
      * @return Stream with values repeated
      */
     default FutureStream<T> cycle() {
@@ -109,17 +109,17 @@ public interface OperationsOnFutures<T> {
      * Duplicate a Stream, buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
-     * 
+     *
      * <pre>
      * {@code
      	Tuple2<FutureStream<<Integer>, FutureStream<<Integer>> copies = of(1, 2, 3, 4, 5, 6)
      * 			actOnFutures().duplicate();
      * 	assertTrue(copies._1.anyMatch(i -> i == 2));
      * 	assertTrue(copies._2.anyMatch(i -> i == 2));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @return duplicated reactiveStream
      */
     default Tuple2<FutureStream<T>, FutureStream<T>> duplicate() {
@@ -135,16 +135,16 @@ public interface OperationsOnFutures<T> {
      * Triplicates a Stream. Buffers intermediate values, leaders may change
      * positions so a limit can be safely applied to the leading reactiveStream. Not
      * thread-safe.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Tuple3<FutureStream<Integer>, FutureStream<Integer>, FutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().triplicate();
     	 assertTrue(copies._1.anyMatch(i->i==2));
     	 assertTrue(copies._2.anyMatch(i->i==2));
     	 assertTrue(copies.v3.anyMatch(i->i==2));
-     * 
+     *
      * }
-    
+
      * </pre>
      */
     @SuppressWarnings("unchecked")
@@ -162,13 +162,13 @@ public interface OperationsOnFutures<T> {
      * change positions so a limit can be safely applied to the leading reactiveStream.
      * Not thread-safe.
      * <pre>
-     * {@code 
+     * {@code
      *  Tuple4<FutureStream<Integer>, FutureStream<Integer>, FutureStream<Integer>,FutureStream<Integer>> copies =of(1,2,3,4,5,6).actOnFutures().quadruplicate();
     	 assertTrue(copies._1.anyMatch(i->i==2));
     	 assertTrue(copies._2.anyMatch(i->i==2));
     	 assertTrue(copies.v3.anyMatch(i->i==2));
     	 assertTrue(copies.v4.anyMatch(i->i==2));
-     * 
+     *
      * }
      * </pre>
      * @return
@@ -186,16 +186,16 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Split a Stream at it's head (similar to headAndTail)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FutureStream.of(1,2,3).actOnFutures().splitAtHead()
-     * 
+     *
      *  //Optional[1], SequenceM[2,3]
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     default Tuple2<Option<T>, FutureStream<T>> splitAtHead() {
@@ -208,14 +208,14 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Split at supplied location
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FutureStream.of(1,2,3).actOnFutures().splitAt(1)
-     * 
+     *
      *  //SequenceM[1], SequenceM[2,3]
      * }
-     * 
+     *
      * </pre>
      */
     default Tuple2<FutureStream<T>, FutureStream<T>> splitAt(final int where) {
@@ -228,18 +228,18 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Zip two LazyFutureStreams by combining the underlying Futures
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * List<Tuple2<Integer,Integer>> list =
     				of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400))
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
-     * 
+     *
      * // [1,100],[2,200],[3,300],[4,400]
      * }
      * </pre>
-     * 
+     *
      * @param other
      * @return
      */
@@ -257,25 +257,25 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Zip two LazyFutureStreams using the provided combiner
-     * 
+     *
      * <pre>
-     * {@code 
-     *  BiFunction<CompletableFuture<Integer>,CompletableFuture<Integer>,CompletableFuture<Tuple2<Integer,Integer>>> combiner = 
+     * {@code
+     *  BiFunction<CompletableFuture<Integer>,CompletableFuture<Integer>,CompletableFuture<Tuple2<Integer,Integer>>> combiner =
     				 			(cf1,cf2)->cf1.<Integer,Tuple2<Integer,Integer>>thenCombine(cf2, (_1,_2)->Tuple.tuple(_1,_2));
     		List<Tuple2<Integer,Integer>> list =
     				of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
-    		
-    		List<Integer> lazyRight = list.reactiveStream().map(t -> t._2).collect(CyclopsCollectors.toList());
-    		assertThat(lazyRight,hasItem(100));
-    		assertThat(lazyRight,hasItem(200));
-    		assertThat(lazyRight,hasItem(300));
-    		assertThat(lazyRight,hasItem(400));
-     * 
-     * 
+
+    		List<Integer> right = list.reactiveStream().map(t -> t._2).collect(CyclopsCollectors.toList());
+    		assertThat(right,hasItem(100));
+    		assertThat(right,hasItem(200));
+    		assertThat(right,hasItem(300));
+    		assertThat(right,hasItem(400));
+     *
+     *
      * }
      * </pre>
-     * 
+     *
      */
     default <R, T2> FutureStream<R> zipLfs(final FutureStream<T2> other,
                                            final BiFunction<CompletableFuture<T>, CompletableFuture<T2>, CompletableFuture<R>> combiner) {
@@ -293,24 +293,24 @@ public interface OperationsOnFutures<T> {
     /**
      * Zip two Streams. Futures from this Stream will be paired with data from provided Stream (if the other Stream is also a FutureStream this operator will pair based on
      * Futures from this Stream with results from the other].
-     * 
+     *
      * <pre>
      * {@code
      * List<Tuple2<Integer,Integer>> list =
     				of(1,2,3,4,5,6).actOnFutures().zip(of(100,200,300,400))
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
-     * 
+     *
      * // [1,100],[2,200],[3,300],[4,400]
      * }
      * </pre>
-     * 
+     *
      * Example with two LazyFutureStreams
      * <pre>
      * {@code
      * List<Tuple2<Integer,Integer>> list =
     				FutureStream.of(slow,fast,med).actOnFutures().zip(FutureStream.of(slow,fast,med))
     												.peek(it -> System.out.println(it)).collect(CyclopsCollectors.toList());
-     * 
+     *
      * // [slow,fast],[fast,med],[med,slow]
      * }
      * </pre>
@@ -328,24 +328,24 @@ public interface OperationsOnFutures<T> {
 
     /**
      * zip 3 Streams into one
-     * 
+     *
      * <pre>
      * {@code
      * 	List<Tuple3<Integer,Integer,Character>> list =
     			of(1,2,3,4,5,6).actOnFutures().zip3(of(100,200,300,400),of('a','b','c'))
     										.collect(CyclopsCollectors.toList());
-     * 
+     *
      * // [1,100,'a'],[2,200,'b'],[3,300,'c']
      * }
      * </pre>
-     * 
+     *
      *<pre>
      *{@code
      * List<Tuple3<Integer,Integer,Character>> list =
     			of(slow,med,fast).actOnFutures().zip3(of(slow,med,fast),of(slow,med,fast))
     											.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//[slow,fast,fast],[med,med,med],[fast,slow,slow]
      *}
      *</pre>
@@ -368,8 +368,8 @@ public interface OperationsOnFutures<T> {
      * List<Tuple3<Integer,Integer,Character>> list =
     			of(slow,med,fast).actOnFutures().zip3Lfs(of(slow,med,fast),of(slow,med,fast))
     											.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//[slow,slow,slow],[med,med,med],[fast,fast,fast]
      *}
      *</pre>
@@ -394,14 +394,14 @@ public interface OperationsOnFutures<T> {
 
     /**
      * zip 4 Streams into 1
-     
+
      *<pre>
      *{@code
      * List<Tuple3<Integer,Integer,Character>> list =
     			of(slow,med,fast).actOnFutures().zip4(of(slow,med,fast),of(slow,med,fast),of(slow,med,fast))
     											.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//[slow,fast,fast,fast],[med,med,med,med],[fast,slow,slow,slow]
      *}
      *</pre>
@@ -418,14 +418,14 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Zip 4 LazyFutureStreams into 1
-     * 
+     *
      *<pre>
      *{@code
      * List<Tuple3<Integer,Integer,Character>> list =
     			of(slow,med,fast).actOnFutures().zip4(of(slow,med,fast),of(slow,med,fast),of(slow,med,fast))
     											.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//[slow,slow,slow,slow],[med,med,med,med],[fast,fast,fast,fast]
      *}
      *</pre>
@@ -451,9 +451,9 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Add an index to the current Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").actOnFutures().zipWithIndex().toList());
      * }
      * </pre>
@@ -469,19 +469,19 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Create a sliding view over this Sequence
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<List<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(2)
     									.collect(CyclopsCollectors.toList());
-    		
-    	
+
+
     		assertThat(list.getValue(0),hasItems(1,2));
     		assertThat(list.getValue(1),hasItems(2,3));
-    
+
      *}
      *</pre>
-     *  
+     *
      * @param windowSize
      *            Size of sliding window
      * @return SequenceM with sliding view
@@ -503,13 +503,13 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Create a sliding view over this Sequence
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<List<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(3,2)
     									.collect(CyclopsCollectors.toList());
-    		
-    		
+
+
     		System.out.println(list.getValue(0));
     		assertThat(list.getValue(0),hasItems(1,2,3));
     		assertThat(list.getValue(1),hasItems(3,4,5));
@@ -538,14 +538,14 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Group elements in a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(of(1,2,3,4,5,6).actOnFutures().grouped(3).collect(CyclopsCollectors.toList()).size(),is(2));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param groupSize
      *            Size of each Group
      * @return Stream with elements grouped by size
@@ -570,9 +570,9 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code assertThat(of(1,2,3,4,5).actOnFutures().skip(2).collect(CyclopsCollectors.toList()).size(),is(3)); }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param n
      *            Number of elemenets to skip
      * @return Stream with elements skipped
@@ -587,12 +587,12 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * <pre>
      * {@code assertThat(of(1,2,3,4,5).actOnFutures().limit(2).collect(CyclopsCollectors.toList()).size(),is(2));}
      * </pre>
-     * 
+     *
      * @param maxSize
      *            Limit element size to num
      * @return Limited Stream
@@ -608,22 +608,22 @@ public interface OperationsOnFutures<T> {
 
     /**
      * extract head and tail together, where head is expected to be present
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FutureStream<String> helloWorld = FutureStream.of("hello",
     			"world", "last");
     	HeadAndTail<String> headAndTail = helloWorld.actOnFutures()
     			.headAndTail();
     	String head = headAndTail.head();
     	assertThat(head, equalTo("hello"));
-    
+
     	ReactiveSeq<String> tail = headAndTail.tail();
     	assertThat(tail.headAndTail().head(), equalTo("world"));
-     * 
+     *
      * }
      * </pre>
-     *	  
+     *
      * @return
      */
     default HeadAndTail<T> headAndTail() {
@@ -637,10 +637,10 @@ public interface OperationsOnFutures<T> {
     /**
      * Returns a reactiveStream with a given value interspersed between any two values
      * of this reactiveStream.
-     * 
-     * 
+     *
+     *
      * // (1, 0, 2, 0, 3, 0, 4) FutureStream.of(1, 2, 3, 4).actOnFutures().intersperse(0)
-     * 
+     *
      */
     default FutureStream<T> intersperse(final T value) {
         return fromStreamOfFutures(this.getLastActive()
@@ -651,13 +651,13 @@ public interface OperationsOnFutures<T> {
     /**
      * Returns a reactiveStream with a given value interspersed between any two values
      * of this reactiveStream.
-     * 
+     *
      * FutureStream.of(1, 2, 3, 4)
      *                 .actOnFutures()
      *                 .intersperse(CompletableFuture.completedFuture(0));
-     * 
-     * // (1, 0, 2, 0, 3, 0, 4) 
-     * 
+     *
+     * // (1, 0, 2, 0, 3, 0, 4)
+     *
      */
     default FutureStream<T> intersperse(final CompletableFuture<T> value) {
         return fromStreamOfFutures(this.getLastActive()
@@ -667,7 +667,7 @@ public interface OperationsOnFutures<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#shuffle()
      */
     default FutureStream<T> shuffle() {
@@ -678,18 +678,18 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Append Stream to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	List<String> result = 	of(1,2,3).actOnFutures()
     									.appendStream(of(100,200,300))
     									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
-     * 
+     *
      * @param stream
      *            to append
      * @return SequenceM with Stream appended
@@ -702,20 +702,20 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Append a Stream of Futures to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .appendStreamFutures(Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300)))
     										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream
      * @return
      */
@@ -727,19 +727,19 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Prepend Stream to this SequenceM
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStream(of(100,200,300))
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param stream
      *            to Prepend
      * @return SequenceM with Stream prepended
@@ -752,15 +752,15 @@ public interface OperationsOnFutures<T> {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      *  	Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
     		List<String> result = 	of(1,2,3).actOnFutures()
     										.prependStreamFutures(streamOfFutures)
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
-     * 
+     *
      * }
      * </pre>
      */
@@ -772,18 +772,18 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Append values to the take of this SequenceM
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .append(100,200,300)
     										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
-    
+
     	assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
-     * 
+     *
      * @param values
      *            to append
      * @return FutureStream with appended values
@@ -797,20 +797,20 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Append the provided Futures to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
     										 .appendFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
     										 .map(it ->it+"!!")
     										 .collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param values Futures to append
      * @return Stream with values appended
      */
@@ -823,14 +823,14 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Prepend given values to the skip of the Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	FutureStream.of(1,2,3).actOnFutures()
      * 									 				 .prependAll(100,200,300)
      * 													 .map(it ->it+"!!")
      * 													 .collect(CyclopsCollectors.toList());
-     * 
+     *
      * 						assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * </pre>
@@ -851,12 +851,12 @@ public interface OperationsOnFutures<T> {
     										.prependFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      *
      *
      */
@@ -869,19 +869,19 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Insert data into a reactiveStream at given position
-     * 
+     *
      * <pre>
-       {@code 
+       {@code
        List<String> result = 	of(1,2,3).actOnFutures()
     									 .insertAt(1,100,200,300)
     									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
-    
+
     	assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
-       
+
        }
      * </pre>
-     * 
+     *
      * @param pos
      *            to insert data at
      * @param values
@@ -897,19 +897,19 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Delete elements between given indexes in a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3,4,5,6).actOnFutures()
     											   .deleteBetween(2,4)
     											   .map(it ->it+"!!")
     											   .collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param start
      *            index
      * @param end
@@ -924,18 +924,18 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Insert a Stream into the middle of this reactiveStream at the specified position
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   List<String> result = 	of(1,2,3).actOnFutures()
     									.insertAtS(1,of(100,200,300))
     									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
-     * 
+     *
      * @param pos
      *            to insert Stream at
      * @param stream
@@ -950,20 +950,20 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Insert a Stream into the middle of this reactiveStream at the specified position
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      		Stream<CompletableFuture<Integer>> streamOfFutures = Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300));
-    
+
     		List<String> result = 	of(1,2,3).actOnFutures()
     								.insertStreamFuturesAt(1,streamOfFutures)
     								.map(it ->it+"!!")
     								.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
     	}
      * </pre>
-     * 
+     *
      * @param pos
      *            to insert Stream at
      * @param stream
@@ -978,18 +978,18 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Skip the last num of elements from this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(FutureStream.of(1,2,3,4,5)
     						.actOnFutures()
     						.skipLast(2)
     						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      */
     default FutureStream<T> skipLast(final int num) {
         return fromStreamOfFutures(this.getLastActive()
@@ -999,13 +999,13 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Limit results to the last x elements in a SequenceM
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(FutureStream.of(1,2,3,4,5).actOnFutures()
      * 										.limitLast(2)
      * 										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
-     * 
+     *
      * }
      * </pre>
      * @param num of elements to return (last elements)
@@ -1019,13 +1019,13 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Return the elementAt index or Optional.zero
-     * 
+     *
      * <pre>
      * {@code
      * 	assertThat(FutureStream.of(1,2,3,4,5).actOnFutures().elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
-     * 
+     *
      * @param index
      *            to extract element from
      * @return elementAt index
@@ -1042,14 +1042,14 @@ public interface OperationsOnFutures<T> {
     /**
      * Gets the element at index, and returns a Tuple containing the element (it
      * must be present) and a lazy copy of the Sequence for further processing.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FutureStream.of(1,2,3,4,5).actOnFutures().getValue(2)._1
      * //3
      * }
      * </pre>
-     * 
+     *
      * @param index
      *            to extract element from
      * @return Element and Sequence
@@ -1068,9 +1068,9 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Combines every pair of values (any odd remaining value will be dropped)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(of(1,2,3,4).actOnFutures().thenCombine((a,b)->a+b).toList(),equalTo(Arrays.asList(3,7)));
      * }
      * </pre>
@@ -1090,7 +1090,7 @@ public interface OperationsOnFutures<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
      */
     default FutureStream<T> concat(final Stream<T> other) {
@@ -1101,7 +1101,7 @@ public interface OperationsOnFutures<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#concat(java.lang.Object)
      */
     default FutureStream<T> concat(final T other) {
@@ -1112,7 +1112,7 @@ public interface OperationsOnFutures<T> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
      */
     default FutureStream<T> concat(final T... other) {
@@ -1121,38 +1121,38 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Concat supplied Futures to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures().concatFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
     		.map(it ->it+"!!").collect(CyclopsCollectors.toList());
-    
+
     	assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
      * }
      * </pre>
-     * 
-    
+     *
+
      * @return
      */
     default FutureStream<T> concatFutures(final CompletableFuture<T>... other) {
         return concatStreamFutures(Stream.of(other));
     }
 
-    /** 
+    /**
      * Concat supplied Futures to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).actOnFutures()
      *                                   .concatStreamFutures(Stream.of(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300)))
     		                             .map(it ->it+"!!")
     		                             .collect(CyclopsCollectors.toList());
-    
+
     	assertThat(result,containsInAnyOrder("1!!","2!!","100!!","200!!","3!!","300!!"));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      */
     default FutureStream<T> concatStreamFutures(final Stream<CompletableFuture<T>> other) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1162,10 +1162,10 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Shuffle a reactiveStream using specified source of randomness
-     * 
-     * 
+     *
+     *
      * // e.g. (2, 3, 1) FutureStream.of(1, 2, 3).actOnFutures().shuffle(new Random())
-     * 
+     *
      */
     default FutureStream<T> shuffle(final Random random) {
         return fromStreamOfFutures(this.getLastActive()
@@ -1176,7 +1176,7 @@ public interface OperationsOnFutures<T> {
     /**
      * Returns a limited interval from a given Stream.
      *<pre>
-     *{@code 
+     *{@code
      *
      * 		FutureStream.of(1, 2, 3, 4, 5, 6).actOnFutures().slice(3, 5)
      *    // (4, 5)
@@ -1192,7 +1192,7 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Convert this FutureStream to a Stream of CompletableFutures
-     * 
+     *
      * @return Stream of CompletableFutures
      */
     default ReactiveSeq<CompletableFuture<T>> toStream() {
@@ -1211,7 +1211,7 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Collect a Stream 
+     * Collect a Stream
      * @param collector Collecto to use
      * @return Collection
      */
@@ -1238,17 +1238,17 @@ public interface OperationsOnFutures<T> {
 
     /**
      * Reduce a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
             							.reduce((cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b)).getValue();
-    
+
          assertThat(sum.join(),equalTo(6));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param accumulator CompletableFuture accumulator
      * @return Reduced value
      */
@@ -1257,24 +1257,24 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Reduce sequentially from the lazyRight
-     * 
+     * Reduce sequentially from the right
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
     	CompletableFuture<String> identity = CompletableFuture.completedFuture("");
     	BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
-    
+
     	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("a"));
     	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("b"));
     	assertTrue(s.getValue().actOnFutures().foldRight(identity, concat).join().contains("c"));
-    	
-     * 
+
+     *
      * }
      * </pre>
-     * 
+     *
      * @param identity value
-     * @param accumulator 
+     * @param accumulator
      * @return Reduced value
      */
     default CompletableFuture<T> foldRight(final CompletableFuture<T> identity, final BinaryOperator<CompletableFuture<T>> accumulator) {
@@ -1283,23 +1283,23 @@ public interface OperationsOnFutures<T> {
     }
 
     /**
-     * Sequentially reduce from the lazyLeft
-     * 
+     * Sequentially reduce from the left
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Supplier<FutureStream<String>> s = () -> of("a", "b", "c");
-    
+
     	CompletableFuture<String> identity = CompletableFuture.completedFuture("");
     	BinaryOperator<CompletableFuture<String>> concat = (cf1,cf2)-> cf1.thenCombine(cf2, String::concat);
     	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("a"));
     	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("b"));
     	assertTrue(s.getValue().actOnFutures().foldLeft(identity, concat).join().contains("c"));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param identity
      * @param accumulator
      * @return
@@ -1308,19 +1308,19 @@ public interface OperationsOnFutures<T> {
         return toStream().foldLeft(identity, accumulator);
     }
 
-    /* 
+    /*
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFuture<Integer> sum = of(1, 2, 3).actOnFutures()
            							.reduce(CompletableFuture.completedFuture(0),(cf1,cf2)-> cf1.thenCombine(cf2, (a,b)->a+b));
-    
+
            assertThat(sum.join(),equalTo(6));
-     * 
+     *
      * }
      * </pre>
      *
-     * 
-     * 
+     *
+     *
      * (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */

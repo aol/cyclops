@@ -22,20 +22,20 @@ import cyclops.function.Memoize;
 /**
  * A reactiveBuffer-streams Subscriber that can take 1 value from a reactiveBuffer-streams publisher and convert
  * it into various forms
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  *    ValueSubscriber<Integer> anInt = ValueSubscriber.reactiveSubscriber();
  *    ReactiveSeq.of(1,2,3)
  *               .publish(anInt);
- *    
+ *
  *    Xor<Throwable,Integer> either = anInt.toLazyEither();
  *    Try<Integer,Throwable> myTry = either.toTry();
  *    Maybe<Integer> maybe = myTry.toMaybe();
  *    Optional<Integer> maybe = maybe.toOptional();
  * }
  * </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Subscriber type
@@ -160,10 +160,10 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
         Ior<Throwable, T> primary = null;
 
         if (firstError.get() != UNSET) {
-            secondary = Ior.<Throwable, T> secondary((Throwable) firstError.get());
+            secondary = Ior.<Throwable, T>left((Throwable) firstError.get());
         }
         if (firstValue.get() != UNSET) {
-            primary = Ior.<Throwable, T> primary((T) firstValue.get());
+            primary = Ior.<Throwable, T>right((T) firstValue.get());
         }
         if (secondary != null && primary != null)
             return Ior.both((Throwable)firstError.get(), (T) firstValue.get());

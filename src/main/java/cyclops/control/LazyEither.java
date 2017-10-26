@@ -32,7 +32,7 @@ import java.util.function.*;
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
  the monadic chain of computations will only be executed once data arrives).
  *
- * 'Right' (or lazyRight type) biased disjunct union.
+ * 'Right' (or right type) biased disjunct union.
 
  *  No 'projections' are provided, swap() and secondaryXXXX alternative methods can be used instead.
  *
@@ -58,22 +58,22 @@ import java.util.function.*;
  *  </pre>
  *
  *  Either's have two states
- *  Right : Most methods operate naturally on the lazyRight type, if it is present. If it is not, nothing happens.
- *  Left : Most methods do nothing to the lazyLeft type if it is present.
- *              To operate on the Left type first call swap() or use lazyLeft analogs of the main operators.
+ *  Right : Most methods operate naturally on the right type, if it is present. If it is not, nothing happens.
+ *  Left : Most methods do nothing to the left type if it is present.
+ *              To operate on the Left type first call swap() or use left analogs of the main operators.
  *
  *  Instantiating an Either - Right
  *  <pre>
  *  {@code
- *      Either.lazyRight("hello").map(v->v+" world")
- *    //Either.lazyRight["hello world"]
+ *      Either.right("hello").map(v->v+" world")
+ *    //Either.right["hello world"]
  *  }
  *  </pre>
  *
  *  Instantiating an Either - Left
  *  <pre>
  *  {@code
- *      Either.lazyLeft("hello").map(v->v+" world")
+ *      Either.left("hello").map(v->v+" world")
  *    //Either.seconary["hello"]
  *  }
  *  </pre>
@@ -83,17 +83,17 @@ import java.util.function.*;
  *   Values can be accumulated via
  *  <pre>
  *  {@code
- *  Xor.accumulateLeft(ListX.of(Either.lazyLeft("failed1"),
-                                                    Either.lazyLeft("failed2"),
-                                                    Either.lazyRight("success")),
+ *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
+                                                    Either.left("failed2"),
+                                                    Either.right("success")),
                                                     SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
- *   Either<String,String> fail1 = Either.lazyLeft("failed1");
+ *   Either<String,String> fail1 = Either.left("failed1");
      fail1.swap().combine((a,b)->a+b)
-                 .combine(Either.lazyLeft("failed2").swap())
-                 .combine(Either.<String,String>lazyRight("success").swap())
+                 .combine(Either.left("failed2").swap())
+                 .combine(Either.<String,String>right("success").swap())
  *
  *  //failed1failed2
  *  }
@@ -111,7 +111,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     /**
     default Either<NonEmptyList<LT>, RT> nel() {
-        return Either.fromLazy(Eval.always(()->visit(s->Either.lazyLeft(NonEmptyList.of(s)),p->Either.lazyRight(p))));
+        return Either.fromLazy(Eval.always(()->visit(s->Either.left(NonEmptyList.of(s)),p->Either.right(p))));
     }
     **/
     default LazyEither<LT,RT> accumulate(Either<LT,RT> next, Semigroup<RT> sg){
@@ -200,7 +200,23 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         public final Completable.CompletablePublisher<ORG> complete;
         public final LazyEither<Throwable,RT> either;
 
-        private Object writeReplace() {
+
+      @Override
+      public Either<Throwable, RT> recover(Supplier<? extends RT> value) {
+        return either.recover(value);
+      }
+
+      @Override
+      public Either<Throwable, RT> recover(RT value) {
+        return either.recover(value);
+      }
+
+      @Override
+      public Either<Throwable, RT> recoverWith(Supplier<? extends Either<Throwable, RT>> fn) {
+        return either.recoverWith(fn);
+      }
+
+      private Object writeReplace() {
             return toEither();
         }
         private Object readResolve() throws InvalidObjectException {
@@ -271,8 +287,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Optional<java.lang.Throwable> secondaryToOptional() {
-            return either.secondaryToOptional();
+        public Option<Throwable> leftOption() {
+            return either.leftOption();
         }
 
         @Override
@@ -378,18 +394,18 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * <pre>
      * {@code
      *
-     * Either<String,Integer> just  = Either.lazyRight(10);
-       Either<String,Integer> none = Either.lazyLeft("none");
+     * Either<String,Integer> just  = Either.right(10);
+       Either<String,Integer> none = Either.left("none");
 
 
-     * Either<ListX<String>,ListX<Integer>> xors =Either.sequence(ListX.of(just,none,Either.lazyRight(1)));
-       //Eitehr.lazyRight(ListX.of(10,1)));
+     * Either<ListX<String>,ListX<Integer>> xors =Either.sequence(ListX.of(just,none,Either.right(1)));
+       //Eitehr.right(ListX.of(10,1)));
      *
      * }</pre>
      *
      *
      *
-     * @param Either Either to sequence
+     * @param xors Either to sequence
      * @return Either Sequenced
      */
     public static <LT1, PT> LazyEither<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<LazyEither<LT1, PT>> xors) {
@@ -429,20 +445,20 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *
      * <pre>
      * {@code
-     * Either3<String,String,Integer> just  = Either3.lazyRight(10);
-       Either3<String,String,Integer> none = Either3.lazyLeft("none");
+     * Either3<String,String,Integer> just  = Either3.right(10);
+       Either3<String,String,Integer> none = Either3.left("none");
      *
-     *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulateRight(Monoids.intSum,ListX.of(just,none,Either3.lazyRight(1)));
-        //Either3.lazyRight(11);
+     *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulateRight(Monoids.intSum,ListX.of(just,none,Either3.right(1)));
+        //Either3.right(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Eithers to accumulate lazyRight values
+     * @param xors Collection of Eithers to accumulate right values
      * @param reducer  Reducer to accumulate results
-     * @return  Either populated with the accumulate lazyRight operation
+     * @return  Either populated with the accumulate right operation
      */
     public static <LT1, RT> LazyEither<ListX<LT1>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither<LT1, RT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
@@ -577,16 +593,16 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
     /**
-     * Create an instance of the lazyLeft type. Most methods are biased to the lazyRight type,
+     * Create an instance of the left type. Most methods are biased to the right type,
      * so you will need to use swap() or secondaryXXXX to manipulate the wrapped value
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyLeft(10).map(i->i+1);
-     *   //Either.lazyLeft[10]
+     *   Either.<Integer,Integer>left(10).map(i->i+1);
+     *   //Either.left[10]
      *
-     *    Either.<Integer,Integer>lazyLeft(10).swap().map(i->i+1);
-     *    //Either.lazyRight[11]
+     *    Either.<Integer,Integer>left(10).swap().map(i->i+1);
+     *    //Either.right[11]
      * }
      * </pre>
      *
@@ -599,13 +615,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     /**
-     * Create an instance of the lazyRight type. Most methods are biased to the lazyRight type,
-     * which means, for example, that the transform method operates on the lazyRight type but does nothing on lazyLeft Eithers
+     * Create an instance of the right type. Most methods are biased to the right type,
+     * which means, for example, that the transform method operates on the right type but does nothing on left Eithers
      *
      * <pre>
      * {@code
-     *   Either.<Integer,Integer>lazyRight(10).map(i->i+1);
-     *   //Either.lazyRight[11]
+     *   Either.<Integer,Integer>right(10).map(i->i+1);
+     *   //Either.right[11]
      *
      *
      * }
@@ -680,8 +696,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * If this Either contains the Left type, transform it's value so that it contains the Right type
      *
      *
-     * @param fn Function to transform lazyLeft type to lazyRight
-     * @return Either with lazyLeft type mapped to lazyRight
+     * @param fn Function to transform left type to right
+     * @return Either with left type mapped to right
      */
     LazyEither<LT, RT> mapLeftToRight(Function<? super LT, ? extends RT> fn);
 
@@ -736,11 +752,11 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *<pre>
      *  {@code
      *
-     *    Either.lazyLeft("hello")
+     *    Either.left("hello")
      *       .map(v->v+" world")
      *    //Either.seconary["hello"]
      *
-     *    Either.lazyLeft("hello")
+     *    Either.left("hello")
      *       .swap()
      *       .map(v->v+" world")
      *       .swap()
@@ -749,7 +765,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *  </pre>
      *
      *
-     * @return Swap the lazyRight and lazyLeft types, allowing operations directly on what was the Left type
+     * @return Swap the right and left types, allowing operations directly on what was the Left type
      */
     LazyEither<RT, LT> swap();
 
@@ -798,18 +814,18 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     /**
      * Visitor pattern for this Ior.
-     * Execute the lazyLeft function if this Either contains an element of the lazyLeft type
-     * Execute the lazyRight function if this Either contains an element of the lazyRight type
+     * Execute the left function if this Either contains an element of the left type
+     * Execute the right function if this Either contains an element of the right type
      *
      *
      * <pre>
      * {@code
-     *  Either.lazyRight(10)
-     *     .visit(lazyLeft->"no", lazyRight->"yes")
+     *  Either.right(10)
+     *     .visit(left->"no", right->"yes")
      *  //Either["yes"]
 
-        Either.lazyLeft(90)
-           .visit(lazyLeft->"no", lazyRight->"yes")
+        Either.left(90)
+           .visit(left->"no", right->"yes")
         //Either["no"]
 
 
@@ -819,7 +835,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      *
      * @param secondary Function to execute if this is a Left Either
      * @param primary Function to execute if this is a Right Ior
-     * @param both Function to execute if this Ior contains both types
      * @return Result of executing the appropriate function
      */
     <R> R visit(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
@@ -897,10 +912,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /**
      * @return The Left value wrapped in an Optional if present, otherwise an zero Optional
      */
-    Optional<LT> secondaryToOptional();
+    Option<LT> leftOption();
 
     /**
-     * @return A Stream containing the lazyLeft value if present, otherwise an zero Stream
+     * @return A Stream containing the left value if present, otherwise an zero Stream
      */
     ReactiveSeq<LT> leftToStream();
 
@@ -931,19 +946,19 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     void peek(Consumer<? super LT> stAction, Consumer<? super RT> ptAction);
 
     /**
-     * @return True if this is a lazyRight Either
+     * @return True if this is a right Either
      */
     public boolean isRight();
 
     /**
-     * @return True if this is a lazyLeft Either
+     * @return True if this is a left Either
      */
     public boolean isLeft();
 
 
 
     /**
-     * @return An Either with the lazyLeft type converted to a persistent list, for use with accumulating app function  {@link LazyEither#combine(LazyEither,BiFunction)}
+     * @return An Either with the left type converted to a persistent list, for use with accumulating app function
      */
     default LazyEither<LinkedListX<LT>, RT> list() {
         return mapLeft(LinkedListX::of);
@@ -951,10 +966,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     /**
      * Accumulate secondarys into a LinkedListX (extended Persistent List) and Right with the supplied combiner function
-     * Right accumulation only occurs if all phases are lazyRight
+     * Right accumulation only occurs if all phases are right
      *
      * @param app Value to combine with
-     * @param fn Combiner function for lazyRight values
+     * @param fn Combiner function for right values
      * @return Combined Either
      */
     default <T2, R> LazyEither<LinkedListX<LT>, R> combineToList(final LazyEither<LT, ? extends T2> app,
@@ -963,21 +978,21 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     /**
-     * Accumulate lazyLeft values with the provided BinaryOperator / Semigroup {@link Semigroups}
-     * Right accumulation only occurs if all phases are lazyRight
+     * Accumulate left values with the provided BinaryOperator / Semigroup {@link Semigroups}
+     * Right accumulation only occurs if all phases are right
      *
      * <pre>
      * {@code
-     *  Either<String,String> fail1 =  Either.lazyLeft("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.lazyLeft("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
+     *  Either<String,String> fail1 =  Either.left("failed1");
+        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), SemigroupK.collectionConcat(),(a,b)->a+b);
 
         //Left of [LinkedListX.of("failed1","failed2")))]
      * }
      * </pre>
      *
      * @param app Value to combine with
-     * @param semigroup to combine lazyLeft types
-     * @param fn To combine lazyRight types
+     * @param semigroup to combine left types
+     * @param fn To combine right types
      * @return Combined Either
      */
 
@@ -1017,6 +1032,21 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         private Object readResolve() throws InvalidObjectException {
             throw new InvalidObjectException("Use Serialization Proxy instead.");
         }
+
+      @Override
+      public Either<ST, PT> recover(Supplier<? extends PT> value) {
+        return visit(l->Either.right(value.get()),r->this);
+      }
+
+      @Override
+      public Either<ST, PT> recover(PT value) {
+        return visit(l->Either.right(value),r->this);
+      }
+
+      @Override
+      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+        return visit(l->fn.get(),r->this);
+      }
         public Eval<Either<ST, PT>> nestedEval(){
             return (Eval)lazy;
         }
@@ -1109,7 +1139,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
                 @Override
                 public void onNext(LazyEither<ST, PT> pts) {
                     if(pts.isRight()){ //if we create a LazyThrowable type
-                                        // we could safely propagate an error if pts was a lazyLeft
+                                        // we could safely propagate an error if pts was a left
                         PT v = pts.orElse(null);
                         if(v!=null)
                             sub.onNext(v);
@@ -1261,12 +1291,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#secondaryToOptional()
+         * @see com.aol.cyclops2.sum.types.Either#leftOption()
          */
         @Override
-        public Optional<ST> secondaryToOptional() {
+        public Option<ST> leftOption() {
             return trampoline()
-                       .secondaryToOptional();
+                       .leftOption();
         }
 
         /*
@@ -1386,7 +1416,22 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     static class Right<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<PT> value;
 
-        private Object writeReplace() {
+      @Override
+      public Either<ST, PT> recover(Supplier<? extends PT> value) {
+        return this;
+      }
+
+      @Override
+      public Either<ST, PT> recover(PT value) {
+        return this;
+      }
+
+      @Override
+      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+        return this;
+      }
+
+      private Object writeReplace() {
             return toEither();
         }
         private Object readResolve() throws InvalidObjectException {
@@ -1449,8 +1494,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Optional<ST> secondaryToOptional() {
-            return Optional.empty();
+        public Option<ST> leftOption() {
+            return Option.none();
         }
 
         @Override
@@ -1504,12 +1549,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public String mkString() {
-            return "Either.lazyRight[" + value.get() + "]";
+            return "Either.right[" + value.get() + "]";
         }
 
         @Override
         public Ior<ST, PT> toIor() {
-            return Ior.primary(value.get());
+            return Ior.right(value.get());
         }
 
         @Override
@@ -1570,7 +1615,23 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     static class Left<ST, PT> implements LazyEither<ST, PT> {
         private final Eval<ST> value;
 
-        private Object writeReplace() {
+
+      @Override
+      public Either<ST, PT> recover(Supplier<? extends PT> value) {
+        return Either.right(value.get());
+      }
+
+      @Override
+      public Either<ST, PT> recover(PT value) {
+        return Either.right(value);
+      }
+
+      @Override
+      public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
+        return fn.get();
+      }
+
+      private Object writeReplace() {
             return toEither();
         }
         private Object readResolve() throws InvalidObjectException {
@@ -1642,13 +1703,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Optional<ST> secondaryToOptional() {
-            return Optional.ofNullable(value.get());
+        public Option<ST> leftOption() {
+            return Option.some(value.get());
         }
 
         @Override
         public ReactiveSeq<ST> leftToStream() {
-            return ReactiveSeq.fromStream(Streams.optionalToStream(secondaryToOptional()));
+            return ReactiveSeq.fromIterable(leftOption());
         }
 
         @Override
@@ -1706,14 +1767,14 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public String mkString() {
-            return "Either.lazyLeft[" + value.get() + "]";
+            return "Either.left[" + value.get() + "]";
         }
 
 
 
         @Override
         public Ior<ST, PT> toIor() {
-            return Ior.secondary(value.get());
+            return Ior.left(value.get());
         }
 
 

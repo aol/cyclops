@@ -325,7 +325,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> fold(Monoid<U> monoid){
         return this.getSimpleReact().fromStream(Stream.of(Lambda.λ(()->this.reduce(monoid))).map(Supplier::get));
     }
-    
+
 
 
     /* (non-Javadoc)
@@ -356,7 +356,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> prepend(Iterable<? extends U> other) {
-        
+
         return fromStream(ReactiveSeq.oneShotStream(stream()).prepend(other));
     }
 
@@ -378,7 +378,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default FutureStream<U> cycle(long times) {
         return fromStream(stream().cycle(times));
     }
-  
+
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
      */
@@ -392,7 +392,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<U> limitWhileClosed(Predicate<? super U> predicate) {
         return fromStream(stream()).limitWhileClosed(predicate);
-        
+
     }
 
     @Override
@@ -406,29 +406,29 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <U1> FutureStream<U> sorted(Function<? super U, ? extends U1> function, Comparator<? super U1> comparator) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).sorted(function,comparator));
-        
+
     }
 
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
-     * 
+     *
      * <pre>
-     * {@code 
-     *   
+     * {@code
+     *
      *      FutureStream.of(1,2,3)
      *                      .map(i->i*2)
      *                      .coflatMap(s -> s.reduce(0,(a,b)->a+b))
-     *      
+     *
      *      //FutureStream[12]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @return
      */
     default <R> FutureStream<R> coflatMap(Function<? super ReactiveSeq<U>, ? extends R> fn){
-        
+
         return this.getSimpleReact().<R>generate(()->fn.apply(this))
                                     .limit(1);
     }
@@ -464,7 +464,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default <T2, R> FutureStream<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super U, ? super T2, ? extends R> fn) {
-      
+
         return (FutureStream<R>)ReactiveSeq.super.zipP(publisher,fn);
     }
 
@@ -529,7 +529,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                                      BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
                                                      Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
                                                      Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
@@ -542,7 +542,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                                      Function3<? super U, ? super R1, ? super R2, ? extends BaseStream<R3, ?>> stream3,
                                                      Function4<? super U, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                      Function4<? super U, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
@@ -553,7 +553,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                                  BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
                                                  Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
@@ -565,7 +565,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                                  BiFunction<? super U, ? super R1, ? extends BaseStream<R2, ?>> stream2,
                                                  Function3<? super U, ? super R1, ? super R2, Boolean> filterFunction,
                                                  Function3<? super U, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
@@ -575,7 +575,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default <R1, R> FutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                              BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach2(stream1, yieldingFunction);
     }
 
@@ -586,7 +586,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <R1, R> FutureStream<R> forEach2(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
                                              BiFunction<? super U, ? super R1, Boolean> filterFunction,
                                              BiFunction<? super U, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (FutureStream<R>)ReactiveSeq.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
@@ -749,7 +749,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
-        
+
         FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 
@@ -928,7 +928,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                         .toQueue();
          q.reactiveStream().collect(CyclopsCollectors.toList())
                    .size()
-    
+
         //100
      * }</pre>
      *	@return Queue
@@ -1149,7 +1149,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /* 
+    /*
      * @see cyclops2.reactiveStream.ReactiveSeq#findFirst()
      */
     @Override
@@ -1328,7 +1328,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      *
         assertThat(of(1,2,3,4,5,6).batchBySizeAndTime(3,10,TimeUnit.SECONDS).toList().getValue(0).size(),is(3));
-    
+
      * }</pre>
      *
      *	@param size Max batch size
@@ -1533,7 +1533,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * List <TreeSet<Integer>> set = FutureStream.ofThread(1,1,1,1,1,1)
      *                                               .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
      *                                               .block();
-    
+
             assertThat(set.getValue(0).size(),is(1));
      *
      * }
@@ -1727,7 +1727,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                         .cast(Integer.class)
                         .peek(it ->System.out.println(it))
                         .toList();
-    
+
      *  //prints the ClasCastException for failed Casts
      * }
      * </pre>
@@ -2070,8 +2070,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * List<List<Integer>> list = futureStream.sliding(2)
                                     .collect(CyclopsCollectors.toList());
-    
-    
+
+
         assertThat(list.getValue(0),hasItems(1,2));
         assertThat(list.getValue(1),hasItems(2,3));
      * }
@@ -2096,8 +2096,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * List<List<Integer>> list = futureStream.sliding(3,2)
                                     .collect(CyclopsCollectors.toList());
-    
-    
+
+
         assertThat(list.getValue(0),hasItems(1,2,3));
         assertThat(list.getValue(1),hasItems(3,4,5));
      * }
@@ -2237,7 +2237,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream to the lazyLeft.
+     * Scan a reactiveStream to the left.
      *
      *
      * // ("", "a", "ab", "abc") FutureStream.of("a", "b", "c").scanLeft("",
@@ -2252,7 +2252,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Scan a reactiveStream to the lazyRight. - careful with infinite streams!
+     * Scan a reactiveStream to the right. - careful with infinite streams!
      *
      *
      * // ("", "c", "cb", "cba") FutureStream.of("a", "b",
@@ -2489,7 +2489,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * 	count =0;
         assertThat(FutureStream.of(1,2,2,3).cycleUntil(next -> count++>10 )
                                             .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
-    
+
      * }
      * </pre>
      * @param predicate
@@ -2640,7 +2640,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * {@code
      * FutureStream.of(1,2,3,4)
                         .toCompletableFuture()
-    
+
         //Future of	[1,2,3,4]
      *
      * }
@@ -3258,30 +3258,30 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /**
      * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
      * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
-     * 
+     *
      * e.g.
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(1,2,3,4)
      *          					    .forEach(2,System.out::println);
-     *          
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
      *     3
-     *     4 
+     *     4
      *     Second batch processed!
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
@@ -3301,26 +3301,26 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace());
-     *          
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
-     *     
+     *
      *     RuntimeException Stack Trace on System.err
-     *     
-     *     4 
+     *
+     *     4
      *     Second batch processed!
      * }
-     * </pre>	 
-     * 
-     * 
+     * </pre>
+     *
+     *
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
@@ -3338,31 +3338,31 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
-     * 
+     *
      * <pre>
      * {@code
      *     Subscription next = LazyFurtureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::getValue)
      *          					    .forEach(2,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
-     *          
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
-     *     
+     *
      *     RuntimeException Stack Trace on System.err
-     *     
-     *     4 
+     *
+     *     4
      *     Second batch processed!
      *     The take!
      * }
-     * </pre>	 
+     * </pre>
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
@@ -3384,20 +3384,20 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::getValue)
      *          					    .forEach(System.out::println, e->e.printStackTrace());
-     *          
+     *
      *     System.out.println("processed!");
-     *     
-     *    
-     *      
+     *
+     *
+     *
      *     //prints
      *     1
      *     2
      *     RuntimeException Stack Trace on System.err
      *     4
      *     processed!
-     *     
+     *
      * }
-     * </pre>	 
+     * </pre>
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
@@ -3410,26 +3410,26 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     /**
      * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
      * when the entire Stream has been processed an onComplete event will be recieved.
-     * 
+     *
      * <pre>
      * {@code
      *     Subscription next = FutureStream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
      *                                  .map(Supplier::getValue)
      *          					    .forEachEvents(System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
-     *          
+     *
      *     System.out.println("processed!");
-     *     
-     *      
+     *
+     *
      *     //prints
      *     1
      *     2
      *     RuntimeException Stack Trace on System.err
-     *      4 
+     *      4
      *     processed!
-     *     
-     *     
+     *
+     *
      * }
-     * </pre>	
+     * </pre>
      * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event

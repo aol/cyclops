@@ -105,13 +105,13 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
         }
         private Trampoline<Tuple2<DIET<T>,T>> findRightAndEndingPoint(T value){
             //            value
-            //                    start         (This is lazyRight Diet, end at old start)
+            //                    start         (This is right Diet, end at old start)
             if(focus.ordering().isLessThan(value,focus.start)) {
                 return done(tuple(this, value));
             }
             //            value
             //                   end
-            //    start                 (lazyRight is lazyRight diet, end new at old end)
+            //    start                 (right is right diet, end new at old end)
             if(focus.ordering().isLessThanOrEqual(value,focus.end))
                 return done(tuple(right,focus.end));
             //             value
@@ -130,12 +130,12 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
                }
                //                        value
                //                                 end
-               //<-- lazyLeft  -->    start                 (Left is leftward diet, start new at start)
+               //<-- left  -->    start                 (Left is leftward diet, start new at start)
                if(focus.ordering().isGreaterThanOrEqual(value,focus.start))
                    return done(tuple(left,focus.start));
                //             value
                //                                  end
-               //   <--     lazyLeft         --> start               (split leftward diet recursively)
+               //   <--     left         --> start               (split leftward diet recursively)
                return left.fold(p->p.findLeftAndStartingPoint(value), leftNil->done(tuple(leftNil,value)));
 
 

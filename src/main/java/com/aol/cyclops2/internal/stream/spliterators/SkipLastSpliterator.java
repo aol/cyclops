@@ -13,7 +13,7 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
         if(skip==0){
             return source;
         }
-        if(skip==source.getExactSizeIfKnown()){ //lazyRight sized already
+        if(skip==source.getExactSizeIfKnown()){ //right sized already
             return Spliterators.emptySpliterator();
         }
 
@@ -33,7 +33,7 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
         this.skip = skip;
     }
 
-    
+
     boolean closed = false;
     boolean canAdvance = true;
     boolean sent = false;

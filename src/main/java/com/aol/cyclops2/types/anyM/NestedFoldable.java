@@ -42,15 +42,15 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /**
      * Attempt to transform this Sequence to the same type as the supplied Monoid
      * (Reducer) Then use Monoid to reduce values
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
-     * 
+     *
      * //4
      * }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -62,14 +62,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /**
      * Attempt to transform this Monad to the same type as the supplied Monoid, using
      * supplied function Then use Monoid to reduce values
-     * 
+     *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
      *           .mapReduce(this::toInt,Reducers.toTotalInt());
-     *  
+     *
      *  //10
-     *  
+     *
      *  int toInt(String s){
      *      if("one".equals(s))
      *          return 1;
@@ -83,7 +83,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *     }
      *  }
      * </pre>
-     * 
+     *
      * @param mapper
      *            Function to transform Monad type
      * @param reducer
@@ -96,13 +96,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
-     * 
+     *
      * //hello,2,world,4
      * }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Use supplied Monoid to reduce values
      * @return reduced values
@@ -117,13 +117,13 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      */
     default AnyM<W,Optional<T>> reduce(final BinaryOperator<T> accumulator) {
         return nestedFoldables().map(s -> s.reduce(accumulator));
-        
+
 
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BinaryOperator)
      */
@@ -133,7 +133,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.util.stream.Stream#reduce(java.lang.Object,
      * java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
@@ -146,20 +146,20 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     * 
+     *
      * <pre>
      * {
      *  {@code
      *  Monoid<Integer> sum = Monoid.of(0, (a, b) -> a + b);
      *  Monoid<Integer> mult = Monoid.of(1, (a, b) -> a * b);
      *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).transformerStream());
-     * 
+     *
      *  assertThat(result, equalTo(Arrays.asList(10, 24)));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param reducers
      * @return
      */
@@ -174,20 +174,20 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
      * was one value To reduce over the values on the list, called
      * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *      Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
      *      Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
      *      List<Integer> result = ReactiveSeq.of(1,2,3,4))
      *                                      .reduce(Arrays.asList(sum,mult) );
-     *              
-     *       
+     *
+     *
      *      assertThat(result,equalTo(Arrays.asList(10,24)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param reducers
      * @return
      */
@@ -207,15 +207,15 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
         return nestedFoldables().map(s -> s.mapReduce(reducer));
     }
     /**
-     * 
+     *
      * <pre>
      *      {@code
      *      ReactiveSeq.of("a","b","c").foldRight(Reducers.toString(""));
-     *        
+     *
      *         // "cab"
      *         }
      * </pre>
-     * 
+     *
      * @param reducer
      *            Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
@@ -225,34 +225,34 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
     /**
-     * Immutable reduction from lazyRight to lazyLeft
-     * 
+     * Immutable reduction from right to left
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", String::concat).equals("cba"));
      * }
      * </pre>
-     * 
+     *
      * @param identity value that results in the input parameter to the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
-     * @return AnyM containing the results of the nest fold lazyRight
+     * @return AnyM containing the results of the nest fold right
      */
     default AnyM<W,T> foldRight(final T identity, final BinaryOperator<T> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));
     }
 
     /**
-     * Immutable reduction from lazyRight to lazyLeft
+     * Immutable reduction from right to left
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of("a","b","c").foldRight("", (a,b)->a+b).equals("cba"));
      * }
-     * </pre> * 
+     * </pre> *
      * @param identity value that results in the input parameter to the accumulator function being returned.
      *          E.g. for multiplication 1 is the identity value, for addition 0 is the identity value
      * @param accumulator function that combines the accumulated value and the next one
-     * @return AnyM containing the results of the nest fold lazyRight
+     * @return AnyM containing the results of the nest fold right
      */
     default <U> AnyM<W,U> foldRight(final U identity, final BiFunction<? super T, U, U> accumulator) {
         return nestedFoldables().map(s -> s.foldRight(identity, accumulator));
@@ -261,16 +261,16 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     /**
      * Attempt to transform this Monad to the same type as the supplied Monoid (using
      * mapToType on the monoid interface) Then use Monoid to reduce values
-     * 
+     *
      * <pre>
      *      {@code
      *      ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
-     *        
+     *
      *         // "321"
      *         }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param reducer
      *            Monoid to reduce values
      * @return Reduce result
@@ -285,7 +285,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *  assertEquals("123".length(),ReactiveSeq.of(1, 2, 3).join().length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     default AnyM<W,String> join() {
@@ -299,7 +299,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * assertEquals("1, 2, 3".length(), ReactiveSeq.of(1, 2, 3).join(", ").length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     default AnyM<W,String> join(final String sep) {
@@ -308,11 +308,11 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
      * }
      * </pre>
-     * 
+     *
      * @return Stream as concatenated String
      */
     default AnyM<W,String> join(final String sep, final String start, final String end) {
@@ -346,17 +346,17 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * Use classifier function to group elements in this Sequence into a Map
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
      *  assertEquals(asList(2, 4), map1.getValue(0));
      *  assertEquals(asList(1, 3), map1.getValue(1));
      *  assertEquals(2, map1.size());
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
      */
     default <K> AnyM<W,MapX<K, ListX<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
@@ -366,31 +366,31 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * @return First matching element in sequential order
-     * 
+     *
      *         <pre>
      * {@code
      * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
-     * 
+     *
      * //3
      * }
      * </pre>
-     * 
+     *
      *         (deterministic)
-     * 
+     *
      */
     default AnyM<W,Optional<T>> findFirst() {
         return nestedFoldables().map(s -> s.findFirst());
-       
+
     }
 
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3)));
      * }
      * </pre>
-     * 
+     *
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
@@ -402,7 +402,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
      * </pre>
-     * 
+     *
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
@@ -416,9 +416,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code
      *  assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
      *              .endsWith(Arrays.asList(5,6)));
-     * 
+     *
      * }
-     * 
+     *
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
@@ -433,7 +433,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *              .endsWith(Stream.of(5,6)));
      * }
      * </pre>
-     * 
+     *
      * @param stream
      *            Values to check
      * @return true if SequenceM endswith values in the supplied Stream
@@ -447,14 +447,14 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      *  assertThat(ReactiveSeq.of(1,2,3,4)
      *                  .map(u->{throw new RuntimeException();})
      *                  .recover(e->"hello")
      *                  .firstValue(),equalTo("hello"));
      * }
      * </pre>
-     * 
+     *
      * @return first value in this Stream
      */
     default AnyM<W,T> firstValue() {
@@ -463,19 +463,19 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * <pre>
-     * {@code 
-     *    
+     * {@code
+     *
      *    //1
      *    ReactiveSeq.of(1).single();
-     *    
+     *
      *    //UnsupportedOperationException
      *    ReactiveSeq.of().single();
-     *     
+     *
      *     //UnsupportedOperationException
      *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
-     * 
+     *
      * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
@@ -490,19 +490,19 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * <pre>
-     * {@code 
-     *    
+     * {@code
+     *
      *    //Optional[1]
      *    ReactiveSeq.of(1).single();
-     *    
+     *
      *    //Optional.zero
      *    ReactiveSeq.of().singleOpional();
-     *     
+     *
      *     //Optional.zero
      *    ReactiveSeq.of(1,2,3).single();
      * }
      * </pre>
-     * 
+     *
      * @return An Optional with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
@@ -512,25 +512,25 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * Return the elementAt index or Optional.zero
-     * 
+     *
      * <pre>
      * {@code
      *  assertThat(ReactiveSeq.of(1,2,3,4,5).elementAt(2).getValue(),equalTo(3));
      * }
      * </pre>
-     * 
+     *
      * @param index
      *            to extract element from
      * @return elementAt index
      */
     default AnyM<W,Maybe<T>> get(final long index) {
         return nestedFoldables().map(s -> s.elementAt(index));
-        
+
     }
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run at 8PM every night
@@ -539,22 +539,22 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect()
      *      .forEach(this::logToDB);
      * }
      * </pre>
-     * 
-     * 
-     * 
+     *
+     *
+     *
      * @param cron
      *            Expression that determines when each job will run
      * @param ex
@@ -567,7 +567,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds after last job completes
@@ -576,19 +576,19 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param delay
      *            Between last element completes passing through the Stream
      *            until the next one starts
@@ -602,7 +602,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds
@@ -611,20 +611,20 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
-     * 
+     *
      *  data.connect()
      *      .forEach(this::logToDB);
      * }
      * </pre>
-     * 
+     *
      * @param rate
      *            Time in millis between job runs
      * @param ex

@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 
 @AllArgsConstructor
 public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueAdapter<ior> {
-   
+
 
 
 
@@ -28,7 +28,7 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
         return false;
     }
 
-    
+
 
     public <T> Option<T> get(AnyMValue<ior,T> t){
         return ior(t).toOption();
@@ -53,14 +53,14 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
 
     @Override
     public <T> AnyM<ior, T> empty() {
-        return AnyM.fromIor(Ior.secondary(null));
-      
+        return AnyM.fromIor(Ior.left(null));
+
     }
 
     @Override
     public <T, R> AnyM<ior, R> ap(AnyM<ior,? extends Function<? super T, ? extends R>> fn, AnyM<ior, T> apply) {
         return flatMap(apply,x->fn.map(fnA->fnA.apply(x)));
-         
+
     }
 
     @Override
@@ -80,15 +80,15 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
     public <T> AnyM<ior, T> unitIterable(Iterable<T> it) {
        return AnyM.fromIor(fromIterable(it));
     }
-   
+
     @Override
     public <T> AnyM<ior, T> unit(T o) {
-        return AnyM.fromIor(Ior.primary(o));
+        return AnyM.fromIor(Ior.right(o));
     }
 
 
     static <ST, T> Ior<ST, T> fromIterable(final Iterable<T> iterable) {
         final Iterator<T> it = iterable.iterator();
-        return it.hasNext() ? Ior.primary(it.next()) : Ior.secondary(null);
+        return it.hasNext() ? Ior.right(it.next()) : Ior.left(null);
     }
 }

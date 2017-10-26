@@ -14,16 +14,16 @@ import com.aol.cyclops2.util.box.Mutable;
 public class IorAnyMValueTest extends BaseAnyMValueTest<Witness.ior> {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromIor(Ior.primary(10));
-        none = AnyM.fromIor(Ior.secondary(null));
+        just = AnyM.fromIor(Ior.right(10));
+        none = AnyM.fromIor(Ior.left(null));
     }
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
 
         just = just.peek(c->capture.set(c));
-        
-        
+
+
         just.get();
         assertThat(capture.get(),equalTo(10));
     }

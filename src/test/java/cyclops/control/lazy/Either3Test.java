@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package cyclops.control.lazy;
 
 
 import cyclops.companion.Monoids;
@@ -77,12 +77,12 @@ public class Either3Test {
              .flatMap(i -> { lazy=false; return  LazyEither3.right(15);})
              .map(i -> { lazy=false; return  LazyEither3.right(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
-    
+
     @Test
     public void mapFlatMapTest(){
         assertThat(LazyEither3.right(10)
@@ -95,7 +95,7 @@ public class Either3Test {
     static class Two extends Base{}
     @Test
     public void visitAny(){
-       
+
         LazyEither3<One,Two,Two> test = LazyEither3.right(new Two());
         test.to(LazyEither3::applyAny).apply(b->b.toString());
         just.to(LazyEither3::consumeAny).accept(System.out::println);
@@ -134,7 +134,7 @@ public class Either3Test {
         assertTrue(left2.isLeft2());
     }
 
-   
+
 
     @Test
     public void testTraverseLeft1() {
@@ -175,12 +175,12 @@ public class Either3Test {
 
     @Test
     public void visit(){
-        
+
         assertThat(just.visit(secondary->"no", left2->"left2", primary->"yes"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", left2->"left2", primary->"yes"),equalTo("no"));
         assertThat(left2.visit(secondary->"no", left2->"left2", primary->"yes"),equalTo("left2"));
     }
-    
+
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -192,26 +192,26 @@ public class Either3Test {
     }
 
 
-    
+
     @Test
     public void testOfT() {
-        assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+        assertThat(Ior.right(1),equalTo(Ior.right(1)));
     }
 
-    
 
-    
 
-    
 
-   
+
+
+
+
 
     @Test
     public void testUnitT() {
         assertThat(just.unit(20),equalTo(LazyEither3.right(20)));
     }
 
-    
+
 
     @Test
     public void testisPrimary() {
@@ -219,7 +219,7 @@ public class Either3Test {
         assertFalse(none.isRight());
     }
 
-    
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(LazyEither3.right(15)));
@@ -248,12 +248,12 @@ public class Either3Test {
 
     @Test
     public void testOfSupplierOfT() {
-        
+
     }
 
     @Test
     public void testConvertTo() {
-       
+
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -262,10 +262,10 @@ public class Either3Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-    
+
     @Test
     public void testIterate() {
         assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -287,12 +287,12 @@ public class Either3Test {
 
 
 
-   
 
 
-    
 
-   
+
+
+
     @Test
     public void testToTry() {
         assertTrue(none.toTry().isFailure());
@@ -306,37 +306,37 @@ public class Either3Test {
 
     @Test
     public void testToIor() {
-        assertThat(just.toIor(),equalTo(Ior.primary(10)));
-        
+        assertThat(just.toIor(),equalTo(Ior.right(10)));
+
     }
     @Test
     public void testToIorNone(){
         Ior<String,Integer> ior = none.toIor();
-        assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary("none")));
-        
+        assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left("none")));
+
     }
 
 
     @Test
     public void testToIorSecondary() {
-        assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+        assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
     }
-    
+
 
     @Test
     public void testToIorSecondaryNone(){
         Ior<Integer,String> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary("none")));
-        
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right("none")));
+
     }
 
 
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either3.lazyRight[10]"));
+        assertThat(just.mkString(),equalTo("Either3.right[10]"));
         assertThat(none.mkString(),equalTo("Either3.left1[none]"));
     }
 
@@ -351,7 +351,7 @@ public class Either3Test {
         assertTrue(just.filter(i->i>5).isPresent());
         assertFalse(none.filter(i->i<5).isPresent());
         assertFalse(none.filter(i->i>5).isPresent());
-        
+
     }
 
     @Test
@@ -374,10 +374,10 @@ public class Either3Test {
     public void testNotNull() {
         assertTrue(just.notNull().isPresent());
         assertFalse(none.notNull().isPresent());
-        
+
     }
 
-    
+
 
 
 
@@ -389,14 +389,14 @@ public class Either3Test {
     }
 
 
-    
+
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
         assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
         assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
     }
 
-    
+
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(()->2),equalTo(2));
@@ -414,7 +414,7 @@ public class Either3Test {
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
         assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-        
+
     }
 
 
@@ -453,13 +453,13 @@ public class Either3Test {
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither3.right(15)));
     }
-    
+
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
         just.get();
-        
+
         assertThat(capture.get(),equalTo(10));
     }
 
@@ -471,12 +471,12 @@ public class Either3Test {
         assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither3.right(65)));
     }
 
-    
+
 
     @Test
     public void testUnitT1() {
         assertThat(none.unit(10),equalTo(just));
     }
 
-  
+
 }

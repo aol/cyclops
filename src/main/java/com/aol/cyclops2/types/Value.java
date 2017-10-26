@@ -156,9 +156,9 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
 
 
     /**
-     * Convert to an Xor where the left value will be used if no lazyRight value is present
+     * Convert to an Xor where the left value will be used if no right value is present
      *
-    * @param secondary Value to use in case no lazyRight value is present
+    * @param secondary Value to use in case no right value is present
     * @return Right Either with same value as this Value, or a Left Either with the provided Value if this Value is zero
     */
     default <ST> Either<ST, T> toEither(final ST secondary) {
@@ -170,13 +170,13 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     }
 
     /**
-     * Lazily convert this Value to an Either.lazyRight instance
+     * Lazily convert this Value to an Either.right instance
      */
     default <LT> LazyEither<LT,T> toRight(T alt){
         return LazyEither.fromIterable(this,alt);
     }
     /**
-     * Lazily convert this Value to an Either.lazyLeft instance
+     * Lazily convert this Value to an Either.left instance
      */
     default <RT> LazyEither<T,RT> toLeft(T alt){
         return LazyEither.<RT,T>fromIterable(this,alt)
@@ -257,14 +257,14 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     }
 
     /**
-     *  Print each value in this Folds to the console in turn (lazyLeft-to-lazyRight)
+     *  Print each value in this Folds to the console in turn (left-to-right)
      */
     default void printOut() {
         stream().printOut();
     }
 
     /**
-     *  Print each value in this Folds to the error console in turn (lazyLeft-to-lazyRight)
+     *  Print each value in this Folds to the error console in turn (left-to-right)
      */
     default void printErr() {
         stream().printErr();

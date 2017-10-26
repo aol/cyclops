@@ -120,7 +120,7 @@ public class SemigroupKs{
     static <T> SemigroupK<reactiveSeq,T> mergeLatestReactiveSeq() {
         return (a,b) -> Spouts.mergeLatest(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
     }
-    
+
 
 
     /**
@@ -155,76 +155,76 @@ public class SemigroupKs{
         return (a, b) -> Future.firstSuccess(Future.narrowK(a),Future.narrowK(b));
     }
     /**
-     * @return Combine two Xor's by taking the first lazyRight
+     * @return Combine two Xor's by taking the first right
      */
     static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstPrimaryXor() {
         return  (a, b) -> Either.narrowK(a).isRight() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the first lazyLeft
+     * @return Combine two Xor's by taking the first left
      */
     static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstSecondaryXor() {
         return  (a, b) -> Either.narrowK(a).isLeft() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the last lazyRight
+     * @return Combine two Xor's by taking the last right
      */
     static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastPrimaryXor() {
         return  (a, b) -> Either.narrowK(b).isRight() ? b : a;
     }
     /**
-     * @return Combine two Xor's by taking the last lazyLeft
+     * @return Combine two Xor's by taking the last left
      */
     static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastSecondaryXor() {
         return  (a, b) -> Either.narrowK(b).isLeft() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the first lazyRight
+     * @return Combine two Try's by taking the first right
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTrySuccess() {
         return  (a, b) -> Try.narrowK(a).isSuccess() ? a : b;
     }
     /**
-     * @return Combine two Try's by taking the first lazyLeft
+     * @return Combine two Try's by taking the first left
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTryFailure() {
         return  (a, b) -> Try.narrowK(a).isFailure() ? a : b;
     }
     /**
-     * @return Combine two Tryr's by taking the last lazyRight
+     * @return Combine two Tryr's by taking the last right
      */
     static<T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTrySuccess() {
         return  (a, b) -> Try.narrowK(b).isSuccess() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the last lazyLeft
+     * @return Combine two Try's by taking the last left
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTryFailure() {
         return  (a, b) -> Try.narrowK(b).isFailure() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the first lazyRight
+     * @return Combine two Ior's by taking the first right
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isPrimary() ? a : b;
+        return  (a, b) -> Ior.narrowK(a).isRight() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the first lazyLeft
+     * @return Combine two Ior's by taking the first left
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isSecondary() ? a : b;
+        return  (a, b) -> Ior.narrowK(a).isLeft() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the last lazyRight
+     * @return Combine two Ior's by taking the last right
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isPrimary() ? b : a;
+        return  (a, b) -> Ior.narrowK(b).isRight() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the last lazyLeft
+     * @return Combine two Ior's by taking the last left
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isSecondary() ? b : a;
+        return  (a, b) -> Ior.narrowK(b).isLeft() ? b : a;
     }
 
     /**

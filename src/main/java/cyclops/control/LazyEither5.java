@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /**
- * A lazyRight biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
+ * A right biased Lazy Either4 type. transform / flatMap operators are tail-call optimized
  *
  *
  * Can be one of 4 types
@@ -272,12 +272,12 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * <pre>
      * {@code
      *
-     * Either4<String,String,String,Integer> just  = Either4.lazyRight(10);
-       Either4<String,String,String,Integer> none = Either4.lazyLeft("none");
+     * Either4<String,String,String,Integer> just  = Either4.right(10);
+       Either4<String,String,String,Integer> none = Either4.left("none");
 
 
-     * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.lazyRight(1)));
-       //Eitehr.lazyRight(ListX.of(10,1)));
+     * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.right(1)));
+       //Eitehr.right(ListX.of(10,1)));
      *
      * }</pre>
      *
@@ -310,20 +310,20 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      *
      * <pre>
      * {@code
-     * Either4<String,String,String,Integer> just  = Either4.lazyRight(10);
-       Either4<String,String,String,Integer> none = Either4.lazyLeft("none");
+     * Either4<String,String,String,Integer> just  = Either4.right(10);
+       Either4<String,String,String,Integer> none = Either4.left("none");
      *
-     *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulateRight(Monoids.intSum,ListX.of(just,none,Either4.lazyRight(1)));
-        //Either4.lazyRight(11);
+     *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulateRight(Monoids.intSum,ListX.of(just,none,Either4.right(1)));
+        //Either4.right(11);
      *
      * }
      * </pre>
      *
      *
      *
-     * @param xors Collection of Eithers to accumulate lazyRight values
+     * @param xors Collection of Eithers to accumulate right values
      * @param reducer  Reducer to accumulate results
-     * @return  Either4 populated with the accumulate lazyRight operation
+     * @return  Either4 populated with the accumulate right operation
      */
     public static <LT1,LT2,LT3,LT4, RT> LazyEither5<ListX<LT1>, ListX<LT2>,ListX<LT3>,ListX<LT4>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
@@ -374,7 +374,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * Construct a Either4#Right from an Eval
      *
      * @param right Eval to construct Either4#Right from
-     * @return Either4 lazyRight instance
+     * @return Either4 right instance
      */
     public static <LT, M1,B, T4,RT> LazyEither5<LT, M1,B,T4, RT> rightEval(final Eval<RT> right) {
         return new Right<>(
@@ -505,7 +505,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param left1 Function to execute if this Either4 is a Left1 instance
      * @param left2 Function to execute if this Either4 is a Left2 instance
      * @param left3 Function to execute if this Either4 is a Left3 instance
-     * @param right Function to execute if this Either4 is a lazyRight instance
+     * @param right Function to execute if this Either4 is a right instance
      * @return Result of executed function
      */
     <R> R visit(final Function<? super LT1, ? extends R> left1, final Function<? super LT2, ? extends R> left2
@@ -533,25 +533,25 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
             Function<? super RT, ? extends LazyEither5<LT1, LT2,LT3, LT4,? extends RT1>> mapper);
 
     /**
-     * @return Swap the fourth and the lazyRight types
+     * @return Swap the fourth and the right types
      */
     LazyEither5<LT1,LT2, LT3,RT,LT4> swap4();
     /**
-     * @return Swap the third and the lazyRight types
+     * @return Swap the third and the right types
      */
     LazyEither5<LT1,LT2, RT,LT4, LT3> swap3();
     /**
-     * @return Swap the second and the lazyRight types
+     * @return Swap the second and the right types
      */
     LazyEither5<LT1, RT,LT3, LT4, LT2> swap2();
 
     /**
-     * @return Swap the lazyRight and lazyLeft types
+     * @return Swap the right and left types
      */
     LazyEither5<RT, LT2,LT3, LT4,LT1> swap1();
 
     /**
-     * @return True if this lazy contains the lazyRight type
+     * @return True if this lazy contains the right type
      */
     boolean isRight();
 
@@ -617,15 +617,15 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     <R> LazyEither5<LT1,LT2,LT3, LT4, R> map(Function<? super RT, ? extends R> fn);
 
     /**
-     * Return an Ior that can be this object or a Ior.lazyRight or Ior.lazyLeft
+     * Return an Ior that can be this object or a Ior.right or Ior.left
      * @return new Ior
      */
      default Ior<LT1, RT> toIor() {
-        return this.visit(l->Ior.secondary(l),
-                          m->Ior.secondary(null),
-                          m->Ior.secondary(null),
-                          m->Ior.secondary(null),
-                          r->Ior.primary(r));
+        return this.visit(l->Ior.left(l),
+                          m->Ior.left(null),
+                          m->Ior.left(null),
+                          m->Ior.left(null),
+                          r->Ior.right(r));
     }
      default Either<LT1, RT> toXor() {
          return this.visit(l-> Either.left(l),
@@ -1021,7 +1021,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
         @Override
         public String mkString() {
-            return "Either5.lazyRight[" + value.get() + "]";
+            return "Either5.right[" + value.get() + "]";
         }
 
         @Override

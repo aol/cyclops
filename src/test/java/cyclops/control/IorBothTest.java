@@ -14,8 +14,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.control.Ior;
-import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,17 +70,17 @@ public class IorBothTest {
 
 	@Test
 	public void testMap() {
-		assertThat(success.map(x->x+1).get(),equalTo(Ior.primary(value+1).get()));
+		assertThat(success.map(x->x+1).get(),equalTo(Ior.right(value+1).get()));
 	}
 
 	@Test
 	public void testFlatMap() {
-		assertThat(success.flatMap(x->Ior.primary(x+1)).get(),equalTo(Ior.primary(value+1).get()));
+		assertThat(success.flatMap(x->Ior.right(x+1)).get(),equalTo(Ior.right(value+1).get()));
 	}
 
 	@Test
 	public void testFilter() {
-		assertThat(success.filter(x->x>5),equalTo(Ior.primary(value).toOption()));
+		assertThat(success.filter(x->x>5),equalTo(Ior.right(value).toOption()));
 	}
 	@Test
 	public void testFilterFail() {
@@ -116,12 +114,12 @@ public class IorBothTest {
 	@Test
 	public void testIsSuccess() {
 		assertTrue(success.isBoth());
-		assertFalse(success.isPrimary());
+		assertFalse(success.isRight());
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertFalse(success.isSecondary());
+		assertFalse(success.isLeft());
 	}
 	Integer valueCaptured = null;
 	@Test

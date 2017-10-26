@@ -35,7 +35,7 @@ public class Either2Test {
 	}
 
 
-   
+
 	@Test
     public void testSequenceSecondary() {
         Either<ListX<Integer>,ListX<String>> xors = Either.sequenceLeft(ListX.of(just,none, Either.right(1)));
@@ -55,8 +55,8 @@ public class Either2Test {
     }
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateSecondary(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.secondary(1)));
-        assertThat(iors,equalTo(Ior.primary(3)));
+        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+        assertThat(iors,equalTo(Ior.right(3)));
     }
 
 	@Test
@@ -67,7 +67,7 @@ public class Either2Test {
 
 	@Test
 	public void visit(){
-	    
+
 	    assertThat(just.visit(secondary->"no", primary->"yes"),equalTo("yes"));
 	    assertThat(none.visit(secondary->"no", primary->"yes"),equalTo("no"));
 	}
@@ -88,10 +88,10 @@ public class Either2Test {
 
 	@Test
 	public void testOfT() {
-		assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+		assertThat(Ior.right(1),equalTo(Ior.right(1)));
 	}
 
-	
+
 
 	@Test
 	public void testSequence() {
@@ -127,7 +127,7 @@ public class Either2Test {
 		assertThat(just.unit(20),equalTo(Either.right(20)));
 	}
 
-	
+
 
 	@Test
 	public void testisPrimary() {
@@ -135,7 +135,7 @@ public class Either2Test {
 		assertFalse(none.isRight());
 	}
 
-	
+
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR() {
 		assertThat(just.map(i->i+5),equalTo(Either.right(15)));
@@ -163,12 +163,12 @@ public class Either2Test {
 
 	@Test
 	public void testOfSupplierOfT() {
-		
+
 	}
 
 	@Test
     public void testConvertTo() {
-	   
+
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -177,10 +177,10 @@ public class Either2Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-	
+
 	@Test
 	public void testIterate() {
 		assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -197,14 +197,14 @@ public class Either2Test {
 	@Test
 	public void testToXor() {
 		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
-		
+
 	}
 	@Test
 	public void testToXorNone(){
 		Either<String,Integer> xor = none;
 		assertTrue(xor.isLeft());
 		assertThat(xor,equalTo(Either.left("none")));
-		
+
 	}
 
 
@@ -217,7 +217,7 @@ public class Either2Test {
 	public void testToXorSecondaryNone(){
 		Either<Integer,String> xorNone = none.swap();
 		assertThat(xorNone,equalTo(Either.right("none")));
-		
+
 	}
 	@Test
 	public void testToTry() {
@@ -232,30 +232,30 @@ public class Either2Test {
 
 	@Test
 	public void testToIor() {
-		assertThat(just.toIor(),equalTo(Ior.primary(10)));
-		
+		assertThat(just.toIor(),equalTo(Ior.right(10)));
+
 	}
 	@Test
 	public void testToIorNone(){
 		Ior<String,Integer> ior = none.toIor();
-		assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary("none")));
-		
+		assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left("none")));
+
 	}
 
 
 	@Test
 	public void testToIorSecondary() {
-		assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+		assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
 	}
-	
+
 
 	@Test
 	public void testToIorSecondaryNone(){
 	    Ior<Integer,String> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary("none")));
-		
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right("none")));
+
 	}
 
 
@@ -280,7 +280,7 @@ public class Either2Test {
 		assertTrue(just.filter(i->i>5).isPresent());
 		assertFalse(none.filter(i->i<5).isPresent());
 		assertFalse(none.filter(i->i>5).isPresent());
-		
+
 	}
 
 	@Test
@@ -303,10 +303,10 @@ public class Either2Test {
 	public void testNotNull() {
 		assertTrue(just.notNull().isPresent());
 		assertFalse(none.notNull().isPresent());
-		
+
 	}
 
-	
+
 	private int add(int a, int b){
 		return a+b;
 	}
@@ -330,14 +330,14 @@ public class Either2Test {
 	}
 
 
-	
+
 	@Test
 	public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 		assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
 
-	
+
 	@Test
 	public void testOrElseGet() {
 		assertThat(none.orElseGet(()->2),equalTo(2));
@@ -355,7 +355,7 @@ public class Either2Test {
 	public void testToStream() {
 		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-		
+
 	}
 
 
@@ -368,7 +368,7 @@ public class Either2Test {
 
 
 
-	
+
 
 	@Test
 	public void testIterator1() {
@@ -395,12 +395,12 @@ public class Either2Test {
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5),equalTo(Either.right(15)));
 	}
-	
+
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		
+
 		assertThat(capture.get(),equalTo(10));
 	}
 
@@ -412,7 +412,7 @@ public class Either2Test {
 		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either.right(65)));
 	}
 
-	
+
 
 	@Test
 	public void testUnitT1() {

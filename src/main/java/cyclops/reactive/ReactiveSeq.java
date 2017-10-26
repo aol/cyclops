@@ -1729,7 +1729,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> distinct();
 
     /**
-     * Scan lazyLeft using supplied Monoid
+     * Scan left using supplied Monoid
      *
      * <pre>
      * {@code
@@ -1741,7 +1741,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      * @param monoid
-     * @return ReactiveSeq with values combined scanning lazyLeft
+     * @return ReactiveSeq with values combined scanning left
      */
     @Override
     default ReactiveSeq<T> scanLeft(Monoid<T> monoid){
@@ -1753,7 +1753,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /**
-     * Scan lazyLeft
+     * Scan left
      *
      * <pre>
      * {@code
@@ -1766,7 +1766,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     <U> ReactiveSeq<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /**
-     * Scan lazyRight
+     * Scan right
      *
      * <pre>
      * {@code
@@ -1782,7 +1782,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Scan lazyRight
+     * Scan right
      *
      * <pre>
      * {@code
@@ -2521,7 +2521,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     T foldRight(Monoid<T> reducer);
 
     /**
-     * Immutable reduction from lazyRight to lazyLeft
+     * Immutable reduction from right to left
      *
      * <pre>
      * {@code

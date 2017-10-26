@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package cyclops.control.lazy;
 
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -34,12 +34,12 @@ public class Either5Test {
              .flatMap(i -> { lazy=false; return  LazyEither5.right(15);})
              .map(i -> { lazy=false; return  LazyEither5.right(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
-    
+
     @Test
     public void mapFlatMapTest(){
         assertThat(LazyEither5.right(10)
@@ -74,7 +74,7 @@ public class Either5Test {
         left2 = LazyEither5.left2("left2");
         left3 = LazyEither5.left3("left3");
         left4 = LazyEither5.left4("left4");
-        
+
     }
     @Test
     public void isLeftRight(){
@@ -83,7 +83,7 @@ public class Either5Test {
         assertTrue(left2.isLeft2());
         assertTrue(left3.isLeft3());
         assertTrue(left4.isLeft4());
-        
+
         assertFalse(just.isLeft1());
         assertFalse(just.isLeft2());
         assertFalse(just.isLeft3());
@@ -102,7 +102,7 @@ public class Either5Test {
         assertFalse(left3.isRight());
     }
 
-   
+
 
     @Test
     public void testTraverseLeft1() {
@@ -143,13 +143,13 @@ public class Either5Test {
 
     @Test
     public void visit(){
-        
+
         assertThat(just.visit(secondary->"no", left2->"left2",left3->"left3",left4->"left4", primary->"yes"),equalTo("yes"));
         assertThat(none.visit(secondary->"no", left2->"left2",left3->"left3",left4->"left4", primary->"yes"),equalTo("no"));
         assertThat(left2.visit(secondary->"no", left2->"left2",left3->"left3",left4->"left4", primary->"yes"),equalTo("left2"));
         assertThat(left3.visit(secondary->"no", left2->"left2",left3->"left3",left4->"left4", primary->"yes"),equalTo("left3"));
     }
-    
+
     @Test
     public void testToMaybe() {
         assertThat(just.toMaybe(),equalTo(Maybe.of(10)));
@@ -160,26 +160,26 @@ public class Either5Test {
         return i+1;
     }
 
-    
+
     @Test
     public void testOfT() {
-        assertThat(Ior.primary(1),equalTo(Ior.primary(1)));
+        assertThat(Ior.right(1),equalTo(Ior.right(1)));
     }
 
-    
 
-    
 
-    
 
-   
+
+
+
+
 
     @Test
     public void testUnitT() {
         assertThat(just.unit(20),equalTo(LazyEither5.right(20)));
     }
 
-    
+
 
     @Test
     public void testisPrimary() {
@@ -187,7 +187,7 @@ public class Either5Test {
         assertFalse(none.isRight());
     }
 
-    
+
     @Test
     public void testMapFunctionOfQsuperTQextendsR() {
         assertThat(just.map(i->i+5),equalTo(LazyEither5.right(15)));
@@ -216,12 +216,12 @@ public class Either5Test {
 
     @Test
     public void testOfSupplierOfT() {
-        
+
     }
 
     @Test
     public void testConvertTo() {
-       
+
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -230,10 +230,10 @@ public class Either5Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-    
+
     @Test
     public void testIterate() {
         assertThat(just.asSupplier(-1000).iterate(i->i+1).limit(10).sumInt(i->i),equalTo(145));
@@ -265,37 +265,37 @@ public class Either5Test {
 
     @Test
     public void testToIor() {
-        assertThat(just.toIor(),equalTo(Ior.primary(10)));
-        
+        assertThat(just.toIor(),equalTo(Ior.right(10)));
+
     }
     @Test
     public void testToIorNone(){
         Ior<String,Integer> ior = none.toIor();
-        assertTrue(ior.isSecondary());
-        assertThat(ior,equalTo(Ior.secondary("none")));
-        
+        assertTrue(ior.isLeft());
+        assertThat(ior,equalTo(Ior.left("none")));
+
     }
 
 
     @Test
     public void testToIorSecondary() {
-        assertThat(just.toIor().swap(),equalTo(Ior.secondary(10)));
+        assertThat(just.toIor().swap(),equalTo(Ior.left(10)));
     }
-    
+
 
     @Test
     public void testToIorSecondaryNone(){
         Ior<Integer,String> ior = none.toIor().swap();
-        assertTrue(ior.isPrimary());
-        assertThat(ior,equalTo(Ior.primary("none")));
-        
+        assertTrue(ior.isRight());
+        assertThat(ior,equalTo(Ior.right("none")));
+
     }
 
 
 
     @Test
     public void testMkString() {
-        assertThat(just.mkString(),equalTo("Either5.lazyRight[10]"));
+        assertThat(just.mkString(),equalTo("Either5.right[10]"));
         assertThat(none.mkString(),equalTo("Either5.left1[none]"));
     }
 
@@ -311,7 +311,7 @@ public class Either5Test {
         assertTrue(just.filter(i->i>5).isPresent());
         assertFalse(none.filter(i->i<5).isPresent());
         assertFalse(none.filter(i->i>5).isPresent());
-        
+
     }
 
     @Test
@@ -334,7 +334,7 @@ public class Either5Test {
     public void testNotNull() {
         assertTrue(just.notNull().isPresent());
         assertFalse(none.notNull().isPresent());
-        
+
     }
 
 
@@ -350,7 +350,7 @@ public class Either5Test {
         assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
     }
 
-    
+
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(()->2),equalTo(2));
@@ -368,7 +368,7 @@ public class Either5Test {
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(0));
         assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-        
+
     }
 
 
@@ -383,7 +383,7 @@ public class Either5Test {
     Executor exec = Executors.newFixedThreadPool(1);
 
 
- 
+
     @Test
     public void testIterator1() {
         assertThat(Streams.stream(just.iterator()).collect(Collectors.toList()),
@@ -411,13 +411,13 @@ public class Either5Test {
     public void testMapFunctionOfQsuperTQextendsR1() {
         assertThat(just.map(i->i+5),equalTo(LazyEither5.right(15)));
     }
-    
+
     @Test
     public void testPeek() {
         Mutable<Integer> capture = Mutable.of(null);
         just = just.peek(c->capture.set(c));
         just.get();
-        
+
         assertThat(capture.get(),equalTo(10));
     }
 
@@ -429,12 +429,12 @@ public class Either5Test {
         assertThat(just.trampoline(n ->sum(10,n)),equalTo(LazyEither5.right(65)));
     }
 
-    
+
 
     @Test
     public void testUnitT1() {
         assertThat(none.unit(10),equalTo(just));
     }
 
-  
+
 }

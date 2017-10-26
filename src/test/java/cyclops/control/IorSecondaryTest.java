@@ -9,13 +9,10 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.control.Ior;
-import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,13 +22,13 @@ public class IorSecondaryTest {
 	FileNotFoundException error = new FileNotFoundException();
 	@Before
 	public void setup(){
-		failure = Ior.secondary(error);
+		failure = Ior.left(error);
 	}
 	@Test
     public void bimap(){
 
         Ior<RuntimeException,Integer> mapped = failure.bimap(e->new RuntimeException(), d->d+1);
-        assertTrue(mapped.isSecondary());
+        assertTrue(mapped.isLeft());
         assertThat(mapped.swap().orElse(null),instanceOf(RuntimeException.class));
     }
     Throwable capT;
@@ -58,7 +55,7 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testFlatMap() {
-		assertThat(failure.flatMap(x->Ior.primary(10)),equalTo(failure));
+		assertThat(failure.flatMap(x->Ior.right(10)),equalTo(failure));
 	}
 
 	@Test
@@ -90,12 +87,12 @@ public class IorSecondaryTest {
 
 	@Test
 	public void testIsSuccess() {
-		assertThat(failure.isPrimary(),equalTo(false));
+		assertThat(failure.isRight(),equalTo(false));
 	}
 
 	@Test
 	public void testIsFailure() {
-		assertThat(failure.isSecondary(),equalTo(true));
+		assertThat(failure.isLeft(),equalTo(true));
 	}
 
 	Integer value = null;
@@ -111,7 +108,7 @@ public class IorSecondaryTest {
 	@Test
 	public void testForeachFailed() {
 		errorCaptured = null;
-		failure.secondaryPeek(e -> errorCaptured =e);
+		failure.peekLeft(e -> errorCaptured =e);
 		assertThat(error,equalTo(errorCaptured));
 	}
 

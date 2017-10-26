@@ -631,7 +631,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     public  <R> ReactiveSeq<R> mapLazyFn(Supplier<Function<? super T, ? extends R>> fn){
-        //not composable to the 'lazyLeft' (as statefulness is lost)
+        //not composable to the 'left' (as statefulness is lost)
         return createSeq(new LazyMappingSpliterator<T,R>(this.get(),fn), reversible);
 
     }

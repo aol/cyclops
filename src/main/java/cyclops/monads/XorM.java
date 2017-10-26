@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 
 /**
  * A Sum type for monads of the same type.
- * XorM is active type biased (rather than lazyRight biased).
+ * XorM is active type biased (rather than right biased).
  * e.g.
  * <pre>
  *     {@code

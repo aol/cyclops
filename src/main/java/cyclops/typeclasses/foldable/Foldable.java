@@ -14,7 +14,7 @@ import java.util.function.Predicate;
 
 /**
  * Type class for foldables
- * 
+ *
  * @author johnmcclean
  *
  * @param <CRE> The core type of the foldable (e.g. the HKT witness type, not the generic type : ListType.µ)
@@ -22,17 +22,17 @@ import java.util.function.Predicate;
 public interface Foldable<CRE> {
 
     /**
-     * Starting from the lazyRight combine each value in turn with an accumulator
-     * 
+     * Starting from the right combine each value in turn with an accumulator
+     *
      * @param monoid Monoid to combine values
      * @param ds DataStructure to foldRight
      * @return Reduced value
      */
     public <T> T foldRight(Monoid<T> monoid, Higher<CRE, T> ds);
-    
+
     /**
-     * Starting from the lazyRight combine each value in turn with an accumulator
-     * 
+     * Starting from the right combine each value in turn with an accumulator
+     *
      * @param identity Identity value &amp; default
      * @param semigroup Combining function
      * @param ds DataStructure to foldRight
@@ -42,17 +42,17 @@ public interface Foldable<CRE> {
         return foldRight(Monoid.fromBiFunction(identity, semigroup),ds);
     }
     /**
-     * Starting from the lazyLeft combine each value in turn with an accumulator
-     * 
+     * Starting from the left combine each value in turn with an accumulator
+     *
      * @param monoid  Monoid to combine values
      * @param ds DataStructure to foldLeft
      * @return Reduced value
      */
     public <T> T foldLeft(Monoid<T> monoid, Higher<CRE, T> ds);
-    
+
     /**
-     * Starting from the lazyLeft combine each value in turn with an accumulator
-     * 
+     * Starting from the left combine each value in turn with an accumulator
+     *
      * @param identity Identity value &amp; default
      * @param semigroup Combining function
      * @param ds DataStructure to foldLeft
