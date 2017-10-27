@@ -17,7 +17,7 @@ This is the 10.x branch for 2.x branch click the link below
 
 # What's new in Cyclops X (cyclops 10.0.0)
 
-- Fast purely functional datastructures (Vector, Seq / List, LazySeq / LazyList, NonEmptyList, HashSet, TreeSet, TrieSet, HashMap, LinkedMap, MultiMap, TreeMap, BankersQueue, LazyString, Discrete Interval Encoded Tree, Zipper, Range, Tree, DifferenceList, HList, Dependent List )
+- Fast purely functional datastructures (Vector, Seq / List, LazySeq / LazyList, NonEmptyList, HashSet, TreeSet, TrieSet, HashMap, LinkedMap, MultiMap, TreeMap, BankersQueue, LazyString, Discrete Interval Encoded Tree, Zipper, Range, Tree, DifferenceList, HList, Dependent Map )
 - Structural Pattern Matching API (deconstruct algebraic product and sum types)
 - Improved type safety via the removal of unsafe APIs
   -- E.g. Unlike Optional, Option has no get method (which could throw a null pointer)
