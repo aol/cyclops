@@ -18,15 +18,19 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops2.internal.adapters.StreamAdapter;
-import com.aol.cyclops2.internal.monads.AnyMValue2Impl;
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
-import com.aol.cyclops2.types.anyM.AnyMValue2;
-import com.aol.cyclops2.types.factory.EmptyUnit;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.internal.adapters.StreamAdapter;
+import com.oath.cyclops.internal.monads.AnyMValue2Impl;
+import com.oath.cyclops.internal.stream.ReactiveStreamX;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.AnyMValue2;
+import com.oath.cyclops.types.factory.EmptyUnit;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
@@ -35,8 +39,7 @@ import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import com.aol.cyclops2.types.*;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
@@ -45,12 +48,12 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.internal.monads.AnyMSeqImpl;
-import com.aol.cyclops2.internal.monads.AnyMValueImpl;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.internal.monads.AnyMSeqImpl;
+import com.oath.cyclops.internal.monads.AnyMValueImpl;
 
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMValue;
 import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.Witness.eval;
 import cyclops.monads.Witness.ior;
@@ -65,11 +68,11 @@ import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.either;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
-import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import com.aol.cyclops2.types.stream.ToStream;
+import com.oath.cyclops.types.extensability.FunctionalAdapter;
+import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Optionals;
 
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 
 /**
  *
@@ -99,16 +102,16 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  *
  * @param <T> type data wrapped by the underlying monad
  */
-public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
+public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             To<AnyM<W,T>>,
                                                             EmptyUnit<T>,
                                                             Unit<T>,
                                                             Folds<T>,
                                                             Transformable<T>,
                                                             ToStream<T>,
-                                                            Zippable<T>,
+  Zippable<T>,
                                                             Publisher<T>,
-                                                            Filters<T>{
+  Filters<T> {
     @Override
     default ReactiveSeq<T> reactiveSeq() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
@@ -883,7 +886,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends   Unwrapable,
         return fromEval(Eval.now(val));
     }
 
-    public static <W extends Witness.MonadicValueWitness<W>,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval,W witness) {
+    public static <W extends Witness.MonadicValueWitness<W>,T> AnyMValue<W,T> fromMonadicValue(final MonadicValue<T> eval, W witness) {
         Objects.requireNonNull(eval);
         if(eval.arity()==2)
             return AnyMFactory.instance.value2(eval,witness);

@@ -1,8 +1,8 @@
 package cyclops.collections;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
@@ -33,7 +33,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 	public abstract <T> CollectionX<T> generate(int times,Supplier<T> fn);
 	public abstract <U,T> CollectionX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
 	public static final LazyReact r = new LazyReact(10,10);
-	
+
 	int captured=-1;
 
 	static Executor ex = Executors.newFixedThreadPool(1);
@@ -109,7 +109,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void plusAllTwo(){
         assertThat(of().plusAll(of(1)).plus(2),hasItems(1,2));
     }
-    
+
 	@Test
     public void minusOne(){
         assertThat(of().removeAt(1).size(),equalTo(0));
@@ -138,7 +138,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
         assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),hasItem(2));
         assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),not(hasItem(1)));
     }
-	
+
 	@Test
     public void notNull(){
         assertThat(of(1,2,3,4,5).notNull(),hasItems(1,2,3,4,5));
@@ -147,7 +147,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 	public void retainAll(){
 	    assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
-	
+
 
 	@Test
     public void retainAllStream(){
@@ -182,8 +182,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void testNoneMatch(){
         assertThat(of(1,2,3,4,5).noneMatch(it-> it==5000),is(true));
     }
-    
-    
+
+
     @Test
     public void testAnyMatchFalse(){
         assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(8)),is(false));
@@ -192,7 +192,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void testAllMatchFalse(){
         assertThat(of(1,2,3,4,5).allMatch(it-> it<0 && it >6),is(false));
     }
-   
+
     @Test
     public void testMapReduce(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),is(1500));
@@ -201,8 +201,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void testMapReduceSeed(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
     }
-    
-    
+
+
     @Test
     public void testMapReduceCombiner(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,
@@ -223,8 +223,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
         assertThat(of(1,1,1,2,1).distinct().collect(java.util.stream.Collectors.toList()),hasItem(1));
         assertThat(of(1,1,1,2,1).distinct().collect(java.util.stream.Collectors.toList()),hasItem(2));
     }
-    
-   
+
+
     @Test
     public void testMax2(){
         assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
@@ -233,11 +233,11 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void testMin2(){
         assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
     }
-    
-   
 
-    
-   
+
+
+
+
     @Test
     public void sorted() {
         assertThat(of(1,5,3,4,2).sorted().collect(java.util.stream.Collectors.toList()),is(Arrays.asList(1,2,3,4,5)));
@@ -255,22 +255,22 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
         assertThat(list,hasItem(3));
         assertThat(list,hasItem(4));
         assertThat(list,hasItem(5));
-        
+
     }
-    
-    
+
+
     @Test
     public void testToArray() {
         assertThat( Arrays.asList(1,2,3,4,5),hasItem(of(1,5,3,4,2).toArray()[0]));
     }
-   
+
 
     @Test
     public void testCount(){
         assertThat(of(1,5,3,4,2).count(),is(5L));
     }
 
-    
+
     @Test
     public void collect(){
         assertThat(of(1,2,3,4,5).collect(java.util.stream.Collectors.toList()).size(),is(5));
@@ -298,7 +298,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
         System.out.println(l);
         assertThat(val,is(101));
     }
-	
+
 	@SuppressWarnings("serial")
     public class X extends Exception {
     }
@@ -344,7 +344,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     public void testMin(){
         assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
     }
-	
+
 	@Test
     public void testOnEmpty2() throws X {
         assertEquals(asList(1), of().onEmpty(1).toListX());
@@ -354,7 +354,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
         assertEquals(asList(2), of(2).onEmptyError(() -> new X()).toListX());
 
-        
+
     }
     @Test
     public void forEach2() {

@@ -1,13 +1,13 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.persistent.PersistentMap;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.persistent.PersistentMap;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.recoverable.OnEmpty;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;

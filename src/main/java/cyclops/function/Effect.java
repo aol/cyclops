@@ -1,6 +1,6 @@
 package cyclops.function;
 
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
 
 import java.util.concurrent.Callable;

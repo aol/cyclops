@@ -1,11 +1,11 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher3;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher3;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
@@ -62,14 +62,14 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
                     Higher<W2,T>> xor, InstanceDefinitions<W1> def1, InstanceDefinitions<W2> def2){
         return new Coproduct<>((Either)xor,def1,def2);
     }
-    
+
     public static  <W1,W2,T> Coproduct<W1,W2,T> right(Higher<W2,T> right,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
         return new Coproduct<>(Either.right(right),def1,def2);
     }
     public static  <W1,W2,T> Coproduct<W1,W2,T> left(Higher<W1,T> left,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
         return new Coproduct<>(Either.left(left),def1,def2);
     }
-    
+
     public Coproduct<W1,W2,T> filter(Predicate<? super T> test) {
         return of(xor.map(m -> def2.<T, T>monadZero().visit(s->s.filter(test, m),()->m))
                .mapLeft(m -> def1.<T, T>monadZero().visit(s->s.filter(test, m),()->m)),def1,def2);

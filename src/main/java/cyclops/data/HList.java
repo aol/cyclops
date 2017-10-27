@@ -1,8 +1,8 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import com.aol.cyclops2.matching.Sealed1Or;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
+import com.oath.cyclops.matching.Sealed1Or;
 import cyclops.data.tuple.Tuple;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;

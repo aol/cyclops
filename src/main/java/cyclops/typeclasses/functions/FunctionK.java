@@ -1,6 +1,6 @@
 package cyclops.typeclasses.functions;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 import cyclops.control.Maybe;

@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.Function3;
 import cyclops.data.tuple.*;
 import lombok.AccessLevel;

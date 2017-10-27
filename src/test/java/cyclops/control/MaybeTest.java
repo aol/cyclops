@@ -1,11 +1,11 @@
 package cyclops.control;
 
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.mixins.Printable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -123,14 +123,14 @@ public class MaybeTest implements Printable {
         assertThat(result.toOptional().get(),equalTo(2000));
 
     }
-    
+
     @Test
     public void recoverWith(){
         assertThat(none.recoverWith(()->Maybe.just(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Maybe.nothing()).toOptional().isPresent(),equalTo(false));
         assertThat(just.recoverWith(()->Maybe.just(5)).toOptional().get(),equalTo(10));
     }
-    
+
     boolean lazy = true;
 
     @Test
@@ -139,16 +139,16 @@ public class MaybeTest implements Printable {
              .flatMap(i -> { lazy=false; return Maybe.just(15);})
              .map(i -> { lazy=false; return   Maybe.just(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
         assertThat(Maybe.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
-        
+
     }
 
 

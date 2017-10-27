@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.reactive.Streamable;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.streamable> {
 
 	@Override
@@ -33,22 +33,22 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
     }
 	@Test
     public void when(){
-        
+
         String res= of(1,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
 	@Test
     public void whenGreaterThan2(){
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                
+
         assertThat(res,equalTo("2hello3"));
     }
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -58,8 +58,8 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
     }
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
@@ -68,13 +68,13 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 		Eval e;
 		//int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h-> (int)h>5, h-> 0 )
 		//		.flatMap(h-> head.when());
-		
+
 		ht.headMaybe().when(some-> Matchable.of(some).matches(
 											c->c.hasValues(1,2,3).map(i->"hello world"),
 											c->c.hasValues('b','b','c').map(i->"boo!")
 									),()->"hello");
 									**/
-	 
+
 
 }
 

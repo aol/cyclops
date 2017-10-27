@@ -11,10 +11,10 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.Zippable;
+import com.oath.cyclops.types.Zippable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.Witness.reactiveSeq;
@@ -25,18 +25,18 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.traversable.Traversable;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.monads.Witness;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import org.reactivestreams.Publisher;
 
 /**
  * Monad Transformer for Java Lists
- * 
+ *
  * ListT allows the deeply wrapped List to be manipulating within it's nest /contained context
  *
  * <pre>
@@ -60,13 +60,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     final AnyM<W,IndexedSequenceX<T>> run;
 
-    
-    
+
+
     private ListT(final AnyM<W,? extends IndexedSequenceX<T>> run) {
         this.run = AnyM.narrow(run);
     }
-    
-   
+
+
 
 
     /**
@@ -82,14 +82,14 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     /**
      * Peek at the current value of the List
      * <pre>
-     * {@code 
+     * {@code
      *    ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of List
      * @return ListT with peek call
      */
@@ -105,10 +105,10 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     /**
      * Filter the wrapped List
      * <pre>
-     * {@code 
+     * {@code
      *    ListT.of(AnyM.fromStream(Arrays.asList(10,11))
      *             .filter(t->t!=10);
-     *             
+     *
      *     //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
@@ -122,17 +122,17 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     /**
      * Map the wrapped List
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped List
      * @return ListT that applies the transform function to the wrapped List
      */
@@ -151,11 +151,11 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     /**
      * Flat Map the wrapped List
       * <pre>
-     * {@code 
+     * {@code
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .flatMap(t->List.zero();
-     *  
-     *  
+     *
+     *
      *  //ListT<AnyM<Stream<List.zero>>>
      * }
      * </pre>
@@ -168,24 +168,24 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
                                       .flatMap(a -> a.stream())));
     }
 
-    
 
-   
+
+
 
     /**
      * Construct an ListT from an AnyM that contains a monad type that contains type other than List
      * The values in the underlying monad will be mapped to List<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
      */
     public static <W extends WitnessType<W>,A> ListT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(ListX::of));
     }
-    
+
     /**
      * Construct an ListT from an AnyM that wraps a monad containing  Lists
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
@@ -218,7 +218,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -247,13 +247,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
-     
+
     @Override
     public Collectable<T> collectors() {
        return this;
     } */
     @Override
-    public <R> ListT<W,R> unitIterator(final Iterator<R> it) {  
+    public <R> ListT<W,R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
                      .map(i -> ListX.of(i)));
     }
@@ -287,7 +287,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return run;
     }
 
-    public static <W extends WitnessType<W>,T> ListT<W,T> emptyList(W witness) { 
+    public static <W extends WitnessType<W>,T> ListT<W,T> emptyList(W witness) {
         return of(witness.<W>adapter().unit(ListX.empty()));
     }
 

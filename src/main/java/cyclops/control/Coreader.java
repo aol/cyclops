@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.monads.Witness.coreader;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

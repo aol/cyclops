@@ -1,7 +1,7 @@
 package cyclops.monads;
 
 
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.Function1;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

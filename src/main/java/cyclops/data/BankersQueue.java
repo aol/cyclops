@@ -1,8 +1,8 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.persistent.PersistentQueue;
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.persistent.PersistentQueue;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;

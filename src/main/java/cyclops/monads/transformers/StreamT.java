@@ -1,11 +1,11 @@
 package cyclops.monads.transformers;
 
 
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.traversable.IterableX;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.traversable.Traversable;
-import com.aol.cyclops2.types.anyM.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.traversable.Traversable;
+import com.oath.cyclops.types.anyM.transformers.FoldableTransformerSeq;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 /**
  * Monad Transformer for Java Streams and related types such as ReactiveSeq
- * 
+ *
  * StreamT allows the deeply wrapped Stream to be manipulating within it's nest /contained context
  * @author johnmcclean
  *
@@ -39,13 +39,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     final AnyM<W,Stream<T>> run;
 
-    
-    
+
+
     private StreamT(final AnyM<W,? extends Stream<T>> run) {
         this.run = AnyM.narrow(run);
     }
-    
-   
+
+
 
 
 
@@ -62,14 +62,14 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     /**
      * Peek at the current value of the List
      * <pre>
-     * {@code 
+     * {@code
      *    ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of List
      * @return ListT with peek call
      */
@@ -85,10 +85,10 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     /**
      * Filter the wrapped List
      * <pre>
-     * {@code 
+     * {@code
      *    ListT.of(AnyM.fromStream(Arrays.asList(10,11))
      *             .filter(t->t!=10);
-     *             
+     *
      *     //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
@@ -102,17 +102,17 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     /**
      * Map the wrapped List
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //ListT<AnyM<Stream<List[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped List
      * @return ListT that applies the transform function to the wrapped List
      */
@@ -131,11 +131,11 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     /**
      * Flat Map the wrapped List
       * <pre>
-     * {@code 
+     * {@code
      *  ListT.of(AnyM.fromStream(Arrays.asList(10))
      *             .flatMap(t->List.zero();
-     *  
-     *  
+     *
+     *
      *  //ListT<AnyM<Stream<List.zero>>>
      * }
      * </pre>
@@ -148,24 +148,24 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
                                       .flatMap(a -> a)));
     }
 
-    
 
-   
+
+
 
     /**
      * Construct an ListT from an AnyM that contains a monad type that contains type other than List
      * The values in the underlying monad will be mapped to List<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an List
      * @return ListT
      */
     public static <W extends WitnessType<W>,A> StreamT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(ReactiveSeq::of));
     }
-    
+
     /**
      * Construct an ListT from an AnyM that wraps a monad containing  Lists
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an List
      * @return ListT
      */
@@ -198,7 +198,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -227,13 +227,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     /* (non-Javadoc)
      * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
-     
+
     @Override
     public Collectable<T> collectors() {
        return this;
     } */
     @Override
-    public <R> StreamT<W,R> unitIterator(final Iterator<R> it) {  
+    public <R> StreamT<W,R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
                      .map(i -> ReactiveSeq.of(i)));
     }
@@ -267,7 +267,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return run.map(ReactiveSeq::fromStream);
     }
 
-    public static <W extends WitnessType<W>,T> StreamT<W,T> emptyList(W witness) { 
+    public static <W extends WitnessType<W>,T> StreamT<W,T> emptyList(W witness) {
         return of(witness.<W>adapter().unit(ReactiveSeq.empty()));
     }
 

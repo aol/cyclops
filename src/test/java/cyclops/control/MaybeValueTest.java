@@ -1,7 +1,7 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.AbstractValueTest;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.AbstractValueTest;
+import com.oath.cyclops.types.Value;
 
 public class MaybeValueTest extends AbstractValueTest {
 

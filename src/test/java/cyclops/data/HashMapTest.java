@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.persistent.PersistentMap;
+import com.oath.cyclops.types.persistent.PersistentMap;
 import org.junit.Test;
 
 

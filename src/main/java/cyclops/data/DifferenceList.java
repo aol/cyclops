@@ -1,9 +1,9 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.monads.DataWitness.differenceList;
 import cyclops.control.Trampoline;
 import cyclops.function.Function0;

@@ -5,7 +5,7 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Either;
@@ -20,21 +20,21 @@ public class EvalsTest {
 
     @Test
     public void unit(){
-      
+
         Eval<String> opt = Eval.Instances.unit()
                                             .unit("hello")
                                             .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now("hello")));
     }
     @Test
     public void functor(){
-        
+
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
                                      .applyHKT(h->Eval.Instances.functor().map((String v) ->v.length(), h))
                                      .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now("hello".length())));
     }
     @Test
@@ -58,13 +58,13 @@ public class EvalsTest {
         Eval<Function1<Integer,Integer>> optFn =Eval.Instances.unit()
                                                              .unit(l1((Integer i) ->i*2))
                                                               .convert(Eval::narrowK);
-        
+
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
                                      .applyHKT(h->Eval.Instances.functor().map((String v) ->v.length(), h))
                                      .applyHKT(h->Eval.Instances.applicative().ap(optFn, h))
                                      .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now("hello".length()*2)));
     }
     @Test
@@ -75,48 +75,48 @@ public class EvalsTest {
     }
     @Test
     public void monad(){
-        
+
         Eval<Integer> opt = Eval.Instances.unit()
                                      .unit("hello")
                                      .applyHKT(h->Eval.Instances.monad().flatMap((String v) ->Eval.Instances.unit().unit(v.length()), h))
                                      .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now("hello".length())));
     }
     @Test
     public void monadZeroFilter(){
-        
+
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
                                      .applyHKT(h->Eval.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now("hello")));
     }
     @Test
     public void monadZeroFilterOut(){
-        
+
         Eval<String> opt = Eval.Instances.unit()
                                      .unit("hello")
                                      .applyHKT(h->Eval.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Eval::narrowK);
-        
+
         assertThat(opt,equalTo(Eval.now(null)));
     }
-    
+
 
     @Test
     public void  foldLeft(){
         int sum  = Eval.Instances.foldable()
                         .foldLeft(0, (a,b)->a+b, Eval.now(4));
-        
+
         assertThat(sum,equalTo(4));
     }
     @Test
     public void  foldRight(){
         int sum  = Eval.Instances.foldable()
                         .foldRight(0, (a,b)->a+b, Eval.now(1));
-        
+
         assertThat(sum,equalTo(1));
     }
     @Test
@@ -124,10 +124,10 @@ public class EvalsTest {
        Maybe<Higher<eval, Integer>> res = Eval.Instances.traverse()
                                                          .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Eval.now(1))
                                                          .convert(Maybe::narrowK);
-       
-       
+
+
        assertThat(res.map(h->h.convert(Eval::narrowK).get()),
                   equalTo(Maybe.just(Eval.now(2).get())));
     }
-    
+
 }

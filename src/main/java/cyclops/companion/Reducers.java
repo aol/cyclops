@@ -1,7 +1,7 @@
 package cyclops.companion;
 
 
-import com.aol.cyclops2.types.persistent.*;
+import com.oath.cyclops.types.persistent.*;
 import cyclops.collections.immutable.*;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
@@ -18,20 +18,20 @@ import java.util.Comparator;
 
 /**
  * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a single value.
- * 
+ *
  * Primary use case is the reduction of Streams to persistent collections
- * 
+ *
  * e.g.
  * <pre>
- * {@code 
+ * {@code
  * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * Use with care, as the mapReduce method is not type safe
- * 
+ *
  * @author johnmcclean
  *
  */
@@ -50,12 +50,12 @@ public class Reducers {
     }
 
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer to PersistentQueueX types
@@ -66,10 +66,10 @@ public class Reducers {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * OrderedSetX<Integer> q = Reducers.<Integer>toOrderedSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer to OrderedSetX
@@ -81,10 +81,10 @@ public class Reducers {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PersistentSetX<Integer> q = Reducers.<Integer>toPersistentSetX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PersistentSetX
@@ -95,10 +95,10 @@ public class Reducers {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * LinkedListX<Integer> q = Reducers.<Integer>toLinkedListX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for LinkedListX
@@ -109,10 +109,10 @@ public class Reducers {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * VectorX<Integer> q = Reducers.<Integer>toVectorX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for VectorX
@@ -124,10 +124,10 @@ public class Reducers {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * BagX<Integer> q = Reducers.<Integer>toBagX()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for BagX
@@ -142,12 +142,12 @@ public class Reducers {
         return result;
     }
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * PQueue<Integer> q = Reducers.<Integer>toPQueue()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer to PQueue types
@@ -157,10 +157,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * POrderedSet<Integer> q = Reducers.<Integer>toPOrderedSet()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer to POrderedSet
@@ -177,10 +177,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PBag<Integer> q = Reducers.<Integer>toPBag()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PBag
@@ -190,10 +190,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PSet<Integer> q = Reducers.<Integer>toPSet()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PSet
@@ -203,10 +203,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PVector<Integer> q = Reducers.<Integer>toPVector()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PVector
@@ -216,10 +216,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PStack<Integer> q = Reducers.<Integer>toPList()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PStack
@@ -230,10 +230,10 @@ public class Reducers {
     }
     /**
      * <pre>
-     * {@code 
+     * {@code
      * PStack<Integer> q = Reducers.<Integer>toPListReversed()
                                 .mapReduce(Stream.of(1,2,3,4));
-     * 
+     *
      * }
      * </pre>
      * @return Reducer for PStack in reveresed order
@@ -280,7 +280,7 @@ public class Reducers {
 
     /**
      * Monoid for String concatonation
-     * 
+     *
      * @param joiner String combiner
      * @return
      */
@@ -289,7 +289,7 @@ public class Reducers {
     }
 
     /**
-     * 
+     *
      * @return Monoid for summing Ints
      */
     public static Monoid<Integer> toTotalInt() {

@@ -4,7 +4,7 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
 import cyclops.control.State;
 import lombok.AccessLevel;
@@ -14,20 +14,20 @@ import cyclops.data.tuple.Tuple2;
 
 /**
  * Compose two functors so operations are applied to the inner functor
- * 
+ *
  * e.g.  given an Optional containing a List we can compose the functor for Optionals and the functor for List
  * to transform the values inside the List
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  *    OptionalType<ListX<Integer>> nest;
- *    
+ *
  *    Compose.compose(Optionals.functor(),Lists.functor())
  *           .map(i->i*2,nest);
- *   
+ *
  * }
  * </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <CRE>
@@ -54,7 +54,7 @@ public class Compose<CRE,C2>{
     }
     /**
      * Compose two functors
-     * 
+     *
      * @param f First functor to compose
      * @param g Second functor to compose
      * @return Composed functor
@@ -62,10 +62,10 @@ public class Compose<CRE,C2>{
     public static <CRE,C2> Compose<CRE,C2> compose(Functor<CRE> f,Functor<C2> g){
         return new Compose<>(f,g);
     }
-    
+
     /**
-     * Transformation operation 
-     * 
+     * Transformation operation
+     *
      * @param fn Transformation function
      * @param ds Datastructure to transform
      * @return Transformed data structure

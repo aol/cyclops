@@ -7,7 +7,7 @@ import java.util.OptionalLong;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.typeclasses.*;
 
 import cyclops.control.Either;
@@ -33,9 +33,9 @@ import org.reactivestreams.Publisher;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
@@ -43,7 +43,7 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Utility class for working with JDK Optionals
- * 
+ *
  * @author johnmcclean
  *
  */
@@ -375,20 +375,20 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are zero the result
      * is an zero Optional
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     *  
+     *
      *  Optional<ListX<Integer>> opts = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
         //Optional.zero();
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
@@ -400,17 +400,17 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * Only successes are retained. By constrast with {@link Optionals#sequence(CollectionX)} Optional#zero types are
      * tolerated and ignored.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     * 
+     *
      * Optional<ListX<Integer>> maybes = Optionals.sequencePresent(ListX.of(just, none, Optional.of(1)));
        //Optional.of(ListX.of(10, 1));
      * }
      * </pre>
-     * 
+     *
      * @param opts Optionals to Sequence
      * @return Optional with a List of values
      */
@@ -421,20 +421,20 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * By constrast with {@link Optional#sequencePresent(CollectionX)} if any Optional types are zero
      * the return type will be an zero Optional
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     *  
+     *
      *  Optional<ListX<Integer>> maybes = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
         //Optional.zero();
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param opts Maybes to Sequence
      * @return  Optional with a List of values
      */
@@ -447,18 +447,18 @@ public class Optionals {
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Optionals.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
+
      * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
        //Optional.of(PersistentSetX.of(10, 1)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param reducer Reducer to accumulate values with
      * @return Optional with reduced value
@@ -470,19 +470,19 @@ public class Optionals {
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
      * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
+
      *  Optional<String> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), i -> "" + i,
                                                      Monoids.stringConcat);
         //Optional.of("101")
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param mapper Mapping function to be applied to the result of each Optional
      * @param reducer Monoid to combine values from each Optional
@@ -494,22 +494,22 @@ public class Optionals {
                                                  .reduce(reducer));
     }
     /**
-     * Accumulate the results only from those Optionals which have a value present, using the 
+     * Accumulate the results only from those Optionals which have a value present, using the
      * supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
-     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)), 
+
+     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)),
                                                      );
         //Optional.of("101")
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param mapper Mapping function to be applied to the result of each Optional
      * @param reducer Monoid to combine values from each Optional
@@ -522,16 +522,16 @@ public class Optionals {
 
     /**
      * Combine an Optional with the provided value using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.combine(Optional.of(10),Maybe.just(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
      * @param f Optional to combine with a value
@@ -547,19 +547,19 @@ public class Optionals {
     }
     /**
      * Combine an Optional with the provided Optional using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.combine(Optional.of(10),Optional.of(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param f Optional to combine with a value
      * @param v Optional to combine
      * @param fn Combining function
@@ -573,14 +573,14 @@ public class Optionals {
     /**
      * Combine an Optional with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.zip(Optional.of(10),Arrays.asList(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
      * @param f Optional to combine with first element in Iterable (if present)
@@ -598,17 +598,17 @@ public class Optionals {
     /**
      * Combine an Optional with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.zip(Flux.just(10),Optional.of(10), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param p Publisher to combine
      * @param f  Optional to combine with
      * @param fn Combining function
@@ -622,7 +622,7 @@ public class Optionals {
     }
     /**
      * Narrow covariant type parameter
-     * 
+     *
      * @param broad Optional with covariant type parameter
      * @return Narrowed Optional
      */
@@ -972,7 +972,7 @@ public class Optionals {
     public static final class OptionalKind<T> implements Higher<optional, T> {
         private final Optional<T> boxed;
 
-       
+
         /**
          * @return An HKT encoded zero Optional
          */

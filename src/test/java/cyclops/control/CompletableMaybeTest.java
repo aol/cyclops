@@ -1,7 +1,7 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.mixins.Printable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.mixins.Printable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -9,7 +9,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.function.Monoid;
@@ -108,14 +108,14 @@ public class CompletableMaybeTest implements Printable {
         assertThat(result.get(),equalTo(Try.success(2000)));
 
     }
-    
+
     @Test
     public void recoverWith(){
         assertThat(none.recoverWith(()->CompletableMaybeTest.just(10)).orElse(null),equalTo(10));
         assertThat(none.recoverWith(()->Maybe.nothing()).isPresent(),equalTo(false));
         assertThat(just.recoverWith(()->CompletableMaybeTest.just(5)).orElse(null),equalTo(10));
     }
-    
+
     boolean lazy = true;
 
     @Test
@@ -124,16 +124,16 @@ public class CompletableMaybeTest implements Printable {
              .flatMap(i -> { lazy=false; return CompletableMaybeTest.just(15);})
              .map(i -> { lazy=false; return   CompletableMaybeTest.just(15);})
              .map(i -> Maybe.of(20));
-             
-        
+
+
         assertTrue(lazy);
-            
+
     }
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
         assertThat(CompletableMaybeTest.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
-        
+
     }
 
 

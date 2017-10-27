@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.foldable.To;
+import com.oath.cyclops.types.foldable.To;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.LazyEither;

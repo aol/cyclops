@@ -17,8 +17,8 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 
-import com.aol.cyclops2.util.box.LazyImmutable;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.box.LazyImmutable;
+import com.oath.cyclops.util.ExceptionSoftener;
 
 import lombok.val;
 
@@ -26,7 +26,7 @@ public class Memoize {
 
     /**
      * Convert a Supplier into one that caches it's result
-     * 
+     *
      * @param s Supplier to memoise
      * @return Memoised Supplier
      */
@@ -37,7 +37,7 @@ public class Memoize {
 
     /**
      * Convert a Supplier into one that caches it's result
-     * 
+     *
      * @param s Supplier to memoise
      * @param cache Cachable to store the results
      * @return Memoised Supplier
@@ -78,7 +78,7 @@ public class Memoize {
 
     /**
      * Convert a Callable into one that caches it's result
-     * 
+     *
      * @param s Callable to memoise
      * @param cache Cachable to store the results
      * @return Memoised Callable
@@ -96,7 +96,7 @@ public class Memoize {
 
     /**
      * Convert a Callable into one that caches it's result
-     * 
+     *
      * @param s Callable to memoise
      * @return Memoised Callable
      */
@@ -128,7 +128,7 @@ public class Memoize {
 
     /**
      * Convert a Function into one that caches it's result
-     * 
+     *
      * @param fn Function to memoise
      * @return Memoised Function
      */
@@ -188,11 +188,11 @@ public class Memoize {
 
         return t -> lazy.computeIfAbsent(t, fn);
     }
- 
+
 
     /**
      * Convert a Function into one that caches it's result
-     * 
+     *
      * @param fn Function to memoise
      * @param cache Cachable to store the results
      * @return Memoised Function
@@ -232,7 +232,7 @@ public class Memoize {
 
     /**
      * Convert a BiFunction into one that caches it's result
-     * 
+     *
      * @param fn BiFunction to memoise
      * @return Memoised BiFunction
      */
@@ -243,7 +243,7 @@ public class Memoize {
 
     /**
      * Convert a BiFunction into one that caches it's result
-     * 
+     *
      * @param fn BiFunction to memoise
      * @param cache Cachable to store the results
      * @return Memoised BiFunction
@@ -255,7 +255,7 @@ public class Memoize {
 
     /**
      * Convert a TriFunction into one that caches it's result
-     * 
+     *
      * @param fn TriFunction to memoise
      * @return Memoised TriFunction
      */
@@ -279,7 +279,7 @@ public class Memoize {
     }
     /**
      * Convert a TriFunction into one that caches it's result
-     * 
+     *
      * @param fn TriFunction to memoise
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
@@ -303,7 +303,7 @@ public class Memoize {
     }
     /**
      * Convert a QuadFunction into one that caches it's result
-     * 
+     *
      * @param fn QuadFunction to memoise
      * @return Memoised TriFunction
      */
@@ -328,7 +328,7 @@ public class Memoize {
 
     /**
      * Convert a QuadFunction into one that caches it's result
-     * 
+     *
      * @param fn QuadFunction to memoise
      * @param cache Cachable to store the results
      * @return Memoised TriFunction
@@ -354,7 +354,7 @@ public class Memoize {
 
     /**
      * Convert a Predicate into one that caches it's result
-     * 
+     *
      * @param p Predicate to memoise
      * @return Memoised Predicate
      */
@@ -366,7 +366,7 @@ public class Memoize {
 
     /**
      * Convert a Predicate into one that caches it's result
-     * 
+     *
      * @param p Predicate to memoise
      * @param cache Cachable to store the results
      * @return Memoised Predicate

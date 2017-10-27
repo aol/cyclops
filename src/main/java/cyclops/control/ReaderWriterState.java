@@ -1,7 +1,7 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher4;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher4;
 import cyclops.monads.Witness.rws;
 import cyclops.monads.Witness.supplier;
 import cyclops.typeclasses.*;

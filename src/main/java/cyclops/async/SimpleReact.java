@@ -1,9 +1,9 @@
 package cyclops.async;
 
-import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
-import com.aol.cyclops2.internal.react.stream.ReactBuilder;
-import com.aol.cyclops2.react.ThreadPools;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.oath.cyclops.internal.react.SimpleReactStreamImpl;
+import com.oath.cyclops.internal.react.stream.ReactBuilder;
+import com.oath.cyclops.react.ThreadPools;
+import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.reactive.Spouts;
 import lombok.Getter;
 import lombok.experimental.Builder;

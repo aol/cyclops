@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import com.aol.cyclops2.streams.BaseSequentialTest;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
@@ -20,7 +20,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import cyclops.collections.CollectionXTestsWithNulls;
 
 public class PVectorXTest extends CollectionXTestsWithNulls{
@@ -56,7 +56,7 @@ public class PVectorXTest extends CollectionXTestsWithNulls{
        assertThat(VectorX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
 	@Test
     public void onEmptySwitch(){

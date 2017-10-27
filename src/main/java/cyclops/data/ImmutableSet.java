@@ -1,13 +1,13 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.persistent.PersistentSet;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.recoverable.OnEmptyError;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.traversable.IterableX;
-import com.aol.cyclops2.types.traversable.Traversable;
+import com.oath.cyclops.types.persistent.PersistentSet;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.recoverable.OnEmptyError;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

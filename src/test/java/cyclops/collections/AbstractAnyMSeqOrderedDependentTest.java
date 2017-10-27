@@ -4,9 +4,9 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Semigroups;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops2.types.stream.HeadAndTail;
+import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -26,13 +26,13 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType<W>> extends AbstractAnyMSeqTest<W> {
-    
+
     @Test
     public void groupedT(){
-       
+
        assertThat(of(1,2,3,4).groupedT(2)
                     .toListOfLists(),equalTo(ListX.of(ListX.of(1,2),ListX.of(3,4))));
-                    
+
     }
     @Test
     public void sortedComparator() {
@@ -64,14 +64,14 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 
 		System.out.println(of(1, 2).cycle(3).toListX());
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
-       
+
     }
     int count =0;
     @Test
     public void testCycleWhile() {
         count =0;
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
-       
+
     }
     @Test
     public void testCycleUntil() {
@@ -98,17 +98,17 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
       //  of(1, 2, 3).cycleUntil(next->count++==6).printOut();
 
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
-       
+
     }
     @Test
     public void sliding() {
-        
-       
-        
+
+
+
         List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
-      
-        
+
+
         assertThat(list.get(0), hasItems(1, 2));
         assertThat(list.get(1), hasItems(2, 3));
     }
@@ -123,13 +123,13 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
     }
     @Test
     public void slidingT() {
-        
-       
-        
+
+
+
         ArrayList<List<Integer>> list = of(1, 2, 3, 4, 5, 6).slidingT(2).collect(()->new ArrayList(),Collectors.toList());
 
-       
-        
+
+
         assertThat(list.get(0), hasItems(1, 2));
         assertThat(list.get(1), hasItems(2, 3));
     }
@@ -147,29 +147,29 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
     public void combine(){
         assertThat(of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3))); 
-                   
+                   .toListX(),equalTo(ListX.of(4,3)));
+
     }
 	@Test
 	public void zip3(){
 		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
 												.toListX();
-		
+
 		System.out.println(list);
 		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
-		
+
 		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
+
 		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-		
-		
+
+
 	}
 	@Test
 	public void zip4(){
@@ -182,24 +182,24 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 		assertThat(right,hasItem(200));
 		assertThat(right,not(hasItem(300)));
 		assertThat(right,not(hasItem(400)));
-		
+
 		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
+
 		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-	
+
 		List<String> four = list.stream().map(t -> t._4()).collect(Collectors.toList());
 		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void testIntersperse() {
-		
+
 		assertThat((of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
-	
+
 
 
 
@@ -218,11 +218,11 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 		int first;
 		int second;
 	}
-	
+
 	@Test
 	public void testOfType() {
 
-		
+
 
 		assertThat(((of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
 
@@ -250,7 +250,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 	private String concat5(String a, String b, String c,String d,String e){
 		return a+b+c+d+e;
 	}
-	
+
 
 	@Test
     public void allCombinations3() {
@@ -262,7 +262,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 	public void emptyAllCombinations() {
 		assertThat(of().combinations().map(s -> s.toList()).toList(), equalTo(Arrays.asList(Arrays.asList())));
 	}
-	
+
 	@Test
     public void emptyPermutations() {
         assertThat(of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
@@ -280,12 +280,12 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 	public void emptyCombinations() {
 		assertThat(of().combinations(2).map(s -> s.toList()).toList(), equalTo(Arrays.asList()));
 	}
-	   
+
 	 @Test
 	public void combinations2() {
 	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
-	    }	
+	    }
 
     @Test
     public void whenGreaterThan2() {
@@ -305,7 +305,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 		ReactiveSeq<String> tail = headAndTail.tail();
 		assertThat(tail.headAndTail().head(), equalTo("world"));
 
-	} 
+	}
 	@Test
     public void testScanLeftStringConcat() {
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
@@ -318,7 +318,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 	}
 	@Test
 	public void testReverse() {
-		
+
 		assertThat(of(1, 2, 3).reverse().toList(), equalTo(asList(3, 2, 1)));
 	}
 

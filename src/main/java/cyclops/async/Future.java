@@ -1,12 +1,13 @@
 package cyclops.async;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
 
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.reactive.Completable;
-import com.aol.cyclops2.types.recoverable.RecoverableFrom;
+import com.oath.cyclops.react.threads.SequentialElasticPools;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -15,24 +16,23 @@ import cyclops.monads.Witness.future;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.FutureT;
 import cyclops.typeclasses.*;
-import com.aol.cyclops2.types.*;
 
-import com.aol.cyclops2.react.Status;
-import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
+import com.oath.cyclops.react.Status;
+import com.oath.cyclops.react.collectors.lazy.Blocker;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
 
 import cyclops.companion.Monoids;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.control.*;
 
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
 
-import com.aol.cyclops2.types.reactive.ValueSubscriber;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
@@ -98,7 +98,7 @@ public class Future<T> implements To<Future<T>>,
                                   Completable<T>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T>,
-                                  OrElseValue<T,Future<T>>{
+  OrElseValue<T,Future<T>> {
 
     public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
         SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();

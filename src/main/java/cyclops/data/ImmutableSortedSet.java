@@ -1,10 +1,10 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.persistent.PersistentSortedSet;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.Traversable;
+import com.oath.cyclops.types.persistent.PersistentSortedSet;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

@@ -1,6 +1,6 @@
 package cyclops.free;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.monads.Witness.yoneda;
 import cyclops.typeclasses.functor.Functor;
 

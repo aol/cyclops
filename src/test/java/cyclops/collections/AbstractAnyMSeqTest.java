@@ -50,13 +50,13 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.util.SimpleTimer;
 
 public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO extends AbstractIterableXTest{
 	public abstract <T> AnyMSeq<W,T> empty();
 	public abstract <T> AnyMSeq<W,T> of(T... values);
-	
+
     public static final LazyReact r = new LazyReact(10,10);
    // prependS, append,append,prependAll,prependAll,insertAt,deleteBetween,insertAtS,recover
     @Test
@@ -108,11 +108,11 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
     @Test
     public void stream(){
-       
+
         assertThat(of(1,2,3).stream().collect(java.util.stream.Collectors.toList()),hasItems(1,2,3));
     }
 
-    
+
 
     private void sleep2(int time){
         try {
@@ -125,22 +125,22 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
     @Test
     public void visit(){
-        
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),
                                                               ()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
     @Test
     public void whenGreaterThan2(){
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                    
+
         assertThat(res,equalTo("2hello3"));
     }
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -150,12 +150,12 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
     }
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
-	
+
 	@Test
 	public void testCollectable(){
 		assertThat(of(1,2,3).anyMatch(i->i==2),equalTo(true));
@@ -168,7 +168,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void dropRightEmpty(){
 		assertThat(of().dropRight(1).toList(),equalTo(Arrays.asList()));
 	}
-	
+
 	@Test
 	public void dropUntil(){
 		assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
@@ -198,10 +198,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void findFirst(){
 		assertThat(of(1,2,3,4,5).findFirst().get(),lessThan(6));
 	}
-	
-	
-	
-	
+
+
+
+
 	AnyMSeq<W,Integer> empty;
 	AnyMSeq<W,Integer> nonEmpty;
 
@@ -211,41 +211,41 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		nonEmpty = of(1);
 	}
 
-	
+
 	protected Object value() {
-		
+
 		return "jello";
 	}
 	private int value2() {
-		
+
 		return 200;
 	}
-	
-	
+
+
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()).size(),is(2));
 	}
-	
 
-	
 
-	
+
+
+
 	@Test
 	public void limitWhileTest(){
-		
+
 		List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
 			list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
 						.peek(it -> System.out.println(it)).collect(java.util.stream.Collectors.toList());
-	
+
 		}
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(list.get(0)));
-		
-		
-		
-		
+
+
+
+
 	}
 
     @Test
@@ -255,7 +255,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
     }
     @Test
     public void testScanLeftSum() {
-    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList().size(), 
+    	assertThat(of("a", "ab", "abc").map(str->str.length()).scanLeft(0, (u, t) -> u + t).toList().size(),
     			is(asList(0, 1, 3, 6).size()));
     }
     @Test
@@ -273,17 +273,17 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
     	assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
             is(asList(0, 3, 5, 6).size()));
 
-        
+
     }
 
-    
 
-   
-    
 
-   
-   
-    
+
+
+
+
+
+
     @Test
     public void testIterable() {
         List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
@@ -292,48 +292,48 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             assertThat(list,hasItem(i));
         }
     }
-	
 
-	   
-	   
-	   
 
-		
+
+
+
+
+
 	    @Test
 	    public void testGroupByEager() {
 	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-	       
+
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
 	        assertThat(map1.get(1),hasItem(1));
 	        assertThat(map1.get(1),hasItem(3));
-	        
+
 	        assertEquals(2, map1.size());
 
-	     
+
 	    }
-	    
+
 
 	    @Test
 	    public void testJoin() {
 	        assertEquals("123".length(),of(1, 2, 3).join().length());
 	        assertEquals("1, 2, 3".length(), of(1, 2, 3).join(", ").length());
 	        assertEquals("^1|2|3$".length(), of(1, 2, 3).join("|", "^", "$").length());
-	        
-	      
+
+
 	    }
 
-	    
-	   
-	  
 
-	   
+
+
+
+
 	    @Test
 	    public void testSkipWhile() {
 	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
-	      
+
 	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
 
@@ -345,30 +345,30 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
-	   
+
 
 	    @Test
 	    public void testLimitWhile() {
 	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
-	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);       
+	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);
 	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitUntil() {
-	        
+
 
 	        assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	        assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().size()==5);
-	        
+
 	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
 
-	   
 
-	    
+
+
 
 	    @Test
 	    public void testMinByMaxBy() {
@@ -381,8 +381,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
 	    }
 
-	   
-	   
+
+
 
 		@Test
 		public void onePer(){
@@ -398,7 +398,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 			assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(java.util.stream.Collectors.toList()).size(),is(6));
 			assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
 		}
-	   
+
 
 		@Test
 		public void zip(){
@@ -407,21 +407,21 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 													.peek(it -> System.out.println(it))
 													.collect(java.util.stream.Collectors.toList());
 			System.out.println("list = " +list);
-			
+
 			List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
-			
+
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
-			
+
 			List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 			assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-			
-			
+
+
 		}
 
-		
+
 		@Test
 		public void testScanLeftStringConcatMonoid() {
 			assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), is(asList("", "a", "ab", "abc")));
@@ -429,12 +429,12 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 		@Test
 		public void testScanLeftSumMonoid() {
-			
+
 			assertThat(of("a", "ab", "abc").map(str -> str.length()).
 								peek(System.out::println).scanLeft(Reducers.toTotalInt()).toList(), is(asList(0, 1, 3, 6)));
 		}
 
-		
+
 
 		@Test
 		public void testScanRightSumMonoid() {
@@ -443,16 +443,16 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 										.peek(System.out::println)
 										.scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
 
-		}	
-	    
-  
+		}
+
+
 	@Test
 	public void onEmptySwitchEmpty(){
 		assertThat(of().stream()
 							.onEmptySwitch(()->Stream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(1,2,3)));
-				
+
 	}
 	@Test
 	public void onEmptySwitch(){
@@ -460,24 +460,24 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 							.onEmptySwitch(()->Stream.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(4,5,6)));
-				
+
 	}
-	
+
 	@Test
 	public void elapsedIsPositive(){
-		
-		
+
+
 		assertTrue(of(1,2,3,4,5).stream().elapsed().noneMatch(t->t._2()<0));
 	}
 	@Test
 	public void timeStamp(){
-		
-		
+
+
 		assertTrue(of(1,2,3,4,5)
 							.stream()
 							.timestamp()
 							.allMatch(t-> t._2() <= System.currentTimeMillis()));
-		
+
 
 	}
 	@Test
@@ -540,33 +540,33 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void singleOptonal2(){
 		assertFalse(of(1,2).single().isPresent());
 	}
-	
+
 	@Test
 	public void limitTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
-		
-		
+
+
 		assertThat(result,equalTo(Arrays.asList()));
 	}
-	
+
 	@Test
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
-		
-		
+
+
 		assertThat(result,equalTo(Arrays.asList()));
 	}
 	private int sleep(Integer i) {
 		try {
 			Thread.currentThread().sleep(i);
 		} catch (InterruptedException e) {
-			
+
 		}
 		return i;
 	}
@@ -654,24 +654,24 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Stream.of()));
 	}
-	
+
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = (of(1,2,3,4,5,6)
 												.map(i->i*2)
 												).to()
 												.streamable();
-		
+
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
-	
+
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
 												.map(i->i*2).to()
 												.lazyStreamableSynchronized();
-		
+
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
@@ -730,30 +730,30 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
-	
+
 
 	@Test
 	public void xMatch(){
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void zip2of(){
-		
+
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
 											.toListX().materialize();
 
-				
+
 
 		List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
-		
+
 		List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 		System.out.println(left);
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
@@ -761,66 +761,66 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	}
 	@Test
 	public void zipInOrder(){
-		
+
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400).stream())
 													.toListX();
-		
+
 		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
 		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
-		
-		
-		
+
+
+
 	}
 
 	@Test
 	public void zipEmpty() throws Exception {
-		
-		
+
+
 		final AnyMSeq<W,Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipEmptyWithNonEmpty() throws Exception {
-		
-		
-		
+
+
+
 		final AnyMSeq<W,Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
-		
-		
+
+
 		final AnyMSeq<W,Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
-		
+
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
-		
+
 		final AnyMSeq<W,String> first = of("A", "B", "C");
 		final AnyMSeq<W,Integer> second = of(1, 2, 3);
 
-		
+
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
 	}
 
-	
+
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
 		final AnyMSeq<W,String> first = of("A", "B", "C");
 		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -832,7 +832,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		final AnyMSeq<W,Integer> second = of(1, 2, 3);
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -848,13 +848,13 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 	}
 
-	
+
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
 		final AnyMSeq<W,String> first = of("A", "B", "C");
 		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -864,10 +864,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
 		final AnyMSeq<W,String> first = of("A", "B", "C","D");
 		final AnyMSeq<W,Integer> second = of(1, 2, 3);
-		
+
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -888,7 +888,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		final AnyMSeq<W,String> first = of("A", "B", "C");
 		final AnyMSeq<W,Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -900,11 +900,11 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		final AnyMSeq<W,Integer> second = of(1, 2, 3);
 		final AnyMSeq<W,String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
-	
+
 	@Test
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().toListX());
@@ -964,16 +964,16 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 	}
 
-	
 
-     
-        
+
+
+
         @Test
         public void batchBySizeCollection(){
-            
-            
+
+
             assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).elementAt(0).toOptional().get().size(),is(3));
-            
+
            // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
         }
         @Test
@@ -983,21 +983,21 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         @Test
         public void fixedDelay(){
             SimpleTimer timer = new SimpleTimer();
-            
+
             assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(java.util.stream.Collectors.toList()).size(),is(6));
             assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
         }
-        
-        
-       
-       
-        
+
+
+
+
+
         @Test
         public void testSorted() {
-         
+
 
             AnyMSeq<W,Tuple2<Integer, Integer>> t1 = of(tuple(2, 2), tuple(1, 1));
-           
+
             List<Tuple2<Integer, Integer>> s1 = t1.sorted().toList();
             assertEquals(tuple(1, 1), s1.get(0));
             assertEquals(tuple(2, 2), s1.get(1));
@@ -1025,22 +1025,22 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             List<Tuple2<Integer,Integer>> list =
                     of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
                                                     .peek(it -> System.out.println(it))
-                                                    
+
                                                     .collect(java.util.stream.Collectors.toList());
-            
+
             List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
             assertThat(right,hasItem(100));
             assertThat(right,hasItem(200));
             assertThat(right,hasItem(300));
             assertThat(right,hasItem(400));
-            
+
             List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
             assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-            
-            
+
+
         }
-        
-        
+
+
 
         @Test
         public void testReverse() {
@@ -1054,7 +1054,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             assertEquals(3, s.get().shuffle().toListX().size());
             assertThat(s.get().shuffle().toListX(), hasItems(1, 2, 3));
 
-            
+
         }
         @Test
         public void testShuffleRandom() {
@@ -1064,7 +1064,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             assertEquals(3, s.get().shuffle(r).toListX().size());
             assertThat(s.get().shuffle(r).toListX(), hasItems(1, 2, 3));
 
-            
+
         }
 
             @Test
@@ -1097,25 +1097,25 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                 assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
             }
 
-           
-           
+
+
 
             @Test
             public void testFoldLeft() {
                 for(int i=0;i<100;i++){
                     Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
-        
+
                     assertTrue(s.get().reduce("", String::concat).contains("a"));
                     assertTrue(s.get().reduce("", String::concat).contains("b"));
                     assertTrue(s.get().reduce("", String::concat).contains("c"));
-                   
+
                     assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
-        
-                    
+
+
                     assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
                 }
             }
-            
+
             @Test
             public void testFoldRight(){
                     Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
@@ -1125,42 +1125,42 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                     assertTrue(s.get().foldRight("", String::concat).contains("c"));
                     assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
             }
-            
+
             @Test
             public void testFoldLeftStringBuilder() {
                 Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
-                
-                
+
+
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
                 assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
-                
-                
+
+
                 assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
 
-               
+
             }
 
             @Test
             public void testFoldRighttringBuilder() {
                 Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
-                
+
                 assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));
                 assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("b"));
                 assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("c"));
                 assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("-"));
-                
-                   
+
+
             }
-            
+
             @Test
             public void batchUntil(){
                 assertThat(of(1,2,3,4,5,6)
                         .groupedUntil(i->false)
                         .toListX().size(),equalTo(1));
-               
+
             }
             @Test
             public void batchWhile(){
@@ -1168,14 +1168,14 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                         .groupedWhile(i->true)
                         .toListX()
                         .size(),anyOf(equalTo(1),equalTo(6)));
-               
+
             }
             @Test
             public void batchUntilSupplier(){
                 assertThat(of(1,2,3,4,5,6)
                         .groupedUntil(i->false,()->ListX.empty())
                         .toListX().size(),equalTo(1));
-               
+
             }
             @Test
             public void batchWhileSupplier(){
@@ -1183,9 +1183,9 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                         .groupedWhile(i->true,()->ListX.empty())
                         .toListX()
                         .size(),equalTo(1));
-               
+
             }
-          
+
             @Test
             public void slidingNoOrder() {
                 ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
@@ -1200,7 +1200,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                 List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
                 System.out.println(list);
-               
+
                 assertThat(list.get(1).size(), greaterThan(1));
             }
 
@@ -1208,8 +1208,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void combineNoOrder(){
                 assertThat(of(1,2,3)
                            .combine((a, b)->a.equals(b),Semigroups.intSum)
-                           .toListX(),equalTo(ListX.of(1,2,3))); 
-                           
+                           .toListX(),equalTo(ListX.of(1,2,3)));
+
             }
     @Test
     public void combineNoOrderMonoid(){
@@ -1224,21 +1224,21 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                 List<Tuple3<Integer,Integer,Character>> list =
                         of(1,2,3,4).zip3(of(100,200,300,400).stream(),of('a','b','c','d').stream())
                                                         .toListX();
-                
+
                 System.out.println(list);
                 List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
                 assertThat(right,hasItem(100));
                 assertThat(right,hasItem(200));
                 assertThat(right,hasItem(300));
                 assertThat(right,hasItem(400));
-                
+
                 List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
-                
+
                 List<Character> three = list.stream().map(t -> t._3()).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
-                
-                
+
+
             }
             @Test
             public void zip4NoOrder(){
@@ -1251,36 +1251,36 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
                 assertThat(right,hasItem(200));
                 assertThat(right,hasItem(300));
                 assertThat(right,hasItem(400));
-                
+
                 List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList(1,2,3,4),hasItem(left.get(0)));
-                
+
                 List<Character> three = list.stream().map(t -> t._3()).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList('a','b','c','d'),hasItem(three.get(0)));
-            
+
                 List<String> four = list.stream().map(t -> t._4()).collect(java.util.stream.Collectors.toList());
                 assertThat(Arrays.asList("hello","world","boo!","2"),hasItem(four.get(0)));
-                
-                
+
+
             }
-            
+
             @Test
             public void testIntersperseNoOrder() {
-                
+
                 assertThat((of(1,2,3).intersperse(0)).toListX(),hasItem(0));
-            
+
 
 
 
             }
-         
 
-            
+
+
             @Test @Ignore
             public void testOfTypeNoOrder() {
 
-                
-                
+
+
                 assertThat(of(1,  0.2, 2, 0.3, 3)
 
                         .ofType(Serializable.class).toListX(),containsInAnyOrder(1, 0.2, 2,0.3, 3));
@@ -1297,7 +1297,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void emptyAllCombinationsNoOrder() {
                 assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
             }
-            
+
             @Test
             public void emptyPermutationsNoOrder() {
                 assertThat(of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
@@ -1314,10 +1314,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void emptyCombinationsNoOrder() {
                 assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
             }
-               
+
              @Test
             public void combinations2NoOrder() {
-                 
+
                     assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
                             equalTo(2));
                 }
@@ -1348,5 +1348,5 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         Trampoline<Long> fibonacci(int n, long a, long b) {
             return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
         }
-			
+
 }

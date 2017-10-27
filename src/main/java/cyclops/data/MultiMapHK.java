@@ -1,8 +1,8 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Option;
 import cyclops.monads.DataWitness.multiMapHK;
 import cyclops.typeclasses.Pure;

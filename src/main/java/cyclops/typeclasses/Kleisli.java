@@ -1,8 +1,8 @@
 package cyclops.typeclasses;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher3;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher3;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.function.Function1;
 import cyclops.function.Function3;
@@ -36,11 +36,11 @@ import cyclops.monads.Witness.kleisli;
 public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
                                         Transformable<R>,
                                         Higher3<kleisli,W,T,R> {
-    
+
     Monad<W> monad;
-    
+
     Function<? super T, ? extends Higher<W,? extends R>> fn;
-    
+
     public static <W,T,R> Kleisli<W,T,R> of(Monad<W> monad, Function<? super T, ? extends Higher<W,? extends R>> fn){
         return new Kleisli<W,T,R>(monad,fn);
     }
@@ -62,7 +62,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
     public  <R2,B> Kleisli<W, T, B> zip(Kleisli<W, T, R2> o, BiFunction<? super R,? super R2,? extends B> fn){
         return flatMapK(a -> o.map(b -> fn.apply(a,b)));
     }
-    
+
     public <R1> Kleisli<W,T,R1> flatMapK(Function<? super R, ? extends Kleisli<W,T, R1>> mapper){
         return kleisliK(monad, t->monad.flatMap(r ->  mapper.apply(r).apply(t),apply(t)));
     }

@@ -1,10 +1,10 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.anyM.transformers.NonEmptyTransformer;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.anyM.transformers.NonEmptyTransformer;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.monads.AnyM;
@@ -18,7 +18,7 @@ import java.util.function.*;
 /**
 * Monad Transformer for Xor's
 
- * 
+ *
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
@@ -59,7 +59,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
         this.run = run;
     }
 
-    
+
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
     protected <R> EitherT<W,ST,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
@@ -82,14 +82,14 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     /**
      * Peek at the current value of the Maybe
      * <pre>
-     * {@code 
+     * {@code
      *    MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Maybe
      * @return MaybeWT with peek call
      */
@@ -103,17 +103,17 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
 
     /**
      * Map the wrapped Maybe
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //MaybeWT<AnyMSeq<Stream<Maybe[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Maybe
      * @return MaybeWT that applies the transform function to the wrapped Maybe
      */
@@ -126,11 +126,11 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     /**
      * Flat Map the wrapped Maybe
       * <pre>
-     * {@code 
+     * {@code
      *  MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .flatMap(t->Maybe.completedMaybe(20));
-     *  
-     *  
+     *
+     *
      *  //MaybeWT<AnyMSeq<Stream<Maybe[20]>>>
      * }
      * </pre>
@@ -159,13 +159,13 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     /**
      * Lift a function into one that accepts and returns an MaybeWT
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling  / iteration (via Maybe) and iteration (via Stream) to an existing function
      * <pre>
-     * {@code 
+     * {@code
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<MaybeWT<Integer>, MaybeWT<Integer>> optTAdd2 = MaybeWT.lift(add2);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
@@ -174,14 +174,14 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//Maybe.completedMaybe(List[3,4]);
-     * 
-     * 
+     *
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param fn Function to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
@@ -192,19 +192,19 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     /**
      * Lift a BiFunction into one that accepts and returns  MaybeWTs
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling / iteration (via Maybe), iteration (via Stream)  and asynchronous execution (Maybe)
      * to an existing function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<MaybeWT<Integer>,MaybeWT<Integer>,MaybeWT<Integer>> optTAdd2 = MaybeWT.lift2(add);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
-    	
+
     	Maybe<Maybe<Integer>> two = Maybe.completedMaybe(Maybe.completedMaybe(2));
     	AnyMSeq<Maybe<Integer>> Maybe=  AnyM.fromMaybeW(two);
     	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt),MaybeWT.of(Maybe))
@@ -212,7 +212,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
-    									
+
     		//Maybe.completedMaybe(List[3,4,5]);
       }
       </pre>
@@ -227,7 +227,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     /**
      * Construct an MaybeWT from an AnyM that contains a monad type that contains type other than Maybe
      * The values in the underlying monad will be mapped to Maybe<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeWT
      */
@@ -237,7 +237,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
 
     /**
      * Construct an MaybeWT from an AnyM that wraps a monad containing  MaybeWs
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Maybe
      * @return MaybeWT
      */
@@ -248,7 +248,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -256,7 +256,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
         return String.format("XorT[%s]", run.unwrap().toString());
     }
 
-    
+
 
 
     public <R> EitherT<W,ST,R> unitIterator(final Iterator<R> it) {
@@ -271,9 +271,9 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
 
 
 
-    
 
-   
+
+
     @Override
     public int hashCode() {
         return run.hashCode();
@@ -297,7 +297,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
      */
     @Override
     public StreamT<W,T> iterate(UnaryOperator<T> fn, T alt) {
-        
+
         return super.iterate(fn,alt);
     }
 
@@ -306,7 +306,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
      */
     @Override
     public StreamT<W,T> generate(T alt) {
-        
+
         return super.generate(alt);
     }
 

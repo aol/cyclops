@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.AbstractCollectionXTest;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Option;
@@ -21,7 +21,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 public class PQueueXTest extends AbstractCollectionXTest {
 
@@ -54,13 +54,13 @@ public class PQueueXTest extends AbstractCollectionXTest {
     public void onEmptySwitch(){
             assertThat(PersistentQueueX.empty().onEmptySwitch(()-> PersistentQueueX.of(1,2,3)).toList(), equalTo(PersistentQueueX.of(1,2,3).toList()));
     }
-	
+
 	@Test
     public void coflatMap(){
        assertThat(PersistentQueueX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()

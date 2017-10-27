@@ -1,7 +1,7 @@
 package cyclops.collections.standard.anyM;
 
 import cyclops.collections.AbstractAnyMSeqTest;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.mutable.SortedSetX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.sortedSet;
@@ -63,7 +63,7 @@ public class SortedSetXTest extends AbstractAnyMSeqTest<sortedSet>{
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 
     @Test

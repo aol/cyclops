@@ -1,6 +1,6 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
 import java.util.function.Function;
 

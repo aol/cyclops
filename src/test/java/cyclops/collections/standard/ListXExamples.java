@@ -1,6 +1,6 @@
 package cyclops.collections.standard;
 
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;

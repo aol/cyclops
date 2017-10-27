@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Semigroups;
@@ -36,9 +36,9 @@ public class BagTest extends BaseImmutableSetTest {
     public void minus(){
         Bag<Integer> bag1 = Bag.of(1,2,3,4,10,1,1,2);
         assertThat(bag1.removeValue(1).instances(1),equalTo(2));
-        
+
     }
-    
+
     @Test
     public void stream(){
         List<Integer> l = Bag.of(1, 2, 3, 4, 10, 1, 1, 2).stream().toList();

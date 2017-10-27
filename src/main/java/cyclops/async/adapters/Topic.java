@@ -7,15 +7,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.futurestream.Continuation;
+import com.oath.cyclops.types.futurestream.Continuation;
 import cyclops.async.QueueFactories;
-import com.aol.cyclops2.types.persistent.PersistentMap;
+import com.oath.cyclops.types.persistent.PersistentMap;
 
 
 import cyclops.data.HashMap;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
-import com.aol.cyclops2.react.async.subscription.Continueable;
+import com.oath.cyclops.react.async.subscription.Continueable;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import lombok.Synchronized;
 /**
  * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be
  * provided to all Topic subsribers
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Data type for the Topic
@@ -65,7 +65,7 @@ public class Topic<T> implements Adapter<T> {
      * Topic will maintain a queue for each Subscribing Stream
      * If a Stream is finished with a Topic it is good practice to disconnect from the Topic
      * so messages will no longer be stored for that Stream
-     * 
+     *
      * @param stream
      */
     @Synchronized("lock")
@@ -99,7 +99,7 @@ public class Topic<T> implements Adapter<T> {
     /**
      * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
-     * 
+     *
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
     @Override
@@ -143,7 +143,7 @@ public class Topic<T> implements Adapter<T> {
 
     /**
      * Close this Topic
-     * 
+     *
      * @return true if closed
      */
     @Override
@@ -171,7 +171,7 @@ public class Topic<T> implements Adapter<T> {
 
     /**
      * Add a single datapoint to this Queue
-     * 
+     *
      * @param data data to add
      * @return self
      */

@@ -1,7 +1,7 @@
 package cyclops.data;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.persistent.PersistentBag;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.persistent.PersistentBag;
 import cyclops.monads.DataWitness.bag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

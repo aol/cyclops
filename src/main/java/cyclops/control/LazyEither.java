@@ -1,11 +1,10 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.reactive.Completable;
-import com.aol.cyclops2.types.MonadicValue;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.MonadicValue;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
-import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;

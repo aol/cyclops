@@ -1,7 +1,7 @@
 package cyclops.reactive;
 
-import com.aol.cyclops2.types.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
+import com.oath.cyclops.types.reactive.AsyncSubscriber;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import cyclops.async.QueueFactories;
@@ -26,7 +26,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;

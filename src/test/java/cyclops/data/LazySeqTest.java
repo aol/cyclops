@@ -1,7 +1,7 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;

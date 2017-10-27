@@ -1,6 +1,6 @@
 package cyclops.typeclasses.foldable;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.monad.Applicative;

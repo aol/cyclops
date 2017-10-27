@@ -1,6 +1,6 @@
 package cyclops.data.basetests;
 
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.AbstractIterableXTest;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

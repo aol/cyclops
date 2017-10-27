@@ -7,8 +7,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.Value;
 import cyclops.function.Function0;
 import cyclops.function.Function3;
 import cyclops.data.tuple.Tuple;
@@ -19,32 +19,32 @@ import cyclops.reactive.ReactiveSeq;
 import static cyclops.data.tuple.Tuple.tuple;
 
 /**
- * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
+ * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl
  * and Mario Fusco presentation
- * 
+ *
  * Allows Stack Free Recursion
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  * @Test
     public void trampolineTest(){
-        
+
         assertThat(loop(500000,10).result(),equalTo(446198426));
-        
+
     }
     Trampoline<Integer> loop(int times,int sum){
-        
+
         if(times==0)
             return Trampoline.done(sum);
         else
             return Trampoline.more(()->loop(times-1,sum+times));
     }
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * And co-routines can be implemented simply via zipping trampolines
- * 
+ *
     <pre>
  {@code
  Trampoline<Integer> looping = loop(500000,5);
@@ -80,7 +80,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 ...
 
  </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Return type
@@ -201,7 +201,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
     /**
      * @return true if complete
-     * 
+     *
      */
     default boolean complete() {
         return true;
@@ -209,7 +209,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
     /**
      * Created a completed Trampoline
-     * 
+     *
      * @param result Completed result
      * @return Completed Trampoline
      */
@@ -219,7 +219,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
     /**
      * Create a Trampoline that has more work to do
-     * 
+     *
      * @param trampoline Next stage in Trampoline
      * @return Trampoline with more work
      */

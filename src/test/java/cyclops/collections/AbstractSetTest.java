@@ -1,7 +1,7 @@
 package cyclops.collections;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;

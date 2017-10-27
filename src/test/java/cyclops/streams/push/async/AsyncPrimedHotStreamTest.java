@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import com.aol.cyclops2.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Ignore;
@@ -63,14 +63,14 @@ public class AsyncPrimedHotStreamTest {
 				.peek(v->latch.countDown())
 				.primedHotStream(exec)
 				.connect().forEach(System.out::println);
-		
+
 		latch.await();
 		assertTrue(value!=null);
 	}
 	@Test
 	public void hotStreamConnect() throws InterruptedException{
-		
-		
+
+
 		for(int i=0;i<1_000;i++)
 		{
 			System.out.println(i);
@@ -85,12 +85,12 @@ public class AsyncPrimedHotStreamTest {
 					.connect()
 					.limit(100)
 					.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
-			
+
 			latch.await();
 			assertTrue(value!=null);
 		}
 	}
-	
+
 	@Test
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
@@ -103,23 +103,23 @@ public class AsyncPrimedHotStreamTest {
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
-		
+
 		latch.await();
 		assertTrue(value!=null);
 	}
 	@Test
 	public void hotStreamCapture() throws InterruptedException{
-		
-		
+
+
 		List<Integer> list = range(0,Integer.MAX_VALUE)
 									 .limit(1000)
 									 .primedHotStream(exec)
 									 .connect()
 									 .limit(2)
 									 .toList();
-		
+
 		assertThat(list,equalTo(Arrays.asList(0,1)));
-		
+
 	}
 	@Test @Ignore
 	public void hotStreamCaptureLong() throws InterruptedException{
@@ -163,10 +163,10 @@ public class AsyncPrimedHotStreamTest {
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
-		
+
 		Object oldValue = value;
-	
-		
+
+
 		try{
 			s.pause();
 			s.unpause();
@@ -194,7 +194,7 @@ public class AsyncPrimedHotStreamTest {
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
 
-		
+
 		Object oldValue = value;
 		try{
 			s.pause();

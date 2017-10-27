@@ -1,10 +1,7 @@
 package cyclops.matching;
 
+import com.oath.cyclops.matching.*;
 import cyclops.data.tuple.*;
-import com.aol.cyclops2.matching.*;
-import com.aol.cyclops2.matching.Case.*;
-import com.aol.cyclops2.matching.Deconstruct.*;
-import com.aol.cyclops2.matching.Matching.*;
 
 import java.util.Optional;
 import java.util.function.Function;

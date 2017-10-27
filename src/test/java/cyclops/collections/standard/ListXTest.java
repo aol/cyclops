@@ -1,10 +1,10 @@
 package cyclops.collections.standard;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.CollectionXTestsWithNulls;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
@@ -142,7 +142,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
        assertThat(ListX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
     @Test
     public void multipaths() {
@@ -168,18 +168,18 @@ public class ListXTest extends CollectionXTestsWithNulls {
                                    .map(i->i*2)
                                    .to(r->r.toSetX())
                                    .to(s->s.toListX());
-        
+
         assertThat(list,equalTo(ListX.of(2,4,6)));
     }
     @Test
     public void zipSemigroup(){
         BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
         assertThat(sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6)),equalTo(ListX.of(5,7,9)));
-        
+
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
      * zero()
@@ -192,23 +192,23 @@ public class ListXTest extends CollectionXTestsWithNulls {
 
     @Test
     public void when(){
-        
+
         String res= of(1,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
     @Test
     public void whenGreaterThan2(){
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                
+
         assertThat(res,equalTo("2hello3"));
     }
-    
+
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -218,8 +218,8 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
@@ -228,7 +228,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
      *
      * Eval e; //int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h->
      * (int)h>5, h-> 0 ) // .flatMap(h-> head.when());
-     * 
+     *
      * ht.headMaybe().when(some-> Matchable.of(some).matches(
      * c->c.hasValues(1,2,3).then(i->"hello world"),
      * c->c.hasValues('b','b','c').then(i->"boo!") ),()->"hello");

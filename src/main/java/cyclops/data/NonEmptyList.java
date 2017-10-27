@@ -1,9 +1,9 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.persistent.PersistentList;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
+import com.oath.cyclops.types.persistent.PersistentList;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

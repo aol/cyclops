@@ -1,18 +1,15 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.stream.HeadAndTail;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.stream.HeadAndTail;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
-import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.Serializable;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -97,7 +94,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
         String head = headAndTail.head();
         assertThat(head, isOneOf("hello","world","last"));
 
-      
+
 
     }
 

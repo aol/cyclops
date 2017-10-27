@@ -1,6 +1,12 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.internal.stream.*;
+import com.oath.cyclops.internal.stream.operators.DebounceOperator;
+import com.oath.cyclops.internal.stream.operators.MultiReduceOperator;
+import com.oath.cyclops.internal.stream.operators.OnePerOperator;
+import com.oath.cyclops.internal.stream.operators.RecoverOperator;
+import com.oath.cyclops.internal.stream.spliterators.*;
 import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.typeclasses.*;
@@ -8,25 +14,22 @@ import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 
-import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import com.aol.cyclops2.util.box.Mutable;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.oath.cyclops.util.box.Mutable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.internal.stream.*;
-import com.aol.cyclops2.internal.stream.operators.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
-import com.aol.cyclops2.types.stream.HeadAndTail;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.NonPausableHotStream;
-import com.aol.cyclops2.types.stream.PausableHotStream;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.types.stream.HeadAndTail;
+import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.NonPausableHotStream;
+import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -42,7 +45,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 
-import com.aol.cyclops2.types.persistent.PersistentList;
+import com.oath.cyclops.types.persistent.PersistentList;
 import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;

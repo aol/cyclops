@@ -7,12 +7,12 @@ import java.util.function.Supplier;
 
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 public abstract class CollectionXTestsWithNulls extends AbstractOrderDependentCollectionXTest {
 	public abstract <T> FluentCollectionX<T> of(T... values);
-	
+
 	@Test
 	public void testSkipUntilWithNulls() {
 		Supplier<CollectionX<Integer>> s = () -> of(1, 2, null, 3, 4, 5);

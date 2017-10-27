@@ -1,10 +1,10 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.mixins.Printable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
@@ -40,14 +40,14 @@ public class OptionTest implements Printable {
     }
 
 
-    
+
     @Test
     public void recoverWith(){
         assertThat(none.recoverWith(()->Option.some(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
         assertThat(eager.recoverWith(()->Option.some(5)).toOptional().get(),equalTo(10));
     }
-    
+
     boolean lazy = true;
 
     @Test
@@ -56,16 +56,16 @@ public class OptionTest implements Printable {
              .flatMap(i -> { lazy=false; return Option.some(15);})
              .map(i -> { lazy=false; return   Option.some(15);})
              .map(i -> Option.some(20));
-             
-        
+
+
         assertFalse(lazy);
-            
+
     }
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
         assertThat(Option.some(1).zip(sumMaybes, Option.some(5)),equalTo(Option.some(6)));
-        
+
     }
 
 

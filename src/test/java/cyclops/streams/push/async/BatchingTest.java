@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.util.SimpleTimer;
 import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -131,7 +131,7 @@ public class BatchingTest {
 				.map(seconds -> "hello!")
 				.peek(System.out::println)
 				.toList();
-				
+
 	 assertTrue(System.currentTimeMillis()-start>1900);
 
 	}
@@ -160,7 +160,7 @@ public class BatchingTest {
 
 		return "Status saved:" + s.getId();
 	}
-	
+
 	@Test
 	public void batchBySize() {
 
@@ -175,7 +175,7 @@ public class BatchingTest {
 				.forEach(a->{});
 
 	}
-	
+
 	private Object nextFile() {
 		return "hello";
 	}
@@ -188,22 +188,22 @@ public class BatchingTest {
 		for(int x=0;x<1;x++){
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
-					
+
 					iterate("", last -> "hello")
 					.limit(1000)
-					
+
 					.peek(i->System.out.println(++otherCount))
-			
+
 					.groupedByTime(1, TimeUnit.MICROSECONDS)
-					
+
 					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
-				
+
 					.peek(batch->count3= count3+batch.size())
-					
-					.forEach(next -> { 
+
+					.forEach(next -> {
 					count2.getAndAdd(next.size());});
-		
-			
+
+
 			System.out.println("In flight count " + count3 + " :" + otherCount);
 			System.out.println(result.size());
 			System.out.println(result);
@@ -218,22 +218,22 @@ public class BatchingTest {
 		for(int x=0;x<10;x++){
 			count2=new AtomicInteger(0);
 			List<Collection<Map>> result = new ArrayList<>();
-					
+
 					iterate("", last -> "hello")
 					.limit(1000)
-					
+
 					.peek(i->System.out.println(++otherCount))
-			
+
 					.groupedByTime(1, TimeUnit.MICROSECONDS)
-					
+
 					.peek(batch -> System.out.println("batched : " + batch + ":" + (++peek)))
-				
+
 					.peek(batch->count3= count3+(int)batch.stream().count())
-					
-					.forEach(next -> { 
+
+					.forEach(next -> {
 					count2.getAndAdd((int)next.stream().count());});
-		
-			
+
+
 			System.out.println("In flight count " + count3 + " :" + otherCount);
 			System.out.println(result.size());
 			System.out.println(result);
@@ -245,23 +245,23 @@ public class BatchingTest {
 	@Test
 	public void batchByTimex() {
 
-		
+
 				iterate("", last -> "next")
 				.limit(100)
-				
-				
+
+
 				.peek(next->System.out.println("Counter " +count2.incrementAndGet()))
 				.groupedByTime(10, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.filter(c->!c.isEmpty())
-				
-				
+
+
 				.forEach(System.out::println);
-			
+
 
 	}
-	
-	
+
+
 
 	@Test
 	public void batchBySize3(){
@@ -270,7 +270,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchBySizeAndTimeSizeCollection(){
-		
+
 		assertThat(of(1,2,3,4,5,6)
 						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
 						.toList().get(0)
@@ -294,16 +294,16 @@ public class BatchingTest {
 				.toList();
 
 		System.out.println(l);
-		
+
 		assertThat(of(1,2,3,4,5,6)
 						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS)
 						.toList().get(0)
 						.size(),is(3));
 	}
-	
+
 	@Test
 	public void windowBySizeAndTimeSizeEmpty(){
-		
+
 		assertThat(of()
 						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS)
 						.toList()
@@ -311,13 +311,13 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchBySizeAndTimeTime(){
-		
+
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<ListX<Integer>> list = of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
-			
+
 			assertThat(list
 							.get(0)
 							,not(hasItem(6)));
@@ -325,13 +325,13 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchBySizeAndTimeTimeCollection(){
-		
+
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
 					.toList();
-			
+
 			assertThat(list
 							.get(0)
 							,not(hasItem(6)));
@@ -339,23 +339,23 @@ public class BatchingTest {
 	}
 	@Test
 	public void windowBySizeAndTimeTime(){
-		
+
 		for(int i=0;i<10;i++){
 			System.out.println(i);
 			List<ListX<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
-					
+
 					.toList();
-			
+
 			assertThat(list
 							.get(0)
-							
+
 							,not(hasItem(6)));
 		}
 	}
-	
-	
+
+
 	@Test
 	public void batchBySizeSet(){
 		System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
@@ -364,7 +364,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchBySizeSetEmpty(){
-		
+
 		assertThat(of().grouped(3,()->new TreeSet<>()).toList().size(),is(0));
 	}
 	@Test
@@ -374,30 +374,30 @@ public class BatchingTest {
 	@Test
 	public void fixedDelay(){
 		SimpleTimer timer = new SimpleTimer();
-		
+
 		assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
 	}
 	@Test
 	public void judder(){
 		SimpleTimer timer = new SimpleTimer();
-		
+
 		assertThat(of(1,2,3,4,5,6).jitter(10000).collect(Collectors.toList()).size(),is(6));
 		assertThat(timer.getElapsedNanoseconds(),greaterThan(20000l));
 	}
 	@Test
 	public void debounce(){
 		SimpleTimer timer = new SimpleTimer();
-		
-		
+
+
 		assertThat(of(1,2,3,4,5,6).debounce(1000,TimeUnit.SECONDS).collect(Collectors.toList()).size(),is(1));
-		
+
 	}
 	@Test
 	public void debounceOk(){
 		System.out.println(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).toList());
 		assertThat(of(1,2,3,4,5,6).debounce(1,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
-		
+
 	}
 	@Test
 	public void onePer(){
@@ -419,7 +419,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchByTimeSet(){
-		
+
 		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
 	}
 	@Test
@@ -430,6 +430,6 @@ public class BatchingTest {
 	public void batchByTimeInternalSizeCollection(){
 		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
-	
+
 
 }

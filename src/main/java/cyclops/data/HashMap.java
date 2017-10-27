@@ -1,11 +1,10 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.persistent.PersistentMap;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.types.persistent.PersistentMap;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.DataWitness.hashMap;

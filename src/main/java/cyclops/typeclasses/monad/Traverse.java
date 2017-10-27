@@ -1,6 +1,6 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Constant;
 import cyclops.control.Maybe;
@@ -20,10 +20,10 @@ import static cyclops.data.tuple.Tuple.tuple;
 
 //HighJ Traverse, ScalaZ Traverse and Cats Traverse Influences
 public interface Traverse<CRE> extends Applicative<CRE>{
-    
+
    <C2,T,R> Higher<C2, Higher<CRE, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
                                                  Higher<CRE, T> ds);
-   
+
     <C2,T> Higher<C2, Higher<CRE, T>> sequenceA(Applicative<C2> applicative,
                                                 Higher<CRE, Higher<C2, T>> ds);
 

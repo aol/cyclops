@@ -1,9 +1,9 @@
 package cyclops.data;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct3;
-import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.foldable.Folds;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct3;
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.types.foldable.Folds;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 

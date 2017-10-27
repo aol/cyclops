@@ -1,8 +1,8 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Deconstruct;
-import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.matching.Deconstruct;
+import com.oath.cyclops.types.anyM.AnyMValue;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;

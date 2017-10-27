@@ -1,9 +1,9 @@
 package cyclops.collections.persistent;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.AbstractSetTest;
 import cyclops.collections.immutable.BagX;
 import cyclops.collections.mutable.SetX;
@@ -96,7 +96,7 @@ public class PBagXTest extends AbstractSetTest {
        assertThat(BagX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(-1),equalTo(6));
-        
+
     }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()

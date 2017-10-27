@@ -1,18 +1,21 @@
 package cyclops.control;
 
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Present;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.reactive.Completable;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
 
 import cyclops.monads.Witness;

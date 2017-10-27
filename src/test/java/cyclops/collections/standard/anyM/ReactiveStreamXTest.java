@@ -1,7 +1,7 @@
 package cyclops.collections.standard.anyM;
 
 import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;

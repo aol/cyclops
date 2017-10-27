@@ -1,14 +1,14 @@
 package cyclops.data;
 
 
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.persistent.PersistentIndexed;
-import com.aol.cyclops2.types.persistent.PersistentList;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
+import com.oath.cyclops.types.persistent.PersistentList;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

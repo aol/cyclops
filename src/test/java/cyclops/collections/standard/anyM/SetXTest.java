@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.SetX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class SetXTest extends AbstractAnyMSeqTest<set> {
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 
     @Test

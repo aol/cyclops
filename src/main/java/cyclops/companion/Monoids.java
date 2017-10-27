@@ -1,9 +1,9 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.persistent.PersistentCollection;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;

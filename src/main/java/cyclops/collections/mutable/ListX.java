@@ -1,19 +1,19 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.LazyListX;
-import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
-import com.aol.cyclops2.data.collections.extensions.standard.MutableSequenceX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
+import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
+import com.oath.cyclops.data.collections.extensions.standard.MutableSequenceX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.*;
 
 import cyclops.typeclasses.*;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

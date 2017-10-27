@@ -1,8 +1,8 @@
 package cyclops.free;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Eval;
 
 import cyclops.monads.Witness.cofree;

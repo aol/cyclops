@@ -1,15 +1,16 @@
 package cyclops.monads;
 
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.anyM.AnyMValue;
-import com.aol.cyclops2.types.extensability.FunctionalAdapter;
-import com.aol.cyclops2.types.factory.EmptyUnit;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.stream.ToStream;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
+import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMValue;
+import com.oath.cyclops.types.extensability.FunctionalAdapter;
+import com.oath.cyclops.types.factory.EmptyUnit;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
@@ -36,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
+import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 
 /**
  *
@@ -67,13 +68,13 @@ import static com.aol.cyclops2.types.foldable.Evaluation.LAZY;
  * @param <T> type data wrapped by the underlying monad
  */
 public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
-                                                                Unwrapable,
+  Unwrapable,
                                                                 EmptyUnit<T>,
                                                                 Unit<T>,
                                                                 Folds<T>,
                                                                 Transformable<T>,
                                                                 ToStream<T>,
-                                                                Zippable<T>,
+  Zippable<T>,
                                                                 Publisher<T> {
     @Override
     default ReactiveSeq<T> reactiveSeq() {

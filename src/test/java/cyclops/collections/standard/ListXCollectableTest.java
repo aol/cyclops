@@ -1,10 +1,10 @@
 package cyclops.collections.standard;
 
-import com.aol.cyclops2.types.foldable.Folds;
+import com.oath.cyclops.types.foldable.Folds;
 
 
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
+import com.oath.cyclops.react.lazy.sequence.CollectableTest;
 
 public class ListXCollectableTest extends CollectableTest {
 

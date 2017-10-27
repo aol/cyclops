@@ -1,7 +1,7 @@
 package cyclops.monads;
 
 
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.function.*;
 import cyclops.data.tuple.Tuple;

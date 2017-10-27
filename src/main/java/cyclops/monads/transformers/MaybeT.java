@@ -1,9 +1,12 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.transformers.ValueTransformer;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -24,7 +27,7 @@ import java.util.stream.Stream;
 /**
 * Monad Transformer for Maybe's
 
- * 
+ *
  * MaybeT allows the deeply wrapped Maybe to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
@@ -32,10 +35,10 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nested Maybe(s)
  */
 //@TODO should be OptionT
-public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
+public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<MaybeT<W,T>>,
         Transformable<T>,
-        Filters<T> {
+  Filters<T> {
 
     private final AnyM<W,Maybe<T>> run;
 
@@ -67,7 +70,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         this.run = run;
     }
 
-    
+
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
     protected <R> MaybeT<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
@@ -90,14 +93,14 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     /**
      * Peek at the current value of the Maybe
      * <pre>
-     * {@code 
+     * {@code
      *    MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Maybe
      * @return MaybeWT with peek call
      */
@@ -111,17 +114,17 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
     /**
      * Map the wrapped Maybe
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //MaybeWT<AnyMSeq<Stream<Maybe[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Maybe
      * @return MaybeWT that applies the transform function to the wrapped Maybe
      */
@@ -134,11 +137,11 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     /**
      * Flat Map the wrapped Maybe
       * <pre>
-     * {@code 
+     * {@code
      *  MaybeWT.of(AnyM.fromStream(Arrays.asMaybeW(10))
      *             .flatMap(t->Maybe.completedMaybe(20));
-     *  
-     *  
+     *
+     *
      *  //MaybeWT<AnyMSeq<Stream<Maybe[20]>>>
      * }
      * </pre>
@@ -167,13 +170,13 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     /**
      * Lift a function into one that accepts and returns an MaybeWT
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling  / iteration (via Maybe) and iteration (via Stream) to an existing function
      * <pre>
-     * {@code 
+     * {@code
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<MaybeWT<Integer>, MaybeWT<Integer>> optTAdd2 = MaybeWT.lift(add2);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
@@ -182,14 +185,14 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//Maybe.completedMaybe(List[3,4]);
-     * 
-     * 
+     *
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param fn Function to enhance with functionality from Maybe and another monad type
      * @return Function that accepts and returns an MaybeWT
      */
@@ -200,19 +203,19 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     /**
      * Lift a BiFunction into one that accepts and returns  MaybeWTs
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling / iteration (via Maybe), iteration (via Stream)  and asynchronous execution (Maybe)
      * to an existing function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<MaybeWT<Integer>,MaybeWT<Integer>,MaybeWT<Integer>> optTAdd2 = MaybeWT.lift2(add);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Maybe<Integer>> streamOpt = reactiveStream.map(Maybe::completedMaybe);
-    	
+
     	Maybe<Maybe<Integer>> two = Maybe.completedMaybe(Maybe.completedMaybe(2));
     	AnyMSeq<Maybe<Integer>> Maybe=  AnyM.fromMaybeW(two);
     	List<Integer> results = optTAdd2.applyHKT(MaybeWT.of(streamOpt),MaybeWT.of(Maybe))
@@ -220,7 +223,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     									.<Stream<Maybe<Integer>>>unwrap()
     									.map(Maybe::join)
     									.collect(CyclopsCollectors.toList());
-    									
+
     		//Maybe.completedMaybe(List[3,4,5]);
       }
       </pre>
@@ -235,7 +238,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     /**
      * Construct an MaybeWT from an AnyM that contains a monad type that contains type other than Maybe
      * The values in the underlying monad will be mapped to Maybe<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an Maybe
      * @return MaybeWT
      */
@@ -245,7 +248,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
     /**
      * Construct an MaybeWT from an AnyM that wraps a monad containing  MaybeWs
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Maybe
      * @return MaybeWT
      */
@@ -256,7 +259,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -264,7 +267,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return String.format("MaybeT[%s]", run.unwrap().toString());
     }
 
-    
+
 
 
     public <R> MaybeT<W,R> unitIterator(final Iterator<R> it) {
@@ -282,9 +285,9 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return of(run.unit(Maybe.<R>nothing()));
     }
 
-    
 
-   
+
+
     @Override
     public int hashCode() {
         return run.hashCode();
@@ -312,7 +315,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public MaybeT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        
+
         return (MaybeT<W, T>)super.zip(combiner, app);
     }
 
@@ -323,7 +326,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
-        
+
         return super.iterate(fn,alt);
     }
 
@@ -332,7 +335,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
-        
+
         return super.generate(alt);
     }
 
@@ -342,7 +345,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     @Override
     public <T2, R> MaybeT<W, R> zip(Iterable<? extends T2> iterable,
                                     BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (MaybeT<W, R>)super.zip(iterable, fn);
     }
 
@@ -351,7 +354,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public <T2, R> MaybeT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (MaybeT<W, R>)super.zipP(publisher,fn);
     }
 
@@ -360,7 +363,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public <U> MaybeT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        
+
         return (MaybeT)super.zipS(other);
     }
 
@@ -370,7 +373,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public <U> MaybeT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
+
         return (MaybeT)super.zip(other);
     }
 
@@ -383,7 +386,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
                                                      BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                      Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -396,7 +399,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
                                                      Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -407,7 +410,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     public <T2, R1, R2, R> MaybeT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -419,7 +422,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                  Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
@@ -429,7 +432,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     @Override
     public <R1, R> MaybeT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                          BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach2(value1, yieldingFunction);
     }
 
@@ -440,7 +443,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     public <R1, R> MaybeT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                          BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                          BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (MaybeT<W, R>)super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
@@ -451,7 +454,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public <R> MaybeT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        
+
         return (MaybeT<W, R>)super.flatMapIterable(mapper);
     }
 
@@ -460,7 +463,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      */
     @Override
     public <R> MaybeT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        
+
         return (MaybeT<W, R>)super.flatMapPublisher(mapper);
     }
     public <T2, R1, R2, R3, R> MaybeT<W,R> forEach4M(Function<? super T, ? extends MaybeT<W,R1>> value1,

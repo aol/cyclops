@@ -17,9 +17,9 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.util.SimpleTimer;
 import cyclops.collections.AbstractSetTest;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
@@ -33,7 +33,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import cyclops.collections.mutable.SortedSetX;
 
 public class SortedSetXTest extends AbstractSetTest {
@@ -121,13 +121,13 @@ public class SortedSetXTest extends AbstractSetTest {
        assertThat(SortedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
-   
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
      * zero()

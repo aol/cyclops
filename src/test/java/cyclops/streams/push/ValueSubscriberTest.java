@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import com.aol.cyclops2.types.reactive.ValueSubscriber;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.control.Eval;

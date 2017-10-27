@@ -1,11 +1,11 @@
 package cyclops.data.tuple;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher4;
-import com.aol.cyclops2.types.foldable.EqualTo;
-import com.aol.cyclops2.types.foldable.OrderedBy;
-import com.aol.cyclops2.types.foldable.To;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher4;
+import com.oath.cyclops.types.foldable.EqualTo;
+import com.oath.cyclops.types.foldable.OrderedBy;
+import com.oath.cyclops.types.foldable.To;
 import cyclops.data.Comparators;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;

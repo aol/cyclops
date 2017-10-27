@@ -1,8 +1,8 @@
 package cyclops;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.persistent.*;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.persistent.*;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.MapX;
 import cyclops.companion.Reducers;

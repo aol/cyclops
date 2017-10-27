@@ -1,22 +1,24 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
-import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.AnyMValue;
+import com.oath.cyclops.types.anyM.AnyMValue;
 import cyclops.monads.Witness;
-import com.aol.cyclops2.types.reactive.ValueSubscriber;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.either;
 import cyclops.monads.WitnessType;
@@ -120,7 +122,7 @@ import java.util.function.*;
 public interface Either<ST, PT> extends To<Either<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Sealed2<ST,PT>,Value<PT>,
-                                     OrElseValue<PT,Either<ST,PT>>,
+  OrElseValue<PT,Either<ST,PT>>,
                                      Unit<PT>, Transformable<PT>, Filters<PT>,
                                      Serializable,
                                      Higher2<either,ST,PT> {

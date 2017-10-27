@@ -15,8 +15,8 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.AbstractSetTest;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.collections.mutable.ListX;
@@ -29,7 +29,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 public class POrderedSetXTest extends AbstractSetTest {
 
@@ -96,7 +96,7 @@ public class POrderedSetXTest extends AbstractSetTest {
        assertThat(OrderedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
 	/* (non-Javadoc)
 	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
@@ -105,7 +105,7 @@ public class POrderedSetXTest extends AbstractSetTest {
 	public <T> FluentCollectionX<T> empty() {
 		return OrderedSetX.empty(Comparators.naturalOrderIdentityComparator());
 	}
-	
+
     @Test
     public void forEach2() {
 
@@ -113,7 +113,7 @@ public class POrderedSetXTest extends AbstractSetTest {
                               .size(),
                    equalTo(12));
     }
-	
+
 	 @Override
 	    public FluentCollectionX<Integer> range(int start, int end) {
 	        return OrderedSetX.range(start, end);

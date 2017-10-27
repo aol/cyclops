@@ -1,9 +1,9 @@
 package cyclops.free;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
 import cyclops.data.tuple.*;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Either;
 import cyclops.control.LazyEither3;
 import cyclops.function.Function3;

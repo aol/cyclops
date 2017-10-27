@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import com.aol.cyclops2.react.ThreadPools;
+import com.oath.cyclops.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.monads.Witness.futureStream;
@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<futureStream> {
     int count = 0;
@@ -47,22 +47,22 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
 	}
 	@Test
 	public void when(){
-		
+
 		String res=	of(1,2,3).visit((x,xs)->
 								xs.join(x>2? "hello" : "world"),()->"boo!");
-					
+
 		assertThat(res,equalTo("2world3"));
 	}
 	@Test
 	public void whenGreaterThan2(){
 		String res=	of(5,2,3).visit((x,xs)->
 								xs.join(x>2? "hello" : "world"),()->"boo!");
-				
+
 		assertThat(res,equalTo("2hello3"));
 	}
 	@Test
 	public void when2(){
-		
+
 		Integer res =	of(1,2,3).visit((x,xs)->x,()->10);
 		System.out.println(res);
 	}

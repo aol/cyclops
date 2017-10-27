@@ -1,10 +1,10 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.recoverable.Recoverable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.types.*;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.recoverable.Recoverable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -32,8 +32,8 @@ import java.util.stream.Stream;
  Less powerful, but may perform better than Maybe (simpler Object structure)
  */
 public interface Option<T> extends To<Option<T>>,
-                                   OrElseValue<T,Option<T>>,
-                                   MonadicValue<T>,
+  OrElseValue<T,Option<T>>,
+  MonadicValue<T>,
                                    Recoverable<T>,
                                    Sealed2<T,Option.None<T>>,
                                    Iterable<T>,

@@ -1,15 +1,17 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.reactive.Completable;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.async.Future;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -71,7 +73,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                  Deconstruct1<T>,
-                                    MonadicValue<T>,
+  MonadicValue<T>,
                                     Higher<eval ,T>{
 
 

@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;

@@ -4,7 +4,7 @@ import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import org.junit.Before;

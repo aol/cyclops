@@ -1,11 +1,11 @@
 package cyclops.collections;
 
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.stream.HeadAndTail;
-import com.aol.cyclops2.types.traversable.IterableX;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.stream.HeadAndTail;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.util.ExceptionSoftener;
+import com.oath.cyclops.util.SimpleTimer;
 import cyclops.async.LazyReact;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
@@ -71,7 +71,7 @@ public abstract class AbstractIterableXTest {
 	public abstract <T> IterableX<T> generate(int times,Supplier<T> fn);
 	public abstract <U,T> IterableX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
 	public static final LazyReact r = new LazyReact(10,10);
-	
+
 	int captured=-1;
 
 	static Executor ex = Executors.newFixedThreadPool(1);
@@ -99,7 +99,7 @@ public abstract class AbstractIterableXTest {
         assertThat(result,equalTo(of("1!!","100!!","200!!","300!!","2!!","3!!")));
     }
 
-    
+
     @Test
     public void unitIterator(){
         assertThat(of(3).unitIterator(of().iterator()),equalTo(of()));
@@ -271,7 +271,7 @@ public abstract class AbstractIterableXTest {
     public void testIterate(){
         assertThat(iterate(5,1,i->i+1).size(),equalTo(5));
     }
-	
+
 	@Test
     public void testGenerate(){
 	    count = 0;
@@ -280,10 +280,10 @@ public abstract class AbstractIterableXTest {
 	@Test
     public void testUnfold(){
 	    Function<Integer,Option<Tuple2<Integer,Integer>>> fn= i-> i<=6 ? Option.of(Tuple.tuple(i,i+1)) : Option.none();
-	  
+
         assertThat(unfold(1,fn ).size(),equalTo(6));
     }
-	
+
 
 	@Test
 	public void plusOne(){
@@ -330,7 +330,7 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2).removeAll(of(1).toList()),not(hasItem(1)));
     }
 
-	
+
 	@Test
     public void notNull(){
         assertThat(of(1,2,3,4,5).notNull(),hasItems(1,2,3,4,5));
@@ -339,7 +339,7 @@ public abstract class AbstractIterableXTest {
 	public void retainAll(){
 	    assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
-	
+
 
 	@Test
     public void retainAllStream(){
@@ -374,8 +374,8 @@ public abstract class AbstractIterableXTest {
     public void testNoneMatch(){
         assertThat(of(1,2,3,4,5).noneMatch(it-> it==5000),is(true));
     }
-    
-    
+
+
     @Test
     public void testAnyMatchFalse(){
         assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(8)),is(false));
@@ -384,7 +384,7 @@ public abstract class AbstractIterableXTest {
     public void testAllMatchFalse(){
         assertThat(of(1,2,3,4,5).allMatch(it-> it<0 && it >6),is(false));
     }
-   
+
     @Test
     public void testMapReduce(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),is(1500));
@@ -393,8 +393,8 @@ public abstract class AbstractIterableXTest {
     public void testMapReduceSeed(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
     }
-    
-    
+
+
     @Test
     public void testMapReduceCombiner(){
         assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,
@@ -415,8 +415,8 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,1,1,2,1).distinct().collect(java.util.stream.Collectors.toList()),hasItem(1));
         assertThat(of(1,1,1,2,1).distinct().collect(java.util.stream.Collectors.toList()),hasItem(2));
     }
-    
-   
+
+
     @Test
     public void testMax2(){
         assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
@@ -425,11 +425,11 @@ public abstract class AbstractIterableXTest {
     public void testMin2(){
         assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
     }
-    
-   
 
-    
-   
+
+
+
+
     @Test
     public void sorted() {
         assertThat(of(1,5,3,4,2).sorted(),is(of(1,2,3,4,5)));
@@ -447,19 +447,19 @@ public abstract class AbstractIterableXTest {
         assertThat(list,hasItem(3));
         assertThat(list,hasItem(4));
         assertThat(list,hasItem(5));
-        
-    }
-    
-    
 
-   
+    }
+
+
+
+
 
     @Test
     public void testCount(){
         assertThat(of(1,5,3,4,2).count(),is(5L));
     }
 
-    
+
     @Test
     public void collect(){
         assertThat(of(1,2,3,4,5).collect(java.util.stream.Collectors.toList()).size(),is(5));
@@ -487,7 +487,7 @@ public abstract class AbstractIterableXTest {
         System.out.println(l);
         assertThat(val,is(101));
     }
-	
+
 	@SuppressWarnings("serial")
     public class X extends Exception {
     }
@@ -533,7 +533,7 @@ public abstract class AbstractIterableXTest {
     public void testMin(){
         assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
     }
-	
+
 	@Test
     public void testOnEmpty() throws X {
         assertEquals(asList(1), of().onEmpty(1).toListX());
@@ -545,16 +545,16 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void visit(){
-        
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),
                                                               ()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
-   
+
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -562,8 +562,8 @@ public abstract class AbstractIterableXTest {
     public void whenNilOrNot(){
         String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
     }
- 
-	
+
+
 	@Test
 	public void testCollectable(){
 		assertThat(of(1,2,3).anyMatch(i->i==2),equalTo(true));
@@ -578,7 +578,7 @@ public abstract class AbstractIterableXTest {
 	public void dropRightEmpty(){
 		assertThat(of().dropRight(1),equalTo(of()));
 	}
-	
+
 	@Test
 	public void dropUntil(){
 		assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
@@ -641,54 +641,54 @@ public abstract class AbstractIterableXTest {
 
 	}
 
-	
+
 	protected Object value() {
-		
+
 		return "jello";
 	}
 	private int value2() {
-		
+
 		return 200;
 	}
-	
-	
+
+
 	@Test
 	public void batchBySize(){
 		System.out.println(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).grouped(3).collect(java.util.stream.Collectors.toList()).size(),is(2));
 	}
-	
 
-	
+
+
 	@Test
 	public void takeWhileTest(){
-		
+
 		List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
 			list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
 						.peek(it -> System.out.println(it)).collect(java.util.stream.Collectors.toList());
-	
+
 		}
 		assertThat(of(1,2,3,4,5,6),hasItem(list.get(0)));
-		
-		
-		
-		
+
+
+
+
 	}
 	@Test
     public void limitWhileTest(){
-        
+
         List<Integer> list = new ArrayList<>();
         while(list.size()==0){
             list = of(1,2,3,4,5,6).limitWhile(it -> it<4)
                         .toListX();
-    
+
         }
         assertThat(of(1,2,3,4,5,6),hasItem(list.get(0)));
-        
-        
-        
-        
+
+
+
+
     }
 
     @Test
@@ -717,11 +717,11 @@ public abstract class AbstractIterableXTest {
     	assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
             is(asList(0, 3, 5, 6).size()));
 
-        
+
     }
 
 
-    
+
     @Test
     public void testIterable() {
         List<Integer> list = of(1, 2, 3).to().collection(LinkedList::new);
@@ -734,17 +734,17 @@ public abstract class AbstractIterableXTest {
 	    @Test
 	    public void testGroupByEager() {
 	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-	       
+
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
 	        assertThat(map1.get(1),hasItem(1));
 	        assertThat(map1.get(1),hasItem(3));
-	        
+
 	        assertEquals(2, map1.size());
 
-	     
+
 	    }
-	    
+
 
 	    @Test
 	    public void testJoin() {
@@ -754,7 +754,7 @@ public abstract class AbstractIterableXTest {
 
 	    }
 
-	    
+
 
 	    @Test
 	    public void testSkipWhile() {
@@ -763,7 +763,7 @@ public abstract class AbstractIterableXTest {
             of(1, 2, 3, 4, 5).dropWhile(i -> false);
 	        System.out.println(s.get().dropWhile(i -> false).toList());
 	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
-	      
+
 	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
 
@@ -775,38 +775,38 @@ public abstract class AbstractIterableXTest {
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
-	   
+
 
 	    @Test
 	    public void testLimitWhile() {
 	        Supplier<IterableX<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
 	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
-	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);       
+	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);
 	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testTakeUntil() {
-	        
+
 
 	        assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	        assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().size()==5);
-	        
+
 	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
 
 	    @Test
         public void testLimitUntil() {
-            
+
 
             assertTrue(of(1, 2, 3, 4, 5).limitUntil(i -> false).toListX().containsAll(asList(1, 2, 3, 4, 5)));
             assertFalse(of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toListX().size()==5);
-            
+
             assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toListX());
         }
 
-	    
+
 
 	    @Test
 	    public void testMinByMaxBy() {
@@ -819,8 +819,8 @@ public abstract class AbstractIterableXTest {
 	        assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
 	    }
 
-	   
-	   
+
+
 
 		@Test
 		public void onePer(){
@@ -836,31 +836,31 @@ public abstract class AbstractIterableXTest {
 			assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(java.util.stream.Collectors.toList()).size(),is(6));
 			assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
 		}
-	   
+
 
 		@Test
 		public void zip(){
 			List<Tuple2<Integer,Integer>> list =
 					of(1,2,3,4,5,6).zip(of(100,200,300,400))
 													.peek(it -> System.out.println(it))
-													
+
 													.collect(java.util.stream.Collectors.toList());
 			System.out.println(list);
-			
+
 			List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
-			
+
 			assertThat(right,hasItem(100));
 			assertThat(right,hasItem(200));
 			assertThat(right,hasItem(300));
 			assertThat(right,hasItem(400));
-			
+
 			List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 			assertThat(of(1,2,3,4,5,6),hasItem(left.get(0)));
-			
-			
+
+
 		}
 
-		
+
 		@Test
 		public void testScanLeftStringConcatMonoid() {
 			assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), is(asList("", "a", "ab", "abc")));
@@ -868,12 +868,12 @@ public abstract class AbstractIterableXTest {
 
 		@Test
 		public void testScanLeftSumMonoid() {
-			
+
 			assertThat(of("a", "ab", "abc").map(str -> str.length()).
 								peek(System.out::println).scanLeft(Reducers.toTotalInt()).toList(), is(asList(0, 1, 3, 6)));
 		}
 
-		
+
 
 		@Test
 		public void testScanRightSumMonoid() {
@@ -882,7 +882,7 @@ public abstract class AbstractIterableXTest {
 										.peek(System.out::println)
 										.scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
 
-		}	
+		}
 
 
     @Test
@@ -954,7 +954,7 @@ public abstract class AbstractIterableXTest {
 	public void singleOptonal2(){
 		assertFalse(of(1,2).single().isPresent());
 	}
-	
+
 
 	@Test
 	public void testSkipLast(){
@@ -1046,24 +1046,24 @@ public abstract class AbstractIterableXTest {
 		assertTrue(ReactiveSeq.<Integer>of()
 				.endsWith(Stream.of()));
 	}
-	
+
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = (of(1,2,3,4,5,6)
 												.map(i->i*2)
 												).to()
 												.streamable();
-		
+
 		assertThat(repeat.reactiveSeq().toList(),equalTo(ListX.of(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(ListX.of(2,4,6,8,10,12)));
 	}
-	
+
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
 												.map(i->i*2).to()
 												.lazyStreamableSynchronized();
-		
+
 		assertThat(repeat.reactiveSeq().toList(),equalTo(ListX.of(2,4,6,8,10,12)));
 		assertThat(repeat.reactiveSeq().toList(),equalTo(ListX.of(2,4,6,8,10,12)));
 	}
@@ -1113,60 +1113,60 @@ public abstract class AbstractIterableXTest {
 		Stream<String> tail = Streams.stream(it);
 		tail.forEach(System.out::println);
 	}
-	
+
 
 	@Test
 	public void xMatch(){
 		assertTrue(of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
-	
-	
-	
+
+
+
 	@Test
 	public void zip2of(){
-		
+
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400).stream())
 											.toListX();
-				
-	
+
+
 		List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
-		
+
 		List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 		assertThat(of(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
 	@Test
 	public void zipInOrder(){
-		
+
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400).stream())
 													.toListX();
-		
+
 		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
 		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
-		
-		
-		
+
+
+
 	}
 
 	@Test
 	public void zipEmpty() throws Exception {
-		
-		
+
+
 		final IterableX<Integer> zipped = this.<Integer>empty().zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipEmptyWithNonEmpty() throws Exception {
-		
-		
-		
+
+
+
 		final IterableX<Integer> zipped = this.<Integer>empty().zip(of(1,2), (a, b) -> a + b);
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
@@ -1211,35 +1211,35 @@ public abstract class AbstractIterableXTest {
 
     @Test
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
-		
-		
+
+
 		final IterableX<Integer> zipped = of(1,2,3).zip(this.<Integer>empty(), (a, b) -> a + b);
 
-		
+
 		assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
-		
+
 		final IterableX<String> first = of("A", "B", "C");
 		final IterableX<Integer> second = of(1, 2, 3);
 
-		
+
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
 	}
 
-	
+
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
 		final IterableX<String> first = of("A", "B", "C");
 		final IterableX<Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -1251,7 +1251,7 @@ public abstract class AbstractIterableXTest {
 		final IterableX<Integer> second = of(1, 2, 3);
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -1349,13 +1349,13 @@ public abstract class AbstractIterableXTest {
 
     }
 
-	
+
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
 		final IterableX<String> first = of("A", "B", "C");
 		final IterableX<Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -1365,10 +1365,10 @@ public abstract class AbstractIterableXTest {
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
 		final IterableX<String> first = of("A", "B", "C","D");
 		final IterableX<Integer> second = of(1, 2, 3);
-		
+
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -1389,7 +1389,7 @@ public abstract class AbstractIterableXTest {
 		final IterableX<String> first = of("A", "B", "C");
 		final IterableX<Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),is(3));
@@ -1401,11 +1401,11 @@ public abstract class AbstractIterableXTest {
 		final IterableX<Integer> second = of(1, 2, 3);
 		final IterableX<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.collect(java.util.stream.Collectors.toList()).size(),equalTo(3));
 	}
 
-	
+
 	@Test
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().toListX());
@@ -1415,10 +1415,10 @@ public abstract class AbstractIterableXTest {
 		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toListX());
 
 	}
-	
-	
-	
-	
+
+
+
+
 	@Test
 	public void emptyConvert(){
 
@@ -1439,8 +1439,8 @@ public abstract class AbstractIterableXTest {
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
 		assertFalse(empty().to().streamable().size()>0);
-		
-		
+
+
 	}
 
 	@Test
@@ -1470,18 +1470,18 @@ public abstract class AbstractIterableXTest {
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
 		assertTrue(of(1).to().streamable().size()>0);
-		
-		
+
+
 	}
 
-	 
-	    
+
+
 	    @Test
 	    public void batchBySizeCollection(){
-	        
-	        
+
+
 	        assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).elementAt(0).toOptional().get().size(),is(3));
-	        
+
 	       // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
 	    }
 	    @Test
@@ -1491,15 +1491,15 @@ public abstract class AbstractIterableXTest {
 	    @Test
 	    public void fixedDelay(){
 	        SimpleTimer timer = new SimpleTimer();
-	        
+
 	        assertThat(of(1,2,3,4,5,6).fixedDelay(10000,TimeUnit.NANOSECONDS).collect(java.util.stream.Collectors.toList()).size(),is(6));
 	        assertThat(timer.getElapsedNanoseconds(),greaterThan(60000l));
 	    }
-	    
-	    
-	   
-	   
-	    
+
+
+
+
+
 	    @Test
 	    public void testSorted() {
 
@@ -1526,19 +1526,19 @@ public abstract class AbstractIterableXTest {
 	        List<Tuple2<Integer,Integer>> list =
 	                of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
 	                                                .peek(it -> System.out.println(it))
-	                                                
+
 	                                                .collect(java.util.stream.Collectors.toList());
-	        
+
 	        List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
 	        assertThat(right,hasItem(100));
 	        assertThat(right,hasItem(200));
 	        assertThat(right,hasItem(300));
 	        assertThat(right,hasItem(400));
-	        
+
 	        List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 	        assertThat(of(1,2,3,4,5,6),hasItem(left.get(0)));
-	        
-	        
+
+
 	    }
     @Test
     public void zip3(){
@@ -1561,7 +1561,7 @@ public abstract class AbstractIterableXTest {
     public void notEqualNull(){
         assertFalse(empty().equals(null));
     }
-	    
+
 
 	    @Test
 	    public void testReverse() {
@@ -1576,7 +1576,7 @@ public abstract class AbstractIterableXTest {
 	        assertEquals(3, ((IterableX<Integer>)s.get().shuffle()).toListX().size());
 	        assertThat(((IterableX<Integer>)s.get().shuffle()).toListX(), hasItems(1, 2, 3));
 
-	        
+
 	    }
 	    @Test
 	    public void testShuffleRandom() {
@@ -1586,24 +1586,24 @@ public abstract class AbstractIterableXTest {
 	        assertEquals(3, ((IterableX<Integer>)s.get()).shuffle(r).toListX().size());
 	        assertThat(((IterableX<Integer>)s.get()).shuffle(r).toListX(), hasItems(1, 2, 3));
 
-	        
+
 	    }
 
 
-	    
-	    
-	   
-	    
-	    
 
 
-	       
 
-	        
-	       
 
-	    
-	  
+
+
+
+
+
+
+
+
+
+
 
 	        @Test
 	        public void testSplitAtHead() {
@@ -1635,25 +1635,25 @@ public abstract class AbstractIterableXTest {
 	            assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
 	        }
 
-	       
-	       
+
+
 
 	        @Test
 	        public void testFoldLeft() {
 	            for(int i=0;i<100;i++){
 	                Supplier<IterableX<String>> s = () -> of("a", "b", "c");
-	    
+
 	                assertTrue(s.get().reduce("", String::concat).contains("a"));
 	                assertTrue(s.get().reduce("", String::concat).contains("b"));
 	                assertTrue(s.get().reduce("", String::concat).contains("c"));
-	               
+
 	                assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
-	    
-	                
+
+
 	                assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 	            }
 	        }
-	        
+
 	        @Test
 	        public void testFoldRight(){
 	                Supplier<IterableX<String>> s = () -> of("a", "b", "c");
@@ -1663,43 +1663,43 @@ public abstract class AbstractIterableXTest {
 	                assertTrue(s.get().foldRight("", String::concat).contains("c"));
 	                assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
 	        }
-	        
+
 	        @Test
 	        public void testFoldLeftStringBuilder() {
 	            Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
-	            
+
 	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
 	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
 	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
 	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
-	            
-	            
+
+
 	            assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
                 assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
-	           
+
 	        }
 
 	        @Test
 	        public void testFoldRighttringBuilder() {
 	            Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
-	            
+
 	            assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("a"));
 	            assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("b"));
 	            assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("c"));
 	            assertTrue(s.get().foldRight(new StringBuilder(), (t, u) -> u.append("-").append(t)).toString().contains("-"));
-	            
-	               
+
+
 	        }
-	        
+
 	        @Test
 	        public void batchUntil(){
 	            assertThat(of(1,2,3,4,5,6)
 	                    .groupedUntil(i->false)
 	                    .toListX().size(),equalTo(1));
-	           
+
 	        }
 	        @Test
 	        public void batchWhile(){
@@ -1707,14 +1707,14 @@ public abstract class AbstractIterableXTest {
 	                    .groupedWhile(i->true)
 	                    .toListX()
 	                    .size(),equalTo(1));
-	           
+
 	        }
 	        @Test
             public void batchUntilSupplier(){
                 assertThat(of(1,2,3,4,5,6)
                         .groupedUntil(i->false,()->ListX.empty())
                         .toListX().size(),equalTo(1));
-               
+
             }
             @Test
             public void batchWhileSupplier(){
@@ -1722,9 +1722,9 @@ public abstract class AbstractIterableXTest {
                         .groupedWhile(i->true,()->ListX.empty())
                         .toListX()
                         .size(),equalTo(1));
-               
+
             }
-	      
+
 	        @Test
 	        public void slidingNoOrder() {
 	            ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
@@ -1739,7 +1739,7 @@ public abstract class AbstractIterableXTest {
 	            List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
 	            System.out.println(list);
-	           
+
                 assertThat(list.get(1).size(), greaterThan(1));
 	        }
 
@@ -1747,8 +1747,8 @@ public abstract class AbstractIterableXTest {
 	        public void combineNoOrder(){
 	            assertThat(of(1,2,3)
 	                       .combine((a, b)->a.equals(b), Semigroups.intSum)
-	                       .toListX(),equalTo(ListX.of(1,2,3))); 
-	                       
+	                       .toListX(),equalTo(ListX.of(1,2,3)));
+
 	        }
 
 	        @Test
@@ -1756,21 +1756,21 @@ public abstract class AbstractIterableXTest {
 	            List<Tuple3<Integer,Integer,Character>> list =
 	                    of(1,2,3,4).zip3(of(100,200,300,400).stream(),of('a','b','c','d').stream())
 	                                                    .toListX();
-	            
+
 	            System.out.println(list);
 	            List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
 	            assertThat(right,hasItem(100));
 	            assertThat(right,hasItem(200));
 	            assertThat(right,hasItem(300));
 	            assertThat(right,hasItem(400));
-	            
+
 	            List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 	            assertThat(of(1,2,3,4),hasItem(left.get(0)));
-	            
+
 	            List<Character> three = list.stream().map(t -> t._3()).collect(java.util.stream.Collectors.toList());
 	            assertThat(of('a','b','c','d'),hasItem(three.get(0)));
-	            
-	            
+
+
 	        }
 	        @Test
 	        public void zip4NoOrder(){
@@ -1783,35 +1783,35 @@ public abstract class AbstractIterableXTest {
 	            assertThat(right,hasItem(200));
 	            assertThat(right,hasItem(300));
 	            assertThat(right,hasItem(400));
-	            
+
 	            List<Integer> left = list.stream().map(t -> t._1()).collect(java.util.stream.Collectors.toList());
 	            assertThat(of(1,2,3,4),hasItem(left.get(0)));
-	            
+
 	            List<Character> three = list.stream().map(t -> t._3()).collect(java.util.stream.Collectors.toList());
 	            assertThat(of('a','b','c','d'),hasItem(three.get(0)));
-	        
+
 	            List<String> four = list.stream().map(t -> t._4()).collect(java.util.stream.Collectors.toList());
 	            assertThat(of("hello","world","boo!","2"),hasItem(four.get(0)));
-	            
-	            
+
+
 	        }
-	        
+
 	        @Test
 	        public void testIntersperseNoOrder() {
-	            
+
 	            assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
-	        
+
 
 
 
 	        }
-	     
 
-	        
+
+
 	        @Test @Ignore
 	        public void testOfTypeNoOrder() {
 
-	            
+
 	            assertThat((((CollectionX<Number>)of(1, 0.2, 2, 0.3, 3).ofType(Number.class))).toListX(),containsInAnyOrder(1, 2, 3));
 
 	            assertThat((((CollectionX<Number>)of(1,  0.2, 2, 0.3, 3).ofType(Number.class))).toListX(),not(containsInAnyOrder("a", "b",null)));
@@ -1832,7 +1832,7 @@ public abstract class AbstractIterableXTest {
 	        public void emptyAllCombinationsNoOrder() {
 	            assertThat(of().combinations().map(s -> s.toListX()), equalTo(of(ListX.of())));
 	        }
-	        
+
 	        @Test
 	        public void emptyPermutationsNoOrder() {
 	            assertThat(of().permutations().map(s->s.toList()),equalTo(of()));
@@ -1849,7 +1849,7 @@ public abstract class AbstractIterableXTest {
 	        public void emptyCombinationsNoOrder() {
 	            assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(ListX.of()));
 	        }
-	           
+
 	         @Test
 	        public void combinations2NoOrder() {
 
@@ -1898,14 +1898,14 @@ public abstract class AbstractIterableXTest {
 	    @Test
 	    public void testCycleTimesNoOrder() {
 	        assertEquals(6,of(1, 2).cycle(3).toListX().size());
-	       
+
 	    }
 
 	    @Test
 	    public void testCycleWhile() {
 	        count =0;
 	        assertEquals(6,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
-	       
+
 	    }
 	    @Test
 	    public void testCycleUntil() {
@@ -1913,7 +1913,7 @@ public abstract class AbstractIterableXTest {
 	        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
 	        count =0;
 	        assertEquals(6,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
-	       
+
 	    }
 
 
@@ -2403,7 +2403,7 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2,3,4).prependAll(ListX.of(10,20,30)),equalTo(of(10,20,30,1,2,3,4)));
         assertThat(empty().prependAll(ListX.of(10,20,30)),equalTo(of(10,20,30)));
     }
-    
+
     @Test
     public void batchUntilCollection(){
         assertThat(of(1,2,3,4,5,6)
@@ -2421,7 +2421,7 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2,3,4,5,6)
                 .groupedWhile(i->i%3!=0,()->new ArrayList<>()),equalTo(of(ListX.of(1,2,3),ListX.of(4,5,6))));
     }
-   
+
 
 
     @Test
@@ -2460,13 +2460,13 @@ public abstract class AbstractIterableXTest {
 
     }
 
-    
+
     @Test
     public void batchBySize3(){
         System.out.println(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()));
         assertThat(of(1,2,3,4,5,6).grouped(3).collect(Collectors.toList()).size(),is(2));
     }
-    
+
 
     @Test
     public void batchBySizeSet(){

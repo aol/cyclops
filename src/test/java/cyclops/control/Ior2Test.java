@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
@@ -244,8 +244,8 @@ public class Ior2Test {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("Ior.lazyRight[10]"));
-		assertThat(none.mkString(),equalTo("Ior.lazyLeft[none]"));
+		assertThat(just.mkString(),equalTo("Ior.right[10]"));
+		assertThat(none.mkString(),equalTo("Ior.left[none]"));
 	}
 	LazyReact react = new LazyReact();
 

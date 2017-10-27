@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import com.aol.cyclops2.streams.BaseSequentialTest;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.companion.Semigroups;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;

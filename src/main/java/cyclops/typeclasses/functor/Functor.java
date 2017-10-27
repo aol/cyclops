@@ -3,11 +3,11 @@ package cyclops.typeclasses.functor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
 /**
  * Functor type class, performs a transformation operation over the supplied data structure
- * 
+ *
  * @author johnmcclean
  *
  * @param <CRE>
@@ -16,23 +16,23 @@ import com.aol.cyclops2.hkt.Higher;
 public interface Functor<CRE> {
     /**
      * Transform the supplied data structure using the supplied transformation function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  ListX<Integer> listx = ListX.of(1,2,3);
         ListType<Integer> mapped1 =Lists.functor().map(a->a+1, ListType.widen(listx));
         mapped1.add(1);
         ListX<Integer> listxMapped = mapped1.list();
      * }
      * </pre>
-     * 
+     *
      * @param fn Transformation function
      * @param ds Datastructure to applyHKT
      * @return
      */
     public <T,R> Higher<CRE,R> map(Function<? super T, ? extends R> fn, Higher<CRE, T> ds);
 
-    
+
     default <T,R> Higher<CRE,R> map_(Higher<CRE, T> ds, Function<? super T, ? extends R> fn){
         return map(fn,ds);
     }
@@ -44,11 +44,11 @@ public interface Functor<CRE> {
             return t;
         },ds);
     }
-    
+
     default <T, R> Function<Higher<CRE, T>, Higher<CRE, R>> lift(final Function<? super T, ? extends R> fn) {
         return t -> map(fn, t);
     }
 
 
- 
+
 }

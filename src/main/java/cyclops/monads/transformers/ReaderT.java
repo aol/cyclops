@@ -1,7 +1,7 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Reader;
 import cyclops.control.Trampoline;
 import cyclops.function.*;
@@ -13,7 +13,7 @@ import java.util.function.*;
 /**
 * Monad Transformer for Future's nested within another monadic type
 
- * 
+ *
  * FutureT allows the deeply wrapped Future to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
@@ -45,21 +45,21 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
         this.run = run;
     }
 
-    
+
 
 
 
     /**
      * Peek at the current value of the Future
      * <pre>
-     * {@code 
+     * {@code
      *    FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Future
      * @return FutureT with peek call
      */
@@ -73,17 +73,17 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
     /**
      * Map the wrapped Future
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Future
      * @return FutureT that applies the transform function to the wrapped Future
      */
@@ -113,7 +113,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
     /**
      * Construct an FutureT from an AnyM that wraps a monad containing  Futures
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Future
      * @return FutureT
      */
@@ -124,7 +124,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -242,7 +242,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
     }
 
 
-   
+
     @Override
     public int hashCode() {
         return run.hashCode();

@@ -1,8 +1,8 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.Function1;
 
 import lombok.AccessLevel;

@@ -3,8 +3,8 @@ package cyclops.control;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.*;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.*;
@@ -20,14 +20,14 @@ import cyclops.data.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad
- * 
+ *
  * A technique for functional dependency injection. Functions rather than values
  * are manipulated and dependencies injected into Functions to execute them.
- * 
- * {@see <a href="https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75">Dependency injection using the Reader Monad in Java 8</a>}
- * 
  *
- * 
+ * {@see <a href="https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75">Dependency injection using the Reader Monad in Java 8</a>}
+ *
+ *
+ *
  * @author johnmcclean
  *
  * @param <T> Current input type of Function
@@ -83,7 +83,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
     /**
      * FlatMap this Reader by applying the prodived function and unnesting to a single Reader
-     * 
+     *
      * @param f Transformation function to be flattened
      * @return Transformed Reader
      */

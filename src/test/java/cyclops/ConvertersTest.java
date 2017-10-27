@@ -1,6 +1,6 @@
 package cyclops;
 
-import com.aol.cyclops2.types.persistent.*;
+import com.oath.cyclops.types.persistent.*;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.MapXs;

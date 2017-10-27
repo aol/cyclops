@@ -1,9 +1,12 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.transformers.ValueTransformer;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Eval;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -24,17 +27,17 @@ import java.util.stream.Stream;
 /**
 * Monad Transformer for Eval's
 
- * 
+ *
  * EvalT allows the deeply wrapped Eval to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested Eval(s)
  */
-public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
+public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<EvalT<W,T>>,
         Transformable<T>,
-        Filters<T> {
+  Filters<T> {
 
     private final AnyM<W,Eval<T>> run;
 
@@ -66,7 +69,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
         this.run = run;
     }
 
-    
+
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
     protected <R> EvalT<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
@@ -89,14 +92,14 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     /**
      * Peek at the current value of the Eval
      * <pre>
-     * {@code 
+     * {@code
      *    EvalWT.of(AnyM.fromStream(Arrays.asEvalW(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Eval
      * @return EvalWT with peek call
      */
@@ -110,17 +113,17 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /**
      * Map the wrapped Eval
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  EvalWT.of(AnyM.fromStream(Arrays.asEvalW(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //EvalWT<AnyMSeq<Stream<Eval[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Eval
      * @return EvalWT that applies the transform function to the wrapped Eval
      */
@@ -133,11 +136,11 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     /**
      * Flat Map the wrapped Eval
       * <pre>
-     * {@code 
+     * {@code
      *  EvalWT.of(AnyM.fromStream(Arrays.asEvalW(10))
      *             .flatMap(t->Eval.completedEval(20));
-     *  
-     *  
+     *
+     *
      *  //EvalWT<AnyMSeq<Stream<Eval[20]>>>
      * }
      * </pre>
@@ -166,13 +169,13 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     /**
      * Lift a function into one that accepts and returns an EvalWT
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling  / iteration (via Eval) and iteration (via Stream) to an existing function
      * <pre>
-     * {@code 
+     * {@code
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<EvalWT<Integer>, EvalWT<Integer>> optTAdd2 = EvalWT.lift(add2);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
@@ -181,14 +184,14 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)
     									.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//Eval.completedEval(List[3,4]);
-     * 
-     * 
+     *
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param fn Function to enhance with functionality from Eval and another monad type
      * @return Function that accepts and returns an EvalWT
      */
@@ -199,19 +202,19 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     /**
      * Lift a BiFunction into one that accepts and returns  EvalWTs
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling / iteration (via Eval), iteration (via Stream)  and asynchronous execution (Eval)
      * to an existing function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<EvalWT<Integer>,EvalWT<Integer>,EvalWT<Integer>> optTAdd2 = EvalWT.lift2(add);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
-    	
+
     	Eval<Eval<Integer>> two = Eval.completedEval(Eval.completedEval(2));
     	AnyMSeq<Eval<Integer>> Eval=  AnyM.fromEvalW(two);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt),EvalWT.of(Eval))
@@ -219,7 +222,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     									.<Stream<Eval<Integer>>>unwrap()
     									.map(Eval::join)
     									.collect(CyclopsCollectors.toList());
-    									
+
     		//Eval.completedEval(List[3,4,5]);
       }
       </pre>
@@ -234,7 +237,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     /**
      * Construct an EvalWT from an AnyM that contains a monad type that contains type other than Eval
      * The values in the underlying monad will be mapped to Eval<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an Eval
      * @return EvalWT
      */
@@ -244,7 +247,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /**
      * Construct an EvalWT from an AnyM that wraps a monad containing  EvalWs
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Eval
      * @return EvalWT
      */
@@ -255,7 +258,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -263,7 +266,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
         return String.format("EvalT[%s]", run.unwrap().toString());
     }
 
-    
+
 
 
     public <R> EvalT<W,R> unitIterator(final Iterator<R> it) {
@@ -281,9 +284,9 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
         return of(run.unit(Eval.<R>eval()));
     }
 
-    
 
-   
+
+
     @Override
     public int hashCode() {
         return run.hashCode();
@@ -311,7 +314,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public EvalT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        
+
         return (EvalT<W, T>)super.zip(combiner, app);
     }
 
@@ -322,7 +325,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
-        
+
         return super.iterate(fn,alt);
     }
 
@@ -331,7 +334,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
-        
+
         return super.generate(alt);
     }
 
@@ -341,7 +344,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     @Override
     public <T2, R> EvalT<W, R> zip(Iterable<? extends T2> iterable,
                                    BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (EvalT<W, R>)super.zip(iterable, fn);
     }
 
@@ -350,7 +353,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public <T2, R> EvalT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (EvalT<W, R>)super.zipP(publisher,fn);
     }
 
@@ -359,7 +362,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public <U> EvalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        
+
         return (EvalT)super.zipS(other);
     }
 
@@ -369,7 +372,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public <U> EvalT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
+
         return (EvalT)super.zip(other);
     }
 
@@ -382,7 +385,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
                                                     BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                     Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                     Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -395,7 +398,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
                                                     Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                     Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                     Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -406,7 +409,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     public <T2, R1, R2, R> EvalT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                 Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -418,7 +421,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                 Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                 Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
@@ -428,7 +431,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     @Override
     public <R1, R> EvalT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                         BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach2(value1, yieldingFunction);
     }
 
@@ -439,7 +442,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     public <R1, R> EvalT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                         BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                         BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (EvalT<W, R>)super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
@@ -450,7 +453,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public <R> EvalT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        
+
         return (EvalT<W, R>)super.flatMapIterable(mapper);
     }
 
@@ -459,7 +462,7 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      */
     @Override
     public <R> EvalT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        
+
         return (EvalT<W, R>)super.flatMapPublisher(mapper);
     }
     public <T2, R1, R2, R3, R> EvalT<W,R> forEach4M(Function<? super T, ? extends EvalT<W,R1>> value1,

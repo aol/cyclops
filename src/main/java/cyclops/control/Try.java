@@ -15,17 +15,18 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
-import com.aol.cyclops2.matching.Sealed2;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.anyM.AnyMValue2;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.recoverable.RecoverableFrom;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.anyM.AnyMValue2;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
@@ -40,7 +41,7 @@ import lombok.*;
 import lombok.experimental.Wither;
 import org.reactivestreams.Publisher;
 
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -151,7 +152,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                       RecoverableFrom<X,T>,Value<T>,
                                                       Unit<T>, Transformable<T>, Filters<T>,
                                                       Sealed2<T,X>,
-                                                      OrElseValue<T,Try<T,X>>,
+  OrElseValue<T,Try<T,X>>,
                                                       Higher2<tryType,X,T> {
 
 

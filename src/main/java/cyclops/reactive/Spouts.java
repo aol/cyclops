@@ -1,19 +1,19 @@
 package cyclops.reactive;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
-import com.aol.cyclops2.types.reactive.BufferOverflowPolicy;
-import com.aol.cyclops2.types.reactive.PushSubscriber;
+import com.oath.cyclops.internal.stream.spliterators.push.*;
+import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
+import com.oath.cyclops.types.reactive.PushSubscriber;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.typeclasses.InstanceDefinitions;
-import com.aol.cyclops2.internal.stream.ReactiveStreamX;
-import com.aol.cyclops2.internal.stream.ReactiveStreamX.Type;
-import com.aol.cyclops2.internal.stream.spliterators.UnfoldSpliterator;
-import com.aol.cyclops2.internal.stream.spliterators.push.*;
-import com.aol.cyclops2.types.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
+import com.oath.cyclops.internal.stream.ReactiveStreamX;
+import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
+import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
+import com.oath.cyclops.types.reactive.AsyncSubscriber;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;

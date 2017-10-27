@@ -1,7 +1,7 @@
 package cyclops.data.tuple;
 
 
-import com.aol.cyclops2.types.foldable.To;
+import com.oath.cyclops.types.foldable.To;
 import cyclops.data.Comparators;
 import cyclops.function.*;
 import lombok.AllArgsConstructor;

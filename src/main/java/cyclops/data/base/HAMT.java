@@ -1,7 +1,7 @@
 package cyclops.data.base;
 
 
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;

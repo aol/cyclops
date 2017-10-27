@@ -1,22 +1,22 @@
 package cyclops.reactive;
 
-import com.aol.cyclops2.internal.react.async.future.FastFuture;
-import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
-import com.aol.cyclops2.internal.react.stream.CloseableIterator;
-import com.aol.cyclops2.internal.react.stream.LazyStreamWrapper;
-import com.aol.cyclops2.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
-import com.aol.cyclops2.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
-import com.aol.cyclops2.internal.stream.FutureOpterationsImpl;
-import com.aol.cyclops2.react.SimpleReactFailedStageException;
-import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.futurestream.*;
-import com.aol.cyclops2.types.reactive.FutureStreamSynchronousPublisher;
-import com.aol.cyclops2.types.reactive.ReactiveStreamsTerminalFutureOperations;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.internal.react.async.future.FastFuture;
+import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
+import com.oath.cyclops.internal.react.stream.CloseableIterator;
+import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
+import com.oath.cyclops.internal.react.stream.traits.future.operators.LazyFutureStreamUtils;
+import com.oath.cyclops.internal.react.stream.traits.future.operators.OperationsOnFuturesImpl;
+import com.oath.cyclops.internal.stream.FutureOpterationsImpl;
+import com.oath.cyclops.react.SimpleReactFailedStageException;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.futurestream.*;
+import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
+import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
+import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.async.QueueFactories;
@@ -55,9 +55,9 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
-                                          LazyStream<U>,
+  LazyStream<U>,
                                             ReactiveSeq<U>,
-                                            LazyToQueue<U>,
+  LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
     @Override

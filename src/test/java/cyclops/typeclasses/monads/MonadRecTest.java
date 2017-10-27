@@ -1,6 +1,6 @@
 package cyclops.typeclasses.monads;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;

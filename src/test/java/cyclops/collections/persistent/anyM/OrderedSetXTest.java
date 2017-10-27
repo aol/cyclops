@@ -1,6 +1,6 @@
 package cyclops.collections.persistent.anyM;
 
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
@@ -33,7 +33,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 	@Test
 	public void prependAppend(){

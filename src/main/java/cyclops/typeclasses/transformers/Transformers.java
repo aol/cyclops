@@ -1,7 +1,7 @@
 package cyclops.typeclasses.transformers;
 
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.*;
 import cyclops.control.Maybe;

@@ -6,7 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
@@ -103,7 +103,7 @@ public interface Function1<T,  R> extends Function<T,R>{
         return AnyM.liftF(this);
     }
 
-    
+
     default Function1<T,R> memoize(){
         return Memoize.memoizeFunction(this);
     }

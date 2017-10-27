@@ -1,8 +1,8 @@
 package cyclops.data.base;
 
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct1;
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct2;
-import com.aol.cyclops2.matching.Sealed4;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
+import com.oath.cyclops.matching.Sealed4;
 import cyclops.control.Option;
 
 import cyclops.data.LazySeq;

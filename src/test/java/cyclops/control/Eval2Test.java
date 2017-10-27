@@ -6,7 +6,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Eval.Module.Later;
-import com.aol.cyclops2.util.box.Mutable;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
@@ -35,7 +35,7 @@ public class Eval2Test {
 		just = Eval.now(10);
 		none = Eval.now(null);
 	}
-	
+
 	@Test
 	public void equals(){
 	    assertTrue(Eval.always(()->10).equals(Eval.later(()->10)));
@@ -49,27 +49,27 @@ public class Eval2Test {
 	@Test
     public void nest(){
        assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
-       
+
     }
     @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(50)));
-        
+
     }
     @Test
     public void combine(){
 
 	    just.combineEager(Monoid.of(0,(a,b)->a+1),Eval.now(10)).printOut();
-        
+
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
         assertThat(just.combineEager(add,Eval.now(10)),equalTo(Eval.now(20)));
-      
-      
-      
+
+
+
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
         assertThat(just.combineEager(firstNonNull,none),equalTo(just));
-         
+
     }
 	@Test
 	public void testToMaybe() {
@@ -81,7 +81,7 @@ public class Eval2Test {
 		return i+1;
 	}
 
-	
+
 
 	@Test
 	public void testFromOptional() {
@@ -98,13 +98,13 @@ public class Eval2Test {
 		assertThat(Maybe.of(1),equalTo(Maybe.of(1)));
 	}
 
-	
+
 
 	@Test
 	public void testOfNullable() {
 		assertFalse(Maybe.ofNullable(null).isPresent());
 		assertThat(Maybe.ofNullable(1),equalTo(Maybe.of(1)));
-		
+
 	}
 
 	@Test
@@ -118,11 +118,11 @@ public class Eval2Test {
 		assertThat(maybes,equalTo(Eval.now(ListX.of(10,1))));
 	}
 
-	
+
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-	    
-	   
+
+
 		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
 		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
 	}
@@ -143,7 +143,7 @@ public class Eval2Test {
 		assertThat(just.unit(20),equalTo(Eval.now(20)));
 	}
 
-	
+
 
 	@Test
 	public void testIsPresent() {
@@ -180,7 +180,7 @@ public class Eval2Test {
 		assertThat(just.visit(i->i+1,()->20),equalTo(11));
 		assertThat(none.visit(i->i+1,()->20),equalTo(20));
 	}
-	
+
 
 	@Test
 	public void testStream() {
@@ -190,7 +190,7 @@ public class Eval2Test {
 
 	@Test
 	public void testOfSupplierOfT() {
-		
+
 	}
 
 
@@ -202,10 +202,10 @@ public class Eval2Test {
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
-        
+
         assertThat(async.toOptional().get().collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
-	
+
 
 	@Test
 	public void testIterate() {
@@ -228,15 +228,15 @@ public class Eval2Test {
 	@Test
 	public void testToXor() {
 		assertThat(just.toEither(-5000),equalTo(Either.right(10)));
-		
+
 	}
 	@Test
 	public void testToXorNone(){
 	    Either<?,Integer> empty = none.toEither(-50000);
-	    
-	    
+
+
         assertTrue(empty.swap().map(__->10).toOptional().get()==10);
-		
+
 	}
 
 
@@ -250,8 +250,8 @@ public class Eval2Test {
 		Either<Integer,?> empty = none.toEither(-50000).swap();
 		assertTrue(empty.isRight());
 		assertThat(empty.map(__->10),equalTo(Either.right(10)));
-		
-		
+
+
 	}
 	@Test
 	public void testToTry() {
@@ -273,7 +273,7 @@ public class Eval2Test {
 	    Either<Integer,?> empty = none.toEither(-50000).swap();
         assertTrue(empty.isRight());
         assertThat(empty.map(__->10),equalTo(Either.right(10)));
-		
+
 	}
 
 
@@ -298,7 +298,7 @@ public class Eval2Test {
 	@Test
 	public void testGetNone() {
 		assertThat(none.get(),nullValue());
-		
+
 	}
 
 	@Test
@@ -307,7 +307,7 @@ public class Eval2Test {
 		assertTrue(just.filter(i->i>5).isPresent());
 		assertFalse(none.filter(i->i!=null).isPresent());
 		assertFalse(none.filter(i->i!=null).isPresent());
-		
+
 	}
 
 	@Test
@@ -330,10 +330,10 @@ public class Eval2Test {
 	public void testNotNull() {
 		assertTrue(just.notNull().isPresent());
 		assertFalse(none.notNull().isPresent());
-		
+
 	}
 
-	
+
 
 
 
@@ -385,7 +385,7 @@ public class Eval2Test {
 		assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
 	}
 
-	
+
 	@Test
 	public void testOrElseGet() {
 		assertThat(none.orElseGet(()->2),equalTo(2));
@@ -403,7 +403,7 @@ public class Eval2Test {
 	public void testToStream() {
 		assertThat(none.stream().collect(Collectors.toList()).size(),equalTo(1));
 		assertThat(just.stream().collect(Collectors.toList()).size(),equalTo(1));
-		
+
 	}
 
 
@@ -447,13 +447,13 @@ public class Eval2Test {
 	public void testMapFunctionOfQsuperTQextendsR1() {
 		assertThat(just.map(i->i+5),equalTo(Eval.now(15)));
 	}
-	
+
 	@Test
 	public void testPeek() {
 		Mutable<Integer> capture = Mutable.of(null);
 		just = just.peek(c->capture.set(c));
-		
-		
+
+
 		just.get();
 		assertThat(capture.get(),equalTo(10));
 	}
@@ -466,7 +466,7 @@ public class Eval2Test {
 		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Eval.now(65)));
 	}
 
-	
+
 
 	@Test
 	public void testUnitT1() {

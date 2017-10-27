@@ -1,12 +1,14 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.reactive.Completable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -43,12 +45,12 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
-                                                        Filters<RT>,
+  Filters<RT>,
                                                         BiTransformable<LT4, RT>,
                                                         To<LazyEither5<LT1, LT2,LT3, LT4,RT>>,
-                                                        OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
+  OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
                                                         Unit<RT>,
-                                                        Value<RT>{
+  Value<RT> {
 
 
     Option<RT> get();

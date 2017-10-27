@@ -21,8 +21,8 @@ import java.util.stream.Stream;
 import cyclops.reactive.ReactiveSeq;
 
 
-import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.aol.cyclops2.types.futurestream.Continuation;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
 
 import lombok.AllArgsConstructor;
 
@@ -275,7 +275,7 @@ public interface AdaptersModule {
         final Supplier<T> s;
         private final Continueable subscription;
         private final Queue queue;
-        
+
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription, final Queue queue) {
             super(estimate,IMMUTABLE);
@@ -294,7 +294,7 @@ public interface AdaptersModule {
             this.queue = queue;
             this.subscription.addQueue(queue);
             this.closed =closed;
-            
+
         }
 
         public ClosingSpliterator(final long estimate, final Supplier<T> s, final Continueable subscription) {
@@ -304,7 +304,7 @@ public interface AdaptersModule {
             this.subscription = subscription;
             this.queue = null;
             this.closed =  new AtomicBoolean(false);
-            
+
         }
 
         @Override
@@ -381,14 +381,14 @@ public interface AdaptersModule {
 
         @Override
         public Spliterator<T> trySplit() {
-            
+
             return new ClosingSpliterator<T>(
                     estimate >>>= 1, s, subscription, queue,closed);
-          
+
         }
-        
-        
+
+
 
     }
-   
+
 }

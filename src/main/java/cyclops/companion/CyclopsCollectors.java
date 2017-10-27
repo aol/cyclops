@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.stream.Collector;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.*;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.data.collections.extensions.lazy.*;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.mutable.DequeX;
 
 import cyclops.collections.mutable.ListX;
@@ -22,7 +22,7 @@ import cyclops.collections.mutable.SortedSetX;
 
 /**
  * CyclopsCollectors for Cyclops Extended Collections
- * 
+ *
  * @author johnmcclean
  *
  */

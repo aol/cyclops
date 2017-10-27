@@ -1,10 +1,13 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.transformers.ValueTransformer;
 
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -28,17 +31,17 @@ import java.util.stream.Stream;
 /**
 * Monad Transformer for Optional's
 
- * 
+ *
  * OptionalT allows the deeply wrapped Optional to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested Optional(s)
  */
-public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
+public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<OptionalT<W,T>>,
         Transformable<T>,
-        Filters<T> {
+  Filters<T> {
 
     private final AnyM<W,Optional<T>> run;
 
@@ -70,7 +73,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         this.run = run;
     }
 
-    
+
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
     protected <R> OptionalT<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
@@ -93,14 +96,14 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     /**
      * Peek at the current value of the Optional
      * <pre>
-     * {@code 
+     * {@code
      *    OptionalWT.of(AnyM.fromStream(Arrays.asOptionalW(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Optional
      * @return OptionalWT with peek call
      */
@@ -114,17 +117,17 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /**
      * Map the wrapped Optional
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  OptionalWT.of(AnyM.fromStream(Arrays.asOptionalW(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //OptionalWT<AnyMSeq<Stream<Optional[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Optional
      * @return OptionalWT that applies the transform function to the wrapped Optional
      */
@@ -137,11 +140,11 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     /**
      * Flat Map the wrapped Optional
       * <pre>
-     * {@code 
+     * {@code
      *  OptionalWT.of(AnyM.fromStream(Arrays.asOptionalW(10))
      *             .flatMap(t->Optional.completedOptional(20));
-     *  
-     *  
+     *
+     *
      *  //OptionalWT<AnyMSeq<Stream<Optional[20]>>>
      * }
      * </pre>
@@ -169,13 +172,13 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     /**
      * Lift a function into one that accepts and returns an OptionalWT
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling  / iteration (via Optional) and iteration (via Stream) to an existing function
      * <pre>
-     * {@code 
+     * {@code
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<OptionalWT<Integer>, OptionalWT<Integer>> optTAdd2 = OptionalWT.lift(add2);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
@@ -184,14 +187,14 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//Optional.completedOptional(List[3,4]);
-     * 
-     * 
+     *
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param fn Function to enhance with functionality from Optional and another monad type
      * @return Function that accepts and returns an OptionalWT
      */
@@ -202,19 +205,19 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     /**
      * Lift a BiFunction into one that accepts and returns  OptionalWTs
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling / iteration (via Optional), iteration (via Stream)  and asynchronous execution (Optional)
      * to an existing function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<OptionalWT<Integer>,OptionalWT<Integer>,OptionalWT<Integer>> optTAdd2 = OptionalWT.lift2(add);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
-    	
+
     	Optional<Optional<Integer>> two = Optional.completedOptional(Optional.completedOptional(2));
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt),OptionalWT.of(Optional))
@@ -222,7 +225,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     									.<Stream<Optional<Integer>>>unwrap()
     									.map(Optional::join)
     									.collect(CyclopsCollectors.toList());
-    									
+
     		//Optional.completedOptional(List[3,4,5]);
       }
       </pre>
@@ -237,7 +240,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     /**
      * Construct an OptionalWT from an AnyM that contains a monad type that contains type other than Optional
      * The values in the underlying monad will be mapped to Optional<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an Optional
      * @return OptionalWT
      */
@@ -247,7 +250,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /**
      * Construct an OptionalWT from an AnyM that wraps a monad containing  OptionalWs
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Optional
      * @return OptionalWT
      */
@@ -258,7 +261,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -266,7 +269,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return String.format("OptionalT[%s]", run.unwrap().toString());
     }
 
-    
+
 
 
     public <R> OptionalT<W,R> unitIterator(final Iterator<R> it) {
@@ -284,9 +287,9 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return of(run.unit(Optional.<R>empty()));
     }
 
-    
 
-   
+
+
     @Override
     public int hashCode() {
         return run.hashCode();
@@ -314,7 +317,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public OptionalT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        
+
         return (OptionalT<W, T>)super.zip(combiner, app);
     }
 
@@ -325,7 +328,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
-        
+
         return super.iterate(fn,alt);
     }
 
@@ -334,7 +337,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
-        
+
         return super.generate(alt);
     }
 
@@ -344,7 +347,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     @Override
     public <T2, R> OptionalT<W, R> zip(Iterable<? extends T2> iterable,
                                        BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (OptionalT<W, R>)super.zip(iterable, fn);
     }
 
@@ -353,7 +356,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public <T2, R> OptionalT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (OptionalT<W, R>)super.zipP(publisher,fn);
     }
 
@@ -362,7 +365,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        
+
         return (OptionalT)super.zipS(other);
     }
 
@@ -372,7 +375,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
+
         return (OptionalT)super.zip(other);
     }
 
@@ -385,7 +388,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
                                                         BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                         Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -398,7 +401,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
                                                         Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                         Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
@@ -409,7 +412,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     public <T2, R1, R2, R> OptionalT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                     BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                     Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach3(value1, value2, yieldingFunction);
     }
 
@@ -421,7 +424,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
                                                     BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
                                                     Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                     Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
@@ -431,7 +434,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     @Override
     public <R1, R> OptionalT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach2(value1, yieldingFunction);
     }
 
@@ -442,7 +445,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     public <R1, R> OptionalT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                             BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (OptionalT<W, R>)super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
@@ -453,7 +456,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public <R> OptionalT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        
+
         return (OptionalT<W, R>)super.flatMapIterable(mapper);
     }
 
@@ -462,7 +465,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      */
     @Override
     public <R> OptionalT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        
+
         return (OptionalT<W, R>)super.flatMapPublisher(mapper);
     }
     public <T2, R1, R2, R3, R> OptionalT<W,R> forEach4M(Function<? super T, ? extends OptionalT<W,R1>> value1,

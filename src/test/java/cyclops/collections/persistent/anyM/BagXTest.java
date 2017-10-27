@@ -1,6 +1,6 @@
 package cyclops.collections.persistent.anyM;
 
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.collections.immutable.BagX;
 import cyclops.companion.Reducers;
@@ -36,7 +36,7 @@ public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 
     @Test

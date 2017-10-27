@@ -1,6 +1,6 @@
 package cyclops.typeclasses;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.comonad.Comonad;

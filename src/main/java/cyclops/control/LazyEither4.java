@@ -1,14 +1,15 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher4;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.reactive.Completable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher4;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -51,11 +52,11 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
-                                                    Filters<RT>,
+  Filters<RT>,
                                                     Higher4<lazyEither4,LT1,LT2,LT3,RT>,
                                                     BiTransformable<LT3, RT>,
                                                     To<LazyEither4<LT1, LT2,LT3, RT>>,
-                                                    OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
+  OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
                                                     Unit<RT>{
 
     Option<RT> get();

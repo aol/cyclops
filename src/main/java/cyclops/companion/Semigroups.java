@@ -1,9 +1,9 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.futurestream.EagerFutureStreamFunctions;
+import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
@@ -16,7 +16,7 @@ import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import com.aol.cyclops2.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

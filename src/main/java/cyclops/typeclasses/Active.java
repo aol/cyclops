@@ -1,10 +1,10 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
@@ -544,13 +544,13 @@ public class Active<W,T> implements Filters<T>,
         return (Active<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
     }
 
-  
+
     public <T2, R1, R2, R3, R> Active<W,R> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3,
                                                     final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return of(Comprehensions.of(def1.monad()).forEach4(this.single,value1,value2,value3,yieldingFunction),def1);
     }
 
-   
+
     public <T2, R1, R2, R3, R> Maybe<Active<W,R>> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3, final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
             return Maybe.nothing();

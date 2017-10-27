@@ -3,7 +3,7 @@ package cyclops.typeclasses.foldable;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functions.MonoidK;
 

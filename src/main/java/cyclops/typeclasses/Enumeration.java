@@ -1,8 +1,8 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;

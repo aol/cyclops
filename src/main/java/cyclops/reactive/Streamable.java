@@ -1,12 +1,12 @@
 package cyclops.reactive;
 
-import com.aol.cyclops2.internal.stream.SeqUtils;
-import com.aol.cyclops2.internal.stream.StreamableImpl;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.ToStream;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.internal.stream.SeqUtils;
+import com.oath.cyclops.internal.stream.StreamableImpl;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.ToStream;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;

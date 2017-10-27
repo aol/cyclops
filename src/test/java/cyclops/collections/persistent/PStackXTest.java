@@ -1,9 +1,9 @@
 package cyclops.collections.persistent;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.traversable.IterableX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.CollectionXTestsWithNulls;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
@@ -67,7 +67,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 		}
 		System.out.println("List " + list);
 		return list;
-		
+
 	}
     @Test
     public void sliding() {
@@ -77,13 +77,13 @@ public class PStackXTest extends CollectionXTestsWithNulls {
         assertThat(list.get(0), hasItems(1, 2));
         assertThat(list.get(1), hasItems(2, 3));
     }
-	
+
 	@Test
     public void coflatMap(){
        assertThat(LinkedListX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
                    .singleOrElse(null),equalTo(6));
-        
+
     }
 	@Test
     public void onEmptySwitch(){
@@ -96,26 +96,26 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	public <T> FluentCollectionX<T> empty() {
 		return LinkedListX.empty();
 	}
-	
+
 	@Test
 	public void pVectorX(){
-	    
+
 
 
 		ReactiveSeq<String> seq = Spouts.from(VectorX.of(1, 2, 3, 4)
 				.plus(5)
 				.map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
-	    
+
 	   PersistentSetX<String> setX =  seq.to().futureStream()
 	                                   .map(data->"fan out across threads with futureStreams" + data)
 	                                   .to().persistentSetX();
-	    
-	                        
-	                             
-	    
-	    
+
+
+
+
+
 	}
-	
+
 	@Test
 	public void remove(){
 	    /**
@@ -137,7 +137,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 
 		assertThat(vec,equalTo(of(5,2,1)));
 	}
-	
+
 	 @Override
 	    public FluentCollectionX<Integer> range(int start, int end) {
 	        return LinkedListX.range(start, end);

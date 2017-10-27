@@ -1,15 +1,17 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher3;
-import com.aol.cyclops2.matching.Sealed3;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.factory.Unit;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.reactive.Completable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher3;
+import com.oath.cyclops.matching.Sealed3;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -45,11 +47,11 @@ import java.util.function.*;
  * @param <LT2> Left2 type
  * @param <RT> Right type (operations are performed on this type if present)
  */
-public interface LazyEither3<LT1, LT2, RT> extends  Value<RT>,
-                                                OrElseValue<RT,LazyEither3<LT1,LT2,RT>>,
+public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
+  OrElseValue<RT,LazyEither3<LT1,LT2,RT>>,
                                                 Unit<RT>,
                                                 Transformable<RT>,
-                                                Filters<RT>,
+  Filters<RT>,
                                                 BiTransformable<LT2, RT>,
                                                 To<LazyEither3<LT1, LT2, RT>>,
                                                 Sealed3<LT1,LT2,RT>,

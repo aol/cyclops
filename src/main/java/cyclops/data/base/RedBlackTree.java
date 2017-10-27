@@ -1,8 +1,8 @@
 package cyclops.data.base;
 
 
-import com.aol.cyclops2.matching.Deconstruct.Deconstruct5;
-import com.aol.cyclops2.matching.Sealed2;
+import com.oath.cyclops.matching.Deconstruct.Deconstruct5;
+import com.oath.cyclops.matching.Sealed2;
 import cyclops.control.Option;
 
 import cyclops.matching.Api;
