@@ -15,13 +15,13 @@ import java.util.function.Predicate;
 public interface FilterableTransformable<T> extends Filters<T>, Transformable<T> {
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     FilterableTransformable<T> filter(Predicate<? super T> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     <R> FilterableTransformable<R> map(Function<? super T, ? extends R> fn);

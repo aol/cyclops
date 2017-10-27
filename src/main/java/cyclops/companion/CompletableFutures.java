@@ -103,7 +103,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach4;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach4;
      *
     forEach4(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -152,7 +152,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach3;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach3;
      *
     forEach3(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -197,7 +197,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach;
      *
     forEach(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),

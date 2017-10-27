@@ -582,7 +582,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toTry()
+     * @see com.oath.cyclops.types.Value#toTry()
      */
     @Override
     public Try<T, Throwable> toTry() {
@@ -601,14 +601,14 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toLazyEither()
+     * @see com.oath.cyclops.types.Value#toLazyEither()
      */
     public Either<X, T> toEither(){
         return xor;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toIor()
+     * @see com.oath.cyclops.types.Value#toIor()
      */
     public Ior<X, T> toIor(){
         return xor.toIor();
@@ -622,7 +622,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
     //cojoin
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
 
     public Try<Try<T,X>, X> nest() {
@@ -631,7 +631,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     public <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -703,7 +703,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     public <T> Try<T, X> unit(final T value) {
@@ -1048,7 +1048,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         /*
          *	@param input
          *	@return
-         * @see com.aol.cyclops2.trycatch.Try.Init#init(com.aol.cyclops2.trycatch.Try.CheckedSupplier)
+         * @see com.oath.cyclops.trycatch.Try.Init#init(com.oath.cyclops.trycatch.Try.CheckedSupplier)
          */
         @Override
         public <V> TryCatch<V, X> init(final CheckedSupplier<V, X> input) {
@@ -1272,7 +1272,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     /*
      * Flatten a nest Try Structure
      * @return Lowest nest Try
-     * @see com.aol.cyclops2.trycatch.Try#flatten()
+     * @see com.oath.cyclops.trycatch.Try#flatten()
      */
 
     public static <T,X extends Throwable> Try<T, X> flatten(Try<? extends Try<T,X>,X> nested) {

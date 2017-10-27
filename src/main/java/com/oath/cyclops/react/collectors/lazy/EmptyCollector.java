@@ -82,7 +82,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#block(java.util.function.Function)
+     * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#block(java.util.function.Function)
      */
     @Override
     public void block(final Function<FastFuture<T>, T> safeJoin) {
@@ -98,7 +98,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 
     /*
      *	@return zero list
-     * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getResults()
+     * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getResults()
      */
     @Override
     public Collection<FastFuture<T>> getResults() {
@@ -110,7 +110,7 @@ public class EmptyCollector<T> implements LazyResultConsumer<T> {
 
     /*
      *	@return zero list
-     * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getAllResults()
+     * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getAllResults()
      */
     @Override
     public Collection<FastFuture<T>> getAllResults() {

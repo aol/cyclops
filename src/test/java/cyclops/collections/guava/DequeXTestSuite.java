@@ -14,18 +14,18 @@ import junit.framework.TestSuite;
     DequeXTestSuite.DTest.class
  })
 public class DequeXTestSuite {
-    
+
     public static class DTest{
         public static Test suite() {
             return new DTest().allTests();
         }
-     
-        
+
+
         public TestSuite allTests() {
             TestSuite suite =
-                new TestSuite("com.aol.cyclops2.function.collections.extensions.guava");
+                new TestSuite("com.oath.cyclops.function.collections.extensions.guava");
             suite.addTest(testForOneToWayUseMySet());
-            
+
             return suite;
         }
         public Test testForOneToWayUseMySet() {
@@ -37,7 +37,7 @@ public class DequeXTestSuite {
                             CollectionFeature.ALLOWS_NULL_VALUES,
                             CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
                             CollectionFeature.SUPPORTS_ADD,
-                           
+
                             CollectionFeature.SUPPORTS_REMOVE,
                             CollectionFeature.SUPPORTS_ITERATOR_REMOVE,
                             CollectionFeature.SUPPORTS_REMOVE
@@ -45,5 +45,5 @@ public class DequeXTestSuite {
                     .createTestSuite();
         }
     }
-    
+
 }

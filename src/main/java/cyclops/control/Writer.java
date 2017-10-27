@@ -60,7 +60,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
               *  <pre>
       * {@code
       *
-      *   import static com.aol.cyclops2.reactor.Writers.forEach4;
+      *   import static com.oath.cyclops.reactor.Writers.forEach4;
       *
          forEach4(Writer.just(1),
                  a-> Writer.just(a+1),
@@ -118,7 +118,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Writers.forEach3;
+     *   import static com.oath.cyclops.reactor.Writers.forEach3;
      *
     forEach3(Writer.just(1),
     a-> Writer.just(a+1),
@@ -164,7 +164,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Writers.forEach;
+     *   import static com.oath.cyclops.reactor.Writers.forEach;
      *
     forEach(Writer.just(1),
     a-> Writer.just(a+1),

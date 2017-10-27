@@ -172,7 +172,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#reactiveStream()
+     * @see com.oath.cyclops.types.Value#reactiveStream()
      */
     public ReactiveSeq<T> stream() {
         return ReactiveSeq.generate(this)
@@ -180,7 +180,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.control.Matchable.ValueAndOptionalMatcher#iterator()
+     * @see com.oath.cyclops.control.Matchable.ValueAndOptionalMatcher#iterator()
      */
     @Override
     public Iterator<T> iterator() {
@@ -190,7 +190,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     public LazyImmutable<T> peek(final Consumer<? super T> c) {
@@ -199,7 +199,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {

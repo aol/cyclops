@@ -277,14 +277,14 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
+     * @see com.oath.cyclops.types.MonadicValue#fromEither5()
      */
     default AnyMValue<ior, RT> anyM() {
         return AnyM.fromIor(this);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Ior<LT, T> unit(final T unit) {
@@ -292,13 +292,13 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Option<RT> filter(Predicate<? super RT> test);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toLazyEither()
+     * @see com.oath.cyclops.types.Value#toLazyEither()
      */
     Either<LT, RT> toEither();
 
@@ -308,7 +308,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     Either<LT, RT> toEitherDropRight(); //drop PT
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
+     * @see com.oath.cyclops.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
     default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
@@ -330,7 +330,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     Ior<LT, RT> peekLeft(Consumer<? super LT> action);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     Ior<LT, RT> peek(Consumer<? super RT> action);
@@ -362,7 +362,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
      <R1, R2> Ior<R1, R2> bimap(final Function<? super LT, ? extends R1> fn1, final Function<? super RT, ? extends R2> fn2);
@@ -406,7 +406,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     Option<RT> get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -648,7 +648,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Option<U> ofType(final Class<? extends U> type) {
@@ -657,7 +657,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Option<RT> filterNot(final Predicate<? super RT> fn) {
@@ -675,7 +675,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Ior<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
@@ -684,7 +684,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default Ior<LT, RT> bipeek(final Consumer<? super LT> c1, final Consumer<? super RT> c2) {
@@ -694,7 +694,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,

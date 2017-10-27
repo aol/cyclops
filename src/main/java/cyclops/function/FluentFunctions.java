@@ -1396,7 +1396,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops2.util.function.TriFunction#applyHKT(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see com.oath.cyclops.util.function.TriFunction#applyHKT(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public R apply(final T1 t1, final T2 t2, final T3 t3) {

@@ -104,7 +104,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     //Add to each collection type
 
     /* (non-Javadoc)
-             * @see com.aol.cyclops2.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
+             * @see com.oath.cyclops.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
              */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
@@ -118,7 +118,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     <X> LazyCollectionX<X> fromStream(ReactiveSeq<X> stream);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default LazyCollectionX<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -126,7 +126,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#reverse()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#reverse()
      */
     @Override
     default LazyCollectionX<T> reverse() {
@@ -134,7 +134,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> filter(final Predicate<? super T> pred) {
@@ -142,7 +142,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#transform(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> CollectionX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -150,7 +150,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> CollectionX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -158,7 +158,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#limit(long)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#limit(long)
      */
     @Override
     default LazyCollectionX<T> limit(final long num) {
@@ -166,7 +166,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#skip(long)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#skip(long)
      */
     @Override
     default LazyCollectionX<T> skip(final long num) {
@@ -174,7 +174,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#takeRight(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#takeRight(int)
      */
     @Override
     default LazyCollectionX<T> takeRight(final int num) {
@@ -182,7 +182,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#dropRight(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#dropRight(int)
      */
     @Override
     default LazyCollectionX<T> dropRight(final int num) {
@@ -190,7 +190,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> takeWhile(final Predicate<? super T> p) {
@@ -198,7 +198,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> dropWhile(final Predicate<? super T> p) {
@@ -206,7 +206,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> takeUntil(final Predicate<? super T> p) {
@@ -214,7 +214,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> dropUntil(final Predicate<? super T> p) {
@@ -222,7 +222,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> LazyCollectionX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -236,7 +236,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see org.jooq.lambda.Seq#slice(long, long)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#slice(long, long)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#slice(long, long)
      */
     @Override
     default LazyCollectionX<T> slice(final long from, final long to) {
@@ -244,7 +244,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#grouped(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#grouped(int)
      */
     @Override
     default LazyCollectionX<ListX<T>> grouped(final int groupSize) {
@@ -256,7 +256,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable)
      */
     @Override
     default <U> LazyCollectionX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -264,7 +264,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> LazyCollectionX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -274,7 +274,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> LazyCollectionX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -282,7 +282,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sliding(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sliding(int)
      */
     @Override
     default LazyCollectionX<VectorX<T>> sliding(final int windowSize) {
@@ -290,7 +290,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sliding(int, int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sliding(int, int)
      */
     @Override
     default LazyCollectionX<VectorX<T>> sliding(final int windowSize, final int increment) {
@@ -298,7 +298,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#scanLeft(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     default LazyCollectionX<T> scanLeft(final Monoid<T> monoid) {
@@ -306,7 +306,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> LazyCollectionX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
@@ -314,7 +314,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#scanRight(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#scanRight(cyclops2.function.Monoid)
      */
     @Override
     default LazyCollectionX<T> scanRight(final Monoid<T> monoid) {
@@ -322,7 +322,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> LazyCollectionX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
@@ -335,7 +335,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sorted(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> LazyCollectionX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -343,7 +343,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
      */
     @Override
     default LazyCollectionX<T> plus(final T e) {
@@ -352,7 +352,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
      */
     @Override
     default LazyCollectionX<T> plusAll(final Iterable<? extends T> list) {
@@ -361,7 +361,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
      */
     @Override
     default LazyCollectionX<T> removeValue(final T e) {
@@ -370,7 +370,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
      */
     @Override
     default LazyCollectionX<T> removeAll(final Iterable<? extends T> list) {
@@ -379,7 +379,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#cycle(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#cycle(int)
      */
     @Override
     default LazyCollectionX<T> cycle(final long times) {
@@ -388,7 +388,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#cycle(cyclops2.function.Monoid, int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#cycle(cyclops2.function.Monoid, int)
      */
     @Override
     default LazyCollectionX<T> cycle(final Monoid<T> m, final long times) {
@@ -397,7 +397,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -406,7 +406,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -415,7 +415,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> LazyCollectionX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -425,7 +425,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> LazyCollectionX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -434,7 +434,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> LazyCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -444,7 +444,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#zipWithIndex()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zipWithIndex()
      */
     @Override
     default LazyCollectionX<Tuple2<T, Long>> zipWithIndex() {
@@ -453,7 +453,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#distinct()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#distinct()
      */
     @Override
     default LazyCollectionX<T> distinct() {
@@ -462,7 +462,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sorted()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sorted()
      */
     @Override
     default LazyCollectionX<T> sorted() {
@@ -471,7 +471,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#sorted(java.util.Comparator)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sorted(java.util.Comparator)
      */
     @Override
     default LazyCollectionX<T> sorted(final Comparator<? super T> c) {
@@ -480,7 +480,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> skipWhile(final Predicate<? super T> p) {
@@ -489,7 +489,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> skipUntil(final Predicate<? super T> p) {
@@ -498,7 +498,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> limitWhile(final Predicate<? super T> p) {
@@ -507,7 +507,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> limitUntil(final Predicate<? super T> p) {
@@ -516,7 +516,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#intersperse(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#intersperse(java.lang.Object)
      */
     @Override
     default LazyCollectionX<T> intersperse(final T value) {
@@ -525,7 +525,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#shuffle()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#shuffle()
      */
     @Override
     default LazyCollectionX<T> shuffle() {
@@ -534,7 +534,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#skipLast(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#skipLast(int)
      */
     @Override
     default LazyCollectionX<T> skipLast(final int num) {
@@ -543,7 +543,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#limitLast(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#limitLast(int)
      */
     @Override
     default LazyCollectionX<T> limitLast(final int num) {
@@ -552,7 +552,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default LazyCollectionX<T> onEmpty(final T value) {
@@ -560,7 +560,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default LazyCollectionX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -568,7 +568,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#onEmptyError(java.util.function.Supplier)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
     default <X extends Throwable> LazyCollectionX<T> onEmptyError(final Supplier<? extends X> supplier) {
@@ -576,7 +576,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#shuffle(java.util.Random)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#shuffle(java.util.Random)
      */
     @Override
     default LazyCollectionX<T> shuffle(final Random random) {
@@ -584,7 +584,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> LazyCollectionX<U> ofType(final Class<? extends U> type) {
@@ -593,7 +593,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<T> filterNot(final Predicate<? super T> fn) {
@@ -602,10 +602,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#notNull()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#notNull()
      */
     @Override
     default LazyCollectionX<T> notNull() {
@@ -614,10 +614,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default LazyCollectionX<T> removeAllS(final Stream<? extends T> stream) {
@@ -628,7 +628,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default LazyCollectionX<T> removeAllI(final Iterable<? extends T> it) {
@@ -637,7 +637,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default LazyCollectionX<T> removeAll(final T... values) {
@@ -646,7 +646,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default LazyCollectionX<T> retainAllI(final Iterable<? extends T> it) {
@@ -654,7 +654,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default LazyCollectionX<T> retainAllS(final Stream<? extends T> stream) {
@@ -664,7 +664,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default LazyCollectionX<T> retainAll(final T... values) {
@@ -673,7 +673,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#permutations()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#permutations()
      */
     @Override
     default LazyCollectionX<ReactiveSeq<T>> permutations() {
@@ -682,10 +682,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.ExtendedTraversable#combinations(int)
+     * @see com.oath.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#combinations(int)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#combinations(int)
      */
     @Override
     default LazyCollectionX<ReactiveSeq<T>> combinations(final int size) {
@@ -693,10 +693,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.ExtendedTraversable#combinations()
+     * @see com.oath.cyclops.lambda.monads.ExtendedTraversable#combinations()
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#combinations()
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#combinations()
      */
     @Override
     default LazyCollectionX<ReactiveSeq<T>> combinations() {
@@ -704,7 +704,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#grouped(int, java.util.function.Supplier)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#grouped(int, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> LazyCollectionX<C> grouped(final int size, final Supplier<C> supplier) {
@@ -713,7 +713,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
@@ -722,7 +722,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
     default LazyCollectionX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
@@ -731,7 +731,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> LazyCollectionX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -740,7 +740,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> LazyCollectionX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -749,7 +749,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default LazyCollectionX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {

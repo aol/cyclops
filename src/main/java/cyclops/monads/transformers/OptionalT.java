@@ -304,7 +304,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> OptionalT<W,R> combine(Value<? extends T2> app,
@@ -313,7 +313,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Combiner)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
      */
     @Override
     public OptionalT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -381,7 +381,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> OptionalT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -393,7 +393,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> OptionalT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -406,7 +406,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> OptionalT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -417,7 +417,7 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> OptionalT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,

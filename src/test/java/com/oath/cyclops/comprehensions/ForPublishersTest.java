@@ -46,7 +46,7 @@ public class ForPublishersTest {
     @Test
     public void publishers(){
 
-       // import static com.aol.cyclops2.control.For.*;
+       // import static com.oath.cyclops.control.For.*;
 
         ReactiveSeq<Tuple2<Integer,Integer>> stream = ReactiveSeq.of(1,2,3).forEach2(i->  ReactiveSeq.range(i,5),
                                                                             Tuple::tuple)

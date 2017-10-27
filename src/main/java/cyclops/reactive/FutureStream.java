@@ -460,7 +460,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> FutureStream<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super U, ? super T2, ? extends R> fn) {
@@ -522,7 +522,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /* (non-Javadoc)
-     * @see cyclops2.reactiveStream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.reactiveStream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
@@ -534,7 +534,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.reactiveStream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.reactiveStream.ReactiveSeq#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> FutureStream<R> forEach4(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
@@ -547,7 +547,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.reactiveStream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.reactiveStream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
@@ -558,7 +558,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.reactiveStream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.reactiveStream.ReactiveSeq#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> FutureStream<R> forEach3(Function<? super U, ? extends BaseStream<R1, ?>> stream1,
@@ -705,7 +705,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      * @return an iterator over this Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#iterator()
+     * @see com.oath.cyclops.react.reactiveStream.traits.SimpleReactStream#iterator()
      */
     @Override
     default CloseableIterator<U> iterator() {
@@ -714,20 +714,20 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      * @return Queue membership subscription for this Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#getSubscription()
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#getSubscription()
      */
     @Override
     Continueable getSubscription();
 
     /*
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#withLastActive(com.aol.simple.react.reactiveStream.LazyStreamWrapper)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#withLastActive(com.aol.simple.react.reactiveStream.LazyStreamWrapper)
      */
     @Override
     <R> FutureStream<R> withLastActive(LazyStreamWrapper<R> streamWrapper);
 
     /*
      *	@return Stream Builder for this Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#getSimpleReact()
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#getSimpleReact()
      */
     @Override
     LazyReact getSimpleReact();
@@ -859,7 +859,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *	@param e New executor to use
      *	@return Stream ready for next stage definition
-     * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
+     * @see com.oath.cyclops.react.reactiveStream.traits.ConfigurableStream#withTaskExecutor(java.util.concurrent.Executor)
      */
     @Override
     FutureStream<U> withTaskExecutor(Executor e);
@@ -886,16 +886,16 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *	@param queue Queue factory to use for subsequent stages
      *	@return Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#unboundedWaitFree()
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#boundedWaitFree(int size)
+     * @see com.oath.cyclops.react.reactiveStream.traits.ConfigurableStream#withQueueFactory(com.aol.simple.react.async.QueueFactory)
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#unboundedWaitFree()
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#boundedWaitFree(int size)
      */
     @Override
     FutureStream<U> withQueueFactory(QueueFactory<U> queue);
 
     /*
      *	@param sub Queue Subscription to use for this Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#withSubscription(com.aol.simple.react.async.subscription.Continueable)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#withSubscription(com.aol.simple.react.async.subscription.Continueable)
      */
     @Override
     FutureStream<U> withSubscription(Continueable sub);
@@ -905,13 +905,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *	@param async true if aysnc reactiveStream
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.traits.ConfigurableStream#withAsync(boolean)
+     * @see com.oath.cyclops.react.reactiveStream.traits.ConfigurableStream#withAsync(boolean)
      */
     @Override
     FutureStream<U> withAsync(boolean async);
 
     /*
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazyStream#forEach(java.util.function.Consumer)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazyStream#forEach(java.util.function.Consumer)
      */
     @Override
     default void forEach(final Consumer<? super U> c) {
@@ -932,7 +932,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         //100
      * }</pre>
      *	@return Queue
-     * @see com.aol.cyclops2.react.reactiveStream.traits.ToQueue#toQueue()
+     * @see com.oath.cyclops.react.reactiveStream.traits.ToQueue#toQueue()
      */
     @Override
     default Queue<U> toQueue() {
@@ -963,7 +963,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazyStream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazyStream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
      */
     @Override
     default <T> T reduce(final T identity, final BiFunction<T, ? super U, T> accumulator, final BinaryOperator<T> combiner) {
@@ -971,7 +971,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazyStream#reduce(java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazyStream#reduce(java.util.function.BinaryOperator)
      */
     @Override
     default Optional<U> reduce(final BinaryOperator<U> accumulator) {
@@ -979,7 +979,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazyStream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazyStream#collect(java.util.function.Supplier, java.util.function.BiConsumer, java.util.function.BiConsumer)
      */
     @Override
     default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super U> accumulator, final BiConsumer<R, R> combiner) {
@@ -1003,7 +1003,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
          * }
          * </pre>
          *	@return Version of FutureStream that will use sync CompletableFuture methods
-         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#sync()
+         * @see com.oath.cyclops.react.reactiveStream.traits.SimpleReactStream#sync()
          */
     @Override
     default FutureStream<U> sync() {
@@ -1025,7 +1025,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * }</pre>
      *
      *	@return Version of FutureStream that will use async CompletableFuture methods
-     * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#async()
+     * @see com.oath.cyclops.react.reactiveStream.traits.SimpleReactStream#async()
      */
     @Override
     default FutureStream<U> async() {
@@ -1096,7 +1096,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * //results in [100,200,300]
      * </pre>
      *
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#thenSync(java.util.function.Function)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#thenSync(java.util.function.Function)
      */
     @Override
     default <R> FutureStream<R> thenSync(final Function<? super U, ? extends R> fn) {
@@ -1115,7 +1115,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                       .run();
      *
      * }</pre>
-     * @see com.aol.cyclops2.react.reactiveStream.traits.LazySimpleReactStream#peekSync(java.util.function.Consumer)
+     * @see com.oath.cyclops.react.reactiveStream.traits.LazySimpleReactStream#peekSync(java.util.function.Consumer)
      */
     @Override
     default FutureStream<U> peekSync(final Consumer<? super U> consumer) {
@@ -1207,7 +1207,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * </pre>
      *	@param mapper Function to be applied to all items in the Stream
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#transform(java.util.function.Function)
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#transform(java.util.function.Function)
      */
     @Override
     default <R> FutureStream<R> map(final Function<? super U, ? extends R> mapper) {
@@ -1335,7 +1335,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *	@param time Max time length
      *	@param unit time unit
      *	@return batched reactiveStream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
      */
     @Override
     default FutureStream<ListX<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
@@ -1824,7 +1824,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
          * Convert the specified Stream to a FutureStream, using the configuration
          * of this FutureStream (task executors, current config settings)
          *
-         * @see com.aol.cyclops2.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.stream.Stream)
+         * @see com.oath.cyclops.react.reactiveStream.traits.SimpleReactStream#fromStream(java.util.stream.Stream)
          */
     @Override
     default <R> FutureStream<R> fromStream(final Stream<R> stream) {
@@ -2505,7 +2505,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      *	@return Convert to standard JDK 8 Stream
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#reactiveStream()
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#reactiveStream()
      */
     @Override
     default ReactiveSeq<U> stream() {
@@ -2515,7 +2515,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      *	@return New version of this reactiveStream converted to execute asynchronously and in parallel
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#parallel()
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#parallel()
      */
     @Override
     default FutureStream<U> parallel() {
@@ -2526,7 +2526,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     /*
      *	@return New version of this reactiveStream  converted to execute synchronously and sequentially
-     * @see com.aol.cyclops2.react.reactiveStream.traits.FutureStream#sequential()
+     * @see com.oath.cyclops.react.reactiveStream.traits.FutureStream#sequential()
      */
     @Override
     default FutureStream<U> sequential() {
@@ -2917,7 +2917,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see cyclops2.reactiveStream.ReactiveSeq#cycle(com.oath.cyclops.sequence.Monoid, int)
      */
     @Override
     default FutureStream<U> cycle(final Monoid<U> m, final long times) {
@@ -2959,7 +2959,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#scanLeft(com.aol.cyclops2.sequence.Monoid)
+     * @see cyclops2.reactiveStream.ReactiveSeq#scanLeft(com.oath.cyclops.sequence.Monoid)
      */
     @Override
     default FutureStream<U> scanLeft(final Monoid<U> monoid) {

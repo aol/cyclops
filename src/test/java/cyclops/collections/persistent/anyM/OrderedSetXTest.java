@@ -21,14 +21,14 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.orderedSetX,T> empty() {
 		return AnyM.fromOrderedSetX(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()));
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test

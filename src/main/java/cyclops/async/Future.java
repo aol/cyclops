@@ -747,7 +747,7 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> Future<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -758,7 +758,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> Future<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -771,7 +771,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> Future<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -782,7 +782,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> Future<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -794,7 +794,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> Future<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -804,7 +804,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> Future<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -880,7 +880,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     public <R> Future<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -890,7 +890,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * cojoin (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     public Future<MonadicValue<T>> nest() {
@@ -900,8 +900,8 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.aol.cyclops2.types.MonadicValue2)
+     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
+     * com.oath.cyclops.types.MonadicValue2)
      */
     @Override
     public Future<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -912,7 +912,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.ConvertableFunctor#transform(java.util.function.Function)
+     * com.oath.cyclops.types.ConvertableFunctor#transform(java.util.function.Function)
      */
     @Override
     public <R> Future<R> map(final Function<? super T, ? extends R> fn) {
@@ -1007,7 +1007,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> Future<T> unit(final T unit) {
@@ -1023,7 +1023,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#reactiveStream()
+     * @see com.oath.cyclops.types.Value#reactiveStream()
      */
     @Override
     public ReactiveSeq<T> stream() {
@@ -1036,7 +1036,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.FlatMap#flatten()
+     * @see com.oath.cyclops.types.FlatMap#flatten()
      */
     public static <R> Future<R> flatten(Future<? extends Future<R>> nested) {
         return nested.flatMap(Function.identity());
@@ -1046,7 +1046,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
@@ -1074,7 +1074,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toLazyEither()
+     * @see com.oath.cyclops.types.Value#toLazyEither()
      */
     public Either<Throwable, T> toXor() {
         try {
@@ -1087,7 +1087,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toIor()
+     * @see com.oath.cyclops.types.Value#toIor()
      */
     public Ior<Throwable, T> toIor() {
         try {
@@ -1101,7 +1101,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.closures.Convertable#toCompletableFuture()
+     * @see com.oath.cyclops.closures.Convertable#toCompletableFuture()
      */
     public CompletableFuture<T> toCompletableFuture() {
         return this.future;
@@ -1165,7 +1165,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * com.oath.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     public Future<T> peek(final Consumer<? super T> c) {
@@ -1176,7 +1176,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.
      * Function)
      */
     @Override
@@ -1223,7 +1223,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     public boolean isPresent() {
@@ -1233,7 +1233,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#mkString()
+     * @see com.oath.cyclops.types.Value#mkString()
      */
     @Override
     public String mkString() {
@@ -1249,7 +1249,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filter(final Predicate<? super T> fn) {
@@ -1259,7 +1259,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -1271,7 +1271,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -1282,7 +1282,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     public Maybe<T> notNull() {
@@ -1297,7 +1297,7 @@ public class Future<T> implements To<Future<T>>,
      * Apply a function across two values at once. (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.
+     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
      * cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
@@ -1312,7 +1312,7 @@ public class Future<T> implements To<Future<T>>,
      * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1327,7 +1327,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
      * org.reactivestreams.Publisher)
      */
     @Override
@@ -1370,7 +1370,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1381,7 +1381,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1393,7 +1393,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -1402,7 +1402,7 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -1411,7 +1411,7 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {

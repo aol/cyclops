@@ -158,7 +158,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plusInOrder
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#plusInOrder
      * (java.lang.Object)
      */
     @Override
@@ -170,7 +170,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plus(java.
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#plus(java.
      * lang.Object)
      */
     @Override
@@ -180,7 +180,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#insertAt(
      * java.util.Collection)
      */
     @Override
@@ -190,7 +190,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeValue(java.
      * lang.Object)
      */
     @Override
@@ -200,7 +200,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeAll(
      * java.util.Collection)
      */
     @Override
@@ -210,7 +210,7 @@ public interface LazyFluentCollectionX<T> extends FluentCollectionX<T> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.data.collections.extensions.FluentCollectionX#unit(java.
+     * com.oath.cyclops.data.collections.extensions.FluentCollectionX#unit(java.
      * util.Collection)
      */
     @Override

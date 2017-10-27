@@ -440,7 +440,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     /**
      *  Accumulate the results only from those Either3 which have a Right type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops2.Monoids }.
+     * input values of the same type and returns the combined result) {@see com.oath.cyclops.Monoids }.
      *
      * <pre>
      * {@code
@@ -533,7 +533,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.control.Xor#combineToList(com.aol.cyclops2.control.Xor, java.util.function.BiFunction)
+     * @see com.oath.cyclops.control.Xor#combineToList(com.oath.cyclops.control.Xor, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> LazyEither<LinkedListX<LT>, R> combineToList(Either<LT, ? extends T2> app,
@@ -542,7 +542,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return (LazyEither<LinkedListX<LT>, R>)Either.super.combineToList(app, fn);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.control.Xor#combine(com.aol.cyclops2.control.Xor, java.util.function.BinaryOperator, java.util.function.BiFunction)
+     * @see com.oath.cyclops.control.Xor#combine(com.oath.cyclops.control.Xor, java.util.function.BinaryOperator, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> LazyEither<LT, R> combine(Either<? extends LT, ? extends T2> app, BinaryOperator<LT> semigroup,
@@ -639,7 +639,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
+     * @see com.oath.cyclops.types.MonadicValue#fromEither5()
      */
 
     default AnyM<lazyEither, RT> anyMEither() {
@@ -662,7 +662,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
 
     default LazyEither<LT, Either<LT,RT>> nest() {
@@ -674,7 +674,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> LazyEither<LT, T> unit(final T unit) {
@@ -686,7 +686,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Option<RT> filter(Predicate<? super RT> test);
@@ -711,7 +711,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> LazyEither<LT, R> map(Function<? super RT, ? extends R> fn);
@@ -727,7 +727,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Functor#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
     LazyEither<LT, RT> peek(Consumer<? super RT> action);
@@ -771,7 +771,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toIor()
+     * @see com.oath.cyclops.types.Value#toIor()
      */
     @Override
     Ior<LT, RT> toIor();
@@ -779,7 +779,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -789,7 +789,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toLazyEither()
+     * @see com.oath.cyclops.types.Value#toLazyEither()
      */
     default Either<LT, RT> toXor() {
         return visit(Either::left, Either::right);
@@ -798,7 +798,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
+     * @see com.oath.cyclops.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
     default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
@@ -850,7 +850,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -865,7 +865,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
@@ -880,7 +880,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
+     * com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -1007,7 +1007,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
+     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
      * Function)
      */
     @Override
@@ -1174,7 +1174,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#mapLeftToRight(java.util.
+         * @see com.oath.cyclops.sum.types.Either#mapLeftToRight(java.util.
          * function.Function)
          */
         @Override
@@ -1188,7 +1188,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#mapLeft(java.util.function.
+         * com.oath.cyclops.sum.types.Either#mapLeft(java.util.function.
          * Function)
          */
         @Override
@@ -1200,7 +1200,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#peekLeft(java.util.function.
+         * com.oath.cyclops.sum.types.Either#peekLeft(java.util.function.
          * Consumer)
          */
         @Override
@@ -1212,7 +1212,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#peek(java.util.function.Consumer)
+         * com.oath.cyclops.sum.types.Either#peek(java.util.function.Consumer)
          */
         @Override
         public LazyEither<ST, PT> peek(Consumer<? super PT> action) {
@@ -1222,7 +1222,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#swap()
+         * @see com.oath.cyclops.sum.types.Either#swap()
          */
         @Override
         public LazyEither<PT, ST> swap() {
@@ -1233,7 +1233,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#toIor()
+         * @see com.oath.cyclops.sum.types.Either#toIor()
          */
         @Override
         public Ior<ST, PT> toIor() {
@@ -1245,7 +1245,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#visit(java.util.function.Function,
+         * com.oath.cyclops.sum.types.Either#visit(java.util.function.Function,
          * java.util.function.Function)
          */
         @Override
@@ -1264,7 +1264,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#getValue()
+         * @see com.oath.cyclops.sum.types.Either#getValue()
          */
         @Override
         public Option<PT> get() {
@@ -1275,7 +1275,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#getLeft()
+         * @see com.oath.cyclops.sum.types.Either#getLeft()
          */
         @Override
         public Option<ST> getLeft() {
@@ -1290,7 +1290,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#leftOption()
+         * @see com.oath.cyclops.sum.types.Either#leftOption()
          */
         @Override
         public Option<ST> leftOption() {
@@ -1301,7 +1301,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#leftToStream()
+         * @see com.oath.cyclops.sum.types.Either#leftToStream()
          */
         @Override
         public ReactiveSeq<ST> leftToStream() {
@@ -1314,7 +1314,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#flatMapLeft(java.util.function.
+         * com.oath.cyclops.sum.types.Either#flatMapLeft(java.util.function.
          * Function)
          */
         @Override
@@ -1327,7 +1327,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#flatMapLeftToRight(java.util.
+         * com.oath.cyclops.sum.types.Either#flatMapLeftToRight(java.util.
          * function.Function)
          */
         @Override
@@ -1339,7 +1339,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * (non-Javadoc)
          *
          * @see
-         * com.aol.cyclops2.sum.types.Either#peek(java.util.function.Consumer,
+         * com.oath.cyclops.sum.types.Either#peek(java.util.function.Consumer,
          * java.util.function.Consumer)
          */
         @Override
@@ -1352,7 +1352,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#isRight()
+         * @see com.oath.cyclops.sum.types.Either#isRight()
          */
         @Override
         public boolean isRight() {
@@ -1363,7 +1363,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.sum.types.Either#isLeft()
+         * @see com.oath.cyclops.sum.types.Either#isLeft()
          */
         @Override
         public boolean isLeft() {

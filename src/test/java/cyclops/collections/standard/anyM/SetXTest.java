@@ -53,14 +53,14 @@ public class SetXTest extends AbstractAnyMSeqTest<set> {
 		assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello"));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<set,T> empty() {
 		return AnyM.fromSet(SetX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test

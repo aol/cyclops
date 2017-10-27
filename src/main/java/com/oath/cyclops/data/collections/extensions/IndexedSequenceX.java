@@ -19,13 +19,13 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     T getOrElse(int index, T value);
     T getOrElseGet(int index,Supplier<? extends T> supplier);
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#plus(java.lang.Object)
      */
     @Override
     public IndexedSequenceX<T> plus(T e);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#insertAt(java.util.Collection)
      */
     @Override
     public IndexedSequenceX<T> plusAll(Iterable<? extends T> list);
@@ -42,13 +42,13 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeValue(java.lang.Object)
      */
     @Override
     public IndexedSequenceX<T> removeValue(T e);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.FluentCollectionX#removeAll(java.util.Collection)
      */
     @Override
     public IndexedSequenceX<T> removeAll(Iterable<? extends T> list);
@@ -72,19 +72,19 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      */
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
      */
     @Override
     IndexedSequenceX<T> filter(Predicate<? super T> pred);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#map(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#map(java.util.function.Function)
      */
     @Override
     <R> IndexedSequenceX<R> map(Function<? super T, ? extends R> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
      */
     @Override
     <R> IndexedSequenceX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);

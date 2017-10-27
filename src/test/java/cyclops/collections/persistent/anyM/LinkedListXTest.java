@@ -18,7 +18,7 @@ public class LinkedListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness
 		return AnyM.fromLinkedListX(LinkedListX.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.linkedListX,T> empty() {

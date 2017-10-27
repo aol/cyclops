@@ -45,7 +45,7 @@ public abstract class NonEmptyTransformer<W extends WitnessType<W>,T> implements
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
+     * @see com.oath.cyclops.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
      @Override
     public void subscribe(final Subscriber<? super T> s) {

@@ -65,7 +65,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.AnyM#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Applicative)
+     * @see cyclops2.monads.AnyM#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
      */
     @Override
     default AnyMValue2<W,T2,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -75,7 +75,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> AnyMValue2<W,T2,R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -85,7 +85,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     /* cojoin
      * (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     default AnyMValue<W,MonadicValue<T>> nest() {
@@ -93,7 +93,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid, com.aol.cyclops2.types.MonadicValue2)
+     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue2)
      */
     default AnyMValue2<W,T2,T> combineEager(final Monoid<T> monoid, final AnyMValue<W, ? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid.apply(t1, t2)))
@@ -160,7 +160,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> AnyMValue2<W,T2,U> ofType(final Class<? extends U> type) {
@@ -169,7 +169,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default AnyMValue2<W,T2,T> filterNot(final Predicate<? super T> fn) {
@@ -178,7 +178,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     default AnyMValue2<W,T2,T> notNull() {
@@ -188,7 +188,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Functor#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> AnyMValue2<W,T2,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -198,7 +198,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.EmptyUnit#emptyUnit()
+     * @see com.oath.cyclops.types.EmptyUnit#emptyUnit()
      */
     @Override
     default <T> AnyMValue2<W,T2,T> emptyUnit(){
@@ -210,7 +210,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.monad.AnyM#filter(java.util.function.Predicate)
      */
     @Override
     default AnyMValue2<W,T2,T> filter(Predicate<? super T> p){
@@ -218,7 +218,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#transform(java.util.function.Function)
+     * @see com.oath.cyclops.monad.AnyM#transform(java.util.function.Function)
      */
     @Override
     default <R> AnyMValue2<W,T2,R> map(Function<? super T, ? extends R> fn){
@@ -226,7 +226,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.monad.AnyM#peek(java.util.function.Consumer)
      */
     @Override
     default AnyMValue2<W,T2,T> peek(Consumer<? super T> c){
@@ -253,7 +253,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#aggregate(com.aol.cyclops2.monad.AnyM)
+     * @see com.oath.cyclops.monad.AnyM#aggregate(com.oath.cyclops.monad.AnyM)
      */
     @Override
     default AnyMValue<W,List<T>> aggregate(AnyM<W, T> next){
@@ -302,7 +302,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#unit(java.lang.Object)
+     * @see com.oath.cyclops.monad.AnyM#unit(java.lang.Object)
      */
     @Override
     default <T> AnyMValue2<W,T2,T> unit(T value){
@@ -310,7 +310,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.monad.AnyM#zero()
+     * @see com.oath.cyclops.monad.AnyM#zero()
      */
     @Override
     default <T> AnyMValue2<W,T2,T> empty(){
@@ -323,7 +323,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.fromEither5.AnyMValue2#ap(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.fromEither5.AnyMValue2#ap(com.oath.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> AnyMValue2<W,T2,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -345,7 +345,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> AnyMValue2<W,T2,R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {

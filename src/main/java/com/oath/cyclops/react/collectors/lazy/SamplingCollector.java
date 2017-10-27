@@ -53,7 +53,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
+     * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#withResults(java.util.Collection)
      */
     @Override
     public LazyResultConsumer<T> withResults(final Collection<FastFuture<T>> t) {
@@ -61,7 +61,7 @@ public class SamplingCollector<T> implements LazyResultConsumer<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.react.collectors.lazy.LazyResultConsumer#getResults()
+     * @see com.oath.cyclops.react.collectors.lazy.LazyResultConsumer#getResults()
      */
     @Override
     public Collection<FastFuture<T>> getResults() {

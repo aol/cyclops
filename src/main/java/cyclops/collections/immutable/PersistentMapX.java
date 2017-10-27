@@ -105,7 +105,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#transform(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R> PersistentMapX<K, R> map(final Function<? super V, ? extends R> fn) {
@@ -114,7 +114,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.BiTransformable#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PersistentMapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
@@ -125,7 +125,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default PersistentMapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
@@ -136,7 +136,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> PersistentMapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
@@ -148,7 +148,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default PersistentMapX<K, V> peek(final Consumer<? super V> c) {
@@ -157,7 +157,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> PersistentMapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
@@ -166,7 +166,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default PersistentMapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
@@ -175,7 +175,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default PersistentMapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
@@ -184,7 +184,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default PersistentMapX<K, V> notNull() {
@@ -193,7 +193,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -202,7 +202,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
     default PersistentMapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
@@ -211,7 +211,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Object[])
      */
     @Override
     default PersistentMapX<K, V> removeAll(final Tuple2<K, V>... values) {
@@ -220,7 +220,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
     default PersistentMapX<K, V> retainAllI(final Iterable<? extends Tuple2<K, V>> it) {
@@ -229,7 +229,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
     default PersistentMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -238,7 +238,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Object[])
      */
     @Override
     default PersistentMapX<K, V> retainAll(final Tuple2<K, V>... values) {
@@ -258,7 +258,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.types.recoverable.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
     default PersistentMapX<K, V> onEmpty(final Tuple2<K, V> value) {
@@ -266,7 +266,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default PersistentMapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
@@ -276,7 +276,7 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default PersistentMapX<K, V> onEmptySwitch(final Supplier<? extends PersistentMapX<K, V>> supplier) {

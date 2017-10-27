@@ -51,14 +51,14 @@ public class SortedSetXTest extends AbstractAnyMSeqTest<sortedSet>{
 		assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello"));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<sortedSet,T> empty() {
 		return AnyM.fromSortedSet(SortedSetX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test

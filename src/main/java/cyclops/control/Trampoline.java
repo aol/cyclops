@@ -186,7 +186,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#iterator()
+     * @see com.oath.cyclops.types.Value#iterator()
      */
     @Override
     default Iterator<T> iterator() {

@@ -18,7 +18,7 @@ public class PersistentQueueXTest extends AbstractAnyMSeqOrderedDependentTest<Wi
 		return AnyM.fromPersistentQueueX(PersistentQueueX.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.persistentQueueX,T> empty() {

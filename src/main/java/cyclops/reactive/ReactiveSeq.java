@@ -886,7 +886,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> ReactiveSeq<T> unit(T unit);
@@ -1017,7 +1017,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.lambda.monads.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -1810,7 +1810,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default ReactiveSeq<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -1848,7 +1848,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
@@ -1873,7 +1873,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
@@ -1882,7 +1882,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
@@ -1891,7 +1891,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
@@ -1900,7 +1900,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
      */
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
@@ -1909,7 +1909,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
      */
     @Override
     default ReactiveSeq<T> takeRight(final int num) {
@@ -5179,8 +5179,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * <pre>
          * {@code
-         * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
-         * import static com.aol.cyclops2.util.function.Lambda.l1;
+         * import static com.oath.cyclops.hkt.jdk.ReactiveSeq.widen;
+         * import static com.oath.cyclops.util.function.Lambda.l1;
          * import static java.util.Arrays.asList;
          *
         Lists.zippingApplicative()
@@ -5220,7 +5220,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
          *
          * <pre>
          * {@code
-         * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
+         * import static com.oath.cyclops.hkt.jdk.ReactiveSeq.widen;
          * ReactiveSeq<Integer> list  = Lists.monad()
         .flatMap(i->widen(ReactiveSeq.range(0,i)), widen(Arrays.asList(1,2,3)))
         .convert(ReactiveSeq::narrowK3);

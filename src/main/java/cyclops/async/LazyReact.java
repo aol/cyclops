@@ -255,7 +255,7 @@ public class LazyReact implements ReactBuilder {
      *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
 
@@ -436,7 +436,7 @@ public class LazyReact implements ReactBuilder {
      *	@param startInclusive Start of range
      *	@param endExclusive End of range
      *	@return FutureStream that is a range of Integers
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#range(int, int)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#range(int, int)
      */
     public FutureStream<Integer> range(final int startInclusive, final int endExclusive) {
         return fromStream(ReactiveSeq.range(startInclusive, endExclusive));
@@ -467,7 +467,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
@@ -494,7 +494,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Supplier Actions
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.function.Supplier[])
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.function.Supplier[])
      */
     @SafeVarargs
     public final <U> FutureStream<U> ofAsync(final Supplier<U>... actions) {
@@ -520,7 +520,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param reactiveStream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStream(final Stream<U> stream) {
 
@@ -546,7 +546,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Suppliers to execute
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.List)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.List)
      */
     public <U> FutureStream<U> react(final Collection<Supplier<U>> actions) {
 
@@ -611,7 +611,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param iter Iterable
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#ofIterable(java.lang.Iterable)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#ofIterable(java.lang.Iterable)
      */
     public <U> FutureStream<U> fromIterable(final Iterable<U> iter) {
         if(iter instanceof FutureStream){
@@ -637,7 +637,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Stream to react to
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
@@ -664,7 +664,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Iterator to react to
      *	@return FutureStream
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#react(java.util.Iterator)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.Iterator)
      */
     public <U> FutureStream<U> fromIteratorAsync(final Iterator<? extends Supplier<U>> actions) {
 
@@ -692,7 +692,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions
      *	@return
-     * @see com.aol.cyclops2.react.reactiveStream.BaseSimpleReact#reactIterable(java.lang.Iterable)
+     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#reactIterable(java.lang.Iterable)
      */
     public <U> FutureStream<U> fromIterableAsync(final Iterable<? extends Supplier<U>> actions) {
         final ReactiveSeq<? extends Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions)

@@ -28,7 +28,7 @@ public interface MonadZero<CRE> extends Monad<CRE>, Filterable<CRE> {
     public <T> Higher<CRE, T> zero();
 
     /* (non-Javadoc)
-     * @see com.aol.com.aol.cyclops2.hkt.typeclasses.Filterable#filter(java.util.function.Predicate, com.aol.com.aol.cyclops2.hkt.alias.Higher)
+     * @see com.aol.com.oath.cyclops.hkt.typeclasses.Filterable#filter(java.util.function.Predicate, com.aol.com.oath.cyclops.hkt.alias.Higher)
      */
     @Override
     default <T> Higher<CRE,T> filter(Predicate<? super T> predicate, Higher<CRE, T> ds){

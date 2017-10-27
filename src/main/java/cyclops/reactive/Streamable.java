@@ -145,7 +145,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     default Streamable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -158,7 +158,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Streamable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -175,7 +175,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -184,7 +184,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -193,7 +193,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -203,7 +203,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -213,7 +213,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> takeWhile(final Predicate<? super T> p) {
@@ -222,7 +222,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> dropWhile(final Predicate<? super T> p) {
@@ -231,7 +231,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> takeUntil(final Predicate<? super T> p) {
@@ -240,7 +240,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default Streamable<T> dropUntil(final Predicate<? super T> p) {
@@ -249,7 +249,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
      */
     @Override
     default Streamable<T> dropRight(final int num) {
@@ -258,7 +258,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
      */
     @Override
     default Streamable<T> takeRight(final int num) {
@@ -290,7 +290,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.oath.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <T> Streamable<T> unitIterator(final Iterator<T> it) {
@@ -596,7 +596,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collect(java.util.reactiveStream.Collector)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#collect(java.util.reactiveStream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {

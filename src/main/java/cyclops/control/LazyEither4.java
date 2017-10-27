@@ -311,7 +311,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
     /**
      *  Accumulate the results only from those Either3 which have a Right type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops2.Monoids }.
+     * input values of the same type and returns the combined result) {@see com.oath.cyclops.Monoids }.
      *
      * <pre>
      * {@code
@@ -549,7 +549,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(Class<? extends U> type) {
@@ -557,7 +557,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return (Maybe<U>)Filters.super.ofType(type);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<RT> filterNot(Predicate<? super RT> predicate) {
@@ -565,7 +565,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return (Maybe<RT>)Filters.super.filterNot(predicate);
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<RT> notNull() {
@@ -575,7 +575,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -585,7 +585,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     <R> LazyEither4<LT1,LT2,LT3, R> map(Function<? super RT, ? extends R> fn);
@@ -671,7 +671,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     <T> LazyEither4<LT1, LT2,LT3, T> unit(T unit);
@@ -679,7 +679,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
@@ -693,7 +693,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
+     * com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -709,7 +709,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default LazyEither4<LT1, LT2, LT3, RT> peek(final Consumer<? super RT> c) {
@@ -721,7 +721,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
+     * com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> LazyEither4<LT1, LT2, LT3, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {

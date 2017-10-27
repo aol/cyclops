@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.zip;
 
-import com.aol.cyclops2.internal.stream.spliterators.push.*;
+import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

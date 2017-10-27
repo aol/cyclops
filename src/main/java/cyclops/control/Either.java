@@ -382,7 +382,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#fromEither5()
+     * @see com.oath.cyclops.types.MonadicValue#fromEither5()
      */
     default AnyMValue<either,PT> anyM() {
         return AnyM.fromLazyEither(this);
@@ -396,7 +396,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
     //cojoin
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     default Either<ST, Either<ST,PT>> nest() {
         return this.map(t -> unit(t));
@@ -405,7 +405,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Either<ST, T> unit(final T unit) {
@@ -414,7 +414,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     Option<PT> filter(Predicate<? super PT> test);
@@ -437,7 +437,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     <R> Either<R, PT> mapLeft(Function<? super ST, ? extends R> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Either<ST, R> map(Function<? super PT, ? extends R> fn);
@@ -451,7 +451,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     Either<ST, PT> peekLeft(Consumer<? super ST> action);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Functor#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
     Either<ST, PT> peek(Consumer<? super PT> action);
@@ -481,7 +481,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     default boolean isPresent() {
@@ -490,7 +490,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#toLazyEither(java.lang.Object)
+     * @see com.oath.cyclops.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
     default <ST2> Either<ST2, PT> toEither(final ST2 left) {
@@ -736,7 +736,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default Either<ST, PT> bipeek(Consumer<? super ST> c1, Consumer<? super PT> c2) {
@@ -746,7 +746,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> Either<R1, R2> bitrampoline(Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
@@ -861,7 +861,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Option<U> ofType(final Class<? extends U> type) {
@@ -870,7 +870,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Option<PT> filterNot(final Predicate<? super PT> fn) {
@@ -879,7 +879,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Option<PT> notNull() {
@@ -890,7 +890,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Either<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {

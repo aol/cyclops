@@ -107,7 +107,7 @@ public class PSetXTest extends AbstractSetTest {
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
+     * com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#
      * zero()
      */
     @Override

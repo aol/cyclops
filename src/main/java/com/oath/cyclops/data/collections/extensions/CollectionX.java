@@ -75,142 +75,142 @@ public interface CollectionX<T> extends IterableX<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
     <C extends Collection<? super T>> CollectionX<C> grouped(int size, Supplier<C> supplier);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     CollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     <C extends Collection<? super T>> CollectionX<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     <C extends Collection<? super T>> CollectionX<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#intersperse(java.lang.Object)
+     * @see com.oath.cyclops.types.traversable.Traversable#intersperse(java.lang.Object)
      */
     @Override
     CollectionX<T> intersperse(T value);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#shuffle()
+     * @see com.oath.cyclops.types.traversable.Traversable#shuffle()
      */
     @Override
     CollectionX<T> shuffle();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#shuffle(java.util.Random)
+     * @see com.oath.cyclops.types.traversable.Traversable#shuffle(java.util.Random)
      */
     @Override
     CollectionX<T> shuffle(Random random);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <S, U> CollectionX<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     <T2, T3, T4> CollectionX<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> limitWhile(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> limitUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitLast(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitLast(int)
      */
     @Override
     CollectionX<T> limitLast(int num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> skipWhile(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> skipUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipLast(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipLast(int)
      */
     @Override
     CollectionX<T> skipLast(int num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycle(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycle(int)
      */
     @Override
     CollectionX<T> cycle(long times);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
      */
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
      */
     @Override
     CollectionX<T> cycle(Monoid<T> m, long times);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycleWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> cycleWhile(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycleUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> cycleUntil(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.types.traversable.Traversable#onEmpty(java.lang.Object)
      */
     @Override
     CollectionX<T> onEmpty(T value);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     CollectionX<T> onEmptyGet(Supplier<? extends T> supplier);
@@ -219,7 +219,7 @@ public interface CollectionX<T> extends IterableX<T>,
     <X extends Throwable> CollectionX<T> onEmptyError(Supplier<? extends X> supplier);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.ExtendedTraversable#reactiveStream()
+     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#reactiveStream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -242,7 +242,7 @@ public interface CollectionX<T> extends IterableX<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#headAndTail()
+     * @see com.oath.cyclops.types.foldable.Folds#headAndTail()
      */
     @Override
     default HeadAndTail<T> headAndTail() {
@@ -266,13 +266,13 @@ public interface CollectionX<T> extends IterableX<T>,
     <T1> CollectionX<T1> from(Iterable<T1> c);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#reverse()
+     * @see com.oath.cyclops.types.traversable.Traversable#reverse()
      */
     @Override
     CollectionX<T> reverse();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single()
+     * @see com.oath.cyclops.types.foldable.Folds#single()
      */
     @Override
     default T singleOrElse(T alt) {
@@ -288,7 +288,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.foldable.Folds#single(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> single(final Predicate<? super T> predicate) {
@@ -298,7 +298,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#single()
+     * @see com.oath.cyclops.types.foldable.Folds#single()
      */
     @Override
     default Maybe<T> single() {
@@ -310,7 +310,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#findFirst()
+     * @see com.oath.cyclops.types.foldable.Folds#findFirst()
      */
     @Override
     default Optional<T> findFirst() {
@@ -318,7 +318,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#findAny()
+     * @see com.oath.cyclops.types.foldable.Folds#findAny()
      */
     @Override
     default Optional<T> findAny() {
@@ -326,7 +326,7 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#groupBy(java.util.function.Function)
+     * @see com.oath.cyclops.types.foldable.Folds#groupBy(java.util.function.Function)
      */
     @Override
     default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
@@ -345,13 +345,13 @@ public interface CollectionX<T> extends IterableX<T>,
     int size();
 
     /* (non-Javadoc)
-         * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+         * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
          */
     @Override
     CollectionX<T> filter(Predicate<? super T> pred);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFunctor#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.IterableFunctor#transform(java.util.function.Function)
      */
     @Override
     <R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
@@ -366,7 +366,7 @@ public interface CollectionX<T> extends IterableX<T>,
     <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limit(long)
+     * @see com.oath.cyclops.types.traversable.Traversable#limit(long)
      */
     @Override
     CollectionX<T> limit(long num);
@@ -380,49 +380,49 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skip(long)
+     * @see com.oath.cyclops.types.traversable.Traversable#skip(long)
      */
     @Override
     CollectionX<T> skip(long num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> takeWhile(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> dropWhile(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> takeUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> dropUntil(Predicate<? super T> p);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
      */
     @Override
     CollectionX<T> dropRight(int num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
      */
     @Override
     CollectionX<T> takeRight(int num);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.functor.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default CollectionX<T> peek(final Consumer<? super T> c) {
@@ -430,14 +430,14 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#grouped(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
     CollectionX<ListX<T>> grouped(int groupSize);
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+     * @see com.oath.cyclops.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
      */
     @Override
     CollectionX<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op);
@@ -453,127 +453,127 @@ public interface CollectionX<T> extends IterableX<T>,
     <U> CollectionX<Tuple2<T, U>> zip(Iterable<? extends U> other);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     <U, R> CollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
     @Override
     <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zipWithIndex()
+     * @see com.oath.cyclops.types.traversable.Traversable#zipWithIndex()
      */
     @Override
     CollectionX<Tuple2<T, Long>> zipWithIndex();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sliding(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int)
      */
     @Override
     CollectionX<VectorX<T>> sliding(int windowSize);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sliding(int, int)
+     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int, int)
      */
     @Override
     CollectionX<VectorX<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     CollectionX<T> scanLeft(Monoid<T> monoid);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     <U> CollectionX<U> scanLeft(U seed, BiFunction<? super U, ? super T, ? extends U> function);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanRight(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanRight(cyclops2.function.Monoid)
      */
     @Override
     CollectionX<T> scanRight(Monoid<T> monoid);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     <U> CollectionX<U> scanRight(U identity, BiFunction<? super T, ? super U, ? extends U> combiner);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#distinct()
+     * @see com.oath.cyclops.types.traversable.Traversable#distinct()
      */
     @Override
     CollectionX<T> distinct();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted()
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted()
      */
     @Override
     CollectionX<T> sorted();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#removeAll(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> removeAllS(Stream<? extends T> stream);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#removeAll(java.lang.Iterable)
      */
     CollectionX<T> removeAllI(Iterable<? extends T> it);
 
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#removeAll(java.lang.Object[])
      */
     CollectionX<T> removeAll(T... values);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.lang.Iterable)
      */
     CollectionX<T> retainAllI(Iterable<? extends T> it);
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.util.stream.Stream)
      */
     @Override
     CollectionX<T> retainAllS(Stream<? extends T> seq);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.IterableFilterable#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.lang.Object[])
      */
     CollectionX<T> retainAll(T... values);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     CollectionX<T> filterNot(Predicate<? super T> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     CollectionX<T> notNull();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
@@ -848,37 +848,37 @@ public interface CollectionX<T> extends IterableX<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#slice(long, long)
+     * @see com.oath.cyclops.types.traversable.Traversable#slice(long, long)
      */
     @Override
     CollectionX<T> slice(long from, long to);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted(java.util.function.Function)
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.function.Function)
      */
     @Override
     <U extends Comparable<? super U>> CollectionX<T> sorted(Function<? super T, ? extends U> function);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted(java.util.Comparator)
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.Comparator)
      */
     @Override
     CollectionX<T> sorted(Comparator<? super T> c);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.ExtendedTraversable#permutations()
+     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#permutations()
      */
     @Override
     CollectionX<ReactiveSeq<T>> permutations();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.ExtendedTraversable#combinations(int)
+     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#combinations(int)
      */
     @Override
     CollectionX<ReactiveSeq<T>> combinations(int size);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.ExtendedTraversable#combinations()
+     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#combinations()
      */
     @Override
     CollectionX<ReactiveSeq<T>> combinations();

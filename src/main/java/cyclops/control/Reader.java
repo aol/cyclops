@@ -74,7 +74,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
         return flatMap(a -> o.map(b -> fn.apply(a,b)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {

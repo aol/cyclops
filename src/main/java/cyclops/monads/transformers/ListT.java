@@ -228,7 +228,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     public <T> ListT<W,T> unit(final T unit) {
         return of(run.unit(ListX.of(unit)));
@@ -246,7 +246,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#collectors()
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#collectors()
 
     @Override
     public Collectable<T> collectors() {

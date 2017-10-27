@@ -255,7 +255,7 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.CollectionX#from(java.util.Collection)
+     * @see com.oath.cyclops.collections.extensions.CollectionX#from(java.util.Collection)
      */
     @Override
     public <T1> CollectionX<T1> from(final Iterable<T1> c) {
@@ -267,7 +267,7 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.oath.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     public <U> CollectionX<U> unitIterator(final Iterator<U> u) {
@@ -275,7 +275,7 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#fromStream(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#fromStream(java.util.stream.Stream)
      */
     @Override
     public <X> LazyCollectionX<X> fromStream(final ReactiveSeq<X> stream) {

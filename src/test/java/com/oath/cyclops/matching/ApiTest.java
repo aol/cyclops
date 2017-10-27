@@ -3,15 +3,15 @@ package com.oath.cyclops.matching;
 import static cyclops.matching.Api.Any;
 import static cyclops.matching.Api.Case;
 import static cyclops.matching.Api.Match;
-//import static com.aol.cyclops2.matching.sample.Book.BookPatterns.Author;
-//import static com.aol.cyclops2.matching.sample.Book.BookPatterns.Name;
+//import static com.oath.cyclops.matching.sample.Book.BookPatterns.Author;
+//import static com.oath.cyclops.matching.sample.Book.BookPatterns.Name;
 
 import static cyclops.function.Predicates.any;
 import static cyclops.function.Predicates.eq;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-//import com.aol.cyclops2.matching.sample.Book;
+//import com.oath.cyclops.matching.sample.Book;
 import com.oath.cyclops.matching.sample.Pet.Dog;
 
 import cyclops.control.Option;

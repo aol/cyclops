@@ -63,7 +63,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Option<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -77,7 +77,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     default <R> Option<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -455,7 +455,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-         * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+         * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
          */
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -466,7 +466,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -479,7 +479,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -490,7 +490,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -502,7 +502,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Option<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -512,7 +512,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Option<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -531,7 +531,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.
+     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
      * cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
@@ -545,7 +545,7 @@ public interface Option<T> extends To<Option<T>>,
      * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
      * java.util.function.BiFunction)
      */
     @Override
@@ -561,7 +561,7 @@ public interface Option<T> extends To<Option<T>>,
      * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
      * org.reactivestreams.Publisher)
      */
     @Override
@@ -574,7 +574,7 @@ public interface Option<T> extends To<Option<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Applicative)
+     * @see com.oath.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
      */
     @Override
     default  Option<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -586,7 +586,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -598,7 +598,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Option<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -610,7 +610,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     default <U> Option<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -619,7 +619,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Option<T> unit(final T unit) {
@@ -630,7 +630,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Option<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -640,7 +640,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * cojoin (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     default Option<MonadicValue<T>> nest() {
@@ -650,8 +650,8 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.aol.cyclops2.types.MonadicValue2)
+     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
+     * com.oath.cyclops.types.MonadicValue2)
      */
     @Override
     default Option<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -661,14 +661,14 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.value.Value#toMaybe()
+     * @see com.oath.cyclops.value.Value#toMaybe()
      */
     @Override
     default Maybe<T> toMaybe(){
         return lazy();
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     boolean isPresent();
@@ -682,19 +682,19 @@ public interface Option<T> extends To<Option<T>>,
     Option<T> recoverWith(Supplier<? extends Option<T>> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Option<R> map(Function<? super T, ? extends R> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     <R> Option<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);
@@ -702,7 +702,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.
+     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.
      * Predicate)
      */
     @Override
@@ -711,7 +711,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Option<U> ofType(final Class<? extends U> type) {
@@ -723,7 +723,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.
+     * com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.
      * Predicate)
      */
     @Override
@@ -735,7 +735,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Option<T> notNull() {
@@ -748,7 +748,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Functor#peek(java.util.function.Consumer)
+     * com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
     default Option<T> peek(final Consumer<? super T> c) {
@@ -764,7 +764,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
          * (non-Javadoc)
          *
-         * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
+         * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
          * Function)
          */
     @Override

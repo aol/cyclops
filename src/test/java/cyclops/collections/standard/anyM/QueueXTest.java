@@ -17,7 +17,7 @@ public class QueueXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.queu
 		return AnyM.fromQueue(QueueX.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.queue,T> empty() {

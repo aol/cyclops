@@ -232,9 +232,9 @@ public class Predicates {
      *
      * <pre>
      * {@code
-     *  import static com.aol.cyclops2.control.Matchable.whenGuard;
-     *  import static com.aol.cyclops2.control.Matchable.otherwise;
-        import static com.aol.cyclops2.control.Matchable.transform;
+     *  import static com.oath.cyclops.control.Matchable.whenGuard;
+     *  import static com.oath.cyclops.control.Matchable.otherwise;
+        import static com.oath.cyclops.control.Matchable.transform;
      *  import static cyclops2.function.Predicates.eq;
      *  import static cyclops2.function.Predicates.any;
      *

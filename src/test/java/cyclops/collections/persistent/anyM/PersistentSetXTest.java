@@ -21,14 +21,14 @@ public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSe
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.persistentSetX,T> empty() {
 		return AnyM.fromPersistentSetX(PersistentSetX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test

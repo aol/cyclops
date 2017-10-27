@@ -74,7 +74,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
            *  <pre>
    * {@code
    *
-   *   import static com.aol.cyclops2.reactor.States.forEach4;
+   *   import static com.oath.cyclops.reactor.States.forEach4;
    *
       forEach4(State.just(1),
               a-> State.just(a+1),
@@ -132,7 +132,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.States.forEach3;
+     *   import static com.oath.cyclops.reactor.States.forEach3;
      *
     forEach3(State.just(1),
     a-> State.just(a+1),
@@ -178,7 +178,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.States.forEach;
+     *   import static com.oath.cyclops.reactor.States.forEach;
      *
     forEach(State.just(1),
     a-> State.just(a+1),

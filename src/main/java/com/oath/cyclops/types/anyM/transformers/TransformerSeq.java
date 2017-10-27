@@ -87,7 +87,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-         * @see com.aol.cyclops2.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
+         * @see com.oath.cyclops.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
          */
     @Override
     default Traversable<T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
@@ -96,7 +96,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
+     * @see com.oath.cyclops.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super T> s) {
@@ -106,7 +106,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycle(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycle(int)
      */
     @Override
     default Traversable<T> cycle(final long times) {
@@ -114,7 +114,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
      */
     @Override
     default Traversable<T> cycle(final Monoid<T> m, final long times) {
@@ -122,7 +122,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycleWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -130,7 +130,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#cycleUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -138,7 +138,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Traversable<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -308,7 +308,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-         * @see com.aol.cyclops2.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
+         * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
          */
     @Override
     default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -317,7 +317,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zipStream(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zipStream(java.util.stream.Stream)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -327,7 +327,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip(org.jooq.lambda.Seq)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip(org.jooq.lambda.Seq)
      */
     @Override
     default <U> Traversable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -335,7 +335,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -346,7 +346,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -360,7 +360,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#zipWithIndex()
+     * @see com.oath.cyclops.types.traversable.Traversable#zipWithIndex()
      */
     @Override
     default Traversable<Tuple2<T, Long>> zipWithIndex() {
@@ -368,7 +368,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sliding(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int)
      */
     @Override
     default Traversable<VectorX<T>> sliding(final int windowSize) {
@@ -377,7 +377,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sliding(int, int)
+     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int, int)
      */
     @Override
     default Traversable<VectorX<T>> sliding(final int windowSize, final int increment) {
@@ -385,7 +385,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
@@ -394,7 +394,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
@@ -403,7 +403,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
     default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
@@ -412,7 +412,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
@@ -420,7 +420,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -429,7 +429,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
     default <C extends Collection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
@@ -437,7 +437,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#grouped(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
     default Traversable<ListX<T>> grouped(final int groupSize) {
@@ -446,7 +446,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#distinct()
+     * @see com.oath.cyclops.types.traversable.Traversable#distinct()
      */
     @Override
     default Traversable<T> distinct() {
@@ -454,7 +454,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)
      */
     @Override
     default Traversable<T> scanLeft(final Monoid<T> monoid) {
@@ -462,7 +462,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
      */
     @Override
     default <U> Traversable<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
@@ -470,7 +470,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#scanRight(cyclops2.function.Monoid)
+     * @see com.oath.cyclops.types.traversable.Traversable#scanRight(cyclops2.function.Monoid)
      */
     @Override
     default Traversable<T> scanRight(final Monoid<T> monoid) {
@@ -486,7 +486,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted()
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted()
      */
     @Override
     default Traversable<T> sorted() {
@@ -494,7 +494,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted(java.util.Comparator)
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.Comparator)
      */
     @Override
     default Traversable<T> sorted(final Comparator<? super T> c) {
@@ -502,7 +502,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> takeWhile(final Predicate<? super T> p) {
@@ -510,7 +510,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> dropWhile(final Predicate<? super T> p) {
@@ -518,7 +518,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> takeUntil(final Predicate<? super T> p) {
@@ -526,7 +526,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> dropUntil(final Predicate<? super T> p) {
@@ -534,7 +534,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#dropRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
      */
     @Override
     default Traversable<T> dropRight(final int num) {
@@ -542,7 +542,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#takeRight(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
      */
     @Override
     default Traversable<T> takeRight(final int num) {
@@ -550,7 +550,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skip(long)
+     * @see com.oath.cyclops.types.traversable.Traversable#skip(long)
      */
     @Override
     default Traversable<T> skip(final long num) {
@@ -558,7 +558,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> skipWhile(final Predicate<? super T> p) {
@@ -566,7 +566,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> skipUntil(final Predicate<? super T> p) {
@@ -574,7 +574,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limit(long)
+     * @see com.oath.cyclops.types.traversable.Traversable#limit(long)
      */
     @Override
     default Traversable<T> limit(final long num) {
@@ -582,7 +582,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitWhile(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> limitWhile(final Predicate<? super T> p) {
@@ -590,7 +590,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitUntil(java.util.function.Predicate)
      */
     @Override
     default Traversable<T> limitUntil(final Predicate<? super T> p) {
@@ -598,7 +598,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#intersperse(java.lang.Object)
+     * @see com.oath.cyclops.types.traversable.Traversable#intersperse(java.lang.Object)
      */
     @Override
     default Traversable<T> intersperse(final T value) {
@@ -606,7 +606,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#reverse()
+     * @see com.oath.cyclops.types.traversable.Traversable#reverse()
      */
     @Override
     default Traversable<T> reverse() {
@@ -614,7 +614,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#shuffle()
+     * @see com.oath.cyclops.types.traversable.Traversable#shuffle()
      */
     @Override
     default Traversable<T> shuffle() {
@@ -624,7 +624,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#skipLast(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#skipLast(int)
      */
     @Override
     default Traversable<T> skipLast(final int num) {
@@ -632,7 +632,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#limitLast(int)
+     * @see com.oath.cyclops.types.traversable.Traversable#limitLast(int)
      */
     @Override
     default Traversable<T> limitLast(final int num) {
@@ -640,7 +640,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.types.traversable.Traversable#onEmpty(java.lang.Object)
      */
     @Override
     default Traversable<T> onEmpty(final T value) {
@@ -648,7 +648,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default Traversable<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -657,7 +657,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#shuffle(java.util.Random)
+     * @see com.oath.cyclops.types.traversable.Traversable#shuffle(java.util.Random)
      */
     @Override
     default Traversable<T> shuffle(final Random random) {
@@ -665,7 +665,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#slice(long, long)
+     * @see com.oath.cyclops.types.traversable.Traversable#slice(long, long)
      */
     @Override
     default Traversable<T> slice(final long from, final long to) {
@@ -673,7 +673,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#sorted(java.util.function.Function)
+     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> Traversable<T> sorted(final Function<? super T, ? extends U> function) {

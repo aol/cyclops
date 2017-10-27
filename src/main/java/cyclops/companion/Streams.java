@@ -193,7 +193,7 @@ public class Streams {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Streames.forEach4;
+     *  import static com.oath.cyclops.reactor.Streames.forEach4;
      *
      *  forEach4(IntStream.range(1,10).boxed(),
                  a-> Stream.iterate(a,i->i+1).limit(10),

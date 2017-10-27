@@ -702,8 +702,8 @@ public interface Spouts {
          *
          * <pre>
          * {@code
-         * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
-         * import static com.aol.cyclops2.util.function.Lambda.l1;
+         * import static com.oath.cyclops.hkt.jdk.ReactiveSeq.widen;
+         * import static com.oath.cyclops.util.function.Lambda.l1;
          * import static java.util.Arrays.asList;
          *
         Lists.zippingApplicative()
@@ -743,7 +743,7 @@ public interface Spouts {
          *
          * <pre>
          * {@code
-         * import static com.aol.cyclops2.hkt.jdk.ReactiveSeq.widen;
+         * import static com.oath.cyclops.hkt.jdk.ReactiveSeq.widen;
          * ReactiveSeq<Integer> list  = Lists.monad()
         .flatMap(i->widen(ReactiveSeq.range(0,i)), widen(Arrays.asList(1,2,3)))
         .convert(ReactiveSeq::narrowK3);

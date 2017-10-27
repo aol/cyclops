@@ -50,13 +50,13 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         return 1;
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
      MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> MonadicValue<T> unit(T unit);
@@ -65,7 +65,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     <T> MonadicValue<T> emptyUnit();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);
@@ -498,7 +498,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
                 .apply(v))).map(tuple -> app.visit(i -> tuple._2().apply(i), () -> tuple._1()));
     }
     /* (non-Javadoc)
-    * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+    * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
     */
     @Override
     default <T2, R> MonadicValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -509,7 +509,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> MonadicValue<R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {

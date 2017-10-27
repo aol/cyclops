@@ -42,8 +42,8 @@ public interface Zippable<T> extends Iterable<T>, Transformable<T> {
      * @see Monoids
      *
      * To lift any Semigroup (or monoid) up to handling Applicatives use the combineApplicatives operator in SemigroupK
-     * {@see com.aol.cyclops2.SemigroupK#combineApplicatives(BiFunction) } or Monoids
-     * { {@see com.aol.cyclops2.Monoids#combineApplicatives(java.util.function.Function, com.aol.cyclops2.function.Monoid)
+     * {@see com.oath.cyclops.SemigroupK#combineApplicatives(BiFunction) } or Monoids
+     * { {@see com.oath.cyclops.Monoids#combineApplicatives(java.util.function.Function, com.oath.cyclops.function.Monoid)
      *  }
      * <pre>
      * {@code

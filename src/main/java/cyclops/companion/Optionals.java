@@ -106,7 +106,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach4;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach4;
      *
     forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -154,7 +154,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach4;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach4;
      *
      *  forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -205,7 +205,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach3;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach3;
      *
     forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -247,7 +247,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach3;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach3;
      *
      *  forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -293,7 +293,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach;
      *
     forEach(Optional.just(1),
     a-> Optional.just(a+1),
@@ -328,7 +328,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach;
      *
      *  forEach(Optional.just(1),
     a-> Optional.just(a+1),

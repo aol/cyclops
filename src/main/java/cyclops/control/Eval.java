@@ -422,19 +422,19 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     public <T> Eval<T> unit(T unit);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
@@ -445,7 +445,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -453,7 +453,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#combineEager(cyclops2.function.Monoid, com.aol.cyclops2.types.MonadicValue)
+     * @see com.oath.cyclops.types.MonadicValue#combineEager(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue)
      */
     @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -463,7 +463,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -471,7 +471,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -488,7 +488,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     default Eval<MonadicValue<T>> nest() {
@@ -502,7 +502,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     public T get();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -511,7 +511,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -520,7 +520,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     default Maybe<T> notNull() {
@@ -529,7 +529,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default Maybe<T> filter(final Predicate<? super T> pred) {
@@ -538,7 +538,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Functor#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
     default Eval<T> peek(final Consumer<? super T> c) {
@@ -546,7 +546,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> Eval<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -555,7 +555,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
@@ -576,7 +576,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Eval<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -586,7 +586,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
      * (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Eval<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -597,7 +597,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
      *
      * (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> Eval<R> zipP( final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -607,7 +607,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -616,7 +616,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -625,7 +625,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -689,7 +689,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -700,7 +700,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -713,7 +713,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -724,7 +724,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -736,7 +736,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -746,7 +746,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -805,7 +805,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             }
 
             /* (non-Javadoc)
-             * @see com.aol.cyclops2.lambda.monads.Pure#unit(java.lang.Object)
+             * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
              */
             @Override
             public <T> Eval<T> unit(final T unit) {

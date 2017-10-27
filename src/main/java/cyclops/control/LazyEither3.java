@@ -267,7 +267,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
     /**
      *  Accumulate the results only from those Either3 which have a Right type present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see com.aol.cyclops2.Monoids }.
+     * input values of the same type and returns the combined result) {@see com.oath.cyclops.Monoids }.
      *
      * <pre>
      * {@code
@@ -601,7 +601,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bimap(java.util.function.Function,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bimap(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -610,7 +610,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Functor#transform(java.util.function.Function)
+     * @see com.oath.cyclops.types.Functor#transform(java.util.function.Function)
      */
     @Override
     <R> LazyEither3<LT1, LT2, R> map(Function<? super RT, ? extends R> fn);
@@ -623,7 +623,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     <T> LazyEither3<LT1, LT2, T> unit(T unit);
@@ -632,7 +632,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
+     * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer,
      * java.util.function.Consumer)
      */
     @Override
@@ -645,7 +645,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
+     * com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
      * java.util.function.Function)
      */
     @Override
@@ -660,7 +660,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Functor#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
     default LazyEither3<LT1, LT2, RT> peek(final Consumer<? super RT> c) {
@@ -672,7 +672,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Functor#trampoline(java.util.function.Function)
+     * com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
      */
     @Override
     default <R> LazyEither3<LT1, LT2, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {

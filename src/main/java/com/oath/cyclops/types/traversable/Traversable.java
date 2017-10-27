@@ -289,7 +289,7 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> Traversable<R> zip(final Iterable<? extends U> other,final BiFunction<? super T, ? super U, ? extends R> zipper) {

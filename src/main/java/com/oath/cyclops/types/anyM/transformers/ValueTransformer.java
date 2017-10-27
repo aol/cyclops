@@ -49,7 +49,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
      */
     public <T2, R> ValueTransformer<W,R> combine(Value<? extends T2> app,
             BiFunction<? super T, ? super T2, ? extends R> fn) {
@@ -59,7 +59,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
+     * @see com.oath.cyclops.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
      @Override
     public void subscribe(final Subscriber<? super T> s) {
@@ -72,7 +72,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
    // <T> TransformerSeq<W,T> unitStream(ReactiveSeq<T> traversable);
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Combiner#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Combiner)
+     * @see com.oath.cyclops.types.Combiner#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
      */
 
     public  ValueTransformer<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -82,7 +82,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#iterate(java.util.function.UnaryOperator)
+     * @see com.oath.cyclops.types.Value#iterate(java.util.function.UnaryOperator)
      */
   //@TODO Return StreamT
     public AnyM<W,? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T altSeed) {
@@ -90,7 +90,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return this.transformerStream().map(v->v.asSupplier(altSeed).iterate(fn));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#generate()
+     * @see com.oath.cyclops.types.Value#generate()
      */
     //@TODO Return StreamT
     public AnyM<W,? extends ReactiveSeq<T>> generate(T altSeed) {
@@ -100,7 +100,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
 
     public <T2, R> ValueTransformer<W,R> zip(Iterable<? extends T2> iterable,
@@ -108,7 +108,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return this.unitAnyM(this.transformerStream().map(v->v.zip(iterable,fn)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
 
     public <T2, R> ValueTransformer<W,R> zipP(Publisher<? extends T2> publisher,BiFunction<? super T, ? super T2, ? extends R> f) {
@@ -116,7 +116,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.zipP(publisher,f)));
     }
      /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
 
     public <U> ValueTransformer<W,Tuple2<T,U>> zipS(Stream<? extends U> other) {
@@ -125,7 +125,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
 
     public <U> ValueTransformer<W,Tuple2<T,U>> zip(Iterable<? extends U> other) {
@@ -136,7 +136,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     public <T2, R1, R2, R3, R> ValueTransformer<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
@@ -147,7 +147,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
 
     public <T2, R1, R2, R3, R> ValueTransformer<W,R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -159,7 +159,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
 
     public <T2, R1, R2, R> ValueTransformer<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -169,7 +169,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
 
     public <T2, R1, R2, R> ValueTransformer<W,R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -181,7 +181,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
 
     public <R1, R> ValueTransformer<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -190,7 +190,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.forEach2(value1,  yieldingFunction)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
 
     public <R1, R> ValueTransformer<W,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -201,7 +201,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
 
     public <R> ValueTransformer<W,R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -209,7 +209,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.flatMapI(mapper)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
 
     public <R> ValueTransformer<W,R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {

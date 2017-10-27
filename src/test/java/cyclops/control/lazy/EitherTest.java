@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package com.oath.cyclops.sum.types;
 
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;

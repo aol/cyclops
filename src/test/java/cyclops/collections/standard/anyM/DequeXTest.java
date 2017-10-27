@@ -17,7 +17,7 @@ public class DequeXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.dequ
 		return AnyM.fromDeque(DequeX.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.deque,T> empty() {
