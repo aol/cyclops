@@ -7,7 +7,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
-import com.aol.cyclops2.types.*;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.types.Unwrapable;
@@ -33,7 +32,7 @@ import cyclops.monads.WitnessType;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
                                                                     Traversable<T>,
-  ToStream<T>,
+                                                                    ToStream<T>,
                                                                     Publisher<T> {
 
     default ConvertableSequence<T> to(){

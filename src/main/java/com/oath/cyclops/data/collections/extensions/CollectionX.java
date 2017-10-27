@@ -12,7 +12,6 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
-import com.aol.cyclops2.types.*;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;

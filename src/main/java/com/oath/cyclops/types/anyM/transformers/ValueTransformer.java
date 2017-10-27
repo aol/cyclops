@@ -3,7 +3,6 @@ package com.oath.cyclops.types.anyM.transformers;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.*;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.MonadicValue;

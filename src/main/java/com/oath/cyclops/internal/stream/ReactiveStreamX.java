@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream;
 
-import com.aol.cyclops2.internal.stream.spliterators.push.*;
+
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.util.ExceptionSoftener;
@@ -87,7 +87,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> reverse() {
-        return coflatMap(s -> reversedListOf(s.toList()))
+        return coflatMap(s -> ReactiveSeq.reversedListOf(s.toList()))
                 .flatMap(i -> i);
     }
 
@@ -717,7 +717,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return Spouts.concat(this, (Stream<T>) fromIterable(other));
+        return Spouts.concat(this, (Stream<T>) ReactiveSeq.fromIterable(other));
     }
 
     //TODO use spliterators and createSeq
@@ -728,7 +728,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> append(final T... other) {
-        return concat(this, Spouts.of(other));
+        return Spouts.concat(this, Spouts.of(other));
     }
 
     @Override
@@ -1057,7 +1057,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
      */
     @Override
     public <T> ReactiveSeq<T> unit(final T unit) {
-        return of(unit);
+        return Spouts.of(unit);
     }
 
     @Override
@@ -1104,7 +1104,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle() {
 
         ReactiveSeq<T> cycling = collectAll(Collectors.toList())
-                .map(s -> fromIterable(s).cycle(Long.MAX_VALUE))
+                .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
                 .flatMap(i -> i);
         return createSeq(new IterableSourceOperator<T>(cycling), SYNC);
 

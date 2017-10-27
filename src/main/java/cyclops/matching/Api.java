@@ -1,6 +1,14 @@
 package cyclops.matching;
 
 import com.oath.cyclops.matching.*;
+import com.oath.cyclops.matching.*;
+import com.oath.cyclops.matching.Case.Any;
+import com.oath.cyclops.matching.Case.Case2;
+import com.oath.cyclops.matching.Deconstruct.*;
+import com.oath.cyclops.matching.Matching.OptionalMatching;
+import com.oath.cyclops.matching.Matching.PatternMatching;
+import com.oath.cyclops.matching.Matching.PatternMatching3;
+import com.oath.cyclops.matching.Matching.*;
 import cyclops.data.tuple.*;
 
 import java.util.Optional;
@@ -20,8 +28,8 @@ public final class Api {
   public static <T> PatternMatching<T> Match(T value) {
     return new PatternMatching<>(value);
   }
-  public static <T1,T2> PatternMatching2<T1,T2> MatchType(Sealed2<T1,T2> value) {
-    return new PatternMatching2<>(value);
+  public static <T1,T2> Matching.PatternMatching2<T1,T2> MatchType(Sealed2<T1,T2> value) {
+    return new Matching.PatternMatching2<>(value);
   }
 
   public static <T1,T2,T3> PatternMatching3<T1,T2,T3> MatchType(Sealed3<T1,T2,T3> value) {
@@ -63,7 +71,7 @@ public final class Api {
   }
 
   public static <T, R> Case<Optional<T>, R> Case(Supplier<R> supplier0, Supplier<R> supplier1) {
-    return new CaseOptional<>(supplier0, supplier1);
+    return new Case.CaseOptional<>(supplier0, supplier1);
   }
 
   public static <T, R> Case<T, R> Case(Pattern<T> pattern, Supplier<R> supplier) {
@@ -98,15 +106,15 @@ public final class Api {
   }
 
   public static <T1, T2, T3, R> Case<Tuple3<T1, T2, T3>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Predicate<T3> predicate3, Supplier<R> supplier) {
-    return new Case3<>(predicate1, predicate2, predicate3, supplier);
+    return new Case.Case3<>(predicate1, predicate2, predicate3, supplier);
   }
 
   public static <T1, T2, T3, T4, R> Case<Tuple4<T1, T2, T3, T4>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Predicate<T3> predicate3, Predicate<T4> predicate4, Supplier<R> supplier) {
-    return new Case4<>(predicate1, predicate2, predicate3, predicate4, supplier);
+    return new Case.Case4<>(predicate1, predicate2, predicate3, predicate4, supplier);
   }
 
   public static <T1, T2, T3, T4, T5, R> Case<Tuple5<T1, T2, T3, T4, T5>, R> Case(Predicate<T1> predicate1, Predicate<T2> predicate2, Predicate<T3> predicate3, Predicate<T4> predicate4, Predicate<T5> predicate5, Supplier<R> supplier) {
-    return new Case5<>(predicate1, predicate2, predicate3, predicate4, predicate5, supplier);
+    return new Case.Case5<>(predicate1, predicate2, predicate3, predicate4, predicate5, supplier);
   }
 
   public static <R> Any<R> Any(Supplier<R> supplier) {

@@ -12,8 +12,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.*;
-
 
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
