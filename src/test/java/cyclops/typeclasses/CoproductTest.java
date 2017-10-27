@@ -3,10 +3,8 @@ package cyclops.typeclasses;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.Maybe;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.stream;
-import cyclops.monads.XorM;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -32,6 +30,6 @@ public class CoproductTest {
 
     @Test
     public void visit(){
-        assertThat(just.visit(s-> StreamKind.narrowK(s).count(), m-> Maybe.narrowK(m).get()),equalTo(10));
+        assertThat(just.visit(s-> StreamKind.narrowK(s).count(), m-> Maybe.narrowK(m).toOptional().get()),equalTo(10));
     }
 }

@@ -1,15 +1,16 @@
 package cyclops.collections.persistent.anyM;
 
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.SetX;
+import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSetX> {
@@ -20,19 +21,19 @@ public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSe
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.persistentSetX,T> empty() {
 		return AnyM.fromPersistentSetX(PersistentSetX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 
 	@Test
@@ -54,4 +55,8 @@ public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSe
 
 
     }
+	@Test
+	public void testScanLeftStringConcatMonoid() {
+		assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), hasItems("", "a", "ab", "abc"));
+	}
 }

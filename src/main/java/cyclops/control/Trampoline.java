@@ -7,49 +7,49 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.Value;
-import cyclops.control.lazy.Either;
-import cyclops.function.Fn3;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.Value;
+import cyclops.function.Function0;
+import cyclops.function.Function3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.reactive.ReactiveSeq;
 
-import static javafx.scene.input.KeyCode.R;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
- * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl 
+ * simple Trampoline implementation : inspired by excellent TotallyLazy Java 8 impl
  * and Mario Fusco presentation
- * 
+ *
  * Allows Stack Free Recursion
- * 
+ *
  * <pre>
- * {@code 
+ * {@code
  * @Test
     public void trampolineTest(){
-        
+
         assertThat(loop(500000,10).result(),equalTo(446198426));
-        
+
     }
     Trampoline<Integer> loop(int times,int sum){
-        
+
         if(times==0)
             return Trampoline.done(sum);
         else
             return Trampoline.more(()->loop(times-1,sum+times));
     }
- * 
+ *
  * }
  * </pre>
- * 
+ *
  * And co-routines can be implemented simply via zipping trampolines
- * 
+ *
     <pre>
  {@code
  Trampoline<Integer> looping = loop(500000,5);
  Trampoline<Integer> looping2 = loop2(500000,5);
- System.out.println(looping.zip(looping2).get());
+ System.out.println(looping.zip(looping2).getValue());
 
  }
     </pre>
@@ -80,13 +80,13 @@ import static org.jooq.lambda.tuple.Tuple.tuple;
 ...
 
  </pre>
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Return type
  */
 @FunctionalInterface
-public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
+public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> {
 
     default <R> R visit(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
         return complete() ? done.apply(get()) : more.apply(this.bounce());
@@ -98,20 +98,20 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
     }
     default  <B,R> Trampoline<R> zip(Trampoline<B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
-        Xor<Trampoline<T>,T> first = resume();
-        Xor<Trampoline<B>,B> second = b.resume();
+        Either<Trampoline<T>,T> first = resume();
+        Either<Trampoline<B>,B> second = b.resume();
 
-        if(first.isSecondary() && second.isSecondary()) {
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),zipper));
+        if(first.isLeft() && second.isLeft()) {
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),zipper));
         }
-        if(first.isPrimary() && second.isPrimary()){
-            return Trampoline.done(zipper.apply(first.get(),second.get()));
+        if(first.isRight() && second.isRight()){
+            return Trampoline.done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
-        if(first.isSecondary() && second.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,zipper));
+        if(first.isLeft() && second.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,zipper));
         }
-        if(first.isPrimary() && second.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),zipper));
+        if(first.isRight() && second.isLeft()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),zipper));
         }
         //unreachable
         return null;
@@ -121,45 +121,45 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
         return zip(b,c,(x,y,z)->Tuple.tuple(x,y,z));
 
     }
-    default  <B,C,R> Trampoline<R> zip(Trampoline<B> b, Trampoline<C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+    default  <B,C,R> Trampoline<R> zip(Trampoline<B> b, Trampoline<C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
-        Xor<Trampoline<T>,T> first = resume();
-        Xor<Trampoline<B>,B> second = b.resume();
-        Xor<Trampoline<C>,C> third = c.resume();
+        Either<Trampoline<T>,T> first = resume();
+        Either<Trampoline<B>,B> second = b.resume();
+        Either<Trampoline<C>,C> third = c.resume();
 
-        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),third.secondaryGet(),fn));
+        if(first.isLeft() && second.isLeft() && third.isLeft()) {
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),third.leftOrElse(null),fn));
         }
-        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
-            return Trampoline.done(fn.apply(first.get(),second.get(),third.get()));
-        }
-
-        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,c,fn));
-        }
-        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),c,fn));
-        }
-        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(b,third.secondaryGet(),fn));
+        if(first.isRight() && second.isRight() && third.isRight()){
+            return Trampoline.done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
+        if(first.isLeft() && second.isRight() && third.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,c,fn));
+        }
+        if(first.isRight() && second.isLeft() && third.isRight()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),c,fn));
+        }
+        if(first.isRight() && second.isRight() && third.isLeft()){
+            return Trampoline.more(()->this.zip(b,third.leftOrElse(null),fn));
+        }
 
-        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return Trampoline.more(()->this.zip(second.secondaryGet(),third.secondaryGet(),fn));
+
+        if(first.isRight() && second.isLeft() && third.isLeft()){
+            return Trampoline.more(()->this.zip(second.leftOrElse(null),third.leftOrElse(null),fn));
         }
-        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return Trampoline.more(()->first.secondaryGet().zip(b,third.secondaryGet(),fn));
+        if(first.isLeft() && second.isRight() && third.isLeft()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(b,third.leftOrElse(null),fn));
         }
-        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return Trampoline.more(()->first.secondaryGet().zip(second.secondaryGet(),c,fn));
+        if(first.isLeft() && second.isLeft() && third.isRight()){
+            return Trampoline.more(()->first.leftOrElse(null).zip(second.leftOrElse(null),c,fn));
         }
         //unreachable
         return null;
     }
 
-    default Xor<Trampoline<T>,T> resume(){
-        return this.visit(Xor::secondary,Xor::primary);
+    default Either<Trampoline<T>,T> resume(){
+        return this.visit(Either::left, Either::right);
     }
 
 
@@ -179,14 +179,14 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
     }
 
     /* (non-Javadoc)
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
     @Override
     T get();
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Value#iterator()
+     * @see com.oath.cyclops.types.Value#iterator()
      */
     @Override
     default Iterator<T> iterator() {
@@ -194,9 +194,14 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
                      .iterator();
     }
 
+    @Override
+    default ReactiveSeq<T> stream() {
+        return Function0.super.stream();
+    }
+
     /**
      * @return true if complete
-     * 
+     *
      */
     default boolean complete() {
         return true;
@@ -204,7 +209,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
     /**
      * Created a completed Trampoline
-     * 
+     *
      * @param result Completed result
      * @return Completed Trampoline
      */
@@ -214,7 +219,7 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
     /**
      * Create a Trampoline that has more work to do
-     * 
+     *
      * @param trampoline Next stage in Trampoline
      * @return Trampoline with more work
      */
@@ -247,5 +252,10 @@ public interface Trampoline<T> extends Value<T>, To<Trampoline<T>> {
 
             }
         };
+    }
+
+    @Override
+    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
+        return present.apply(get());
     }
 }

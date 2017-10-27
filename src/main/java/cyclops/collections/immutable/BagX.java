@@ -1,32 +1,32 @@
 package cyclops.collections.immutable;
 
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPBagX;
-import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
+import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.collections.mutable.DequeX;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.control.Xor;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.control.Either;
+import cyclops.data.Bag;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.bagX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.HashTreePBag;
-import org.pcollections.PBag;
-import org.pcollections.PStack;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import com.oath.cyclops.types.persistent.PersistentBag;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -35,14 +35,13 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 
 /**
  *
  * A Lazy and Reactive Wrapper for Pesistent Bags (immutable collections like Sets that can contain duplicates).
- * BagX is lazy - chainging functional operations such as map / filter / flatMap only results in the toX
+ * BagX is lazy - chainging functional operations such as transform / filter / flatMap only results in the toX
  * being traversed once. It is materialized and cached on first access (or via {@link BagX#materialize()}
  *
  * It is also possible to populate BagX asynchronously using reactiveBuffer-streams publishers such as those created via the
@@ -51,9 +50,19 @@ import java.util.stream.Stream;
  *
  * @param <T>
  */
-public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PBag<T>> {
+public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T>, OnEmptySwitch<T, PersistentBag<T>> {
     BagX<T> lazy();
     BagX<T> eager();
+
+    @Override
+    default boolean isEmpty() {
+        return PersistentBag.super.isEmpty();
+    }
+
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
+    }
 
     static <T> CompletableBagX<T> completable(){
         return new CompletableBagX<>();
@@ -61,9 +70,15 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     static class CompletableBagX<T> implements InvocationHandler {
         Future<BagX<T>> future = Future.future();
-        public boolean complete(PBag<T> result){
+
+        public CompletableBagX(){
+            System.out.println("new!!");
+            new Exception().printStackTrace();
+        }
+        public boolean complete(PersistentBag<T> result){
             return future.complete(BagX.fromIterable(result));
         }
+
 
         public BagX<T> asBagX(){
             BagX f = (BagX) Proxy.newProxyInstance(BagX.class.getClassLoader(),
@@ -74,30 +89,30 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            BagX<T> target = future.get();
+            BagX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
     /**
      * Narrow a covariant BagX
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  PBaagX<? extends Fruit> set = BagX.of(apple,bannana);
      *  BagX<Fruit> fruitSet = BagX.narrowK(set);
      * }
      * </pre>
-     * 
+     *
      * @param bagX to narrowK generic type
      * @return BagX with narrowed type
      */
     public static <T> BagX<T> narrow(final BagX<? extends T> bagX) {
         return (BagX<T>) bagX;
     }
-    
+
     /**
      * Create a BagX that contains the Integers between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -110,7 +125,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     /**
      * Create a BagX that contains the Longs between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -124,26 +139,26 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     /**
      * Unfold a function into a BagX
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  BagX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
-     * 
+     *
      * //(1,2,3,4,5)
-     * 
+     *
      * }</code>
-     * 
-     * @param seed Initial value 
+     *
+     * @param seed Initial value
      * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return BagX generated by unfolder function
      */
-    static <U, T> BagX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> BagX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to().bagX(Evaluation.LAZY);
     }
 
     /**
      * Generate a BagX from the provided Supplier up to the provided limit number of times
-     * 
+     *
      * @param limit Max number of elements to generate
      * @param s Supplier to generate BagX elements
      * @return BagX generated from the provided Supplier
@@ -155,7 +170,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
     /**
      * Generate a BagX from the provided value up to the provided limit number of times
-     * 
+     *
      * @param limit Max number of elements to generate
      * @param s Value for BagX elements
      * @return BagX generated from the provided Supplier
@@ -172,7 +187,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     /**
      * Create a BagX by iterative application of a function to an initial element up to the supplied limit number of times
-     * 
+     *
      * @param limit Max number of elements to generate
      * @param seed Initial element
      * @param f Iteratively applied to each element to generate the next element
@@ -184,78 +199,78 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> BagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                              BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                             Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                             Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (BagX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> BagX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                              BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                             Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                             Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                             Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                             Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                             Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (BagX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> BagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                          BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                         Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                         Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (BagX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> BagX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                          BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                         Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                         Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                         Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                         Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (BagX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> BagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (BagX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> BagX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                      BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (BagX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
     default AnyMSeq<bagX,T> anyM(){
         return AnyM.fromBagX(this);
     }
-    
+
     @Override
     default BagX<T> take(final long num) {
 
@@ -272,8 +287,8 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return ReactiveSeq.fromIterable(this);
     }
 
-    BagX<T> type(Reducer<? extends PBag<T>> reducer);
-    
+    BagX<T> type(Reducer<? extends PersistentBag<T>,T> reducer);
+
     /**
      *
      * <pre>
@@ -305,12 +320,12 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     public static <T> BagX<T> singleton(final T value) {
         //use concrete type for singleton as used in Reducers
         return new LazyPBagX<>(
-                HashTreePBag.singleton(value),null,Reducers.toPBag(),Evaluation.LAZY);
+                Bag.of(value),null,Reducers.toPBag(),Evaluation.LAZY);
     }
 
     /**
      * Construct a BagX from an Publisher
-     * 
+     *
      * @param publisher
      *            to construct BagX from
      * @return BagX
@@ -322,9 +337,9 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     public static <T> BagX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof BagX)
             return (BagX) iterable;
-        if (iterable instanceof PBag)
+        if (iterable instanceof PersistentBag)
             return new LazyPBagX<>(
-                                   (PBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
+                                   (PersistentBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
 
 
         return new LazyPBagX<>(null,
@@ -339,19 +354,19 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
-     * 
+     *
      * <pre>
-     * {@code 
-     *   
+     * {@code
+     *
      *     BagX.of(1,2,3)
      *          .map(i->i*2)
      *          .coflatMap(s -> s.reduce(0,(a,b)->a+b))
-     *      
+     *
      *      //BagX[12]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn mapping function
      * @return Transformed BagX
      */
@@ -365,14 +380,14 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     * This is a stateful grouping & reduction operation. The emitted of a combination may in turn be combined
     * with it's neighbor
     * <pre>
-    * {@code 
+    * {@code
     *  BagX.of(1,1,2,3)
                  .combine((a, b)->a.equals(b),SemigroupK.intSum)
                  .listX()
-                 
-    *  //ListX(3,4) 
+
+    *  //ListX(3,4)
     * }</pre>
-    * 
+    *
     * @param predicate Test to see if two neighbors should be joined
     * @param op Reducer to combine neighbors
     * @return Combined / Partially Reduced BagX
@@ -389,7 +404,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
      */
     @Override
     default <R> BagX<R> unit(final R value) {
@@ -397,7 +412,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.IterableFunctor#unitIterable(java.util.Iterator)
+     * @see com.oath.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
     default <R> BagX<R> unitIterator(final Iterator<R> it) {
@@ -405,15 +420,15 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#unit(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.persistent.LazyCollectionX#unit(java.util.Collection)
      */
     @Override
-    default <R> BagX<R> unit(final Collection<R> col) {
+    default <R> BagX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#emptyUnit()
+     * @see com.oath.cyclops.data.collections.extensions.persistent.LazyCollectionX#emptyUnit()
      */
   //  @Override
     default <R> BagX<R> emptyUnit() {
@@ -423,47 +438,41 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#from(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.persistent.LazyCollectionX#from(java.util.Collection)
      */
     @Override
-    default <X> BagX<X> from(final Collection<X> col) {
+    default <X> BagX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.persistent.LazyCollectionX#monoid()
+     * @see com.oath.cyclops.data.collections.extensions.persistent.LazyCollectionX#monoid()
      */
  //   @Override
-    default <T> Reducer<PBag<T>> monoid() {
+    default <T> Reducer<PersistentBag<T>,T> monoid() {
         return Reducers.toPBag();
     }
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plus(java.lang.Object)
-     */
+
     @Override
     public BagX<T> plus(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
-     */
+
     @Override
-    public BagX<T> plusAll(Collection<? extends T> list);
+    public BagX<T> plusAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#minus(java.lang.Object)
+     * @see org.pcollections.PSet#removeValue(java.lang.Object)
      */
     @Override
-    public BagX<T> minus(Object e);
+    public BagX<T> removeValue(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
-     */
+
     @Override
-    public BagX<T> minusAll(Collection<?> list);
+    public BagX<T> removeAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#reverse()
      */
     @Override
     default BagX<T> reverse() {
@@ -471,7 +480,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default BagX<T> filter(final Predicate<? super T> pred) {
@@ -479,7 +488,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> BagX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -487,7 +496,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> BagX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -495,7 +504,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limit(long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
     @Override
     default BagX<T> limit(final long num) {
@@ -503,7 +512,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skip(long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
      */
     @Override
     default BagX<T> skip(final long num) {
@@ -521,7 +530,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default BagX<T> takeWhile(final Predicate<? super T> p) {
@@ -529,7 +538,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default BagX<T> dropWhile(final Predicate<? super T> p) {
@@ -537,7 +546,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default BagX<T> takeUntil(final Predicate<? super T> p) {
@@ -545,7 +554,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default BagX<T> dropUntil(final Predicate<? super T> p) {
@@ -553,7 +562,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> BagX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -561,7 +570,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#slice(long, long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
     @Override
     default BagX<T> slice(final long from, final long to) {
@@ -569,7 +578,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> BagX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -581,15 +590,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
         return (BagX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> BagX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier, final Collector<? super T, A, D> downstream) {
-        return (BagX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
 
-    @Override
-    default <K> BagX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (BagX) LazyCollectionX.super.grouped(classifier);
-    }
 
     @Override
     default <U> BagX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -597,7 +598,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> BagX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -614,7 +615,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#permutations()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
      */
     @Override
     default BagX<ReactiveSeq<T>> permutations() {
@@ -623,7 +624,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#combinations(int)
      */
     @Override
     default BagX<ReactiveSeq<T>> combinations(final int size) {
@@ -632,7 +633,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#combinations()
      */
     @Override
     default BagX<ReactiveSeq<T>> combinations() {
@@ -671,7 +672,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#plusInOrder(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#plusInOrder(java.lang.Object)
      */
     @Override
     default BagX<T> plusInOrder(final T e) {
@@ -680,7 +681,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycle(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#cycle(int)
      */
     @Override
     default BagX<T> cycle(final long times) {
@@ -689,7 +690,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#cycle(com.oath.cyclops.sequence.Monoid, int)
      */
     @Override
     default BagX<T> cycle(final Monoid<T> m, final long times) {
@@ -698,7 +699,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default BagX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -707,7 +708,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default BagX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -716,7 +717,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
     default <U> BagX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -726,7 +727,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> BagX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -735,7 +736,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> BagX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -745,7 +746,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
      */
     @Override
     default BagX<Tuple2<T, Long>> zipWithIndex() {
@@ -754,7 +755,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#distinct()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#distinct()
      */
     @Override
     default BagX<T> distinct() {
@@ -763,7 +764,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted()
      */
     @Override
     default BagX<T> sorted() {
@@ -772,7 +773,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default BagX<T> sorted(final Comparator<? super T> c) {
@@ -781,7 +782,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default BagX<T> skipWhile(final Predicate<? super T> p) {
@@ -790,7 +791,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default BagX<T> skipUntil(final Predicate<? super T> p) {
@@ -799,7 +800,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default BagX<T> limitWhile(final Predicate<? super T> p) {
@@ -808,7 +809,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default BagX<T> limitUntil(final Predicate<? super T> p) {
@@ -817,7 +818,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default BagX<T> intersperse(final T value) {
@@ -826,7 +827,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#shuffle()
      */
     @Override
     default BagX<T> shuffle() {
@@ -835,7 +836,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipLast(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
     @Override
     default BagX<T> skipLast(final int num) {
@@ -844,7 +845,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitLast(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
     @Override
     default BagX<T> limitLast(final int num) {
@@ -853,17 +854,17 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default BagX<T> onEmptySwitch(final Supplier<? extends PBag<T>> supplier) {
+    default BagX<T> onEmptySwitch(final Supplier<? extends PersistentBag<T>> supplier) {
         if (isEmpty())
             return BagX.fromIterable(supplier.get());
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default BagX<T> onEmpty(final T value) {
@@ -872,7 +873,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default BagX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -881,16 +882,16 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> BagX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> BagX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (BagX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (BagX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
      */
     @Override
     default BagX<T> shuffle(final Random random) {
@@ -899,7 +900,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> BagX<U> ofType(final Class<? extends U> type) {
@@ -908,7 +909,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default BagX<T> filterNot(final Predicate<? super T> fn) {
@@ -917,7 +918,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#notNull()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#notNull()
      */
     @Override
     default BagX<T> notNull() {
@@ -926,7 +927,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default BagX<T> removeAllS(final Stream<? extends T> stream) {
@@ -935,7 +936,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default BagX<T> removeAllI(final Iterable<? extends T> it) {
@@ -944,7 +945,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default BagX<T> removeAll(final T... values) {
@@ -953,7 +954,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default BagX<T> retainAllI(final Iterable<? extends T> it) {
@@ -962,7 +963,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default BagX<T> retainAllS(final Stream<? extends T> seq) {
@@ -971,23 +972,13 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default BagX<T> retainAll(final T... values) {
 
         return (BagX<T>) LazyCollectionX.super.retainAll(values);
     }
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> BagX<U> cast(final Class<? extends U> type) {
-
-        return (BagX<U>) LazyCollectionX.super.cast(type);
-    }
-
 
 
     @Override
@@ -1033,7 +1024,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
     @Override
     default <R> BagX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (BagX<R>)LazyCollectionX.super.retry(fn);
+        return (BagX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
@@ -1067,8 +1058,8 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     @Override
-    default BagX<T> prepend(T... values) {
-        return (BagX<T>)LazyCollectionX.super.prepend(values);
+    default BagX<T> prependAll(T... values) {
+        return (BagX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override
@@ -1102,7 +1093,7 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
     }
 
     @Override
-    default BagX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    default BagX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (BagX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
@@ -1142,16 +1133,16 @@ public interface BagX<T> extends To<BagX<T>>,PBag<T>, LazyCollectionX<T>, OnEmpt
 
 
     @Override
-    default <S, U, R> BagX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> BagX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (BagX<R>)LazyCollectionX.super.zip3(second,third,fn3);
     }
 
     @Override
-    default <T2, T3, T4, R> BagX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> BagX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (BagX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
-    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Xor<T, R>>> fn) {
+    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).to().bagX(Evaluation.LAZY);
     }
 

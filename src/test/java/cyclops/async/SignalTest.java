@@ -1,6 +1,6 @@
 package cyclops.async;
 
-import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
+import static com.oath.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -20,37 +20,37 @@ public class SignalTest {
 	public synchronized void incrementFound(){
 		found++;
 	}
-	
+
 	@Test
 	public void signalFromStream(){
 		Signal<Integer> q = Signal.topicBackedSignal();
 		Stream<Integer> stage =q.getDiscrete().stream().limit(2);
 		q.fromStream(Stream.of(1,1,1,2,2));
-		
-		 
+
+
 		int sum  = stage.map(it -> it*100).reduce(0, (acc,n) -> acc+n);
-		
+
 		 assertThat(sum,is(300));
 	}
-	
+
 	@Test
 	public void signalDiscrete3(){
 		try{
 			Signal<Integer> q = Signal.queueBackedSignal();
 
 			new SimpleReact().ofAsync(
-					() -> q.set(1), 
+					() -> q.set(1),
 					() -> q.set(2),
-					()-> { 
-						sleep(20); 
-						return q.set(4); 
-					}, 
-					()-> { 
-						sleep(400); 
-						q.getDiscrete().close(); 
+					()-> {
+						sleep(20);
+						return q.set(4);
+					},
+					()-> {
+						sleep(400);
+						q.getDiscrete().close();
 						return 1;
 					});
-			
+
 			parallel().fromStream(q.getDiscrete().streamCompletableFutures())
 					.then(it -> "*" +it)
 					.peek(it -> incrementFound())
@@ -60,39 +60,39 @@ public class SignalTest {
 			assertThat(found, is(3));
 		}
 	}
-	
+
 	@Test
 	public void signalDiscrete1(){
 		for(int i=0;i<100;i++){
 			resetFound();
 			try{
 				Signal<Integer> q = Signal.queueBackedSignal();
-				
-				
+
+
 				new SimpleReact().ofAsync(() -> q.set(1), ()-> q.set(1),()-> {sleep(200); return q.set(1); }, ()-> { sleep(40); q.close(); return 1;});
-				
-				
-				
+
+
+
 				parallel().fromStreamOfFutures(q.getDiscrete().streamCompletableFutures())
 						.then(it -> "*" +it)
 						.peek(it -> incrementFound())
 						.peek(it -> System.out.println(it))
 						.block();
-				
-				
-				
-				
-					
+
+
+
+
+
 			}finally{
 				assertThat(found,is(1));
 			}
 		}
-		
-		
+
+
 	}
 	private synchronized void resetFound() {
 		found=0;
-		
+
 	}
 
 	@Test
@@ -102,29 +102,29 @@ public class SignalTest {
 			resetFound();
 			try{
 				Signal<Integer> q =Signal.queueBackedSignal();
-				
-				
+
+
 				new SimpleReact().ofAsync(() -> q.set(1), ()-> q.set(1),()-> {sleep(20); return q.set(1); }, ()-> { sleep(40); q.close(); return 1;});
-				
-				
-				
+
+
+
 				parallel().fromStream(q.getContinuous().streamCompletableFutures())
 						.then(it -> "*" +it)
 						.peek(it -> incrementFound())
 						.peek(it -> System.out.println(it))
 						.block();
-				
-				
-				
-				
-					
+
+
+
+
+
 			}finally{
 				assertThat(found,is(3));
 			}
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testDiscreteMultipleStreamsQueue(){
 		 Signal<Integer> s = Signal.queueBackedSignal();
@@ -165,6 +165,6 @@ public class SignalTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 }

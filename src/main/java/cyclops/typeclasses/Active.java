@@ -1,42 +1,38 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Monoids;
 import cyclops.control.*;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.*;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.list;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.FunctionK;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
-import cyclops.typeclasses.monad.ComposedTraverse;
 import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
-import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
-import static cyclops.collections.mutable.ListX.kindKleisli;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * Provide easy access to all typeclasses for a type
@@ -237,7 +233,7 @@ public class Active<W,T> implements Filters<T>,
     public <C,R> NarrowedApplicative<C,R> concreteAp(Kleisli<W,C,Function<T,R>> widen){
         return new NarrowedApplicative<>(widen);
     }
-    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W,C,Xor<T,R>> widen){
+    public <C,R> NarrowedTailRec<C,R> concreteTailRec(Kleisli<W,C,Either<T,R>> widen){
         return new NarrowedTailRec<>(widen);
     }
     @AllArgsConstructor
@@ -256,7 +252,7 @@ public class Active<W,T> implements Filters<T>,
     }
     @AllArgsConstructor
     class NarrowedTailRec<C,R>{
-        private final Kleisli<W,C,Xor<T,R>>  narrow;
+        private final Kleisli<W,C,Either<T,R>>  narrow;
 
         public  Active<W, R> tailRec(T initial,Function<? super T,? extends C> fn){
             return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
@@ -340,7 +336,7 @@ public class Active<W,T> implements Filters<T>,
 
         return zip(p2, p3,Tuple::tuple);
     }
-    public <R> Active<W,R> zip(Active<W,T> p2,Active<W,T> p3,Fn3<? super T,? super T, ? super T,? extends R> zipper){
+    public <R> Active<W,R> zip(Active<W,T> p2,Active<W,T> p3,Function3<? super T,? super T, ? super T,? extends R> zipper){
         Applicative<W> ap = def1.applicative();
 
         Function<T, Function<T,Function<T, R>>> fn = a->b->c->zipper.apply(a,b,c);
@@ -381,17 +377,12 @@ public class Active<W,T> implements Filters<T>,
         return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
     }
 
-    @Deprecated
-    public Plus plusUnsafe(){
-        return new Plus(def1.monadPlus().get());
-    }
-
 
     public Maybe<Unfolds> unfolds(){
-        return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::none);
+        return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::nothing);
     }
     public Maybe<Plus> plus(){
-        return def1.monadPlus().visit(e->Maybe.just(new Plus(e)),Maybe::none);
+        return def1.monadPlus().visit(e->Maybe.just(new Plus(e)),Maybe::nothing);
     }
 
     @AllArgsConstructor
@@ -424,22 +415,22 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
-    public <R> Active<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Xor<T, R>>> fn){
+    public <R> Active<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Either<T, R>>> fn){
         return Active.of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
     }
-    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Xor<T, R>>> fn){
+    public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Either<T, R>>> fn){
         return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
     @AllArgsConstructor
     public class Unfolds{
         private final Unfoldable<W> unfoldable;
 
-        public <R, T> Active<W, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
+        public <R, T> Active<W, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
             return Active.of(unfoldable.unfold(b,fn),def1);
         }
 
         public <T> Active<W, T> replicate(long n, T value) {
-            return unfold(n,i -> i>0? Optional.of(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Optional.empty());
+            return unfold(n,i -> i>0? Option.some(tuple(value, i<Long.MAX_VALUE? i-1 : i)) : Option.none());
         }
         public <R> Nested<W, W,R> replicate(Function<? super T,Long> fn, Function<? super T,R> mapper) {
             return Nested.of(def1.functor().map(value->replicate(fn.apply(value), mapper.apply(value)).getSingle(),single),def1,def1);
@@ -452,7 +443,7 @@ public class Active<W,T> implements Filters<T>,
         }
 
         public <R> Active<W,R> none() {
-            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+            return unfold((T) null, t -> Option.<Tuple2<R, T>>none());
         }
         public <T> Active<W,T> one(T a) {
             return replicate(1, a);
@@ -521,10 +512,7 @@ public class Active<W,T> implements Filters<T>,
         return Product.of(this,active);
     }
 
-    @Override
-    public <U> Active<W,U> cast(Class<? extends U> type) {
-        return (Active<W,U>)Transformable.super.cast(type);
-    }
+
 
     @Override
     public <U> Active<W,U> ofType(Class<? extends U> type) {
@@ -556,28 +544,31 @@ public class Active<W,T> implements Filters<T>,
         return (Active<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
     }
 
-  
-    public <T2, R1, R2, R3, R> Active<W,R> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3, 
-                                                    final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
+    public <T2, R1, R2, R3, R> Active<W,R> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3,
+                                                    final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return of(Comprehensions.of(def1.monad()).forEach4(this.single,value1,value2,value3,yieldingFunction),def1);
     }
 
-   
-    public <T2, R1, R2, R3, R> Maybe<Active<W,R>> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3, final Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
+    public <T2, R1, R2, R3, R> Maybe<Active<W,R>> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3, final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction, final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
-            return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach4(this.single,value1,value2,value3,filterFunction,yieldingFunction),def1));
+            return Maybe.nothing();
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+
+        return Maybe.just(of(Comprehensions.of(mZero).forEach4(this.single,value1,value2,value3,filterFunction,yieldingFunction),def1));
     }
 
 
-    public <T2, R1, R2, R> Active<W,R> forEach3(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    public <T2, R1, R2, R> Active<W,R> forEach3(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         return of(Comprehensions.of(def1.monad()).forEach3(this.single,value1,value2,yieldingFunction),def1);
     }
 
-    public <T2, R1, R2, R> Maybe<Active<W,R>> forEach3(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    public <T2, R1, R2, R> Maybe<Active<W,R>> forEach3(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction, final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
-            return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach3(this.single,value1,value2,filterFunction,yieldingFunction),def1));
+            return Maybe.nothing();
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+        return Maybe.just(of(Comprehensions.of(mZero).forEach3(this.single,value1,value2,filterFunction,yieldingFunction),def1));
     }
 
 
@@ -588,8 +579,9 @@ public class Active<W,T> implements Filters<T>,
 
     public <R1, R> Maybe<Active<W,R>> forEach2(Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, Boolean> filterFunction, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         if(!def1.monadZero().isPresent())
-            return Maybe.none();
-        return Maybe.just(of(Comprehensions.of(def1.monadZero().get()).forEach2(this.single,value1,filterFunction,yieldingFunction),def1));
+            return Maybe.nothing();
+        MonadZero<W> mZero = def1.monadZero().orElse(null);
+        return Maybe.just(of(Comprehensions.of(mZero).forEach2(this.single,value1,filterFunction,yieldingFunction),def1));
     }
 
     public String show(){

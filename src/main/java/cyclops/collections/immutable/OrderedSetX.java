@@ -1,37 +1,36 @@
 package cyclops.collections.immutable;
 
 
-import com.aol.cyclops2.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
-import com.aol.cyclops2.types.foldable.ConvertableSequence;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import cyclops.data.Comparators;
+import cyclops.data.TreeSet;
+import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.foldable.Evaluation;
 
 
-import com.aol.cyclops2.data.collections.extensions.standard.LazyCollectionX;
+import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Xor;
+import cyclops.control.Either;
+import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.orderedSetX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.foldable.To;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.Collectable;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.OrderedPSet;
-import org.pcollections.POrderedSet;
-import org.pcollections.PStack;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.foldable.To;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.reactive.Spouts;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+import com.oath.cyclops.types.persistent.PersistentSortedSet;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -40,7 +39,6 @@ import java.lang.reflect.Proxy;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 /**
@@ -51,7 +49,7 @@ import java.util.stream.Stream;
  *
  * @param <T> the type of elements held in this collection
  */
-public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, POrderedSet<T>> {
+public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T>, LazyCollectionX<T>, OnEmptySwitch<T, PersistentSortedSet<T>> {
 
     OrderedSetX<T> lazy();
     OrderedSetX<T> eager();
@@ -62,7 +60,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     static class CompletableOrderedSetX<T> implements InvocationHandler {
         Future<OrderedSetX<T>> future = Future.future();
-        public boolean complete(POrderedSet<T> result){
+        public boolean complete(PersistentSortedSet<T> result){
             return future.complete(OrderedSetX.fromIterable(result));
         }
 
@@ -75,20 +73,20 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            OrderedSetX<T> target = future.get();
+            OrderedSetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
     /**
      * Narrow a covariant OrderedSetX
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  OrderedSetX<? extends Fruit> set = OrderedSetX.of(apple,bannana);
      *  OrderedSetX<Fruit> fruitSet = OrderedSetX.narrowK(set);
      * }
      * </pre>
-     * 
+     *
      * @param setX to narrowK generic type
      * @return OrderedSetX with narrowed type
      */
@@ -97,7 +95,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
     /**
      * Create a OrderedSetX that contains the Integers between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -110,7 +108,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     /**
      * Create a OrderedSetX that contains the Longs between skip and take
-     * 
+     *
      * @param start
      *            Number of range to skip from
      * @param end
@@ -123,26 +121,26 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     /**
      * Unfold a function into a OrderedSetX
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  OrderedSetX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
-     * 
+     *
      * //(1,2,3,4,5)
-     * 
+     *
      * }</code>
-     * 
-     * @param seed Initial value 
+     *
+     * @param seed Initial value
      * @param unfolder Iteratively applied function, terminated by an zero Optional
      * @return OrderedSetX generated by unfolder function
      */
-    static <U, T> OrderedSetX<T> unfold(final U seed, final Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    static <U, T> OrderedSetX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder).to().orderedSetX(Evaluation.LAZY);
     }
 
     /**
      * Generate a OrderedSetX from the provided Supplier up to the provided limit number of times
-     * 
+     *
      * @param limit Max number of elements to generate
      * @param s Supplier to generate OrderedSetX elements
      * @return OrderedSetX generated from the provided Supplier
@@ -155,7 +153,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     /**
      * Create a OrderedSetX by iterative application of a function to an initial element up to the supplied limit number of times
-     * 
+     *
      * @param limit Max number of elements to generate
      * @param seed Initial element
      * @param f Iteratively applied to each element to generate the next element
@@ -167,20 +165,37 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     }
 
-    public static <T> OrderedSetX<T> of(final T... values) {
+    public static <T extends Comparable<? super T>> OrderedSetX<T> of(final T... values) {
+
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> of(final Comparator<T> comp,final T... values) {
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> identityOrNatural(final T... values) {
         return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
     }
 
-    public static <T> OrderedSetX<T> empty() {
+    public static <T extends Comparable<? super T>> OrderedSetX<T> empty() {
+        TreeSet<T> t = TreeSet.empty();
+        Reducer<PersistentSortedSet<T>,T> r = Reducers.toPOrderedSet();
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.empty(),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                      t,null,r,Evaluation.LAZY);
+    }
+    public static <T> OrderedSetX<T> empty(Comparator<T> comp) {
+        return new LazyPOrderedSetX<>(
+                TreeSet.empty(comp),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+    }
+    public static <T extends Comparable<? super T>>OrderedSetX<T> singleton(final T value) {
+        return new LazyPOrderedSetX<>(
+                                      TreeSet.singleton(value),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
     }
 
-    public static <T> OrderedSetX<T> singleton(final T value) {
+    public static <T>OrderedSetX<T> singleton(Comparator<T> comp,final T value) {
         return new LazyPOrderedSetX<>(
-                                      OrderedPSet.singleton(value),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                TreeSet.singleton(comp,value),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
     }
-    OrderedSetX<T> type(Reducer<? extends POrderedSet<T>> reducer);
+    OrderedSetX<T> type(Reducer<? extends PersistentSortedSet<T>,T> reducer);
 
     /**
      *
@@ -204,15 +219,15 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     /**
      * Reduce a Stream to a OrderedSetX,
-     * 
-     * 
+     *
+     *
      * <pre>
-     * {@code 
+     * {@code
      *    OrderedSetX<Integer> set = OrderedSetX.fromStream(Stream.of(1,2,3));
-     * 
+     *
      *  //set = [1,2,3]
      * }</pre>
-     * 
+     *
      *
      * @param stream to convert
      * @param stream to convert
@@ -227,7 +242,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     /**
      * Construct a OrderedSetX from an Publisher
-     * 
+     *
      * @param publisher
      *            to construct OrderedSetX from
      * @return OrderedSetX
@@ -239,9 +254,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     public static <T> OrderedSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof OrderedSetX)
             return (OrderedSetX) iterable;
-        if (iterable instanceof POrderedSet)
+        if (iterable instanceof PersistentSortedSet)
             return new LazyPOrderedSetX<>(
-                                          (POrderedSet) iterable,null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                          (PersistentSortedSet) iterable,null,Reducers.toPOrderedSet(),Evaluation.LAZY);
 
 
         return new LazyPOrderedSetX<>(null,
@@ -262,7 +277,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
     @Override
     default Collectable<T> collectors(){
-        
+
 
         return Seq.seq(this);
     }
@@ -272,88 +287,88 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<T>)LazyCollectionX.super.materialize();
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> OrderedSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                                     BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                    Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                                    Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (OrderedSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <R1, R2, R3, R> OrderedSetX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
                                                     BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                    Fn3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                    Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                                    Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> stream3,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                    Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (OrderedSetX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> OrderedSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                                 BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                                Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (OrderedSetX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <R1, R2, R> OrderedSetX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
                                                 BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
-                                                Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                                Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (OrderedSetX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> OrderedSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (OrderedSetX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.data.collections.extensions.CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> OrderedSetX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
                                             BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (OrderedSetX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
-     * 
+     *
      * <pre>
-     * {@code 
-     *   
+     * {@code
+     *
      *     OrderedSetX.of(1,2,3)
      *                 .map(i->i*2)
      *                 .coflatMap(s -> s.reduce(0,(a,b)->a+b))
-     *      
+     *
      *     //OrderedSetX[12]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn mapping function
      * @return Transformed OrderedSetX
      */
@@ -361,6 +376,11 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
        return fn.andThen(r ->  this.<R>unit(r))
                 .apply(this);
 
+    }
+
+    @Override
+    default boolean containsValue(T item) {
+        return LazyCollectionX.super.containsValue(item);
     }
 
     @Override
@@ -379,13 +399,13 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     @Override
-    default <R> OrderedSetX<R> unit(final Collection<R> col) {
+    default <R> OrderedSetX<R> unit(final Iterable<R> col) {
         return fromIterable(col);
     }
 
     @Override
     default <R> OrderedSetX<R> unit(final R value) {
-        return singleton(value);
+        return singleton(Comparators.naturalOrderIdentityComparator(),value);
     }
 
     @Override
@@ -395,7 +415,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     //@Override
     default <R> OrderedSetX<R> emptyUnit() {
-        return empty();
+        return empty(Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
@@ -404,19 +424,24 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return ReactiveSeq.fromIterable(this);
     }
 
+    @Override
+    default boolean isEmpty() {
+        return PersistentSortedSet.super.isEmpty();
+    }
+
     /**
     * Combine two adjacent elements in a OrderedSetX using the supplied BinaryOperator
     * This is a stateful grouping & reduction operation. The emitted of a combination may in turn be combined
     * with it's neighbor
     * <pre>
-    * {@code 
+    * {@code
     *  OrderedSetX.of(1,1,2,3)
                  .combine((a, b)->a.equals(b),SemigroupK.intSum)
                  .listX()
-                 
-    *  //ListX(3,4) 
+
+    *  //ListX(3,4)
     * }</pre>
-    * 
+    *
     * @param predicate Test to see if two neighbors should be joined
     * @param op Reducer to combine neighbors
     * @return Combined / Partially Reduced OrderedSetX
@@ -432,41 +457,33 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     @Override
-    default <X> OrderedSetX<X> from(final Collection<X> col) {
+    default <X> OrderedSetX<X> from(final Iterable<X> col) {
         return fromIterable(col);
     }
 
   //  @Override
-    default <T> Reducer<POrderedSet<T>> monoid() {
+    default <T> Reducer<PersistentSortedSet<T>,T> monoid() {
         return Reducers.toPOrderedSet();
     }
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plus(java.lang.Object)
-     */
+
     @Override
     public OrderedSetX<T> plus(T e);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#plusAll(java.util.Collection)
-     */
+
     @Override
-    public OrderedSetX<T> plusAll(Collection<? extends T> list);
+    public OrderedSetX<T> plusAll(Iterable<? extends T> list);
+
+
+    @Override
+    public OrderedSetX<T> removeValue(T e);
+
+
+    @Override
+    public OrderedSetX<T> removeAll(Iterable<? extends T> list);
 
     /* (non-Javadoc)
-     * @see org.pcollections.PSet#minus(java.lang.Object)
-     */
-    @Override
-    public OrderedSetX<T> minus(Object e);
-
-    /* (non-Javadoc)
-     * @see org.pcollections.PSet#minusAll(java.util.Collection)
-     */
-    @Override
-    public OrderedSetX<T> minusAll(Collection<?> list);
-
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#reverse()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#reverse()
      */
     @Override
     default OrderedSetX<T> reverse() {
@@ -474,7 +491,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> filter(final Predicate<? super T> pred) {
@@ -482,7 +499,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#map(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
      */
     @Override
     default <R> OrderedSetX<R> map(final Function<? super T, ? extends R> mapper) {
@@ -490,7 +507,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
     default <R> OrderedSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -508,7 +525,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limit(long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
     @Override
     default OrderedSetX<T> limit(final long num) {
@@ -516,7 +533,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skip(long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
      */
     @Override
     default OrderedSetX<T> skip(final long num) {
@@ -524,7 +541,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> takeWhile(final Predicate<? super T> p) {
@@ -532,7 +549,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> dropWhile(final Predicate<? super T> p) {
@@ -540,7 +557,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> takeUntil(final Predicate<? super T> p) {
@@ -548,7 +565,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> dropUntil(final Predicate<? super T> p) {
@@ -556,7 +573,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
      */
     @Override
     default <R> OrderedSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
@@ -564,7 +581,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#slice(long, long)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
     @Override
     default OrderedSetX<T> slice(final long from, final long to) {
@@ -572,7 +589,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted(java.util.function.Function)
      */
     @Override
     default <U extends Comparable<? super U>> OrderedSetX<T> sorted(final Function<? super T, ? extends U> function) {
@@ -584,16 +601,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
-    @Override
-    default <K, A, D> OrderedSetX<Tuple2<K, D>> grouped(final Function<? super T, ? extends K> classifier,
-                                                        final Collector<? super T, A, D> downstream) {
-        return (OrderedSetX) LazyCollectionX.super.grouped(classifier, downstream);
-    }
 
-    @Override
-    default <K> OrderedSetX<Tuple2<K, ReactiveSeq<T>>> grouped(final Function<? super T, ? extends K> classifier) {
-        return (OrderedSetX) LazyCollectionX.super.grouped(classifier);
-    }
 
     @Override
     default <U> OrderedSetX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -601,7 +609,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
      */
     @Override
     default <U, R> OrderedSetX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
@@ -617,7 +625,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#permutations()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
      */
     @Override
     default OrderedSetX<ReactiveSeq<T>> permutations() {
@@ -626,7 +634,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#combinations(int)
      */
     @Override
     default OrderedSetX<ReactiveSeq<T>> combinations(final int size) {
@@ -635,7 +643,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#combinations()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#combinations()
      */
     @Override
     default OrderedSetX<ReactiveSeq<T>> combinations() {
@@ -674,7 +682,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#plusInOrder(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#plusInOrder(java.lang.Object)
      */
     @Override
     default OrderedSetX<T> plusInOrder(final T e) {
@@ -683,7 +691,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-    * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(int)
+    * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#cycle(int)
     */
     @Override
     default LinkedListX<T> cycle(final long times) {
@@ -694,7 +702,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycle(com.aol.cyclops2.sequence.Monoid, int)
+     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#cycle(com.oath.cyclops.sequence.Monoid, int)
      */
     @Override
     default LinkedListX<T> cycle(final Monoid<T> m, final long times) {
@@ -704,7 +712,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#cycleWhile(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleWhile(final Predicate<? super T> predicate) {
@@ -714,7 +722,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#cycleUntil(java.util.function.Predicate)
      */
     @Override
     default LinkedListX<T> cycleUntil(final Predicate<? super T> predicate) {
@@ -724,7 +732,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.stream.Stream)
      */
     @Override
     default <U> OrderedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -734,7 +742,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <S, U> OrderedSetX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -743,7 +751,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
      */
     @Override
     default <T2, T3, T4> OrderedSetX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
@@ -753,7 +761,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zipWithIndex()
      */
     @Override
     default OrderedSetX<Tuple2<T, Long>> zipWithIndex() {
@@ -762,7 +770,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#distinct()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#distinct()
      */
     @Override
     default OrderedSetX<T> distinct() {
@@ -771,7 +779,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted()
      */
     @Override
     default OrderedSetX<T> sorted() {
@@ -780,7 +788,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#sorted(java.util.Comparator)
      */
     @Override
     default OrderedSetX<T> sorted(final Comparator<? super T> c) {
@@ -789,7 +797,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> skipWhile(final Predicate<? super T> p) {
@@ -798,7 +806,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> skipUntil(final Predicate<? super T> p) {
@@ -807,7 +815,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> limitWhile(final Predicate<? super T> p) {
@@ -816,7 +824,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> limitUntil(final Predicate<? super T> p) {
@@ -825,7 +833,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
      */
     @Override
     default OrderedSetX<T> intersperse(final T value) {
@@ -834,7 +842,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#shuffle()
      */
     @Override
     default OrderedSetX<T> shuffle() {
@@ -843,7 +851,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#skipLast(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
     @Override
     default OrderedSetX<T> skipLast(final int num) {
@@ -852,7 +860,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#limitLast(int)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
     @Override
     default OrderedSetX<T> limitLast(final int num) {
@@ -861,17 +869,17 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
-    default OrderedSetX<T> onEmptySwitch(final Supplier<? extends POrderedSet<T>> supplier) {
+    default OrderedSetX<T> onEmptySwitch(final Supplier<? extends PersistentSortedSet<T>> supplier) {
         if (this.isEmpty())
             return OrderedSetX.fromIterable(supplier.get());
         return this;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmpty(java.lang.Object)
      */
     @Override
     default OrderedSetX<T> onEmpty(final T value) {
@@ -880,7 +888,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default OrderedSetX<T> onEmptyGet(final Supplier<? extends T> supplier) {
@@ -889,16 +897,16 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#onEmptyThrow(java.util.function.Supplier)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#onEmptyError(java.util.function.Supplier)
      */
     @Override
-    default <X extends Throwable> OrderedSetX<T> onEmptyThrow(final Supplier<? extends X> supplier) {
+    default <X extends Throwable> OrderedSetX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.onEmptyThrow(supplier);
+        return (OrderedSetX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#shuffle(java.util.Random)
      */
     @Override
     default OrderedSetX<T> shuffle(final Random random) {
@@ -907,7 +915,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#ofType(java.lang.Class)
      */
     @Override
     default <U> OrderedSetX<U> ofType(final Class<? extends U> type) {
@@ -916,7 +924,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#filterNot(java.util.function.Predicate)
      */
     @Override
     default OrderedSetX<T> filterNot(final Predicate<? super T> fn) {
@@ -925,7 +933,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#notNull()
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#notNull()
      */
     @Override
     default OrderedSetX<T> notNull() {
@@ -934,7 +942,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
     default OrderedSetX<T> removeAllS(final Stream<? extends T> stream) {
@@ -943,7 +951,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
      */
     @Override
     default OrderedSetX<T> removeAllI(final Iterable<? extends T> it) {
@@ -952,7 +960,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default OrderedSetX<T> removeAll(final T... values) {
@@ -961,7 +969,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
     default OrderedSetX<T> retainAllI(final Iterable<? extends T> it) {
@@ -970,7 +978,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
     default OrderedSetX<T> retainAllS(final Stream<? extends T> seq) {
@@ -979,7 +987,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
      */
     @Override
     default OrderedSetX<T> retainAll(final T... values) {
@@ -987,14 +995,6 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
         return (OrderedSetX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.collections.extensions.persistent.LazyCollectionX#cast(java.lang.Class)
-     */
-    @Override
-    default <U> OrderedSetX<U> cast(final Class<? extends U> type) {
-
-        return (OrderedSetX<U>) LazyCollectionX.super.cast(type);
-    }
 
     @Override
     default <C extends Collection<? super T>> OrderedSetX<C> grouped(final int size, final Supplier<C> supplier) {
@@ -1038,7 +1038,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
     @Override
     default <R> OrderedSetX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (OrderedSetX<R>)LazyCollectionX.super.retry(fn);
+        return (OrderedSetX<R>)LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
@@ -1072,8 +1072,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     @Override
-    default OrderedSetX<T> prepend(T... values) {
-        return (OrderedSetX<T>)LazyCollectionX.super.prepend(values);
+    default OrderedSetX<T> prependAll(T... values) {
+        return (OrderedSetX<T>)LazyCollectionX.super.prependAll(values);
     }
 
     @Override
@@ -1107,7 +1107,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
     }
 
     @Override
-    default OrderedSetX<T> plusLoop(Supplier<Optional<T>> supplier) {
+    default OrderedSetX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (OrderedSetX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
     static <T> OrderedSetX<T> fromIterator(Iterator<T> iterator) {
@@ -1147,18 +1147,18 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
 
 
     @Override
-    default <S, U, R> OrderedSetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> OrderedSetX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (OrderedSetX<R>)LazyCollectionX.super.zip3(second,third,fn3);
     }
 
     @Override
-    default <T2, T3, T4, R> OrderedSetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> OrderedSetX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (OrderedSetX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
-    public static  <T,R> OrderedSetX<R> tailRec(T initial, Function<? super T, ? extends OrderedSetX<? extends Xor<T, R>>> fn) {
-        ListX<Xor<T, R>> lazy = ListX.of(Xor.secondary(initial));
-        ListX<Xor<T, R>> next = lazy.eager();
+    public static  <T,R> OrderedSetX<R> tailRec(T initial, Function<? super T, ? extends OrderedSetX<? extends Either<T, R>>> fn) {
+        ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
+        ListX<Either<T, R>> next = lazy.eager();
         boolean newValue[] = {true};
         for(;;){
 
@@ -1173,7 +1173,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,POrderedSet<T>, LazyC
                 break;
 
         }
-        return Xor.sequencePrimary(next).get().to().orderedSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ListX.empty()).to().orderedSetX(Evaluation.LAZY);
     }
 
 }

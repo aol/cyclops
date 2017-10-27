@@ -1,4 +1,4 @@
-package com.aol.cyclops2.sum.types;
+package com.oath.cyclops.sum.types;
 
 import cyclops.control.Maybe;
 import org.junit.Test;
@@ -11,11 +11,11 @@ public class MaybeTest {
              .flatMap(i -> { System.out.println("Not maybe!"); return  Maybe.of(15);})
              .map(i -> { System.out.println("Not maybe!"); return  Maybe.of(15);})
              .map(i -> Maybe.of(20));
-            
+
     }
      @Test
     public void odd() {
-        System.out.println(even(Maybe.just(200000)).get());
+        System.out.println(even(Maybe.just(200000)).toOptional().get());
     }
 
     public Maybe<String> odd(Maybe<Integer> n) {
@@ -28,5 +28,5 @@ public class MaybeTest {
             return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
         });
     }
- 
+
 }

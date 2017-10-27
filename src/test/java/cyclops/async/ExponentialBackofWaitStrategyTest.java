@@ -11,17 +11,17 @@ import org.junit.Test;
 import cyclops.async.wait.ExponentialBackofWaitStrategy;
 import cyclops.async.wait.WaitStrategy.Offerable;
 import cyclops.async.wait.WaitStrategy.Takeable;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.util.SimpleTimer;
 
 public class ExponentialBackofWaitStrategyTest {
 	int called = 0;
-	Takeable<String> takeable = ()->{ 
+	Takeable<String> takeable = ()->{
 		called++;
 		if(called<150)
 			return null;
 		return "hello";
 	};
-	Offerable offerable = ()->{ 
+	Offerable offerable = ()->{
 		called++;
 		if(called<150)
 			return false;
@@ -50,7 +50,7 @@ public class ExponentialBackofWaitStrategyTest {
 		Queue<String> q = new Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
 									new ExponentialBackofWaitStrategy<>(),
 									new ExponentialBackofWaitStrategy<>());
-		
+
 		q.offer("hello");
 		assertThat(q.get(),equalTo("hello"));
 	}

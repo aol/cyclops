@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monad;
 
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.Monoid;
 import cyclops.typeclasses.functions.MonoidK;
@@ -9,7 +9,7 @@ import cyclops.typeclasses.functions.MonoidK;
 public interface MonadPlus<CRE> extends MonadZero<CRE>{
 
      <T> Monoid<Higher<CRE,T>> monoid();
-        
+
     default <T> Monoid<Higher<CRE,T>> narrowMonoid(){
        return (Monoid)monoid();
    }
@@ -21,9 +21,9 @@ public interface MonadPlus<CRE> extends MonadZero<CRE>{
     default <T> Higher<CRE, T> zero(){
         return this.<T>monoid().zero();
     }
-    
+
     default <T> Higher<CRE,T> plus(Higher<CRE, T> a, Higher<CRE, T> b){
-        return this.<T>narrowMonoid().apply(a,b);         
+        return this.<T>narrowMonoid().apply(a,b);
     }
 
     default <T> Higher<CRE, T> sum(ListX<Higher<CRE, T>> list) {

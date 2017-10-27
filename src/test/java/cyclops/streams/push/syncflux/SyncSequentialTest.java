@@ -1,15 +1,16 @@
 package cyclops.streams.push.syncflux;
 
-import com.aol.cyclops2.streams.BaseSequentialTest;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
+import cyclops.control.Option;
 import cyclops.control.Maybe;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -105,13 +106,13 @@ public class SyncSequentialTest extends BaseSequentialTest {
     }
     @Test
     public void prependPlay(){
-        System.out.println(of(1,2,3).prepend(100,200,300).collect(Collectors.toList()));
+        System.out.println(of(1,2,3).prependAll(100,200,300).collect(Collectors.toList()));
 
 
     }
     @Test
     public void splitAtExp(){
-        of(1, 2, 3).peek(e->System.out.println("Peeking! " +e)).splitAt(0).map( (a,b)->{
+        of(1, 2, 3).peek(e->System.out.println("Peeking! " +e)).splitAt(0).transform( (a, b)->{
             a.printOut();
             b.printOut();
             return null;
@@ -142,9 +143,9 @@ public class SyncSequentialTest extends BaseSequentialTest {
  //       t.v2.printOut();
 
 
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
         System.out.println("Second!");
-        assertThat(t.v2.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().limit(1).toList(),equalTo(ListX.of(1)));
 
     }
     @Test
@@ -155,15 +156,15 @@ public class SyncSequentialTest extends BaseSequentialTest {
         //       t.v2.printOut();
 
 
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
         System.out.println("Second!");
-        assertThat(t.v2.cycle().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().cycle().limit(1).toList(),equalTo(ListX.of(1)));
 
     }
     @Test
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
 //        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
     }
     @Test
@@ -172,15 +173,15 @@ public class SyncSequentialTest extends BaseSequentialTest {
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = stream.duplicate();
 
 
-        assertThat(Streamable.fromStream(dup.v1.limit(1)).toList(),equalTo(ListX.of(1)));
-        assertThat(Streamable.fromStream(dup.v2.skip(1)).toList(),equalTo(ListX.of()));
+        assertThat(Streamable.fromStream(dup._1().limit(1)).toList(),equalTo(ListX.of(1)));
+        assertThat(Streamable.fromStream(dup._2().skip(1)).toList(),equalTo(ListX.of()));
 
     }@Test
     public void limitSkip2(){
         ReactiveSeq<Integer> stream = of(1);
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = stream.duplicate();
-        assertThat(dup.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(dup.v2.skip(1).toList(),equalTo(ListX.of()));
+        assertThat(dup._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(dup._2().skip(1).toList(),equalTo(ListX.of()));
 
 
 
@@ -196,9 +197,9 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
 
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
-                t.v1.limit(1), t.v2.skip(1));
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t.v2.skip(1).toList(),equalTo(ListX.of()));
+                t._1().limit(1), t._2().skip(1));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().skip(1).toList(),equalTo(ListX.of()));
 
 
     }
@@ -210,9 +211,9 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
 
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
-                t.v1.limit(1), t.v2.skip(1));
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t.v2.skip(1).toList(),equalTo(ListX.of()));
+                t._1().limit(1), t._2().skip(1));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().skip(1).toList(),equalTo(ListX.of()));
 
 
     }
@@ -221,7 +222,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
 
     }
     @Test
@@ -230,14 +231,14 @@ public class SyncSequentialTest extends BaseSequentialTest {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(),equalTo(ListX.of(1)));
 
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
     }
 
     @Test
     public void duplicateDuplicate(){
         for(int k=0;k<ITERATIONS;k++) {
             assertThat(of(1, 2, 3).duplicate()
-                    .v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+                    ._1().duplicate()._1().duplicate()._1().toListX(), equalTo(ListX.of(1, 2, 3)));
         }
 
     }
@@ -245,28 +246,28 @@ public class SyncSequentialTest extends BaseSequentialTest {
     public void duplicateDuplicateDuplicate(){
         for(int k=0;k<ITERATIONS;k++) {
             assertThat(of(1, 2, 3).duplicate()
-                    .v1.duplicate().v1.duplicate().v1.duplicate().v1.toListX(), equalTo(ListX.of(1, 2, 3)));
+                    ._1().duplicate()._1().duplicate()._1().duplicate()._1().toListX(), equalTo(ListX.of(1, 2, 3)));
         }
 
     }
     @Test
     public void skipDuplicateSkip() {
-        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
-        assertThat(of(1, 2, 3).duplicate().v2.skip(1).duplicate().v2.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._2().skip(1).duplicate()._2().skip(1).toListX(), equalTo(ListX.of(3)));
     }
     @Test
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Optional<Integer> head1 = dup.v1.limit(1).to().optional().flatMap(l -> {
+        Optional<Integer> head1 = dup._1().limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup.v2.skip(1).triplicate();
-        Optional<Integer> head2 = dup2.v1.limit(1).to().optional().flatMap(l -> {
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> dup2 = dup._2().skip(1).triplicate();
+        Optional<Integer> head2 = dup2._1().limit(1).to().optional().flatMap(l -> {
             return l.size() > 0 ? Optional.of(l.get(0)) : Optional.empty();
         });
-       assertThat(dup2.v2.skip(1).toListX(),equalTo(ListX.of(3)));
+       assertThat(dup2._2().skip(1).toListX(),equalTo(ListX.of(3)));
 
-        assertThat(of(1, 2, 3).duplicate().v1.skip(1).duplicate().v1.skip(1).toListX(), equalTo(ListX.of(3)));
+        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toListX(), equalTo(ListX.of(3)));
     }
 
 
@@ -274,27 +275,27 @@ public class SyncSequentialTest extends BaseSequentialTest {
     public void splitThenSplit(){
         assertThat(of(1,2,3).to().optional(),equalTo(Optional.of(ListX.of(1,2,3))));
        // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
-        System.out.println("split " + of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toListX());
-        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
+        System.out.println("split " + of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toListX());
+        assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
     }
     @Test
     public void testSplitAtHead() {
 
-        assertEquals(Optional.empty(), of().splitAtHead().v1);
-        assertEquals(asList(), of().splitAtHead().v2.toList());
+        assertEquals(Option.none(), of().splitAtHead()._1());
+        assertEquals(asList(), of().splitAtHead()._2().toList());
 
-        assertEquals(Optional.of(1), of(1).splitAtHead().v1);
-        assertEquals(asList(), of(1).splitAtHead().v2.toList());
+        assertEquals(Option.of(1), of(1).splitAtHead()._1());
+        assertEquals(asList(), of(1).splitAtHead()._2().toList());
 
-        assertEquals(Optional.of(1), of(1, 2).splitAtHead().v1);
-        assertEquals(asList(2), of(1, 2).splitAtHead().v2.toList());
+        assertEquals(Option.of(1), of(1, 2).splitAtHead()._1());
+        assertEquals(asList(2), of(1, 2).splitAtHead()._2().toList());
 
-        assertEquals(Optional.of(1), of(1, 2, 3).splitAtHead().v1);
-        assertEquals(Optional.of(2), of(1, 2, 3).splitAtHead().v2.splitAtHead().v1);
-        assertEquals(Optional.of(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v1);
-        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead().v2.toList());
-         assertEquals(asList(3), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.toList());
-        assertEquals(asList(), of(1, 2, 3).splitAtHead().v2.splitAtHead().v2.splitAtHead().v2.toList());
+        assertEquals(Option.of(1), of(1, 2, 3).splitAtHead()._1());
+        assertEquals(Option.of(2), of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+        assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+        assertEquals(asList(2, 3), of(1, 2, 3).splitAtHead()._2().toList());
+         assertEquals(asList(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
+        assertEquals(asList(), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
     }
 
 }

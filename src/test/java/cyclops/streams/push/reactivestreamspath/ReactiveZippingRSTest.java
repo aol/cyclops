@@ -1,11 +1,11 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static cyclops.stream.Spouts.of;
+import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
 public class ReactiveZippingRSTest {
@@ -41,14 +41,14 @@ public class ReactiveZippingRSTest {
 		 .zip( of(100,200,300,400).limit(4))
 		 .to(Streamable::fromStream).collect(CyclopsCollectors.toList());**/
 
-		assertThat(list.get(0).v1,is(1));
-		assertThat(list.get(0).v2,is(100));
-		assertThat(list.get(1).v1,is(2));
-		assertThat(list.get(1).v2,is(200));
-		assertThat(list.get(2).v1,is(3));
-		assertThat(list.get(2).v2,is(300));
-		assertThat(list.get(3).v1,is(4));
-		assertThat(list.get(3).v2,is(400));
+		assertThat(list.get(0)._1(),is(1));
+		assertThat(list.get(0)._2(),is(100));
+		assertThat(list.get(1)._1(),is(2));
+		assertThat(list.get(1)._2(),is(200));
+		assertThat(list.get(2)._1(),is(3));
+		assertThat(list.get(2)._2(),is(300));
+		assertThat(list.get(3)._1(),is(4));
+		assertThat(list.get(3)._2(),is(400));
 
 
 
@@ -91,14 +91,14 @@ public class ReactiveZippingRSTest {
 												.to(Streamable::fromStream).collect(Collectors.toList());
 		System.out.println(list);
 		
-		List<Integer> right = Spouts.fromIterable(list).map(t -> t.v2).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 		
-		List<Integer> left = Spouts.fromIterable(list).map(t -> t.v1).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
 		
@@ -112,16 +112,16 @@ public class ReactiveZippingRSTest {
 												.to(Streamable::fromStream).collect(Collectors.toList());
 		
 		System.out.println(list);
-		List<Integer> right = Spouts.fromIterable(list).map(t -> t.v2).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
 		
-		List<Integer> left = Spouts.fromIterable(list).map(t -> t.v1).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
-		List<Character> three = Spouts.fromIterable(list).map(t -> t.v3).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Character> three = Spouts.fromIterable(list).map(t -> t._3()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
 		
 		
@@ -134,19 +134,19 @@ public class ReactiveZippingRSTest {
 												
 												.to(Streamable::fromStream).collect(Collectors.toList());
 		System.out.println(list);
-		List<Integer> right = Spouts.fromIterable(list).map(t -> t.v2).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,not(hasItem(300)));
 		assertThat(right,not(hasItem(400)));
 		
-		List<Integer> left = Spouts.fromIterable(list).map(t -> t.v1).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 		
-		List<Character> three = Spouts.fromIterable(list).map(t -> t.v3).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Character> three = Spouts.fromIterable(list).map(t -> t._3()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
 	
-		List<String> four = Spouts.fromIterable(list).map(t -> t.v4).to(Streamable::fromStream).collect(Collectors.toList());
+		List<String> four = Spouts.fromIterable(list).map(t -> t._4()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
 		
 		
@@ -161,13 +161,13 @@ public class ReactiveZippingRSTest {
 											.to(Streamable::fromStream).collect(Collectors.toList());
 				
 	
-		List<Integer> right = Spouts.fromIterable(list).map(t -> t.v2).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 		
-		List<Integer> left = Spouts.fromIterable(list).map(t -> t.v1).to(Streamable::fromStream).collect(Collectors.toList());
+		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
@@ -178,8 +178,8 @@ public class ReactiveZippingRSTest {
 													.zip( of(100,200,300,400))
 													.to(Streamable::fromStream).collect(Collectors.toList());
 		
-		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0).v1));
-		assertThat(asList(100,200,300,400),hasItem(list.get(0).v2));
+		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
+		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
 		
 		
 		
@@ -253,10 +253,10 @@ public class ReactiveZippingRSTest {
 		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).to(Streamable::fromStream).toList();
 
 		assertEquals(2, list.size());
-		assertTrue(asList(1, 2).contains(list.get(0).v1));
-		assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+		assertTrue(asList(1, 2).contains(list.get(0)._1()));
+		assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 	}
 
@@ -287,10 +287,10 @@ public class ReactiveZippingRSTest {
 		List<Tuple2<Integer, String>> list = of(1, 2).zip(of("a", "b", "c", "d")).to(Streamable::fromStream).toList();
 
 		assertEquals(2, list.size());
-		assertTrue(asList(1, 2).contains(list.get(0).v1));
-		assertTrue("" + list.get(1).v2, asList(1, 2).contains(list.get(1).v1));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(0).v2));
-		assertTrue(asList("a", "b", "c", "d").contains(list.get(1).v2));
+		assertTrue(asList(1, 2).contains(list.get(0)._1()));
+		assertTrue("" + list.get(1)._2(), asList(1, 2).contains(list.get(1)._1()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(0)._2()));
+		assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
 	}
 
@@ -320,7 +320,7 @@ public class ReactiveZippingRSTest {
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().to(Streamable::fromStream).toList());
 
-		assertThat(of("a").zipWithIndex().map(t -> t.v2).findFirst().get(), is(0l));
+		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
 		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().to(Streamable::fromStream).toList());
 
 	}
@@ -332,9 +332,9 @@ public class ReactiveZippingRSTest {
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
-		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
-		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		assertTrue(u1._2().toList().containsAll(asList("a", "b", "c")));
 
 	}
 
@@ -345,9 +345,9 @@ public class ReactiveZippingRSTest {
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
-		assertTrue(u1.v1.limit(2).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1, 2)));
+		assertTrue(u1._1().limit(2).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1, 2)));
 
-		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		assertTrue(u1._2().toList().containsAll(asList("a", "b", "c")));
 
 	}
 
@@ -358,10 +358,10 @@ public class ReactiveZippingRSTest {
 
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
 
-		assertTrue(u1.v1.limit(1).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1)));
+		assertTrue(u1._1().limit(1).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1)));
 
-		assertTrue(u1.v2.limit(2).to(Streamable::fromStream).toList().containsAll(asList("a", "b")));
-		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1._2().limit(2).to(Streamable::fromStream).toList().containsAll(asList("a", "b")));
+		assertTrue(u1._3().toList().containsAll(asList(2l, 3l, 4l)));
 
 	}
 
@@ -372,10 +372,10 @@ public class ReactiveZippingRSTest {
 
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>> u1 = ReactiveSeq.unzip3(s.get());
 
-		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
-		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
-		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1._2().toList().containsAll(asList("a", "b", "c")));
+		assertTrue(u1._3().toList().containsAll(asList(2l, 3l, 4l)));
 
 	}
 
@@ -387,12 +387,12 @@ public class ReactiveZippingRSTest {
 
 		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
 
-		assertTrue(u1.v1.toList().containsAll(Arrays.asList(1, 2, 3)));
+		assertTrue(u1._1().toList().containsAll(Arrays.asList(1, 2, 3)));
 
-		assertTrue(u1.v2.toList().containsAll(asList("a", "b", "c")));
+		assertTrue(u1._2().toList().containsAll(asList("a", "b", "c")));
 
-		assertTrue(u1.v3.toList().containsAll(asList(2l, 3l, 4l)));
-		assertTrue(u1.v4.toList().containsAll(asList('z', 'y', 'x')));
+		assertTrue(u1._3().toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1._4().toList().containsAll(asList('z', 'y', 'x')));
 
 	}
 
@@ -404,12 +404,12 @@ public class ReactiveZippingRSTest {
 
 		Tuple4<ReactiveSeq<Integer>, ReactiveSeq<String>, ReactiveSeq<Long>, ReactiveSeq<Character>> u1 = ReactiveSeq.unzip4(s.get());
 
-		assertTrue(u1.v1.limit(1).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1)));
+		assertTrue(u1._1().limit(1).to(Streamable::fromStream).toList().containsAll(Arrays.asList(1)));
 
-		assertTrue(u1.v2.limit(2).to(Streamable::fromStream).toList().containsAll(asList("a", "b")));
+		assertTrue(u1._2().limit(2).to(Streamable::fromStream).toList().containsAll(asList("a", "b")));
 
-		assertTrue(u1.v3.limit(3).to(Streamable::fromStream).toList().containsAll(asList(2l, 3l, 4l)));
-		assertTrue(u1.v4.limit(4).to(Streamable::fromStream).toList().containsAll(asList('z', 'y', 'x')));
+		assertTrue(u1._3().limit(3).to(Streamable::fromStream).toList().containsAll(asList(2l, 3l, 4l)));
+		assertTrue(u1._4().limit(4).to(Streamable::fromStream).toList().containsAll(asList('z', 'y', 'x')));
 
 	}
 	@Test
@@ -419,16 +419,16 @@ public class ReactiveZippingRSTest {
 						.toListX();
 
 		System.out.println(list);
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
 
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
-		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
 
 

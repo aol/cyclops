@@ -1,31 +1,32 @@
 package cyclops.function;
 
+import cyclops.control.Option;
 import cyclops.control.Reader;
+import cyclops.function.checked.*;
 import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Try;
-import cyclops.collections.box.MutableInt;
-import com.aol.cyclops2.internal.invokedynamic.CheckedTriFunction;
+import com.oath.cyclops.util.box.MutableInt;
+import cyclops.function.checked.CheckedTriFunction;
 import cyclops.monads.WitnessType;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.Wither;
-import org.jooq.lambda.fi.util.function.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 
 import java.util.Objects;
-import java.util.Optional;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 
 /**
  * Fluent API for working with java.util.Function types
- * 
- * Supports 
+ *
+ * Supports
  *      caching (memoization)
  *      aspects (before, after, around)
  *      logging
@@ -36,8 +37,8 @@ import java.util.function.*;
  *      Partial application
  *      Currying
  *      Pattern Matching
- *   
- * 
+ *
+ *
  * @author johnmcclean
  *
  */
@@ -50,8 +51,8 @@ public class FluentFunctions {
      * FluentFunctions.ofChecked(this::exceptionalFirstTime)
     					.recover(IOException.class, ()->"hello boo!")
     					.println()
-    					.get()
-     * 
+    					.getValue()
+     *
      * }
      * </pre>
      * @param supplier that throws CheckedExcpetion
@@ -63,24 +64,24 @@ public class FluentFunctions {
 
     /**
      * Construct a FluentSupplier from a Supplier
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
     		       .maximumSize(1000)
     		       .expireAfterWrite(10, TimeUnit.MINUTES)
     		       .build();
-    
+
     	called=0;
     	Supplier<Integer> fn = FluentFunctions.of(this::getOne)
     												  .name("myFunction")
-    												  .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
-    	fn.get();
-    	fn.get();
-    	fn.get();
-    	
+    												  .memoize((key,f)->cache.getValue(key,()->f.applyHKT(key)));
+    	fn.getValue();
+    	fn.getValue();
+    	fn.getValue();
+
     	//called == 1
-     * 
+     *
      * }
      * </pre>
      * @param supplier to make Fluent
@@ -96,15 +97,15 @@ public class FluentFunctions {
 
     /**
      * Construct a FluentFunction from a CheckedFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FluentFunctions.ofChecked(this::exceptionalFirstTime)
     					.recover(IOException.class, in->in+"boo!")
     					.println()
     					.applyHKT("hello ")
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
      * @param fn CheckedFunction
@@ -116,9 +117,9 @@ public class FluentFunctions {
 
     /**
      * Construct a FluentFunction from a Function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FluentFunctions.of(this::addOne)
     				   .around(advice->advice.proceed(advice.param+1))
     				   .println()
@@ -135,9 +136,9 @@ public class FluentFunctions {
 
     /**
      * Construct a FluentBiFunction from a CheckedBiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * FluentFunctions.ofChecked(this::exceptionalFirstTime)
     				   .println()
     				   .retry(2,500)
@@ -154,11 +155,11 @@ public class FluentFunctions {
     /**
      * Convert a BiFunction to a FluentBiFunction
      * <pre>
-     * {@code 
+     * {@code
      * CompletableFuture<Integer> cf = FluentFunctions.of(this::add)
     												  .liftAsync(ex)
     												  .applyHKT(1,1)
-     * 
+     *
      * }
      * </pre>
      * @param fn BiFunction to convert
@@ -177,8 +178,8 @@ public class FluentFunctions {
     				   .println()
     				   .retry(2,500)
     				   .applyHKT("hello","woo!","h")
-    				   
-       } 
+
+       }
        </pre>
      * @param fn CheckedTriFunction to convert
      * @return FluentTriFunction
@@ -193,15 +194,15 @@ public class FluentFunctions {
      * Convert a CheckedTriFunction to a FluentTriFunction
      * <pre>
      * {@code
-       FluentFunctions.of(this::add)	
+       FluentFunctions.of(this::add)
     				  .matches(-1,c->c.hasValues(3).applyHKT(i->3))
     				  .applyHKT(1,1,1)
-       }  
+       }
        </pre>
      * @param fn TriFunction to convert
      * @return FluentTriFunction
      */
-    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Fn3<T1, T2, T3, R> fn) {
+    public static <T1, T2, T3, R> FluentFunctions.FluentTriFunction<T1, T2, T3, R> of(final Function3<T1, T2, T3, R> fn) {
         return new FluentTriFunction<>(
                                        fn);
     }
@@ -209,10 +210,10 @@ public class FluentFunctions {
     /**
      * Convert a statement (e.g. a method or Consumer with no return value) to an Expression. The input is returned as emitted
      * <pre>
-     * {@code 
+     * {@code
      * FluentFunctions.expression(System.out::println)
     				   .applyHKT("hello");
-    	
+
     	//hello
      * }
      * </pre>
@@ -230,7 +231,7 @@ public class FluentFunctions {
      * Convert a checked statement (e.g. a method or Consumer with no return value that throws a Checked Exception) to a
      * fluent expression (FluentFunction).  The input is returned as emitted
      * <pre>
-     * {@code 
+     * {@code
      * public void print(String input) throws IOException{
     	  System.out.println(input);
         }
@@ -252,15 +253,15 @@ public class FluentFunctions {
     /**
      * Convert a BiConsumer into a FluentBiFunction that returns it's input in a Tuple
      * <pre>
-     * {@code 
+     * {@code
      * public void withTwo(Integer a,Integer b){
     	 System.out.println(a+b);
     	}
     	FluentFunctions.expression(this::withTwo)
     				   .applyHKT(1,2)
-    				   
+
     	//returns Tuple2[1,2]
-     * 
+     *
      * }
      * </pre>
      * @param action BiConsumer
@@ -275,18 +276,18 @@ public class FluentFunctions {
 
     /**
      * Convert a CheckedBiConsumer into a FluentBiConsumer that returns it's input in a tuple
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * public void printTwo(String input1,String input2) throws IOException{
     	System.out.println(input1);
     	System.out.println(input2);
        }
-     * 
+     *
      * FluentFunctions.checkedExpression(this::printTwo)
     				   .applyHKT("hello","world");
-    				   
-    	//returns Tuple2["hello","world"]		   
+
+    	//returns Tuple2["hello","world"]
      * }
      * </pre>
      * @param action
@@ -300,7 +301,7 @@ public class FluentFunctions {
         });
     }
 
-    private static <T1, T2, T3, R> Fn3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
+    private static <T1, T2, T3, R> Function3<T1, T2, T3, R> softenTriFunction(final CheckedTriFunction<T1, T2, T3, R> fn) {
         return (t1, t2, t3) -> {
             try {
                 return fn.apply(t1, t2, t3);
@@ -484,7 +485,7 @@ public class FluentFunctions {
     }
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentSupplier<R> implements Fn0<R> {
+    public static class FluentSupplier<R> implements Function0<R> {
         private final Supplier<R> fn;
         private final String name;
 
@@ -494,7 +495,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see java.util.function.Supplier#get()
+         * @see java.util.function.Supplier#getValue()
          */
         @Override
         public R get() {
@@ -503,7 +504,7 @@ public class FluentFunctions {
 
         /**
          * Apply before advice to this Supplier
-         * 
+         *
          * @param r Runnable that represents before advice (AOP)
          * @return Returns a new Supplier with before advice attached
          */
@@ -516,7 +517,7 @@ public class FluentFunctions {
 
         /**
          * Apply after advice to this Supplier
-         * 
+         *
          * @param action Runnable that represents after advice (AOP)
          * @return Returns a new Supplier with after advice attached
          */
@@ -530,7 +531,7 @@ public class FluentFunctions {
 
         /**
          * Apply around advice to this Supplier
-         * 
+         *
          * @param around Function that captures input to this Supplier and can optionally pass on the call
          * @return Supplier with around advice attached
          */
@@ -582,7 +583,7 @@ public class FluentFunctions {
 
         /**
          * A supplier that logs it's success or error states to the provided Consumers
-         * 
+         *
          * @param logger Success logger
          * @param error Failure logger
          * @return Supplier that logs it's state
@@ -602,7 +603,7 @@ public class FluentFunctions {
 
         /**
          * A supplier that can recover from the specified exception types, using the provided Supplier
-         * 
+         *
          * @param type Recoverable exception types
          * @param onError Supplier to use on error
          * @return Supplier capable of error recovery
@@ -624,7 +625,7 @@ public class FluentFunctions {
 
         /**
          * A supplier capable of retrying on failure using an exponential backoff strategy
-         * 
+         *
          * @param times Number of times to retry
          * @param backoffStartTime Wait time before first retry
          * @return Supplier with a retry strategy
@@ -691,7 +692,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentFunction<T, R> implements Fn1<T, R>, Reader<T, R> {
+    public static class FluentFunction<T, R> implements Function1<T, R>, Reader<T, R> {
         private final Function<T, R> fn;
         private final String name;
 
@@ -709,7 +710,7 @@ public class FluentFunctions {
         }
 
         /* (non-Javadoc)
-         * @see cyclops2.function.Reader#map(java.util.function.Function)
+         * @see cyclops2.function.Reader#transform(java.util.function.Function)
          */
         @Override
         public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -727,7 +728,7 @@ public class FluentFunctions {
 
         /**
          * Apply before advice to this function, capture the input with the provided Consumer
-         * 
+         *
          * @param action LESS advice
          * @return Function with LESS advice attached
          */
@@ -740,7 +741,7 @@ public class FluentFunctions {
 
         /**
          * Apply MORE advice to this function capturing both the input and the emitted with the provided BiConsumer
-         * 
+         *
          * @param action MORE advice
          * @return  Function with MORE advice attached
          */
@@ -755,7 +756,7 @@ public class FluentFunctions {
 
         /**
          * Apply around advice to this function, captures input allows emitted to be controlled by the advice
-         * 
+         *
          * @param around Around advice
          * @return Function with Around advice attached
          */
@@ -766,7 +767,7 @@ public class FluentFunctions {
 
         /**
          * Partially applyHKT the provided value to this function, to turn it into a Supplier
-         * 
+         *
          * @param param Input param to applyHKT to this function
          * @return Supplier generated by partially applying the input param to this function
          */
@@ -810,7 +811,7 @@ public class FluentFunctions {
 
         /**
          *  A Function that logs it's success or error states to the provided Consumers
-         * 
+         *
          * @param logger Success logger
          * @param error Failure logger
          * @return Function that logs it's state
@@ -834,7 +835,7 @@ public class FluentFunctions {
         /**
          * Visit the result of this Function once it has been executed, if the Function executes successfully the
          * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         * 
+         *
          * @param eventConsumer Consumer to recieve result on successful execution
          * @param errorConsumer Consumer to recieve error on failure
          * @return Function with event vistor attached.
@@ -864,7 +865,7 @@ public class FluentFunctions {
 
         /**
          * A Function that can recover from the specified exception types, using the provided recovery Function
-         * 
+         *
          * @param type Recoverable exception types
          * @param onError Recovery function
          * @return Function capable of error recovery
@@ -886,7 +887,7 @@ public class FluentFunctions {
 
         /**
          *  A Function capable of retrying on failure using an exponential backoff strategy
-         * 
+         *
          * @param times Number of times to retry
          * @param backoffStartTime Wait time before first retry
          * @return Function with a retry strategy
@@ -915,16 +916,16 @@ public class FluentFunctions {
 
         /**
          * Generate an infinite Stream that iterates from the specified seed using the currently wrapped function
-         * 
+         *
          * e.g.
-         * 
+         *
          * <pre>
-         * {@code 
-         * FluentFunctions.of(this::addOne)	
+         * {@code
+         * FluentFunctions.of(this::addOne)
         				.iterate(95281,i->i)
         				.forEach(System.out::println);
-         * 
-         * 
+         *
+         *
          * //95282
            //95283
            //95284
@@ -933,8 +934,8 @@ public class FluentFunctions {
          * //etc
          * }
          * </pre>
-         * 
-         * 
+         *
+         *
          * @param seed initial value
          * @param mapToType Convert from supplied function return type to Stream input type
          * @return Infinite Stream
@@ -954,9 +955,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A Function that accepts and returns an Optional
+         * @return A Function that accepts and returns an Option
 
-        public FluentFunction<Optional<T>, Optional<R>> lift() {
+        public FluentFunction<Option<T>, Option<R>> lift() {
             return new FluentFunction<>(
                                         opt -> opt.map(t -> fn.applyHKT(t)));
         }*/
@@ -986,7 +987,7 @@ public class FluentFunctions {
 
         /**
          * Move this function into an asynchronous context
-         * 
+         *
          * @param ex Executor to manage operations on this function on
          * @return A CompletableFuture that contains this function
          */
@@ -1016,7 +1017,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentBiFunction<T1, T2, R> implements Fn2<T1, T2, R> {
+    public static class FluentBiFunction<T1, T2, R> implements Function2<T1, T2, R> {
         BiFunction<T1, T2, R> fn;
         private final String name;
 
@@ -1035,7 +1036,7 @@ public class FluentFunctions {
 
         /**
          * Apply before advice to this BiFunction
-         * 
+         *
          * @param action BiConsumer to recieve input parameters to BiFunction
          * @return BiFunction with before advice attached
          */
@@ -1048,11 +1049,11 @@ public class FluentFunctions {
 
         /**
          * Apply after advice to this BiFunction
-         * 
+         *
          * @param action C3 to recieve input parameters and return value from BiFunction after it has executed
          * @return BiFunction with after advice attached
          */
-        public FluentBiFunction<T1, T2, R> after(final C3<T1, T2, R> action) {
+        public FluentBiFunction<T1, T2, R> after(final Consumer3<T1, T2, R> action) {
             return withFn((t1, t2) -> {
 
                 final R result = fn.apply(t1, t2);
@@ -1063,9 +1064,9 @@ public class FluentFunctions {
 
         /**
          * Apply around advice to this BiFunction
-         * 
+         *
          * <pre>
-         * {@code 
+         * {@code
          * public int add(Integer a,Integer b ){
                return a+b;
            }
@@ -1073,11 +1074,11 @@ public class FluentFunctions {
                        .around(advice->advice.proceed1(advice.param1+1))
                        .println()
                        .applyHKT(10,1)
-         *    
+         *
          *   //12   (input = 10+1 with advice + 1 = 12)
          * }</pre>
-         * 
-         * 
+         *
+         *
          * @param around Function that allows the execution of this BiFunction to be contolled via it's input parameter
          * @return BiFunction with around advice attached
          */
@@ -1087,8 +1088,8 @@ public class FluentFunctions {
         }
 
         /**
-         * Partially applyHKT the provided parameter as the first parameter to this BiFunction to generate a Function (singleUnsafe input value)
-         * 
+         * Partially applyHKT the provided parameter as the first parameter to this BiFunction to generate a Function (single input value)
+         *
          * @param param Input parameter to Partially Applied
          * @return A Function generated from the BiFunction with the first parameter already applied
          */
@@ -1099,7 +1100,7 @@ public class FluentFunctions {
 
         /**
          * Partially applyHKT the provided parameters to this BiFunction to generate a Supplier (that takes no inputs)
-         * 
+         *
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
          * @return Supplier generated from the partial application of the provided input parameters to this BiFunction
@@ -1121,35 +1122,35 @@ public class FluentFunctions {
         /**
          * This methods creates a caching version of this BiFunction, caching is implemented via the Cacheable wrapper,
          * that can be used to wrap any concrete cache implementation
-         * 
+         *
          * E.g. to use a Guava cache for memoization
-         * 
+         *
          * <pre>
-         * {@code 
-         * 
+         * {@code
+         *
          * Cache<Object, Integer> cache = CacheBuilder.newBuilder()
                    .maximumSize(1000)
                    .expireAfterWrite(10, TimeUnit.MINUTES)
                    .build();
-        
+
                    called=0;
             BiFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                                     .name("myFunction")
-                                                                     .memoize((key,f)->cache.get(key,()->f.applyHKT(key)));
-        
+                                                                     .memoize((key,f)->cache.getValue(key,()->f.applyHKT(key)));
+
             fn.applyHKT(10,1);
             fn.applyHKT(10,1);
             fn.applyHKT(10,1);
-        
+
             assertThat(called,equalTo(1));
-         * 
-         * 
-         * 
+         *
+         *
+         *
          * }</pre>
-         * 
-         * 
+         *
+         *
          * @param cache Cache implementation wrapper
-         * 
+         *
          * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached (unless ejected from the cache)
          */
         public FluentBiFunction<T1, T2, R> memoize(final Cacheable<R> cache) {
@@ -1176,7 +1177,7 @@ public class FluentFunctions {
 
         /**
          *  A BiFunction that logs it's success or error states to the provided Consumers
-         * 
+         *
          * @param logger Success logger
          * @param error Failure logger
          * @return BiFunction that logs it's state
@@ -1198,7 +1199,7 @@ public class FluentFunctions {
         /**
          * Visit the result of this BiFunction once it has been executed, if the Function executes successfully the
          * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         * 
+         *
          * @param eventConsumer Consumer to recieve result on successful execution
          * @param errorConsumer Consumer to recieve error on failure
          * @return BiFunction with event vistor attached.
@@ -1228,7 +1229,7 @@ public class FluentFunctions {
 
         /**
          * A BiFunction that can recover from the specified exception types, using the provided recovery Function
-         * 
+         *
          * @param type Recoverable exception types
          * @param onError Recovery BiFunction
          * @return BiFunction capable of error recovery
@@ -1251,7 +1252,7 @@ public class FluentFunctions {
 
         /**
          *  A BiFunction capable of retrying on failure using an exponential backoff strategy
-         * 
+         *
          * @param times Number of times to retry
          * @param backoffStartTime Wait time before first retry
          * @return BiFunction with a retry strategy
@@ -1280,17 +1281,17 @@ public class FluentFunctions {
 
 
         /**
-         * 
+         *
          * Generate an infinite Stream from the provided seed values and mapping function.
          * The supplied mapping function is inverted taking an input of type R and returning two outputs T1, T2 (in a Tuple)
-         * 
+         *
          * <pre>
-         * {@code 
-         *   FluentFunctions.of(this::add) 
+         * {@code
+         *   FluentFunctions.of(this::add)
                             .iterate(1,2,(i)->Tuple.tuple(i,i))
                             .limit(10)
                             .printOut();
-         * 
+         *
          *   //3
                6
                12
@@ -1302,8 +1303,8 @@ public class FluentFunctions {
                768
                1536
          * }</pre>
-         * 
-         * 
+         *
+         *
          * @param seed1 Initial input parameter 1
          * @param seed2 Initial input parameter 2
          * @param mapToTypeAndSplit Reversed mapping function
@@ -1312,14 +1313,14 @@ public class FluentFunctions {
         public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final Function<R, Tuple2<T1, T2>> mapToTypeAndSplit) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2), t -> {
                 final Tuple2<T1, T2> tuple = mapToTypeAndSplit.apply(t);
-                return fn.apply(tuple.v1, tuple.v2);
+                return fn.apply(tuple._1(), tuple._2());
             });
         }
 
         /**
          * Generate an infinite Stream by applying the input parameters to this function
          * repeatedly
-         * 
+         *
          * @param input1 First input parameter
          * @param input2 Second input parameter
          * @return Infinite Stream
@@ -1339,9 +1340,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A BiFunction that accepts and returns Optionals
+         * @return A BiFunction that accepts and returns Options
          */
-        public FluentBiFunction<Optional<T1>, Optional<T2>, Optional<R>> liftOptional() {
+        public FluentBiFunction<Option<T1>, Option<T2>, Option<R>> liftOption() {
             return new FluentBiFunction<>(
                     (opt1, opt2) -> opt1.flatMap(t1 -> opt2.map(t2 -> fn.apply(t1, t2))));
         }
@@ -1356,16 +1357,16 @@ public class FluentFunctions {
 
         /**
          * Wrap this BiFunction in a CompletableFuture for asyncrhonous execution
-         * 
+         *
          * <pre>
-         * {@code 
+         * {@code
          *   FluentFunctions.of(this::add)
                             .async(ex)
                             .thenApplyAsync(f->f.applyHKT(4,1))
                             .join()
          * }</pre>
-         * 
-         * 
+         *
+         *
          * @param ex Executor to execute this BiFunction on
          * @return CompletableFuture containing BiFunction for asyncrhonous execution
          */
@@ -1378,37 +1379,37 @@ public class FluentFunctions {
          */
         @Override
         public <V> FluentBiFunction<T1, T2, V> andThen(final Function<? super R, ? extends V> after) {
-            return FluentFunctions.of(Fn2.super.andThen(after));
+            return FluentFunctions.of(Function2.super.andThen(after));
         }
 
     }
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentTriFunction<T1, T2, T3, R> implements Fn3<T1, T2, T3, R> {
-        private final Fn3<T1, T2, T3, R> fn;
+    public static class FluentTriFunction<T1, T2, T3, R> implements Function3<T1, T2, T3, R> {
+        private final Function3<T1, T2, T3, R> fn;
         private final String name;
 
-        public FluentTriFunction(final Fn3<T1, T2, T3, R> fn) {
+        public FluentTriFunction(final Function3<T1, T2, T3, R> fn) {
             this.name = null;
             this.fn = fn;
         }
 
         /* (non-Javadoc)
-         * @see com.aol.cyclops2.util.function.TriFunction#applyHKT(java.lang.Object, java.lang.Object, java.lang.Object)
+         * @see com.oath.cyclops.util.function.TriFunction#applyHKT(java.lang.Object, java.lang.Object, java.lang.Object)
          */
         @Override
         public R apply(final T1 t1, final T2 t2, final T3 t3) {
             return fn.apply(t1, t2, t3);
         }
-   
+
         /**
          * Apply before advice to this TriFunction
-         * 
+         *
          * @param action C3 to recieve the input parameters to TriFunction
          * @return TriFunction with before advice attached
          */
-        public FluentTriFunction<T1, T2, T3, R> before(final C3<T1, T2, T3> action) {
+        public FluentTriFunction<T1, T2, T3, R> before(final Consumer3<T1, T2, T3> action) {
             return withFn((t1, t2, t3) -> {
                 action.accept(t1, t2, t3);
                 return fn.apply(t1, t2, t3);
@@ -1417,11 +1418,11 @@ public class FluentFunctions {
 
         /**
          * Apply after advice to this TriFunction
-         * 
+         *
          * @param action C4 to recieve  the input parameters and result from this TriFunction
          * @return TriFunction with after advice attached
          */
-        public FluentTriFunction<T1, T2, T3, R> after(final C4<T1, T2, T3, R> action) {
+        public FluentTriFunction<T1, T2, T3, R> after(final Consumer4<T1, T2, T3, R> action) {
             return withFn((t1, t2, t3) -> {
 
                 final R result = fn.apply(t1, t2, t3);
@@ -1432,20 +1433,20 @@ public class FluentFunctions {
 
         /**
          * Apply around advic to this TriFunction
-         * 
+         *
          * <pre>
-         * {@code 
-         * 
+         * {@code
+         *
          * FluentFunctions.of((a,b,c)->a+b+c)
                           .around(advice->advice.proceed1(advice.param1+1))
                           .println()
                           .applyHKT(10,1,0)
-                          
-              //12            
+
+              //12
          * }
          * </pre>
-         * 
-         * 
+         *
+         *
          * @param around Function that gives controlling access to this Function via the Advice inout parameter
          * @return TriFunction with around advice attached
          */
@@ -1454,8 +1455,8 @@ public class FluentFunctions {
                                                                      t1, t2, t3, fn)));
         }
         /**
-         * Partially applyHKT the provided parameter as the first parameter to this TriFunction to generate a Function (singleUnsafe input value)
-         * 
+         * Partially applyHKT the provided parameter as the first parameter to this TriFunction to generate a Function (single input value)
+         *
          * @param param Input parameter to Partially Applied
          * @return A BiFunction generated from the BiFunction with the first parameter already applied
          */
@@ -1464,8 +1465,8 @@ public class FluentFunctions {
                                           PartialApplicator.partial3(param, fn));
         }
         /**
-         * Partially applyHKT the provided parameters to this BiFunction to generate a Function (singleUnsafe input)
-         * 
+         * Partially applyHKT the provided parameters to this BiFunction to generate a Function (single input)
+         *
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
          * @return Function generated from the partial application of the provided input parameters to this TriFunction
@@ -1477,7 +1478,7 @@ public class FluentFunctions {
 
         /**
          * Partially applyHKT the provided parameters to this TriFunction to generate a Supplier (that takes no inputs)
-         * 
+         *
          * @param param1 First Input parameter
          * @param param2 Second Input parameter
          * @param param3 Third Input parameter
@@ -1489,28 +1490,28 @@ public class FluentFunctions {
         }
         /**
          * Curry this BiFunction, that is convert it from a TriFunction that accepts thre input parameters to a 'chain'
-         * of three Functions that accept a singleUnsafe parameter
-         * 
+         * of three Functions that accept a single parameter
+         *
          * <pre>
-         * {@code 
+         * {@code
          * public int add(Integer a,Integer b, Integer c ){
                return a+b;
            }
-         * 
+         *
          *      FluentFunctions.of(this::add)
                                .curry()
                                .applyHKT(1)
                                .applyHKT(2)
                                .applyHKT(3);
-                               
-                //6               
-         *    
+
+                //6
+         *
          * }
          * </pre>
-         * 
-         * @return Curried function 
+         *
+         * @return Curried function
          */
-        public FluentFunction<? super T1, Fn1<? super T2, Fn1<? super T3,? extends R>>> curry() {
+        public FluentFunction<? super T1, Function1<? super T2, Function1<? super T3,? extends R>>> curry() {
             return new FluentFunction(
                                         Curry.curry3(fn));
         }
@@ -1538,7 +1539,7 @@ public class FluentFunctions {
                    called=0;
             TriFunction<Integer,Integer,Integer> fn = FluentFunctions.of(this::add)
                                                                      .name("myFunction")
-                                                                     .memoize3((key,f)->cache.get(key,()->f.applyHKT(key)));
+                                                                     .memoize3((key,f)->cache.getValue(key,()->f.applyHKT(key)));
 
             fn.applyHKT(10,1,4);
             fn.applyHKT(10,1,4);
@@ -1577,7 +1578,7 @@ public class FluentFunctions {
         }
         /**
          *  A TriFunction that logs it's success or error states to the provided Consumers
-         * 
+         *
          * @param logger Success logger
          * @param error Failure logger
          * @return TriFunction that logs it's state
@@ -1598,7 +1599,7 @@ public class FluentFunctions {
         /**
          * Visit the result of this TriFunction once it has been executed, if the Function executes successfully the
          * result will be passes to the eventConsumer, if there is an error it will be passed to the errorConsumer
-         * 
+         *
          * @param eventConsumer Consumer to recieve result on successful execution
          * @param errorConsumer Consumer to recieve error on failure
          * @return TriFunction with event vistor attached.
@@ -1624,15 +1625,15 @@ public class FluentFunctions {
         public FluentTriFunction<T1, T2, T3, R> println() {
             return log(s -> System.out.println(s), t -> t.printStackTrace());
         }
-        
+
         /**
          * A TriFunction that can recover from the specified exception types, using the provided recovery Function
-         * 
+         *
          * @param type Recoverable exception types
          * @param onError Recovery BiFunction
          * @return TriFunction capable of error recovery
          */
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final Fn3<T1, T2, T3, R> onError) {
+        public <X extends Throwable> FluentTriFunction<T1, T2, T3, R> recover(final Class<X> type, final Function3<T1, T2, T3, R> onError) {
             return FluentFunctions.of((t1, t2, t3) -> {
                 try {
                     return fn.apply(t1, t2, t3);
@@ -1649,7 +1650,7 @@ public class FluentFunctions {
         }
         /**
          *  A TriFunction capable of retrying on failure using an exponential backoff strategy
-         * 
+         *
          * @param times Number of times to retry
          * @param backoffStartTime Wait time before first retry
          * @return TriFunction with a retry strategy
@@ -1678,21 +1679,21 @@ public class FluentFunctions {
         /**
          * Generate an infinite Stream from the provided seed values and mapping function.
          * The supplied mapping function is inverted taking an input of type R and returning three outputs T1, T2 (in a Tuple)
-         * 
+         *
          * <pre>
-         * {@code 
-         *   FluentFunctions.of(this::add)  
+         * {@code
+         *   FluentFunctions.of(this::add)
                            .iterate(1,2,3,(i)->Tuple.tuple(i,i,i))
-                           .limit(2) 
+                           .limit(2)
                            .printOut();
-                           
-                           
+
+
               //6
-                18             
+                18
          * }
          * </pre>
-         * 
-         * 
+         *
+         *
          * @param seed1 Initial input parameter 1
          * @param seed2 Initial input parameter 2
          * @param seed3 Initial input parameter 3
@@ -1702,13 +1703,13 @@ public class FluentFunctions {
         public ReactiveSeq<R> iterate(final T1 seed1, final T2 seed2, final T3 seed3, final Function<R, Tuple3<T1, T2, T3>> mapToType) {
             return ReactiveSeq.iterate(fn.apply(seed1, seed2, seed3), t -> {
                 final Tuple3<T1, T2, T3> tuple = mapToType.apply(t);
-                return fn.apply(tuple.v1, tuple.v2, tuple.v3);
+                return fn.apply(tuple._1(), tuple._2(), tuple._3());
             });
         }
         /**
          * Generate an infinite Stream by applying the input parameters to this function
          * repeatedly
-         * 
+         *
          * @param input1 First input parameter
          * @param input2 Second input parameter
          * @param input3 Third input parameter
@@ -1719,9 +1720,9 @@ public class FluentFunctions {
         }
 
         /**
-         * @return A TriFunction that accepts and returns Optionals
+         * @return A TriFunction that accepts and returns Options
          */
-        public FluentTriFunction<Optional<T1>, Optional<T2>, Optional<T3>, Optional<R>> liftOptional() {
+        public FluentTriFunction<Option<T1>, Option<T2>, Option<T3>, Option<R>> liftOption() {
             return new FluentTriFunction<>(
                                            (opt1, opt2, opt3) -> opt1.flatMap(t1 -> opt2.flatMap(t2 -> opt3.map(t3 -> fn.apply(t1, t2, t3)))));
         }
@@ -1743,17 +1744,17 @@ public class FluentFunctions {
 
         /**
          * Convert this TriFunction into one that executes asynchronously and returns a CompleteableFuture with the result
-         * 
+         *
          * @param ex Executor to execute this TriFunction on
-         * @return TriFunction that executes Asynchronous 
+         * @return TriFunction that executes Asynchronous
          */
         public FluentTriFunction<T1, T2, T3, CompletableFuture<R>> liftAsync(final Executor ex) {
             return FluentFunctions.of((t1, t2, t3) -> CompletableFuture.supplyAsync(() -> fn.apply(t1, t2, t3), ex));
         }
-      
+
         /**
          * Move this function into an asynchronous context
-         * 
+         *
          * @param ex Executor to manage operations on this function on
          * @return A CompletableFuture that contains this function
          */
@@ -1762,9 +1763,9 @@ public class FluentFunctions {
         }
 
         /**
-         * Compose this TriFunction with the provided function into a singleUnsafe TriFunction.
+         * Compose this TriFunction with the provided function into a single TriFunction.
          * This TriFunction would be executed first and the result passed to the provided Function and applied there.
-         * 
+         *
          * @param after Function to execute after this one in a chain
          * @return TriFunction that executes this TriFunction and the provided Function in a chain
          */
@@ -1781,7 +1782,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped Supplier
-         * 
+         *
          * @return Result of executing wrapped Supplier
          */
         public R proceed() {
@@ -1797,7 +1798,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped Function with it's input param as captured
-         * 
+         *
          * @return  Result of executing wrapped Function
          */
         public R proceed() {
@@ -1806,7 +1807,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped Function replacing it's input param
-         * 
+         *
          * @param param Replacement parameter
          * @return Result of executing wrapped Function
          */
@@ -1823,7 +1824,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped BiFunction with it's input params as captured
-         * 
+         *
          * @return Result of executing wrapped BiFunction
          */
         public R proceed() {
@@ -1832,10 +1833,10 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped BiFunction with it's input params as captured
-         * 
+         *
          * @param param1 First replacement parameter
          * @param param2 Second replacement parameter
-         * @return Result of executing wrapped BiFunction 
+         * @return Result of executing wrapped BiFunction
          */
         public R proceed(final T1 param1, final T2 param2) {
             return fn.apply(param1, param2);
@@ -1843,7 +1844,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped BiFunction with it's second input parameter as a captured and the replacement parameter as provided
-         * 
+         *
          * @param param First replacement parameter
          * @return Result of executing wrapped BiFunction
          */
@@ -1853,7 +1854,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped BiFunction with it's first input parameter as a captured and the replacement parameter as provided
-         * 
+         *
          * @param param Second replacement parameter
          * @return Result of executing wrapped BiFunction
          */
@@ -1867,11 +1868,11 @@ public class FluentFunctions {
         public final T1 param1;
         public final T2 param2;
         public final T3 param3;
-        private final Fn3<T1, T2, T3, R> fn;
+        private final Function3<T1, T2, T3, R> fn;
 
         /**
          * Proceed and execute wrapped TriFunction with it's input params as captured
-         * 
+         *
          * @return Result of executing wrapped TriFunction
          */
         public R proceed() {
@@ -1880,7 +1881,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped TriFunction with it's input params as captured
-         * 
+         *
          * @param param1 First replacement parameter
          * @param param2 Second replacement parameter
          * @param param3 Third replacement parameter
@@ -1892,7 +1893,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped TriFunction with it's second and third input parameters as a captured and the replacement parameter as provided
-         * 
+         *
          * @param param First replacement parameter
          * @return Result of executing wrapped TriFunction
          */
@@ -1902,7 +1903,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped TriFunction with it's first and third input parameters as a captured and the replacement parameter as provided
-         * 
+         *
          * @param param Second replacement parameter
          * @return Result of executing wrapped TriFunction
          */
@@ -1912,7 +1913,7 @@ public class FluentFunctions {
 
         /**
          * Proceed and execute wrapped TriFunction with it's first and second input parameters as a captured and the replacement parameter as provided
-         * 
+         *
          * @param param Third replacement parameter
          * @return Result of executing wrapped TriFunction
          */

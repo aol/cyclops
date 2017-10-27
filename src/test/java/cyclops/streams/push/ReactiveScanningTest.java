@@ -3,7 +3,7 @@ package cyclops.streams.push;
 import cyclops.companion.Reducers;
 import org.junit.Test;
 
-import static cyclops.stream.Spouts.of;
+import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

@@ -5,14 +5,11 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.future;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.Witness.reactiveSeq;
-import cyclops.stream.ReactiveSeq;
-import org.hamcrest.Matchers;
-import org.junit.Before;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

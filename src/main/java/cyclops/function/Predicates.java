@@ -1,13 +1,12 @@
 package cyclops.function;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.util.SimpleTimer;
 import cyclops.control.Maybe;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.predicate;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.Value;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 
 import java.util.*;
@@ -20,22 +19,22 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
- * 
+ *
  * Predicates for filtering and Pattern matching
- * 
- * e.g. 
+ *
+ * e.g.
  * <pre>
- * {@code 
+ * {@code
  *  import static cyclops2.function.Predicates.greaterThan;
- *  
+ *
  *  Stream.of(1,2,3,100,200,300)
  *        .filter(greaterThan(10));
- * 
+ *
  * //Stream[100,200,300]
  * }
  * </pre>
- * 
- * 
+ *
+ *
  * @author johnmcclean
  *
  */
@@ -70,17 +69,17 @@ public class Predicates {
     }
 
     /**
-     * Method for point-free Predicate definition (helps with lambda type inferencing) 
-     * 
-     * e.g. 
+     * Method for point-free Predicate definition (helps with lambda type inferencing)
+     *
+     * e.g.
      * <pre>
-     * {@code 
+     * {@code
      *    Predicate<Integer> pred = i->i>10;
-     *   
+     *
      *    Predicates.<Integer>p(i->i>10).and(not(p(i<100));
      * }
      * </pre>
-     * 
+     *
      * @param p Supplied predicate (normally as a lambda expression)
      * @return Predicate
      */
@@ -89,18 +88,18 @@ public class Predicates {
     }
 
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *      import static cyclops2.function.Predicates.optionalPresent;
-     *      
+     *
      *      ListX.of(Optional.ofNullable(null),Optional.of(1),null)
      *            .filter(optionalPresent());
-     *            
-     *       //ListX[Optional[1]]      
+     *
+     *       //ListX[Optional[1]]
      * }
      * </pre>
-     * 
+     *
      * @return A Predicate that checks if it's input is an Optional with a value
      */
 
@@ -110,15 +109,15 @@ public class Predicates {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      *      import static cyclops2.function.Predicates.valuePresent;
-     *      
+     *
      *      ListX.of(Maybe.ofNullable(null),Maybe.just(1),null)
      *            .filter(valuePresent());
-     *            
-     *       //ListX[Maybe[1]]      
+     *
+     *       //ListX[Maybe[1]]
      * }
-     * </pre>     
+     * </pre>
      *  @return A Predicate that checks if it's input is a cyclops2-react Value (which also contains a present value)
      */
     public static <T> Predicate<T> valuePresent() {
@@ -129,15 +128,15 @@ public class Predicates {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      *      import static cyclops2.function.Predicates.valuePresent;
-     *      
+     *
      *      ListX.of(Arrays.asList(),Arrays.asList(1),null)
      *            .filter(iterablePresent());
-     *            
-     *       //ListX[List[1]]      
+     *
+     *       //ListX[List[1]]
      * }
-     * </pre>     
+     * </pre>
      * @return A Predicate that checks if it's input is an Iterable with at least one value
      */
     public static <T> Predicate<T> iterablePresent() {
@@ -147,19 +146,19 @@ public class Predicates {
     }
 
     /**
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *      import static cyclops2.function.Predicates.some;
-     *      
+     *
      *      ListX.of(Arrays.asList(),Arrays.asList(1),null, Optional.zero(),Maybe.none())
      *            .filter(some());
-     *            
-     *       //ListX[List[1]]      
+     *
+     *       //ListX[List[1]]
      * }
-     * </pre>   
-     * 
-     * @return A predicate that checks for a values presence (i.e. for standard values that they are non-null, 
+     * </pre>
+     *
+     * @return A predicate that checks for a values presence (i.e. for standard values that they are non-null,
      *  for Optionals that they are present, for cyclops2-react values that they are present and for Iterables that they are
      *  non-null).
      */
@@ -173,23 +172,23 @@ public class Predicates {
     /**
      * Alias for eq (results in nicer pattern matching dsl).
      * Returns a Predicate that checks for equality between the supplied value and the predicates input parameter
-     * 
+     *
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * import static cyclops2.function.Predicates.some
 
-     * 
+     *
      * Eval<Integer> result = Xors.future(Future.ofResult(1))
                                          .matches(c-> c.is( when(some(1)), applyHKT(10)), c->c.is(when(instanceOf(RuntimeException.class)), applyHKT(2)),otherwise(3));
-        
+
        //Eval[10]
-     * 
-     * 
+     *
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param value Value to check for equality
      * @return Predicate that checks for equality with the supplied value
      */
@@ -199,27 +198,27 @@ public class Predicates {
 
     /**
      * wildcard predicate
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  import static cyclops2.function.Predicates.__
-     * 
+     *
      *  Eval<String> result = Xors.listOfValues(1,new MyCase(4,5,6))
                                 .matches(c->c.is(when(__,Predicates.has(4,5,6)),transform("rec")),otherwise("n/a"));
-        
+
         //Eval["rec"]
-     * 
+     *
      * }
      * </pr>
-     * 
-     * 
+     *
+     *
      */
     public static final Predicate __ = test -> true;
 
     /**
      * @see Predicates#__
      * @return A Wildcard predicate, always returns true
-     * 
+     *
      */
     public static final <Y> Predicate<Y> any() {
         return __;
@@ -229,24 +228,24 @@ public class Predicates {
     };
 
     /**
-     * Match against any object that is an instance of supplied type
-     * 
+     * MatchType against any object that is an instance of supplied type
+     *
      * <pre>
-     * {@code 
-     *  import static com.aol.cyclops2.control.Matchable.whenGuard;
-     *  import static com.aol.cyclops2.control.Matchable.otherwise;
-        import static com.aol.cyclops2.control.Matchable.transform;
+     * {@code
+     *  import static com.oath.cyclops.control.Matchable.whenGuard;
+     *  import static com.oath.cyclops.control.Matchable.otherwise;
+        import static com.oath.cyclops.control.Matchable.transform;
      *  import static cyclops2.function.Predicates.eq;
      *  import static cyclops2.function.Predicates.any;
-     *  
+     *
      *  Matchable.of(Arrays.asList(1,2,3))
                     .matches(c->c.is(whenGuard(eq(1),any(Integer.class),eq(4)),transform("2")),otherwise("45"));
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
-     * @param c Class type to match against
+     *
+     *
+     * @param c Class type to fold against
      * @return Predicate that mathes against type
      */
     public static final <Y> Predicate<Y> any(final Class<Y> c) {
@@ -259,31 +258,31 @@ public class Predicates {
 
     /**
      * Check for universal equality (Object#equals)
-     * 
+     *
      * Filtering example
      * <pre>
-     * {@code 
+     * {@code
      *  ReactiveSeq.of(1,2,3).filter(anyOf(not(eq(2)),in(1,10,20)));
      *  //ReactiveSeq[1]
-     * 
+     *
      * }
      * </pre>
-     * 
-     * Pattern Matching Example 
-     * 
+     *
+     * Pattern Matching Example
+     *
      *  <pre>
-     *  {@code 
+     *  {@code
      *   Eval<String> url = Xors.url(new URL("http://www.aol.com/path?q=hello"))
                                      .on$12_45()
                                      .matches(c->c.is(when(eq("http"),in("www.aol.com","aol.com"),any(),not(eq("q=hello!"))), transform("correct")),otherwise("miss"));
-       
+
         //Eval.now("correct");
-     *  
-     *  
+     *
+     *
      *  }
      *  </pre>
-     * 
-     * @param value Value to check equality of 
+     *
+     * @param value Value to check equality of
      * @return Predicate for equality
      */
     public static <V> Predicate<V> eq(final V value) {
@@ -300,21 +299,21 @@ public class Predicates {
      *  null eqv to absent, embedded value equivalency, non-values converted to values before testing
      *.
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      *   Stream.of(Maybe.of(2))
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
-     *   
-     *   //Maybe[2]       
-     *          
+     *
+     *   //Maybe[2]
+     *
      *   Stream.of(2)
      *         .filter(eqv(Maybe.of(2)))
      *         .forEach(System.out::println);
-     *         
+     *
      *   //2      (passes filter as equivalent to Maybe[2])
      * }</pre>
-     * 
+     *
      * @param value
      * @return
      */

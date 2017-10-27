@@ -5,10 +5,9 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import cyclops.collections.immutable.PersistentMapX;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import cyclops.function.Reducer;
-import cyclops.companion.Reducers;
 
 public class PersistentMapXs {
 
@@ -41,10 +40,11 @@ public class PersistentMapXs {
     }
 
     public static <K, V> PersistentMapX<K, V> toPMapX(final Stream<Tuple2<K, V>> stream) {
-        return (PersistentMapX<K, V>) toPMapX().mapReduce(stream);
+        Reducer<PersistentMapX<K, V>, Tuple2<K, V>> r = toPMapX();
+        return r.mapReduce(stream);
     }
 
-    public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
+    public static <K, V> Reducer<PersistentMapX<K, V>,Tuple2<K,V>> toPMapX() {
         return Reducers.toPMapX();
     }
 

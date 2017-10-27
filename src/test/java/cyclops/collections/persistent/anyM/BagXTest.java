@@ -1,20 +1,20 @@
 package cyclops.collections.persistent.anyM;
 
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.AbstractAnyMSeqTest;
 import cyclops.collections.immutable.BagX;
-import cyclops.collections.immutable.OrderedSetX;
+import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import org.jooq.lambda.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.List;
-
 import static java.util.Comparator.comparing;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 
@@ -24,19 +24,19 @@ public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.bagX,T> empty() {
 		return AnyM.fromBagX(BagX.empty());
 	}
 	 /* (non-Javadoc)
-     * @see com.aol.cyclops2.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
+     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
      */
     @Override
     @Test
     public void whenGreaterThan2() {
-       
+
     }
 
     @Test
@@ -49,5 +49,9 @@ public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 
 
 
+	}
+	@Test
+	public void testScanLeftStringConcatMonoid() {
+		assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), hasItems("", "a", "ab", "abc"));
 	}
 }

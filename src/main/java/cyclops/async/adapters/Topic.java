@@ -7,15 +7,15 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.types.futurestream.Continuation;
+import com.oath.cyclops.types.futurestream.Continuation;
 import cyclops.async.QueueFactories;
-import org.pcollections.HashTreePMap;
-import org.pcollections.PMap;
-import org.pcollections.PVector;
-import org.pcollections.TreePVector;
+import com.oath.cyclops.types.persistent.PersistentMap;
 
-import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.react.async.subscription.Continueable;
+
+import cyclops.data.HashMap;
+import cyclops.data.Seq;
+import cyclops.reactive.ReactiveSeq;
+import com.oath.cyclops.react.async.subscription.Continueable;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -24,7 +24,7 @@ import lombok.Synchronized;
 /**
  * A class that can accept input streams and generate emitted streams where data sent in the Topic is guaranteed to be
  * provided to all Topic subsribers
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Data type for the Topic
@@ -34,7 +34,7 @@ public class Topic<T> implements Adapter<T> {
     @Getter(AccessLevel.PACKAGE)
     private final DistributingCollection<T> distributor = new DistributingCollection<T>();
     @Getter(AccessLevel.PACKAGE)
-    private volatile PMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashTreePMap.empty();
+    private volatile PersistentMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
     private final QueueFactory<T> factory;
@@ -65,15 +65,15 @@ public class Topic<T> implements Adapter<T> {
      * Topic will maintain a queue for each Subscribing Stream
      * If a Stream is finished with a Topic it is good practice to disconnect from the Topic
      * so messages will no longer be stored for that Stream
-     * 
+     *
      * @param stream
      */
     @Synchronized("lock")
-    public void disconnect(final Stream<T> stream) {
+    public void disconnect(final ReactiveSeq<T> stream) {
 
-        distributor.removeQueue(streamToQueue.get(stream));
+        distributor.removeQueue(streamToQueue.getOrElse(stream, new Queue<>()));
 
-        this.streamToQueue = streamToQueue.minus(stream);
+        this.streamToQueue = streamToQueue.remove(stream);
         this.index--;
     }
 
@@ -82,7 +82,7 @@ public class Topic<T> implements Adapter<T> {
         final Queue<T> queue = this.getNextQueue();
         final ReactiveSeq<R> stream = streamCreator.apply(queue);
 
-        this.streamToQueue = streamToQueue.plus(stream, queue);
+        this.streamToQueue = streamToQueue.put(stream, queue);
         return stream;
     }
 
@@ -99,7 +99,7 @@ public class Topic<T> implements Adapter<T> {
     /**
      * Generating a streamCompletableFutures will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
-     * 
+     *
      * @return Stream of CompletableFutures that can be used as input into a SimpleReact concurrent dataflow
      */
     @Override
@@ -128,6 +128,9 @@ public class Topic<T> implements Adapter<T> {
 
     private Queue<T> getNextQueue() {
 
+        System.out.println("Sub size " + this.distributor.getSubscribers()
+                .size());
+        System.out.println("Subs" + this.distributor.getSubscribers());
         if (index >= this.distributor.getSubscribers()
                                      .size()) {
 
@@ -135,12 +138,12 @@ public class Topic<T> implements Adapter<T> {
 
         }
         return this.distributor.getSubscribers()
-                               .get(index++);
+                               .getOrElse(index++,null);
     }
 
     /**
      * Close this Topic
-     * 
+     *
      * @return true if closed
      */
     @Override
@@ -156,19 +159,19 @@ public class Topic<T> implements Adapter<T> {
      */
     public Signal<Integer> getSizeSignal(final int index) {
         return this.distributor.getSubscribers()
-                               .get(index)
+                               .getOrElse(index,null)
                                .getSizeSignal();
     }
 
     public void setSizeSignal(final int index, final Signal<Integer> s) {
         this.distributor.getSubscribers()
-                        .get(index)
+                        .getOrElse(index, null)
                         .setSizeSignal(s);
     }
 
     /**
-     * Add a singleUnsafe datapoint to this Queue
-     * 
+     * Add a single datapoint to this Queue
+     *
      * @param data data to add
      * @return self
      */
@@ -187,19 +190,18 @@ public class Topic<T> implements Adapter<T> {
 
         private static final long serialVersionUID = 1L;
         @Getter
-        private volatile PVector<Queue<T>> subscribers = TreePVector.empty();
+        private volatile Seq<Queue<T>> subscribers = Seq.empty();
 
         private final Object lock = new Object();
 
         @Synchronized("lock")
         public void addQueue(final Queue<T> q) {
-            subscribers = subscribers.plus(q);
+            subscribers = subscribers.append(q);
         }
 
         @Synchronized("lock")
         public void removeQueue(final Queue<T> q) {
-            subscribers = subscribers.minus(q);
-
+            subscribers = subscribers.removeValue(q);
         }
 
         @Override

@@ -1,21 +1,22 @@
 package cyclops.collections.mutable;
 
-import com.aol.cyclops2.data.collections.extensions.standard.MapXImpl;
-import com.aol.cyclops2.types.foldable.Folds;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.BiTransformable;
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.types.recoverable.OnEmpty;
-import com.aol.cyclops2.types.recoverable.OnEmptySwitch;
-import com.aol.cyclops2.types.traversable.IterableFilterable;
-import cyclops.stream.ReactiveSeq;
+import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.persistent.PersistentMap;
+import com.oath.cyclops.data.collections.extensions.standard.MapXImpl;
+import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
+import com.oath.cyclops.types.recoverable.OnEmpty;
+import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.traversable.IterableFilterable;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
-import com.aol.cyclops2.data.collections.extensions.FluentMapX;
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.foldable.CyclopsCollectable;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import com.oath.cyclops.data.collections.extensions.FluentMapX;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -27,22 +28,22 @@ import java.util.stream.Stream;
 
 /**
  * An eXtended Map type, that offers additional eagerly executed functional style operators such as bimap, filter and more
- * 
+ *
  * @author johnmcclean
  *
  * @param <K> Key type
  * @param <V> Value type
  */
 public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMapX<K, V>, BiTransformable<K, V>, Transformable<V>, IterableFilterable<Tuple2<K, V>>, OnEmpty<Tuple2<K, V>>,
-        OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>, CyclopsCollectable<Tuple2<K, V>> {
+        OnEmptySwitch<Tuple2<K, V>, Map<K, V>>, Publisher<Tuple2<K, V>>, Folds<Tuple2<K, V>>,ReactiveStreamsTerminalOperations<Tuple2<K,V>> {
 
 
     /**
-     * 
+     *
      * @return A Collector that generates a mutable Map from a Collection of Tuple2
      */
     static <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> defaultCollector() {
-        return Collectors.toMap(t -> t.v1, t -> t.v2);
+        return Collectors.toMap(t -> t._1(), t -> t._2());
     }
 
     /**
@@ -68,7 +69,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     public <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> getCollector();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Folds#reactiveStream()
+     * @see com.oath.cyclops.types.foldable.Folds#reactiveStream()
      */
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -85,7 +86,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Wrap a Map in a MapX
-     * 
+     *
      * @param map to wrap
      * @return MapX wrapping the supplied Map
      */
@@ -94,8 +95,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /**
-     * Wrap a map in a MapX, also supplying a Collector for use in operations
-     * 
+     * Wrap a transform in a MapX, also supplying a Collector for use in operations
+     *
      * @param collector To generate new MapX's from
      * @param map to wrap
      * @return MapX wrapping the supplied Map
@@ -116,13 +117,13 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Construct a new MapX with the same collector from the supplied Stream
-     * 
+     *
      * @param stream ot Tuples to convert into a MapX
      * @return MapX
      */
     default MapX<K, V> fromStream(final ReactiveSeq<Tuple2<K, V>> stream) {
         return new MapXImpl<K,V>(
-                              stream.toMap(t -> t.v1, t -> t.v2), getCollector());
+                              stream.toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
@@ -136,36 +137,36 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#transform(java.util.function.Function)
      */
     default <KR, VR> MapX<KR, VR> flatMap(final BiFunction<? super K, ? super V, ? extends MapX<KR, VR>> fn) {
 
-        final ReactiveSeq<Tuple2<KR, VR>> s = stream().flatMap(t -> fn.apply(t.v1, t.v2)
+        final ReactiveSeq<Tuple2<KR, VR>> s = stream().flatMap(t -> fn.apply(t._1(), t._2())
                                                                       .stream());
         return new MapXImpl<>(
-                              s.<KR, VR> toMap(t -> t.v1, t -> t.v2), getCollector());
+                              s.<KR, VR> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#map(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R> MapX<K, R> map(final Function<? super V, ? extends R> fn) {
 
         final ReactiveSeq<Tuple2<K, R>> s = stream().map(t -> t.map2(v -> fn.apply(v)));
         return new MapXImpl<>(
-                              s.<K, R> toMap(t -> t.v1, t -> t.v2), getCollector());
+                              s.<K, R> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.MapX#bimap(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.MapX#bimap(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> MapX<R1, R2> bimap(final Function<? super K, ? extends R1> fn1, final Function<? super V, ? extends R2> fn2) {
         final ReactiveSeq<Tuple2<R1, V>> s1 = stream().map(t -> t.map1(v -> fn1.apply(v)));
         final ReactiveSeq<Tuple2<R1, R2>> s2 = s1.map(t -> t.map2(v -> fn2.apply(v)));
         return new MapXImpl<>(
-                              s2.<R1, R2> toMap(t -> t.v1, t -> t.v2), getCollector());
+                              s2.<R1, R2> toMap(t -> t._1(), t -> t._2()), getCollector());
     }
 
     @Override
@@ -175,47 +176,47 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     boolean isEmpty();
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#allMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#allMatch(java.util.function.Predicate)
      */
     @Override
     default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.allMatch(c);
+        return Folds.super.allMatch(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
      */
     @Override
     default boolean anyMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.anyMatch(c);
+        return Folds.super.anyMatch(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
      */
     @Override
     default boolean noneMatch(final Predicate<? super Tuple2<K, V>> c) {
-        return CyclopsCollectable.super.noneMatch(c);
+        return Folds.super.noneMatch(c);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#max(java.util.Comparator)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#max(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
-        return CyclopsCollectable.super.max(comparator);
+        return Folds.super.max(comparator);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.reactiveStream.CyclopsCollectable#min(java.util.Comparator)
+     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#min(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {
-        return CyclopsCollectable.super.min(comparator);
+        return Folds.super.min(comparator);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#plus(java.lang.Object, java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#plus(java.lang.Object, java.lang.Object)
      */
     @Override
     default MapX<K, V> plus(final K key, final V value) {
@@ -223,40 +224,32 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#insertAt(java.util.Map)
      */
     @Override
-    default MapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
+    default MapX<K, V> plusAll(final PersistentMap<? extends K, ? extends V> map) {
         return (MapX<K, V>) FluentMapX.super.plusAll(map);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minus(java.lang.Object)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#removeValue(java.lang.Object)
      */
     @Override
-    default MapX<K, V> minus(final Object key) {
+    default MapX<K, V> minus(final K key) {
         return (MapX<K, V>) FluentMapX.super.minus(key);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.data.collections.extensions.FluentMapX#minusAll(java.util.Collection)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#removeAll(java.util.Collection)
      */
     @Override
-    default MapX<K, V> minusAll(final Collection<?> keys) {
+    default MapX<K, V> minusAll(final Collection<? extends K> keys) {
         return (MapX<K, V>) FluentMapX.super.minusAll(keys);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    default <U> MapX<K, U> cast(final Class<? extends U> type) {
-
-        return (MapX<K, U>) Transformable.super.cast(type);
-    }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * @see com.oath.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     default MapX<K, V> peek(final Consumer<? super V> c) {
@@ -265,7 +258,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.Function)
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
      */
     @Override
     default <R> MapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
@@ -274,16 +267,16 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)
      */
     @Override
     default MapX<K, V> filter(final Predicate<? super Tuple2<K, V>> fn) {
         return stream().filter(fn).to()
-                       .mapX(t -> t.v1, t -> t.v2);
+                       .mapX(t -> t._1(), t -> t._2());
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.Predicate)
+     * @see com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     default MapX<K, V> filterNot(final Predicate<? super Tuple2<K, V>> fn) {
@@ -292,7 +285,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default MapX<K, V> notNull() {
@@ -301,7 +294,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.util.stream.Stream)
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
     default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -310,7 +303,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Iterable)
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
@@ -319,7 +312,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#removeAll(java.lang.Object[])
+     * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Object[])
      */
     @Override
     default MapX<K, V> removeAll(final Tuple2<K, V>... values) {
@@ -328,7 +321,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Iterable)
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
     default MapX<K, V> retainAllI(final Iterable<? extends Tuple2<K, V>> it) {
@@ -337,7 +330,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
     default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
@@ -346,7 +339,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.lambda.monads.Filters#retainAllI(java.lang.Object[])
+     * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Object[])
      */
     @Override
     default MapX<K, V> retainAll(final Tuple2<K, V>... values) {
@@ -356,7 +349,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default MapX<K, V> bipeek(final Consumer<? super K> c1, final Consumer<? super V> c2) {
@@ -364,17 +357,9 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return (MapX<K, V>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bicast(java.lang.Class, java.lang.Class)
-     */
-    @Override
-    default <U1, U2> MapX<U1, U2> bicast(final Class<U1> type1, final Class<U2> type2) {
-
-        return (MapX<U1, U2>) BiTransformable.super.bicast(type1, type2);
-    }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
     default <R1, R2> MapX<R1, R2> bitrampoline(final Function<? super K, ? extends Trampoline<? extends R1>> mapper1,
@@ -384,7 +369,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
+     * @see com.oath.cyclops.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
      */
     @Override
     default void subscribe(final Subscriber<? super Tuple2<K, V>> s) {
@@ -393,7 +378,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmpty(java.lang.Object)
+     * @see com.oath.cyclops.types.recoverable.OnEmpty#onEmpty(java.lang.Object)
      */
     @Override
     default MapX<K, V> onEmpty(final Tuple2<K, V> value) {
@@ -402,7 +387,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyGet(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmpty#onEmptyGet(java.util.function.Supplier)
      */
     @Override
     default MapX<K, V> onEmptyGet(final Supplier<? extends Tuple2<K, V>> supplier) {
@@ -410,17 +395,10 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return fromStream(stream().onEmptyGet(supplier));
     }
 
-    /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmpty#onEmptyThrow(java.util.function.Supplier)
-     */
-    @Override
-    default <X extends Throwable> MapX<K, V> onEmptyThrow(final Supplier<? extends X> supplier) {
 
-        return fromStream(stream().onEmptyThrow(supplier));
-    }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
+     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
      */
     @Override
     default MapX<K, V> onEmptySwitch(final Supplier<? extends Map<K, V>> supplier) {
@@ -431,8 +409,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a ListX via the provided transformation function
-     * 
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     *
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return ListX of transformed values
      */
     default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -442,8 +420,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a SetX via the provided transformation function
-     * 
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     *
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return SetX of transformed values
      */
     default <T> SetX<T> toSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -453,8 +431,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a SortedSetX via the provided transformation function
-     * 
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     *
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return SortedSetX of transformed values
      */
     default <T> SortedSetX<T> toSortedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -464,8 +442,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a QueueX via the provided transformation function
-     * 
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     *
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return QueueX of transformed values
      */
     default <T> QueueX<T> toQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
@@ -475,8 +453,8 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
 
     /**
      * Convert this MapX to a DequeX via the provided transformation function
-     * 
-     * @param fn Mapping function to transform each Map entry into a singleUnsafe value
+     *
+     * @param fn Mapping function to transform each Map entry into a single value
      * @return DequeX of transformed values
      */
     default <T> DequeX<T> toDequeX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {

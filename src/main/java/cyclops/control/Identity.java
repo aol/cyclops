@@ -1,39 +1,37 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.anyM.AnyMValue;
-import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.tuple.Tuple1;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.matching.Deconstruct;
+import com.oath.cyclops.types.anyM.AnyMValue;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.identity;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Identity<T> implements Higher<identity,T>, Iterable<T> {
+public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Deconstruct.Deconstruct1<T>, Serializable {
+    private static final long serialVersionUID = 1L;
     private final T value;
 
 
-    public static  <T,R> Identity<R> tailRec(T initial, Function<? super T, ? extends Identity<? extends Xor<T, R>>> fn){
-        Identity<? extends Xor<T, R>> next[] = new Identity[1];
-        next[0] = Identity.of(Xor.secondary(initial));
+    public static  <T,R> Identity<R> tailRec(T initial, Function<? super T, ? extends Identity<? extends Either<T, R>>> fn){
+        Identity<? extends Either<T, R>> next[] = new Identity[1];
+        next[0] = Identity.of(Either.left(initial));
         boolean cont = true;
         do {
 
@@ -42,7 +40,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
                 return true;
             }, __ -> false));
         } while (cont);
-        return next[0].map(Xor::get);
+        return next[0].map(x->x.visit(l->null,r->r));
     }
     public static <T> Identity<T> of(T value){
          return new Identity<>(value);
@@ -111,6 +109,11 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
         return Arrays.asList(value).iterator();
     }
 
+    @Override
+    public Tuple1<T> unapply() {
+        return Tuple.tuple(value);
+    }
+
     public static class Instances{
 
         public static InstanceDefinitions<identity> definitions(){
@@ -137,12 +140,12 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
 
                 @Override
                 public <T, R> Maybe<MonadZero<identity>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -152,7 +155,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
 
                 @Override
                 public <T> Maybe<MonadPlus<identity>> monadPlus(Monoid<Higher<identity, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -172,7 +175,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
 
                 @Override
                 public <T> Maybe<Unfoldable<identity>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -249,7 +252,7 @@ public class Identity<T> implements Higher<identity,T>, Iterable<T> {
 
             return new MonadRec<identity>(){
                 @Override
-                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<identity, R> tailRec(T initial, Function<? super T, ? extends Higher<identity, ? extends Either<T, R>>> fn) {
                    return Identity.tailRec(initial,fn.andThen(Identity::narrowK));
                 }
 

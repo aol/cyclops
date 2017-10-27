@@ -1,13 +1,7 @@
 package cyclops.typeclasses;
 
-import com.aol.cyclops2.hkt.Higher;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.function.Fn1;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.typeclasses.functions.FunctionK;
-
-import java.util.Objects;
-import java.util.function.Function;
 
 @FunctionalInterface
 public interface NaturalTransformation<W1,W2>{

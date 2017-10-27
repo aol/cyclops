@@ -19,16 +19,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import cyclops.collections.immutable.VectorX;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.stream.HeadAndTail;
+import com.oath.cyclops.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
 
@@ -48,11 +48,11 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toListX(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
     }
-        
+
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
@@ -68,7 +68,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     public void takeRightEmpty(){
         assertThat(of().takeRight(1).toListX(),equalTo(Arrays.asList()));
     }
-    
+
     @Test
     public void takeUntil(){
         assertThat(of(1,2,3,4,5).takeUntil(p->p==2).toListX().size(),greaterThan(0));
@@ -84,8 +84,8 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     @Test
     public void takeWhileEmpty(){
         assertThat(of().takeWhile(p->true).toListX(),equalTo(Arrays.asList()));
-    } 
-    
+    }
+
     @Test
     public void testOnEmptyOrdered() throws X {
         assertEquals(asList(1), of().onEmpty(1).toListX());
@@ -93,11 +93,11 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
         assertEquals(asList(2), of(2).onEmpty(1).toListX());
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2), of(2).onEmptyThrow(() -> new X()).toListX());
+        assertEquals(asList(2), of(2).onEmptyError(() -> new X()).toListX());
 
         assertEquals(asList(2, 3), of(2, 3).onEmpty(1).toListX());
         assertEquals(asList(2, 3), of(2, 3).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2, 3), of(2, 3).onEmptyThrow(() -> new X()).toListX());
+        assertEquals(asList(2, 3), of(2, 3).onEmptyError(() -> new X()).toListX());
     }
     @Test
     public void testCycle() {
@@ -107,7 +107,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     @Test
     public void testCycleTimes() {
         assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
-       
+
     }
 
     int count =0;
@@ -115,13 +115,13 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     public void testCycleWhile() {
         count =0;
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
-       
+
     }
     @Test
     public void testCycleUntil() {
         count =0;
         assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
-       
+
     }
     @Test
     public void sliding() {
@@ -134,7 +134,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
     @Test
     public void slidingIncrement() {
-        List<List<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));
@@ -145,43 +145,30 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     public void combine(){
         assertThat(of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3))); 
-                   
+                   .toListX(),equalTo(ListX.of(4,3)));
+
     }
-    @Test
-    public void groupedFunction(){
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").count(),equalTo((2L)));
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b").filter(t->t.v1.equals("a"))
-                        .map(t->t.v2).map(s->s.toListX()).singleUnsafe(),
-                            equalTo((Arrays.asList(1,2))));
-    }
-    @Test
-    public void groupedFunctionCollector(){
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).count(),equalTo((2L)));
-        assertThat(of(1,2,3).grouped(f-> f<3? "a" : "b",Collectors.toList()).filter(t->t.v1.equals("a"))
-                .map(t->t.v2).singleUnsafe(),
-                    equalTo((Arrays.asList(1,2))));
-    }
+
 	@Test
 	public void zip3(){
 		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
 												.toListX();
-		
+
 		System.out.println(list);
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
-		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
-		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+
+		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-		
-		
+
+
 	}
 	@Test
 	public void zip4(){
@@ -189,40 +176,40 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 				of(1,2,3,4,5,6).zip4(of(100,200,300,400).stream(),of('a','b','c').stream(),of("hello","world").stream())
 												.toListX();
 		System.out.println(list);
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,not(hasItem(300)));
 		assertThat(right,not(hasItem(400)));
-		
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
-		List<Character> three = list.stream().map(t -> t.v3).collect(Collectors.toList());
+
+		List<Character> three = list.stream().map(t -> t._3()).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-	
-		List<String> four = list.stream().map(t -> t.v4).collect(Collectors.toList());
+
+		List<String> four = list.stream().map(t -> t._4()).collect(Collectors.toList());
 		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void testIntersperse() {
-		
+
 		assertThat(((CollectionX<Integer>)of(1,2,3).intersperse(0)).toListX(),equalTo(Arrays.asList(1,0,2,0,3)));
-	
+
 
 
 
 	}
 
 
-	
+
 	@Test
 	public void testOfType() {
 
-		
+
 
 		assertThat((((CollectionX<Integer>)of(1, "a", 2, "b", 3).ofType(Integer.class))).toListX(),containsInAnyOrder(1, 2, 3));
 
@@ -234,7 +221,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
 	}
 
-	
+
 	private int addOne(Integer i){
 		return i+1;
 	}
@@ -250,7 +237,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	private String concat5(String a, String b, String c,String d,String e){
 		return a+b+c+d+e;
 	}
-	
+
 
 
 	@Test
@@ -263,7 +250,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	public void emptyAllCombinations() {
 		assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
 	}
-	
+
 	@Test
     public void emptyPermutations() {
         assertThat(of().permutations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList()));
@@ -281,12 +268,12 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	public void emptyCombinations() {
 		assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
 	}
-	   
+
 	 @Test
 	public void combinations2() {
 	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
-	    }	
+	    }
 
     @Test
     public void whenGreaterThan2() {
@@ -306,7 +293,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		ReactiveSeq<String> tail = headAndTail.tail();
 		assertThat(tail.headAndTail().head(), equalTo("world"));
 
-	} 
+	}
 	@Test
     public void testScanLeftStringConcat() {
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toListX().size(),
@@ -319,7 +306,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	}
 	@Test
 	public void testReverse() {
-		
+
 		assertThat(of(1, 2, 3).reverse().toListX(), equalTo(asList(3, 2, 1)));
 	}
 

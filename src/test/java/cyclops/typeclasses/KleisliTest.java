@@ -1,8 +1,6 @@
 package cyclops.typeclasses;
 
 import cyclops.async.Future;
-import cyclops.control.Reader;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.future;
 import cyclops.typeclasses.monad.Monad;
 import org.junit.Test;
@@ -43,7 +41,7 @@ public class KleisliTest {
                                                                             (id, name) -> updateName(id, name),
                                                                             (id, name, success) -> logIfFail(id, name, success));
 
-        assertThat(findUpdate.apply(new DAO(){}).convert(Future::narrowK).get(),equalTo(true));
+        assertThat(findUpdate.apply(new DAO(){}).convert(Future::narrowK).orElse(false),equalTo(true));
 
     }
 }

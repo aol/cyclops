@@ -1,23 +1,21 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.data.collections.extensions.IndexedSequenceX;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
-import cyclops.function.Fn1;
-import cyclops.function.Predicates;
-import cyclops.stream.ReactiveSeq;
+import cyclops.control.Option;
+import cyclops.function.Function1;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface Enumeration<E> {
 
-    Maybe<E> toEnum(int e);
+    Option<E> toEnum(int e);
 
     int fromEnum(E a);
 
@@ -43,10 +41,10 @@ public interface Enumeration<E> {
         return toEnumOrElseGet(fromEnum(e)-1,value);
     }
 
-    default Maybe<E> succ(E e){
+    default Option<E> succ(E e){
         return toEnum(fromEnum(e)+1);
     }
-    default Maybe<E> pred(E e){
+    default Option<E> pred(E e){
         return toEnum(fromEnum(e)-1);
     }
 
@@ -57,6 +55,19 @@ public interface Enumeration<E> {
         return new EnumerationByEnum<E>(c.getEnumConstants());
     }
 
+    static Enumeration<Integer> ints(){
+          return   new Enumeration<Integer>() {
+        @Override
+        public Option<Integer> toEnum(int e) {
+            return Option.some(e);
+        }
+
+        @Override
+        public int fromEnum(Integer a) {
+            return a;
+        }
+    };
+    }
     static <E> Enumeration<E> enums(IndexedSequenceX<E> seq){
         return new EnumerationByIndexed<E>(seq);
     }
@@ -67,10 +78,10 @@ public interface Enumeration<E> {
     @AllArgsConstructor
     static class EnumerationByEnum<E extends Enum<E>> implements  Enumeration<E>{
         private final E[] values;
-        final Fn1<E,Integer> memo = this::calcFromEnum;
-        public Maybe<E> toEnum(int a){
+        final Function1<E,Integer> memo = this::calcFromEnum;
+        public Option<E> toEnum(int a){
 
-            return a>-1 && a< values.length ? Maybe.just(values[a]) :  Maybe.none();
+            return a>-1 && a< values.length ? Option.just(values[a]) :  Option.none();
         }
         public E toEnumOrElse(int a,E e){
 
@@ -82,8 +93,8 @@ public interface Enumeration<E> {
         }
 
 
-        public Fn1<E,Integer> fromEnumMemoized(){
-            Fn1<E,Integer> fn = this::fromEnum;
+        public Function1<E,Integer> fromEnumMemoized(){
+            Function1<E,Integer> fn = this::fromEnum;
             return fn.memoize();
         }
 
@@ -105,10 +116,10 @@ public interface Enumeration<E> {
     static class EnumerationByIndexed<E> implements Enumeration<E>{
 
         private final IndexedSequenceX<E> seq;
-        final Fn1<E,Integer> memo = this::calcFromEnum;
+        final Function1<E,Integer> memo = this::calcFromEnum;
         @Override
-        public Maybe<E> toEnum(int e) {
-            return seq.get(e);
+        public Option<E> toEnum(int e) {
+            return seq.elementAt(e);
         }
 
         @Override
@@ -127,7 +138,7 @@ public interface Enumeration<E> {
         }
         public int calcFromEnum(E e) {
             for(int i=0;i<seq.size();i++){
-                if(seq.get(i)==e){
+                if(seq.elementAt(i)==e){
                     return i;
                 }
             }
@@ -137,22 +148,22 @@ public interface Enumeration<E> {
     }
     default  ReactiveSeq<E> streamTo(E e,E end){
         return ReactiveSeq.range(fromEnum(e),fromEnum(end)).map(this::toEnum)
-                .takeWhile(Maybe::isPresent)
-                .filter(Maybe::isPresent).map(Maybe::get);
+                .takeWhile(Option::isPresent)
+                .filter(Option::isPresent).flatMap(Option::stream);
     }
 
     default  ReactiveSeq<E> streamThenTo(E e,E next,E end){
         int start=  fromEnum(e);
         int step = fromEnum(next)-start;
         return ReactiveSeq.range(start,step,fromEnum(end)).map(this::toEnum)
-                .takeWhile(Maybe::isPresent)
-                .filter(Maybe::isPresent).map(Maybe::get);
+                .takeWhile(Option::isPresent)
+                .filter(Option::isPresent).flatMap(Option::stream);
     }
 
     default  ReactiveSeq<E> stream(E e){
         return ReactiveSeq.range(fromEnum(e),Integer.MAX_VALUE).map(this::toEnum)
-                .takeWhile(Maybe::isPresent)
-                    .filter(Maybe::isPresent).map(Maybe::get);
+                .takeWhile(Option::isPresent)
+                    .filter(Option::isPresent).flatMap(Option::stream);
     }
 
     default ListX<E> list(E e){

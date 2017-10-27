@@ -2,23 +2,23 @@ package cyclops.function;
 
 import java.util.function.Function;
 
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 
 /**
  * Interface that represents a pluggable cache
- * 
+ *
  * @author johnmcclean
- * 
+ *
  * E.g. plugging in a Guava cache
  * <pre>
- * {@code 
+ * {@code
  * Cache<Object, String> cache = CacheBuilder.newBuilder()
        .maximumSize(1000)
        .expireAfterWrite(10, TimeUnit.MINUTES)
        .build();
 
  * BiFunction<Integer,Integer,Integer> s = Memoize.memoizeBiFunction( (a,b)->a + ++called,
- * 													(key,fn)-> cache.get(key,()->fn.applyHKT(key));
+ * 													(key,fn)-> cache.getValue(key,()->fn.applyHKT(key));
  * }
  * </pre>
  *

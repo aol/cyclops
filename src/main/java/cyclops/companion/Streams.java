@@ -1,32 +1,35 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.hkt.Higher;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.QueueX;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.internal.stream.*;
+import com.oath.cyclops.internal.stream.operators.DebounceOperator;
+import com.oath.cyclops.internal.stream.operators.MultiReduceOperator;
+import com.oath.cyclops.internal.stream.operators.OnePerOperator;
+import com.oath.cyclops.internal.stream.operators.RecoverOperator;
+import com.oath.cyclops.internal.stream.spliterators.*;
+import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.typeclasses.*;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 
-import com.aol.cyclops2.internal.stream.spliterators.*;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
-import cyclops.collections.box.Mutable;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
+import com.oath.cyclops.util.box.Mutable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.internal.stream.*;
-import com.aol.cyclops2.internal.stream.operators.*;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.stream;
-import com.aol.cyclops2.types.stream.HeadAndTail;
-import com.aol.cyclops2.types.stream.HotStream;
-import com.aol.cyclops2.types.stream.NonPausableHotStream;
-import com.aol.cyclops2.types.stream.PausableHotStream;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.types.stream.HeadAndTail;
+import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.NonPausableHotStream;
+import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -37,13 +40,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import org.jooq.lambda.Seq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
+
+import com.oath.cyclops.types.persistent.PersistentList;
 import org.reactivestreams.Subscription;
 
 import java.io.BufferedReader;
@@ -63,7 +65,7 @@ import java.util.stream.*;
 
 /**
  * Static utility methods for working with Java  8 Streams
- * 
+ *
  * @author johnmcclean
  *
  */
@@ -165,8 +167,8 @@ public class Streams {
     public static <T1, T2, T3, R1, R2, R3, R> Stream<R> forEach4(Stream<? extends T1> value1,
                                                                  Function<? super T1, ? extends Stream<R1>> value2,
                                                                  BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                                 Fn3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -191,7 +193,7 @@ public class Streams {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Streames.forEach4;
+     *  import static com.oath.cyclops.reactor.Streames.forEach4;
      *
      *  forEach4(IntStream.range(1,10).boxed(),
                  a-> Stream.iterate(a,i->i+1).limit(10),
@@ -214,9 +216,9 @@ public class Streams {
     public static <T1, T2, T3, R1, R2, R3, R> Stream<R> forEach4(Stream<? extends T1> value1,
                                                                  Function<? super T1, ? extends Stream<R1>> value2,
                                                                  BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                                 Fn3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                 Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T1, ? super R1, ? super R2, ? extends Stream<R3>> value4,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                 Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -262,7 +264,7 @@ public class Streams {
     public static <T1, T2, R1, R2, R> Stream<R> forEach3(Stream<? extends T1> value1,
                                                          Function<? super T1, ? extends Stream<R1>> value2,
                                                          BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                         Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                         Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -305,8 +307,8 @@ public class Streams {
     public static <T1, T2, R1, R2, R> Stream<R> forEach3(Stream<? extends T1> value1,
                                                          Function<? super T1, ? extends Stream<R1>> value2,
                                                          BiFunction<? super T1, ? super R1, ? extends Stream<R2>> value3,
-                                                         Fn3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                                                         Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                         Function3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                                                         Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
 
         return value1.flatMap(in -> {
@@ -410,22 +412,22 @@ public class Streams {
 
     /**
      * Create an Optional containing a List materialized from a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   Optional<ListX<Integer>> opt = Streams.streamToOptional(Stream.of(1,2,3));
-     *   
+     *
      *   //Optional[[1,2,3]]
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream To convert into an Optional
      * @return Optional with a List of values
      */
     public final static <T> Optional<ListX<T>> streamToOptional(final Stream<T> stream) {
-        
+
         final List<T> collected = stream.collect(java.util.stream.Collectors.toList());
         if (collected.size() == 0)
             return Optional.empty();
@@ -434,19 +436,19 @@ public class Streams {
 
     /**
      * Convert an Optional to a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *     Stream<Integer> reactiveStream = Streams.optionalToStream(Optional.of(1));
      *     //Stream[1]
-     *     
+     *
      *     Stream<Integer> zero = Streams.optionalToStream(Optional.zero());
      *     //Stream[]
      * }
      * </pre>
-     * 
+     *
      * @param optional Optional to convert to a Stream
-     * @return Stream with a singleUnsafe value (if present) created from an Optional
+     * @return Stream with a single value (if present) created from an Optional
      */
     public final static <T> Stream<T> optionalToStream(final Optional<T> optional) {
         if (optional.isPresent())
@@ -456,7 +458,7 @@ public class Streams {
 
     /**
      * Create a CompletableFuture containing a List materialized from a Stream
-     * 
+     *
      * @param stream To convert into an Optional
      * @return CompletableFuture with a List of values
      */
@@ -467,9 +469,9 @@ public class Streams {
 
     /**
      * Convert a CompletableFuture to a Stream
-     * 
+     *
      * @param future CompletableFuture to convert
-     * @return  Stream with a singleUnsafe value created from a CompletableFuture
+     * @return  Stream with a single value created from a CompletableFuture
      */
     public final static <T> Stream<T> completableFutureToStream(final CompletableFuture<T> future) {
         return Stream.of(future.join());
@@ -479,27 +481,27 @@ public class Streams {
     /**
      * Perform a forEach operation over the Stream, without closing it, consuming only the specified number of elements from
      * the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription
-     * 
+     *
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(1,2,3,4),2,System.out::println);
-     *          
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
      *     3
-     *     4 
+     *     4
      *     Second batch processed!
      * }
      * </pre>
-     * 
+     *
      * @param Stream - the Stream to consume data from
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming events from the Stream
@@ -507,8 +509,8 @@ public class Streams {
      */
     public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x, final Consumer<? super T> consumerElement) {
         val t2 = FutureStreamUtils.forEachX(stream, x, consumerElement);
-        t2.v2.run();
-        return t2.v1.join();
+        t2._2().run();
+        return t2._1().join();
     }
 
     /**
@@ -517,26 +519,26 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
-     *          
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
-     *     
+     *
      *     RuntimeException Stack Trace on System.err
-     *     
-     *     4 
+     *
+     *     4
      *     Second batch processed!
      * }
-     * </pre>	 
-     * 
+     * </pre>
+     *
      * @param Stream - the Stream to consume data from
      * @param numberOfElements To consume from the Stream at this time
      * @param consumer To accept incoming elements from the Stream
@@ -547,34 +549,34 @@ public class Streams {
     public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x,
                                                                 final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         val t2 = FutureStreamUtils.forEachXWithError(stream, x, consumerElement, consumerError);
-        t2.v2.run();
-        return t2.v1.join();
+        t2._2().run();
+        return t2._1().join();
     }
 
     /**
      * Perform a forEach operation over the Stream  without closing it,  capturing any elements and errors in the supplied consumers, but only consuming
      * the specified number of elements from the Stream, at this time. More elements can be consumed later, by called request on the returned Subscription,
      * when the entire Stream has been processed an onComplete event will be recieved.
-     * 
+     *
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
-     *          
+     *                                  .map(Supplier::getValue) ,System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *
      *     System.out.println("First batch processed!");
-     *     
+     *
      *     next.request(2);
-     *     
+     *
      *      System.out.println("Second batch processed!");
-     *      
+     *
      *     //prints
      *     1
      *     2
      *     First batch processed!
-     *     
+     *
      *     RuntimeException Stack Trace on System.err
-     *     
-     *     4 
+     *
+     *     4
      *     Second batch processed!
      *     The take!
      * }
@@ -589,8 +591,8 @@ public class Streams {
     public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x,
                                                                 final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         val t2 = FutureStreamUtils.forEachXEvents(stream, x, consumerElement, consumerError, onComplete);
-        t2.v2.run();
-        return t2.v1.join();
+        t2._2().run();
+        return t2._1().join();
     }
 
     /**
@@ -598,19 +600,19 @@ public class Streams {
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace());
-     *          
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace());
+     *
      *     System.out.println("processed!");
-     *     
-     *    
-     *      
+     *
+     *
+     *
      *     //prints
      *     1
      *     2
      *     RuntimeException Stack Trace on System.err
      *     4
      *     processed!
-     *     
+     *
      * }
      * </pre>
      * @param Stream - the Stream to consume data from
@@ -622,30 +624,30 @@ public class Streams {
 
 
         val t2 = FutureStreamUtils.forEachWithError(stream, consumerElement, consumerError);
-        t2.v2.run();
+        t2._2().run();
 
     }
 
     /**
      * Perform a forEach operation over the Stream  capturing any elements and errors in the supplied consumers
      * when the entire Stream has been processed an onComplete event will be recieved.
-     * 
+     *
      * <pre>
      * @{code
      *     Subscription next = Streams.forEach(Stream.of(()->1,()->2,()->{throw new RuntimeException()},()->4)
-     *                                  .map(Supplier::get),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
-     *          
+     *                                  .map(Supplier::getValue),System.out::println, e->e.printStackTrace(),()->System.out.println("the take!"));
+     *
      *     System.out.println("processed!");
-     *     
-     *      
+     *
+     *
      *     //prints
      *     1
      *     2
      *     RuntimeException Stack Trace on System.err
-     *      4 
+     *      4
      *     processed!
-     *     
-     *     
+     *
+     *
      * }
      * </pre>
      * @param Stream - the Stream to consume data from
@@ -658,13 +660,13 @@ public class Streams {
                                                         final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
 
         val t2 = FutureStreamUtils.forEachEvent(stream, consumerElement, consumerError, onComplete);
-        t2.v2.run();
+        t2._2().run();
 
     }
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run at 8PM every night
@@ -673,21 +675,21 @@ public class Streams {
      *            ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * HotStream<Data> dataStream = Streams.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
-     * 
-     * 
+     *
+     *
      * data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream the reactiveStream to schedule element processing on
      * @param cron Expression that determines when each job will run
      * @param ex ScheduledExecutorService
@@ -700,7 +702,7 @@ public class Streams {
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds after last job completes
@@ -709,21 +711,21 @@ public class Streams {
      *            ,60_000,Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * HotStream<Data> dataStream = Streams.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
-     * 
-     * 
+     *
+     *
      * data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param stream the reactiveStream to schedule element processing on
      * @param delay Between last element completes passing through the Stream until the next one starts
      * @param ex ScheduledExecutorService
@@ -736,7 +738,7 @@ public class Streams {
 
     /**
      * Execute this Stream on a schedule
-     * 
+     *
      * <pre>
      * {@code
      *  //run every 60 seconds
@@ -745,16 +747,16 @@ public class Streams {
      *            60_000,Executors.newScheduledThreadPool(1)));
      * }
      * </pre>
-     * 
+     *
      * Connect to the Scheduled Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * HotStream<Data> dataStream = Streams.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
-     * 
-     * 
+     *
+     *
      * data.connect().forEach(this::logToDB);
      * }
      * </pre>
@@ -769,20 +771,20 @@ public class Streams {
     }
 
     /**
-     * Split at supplied location 
+     * Split at supplied location
      * <pre>
-     * {@code 
+     * {@code
      * ReactiveSeq.of(1,2,3).splitAt(1)
-     * 
+     *
      *  //Stream[1], Stream[2,3]
      * }
-     * 
+     *
      * </pre>
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> splitAt(final Stream<T> stream, final int where) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
         return new Tuple2(
-                          Tuple2.v1.limit(where), Tuple2.v2.skip(where));
+                          Tuple2._1().limit(where), Tuple2._2().skip(where));
     }
 
     /**
@@ -790,7 +792,7 @@ public class Streams {
      * <pre>
      * {@code
      *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
-     *   
+     *
      *   //Stream[1,2,3] Stream[4,5,6]
      * }
      * </pre>
@@ -798,15 +800,15 @@ public class Streams {
     public final static <T> Tuple2<Stream<T>, Stream<T>> splitBy(final Stream<T> stream, final Predicate<T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
         return new Tuple2(
-                          limitWhile(Tuple2.v1, splitter), skipWhile(Tuple2.v2, splitter));
+                          limitWhile(Tuple2._1(), splitter), skipWhile(Tuple2._2(), splitter));
     }
 
     /**
      * Partition a Stream into two one a per element basis, based on predicate's boolean value
      * <pre>
-     * {@code 
-     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0) 
-     *  
+     * {@code
+     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)
+     *
      *  //Stream[1,3,5], Stream[2,4,6]
      * }
      *
@@ -815,28 +817,28 @@ public class Streams {
     public final static <T> Tuple2<Stream<T>, Stream<T>> partition(final Stream<T> stream, final Predicate<? super T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
         return new Tuple2(
-                          Tuple2.v1.filter(splitter), Tuple2.v2.filter(splitter.negate()));
+                          Tuple2._1().filter(splitter), Tuple2._2().filter(splitter.negate()));
     }
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
      * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
-     * {@code 
+     * {@code
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-    	 assertTrue(copies.v1.anyMatch(i->i==2));
-    	 assertTrue(copies.v2.anyMatch(i->i==2));
-     * 
+    	 assertTrue(copies._1.anyMatch(i->i==2));
+    	 assertTrue(copies._2.anyMatch(i->i==2));
+     *
      * }
      * </pre>
-     * 
+     *
      * @return duplicated reactiveStream
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator());
         return new Tuple2(
-                          Streams.stream(Tuple2.v1()), Streams.stream(Tuple2.v2()));
+                          Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
@@ -844,8 +846,8 @@ public class Streams {
      * <pre>
      * {@code
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-    assertTrue(copies.v1.anyMatch(i->i==2));
-    assertTrue(copies.v2.anyMatch(i->i==2));
+    assertTrue(copies._1.anyMatch(i->i==2));
+    assertTrue(copies._2.anyMatch(i->i==2));
      *
      * }
      * </pre>
@@ -856,14 +858,14 @@ public class Streams {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(),bufferFactory);
         return new Tuple2(
-                Streams.stream(Tuple2.v1()), Streams.stream(Tuple2.v2()));
+                Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
 
     private final static <T> Tuple2<Stream<T>, Stream<T>> duplicatePos(final Stream<T> stream, final int pos) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(), pos);
         return new Tuple2(
-                          Streams.stream(Tuple2.v1()), Streams.stream(Tuple2.v2()));
+                          Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
 
     /**
@@ -871,9 +873,9 @@ public class Streams {
      * Buffers intermediate values, leaders may change positions so a limit
      * can be safely applied to the leading reactiveStream. Not thread-safe.
      * <pre>
-     * {@code 
+     * {@code
      * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
-    
+
      * }
      * </pre>
      */
@@ -915,12 +917,12 @@ public class Streams {
      * Makes four copies of a Stream
      * Buffers intermediate values, leaders may change positions so a limit
      * can be safely applied to the leading reactiveStream. Not thread-safe.
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      * 		Tuple4<ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>,ReactiveSeq<Tuple4<T1,T2,T3,T4>>> quad = sequence.quadruplicate();
-    
+
      * }
      * </pre>
      * @return
@@ -960,17 +962,17 @@ public class Streams {
 
     /**
      * Append Stream to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
     									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
-     * 
+     *
      * @param stream to append
      * @return Stream with Stream appended
      */
@@ -980,17 +982,17 @@ public class Streams {
 
     /**
      * Prepend Stream to this Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = of(1,2,3).prependStream(of(100,200,300))
     			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param stream to Prepend
      * @return Stream with Stream prepended
      */
@@ -1002,11 +1004,11 @@ public class Streams {
     /**
      * Append values to the take of this Stream
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).append(100,200,300)
     									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
      * }
      * </pre>
@@ -1020,13 +1022,13 @@ public class Streams {
     /**
      * Prepend given values to the skip of the Stream
      * <pre>
-     * {@code 
-     * List<String> result = 	of(1,2,3).prepend(100,200,300)
+     * {@code
+     * List<String> result = 	of(1,2,3).prependAll(100,200,300)
     			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
-     * @param values to prepend
+     * @param values to prependAll
      * @return Stream with values prepended
      */
     public static final <T> Stream<T> prepend(final Stream<T> stream, final T... values) {
@@ -1036,12 +1038,12 @@ public class Streams {
     /**
      * Insert data into a reactiveStream at given position
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
     			.map(it ->it+"!!").collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
-     * 
+     *
      * }
      * </pre>
      * @param pos to insert data at
@@ -1050,17 +1052,17 @@ public class Streams {
      */
     public static final <T> Stream<T> insertAt(final Stream<T> stream, final int pos, final T... values) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicatePos(stream, pos);
-        return appendStream(append(Tuple2.v1.limit(pos), values), Tuple2.v2.skip(pos));
+        return appendStream(append(Tuple2._1().limit(pos), values), Tuple2._2().skip(pos));
     }
 
     /**
      * Delete elements between given indexes in a Stream
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	Streams.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
      * }
      * </pre>
@@ -1070,17 +1072,17 @@ public class Streams {
      */
     public static final <T> Stream<T> deleteBetween(final Stream<T> stream, final int start, final int end) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicatePos(stream, start);
-        return appendStream(Tuple2.v1.limit(start), Tuple2.v2.skip(end));
+        return appendStream(Tuple2._1().limit(start), Tuple2._2().skip(end));
     }
 
     /**
      * Insert a Stream into the middle of this reactiveStream at the specified position
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
-    
+
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
@@ -1091,22 +1093,22 @@ public class Streams {
     public static final <T> Stream<T> insertStreamAt(final Stream<T> stream1, final int pos, final Stream<T> insert) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicatePos(stream1, pos);
 
-        return appendStream(appendStream(Tuple2.v1.limit(pos), insert), Tuple2.v2.skip(pos));
+        return appendStream(appendStream(Tuple2._1().limit(pos), insert), Tuple2._2().skip(pos));
     }
 
     /**
      * Convert to a Stream with the result of a reduction operation repeated
      * specified times
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   		List<Integer> list = Streams.cycle(Stream.of(1,2,2),Reducers.toCountInt(),3)
      * 										.
      * 										.collect(CyclopsCollectors.toList());
      * 	//is asList(3,3,3);
      *   }
      * </pre>
-     * 
+     *
      * @param m
      *            Monoid to be used in reduction
      * @param times
@@ -1114,25 +1116,25 @@ public class Streams {
      * @return Stream with reduced values repeated
      */
     public final static <T> Stream<T> cycle(final Stream<T> stream, final Monoid<T> m, final int times) {
-        return Streams.cycle(times, Streamable.fromObject(m.reduce(stream)));
+        return Streams.cycle(times, Streamable.fromObject(m.foldLeft(stream)));
 
     }
 
     /**
      * extract head and tail together
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Stream<String> helloWorld = Stream.of("hello","world","last");
     	HeadAndTail<String> headAndTail = Streams.headAndTail(helloWorld);
     	 String head = headAndTail.head();
     	 assertThat(head,equalTo("hello"));
-    	
+
     	ReactiveSeq<String> tail =  headAndTail.tail();
     	assertThat(tail.headAndTail().head(),equalTo("world"));
      * }
      * </pre>
-     * 
+     *
      * @return
      */
     public final static <T> HeadAndTail<T> headAndTail(final Stream<T> stream) {
@@ -1147,7 +1149,7 @@ public class Streams {
      * {@code  Streams.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
-    
+
      * @param stream Stream to skip elements from
      * @param predicate to applyHKT
      * @return Stream with elements skipped
@@ -1176,9 +1178,9 @@ public class Streams {
 
     /**
      * skip elements in a Stream while Predicate holds true
-     * 
+     *
      * <pre>
-     * 
+     *
      * {@code  Streams.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
@@ -1308,14 +1310,14 @@ public class Streams {
 
     /**
      * Reverse a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(Streams.reverse(Stream.of(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
      * }
      * </pre>
-     * 
+     *
      * @param stream Stream to reverse
      * @return Reversed reactiveStream
      */
@@ -1327,18 +1329,18 @@ public class Streams {
     /**
      * Create a reversed Stream from a List
      * <pre>
-     * {@code 
+     * {@code
      * Streams.reversedStream(asList(1,2,3))
     			.map(i->i*100)
     			.forEach(System.out::println);
-    	
-    	
+
+
     	assertThat(Streams.reversedStream(Arrays.asList(1,2,3)).collect(CyclopsCollectors.toList())
     			,equalTo(Arrays.asList(3,2,1)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param list List to create a reversed Stream from
      * @return Reversed Stream
      */
@@ -1349,9 +1351,9 @@ public class Streams {
     }
     /**
      * Create a new Stream that infiniteable cycles the provided Stream
-     * 
+     *
      * <pre>
-     * {@code 		
+     * {@code
      * assertThat(Streams.cycle(Stream.of(1,2,3))
      * 						.limit(6)
      * 						.collect(CyclopsCollectors.toList()),
@@ -1377,9 +1379,9 @@ public class Streams {
 
     /**
      * Create a Stream that finitely cycles the provided Streamable, provided number of times
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(Streams.cycle(3,Streamable.of(1,2,2))
     							.collect(CyclopsCollectors.toList()),
     								equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
@@ -1397,12 +1399,12 @@ public class Streams {
     /**
      * Create a reactiveStream from an iterable
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3))
      * 								.collect(CyclopsCollectors.toList()),
      * 									equalTo(Arrays.asList(1,2,3)));
-    
-     * 
+
+     *
      * }
      * </pre>
      * @param it Iterable to convert to a Stream
@@ -1419,11 +1421,11 @@ public class Streams {
     /**
      * Create a reactiveStream from an iterator
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3).iterator())
      * 							.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,3)));
-    
+
      * }
      * </pre>
      * @param it Iterator to convert to a Stream
@@ -1437,7 +1439,7 @@ public class Streams {
      * Concat an Object and a Stream
      * If the Object is a Stream, Streamable or Iterable will be converted (or left) in Stream form and concatonated
      * Otherwise a new Stream.of(o) is created
-     * 
+     *
      * @param o Object to concat
      * @param stream  Stream to concat
      * @return Concatonated Stream
@@ -1458,18 +1460,18 @@ public class Streams {
     }
 
     /**
-     * Create a reactiveStream from a map
+     * Create a reactiveStream from a transform
      * <pre>
-     * {@code 
-     * 	Map<String,String> map = new HashMap<>();
-    	map.put("hello","world");
-    	assertThat(Streams.reactiveStream(map).collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
-    
+     * {@code
+     * 	Map<String,String> transform = new HashMap<>();
+    	transform.put("hello","world");
+    	assertThat(Streams.reactiveStream(transform).collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param it Iterator to convert to a Stream
-     * @return Stream from a map
+     * @return Stream from a transform
      */
     public final static <K, V> Stream<Map.Entry<K, V>> stream(final Map<K, V> it) {
         return it.entrySet()
@@ -1485,17 +1487,17 @@ public class Streams {
 
     /**
      * Simultaneously reduce a reactiveStream with multiple reducers
-     * 
+     *
      * <pre>{@code
-     * 
+     *
      *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
     	Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
     	val result = Streams.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
-    			
-    	 
+
+
     	assertThat(result,equalTo(Arrays.asList(10,24)));
     	}</pre>
-     * 
+     *
      * @param stream Stream to reduce
      * @param reducers Reducers to reduce Stream
      * @return Reduced Stream values as List entries
@@ -1509,16 +1511,16 @@ public class Streams {
 
     /**
      * Simultanously reduce a reactiveStream with multiple reducers
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Monoid<String> concat = Monoid.of("",(a,b)->a+b);
     	Monoid<String> join = Monoid.of("",(a,b)->a+","+b);
     	assertThat(Streams.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
     	                 ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
      * }
      * </pre>
-     * 
+     *
      *  @param stream Stream to reduce
      * @param reducers Reducers to reduce Stream
      * @return Reduced Stream values as List entries
@@ -1532,9 +1534,9 @@ public class Streams {
     /**
      * Repeat in a Stream while specified predicate holds
      * <pre>
-     * {@code 
+     * {@code
      *  int count =0;
-     *  
+     *
     	assertThat(Streams.cycleWhile(Stream.of(1,2,2)
     										,next -> count++<6 )
     										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2)));
@@ -1550,14 +1552,14 @@ public class Streams {
 
     /**
      * Repeat in a Stream until specified predicate holds
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * 	count =0;
     	assertThat(Streams.cycleUntil(Stream.of(1,2,2,3)
     										,next -> count++>10 )
     										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1, 2, 2, 3, 1, 2, 2, 3, 1, 2, 2)));
-    
+
      * }
      * </pre>
      * @param predicate
@@ -1570,17 +1572,17 @@ public class Streams {
 
     /**
      * Generic zip function. E.g. Zipping a Stream and a Sequence
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * Stream<List<Integer>> zipped = Streams.zip(Stream.of(1,2,3)
-    											,ReactiveSeq.of(2,3,4), 
+    											,ReactiveSeq.of(2,3,4),
     												(a,b) -> Arrays.asList(a,b));
-    	
-    	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
-    	assertThat(zip.get(0),equalTo(2));
-    	assertThat(zip.get(1),equalTo(3));
+
+
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(1);
+    	assertThat(zip.getValue(0),equalTo(2));
+    	assertThat(zip.getValue(1),equalTo(3));
      * }
      * </pre>
      * @param second
@@ -1611,21 +1613,21 @@ public class Streams {
 
     /**
      *  Generic zip function. E.g. Zipping a Stream and an Optional
-     * 
+     *
      * <pre>
      * {@code
      * Stream<List<Integer>> zipped = Streams.zip(Stream.of(1,2,3)
     									,fromEither5(Optional.of(2)),
     										(a,b) -> Arrays.asList(a,b));
-    	
-    	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(0);
-    	assertThat(zip.get(0),equalTo(1));
-    	assertThat(zip.get(1),equalTo(2));
-     * 
+
+
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(0);
+    	assertThat(zip.getValue(0),equalTo(1));
+    	assertThat(zip.getValue(1),equalTo(2));
+     *
      * }
      * </pre>
-     
+
      */
     public final static <T, S, R> Stream<R> zipAnyM(final Stream<T> stream, final AnyM<stream,? extends S> second,
             final BiFunction<? super T, ? super S, ? extends R> zipper) {
@@ -1634,20 +1636,20 @@ public class Streams {
 
     /**
      * Zip this Monad with a Stream
-     * 
+     *
        <pre>
-       {@code 
+       {@code
        Stream<List<Integer>> zipped = Streams.zipStream(Stream.of(1,2,3)
     											,Stream.of(2,3,4),
     												(a,b) -> Arrays.asList(a,b));
-    	
-    	
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).get(1);
-    	assertThat(zip.get(0),equalTo(2));
-    	assertThat(zip.get(1),equalTo(3));
+
+
+    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(1);
+    	assertThat(zip.getValue(0),equalTo(2));
+    	assertThat(zip.getValue(1),equalTo(3));
        }
        </pre>
-     * 
+     *
      * @param second
      *            Stream to zip with
      * @param zipper
@@ -1677,14 +1679,14 @@ public class Streams {
     /**
      * Create a sliding view over this Stream
      * <pre>
-     * {@code 
+     * {@code
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2,1)
     								.collect(CyclopsCollectors.toList());
-    	
-    
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+
+
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
      * </pre>
      * @param windowSize
@@ -1699,14 +1701,14 @@ public class Streams {
     /**
      * Create a sliding view over this Stream
      * <pre>
-     * {@code 
+     * {@code
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2,1)
     								.collect(CyclopsCollectors.toList());
-    	
-    
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+
+
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
      * </pre>
      * @param windowSize
@@ -1715,7 +1717,7 @@ public class Streams {
      */
     public final static <T> Stream<Streamable<T>> window(final Stream<T> stream, final int windowSize, final int increment) {
         final Iterator<T> it = stream.iterator();
-        final Mutable<PStack<T>> list = Mutable.of(ConsPStack.empty());
+        final Mutable<PersistentList<T>> list = Mutable.of(Seq.empty());
         return Streams.stream(new Iterator<Streamable<T>>() {
 
             @Override
@@ -1727,12 +1729,12 @@ public class Streams {
             public Streamable<T> next() {
                 for (int i = 0; i < increment && list.get()
                                                      .size() > 0; i++)
-                    list.mutate(var -> var.minus(0));
+                    list.mutate(var -> var.removeAt(0));
                 for (; list.get()
                            .size() < windowSize
                         && it.hasNext();) {
                     if (it.hasNext()) {
-                        list.mutate(var -> var.plus(Math.max(0, var.size()), it.next()));
+                        list.mutate(var -> var.insertAt(Math.max(0, var.size()), it.next()));
                     }
 
                 }
@@ -1745,17 +1747,17 @@ public class Streams {
     /**
      * Create a sliding view over this Stream
      * <pre>
-     * {@code 
+     * {@code
      * List<List<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
     											,2)
     								.collect(CyclopsCollectors.toList());
-    	
-    
-    	assertThat(list.get(0),hasItems(1,2));
-    	assertThat(list.get(1),hasItems(2,3));
+
+
+    	assertThat(list.getValue(0),hasItems(1,2));
+    	assertThat(list.getValue(1),hasItems(2,3));
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param stream Stream to create sliding view on
      * @param windowSize size of window
      * @return
@@ -1767,16 +1769,16 @@ public class Streams {
 
     /**
      * Group elements in a Stream by size
-     * 
+     *
        <pre>
-       {@code 
+       {@code
      *  List<List<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
                                                         ,3)
                                                     .collect(CyclopsCollectors.toList());
-        
-        
-        assertThat(list.get(0),hasItems(1,2,3));
-        assertThat(list.get(1),hasItems(4,5,6));
+
+
+        assertThat(list.getValue(0),hasItems(1,2,3));
+        assertThat(list.getValue(1),hasItems(4,5,6));
         }
      * </pre>
      * @param stream Stream to group
@@ -1791,22 +1793,22 @@ public class Streams {
 
     }
 
-    
+
     /**
-     * 
-     * 
+     *
+     *
        <pre>
-       {@code 
+       {@code
      *  List<SetX<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
                                                         ,3,()->SetX.zero())
                                                     .collect(CyclopsCollectors.toList());
-        
-        
-        assertThat(list.get(0),hasItems(1,2,3));
-        assertThat(list.get(1),hasItems(4,5,6));
+
+
+        assertThat(list.getValue(0),hasItems(1,2,3));
+        assertThat(list.getValue(1),hasItems(4,5,6));
         }
      * </pre>
-     * 
+     *
      * @param stream Stream to group
      * @param groupSize Size of each Group
      * @param factory Supplier for creating Collections for holding grouping
@@ -1836,23 +1838,23 @@ public class Streams {
 
     public final static <U, T> Stream<U> scanRight(final Stream<T> stream, final U identity,
             final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return Seq.seq(stream)
+        return ReactiveSeq.fromStream(stream)
                   .scanRight(identity, combiner);
     }
 
     /**
      * Scan left using supplied Monoid
-     * 
+     *
      * <pre>
-     * {@code  
-     * 
+     * {@code
+     *
      * 	assertEquals(asList("", "a", "ab", "abc"),
      * 					Streams.scanLeft(Stream.of("a", "b", "c"),Reducers.toString(""))
      * 			.collect(CyclopsCollectors.toList());
-     *         
+     *
      *         }
      * </pre>
-     * 
+     *
      * @param monoid
      * @return
      */
@@ -1887,13 +1889,13 @@ public class Streams {
 
     /**
      * Check that there are specified number of matches of predicate in the Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  assertTrue(Streams.xMatch(Stream.of(1,2,3,5,6,7),3, i->i>4));
      * }
      * </pre>
-     * 
+     *
      */
     public static <T> boolean xMatch(final Stream<T> stream, final int num, final Predicate<? super T> c) {
 
@@ -1903,7 +1905,7 @@ public class Streams {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(Streams.noneMatch(of(1,2,3,4,5),it-> it==5000),equalTo(true));
      * }
      * </pre>
@@ -1931,8 +1933,8 @@ public class Streams {
     public final static <T, C extends Comparable<? super C>> Optional<T> minBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
         final Optional<Tuple2<C, T>> o = stream.map(in -> new Tuple2<C, T>(
                                                                            f.apply(in), in))
-                                               .min(Comparator.comparing(n -> n.v1(), Comparator.naturalOrder()));
-        return o.map(p -> p.v2());
+                                               .min(Comparator.comparing(n -> n._1(), Comparator.naturalOrder()));
+        return o.map(p -> p._2());
     }
 
     public final static <T> Optional<T> min(final Stream<T> stream, final Comparator<? super T> comparator) {
@@ -1942,8 +1944,8 @@ public class Streams {
     public final static <T, C extends Comparable<? super C>> Optional<T> maxBy(final Stream<T> stream, final Function<? super T, ? extends C> f) {
         final Optional<Tuple2<C, T>> o = stream.map(in -> new Tuple2<C, T>(
                                                                            f.apply(in), in))
-                                               .max(Comparator.comparing(n -> n.v1(), Comparator.naturalOrder()));
-        return o.map(p -> p.v2());
+                                               .max(Comparator.comparing(n -> n._1(), Comparator.naturalOrder()));
+        return o.map(p -> p._2());
     }
 
     public final static <T> Optional<T> max(final Stream<T> stream, final Comparator<? super T> comparator) {
@@ -1951,67 +1953,67 @@ public class Streams {
     }
 
     /**
-     * Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Attempt to transform this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
      * Then use Monoid to reduce values
-     * 
+     *
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R> reducer) {
+    public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(stream);
     }
 
     /**
-     *  Attempt to map this Monad to the same type as the supplied Monoid, using supplied function
+     *  Attempt to transform this Monad to the same type as the supplied Monoid, using supplied function
      *  Then use Monoid to reduce values
-     *  
-     * @param mapper Function to map Monad type
+     *
+     * @param mapper Function to transform Monad type
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
     public final static <T, R> R mapReduce(final Stream<T> stream, final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return reducer.reduce(stream.map(mapper));
+        return reducer.foldLeft(stream.map(mapper));
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param reducer Use supplied Monoid to reduce values starting via foldLeft
      * @return Reduced result
      */
     public final static <T> T foldLeft(final Stream<T> stream, final Monoid<T> reducer) {
-        return reducer.reduce(stream);
+        return reducer.foldLeft(stream);
     }
 
     /**
-     *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     *  Attempt to transform this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
      * Then use Monoid to reduce values
-     * 
+     *
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T> T foldLeftMapToType(final Stream<T> stream, final Reducer<T> reducer) {
+    public final static <R,T> R foldLeftMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(stream);
     }
 
     /**
-     * 
-     * 
+     *
+     *
      * @param reducer Use supplied Monoid to reduce values starting via foldRight
      * @return Reduced result
      */
     public final static <T> T foldRight(final Stream<T> stream, final Monoid<T> reducer) {
-        return reducer.reduce(Streams.reverse(stream));
+        return reducer.foldLeft(Streams.reverse(stream));
     }
 
     /**
-     *  Attempt to map this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     *  Attempt to transform this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
      * Then use Monoid to reduce values
-     * 
+     *
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T> T foldRightMapToType(final Stream<T> stream, final Reducer<T> reducer) {
+    public final static <R,T> R foldRightMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
         return reducer.mapReduce(Streams.reverse(stream));
     }
 
@@ -2038,11 +2040,11 @@ public class Streams {
     }
 
     /**
-     * 
-     * <pre>{@code 
+     *
+     * <pre>{@code
      * assertTrue(Streams.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3)));
      * }</pre>
-     * 
+     *
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
@@ -2068,13 +2070,13 @@ public class Streams {
     public final static <T> boolean endsWith(final Stream<T> stream, final Iterable<T> iterable) {
         Tuple2<Integer,Iterator<T>> sizeAndIterator = findSize(iterable);
 
-        final Deque<T> list = new ArrayDeque<T>(sizeAndIterator.v1);
+        final Deque<T> list = new ArrayDeque<T>(sizeAndIterator._1());
         stream.forEach(v -> {
             list.add(v);
-            if (list.size() > sizeAndIterator.v1)
+            if (list.size() > sizeAndIterator._1())
                 list.remove();
         });
-        return startsWith(list.stream(), sizeAndIterator.v2);
+        return startsWith(list.stream(), sizeAndIterator._2());
 
     }
 
@@ -2087,7 +2089,7 @@ public class Streams {
      * {@code
      * 		 assertTrue(Streams.startsWith(Stream.of(1,2,3,4),Arrays.asList(1,2,3).iterator()))
      * }</pre>
-    
+
      * @param iterator
      * @return True if Monad starts with Iterators sequence of data
      */
@@ -2128,9 +2130,7 @@ public class Streams {
     public final static <T> ReactiveSeq<T> reactiveSeq(final Stream<T> stream){
         return ReactiveSeq.fromStream(stream);
     }
-    public final static <T> ReactiveSeq<T> reactiveSeq(final Seq<T> stream){
-        return ReactiveSeq.fromStream(stream);
-    }
+
     public final static <T> ReactiveSeq<T> reactiveSeq(final Spliterator<? super T> stream, final Optional<ReversableSpliterator> rev) {
 
         return new StreamX<T>((Spliterator<T>)
@@ -2141,9 +2141,9 @@ public class Streams {
     /**
      * Returns a reactiveStream with a given value interspersed between any two values
      * of this reactiveStream.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * assertThat(Arrays.asList(1, 0, 2, 0, 3, 0, 4),
      * 			equalTo( Streams.intersperse(Stream.of(1, 2, 3, 4),0));
      * }
@@ -2156,11 +2156,11 @@ public class Streams {
 
     /**
      * Keep only those elements in a reactiveStream that are of a given type.
-     * 
-     * 
-     * assertThat(Arrays.asList(1, 2, 3), 
+     *
+     *
+     * assertThat(Arrays.asList(1, 2, 3),
      *      equalTo( Streams.ofType(Stream.of(1, "a", 2, "b", 3,Integer.class));
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     public static <T, U> Stream<U> ofType(final Stream<T> stream, final Class<? extends U> type) {
@@ -2171,7 +2171,7 @@ public class Streams {
     /**
      * Cast all elements in a reactiveStream to a given type, possibly throwing a
      * {@link ClassCastException}.
-     * 
+     *
      * <pre>
      * {@code
      * Streams.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
@@ -2183,25 +2183,25 @@ public class Streams {
     }
 
 
-    
+
     public final static <T> Stream<T> narrow(Stream<? extends T> stream){
         return (Stream<T>)stream;
     }
 
     public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<stream,? extends R>> fn) {
         return stream.flatMap(fn.<Stream<R>>andThen(anyM->narrow(stream(anyM))));
-       
+
 
     }
 
     /**
      * flatMap operation that allows a Collection to be returned
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(Streams.flatMapCollection(Stream.of(20),i->Arrays.asList(1,2,i))
      * 								.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,20)));
-    
+
      * }
      * </pre>
      *
@@ -2213,12 +2213,12 @@ public class Streams {
 
     /**
      * <pre>
-     * {@code 
+     * {@code
      * 	assertThat(Streams.flatMapStream(Stream.of(1,2,3),
      * 							i->Stream.of(i)).collect(CyclopsCollectors.toList()),
      * 							equalTo(Arrays.asList(1,2,3)));
-    
-     * 
+
+     *
      * }
      * </pre>
      *
@@ -2237,12 +2237,12 @@ public class Streams {
     /**
      * cross type flatMap, removes null entries
      * <pre>
-     * {@code 
+     * {@code
      * 	 assertThat(Streams.flatMapOptional(Stream.of(1,2,3,null),
      * 										Optional::ofNullable)
      * 										.collect(CyclopsCollectors.toList()),
      * 										equalTo(Arrays.asList(1,2,3)));
-    
+
      * }
      * </pre>
      */
@@ -2257,12 +2257,12 @@ public class Streams {
 
     /**
      *<pre>
-     * {@code 
+     * {@code
      * 	assertThat(Streams.flatMapCompletableFuture(Stream.of(1,2,3),
      * 								i->CompletableFuture.completedFuture(i+2))
      * 								.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(3,4,5)));
-    
+
      * }
      *</pre>
      */
@@ -2275,17 +2275,17 @@ public class Streams {
     /**
      * Perform a flatMap operation where the result will be a flattened reactiveStream of Characters
      * from the CharSequence returned by the supplied function.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   List<Character> result = Streams.liftAndBindCharSequence(Stream.of("input.file"),
     								.i->"hello world")
     								.toList();
-    	
+
     	assertThat(result,equalTo(Arrays.asList('h','e','l','l','o',' ','w','o','r','l','d')));
      * }
      * </pre>
-     * 
+     *
      * @param fn
      * @return
      *///rename -flatMapCharSequence
@@ -2297,23 +2297,23 @@ public class Streams {
     /**
      *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
      * from the text loaded from the supplied files.
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
     	List<String> result = Streams.liftAndBindFile(Stream.of("input.file")
     							.map(getClass().getClassLoader()::getResource)
     							.peek(System.out::println)
     							.map(URL::getFile)
     							,File::new)
     							.toList();
-    	
+
     	assertThat(result,equalTo(Arrays.asList("hello","world")));
-     * 
+     *
      * }
-     * 
+     *
      * </pre>
-     * 
+     *
      * @param fn
      * @return
      */
@@ -2323,19 +2323,19 @@ public class Streams {
 
     /**
      *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
-     * from the text loaded from the supplied URLs 
-     * 
+     * from the text loaded from the supplied URLs
+     *
      * <pre>
-     * {@code 
+     * {@code
      * List<String> result = Streams.liftAndBindURL(Stream.of("input.file")
     							,getClass().getClassLoader()::getResource)
     							.collect(CyclopsCollectors.toList();
-    	
+
     	assertThat(result,equalTo(Arrays.asList("hello","world")));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param fn
      * @return
      */
@@ -2354,25 +2354,25 @@ public class Streams {
     /**
       *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
      * from the text loaded from the supplied BufferedReaders
-     * 
+     *
      * <pre>
      * List<String> result = Streams.liftAndBindBufferedReader(Stream.of("input.file")
     							.map(getClass().getClassLoader()::getResourceAsStream)
     							.map(InputStreamReader::new)
     							,BufferedReader::new)
     							.collect(CyclopsCollectors.toList();
-    	
+
     	assertThat(result,equalTo(Arrays.asList("hello","world")));
-     * 
+     *
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fn
      * @return
      */
     public final static <T> Stream<String> flatMapBufferedReader(final Stream<T> stream, final Function<? super T, BufferedReader> fn) {
         return stream.flatMap(fn.andThen(in -> ExceptionSoftener.softenSupplier(() -> {
-       
+
 
             return in.lines();
         })
@@ -2380,12 +2380,12 @@ public class Streams {
     }
 
     public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it,Supplier<Deque<A>> bufferFactory) {
-        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v1,
-                ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory).v2);
+        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)._1(),
+                ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE,bufferFactory)._2());
     }
     public static final <A> Tuple2<Iterable<A>, Iterable<A>> toBufferingDuplicator(final Iterable<A> it) {
-        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE).v1,
-                            ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE).v2);
+        return Tuple.tuple(()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)._1(),
+                            ()-> toBufferingDuplicator(it.iterator(), Long.MAX_VALUE)._2());
     }
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator) {
         return toBufferingDuplicator(iterator, Long.MAX_VALUE);
@@ -2419,13 +2419,13 @@ public class Streams {
 
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t.v2).get());
+                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t._2().intValue()));
     }
     public static final <A> ListX<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies,Supplier<Deque<A>> bufferSupplier) {
 
         return  ListX.range(0,copies)
                 .zipWithIndex()
-                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t.v2).get());
+                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t._2().intValue()));
     }
 
     public static final <A> ListX<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {
@@ -2591,7 +2591,7 @@ public class Streams {
 
         });
     }
-    
+
     public final static <T> Stream<ListX<T>> groupedByTime(final Stream<T> stream, final long time, final TimeUnit t) {
         return StreamSupport.stream(new GroupedByTimeSpliterator(stream.spliterator(),()->ListX.fromIterable(new ArrayList<>()),
                 Function.identity(),time,t),stream.isParallel());
@@ -2616,9 +2616,9 @@ public class Streams {
 
     /**
      * Group data in a Stream using knowledge of the current batch and the next entry to determing grouping limits
-     * 
+     *
      * @see ReactiveSeq#groupedStatefullyUntil(BiPredicate)
-     * 
+     *
      * @param stream Stream to group
      * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
@@ -2627,12 +2627,12 @@ public class Streams {
             final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return StreamSupport.stream(new GroupedStatefullySpliterator<>(stream.spliterator(),()->ListX.of(),Function.identity(),predicate.negate()),stream.isParallel());
     }
-    
+
     /**
      * Group a Stream while the supplied predicate holds
-     * 
+     *
      * @see ReactiveSeq#groupedWhile(Predicate)
-     * 
+     *
      * @param stream Stream to group
      * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
@@ -2647,9 +2647,9 @@ public class Streams {
     }
     /**
      * Group a Stream while the supplied predicate holds
-     * 
+     *
      * @see ReactiveSeq#groupedWhile(Predicate, Supplier)
-     * 
+     *
      * @param stream Stream to group
      * @param predicate Predicate to determine grouping
      * @param factory Supplier to create toX for groupings
@@ -2667,9 +2667,9 @@ public class Streams {
     }
     /**
      * Group a Stream until the supplied predicate holds
-     * 
+     *
      * @see ReactiveSeq#groupedUntil(Predicate)
-     * 
+     *
      * @param stream Stream to group
      * @param predicate Predicate to determine grouping
      * @return Stream grouped into Lists determined by predicate
@@ -2683,11 +2683,11 @@ public class Streams {
     }
     /**
      * Group a Stream by size and time constraints
-     * 
+     *
      * @see ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit)
-     * 
+     *
      * @param stream Stream to group
-     * @param size Max group size 
+     * @param size Max group size
      * @param time Max group time
      * @param t Time unit for max group time
      * @return Stream grouped by time and size
@@ -2697,14 +2697,14 @@ public class Streams {
                 Function.identity(),size,time,t),stream.isParallel());
     }
 
-    
+
     /**
      * Group a Stream by size and time constraints
-     * 
+     *
      * @see ReactiveSeq#groupedBySizeAndTime(int, long, TimeUnit, Supplier)
-     * 
+     *
      * @param stream Stream to group
-     * @param size Max group size 
+     * @param size Max group size
      * @param time Max group time
      * @param t Time unit for max group time
      * @param factory Supplier to create toX for groupings
@@ -2721,9 +2721,9 @@ public class Streams {
     /**
      * Allow one element through per time period, drop all other elements in
      * that time period
-     * 
+     *
      * @see ReactiveSeq#debounce(long, TimeUnit)
-     * 
+     *
      * @param stream Stream to debounce
      * @param time Time to applyHKT debouncing over
      * @param t Time unit for debounce period
@@ -2736,9 +2736,9 @@ public class Streams {
 
     /**
      *  emit one element per time period
-     * 
+     *
      * @see ReactiveSeq#onePer(long, TimeUnit)
-     * 
+     *
      * @param stream Stream to emit one element per time period from
      * @param time  Time period
      * @param t Time Pure
@@ -2751,9 +2751,9 @@ public class Streams {
 
     /**
      *  Introduce a random jitter / time delay between the emission of elements
-     *  
+     *
      *  @see ReactiveSeq#jitter(long)
-     *  
+     *
      * @param stream  Stream to introduce jitter to
      * @param jitterInNanos Max jitter period - random number less than this is used for each jitter
      * @return Jittered Stream
@@ -2778,8 +2778,7 @@ public class Streams {
                     Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
 
                 } catch (final InterruptedException e) {
-                    ExceptionSoftener.throwSoftenedException(e);
-                    return null;
+                    throw ExceptionSoftener.throwSoftenedException(e);
                 }
                 return nextValue;
             }
@@ -2807,8 +2806,8 @@ public class Streams {
                     Thread.sleep(Math.max(0, millis), Math.max(0, nanos));
 
                 } catch (final InterruptedException e) {
-                    ExceptionSoftener.throwSoftenedException(e);
-                    return null;
+                    throw ExceptionSoftener.throwSoftenedException(e);
+
                 }
                 return nextValue;
             }
@@ -2925,7 +2924,7 @@ public class Streams {
 
                 @Override
                 public <T> Maybe<Comonad<stream>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
                 @Override
                 public <T> Maybe<Unfoldable<Witness.stream>> unfoldable() {
@@ -2936,7 +2935,7 @@ public class Streams {
         public static Unfoldable<Witness.stream> unfoldable(){
             return new Unfoldable<Witness.stream>() {
                 @Override
-                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     return StreamKind.widen(ReactiveSeq.unfold(b,fn));
                 }
             };
@@ -3088,7 +3087,7 @@ public class Streams {
 
             return new MonadRec<stream>(){
                 @Override
-                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Either<T, R>>> fn) {
                     return widen(ReactiveSeq.tailRec(initial,fn.andThen(s->ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
                 }
             };
@@ -3172,7 +3171,7 @@ public class Streams {
         public static <T,R> Foldable<stream> foldable(){
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldRightFn =  (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
             BiFunction<Monoid<T>,Higher<stream,T>,T> foldLeftFn = (m,l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
+            Function3<Monoid<R>, Function<T, R>, Higher<stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
@@ -3206,7 +3205,7 @@ public class Streams {
      */
 
     public static interface StreamKind<T> extends Higher<stream, T>, Stream<T> {
-       
+
         public static <T> StreamKind<T> of(T... elements){
             return widen(Stream.of(elements));
         }
@@ -3483,7 +3482,7 @@ public class Streams {
         }
 
     }
-    public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Xor<T, R>>> fn) {
+    public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn.andThen(ReactiveSeq::fromStream)).stream();
     }
 }

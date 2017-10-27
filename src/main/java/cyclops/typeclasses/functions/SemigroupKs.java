@@ -1,37 +1,23 @@
 package cyclops.typeclasses.functions;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.EagerFutureStreamFunctions;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Xor;
-import cyclops.function.Semigroup;
+import cyclops.control.Either;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.Seq;
-import org.pcollections.PCollection;
-import org.reactivestreams.Publisher;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 
-import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 
@@ -50,63 +36,63 @@ public class SemigroupKs{
 
 
     /**
-     * @return A combiner for SetX (concatenates two SetX into a singleUnsafe SetX)
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
      */
     static <T> SemigroupK<set,T> setXConcat() {
         return (a, b) -> SetX.narrowK(a).plusAll(SetX.narrowK(b));
     }
 
     /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
 
     static <T> SemigroupK<sortedSet,T> sortedSetXConcat() {
-        return (a, b) -> SortedSetX.narrowK(a).plusAll(SortedSetX.narrowK(b));
+        return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for QueueX (concatenates two QueueX into a singleUnsafe QueueX)
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
      */
     static <T> SemigroupK<queue,T> queueXConcat() {
         return (a, b) -> QueueX.narrowK(a).plusAll(QueueX.narrowK(b));
     }
 
     /**
-     * @return A combiner for DequeX (concatenates two DequeX into a singleUnsafe DequeX)
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
      */
     static <T> SemigroupK<deque,T> dequeXConcat() {
         return (a, b) -> DequeX.narrowK(a).plusAll(DequeX.narrowK(b));
     }
 
     /**
-     * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
     static <T> SemigroupK<linkedListX,T> linkedListXConcat() {
         return (a, b) -> LinkedListX.narrowK(a).plusAll(LinkedListX.narrowK(b));
     }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a singleUnsafe VectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
     static <T> SemigroupK<vectorX,T> vectorXConcat() {
         return (a, b) -> VectorX.narrowK(a).plusAll(VectorX.narrowK(b));
     }
 
     /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
 
     static <T> SemigroupK<persistentSetX,T> persistentSetXConcat() {
-        return (a, b) -> PersistentSetX.narrowK(a).plusAll(PersistentSetX.narrowK(b));
+        return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
     }
      */
     /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
 
     static <T> SemigroupK<OrderedsetX,T> orderedSetXConcat() {
-        return (a, b) -> OrderedSetX.narrowK(a).plusAll(OrderedSetX.narrowK(b));
+        return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
     }*/
 
     /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a singleUnsafe PersistentQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
     static <T> SemigroupK<persistentQueueX,T> persistentQueueXConcat() {
         return (a, b) -> PersistentQueueX.narrowK(a).plusAll(PersistentQueueX.narrowK(b));
@@ -134,7 +120,7 @@ public class SemigroupKs{
     static <T> SemigroupK<reactiveSeq,T> mergeLatestReactiveSeq() {
         return (a,b) -> Spouts.mergeLatest(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
     }
-    
+
 
 
     /**
@@ -169,76 +155,76 @@ public class SemigroupKs{
         return (a, b) -> Future.firstSuccess(Future.narrowK(a),Future.narrowK(b));
     }
     /**
-     * @return Combine two Xor's by taking the first primary
+     * @return Combine two Xor's by taking the first right
      */
-    static <ST,PT> SemigroupK<Higher<xor,ST>,PT> firstPrimaryXor() {
-        return  (a, b) -> Xor.narrowK(a).isPrimary() ? a : b;
+    static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstPrimaryXor() {
+        return  (a, b) -> Either.narrowK(a).isRight() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the first secondary
+     * @return Combine two Xor's by taking the first left
      */
-    static <ST,PT> SemigroupK<Higher<xor,ST>,PT> firstSecondaryXor() {
-        return  (a, b) -> Xor.narrowK(a).isSecondary() ? a : b;
+    static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstSecondaryXor() {
+        return  (a, b) -> Either.narrowK(a).isLeft() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the last primary
+     * @return Combine two Xor's by taking the last right
      */
-    static <ST,PT> SemigroupK<Higher<xor,ST>,PT> lastPrimaryXor() {
-        return  (a, b) -> Xor.narrowK(b).isPrimary() ? b : a;
+    static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastPrimaryXor() {
+        return  (a, b) -> Either.narrowK(b).isRight() ? b : a;
     }
     /**
-     * @return Combine two Xor's by taking the last secondary
+     * @return Combine two Xor's by taking the last left
      */
-    static <ST,PT> SemigroupK<Higher<xor,ST>,PT> lastSecondaryXor() {
-        return  (a, b) -> Xor.narrowK(b).isSecondary() ? b : a;
+    static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastSecondaryXor() {
+        return  (a, b) -> Either.narrowK(b).isLeft() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the first primary
+     * @return Combine two Try's by taking the first right
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTrySuccess() {
         return  (a, b) -> Try.narrowK(a).isSuccess() ? a : b;
     }
     /**
-     * @return Combine two Try's by taking the first secondary
+     * @return Combine two Try's by taking the first left
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTryFailure() {
         return  (a, b) -> Try.narrowK(a).isFailure() ? a : b;
     }
     /**
-     * @return Combine two Tryr's by taking the last primary
+     * @return Combine two Tryr's by taking the last right
      */
     static<T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTrySuccess() {
         return  (a, b) -> Try.narrowK(b).isSuccess() ? b : a;
     }
     /**
-     * @return Combine two Try's by taking the last secondary
+     * @return Combine two Try's by taking the last left
      */
     static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTryFailure() {
         return  (a, b) -> Try.narrowK(b).isFailure() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the first primary
+     * @return Combine two Ior's by taking the first right
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isPrimary() ? a : b;
+        return  (a, b) -> Ior.narrowK(a).isRight() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the first secondary
+     * @return Combine two Ior's by taking the first left
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isSecondary() ? a : b;
+        return  (a, b) -> Ior.narrowK(a).isLeft() ? a : b;
     }
     /**
-     * @return Combine two Ior's by taking the last primary
+     * @return Combine two Ior's by taking the last right
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isPrimary() ? b : a;
+        return  (a, b) -> Ior.narrowK(b).isRight() ? b : a;
     }
     /**
-     * @return Combine two Ior's by taking the last secondary
+     * @return Combine two Ior's by taking the last left
      */
     static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isSecondary() ? b : a;
+        return  (a, b) -> Ior.narrowK(b).isLeft() ? b : a;
     }
 
     /**

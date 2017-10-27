@@ -1,10 +1,10 @@
 package cyclops.streams.push;
 
-import com.aol.cyclops2.types.reactive.AsyncSubscriber;
-import com.aol.cyclops2.types.reactive.ReactiveSubscriber;
+import com.oath.cyclops.types.reactive.AsyncSubscriber;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 

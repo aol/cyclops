@@ -1,12 +1,12 @@
 package cyclops.collections.standard.anyM;
 
 import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.concurrent.ForkJoinPool;
@@ -112,7 +112,7 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
 		return AnyM.fromStream(Spouts.of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
@@ -168,7 +168,7 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
     public void testOnComplete() {
         BooleanProxy completed = new BooleanProxy(false);
 
-        ReactiveSeq.ofInts(1, 2, 3, 4).complete(() -> {
+        ReactiveSeq.ofInts(1, 2, 3, 4).onComplete(() -> {
             completed.value = true;
         }).forEach(x -> {
             assertFalse(completed.value);

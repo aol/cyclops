@@ -1,11 +1,11 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Eval;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.functor.Functor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -19,14 +19,14 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
 
     }
     default <T1, T2, R> Higher<CRE, R> zip(Higher<CRE, T1> fa, Higher<CRE, T2> fb, BiFunction<? super T1,? super T2,? extends R> f) {
-        return map_(zip(fa, fb), in-> f.apply(in.v1,in.v2));
+        return map_(zip(fa, fb), in-> f.apply(in._1(),in._2()));
     }
     default <T1,T2,R> Eval<Higher<CRE,R>> lazyZip(Higher<CRE,T1> f1, Eval<Higher<CRE,T2>> lazy, BiFunction<? super T1,? super T2,? extends R> fn) {
         return lazy.map(e-> zip(f1,e,fn));
     }
     /**
-     * Narrow the co/contra variance on Function stored within a HKT encoded type 
-     * 
+     * Narrow the co/contra variance on Function stored within a HKT encoded type
+     *
      * @param broad HKT encoded type with function to narrow variance on
      * @return HKT encoded type with narrowed function type
      */
@@ -34,8 +34,8 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
         return (Higher)broad;
     }
     /**
-     * Narrow the co/contra variance on Function stored within a HKT encoded type 
-     * 
+     * Narrow the co/contra variance on Function stored within a HKT encoded type
+     *
      * @param broad HKT encoded type with function to narrow variance on
      * @return HKT encoded type with narrowed function type
      */
@@ -43,8 +43,8 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
         return (Higher)broad;
     }
     /**
-     * Narrow the co/contra variance on Function stored within a HKT encoded type 
-     * 
+     * Narrow the co/contra variance on Function stored within a HKT encoded type
+     *
      * @param broad HKT encoded type with function to narrow variance on
      * @return HKT encoded type with narrowed function type
      */
@@ -52,23 +52,23 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
         return (Higher)broad;
     }
     /**
-     * Narrow the co/contra variance on BiFunction stored within a HKT encoded type 
-     * 
+     * Narrow the co/contra variance on BiFunction stored within a HKT encoded type
+     *
      * @param broad HKT encoded type with function to narrow variance on
      * @return HKT encoded type with narrowed function type
      */
     public static <CRE,T,T2,R> Higher<CRE, BiFunction<T,T2,R>> narrowBiFn(Higher<CRE, ? extends BiFunction<? super T, ? super T2, ? extends R>> fn, Higher<CRE, T> apply, Higher<CRE, T2> broad){
         return (Higher)broad;
     }
-    
+
     public <T,R> Higher<CRE,R> ap(Higher<CRE, ? extends Function<T, R>> fn, Higher<CRE, T> apply);
 
 
 
-    
+
     /**
-     * The default implementation of apBiFn is less efficient than ap2 (extra map operation)
-     * 
+     * The default implementation of apBiFn is less efficient than ap2 (extra transform operation)
+     *
      * @param fn
      * @param apply
      * @param apply2
@@ -77,7 +77,7 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
     default <T,T2,R> Higher<CRE,R> apBiFn(Higher<CRE, ? extends BiFunction<T, T2, R>> fn, Higher<CRE, T> apply, Higher<CRE, T2> apply2){
         return  ap(ap(map(Applicative::curry2,fn), apply), apply2);
     }
-    
+
     default <T,T2,R> Higher<CRE,R> ap2(Higher<CRE, ? extends Function<T, ? extends Function<T2, R>>> fn, Higher<CRE, T> apply, Higher<CRE, T2> apply2){
         Higher<CRE,Function<T,  Function<T2, R>>> noVariance = (Higher<CRE, Function<T, Function<T2, R>>>) fn;
         return  ap(ap(noVariance, apply), apply2);
@@ -90,8 +90,8 @@ public interface Applicative<CRE> extends Functor<CRE>,Pure<CRE> {
         Higher<CRE, Function<T3, R>> ap2 = ap(ap1, apply2);
         return  ap(ap2,apply3);
     }
-  
-    
+
+
     public static <T1, T2, R> Function< T1, Function<T2, R>> curry2(
             final BiFunction<T1, T2, R> biFunc) {
         return t1 -> t2 -> biFunc.apply(t1, t2);

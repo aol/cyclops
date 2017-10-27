@@ -2,10 +2,10 @@ package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.Streamable;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 
-import static cyclops.stream.Spouts.of;
+import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;

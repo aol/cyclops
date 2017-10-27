@@ -1,9 +1,9 @@
 package cyclops.streams.push.async;
 
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -51,9 +51,9 @@ public class AsyncCycle {
         //       t.v2.printOut();
 
 
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
         System.out.println("Second!");
-        assertThat(t.v2.cycle().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().cycle().limit(1).toList(),equalTo(ListX.of(1)));
 
     }
 }

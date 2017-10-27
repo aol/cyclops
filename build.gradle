@@ -48,8 +48,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 
 dependencies {
 
-  compile 'org.pcollections:pcollections:2.1.2'
-  compile 'org.jooq:jool:0.9.12'
+
   compile 'org.agrona:Agrona:0.9.1'
   compile 'org.reactivestreams:reactive-streams:1.0.0'
   compileOnly 'org.projectlombok:lombok:1.16.12'
@@ -121,16 +120,16 @@ modifyPom {
   project {
     name 'cyclops-react'
     description 'Platform for Functional Reactive Programming with Java 8'
-    url 'https://github.com/aol/simple-react'
+    url 'https://github.com/aol/cyclops-react'
     inceptionYear '2015'
 
-    groupId 'com.aol.simplereact'
-    artifactId 'cyclops-react'
+    groupId 'com.oath.cyclops'
+    artifactId 'cyclops'
     version "$version"
 
     scm {
-      url 'scm:git@github.com:aol/simple-react.git'
-      connection 'scm:git@github.com:aol/simple-react.git'
+      url 'scm:git@github.com:aol/cyclops-react.git'
+      connection 'scm:git@github.com:aol/cyclops-react.git'
       developerConnection 'scm:git@github.com:aol/simple-react.git'
     }
 

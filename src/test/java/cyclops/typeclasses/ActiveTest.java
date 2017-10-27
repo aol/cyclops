@@ -1,19 +1,17 @@
 package cyclops.typeclasses;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
-import cyclops.control.Xor;
-import cyclops.monads.Witness;
+import cyclops.control.Either;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.reactiveSeq;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
@@ -77,7 +75,7 @@ public class ActiveTest {
                 .flatMap(i->ListX.of(1,2,3));
 
         list.concreteTailRec(kindKleisli())
-                .tailRec(1,i-> 1<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)));
+                .tailRec(1,i-> 1<100_000 ? ListX.of(Either.left(i+1)) : ListX.of(Either.right(i)));
 
 
     }
@@ -92,22 +90,22 @@ public class ActiveTest {
     @Test
     public void tailRec(){
         MonadRec<list> mr = ListX.Instances.monadRec();
-        mr.tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i+1)) )
+        mr.tailRec(0,i-> i<100_000 ? ListX.of(Either.left(i+1)) : ListX.of(Either.right(i+1)) )
                 .convert(ListX::narrowK).printOut();
        /**
         active.concreteTailRec(ListX.kindKleisli())
-                .tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)) )
+                .tailRec(0,i-> i<100_000 ? ListX.of(Xor.lazyLeft(i+1)) : ListX.of(Xor.lazyRight(i)) )
                 .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
         **/
     }
     @Test
     public void tailRecStream(){
         MonadRec<reactiveSeq> mr = ReactiveSeq.Instances.monadRec();
-        mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Xor.secondary(i+1)) : ReactiveSeq.of(Xor.primary(i+1)) )
+        mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Either.left(i+1)) : ReactiveSeq.of(Either.right(i+1)) )
                 .convert(ReactiveSeq::narrowK).printOut();
         /**
          active.concreteTailRec(ListX.kindKleisli())
-         .tailRec(0,i-> i<100_000 ? ListX.of(Xor.secondary(i+1)) : ListX.of(Xor.primary(i)) )
+         .tailRec(0,i-> i<100_000 ? ListX.of(Xor.lazyLeft(i+1)) : ListX.of(Xor.lazyRight(i)) )
          .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
          **/
     }

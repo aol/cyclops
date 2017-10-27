@@ -1,48 +1,45 @@
 package cyclops.control;
 
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.*;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.reader;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 /**
  * An interface that represents the Reader monad
- * 
+ *
  * A technique for functional dependency injection. Functions rather than values
  * are manipulated and dependencies injected into Functions to execute them.
- * 
- * {@see <a href="https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75">Dependency injection using the Reader Monad in Java 8</a>}
- * 
  *
- * 
+ * {@see <a href="https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75">Dependency injection using the Reader Monad in Java 8</a>}
+ *
+ *
+ *
  * @author johnmcclean
  *
  * @param <T> Current input type of Function
  * @param <R> Current return type of Function
  */
 @FunctionalInterface
-public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
+public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
 
     public static <T,R> Reader<T,R> of(Reader<T,R> i){
         return i;
     }
-    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Xor<T, R>>> fn ){
+    public static <IN,T,R> Reader<IN,R> tailRec(T initial,Function<? super T,? extends Reader<IN, ? extends Either<T, R>>> fn ){
         return narrowK(Instances.<IN, T, R>monadRec().tailRec(initial, fn));
     }
     public static  <R,T> Kleisli<Higher<reader,T>,Reader<T,R>,R> kindKleisli(){
@@ -77,7 +74,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
         return flatMap(a -> o.map(b -> fn.apply(a,b)));
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.functor.Transformable#map(java.util.function.Function)
+     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {
@@ -85,8 +82,8 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     }
 
     /**
-     * FlatMap this Reader by applying the prodived function and unnesting to a singleUnsafe Reader
-     * 
+     * FlatMap this Reader by applying the prodived function and unnesting to a single Reader
+     *
      * @param f Transformation function to be flattened
      * @return Transformed Reader
      */
@@ -98,8 +95,8 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
     default <R1, R2, R3, R4> Reader<T,R4> forEach4(Function<? super R, Function<? super T,? extends R1>> value2,
                                                    BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                   Fn3<? super R, ? super R1, ? super R2,Function<? super T, ? extends R3>> value4,
-                                                   Fn4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                   Function3<? super R, ? super R1, ? super R2,Function<? super T, ? extends R3>> value4,
+                                                   Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
         Reader<? super T, ? extends R4> res =  this.flatMap(in -> {
@@ -136,7 +133,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
     default <R1, R2, R4> Reader<T,R4> forEach3(Function<? super R, Function<? super T,? extends R1>> value2,
                                                          BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
-                                                         Fn3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                                         Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMap(in -> {
 
@@ -206,12 +203,12 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<reader, IN>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -221,7 +218,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus(Monoid<Higher<Higher<reader, IN>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
 
@@ -237,12 +234,12 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
 
                 @Override
                 public <T> Maybe<Comonad<Higher<reader, IN>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<reader, IN>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -346,7 +343,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
                 @Override
                 public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
                     Reader<IN, T> mapper = Reader.narrowK(ds);
-                    Fn1<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
+                    Function1<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
                     return res.reader();
                 }
             };
@@ -369,22 +366,22 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
         public static <IN, T, R> MonadRec<Higher<reader, IN>> monadRec() {
              return new MonadRec<Higher<reader, IN>>() {
                 @Override
-                public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<reader, IN>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<reader, IN>, ? extends Either<T, R>>> fn) {
 
                     Reader<IN, Reader<IN, R>> reader = (IN in) -> {
-                        Reader<IN, ? extends Xor<T, R>> next[] = new Reader[1];
-                        next[0] = __ -> Xor.secondary(initial);
+                        Reader<IN, ? extends Either<T, R>> next[] = new Reader[1];
+                        next[0] = __ -> Either.left(initial);
                         boolean cont = true;
                         do {
 
                             cont = next[0].apply(in).visit(s -> {
-                                Reader<IN, ? extends Xor<T, R>> x = narrowK(fn.apply(s));
+                                Reader<IN, ? extends Either<T, R>> x = narrowK(fn.apply(s));
 
                                 next[0] = narrowK(fn.apply(s));
                                 return true;
                             }, pr -> false);
                         } while (cont);
-                        return next[0].map(Xor::get);
+                        return next[0].map(x->x.orElse(null));
                     };
                     return reader.flatMap(Function.identity());
 
@@ -398,7 +395,7 @@ public interface Reader<T, R> extends Fn1<T, R>, Transformable<R>,Higher<Higher<
     }
 
     default R foldLeft(T t, Monoid<R> monoid){
-        Fn1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
+        Function1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
         return x.apply(t);
     }
 }

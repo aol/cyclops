@@ -1,19 +1,18 @@
 package cyclops.control;
 
-import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.control.lazy.Either3;
-import cyclops.function.Fn3;
+import com.oath.cyclops.types.functor.Transformable;
+import cyclops.function.Function3;
+import cyclops.data.tuple.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.jooq.lambda.tuple.*;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
  * Java friendly version of Free (as in Unrestricted) monad for cyclops2
- * also see {@link cyclops.typeclasses.free.Free} for a more advanced type safe version
+ * also see {@link cyclops.free.Free} for a more advanced type safe version
  *
  * Inspiration and heavily influenced by https://github.com/xuwei-k/free-monad-java/blob/master/src/main/java/free/Free.java
  * Other influences incl :- http://www.slideshare.net/kenbot/running-free-with-the-monads
@@ -262,7 +261,7 @@ public abstract class Unrestricted<T> {
      */
     public  < T2, T3, R1, R2, R3> Unrestricted<R3> forEach4(Function<? super T, ? extends Unrestricted<R1>> value2,
                                                             BiFunction<? super T, ? super R1, ? extends Unrestricted<R2>> value3,
-                                                            Fn3<? super T, ? super R1, ? super R2, ? extends Unrestricted<R3>> value4
+                                                            Function3<? super T, ? super R1, ? super R2, ? extends Unrestricted<R3>> value4
                                                                        ) {
 
         return this.flatMap(in -> {
@@ -352,10 +351,10 @@ public abstract class Unrestricted<T> {
     public final T go(final Function<? super Transformable<Unrestricted<T>>,? extends Unrestricted<T>> fn){
         Unrestricted<T> toUse = this;
         for(;;) {
-            Xor<Transformable<Unrestricted<T>>, T> xor = (Xor)toUse.resume();
-            if (xor.isPrimary())
-                return xor.get();
-            toUse =  fn.apply(xor.secondaryGet());
+            Either<Transformable<Unrestricted<T>>, T> xor = (Either)toUse.resume();
+            if (xor.isRight())
+                return xor.orElse(null);
+            toUse =  fn.apply(xor.leftOrElse(null));
         }
     }
 
@@ -368,8 +367,8 @@ public abstract class Unrestricted<T> {
 
     public abstract <R> Unrestricted<R> flatMap(final Function<? super T,? extends Unrestricted<? extends R>> f);
 
-    public final <R> Xor<R, T> resume(Function<Transformable<Unrestricted<T>>,R> decoder) {
-        return resume().secondaryMap(decoder);
+    public final <R> Either<R, T> resume(Function<Transformable<Unrestricted<T>>,R> decoder) {
+        return resume().mapLeft(decoder);
     }
 
     public  <B> Unrestricted<Tuple2<T,B>> zip(Unrestricted<B> b){
@@ -377,23 +376,23 @@ public abstract class Unrestricted<T> {
     }
     public  <B,R> Unrestricted<R> zip(Unrestricted<B> b,BiFunction<? super T,? super B,? extends R> zipper){
 
-        Xor<Transformable<Unrestricted<T>>, T> first = resume();
-        Xor<Transformable<Unrestricted<B>>, B> second = b.resume();
+        Either<Transformable<Unrestricted<T>>, T> first = resume();
+        Either<Transformable<Unrestricted<B>>, B> second = b.resume();
 
-        if(first.isSecondary() && second.isSecondary()) {
-            return suspend(first.secondaryGet().map(a1->{
-               return suspend(second.secondaryGet().map(b1->a1.zip(b1,zipper)));
+        if(first.isLeft() && second.isLeft()) {
+            return suspend(first.leftOrElse(null).map(a1->{
+               return suspend(second.leftOrElse(null).map(b1->a1.zip(b1,zipper)));
             }));
         }
-        if(first.isPrimary() && second.isPrimary()){
-            return done(zipper.apply(first.get(),second.get()));
+        if(first.isRight() && second.isRight()){
+            return done(zipper.apply(first.orElse(null),second.orElse(null)));
         }
-        if(first.isSecondary() && second.isPrimary()){
-            return suspend(first.secondaryGet().map(a1->a1.zip(b,zipper)));
+        if(first.isLeft() && second.isRight()){
+            return suspend(first.leftOrElse(null).map(a1->a1.zip(b,zipper)));
 
         }
-        if(first.isPrimary() && second.isSecondary()){
-            return suspend(second.secondaryGet().map(a1->this.zip(b,zipper)));
+        if(first.isRight() && second.isLeft()){
+            return suspend(second.leftOrElse(null).map(a1->this.zip(b,zipper)));
         }
         return null;
     }
@@ -401,55 +400,55 @@ public abstract class Unrestricted<T> {
         return zip(b,c,(x,y,z)->Tuple.tuple(x,y,z));
 
     }
-    public  <B,C,R> Unrestricted<R> zip(Unrestricted<B> b, Unrestricted<C> c, Fn3<? super T, ? super B, ? super C,? extends R> fn){
+    public  <B,C,R> Unrestricted<R> zip(Unrestricted<B> b, Unrestricted<C> c, Function3<? super T, ? super B, ? super C,? extends R> fn){
 
-        Xor<Transformable<Unrestricted<T>>,T> first = resume();
-        Xor<Transformable<Unrestricted<B>>,B> second = b.resume();
-        Xor<Transformable<Unrestricted<C>>,C> third = c.resume();
+        Either<Transformable<Unrestricted<T>>,T> first = resume();
+        Either<Transformable<Unrestricted<B>>,B> second = b.resume();
+        Either<Transformable<Unrestricted<C>>,C> third = c.resume();
 
-        if(first.isSecondary() && second.isSecondary() && third.isSecondary()) {
-            return suspend(first.secondaryGet().map(a1->{
-                return suspend(second.secondaryGet().map(b1->{
-                    return suspend(third.secondaryGet().map(c1->a1.zip(b1,c1,fn)));
+        if(first.isLeft() && second.isLeft() && third.isLeft()) {
+            return suspend(first.leftOrElse(null).map(a1->{
+                return suspend(second.leftOrElse(null).map(b1->{
+                    return suspend(third.leftOrElse(null).map(c1->a1.zip(b1,c1,fn)));
                 }));
             }));
         }
 
-        if(first.isPrimary() && second.isPrimary() && third.isPrimary()){
-            return done(fn.apply(first.get(),second.get(),third.get()));
+        if(first.isRight() && second.isRight() && third.isRight()){
+            return done(fn.apply(first.orElse(null),second.orElse(null),third.orElse(null)));
         }
 
-        if(first.isSecondary() && second.isPrimary() && third.isPrimary()){
-            return suspend(first.secondaryGet().map(a1->a1.zip(b,c,fn)));
+        if(first.isLeft() && second.isRight() && third.isRight()){
+            return suspend(first.leftOrElse(null).map(a1->a1.zip(b,c,fn)));
         }
-        if(first.isPrimary() && second.isSecondary() && third.isPrimary()){
+        if(first.isRight() && second.isLeft() && third.isRight()){
 
-                return suspend(second.secondaryGet().map(b1->this.zip(b1,c,fn)));
+                return suspend(second.leftOrElse(null).map(b1->this.zip(b1,c,fn)));
 
 
 
         }
-        if(first.isPrimary() && second.isPrimary() && third.isSecondary()){
-              return suspend(third.secondaryGet().map(c1->this.zip(b,c1,fn)));
+        if(first.isRight() && second.isRight() && third.isLeft()){
+              return suspend(third.leftOrElse(null).map(c1->this.zip(b,c1,fn)));
         }
 
 
-        if(first.isPrimary() && second.isSecondary() && third.isSecondary()){
-            return suspend(second.secondaryGet().map(b1->{
-                return suspend(third.secondaryGet().map(c1->this.zip(b1,c1,fn)));
+        if(first.isRight() && second.isLeft() && third.isLeft()){
+            return suspend(second.leftOrElse(null).map(b1->{
+                return suspend(third.leftOrElse(null).map(c1->this.zip(b1,c1,fn)));
             }));
 
         }
-        if(first.isSecondary() && second.isPrimary() && third.isSecondary()){
-            return suspend(first.secondaryGet().map(a1->{
+        if(first.isLeft() && second.isRight() && third.isLeft()){
+            return suspend(first.leftOrElse(null).map(a1->{
 
-                    return suspend(third.secondaryGet().map(c1->a1.zip(b,c1,fn)));
+                    return suspend(third.leftOrElse(null).map(c1->a1.zip(b,c1,fn)));
 
             }));
         }
-        if(first.isSecondary() && second.isSecondary() && third.isPrimary()){
-            return suspend(first.secondaryGet().map(a1->{
-                return suspend(second.secondaryGet().map(b1->a1.zip(b1,c,fn)));
+        if(first.isLeft() && second.isLeft() && third.isRight()){
+            return suspend(first.leftOrElse(null).map(a1->{
+                return suspend(second.leftOrElse(null).map(b1->a1.zip(b1,c,fn)));
 
             }));
         }
@@ -469,7 +468,7 @@ public abstract class Unrestricted<T> {
         private <R,X> Function<Transformable<Unrestricted<R>>,X> decoder(){
             return (Function)decoder1;
         }
-        public final <R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(Unrestricted<R1> free1, Unrestricted<R2> free2 ){
+        public final <R1,R2,X1,X2> Tuple2<Either<X1,R1>,Either<X2,R2>> product(Unrestricted<R1> free1, Unrestricted<R2> free2 ){
 
             return Tuple.tuple(free1.resume(decoder()),free2.resume(decoder()));
 
@@ -478,17 +477,17 @@ public abstract class Unrestricted<T> {
     }
 
 
-    public static final <F,R1,R2,X1,X2> Tuple2<Xor<X1,R1>,Xor<X2,R2>> product(Unrestricted<R1> free1, Function<Transformable<Unrestricted<R1>>,X1> decoder1,
-                                                                              Unrestricted<R2> free2, Function<Transformable<Unrestricted<R2>>,X2> decoder2 ){
+    public static final <F,R1,R2,X1,X2> Tuple2<Either<X1,R1>,Either<X2,R2>> product(Unrestricted<R1> free1, Function<Transformable<Unrestricted<R1>>,X1> decoder1,
+                                                                                    Unrestricted<R2> free2, Function<Transformable<Unrestricted<R2>>,X2> decoder2 ){
 
         return Tuple.tuple(free1.resume(decoder1),free2.resume(decoder2));
 
     }
-    public final Xor<Transformable<Unrestricted<T>>, T> resume() {
-        return resumeInternal().visit(Xor::secondary,Xor::primary,t->null);
+    public final Either<Transformable<Unrestricted<T>>, T> resume() {
+        return resumeInternal().visit(Either::left, Either::right, t->null);
 
     }
-   abstract <T1, U> Either3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal();
+   abstract <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal();
 
     public final <R> Unrestricted<R> map(final Function<? super T, ? extends R> mapper) {
         return flatMap(t -> new Pure<>(mapper.apply(t)));
@@ -507,8 +506,8 @@ public abstract class Unrestricted<T> {
                                     Function<? super FlatMapped<?, T>,? extends R> flatMapped){
             return done.apply(this);
         }
-        <T1, U> Either3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
-            return Either3.left2(value);
+        <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
+            return LazyEither3.left2(value);
         }
         @Override
         public <R> Unrestricted<R> flatMap(Function<? super T, ? extends Unrestricted<? extends R>> f) {
@@ -528,8 +527,8 @@ public abstract class Unrestricted<T> {
                            Function<? super FlatMapped<?, T>,? extends R> flatMapped){
             return suspend.apply(this);
         }
-        <T1, U> Either3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
-            return Either3.left1(suspended);
+        <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
+            return LazyEither3.left1(suspended);
         }
         @Override
         public <R> Unrestricted<R> flatMap(Function<? super T,? extends Unrestricted<? extends R>> f) {
@@ -559,16 +558,16 @@ public abstract class Unrestricted<T> {
         public <R> Unrestricted<R> flatMap(final Function<? super T,? extends Unrestricted<? extends R>> g) {
             return new FlatMapped<IN, R>(free, aa -> new FlatMapped<T, R>(narrowFn().apply(aa), g));
         }
-        <T1, U> Either3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
+        <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
             return   resumeNestedFree().flatMap(cur->cur.resumeInternal());
         }
-        private  <U> Either3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeNestedFree(){
+        private  <U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeNestedFree(){
             Function<IN, Unrestricted<T>> f = narrowFn();
-            return free.visit(pure->Either3.right(f.apply(pure.value)),
-                    s-> Either3.left1(s.suspended.map(o -> o.flatMap(f))),
+            return free.visit(pure-> LazyEither3.right(f.apply(pure.value)),
+                    s-> LazyEither3.left1(s.suspended.map(o -> o.flatMap(f))),
                     fm->{
                         final FlatMapped<U, IN> flatMapped2 = (FlatMapped<U, IN>)fm;
-                        return Either3.right(flatMapped2.free.flatMap(o ->
+                        return LazyEither3.right(flatMapped2.free.flatMap(o ->
                                 flatMapped2.fn.apply(o).flatMap(fn)));
                     });
 

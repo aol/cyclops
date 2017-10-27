@@ -4,12 +4,12 @@ import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.hamcrest.Matchers;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -18,10 +18,7 @@ import reactor.core.scheduler.Schedulers;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -315,34 +312,19 @@ public  class AsyncRSReactiveStreamXTest {
 
 		System.out.println(list);
 
-		List<Integer> right = list.stream().map(t -> t.v2).collect(Collectors.toList());
+		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
 
-		List<Integer> left = list.stream().map(t -> t.v1).collect(Collectors.toList());
+		List<Integer> left = list.stream().map(t -> t._1()).collect(Collectors.toList());
 		System.out.println(left);
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
-	@Test
-	public void cast(){
-        AtomicReference<Throwable> error = new AtomicReference<>(null);
-        AtomicBoolean complete=  new AtomicBoolean(false);
-		of(1,2,3).cast(String.class).forEach(System.out::println,e->error.set(e),()->complete.set(true));
-		while(!complete.get()){
-            LockSupport.parkNanos(100l);
-        }
-		System.out.println(error.get());
-		assertTrue(error.get() instanceof ClassCastException);
-	}
-	@Test(expected=ClassCastException.class)
-	public void castList(){
 
-		of(1,2,3).cast(String.class).toList();
 
-	}
     @Test
 	public void dropRight(){
 		System.out.println(of(1,2,3).skipLast(1).toList());
@@ -388,79 +370,72 @@ public  class AsyncRSReactiveStreamXTest {
 	@Test
 	public void testDuplicate(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
 	}
 	@Test
 	public void testTriplicate(){
 		 Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
+		 assertTrue(copies._3().anyMatch(i->i==2));
 	}
 	
 	@Test
 	public void testQuadriplicate(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.anyMatch(i->i==2));
-		 assertTrue(copies.v2.anyMatch(i->i==2));
-		 assertTrue(copies.v3.anyMatch(i->i==2));
-		 assertTrue(copies.v4.anyMatch(i->i==2));
+		 assertTrue(copies._1().anyMatch(i->i==2));
+		 assertTrue(copies._2().anyMatch(i->i==2));
+		 assertTrue(copies._3().anyMatch(i->i==2));
+		 assertTrue(copies._4().anyMatch(i->i==2));
 	}
 
 	@Test
 	public void testDuplicateFilter(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateFilter(){
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._3().filter(i->i%2==0).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateFilter(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v2.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v3.filter(i->i%2==0).toList().size()==3);
-		 assertTrue(copies.v4.filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._1().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._2().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._3().filter(i->i%2==0).toList().size()==3);
+		 assertTrue(copies._4().filter(i->i%2==0).toList().size()==3);
 	}
 	@Test
 	public void testDuplicateLimit(){
 		 Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testTriplicateLimit(){
 		Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).triplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
-		 assertTrue(copies.v3.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
+		 assertTrue(copies._3().limit(3).toList().size()==3);
 	} 
 	@Test
 	public void testQuadriplicateLimit(){
 		 Tuple4<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>,ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).quadruplicate();
-		 assertTrue(copies.v1.limit(3).toList().size()==3);
-		 assertTrue(copies.v2.limit(3).toList().size()==3);
-		 assertTrue(copies.v3.limit(3).toList().size()==3);
-		 assertTrue(copies.v4.limit(3).toList().size()==3);
+		 assertTrue(copies._1().limit(3).toList().size()==3);
+		 assertTrue(copies._2().limit(3).toList().size()==3);
+		 assertTrue(copies._3().limit(3).toList().size()==3);
+		 assertTrue(copies._4().limit(3).toList().size()==3);
 	}
-	    @Test(expected=ClassCastException.class)
-	    public void testCastException() {
-	    	of(1, "a", 2, "b", 3, null)
-	    			.peek(it ->System.out.println(it))
-	    			.cast(Integer.class)
-	    				.peek(it ->System.out.println(it)).toList();
-	    		
-	    }
+
 
 	public void prepend(){
-		List<String> result = 	of(1,2,3).prepend(100,200,300)
+		List<String> result = 	of(1,2,3).prependAll(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -586,11 +561,11 @@ public  class AsyncRSReactiveStreamXTest {
 	    public void testMinByMaxBy() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5, 6);
 
-	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).get());
-	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).get());
+	        assertEquals(1, (int) s.get().maxBy(t -> Math.abs(t - 5)).orElse(-1));
+	        assertEquals(5, (int) s.get().minBy(t -> Math.abs(t - 5)).orElse(-1));
 
-	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).get());
-	        assertEquals(1, (int) s.get().minBy(t -> "" + t).get());
+	        assertEquals(6, (int) s.get().maxBy(t -> "" + t).orElse(-1));
+	        assertEquals(1, (int) s.get().minBy(t -> "" + t).orElse(-1));
 	    }
 
 	   

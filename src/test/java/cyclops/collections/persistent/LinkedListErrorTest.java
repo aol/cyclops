@@ -1,10 +1,8 @@
 package cyclops.collections.persistent;
 
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
-
-import java.util.stream.Collectors;
 
 /**
  * Created by johnmcclean on 02/06/2017.

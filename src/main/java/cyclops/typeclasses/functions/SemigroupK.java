@@ -1,11 +1,8 @@
 package cyclops.typeclasses.functions;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import cyclops.function.BinaryFn;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.function.Semigroup;
-
-import java.util.function.BinaryOperator;
 
 @FunctionalInterface
 public interface SemigroupK<W,T>  extends Semigroup<Higher<W,T>> {

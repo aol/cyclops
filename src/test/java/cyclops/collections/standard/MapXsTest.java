@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jooq.lambda.tuple.Tuple;
+import cyclops.data.tuple.Tuple;
 import org.junit.Test;
 
 import cyclops.collections.mutable.DequeX;
@@ -26,31 +26,31 @@ public class MapXsTest {
     public void toListX(){
         MapX.empty().forEach(1l,System.out::println);
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        ListX<String> strs = maps.toListX(t->""+t.v1+t.v2);
+        ListX<String> strs = maps.toListX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(ListX.of("a1","b2")));
     }
     @Test
     public void toSetX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        SetX<String> strs = maps.toSetX(t->""+t.v1+t.v2);
+        SetX<String> strs = maps.toSetX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(SetX.of("a1","b2")));
     }
     @Test
     public void toSortedSetX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        SortedSetX<String> strs = maps.toSortedSetX(t->""+t.v1+t.v2);
+        SortedSetX<String> strs = maps.toSortedSetX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(SortedSetX.of("a1","b2")));
     }
     @Test
     public void toQueueX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        QueueX<String> strs = maps.toQueueX(t->""+t.v1+t.v2);
+        QueueX<String> strs = maps.toQueueX(t->""+t._1()+t._2());
         assertThat(strs.toList(),equalTo(QueueX.of("a1","b2").toList()));
     }
     @Test
     public void toDequeX(){
         MapX<String,Integer> maps = MapXs.of("a",1,"b",2);
-        DequeX<String> strs = maps.toDequeX(t->""+t.v1+t.v2);
+        DequeX<String> strs = maps.toDequeX(t->""+t._1()+t._2());
         assertThat(strs.toList(),equalTo(DequeX.of("a1","b2").toList()));
     }
     @Test
@@ -61,10 +61,7 @@ public class MapXsTest {
     public void onEmptyGet(){
         assertThat(MapX.empty().onEmptyGet(()->Tuple.tuple("hello",10)).get("hello"),equalTo(10));
     }
-    @Test(expected=RuntimeException.class)
-    public void onEmptyThrow(){
-       MapX.empty().onEmptyThrow(()->new RuntimeException("hello"));
-    }
+
     @Test
     public void onEmptySwitch(){
        

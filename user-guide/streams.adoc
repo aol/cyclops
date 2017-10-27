@@ -848,10 +848,10 @@ cyclops-react provides many extraction operators, including many that return a T
 ----
 ReactiveSeq<String> helloWorld = ReactiveSeq.of("hello","world","last");
 Tuple2<String,ReactiveSeq<String> headAndTail = helloWorld.splitAtHead();
-String head = headAndTail.v1();
+String head = headAndTail._1();
 //hello
 
-ReactiveSeq<String> tail =  headAndTail.v2();
+ReactiveSeq<String> tail =  headAndTail._2();
 //[world,last]
 ----
 
@@ -1298,7 +1298,11 @@ The elasped operator maps the elements in the Stream into a http://www.jooq.org/
 ====
 [source,java]
 ----
+<<<<<<< HEAD
+ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(value->value._2()<0)
+=======
 ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0)
+>>>>>>> master
 ----
 ====
 

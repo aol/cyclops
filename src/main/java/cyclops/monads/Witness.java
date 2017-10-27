@@ -8,35 +8,32 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.internal.adapters.*;
+import com.oath.cyclops.internal.adapters.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.async.Future;
-import cyclops.control.lazy.Either;
-import cyclops.control.lazy.Either3;
-import cyclops.control.lazy.Either4;
-import cyclops.control.lazy.Either5;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Streamable;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.extensability.FunctionalAdapter;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.extensability.FunctionalAdapter;
 
 public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
-        
+
     }
+
     static interface StreamWitness<W extends StreamWitness<W>>  extends WitnessType<W>{
 
     }
    static interface CollectionXWitness<W extends CollectionXWitness<W>>  extends WitnessType<W>{
-       
+
    }
     public static <T> Identity<T> identity(AnyM<identity,? extends T> anyM){
         return anyM.unwrap();
@@ -108,25 +105,25 @@ public interface Witness {
     public static <T> Future<T> future(AnyM<future,? extends T> anyM){
         return anyM.unwrap();
     }
-    
+
     public static <T> CompletableFuture<T> completableFuture(AnyM<completableFuture,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <ST,T> Xor<ST,T> xor(AnyM<xor,? extends T> anyM){
+    public static <ST,T> Either<ST,T> either(AnyM<either,? extends T> anyM){
         return anyM.unwrap();
     }
 
 
-    public static <L,R> Either<L,R> either(AnyM<either,? extends R> anyM){
+    public static <L,R> LazyEither<L,R> lazyEither(AnyM<lazyEither,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,R> Either3<L1,L2,R> either3(AnyM<either3,? extends R> anyM){
+    public static <L1,L2,R> LazyEither3<L1,L2,R> lazyEither3(AnyM<lazyEither3,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,L3,R> Either4<L1,L2,L3,R> either4(AnyM<either4,? extends R> anyM){
+    public static <L1,L2,L3,R> LazyEither4<L1,L2,L3,R> lazyEither4(AnyM<lazyEither4,? extends R> anyM){
         return anyM.unwrap();
     }
-    public static <L1,L2,L3,L4,R> Either5<L1,L2,L3,L4,R> either5(AnyM<either5,? extends R> anyM){
+    public static <L1,L2,L3,L4,R> LazyEither5<L1,L2,L3,L4,R> lazyEither5(AnyM<lazyEither5,? extends R> anyM){
         return anyM.unwrap();
     }
     public static <ST,T> Ior<ST,T> ior(AnyM<ior,? extends T> anyM){
@@ -144,7 +141,7 @@ public interface Witness {
         public  FunctionalAdapter<stream> adapter() {
             return StreamAdapter.stream;
         }
-        
+
     }
     public static enum futureStream implements StreamWitness<futureStream>{
         INSTANCE;
@@ -167,7 +164,7 @@ public interface Witness {
 
 
         }
-        
+
     }
 
     public static enum sortedSet implements CollectionXWitness<sortedSet>{
@@ -178,7 +175,7 @@ public interface Witness {
             return new CollectionXAdapter<Witness.sortedSet>(SortedSetX::empty,
                     SortedSetX::of,SortedSetX::fromIterator,this);
         }
-        
+
     }
     public static enum set implements CollectionXWitness<set>{
         INSTANCE;
@@ -188,7 +185,7 @@ public interface Witness {
             return new CollectionXAdapter<Witness.set>(SetX::empty,
                     SetX::of,SetX::fromIterator,this);
         }
-        
+
     }
     public static enum list implements CollectionXWitness<list>{
         INSTANCE;
@@ -198,7 +195,7 @@ public interface Witness {
             return new CollectionXAdapter<Witness.list>(ListX::empty,
                     ListX::of,ListX::fromIterator,this);
         }
-        
+
     }
     public static enum linkedListX implements CollectionXWitness<linkedListX>{
         INSTANCE;
@@ -208,7 +205,7 @@ public interface Witness {
             return new CollectionXAdapter<linkedListX>(LinkedListX::empty,
                     LinkedListX::of, LinkedListX::fromIterator,this);
         }
-        
+
     }
     public static enum vectorX implements CollectionXWitness<vectorX>{
         INSTANCE;
@@ -218,7 +215,7 @@ public interface Witness {
             return new CollectionXAdapter<vectorX>(VectorX::empty,
                     VectorX::of, VectorX::fromIterator,this);
         }
-        
+
     }
     public static enum persistentQueueX implements CollectionXWitness<persistentQueueX>{
         INSTANCE;
@@ -246,7 +243,7 @@ public interface Witness {
         @Override
         public  FunctionalAdapter<orderedSetX> adapter() {
             return new CollectionXAdapter<orderedSetX>(OrderedSetX::empty,
-                    OrderedSetX::of, OrderedSetX::fromIterator,this);
+                    OrderedSetX::identityOrNatural, OrderedSetX::fromIterator,this);
         }
 
     }
@@ -268,7 +265,7 @@ public interface Witness {
             return new CollectionXAdapter<Witness.deque>(DequeX::empty,
                     DequeX::of,DequeX::fromIterator,this);
         }
-        
+
     }
     public static enum queue implements CollectionXWitness<queue>{
         INSTANCE;
@@ -278,7 +275,7 @@ public interface Witness {
             return new CollectionXAdapter<Witness.queue>(QueueX::empty,
                     QueueX::of,QueueX::fromIterator,this);
         }
-        
+
     }
     public static enum streamable implements WitnessType<streamable>{
         INSTANCE;
@@ -287,7 +284,7 @@ public interface Witness {
         public FunctionalAdapter<streamable> adapter() {
             return StreamableAdapter.streamable;
         }
-        
+
     }
 
     public static enum tryType implements MonadicValueWitness<tryType>{
@@ -296,10 +293,9 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<tryType> adapter() {
-            return new MonadicValueAdapter<tryType>(()->Try.failure(null),
-                    Try::success,Try::fromIterable,false,this);
+            return new TryAdapter();
         }
-        
+
     }
     public static enum ior implements MonadicValueWitness<ior>{
         INSTANCE;
@@ -307,65 +303,59 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<ior> adapter() {
-            return new MonadicValueAdapter<Witness.ior>(()->Ior.secondary(null),
-                    Ior::primary,Ior::fromIterable,false,this);
+            return new IorAdapter();
         }
-        
+
     }
-    public static enum either implements MonadicValueWitness<either>{
+    public static enum lazyEither implements MonadicValueWitness<lazyEither>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither> adapter() {
+            return new LazyEitherAdapter();
+        }
+
+    }
+    public static enum lazyEither3 implements MonadicValueWitness<lazyEither3>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither3> adapter() {
+            return new LazyEither3Adapter();
+        }
+
+    }
+    public static enum lazyEither4 implements MonadicValueWitness<lazyEither4>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither4> adapter() {
+            return new LazyEither4Adapter();
+        }
+
+    }
+    public static enum lazyEither5 implements MonadicValueWitness<lazyEither5>{
+        INSTANCE;
+
+
+        @Override
+        public FunctionalAdapter<lazyEither5> adapter() {
+            return new LazyEither5Adapter();
+        }
+
+    }
+    public static enum either implements WitnessType<either>{
         INSTANCE;
 
 
         @Override
         public FunctionalAdapter<either> adapter() {
-            return new MonadicValueAdapter<Witness.either>(()-> Either.left(null),
-                    Either::right,Either::fromIterable,false,this);
+            return new EitherAdapter();
         }
 
-    }
-    public static enum either3 implements MonadicValueWitness<either3>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either3> adapter() {
-            return new MonadicValueAdapter<Witness.either3>(()-> Either3.left1(null),
-                    Either3::right,Either3::fromIterable,false,this);
-        }
-
-    }
-    public static enum either4 implements MonadicValueWitness<either4>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either4> adapter() {
-            return new MonadicValueAdapter<Witness.either4>(()-> Either4.left1(null),
-                    Either4::right, Either4::fromIterable,false,this);
-        }
-
-    }
-    public static enum either5 implements MonadicValueWitness<either5>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<either5> adapter() {
-            return new MonadicValueAdapter<Witness.either5>(()-> Either5.left1(null),
-                    Either5::right, Either5::fromIterable,false,this);
-        }
-
-    }
-    public static enum xor implements MonadicValueWitness<xor>{
-        INSTANCE;
-
-
-        @Override
-        public FunctionalAdapter<xor> adapter() {
-            return new MonadicValueAdapter<Witness.xor>(()->Xor.secondary(null),
-                    Xor::primary,Xor::fromIterable,false,this);
-        }
-        
     }
     public static enum eval implements MonadicValueWitness<eval>{
         INSTANCE;
@@ -373,10 +363,10 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<eval> adapter() {
-            return new MonadicValueAdapter<Witness.eval>(()->Eval.now(null),
+            return new MonadicValueAdapter<eval>(()->Eval.now(null),
                     Eval::now,Eval::fromIterable,false,this);
         }
-        
+
     }
     public static enum maybe implements MonadicValueWitness<maybe>{
         INSTANCE;
@@ -384,10 +374,10 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<maybe> adapter() {
-            return new MonadicValueAdapter<Witness.maybe>(()->Maybe.none(),
+            return new MonadicValueAdapter<Witness.maybe>(()->Maybe.nothing(),
                     Maybe::just,Maybe::fromIterable,true,this);
         }
-        
+
     }
     public static enum future implements MonadicValueWitness<future>{
         INSTANCE;
@@ -398,7 +388,7 @@ public interface Witness {
             return new MonadicValueAdapter<Witness.future>(Future::future,
                     Future::ofResult, Future::fromIterable,false,this);
         }
-        
+
     }
     public static enum completableFuture implements WitnessType<completableFuture>{
         INSTANCE;
@@ -407,9 +397,9 @@ public interface Witness {
         public FunctionalAdapter<completableFuture> adapter() {
             return FutureAdapter.completableFuture;
         }
-        
+
     }
-    
+
     public static enum optional implements WitnessType<optional>{
         INSTANCE;
 
@@ -417,7 +407,7 @@ public interface Witness {
         public FunctionalAdapter<optional> adapter() {
             return OptionalAdapter.optional;
         }
-        
+
     }
 
     public static enum reader implements WitnessType<reader>{
@@ -452,6 +442,15 @@ public interface Witness {
 
         @Override
         public FunctionalAdapter<coyoneda> adapter() {
+            return null;
+        }
+
+    }
+    public static enum coreader implements WitnessType<coreader>{
+        INSTANCE;
+
+        @Override
+        public FunctionalAdapter<coreader> adapter() {
             return null;
         }
 

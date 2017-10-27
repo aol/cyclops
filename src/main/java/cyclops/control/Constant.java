@@ -1,11 +1,13 @@
 package cyclops.control;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
+import com.oath.cyclops.matching.Deconstruct;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.constant;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
@@ -13,7 +15,7 @@ import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
-import java.util.function.BiFunction;
+import java.io.Serializable;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -22,7 +24,8 @@ import java.util.function.Supplier;
  * @param <P> Phantom type
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T> {
+public final class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T>, Deconstruct.Deconstruct1<T>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final T value;
 
@@ -50,6 +53,11 @@ public class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T> {
     }
     public static <T,P> MonoidK<Higher<constant,T>,P> monoidK(Monoid<T> monoid){
        return MonoidK.of(Constant.of(monoid.zero()), (a, b) -> Constant.of(monoid.apply(narrowK(a).value, narrowK(b).value)));
+    }
+
+    @Override
+    public Tuple1<T> unapply() {
+        return Tuple.tuple(value);
     }
 
     public static class Instances{

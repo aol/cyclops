@@ -1,7 +1,7 @@
 package cyclops.streams.push.hotstream;
 
-import com.aol.cyclops2.types.stream.PausableHotStream;
-import cyclops.stream.Spouts;
+import com.oath.cyclops.types.stream.PausableHotStream;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.concurrent.CountDownLatch;
@@ -31,8 +31,8 @@ public class ConnectionTesst {
                 .limit(10000)
                 .runFuture(exec3,x->x.forEach(System.out::println,System.err::println));
 
-        
-        
+
+
         s.pause();
         s.unpause();
 

@@ -1,7 +1,6 @@
 package cyclops.streams.push;
 
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.Spouts;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

@@ -1,8 +1,7 @@
 package cyclops.streams.push.hotstream;
 
-import com.aol.cyclops2.types.stream.PausableHotStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import com.oath.cyclops.types.stream.PausableHotStream;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -17,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class PrimedHotStreamTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	volatile Object value;
-	
+
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;
@@ -27,14 +26,14 @@ public class PrimedHotStreamTest {
 				.peek(v->latch.countDown())
 				.primedHotStream(exec)
 				.connect().forEach(System.out::println);
-		
+
 		latch.await();
 		assertTrue(value!=null);
 	}
 	@Test
 	public void hotStreamConnect() throws InterruptedException{
-		
-		
+
+
 		for(int i=0;i<1_000;i++)
 		{
 			System.out.println(i);
@@ -49,12 +48,12 @@ public class PrimedHotStreamTest {
 					.connect()
 					.limit(100)
 					.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
-			
+
 			latch.await();
 			assertTrue(value!=null);
 		}
 	}
-	
+
 	@Test
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
@@ -67,23 +66,23 @@ public class PrimedHotStreamTest {
 				.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),s->s.forEach(System.out::println));
-		
+
 		latch.await();
 		assertTrue(value!=null);
 	}
 	@Test
 	public void hotStreamCapture() throws InterruptedException{
-		
-		
+
+
 		List<Integer> list = Spouts.range(0,Integer.MAX_VALUE)
 									 .limit(1000)
 									 .primedHotStream(exec)
 									 .connect()
 									 .limit(2)
 									 .toList();
-		
+
 		assertThat(list,equalTo(Arrays.asList(0,1)));
-		
+
 	}
 	@Test
 	public void hotStreamCaptureLong() throws InterruptedException{
@@ -127,10 +126,10 @@ public class PrimedHotStreamTest {
 		s.connect(new LinkedBlockingQueue<>())
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
-		
+
 		Object oldValue = value;
-	
-		
+
+
 		try{
 			s.pause();
 			s.unpause();
@@ -158,7 +157,7 @@ public class PrimedHotStreamTest {
 				.limit(100)
 				.runFuture(ForkJoinPool.commonPool(),st->st.forEach(System.out::println));
 
-		
+
 		Object oldValue = value;
 		try{
 			s.pause();

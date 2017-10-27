@@ -1,7 +1,7 @@
 package cyclops.control;
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher2;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Maybe.Nothing;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.state;
@@ -10,14 +10,14 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.free.Free;
+import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -26,21 +26,21 @@ import java.util.function.Function;
 public final class State<S, T> implements Higher2<state,S,T> {
 
 
-    private final Fn1<S, Free<supplier,Tuple2<S, T>>> runState;
+    private final Function1<S, Free<supplier,Tuple2<S, T>>> runState;
 
 
     public Tuple2<S, T> run(S s) {
-        return Fn0.run(runState.apply(s));
+        return Function0.run(runState.apply(s));
     }
     public T eval(S s) {
-        return Fn0.run(runState.apply(s)).v2;
+        return Function0.run(runState.apply(s))._2();
     }
     public static <S> State<S, S> get() {
         return state(s -> Tuple.tuple(s, s));
     }
 
     public static <S> State<S, Nothing> transition(Function<? super S,? extends S> f) {
-        return state(s -> Tuple.tuple(f.apply(s),(Nothing) Maybe.none()));
+        return state(s -> Tuple.tuple(f.apply(s),(Nothing) Maybe.nothing()));
     }
 
     public static <S, T> State<S, T> transition(Function<? super S,? extends S> f, T value) {
@@ -51,17 +51,17 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public <R> State<S, R> map(Function<? super T,? extends R> mapper) {
-        return mapState(t -> Tuple.tuple(t.v1, mapper.apply(t.v2)));
+        return mapState(t -> Tuple.tuple(t._1(), mapper.apply(t._2())));
     }
     public <R> State<S, R> mapState(Function<Tuple2<S,T>, Tuple2<S, R>> fn) {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
     }
-    private static <S, T> State<S, T> suspended(Fn1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
-        return new State<>(s -> Fn0.suspend(Lambda.λK(()->runF.apply(s))));
+    private static <S, T> State<S, T> suspended(Function1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
+        return new State<>(s -> Function0.suspend(Lambda.λK(()->runF.apply(s))));
     }
 
     public <R> State<S, R> flatMap(Function<? super T,? extends  State<S, R>> f) {
-        return suspended(s -> runState.apply(s).flatMap(t -> Free.done(f.apply(t.v2).run(t.v1))));
+        return suspended(s -> runState.apply(s).flatMap(t -> Free.done(f.apply(t._2()).run(t._1()))));
     }
     public static <S, T> State<S, T> constant(T constant) {
         return state(s -> Tuple.tuple(s, constant));
@@ -74,7 +74,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
            *  <pre>
    * {@code
    *
-   *   import static com.aol.cyclops2.reactor.States.forEach4;
+   *   import static com.oath.cyclops.reactor.States.forEach4;
    *
       forEach4(State.just(1),
               a-> State.just(a+1),
@@ -94,8 +94,8 @@ public final class State<S, T> implements Higher2<state,S,T> {
    */
     public  <R1, R2, R3, R4> State<S,R4> forEach4(Function<? super T, ? extends State<S,R1>> value2,
                                                   BiFunction<? super T, ? super R1, ? extends State<S,R2>> value3,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends State<S,R3>> value4,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends State<S,R3>> value4,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
 
         return this.flatMap(in -> {
@@ -132,7 +132,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.States.forEach3;
+     *   import static com.oath.cyclops.reactor.States.forEach3;
      *
     forEach3(State.just(1),
     a-> State.just(a+1),
@@ -150,7 +150,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      */
     public <R1, R2, R4> State<S,R4> forEach3(Function<? super T, ? extends State<S,R1>> value2,
                                              BiFunction<? super T, ? super R1, ? extends State<S,R2>> value3,
-                                             Fn3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
         return this.flatMap(in -> {
 
@@ -178,7 +178,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.States.forEach;
+     *   import static com.oath.cyclops.reactor.States.forEach;
      *
     forEach(State.just(1),
     a-> State.just(a+1),
@@ -206,7 +206,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         });
 
     }
-    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Xor<T, R>>> fn) {
+    public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Either<T, R>>> fn) {
         return narrowK( State.Instances.<S> monadRec().tailRec(initial, fn));
 
     }
@@ -218,7 +218,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
     }
 
     public static <S> State<S, Nothing> of(S s) {
-        return state(__ -> Tuple.tuple(s, (Nothing)Maybe.none()));
+        return state(__ -> Tuple.tuple(s, (Nothing)Maybe.nothing()));
     }
     public static <S> State<S, Nothing> put(S s) {
         return of(s);
@@ -274,12 +274,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T, R> Maybe<MonadZero<Higher<state, S>>> monadZero() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -289,7 +289,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus(Monoid<Higher<Higher<state, S>, T>> m) {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
@@ -304,12 +304,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> Maybe<Comonad<Higher<state, S>>> comonad() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<Higher<state, S>>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -413,13 +413,13 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
                 @Override
                 public <T> T foldRight(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.foldRight(narrowK(ds).eval(val));
+                    return monoid.fold(narrowK(ds).eval(val));
 
                 }
 
                 @Override
                 public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.foldLeft(narrowK(ds).eval(val));
+                    return monoid.fold(narrowK(ds).eval(val));
                 }
 
                 @Override
@@ -431,7 +431,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         public static <S> MonadRec<Higher<state,S>> monadRec() {
             return new MonadRec<Higher<state,S>>() {
                 @Override
-                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Either<T, R>>> fn) {
                     return narrowK(fn.apply(initial)).flatMap( eval ->
                             eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
                 }

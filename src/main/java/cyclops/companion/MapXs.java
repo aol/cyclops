@@ -2,14 +2,8 @@ package cyclops.companion;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
-import cyclops.collections.immutable.PersistentMapX;
 import cyclops.collections.mutable.MapX;
-import org.jooq.lambda.tuple.Tuple2;
-
-import cyclops.function.Reducer;
-import cyclops.companion.Reducers;
 
 public class MapXs {
 
@@ -40,7 +34,7 @@ public class MapXs {
                                               key, value).put(key, value, key1, value1, key2, value2, key3, value3)
                                                          .build());
     }
-
+/**
     public static <K, V> PersistentMapX<K, V> toPMapX(final Stream<Tuple2<K, V>> stream) {
         return (PersistentMapX<K, V>) toPMapX().mapReduce(stream);
     }
@@ -48,7 +42,7 @@ public class MapXs {
     public static <K, V> Reducer<PersistentMapX<K, V>> toPMapX() {
         return Reducers.toPMapX();
     }
-
+**/
     public static <K, V> Builder<K, V> from(final Map<K, V> map) {
         return new Builder<K, V>(
                                  map);

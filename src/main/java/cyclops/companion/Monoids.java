@@ -1,8 +1,9 @@
 package cyclops.companion;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;
@@ -10,14 +11,13 @@ import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.control.Xor;
+import cyclops.control.Either;
+import cyclops.data.Comparators;
 import cyclops.function.Monoid;
-import cyclops.function.Semigroup;
-import cyclops.stream.FutureStream;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.FutureStream;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
-import org.jooq.lambda.Seq;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
@@ -27,12 +27,12 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * 
+ *
  * A static class with a large number of Monoids  or Combiners with identity elements.
- * 
+ *
  * A Monoid is an Object that can be used to combine objects of the same type inconjunction with it's
  * identity element which leaves any element it is combined with unchanged.
- * 
+ *
  * @author johnmcclean
  */
 public interface Monoids {
@@ -41,12 +41,12 @@ public interface Monoids {
      * To manage javac type inference first assign the monoid
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<ListX<Integer>> listX = Monoid.of(identity,Semigroups.collectionXConcat(ListX.zero());
      *    Monoid<SetX<Integer>> setX = Monoid.of(identity,Semigroups.collectionXConcat(SetX.zero());
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
      * </pre>
      * @return A Monoid that can combine any cyclops2-react extended Collection type
@@ -57,18 +57,18 @@ public interface Monoids {
 
     /**
      * Concatenate mutable collections
-     * 
+     *
      * To manage javac type inference first assign the Monoid
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<List<Integer>> list =  Monoid.of(identity,Semigroups.collectionConcat(Arrays.asList());
      *    Monoid<Set<Integer>> set =  Monoid.of(identity,Semigroups.collectionConcat(new HashSet());
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
-     * </pre> 
+     * </pre>
      * @return A  Monoid that can combine any mutable toX type
      */
     static <T, C extends Collection<T>> Monoid<C> mutableCollectionConcat(C identity) {
@@ -111,77 +111,81 @@ public interface Monoids {
     }
 
     /**
-     * @return A combiner for ListX (concatenates two ListX into a singleUnsafe ListX)
+     * @return A combiner for ListX (concatenates two ListX into a single ListX)
      */
     static <T> Monoid<ListX<T>> listXConcat() {
         return Monoid.of(ListX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for SetX (concatenates two SetX into a singleUnsafe SetX)
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
      */
     static <T> Monoid<SetX<T>> setXConcat() {
         return Monoid.of(SetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a singleUnsafe SortedSetX)
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
      */
     static <T> Monoid<SortedSetX<T>> sortedSetXConcat() {
         return Monoid.of(SortedSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for QueueX (concatenates two QueueX into a singleUnsafe QueueX)
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
      */
     static <T> Monoid<QueueX<T>> queueXConcat() {
         return Monoid.of(QueueX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for DequeX (concatenates two DequeX into a singleUnsafe DequeX)
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
      */
     static <T> Monoid<DequeX<T>> dequeXConcat() {
         return Monoid.of(DequeX.empty(),Semigroups.collectionXConcat());
     }
 
+    static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
+        return Monoid.of(empty,Semigroups.pcollectionConcat());
+    }
+
     /**
-     * @return A combiner for LinkedListX (concatenates two LinkedListX into a singleUnsafe LinkedListX)
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
     static <T> Monoid<LinkedListX<T>> linkedListXConcat() {
         return Monoid.of(LinkedListX.empty(),Semigroups.linkedListXConcat());
     }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a singleUnsafe VectorX)
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
     static <T> Monoid<VectorX<T>> vectorXConcat() {
         return Monoid.of(VectorX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a singleUnsafe PersistentSetX)
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
      */
     static <T> Monoid<PersistentSetX<T>> persistentSetXConcat() {
         return Monoid.of(PersistentSetX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a singleUnsafe OrderedSetX)
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
      */
     static <T> Monoid<OrderedSetX<T>> orderedSetXConcat() {
-        return Monoid.of(OrderedSetX.empty(),Semigroups.collectionXConcat());
+        return Monoid.of(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a singleUnsafe PersistentQueueX)
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
     static <T> Monoid<PersistentQueueX<T>> persistentQueueXConcat() {
         return Monoid.of(PersistentQueueX.empty(),Semigroups.collectionXConcat());
     }
 
     /**
-     * @return A combiner for BagX (concatenates two BagX into a singleUnsafe BagX)
+     * @return A combiner for BagX (concatenates two BagX into a single BagX)
      */
     static <T> Monoid<BagX<T>> bagXConcat() {
         return Monoid.of(BagX.empty(),Semigroups.collectionXConcat());
@@ -191,17 +195,17 @@ public interface Monoids {
      * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
      * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
      * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
-     * 
-     * 
+     *
+     *
      * To manage javac type inference to assign the semigroup
      * <pre>
      * {@code
-     *    
+     *
      *    Monoid<List<Integer>> list = Monoids.collectionConcat();
      *    Monoid<Set<Integer>> set = Monoids.collectionConcat();
-     *    
-     *    
-     * 
+     *
+     *
+     *
      * }
      * </pre>
      * @return A Semigroup that attempts to combine the supplied Collections
@@ -212,33 +216,33 @@ public interface Monoids {
     /**
      * Example sum integer Maybes
      * <pre>
-     * {@code 
+     * {@code
      *     Monoid<Maybe<Integer>> sumMaybes = Monoids.combineScalarFunctors(Maybe::just,Monoids.intSum);
      * }
      * </pre>
-     * 
+     *
      * @param zeroFn Function zeoFn lift the Identity value into a Scalar Functor
      * @param monoid Monoid to combine the values inside the Scalar Functors
      * @return Combination of two Scalar Functors
      */
     static <T,A extends Zippable<T>> Monoid<A> combineScalarFunctors(Function<T,A> zeroFn,Monoid<T> monoid) {
-       
+
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineScalarFunctors(monoid));
     }
     /**
      * Example sum integer Lists
      * <pre>
-     * {@code 
+     * {@code
      *      Monoid<ListX<Integer>> sumLists = Monoids.combineZippables(ListX::of,Monoids.intSum);
      * }
      * </pre>
-     * 
+     *
      * @param zeroFn Function to lift the Identity value into a Zippable
      * @param monoid Monoid to combine the values inside the Zippables
-     * @return Combination of two Applicatives 
+     * @return Combination of two Applicatives
      */
     static <T,A extends Zippable<T>> Monoid<A> combineZippables(Function<T,A> zeroFn,Monoid<T> monoid) {
-       
+
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
     }
     /**
@@ -270,12 +274,6 @@ public interface Monoids {
         return Monoid.of(Spouts.empty(), Semigroups.ambReactiveSeq());
     }
 
-    /**
-     * @return Combination of two Seq's : b is appended to a
-     */
-    static <T> Monoid<Seq<T>> combineSeq() {
-        return Monoid.of(Seq.empty(), Semigroups.combineSeq());
-    }
 
     /**
      * @return Combination of two Stream's : b is appended to a
@@ -326,82 +324,82 @@ public interface Monoids {
         return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the first primary
+     * @return Combine two Xor's by taking the first right
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> firstPrimaryXor(ST zero) {
-        return Monoid.of(Xor.secondary(zero), Semigroups.firstPrimaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> firstRightEither(ST zero) {
+        return Monoid.of(Either.left(zero), Semigroups.firstPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the first secondary
+     * @return Combine two Xor's by taking the first left
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> firstSecondaryXor(PT zero) {
-        return Monoid.of(Xor.primary(zero), Semigroups.firstSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> firstSecondaryXor(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.firstSecondaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last primary
+     * @return Combine two Xor's by taking the last right
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> lastPrimaryXor(ST zero) {
-        return Monoid.of(Xor.secondary(zero), Semigroups.lastPrimaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastPrimaryXor(ST zero) {
+        return Monoid.of(Either.left(zero), Semigroups.lastPrimaryXor());
     }
     /**
-     * @return Combine two Xor's by taking the last secondary
+     * @return Combine two Xor's by taking the last left
      */
-    static <ST,PT> Monoid<Xor<ST,PT>> lastSecondaryXor(PT zero) {
-        return Monoid.of(Xor.primary(zero), Semigroups.lastSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastSecondaryXor(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.lastSecondaryXor());
     }
     /**
-     * @return Combine two Try's by taking the first primary
+     * @return Combine two Try's by taking the first right
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.firstTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the first secondary
+     * @return Combine two Try's by taking the first left
      */
     static <T,X extends Throwable> Monoid<Try<T,X>> firstTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.firstTryFailure());
     }
     /**
-     * @return Combine two Tryr's by taking the last primary
+     * @return Combine two Tryr's by taking the last right
      */
     static<T,X extends Throwable> Monoid<Try<T,X>> lastTrySuccess(X zero) {
         return Monoid.of(Try.failure(zero), Semigroups.lastTrySuccess());
     }
     /**
-     * @return Combine two Try's by taking the last secondary
+     * @return Combine two Try's by taking the last left
      */
     static <T,X extends Throwable> Monoid<Try<T,X>>lastTryFailure(T zero) {
         return Monoid.of(Try.success(zero), Semigroups.lastTryFailure());
     }
     /**
-     * @return Combine two Ior's by taking the first primary
+     * @return Combine two Ior's by taking the first right
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstPrimaryIor(ST zero) {
-        return Monoid.of(Ior.secondary(zero), Semigroups.firstPrimaryIor());
+        return Monoid.of(Ior.left(zero), Semigroups.firstPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the first secondary
+     * @return Combine two Ior's by taking the first left
      */
     static <ST,PT> Monoid<Ior<ST,PT>> firstSecondaryIor(PT zero) {
-        return Monoid.of(Ior.primary(zero), Semigroups.firstSecondaryIor());
+        return Monoid.of(Ior.right(zero), Semigroups.firstSecondaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last primary
+     * @return Combine two Ior's by taking the last right
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastPrimaryIor(ST zero) {
-        return Monoid.of(Ior.secondary(zero), Semigroups.lastPrimaryIor());
+        return Monoid.of(Ior.left(zero), Semigroups.lastPrimaryIor());
     }
     /**
-     * @return Combine two Ior's by taking the last secondary
+     * @return Combine two Ior's by taking the last left
      */
     static <ST,PT> Monoid<Ior<ST,PT>> lastSecondaryIor(PT zero) {
-        return Monoid.of(Ior.primary(zero), Semigroups.lastSecondaryIor());
+        return Monoid.of(Ior.right(zero), Semigroups.lastSecondaryIor());
     }
     /**
      * @return Combine two Maybe's by taking the first present
      */
     static <T> Monoid<Maybe<T>> firstPresentMaybe() {
-        return Monoid.of(Maybe.none(), Semigroups.firstPresentMaybe());
+        return Monoid.of(Maybe.nothing(), Semigroups.firstPresentMaybe());
     }
 
     /**
@@ -415,7 +413,7 @@ public interface Monoids {
      * @return Combine two Maybes by taking the last present
      */
     static <T> Monoid<Maybe<T>> lastPresentMaybe() {
-        return Monoid.of(Maybe.none(), Semigroups.lastPresentMaybe());
+        return Monoid.of(Maybe.nothing(), Semigroups.lastPresentMaybe());
     }
 
     /**

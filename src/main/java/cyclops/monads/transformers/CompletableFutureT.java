@@ -1,20 +1,23 @@
 package cyclops.monads.transformers;
 
-import com.aol.cyclops2.types.*;
-import com.aol.cyclops2.types.anyM.transformers.ValueTransformer;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.anyM.transformers.ValueTransformer;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Trampoline;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
-import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
@@ -27,17 +30,17 @@ import java.util.stream.Stream;
 /**
 * Monad Transformer for CompletableFuture's nested within another monadic type
 
- * 
+ *
  * FutureT allows the deeply wrapped Future to be manipulating within it's nested /contained context
  *
  * @author johnmcclean
  *
  * @param <T> Type of data stored inside the nested Future(s)
  */
-public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T> 
+public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                                   implements To<CompletableFutureT<W,T>>,
                                                                              Transformable<T>,
-                                                                             Filters<T> {
+  Filters<T> {
 
     private final AnyM<W,CompletableFuture<T>> run;
 
@@ -69,7 +72,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         this.run = run;
     }
 
-    
+
     @Override @Deprecated (/*DO NOT USE INTERNAL USE ONLY*/)
     protected <R> CompletableFutureT<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> traversable) {
 
@@ -85,21 +88,21 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     @Override
     public CompletableFutureT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.thenApply(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.join().v2 )
-                     .map( f->f.thenApply(in->in.v1)));
+                     .filter( f->f.join()._2() )
+                     .map( f->f.thenApply(in->in._1())));
     }
 
     /**
      * Peek at the current value of the Future
      * <pre>
-     * {@code 
+     * {@code
      *    FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .peek(System.out::println);
-     *             
-     *     //prints 10        
+     *
+     *     //prints 10
      * }
      * </pre>
-     * 
+     *
      * @param peek  Consumer to accept current value of Future
      * @return FutureT with peek call
      */
@@ -113,19 +116,19 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
     /**
      * Map the wrapped Future
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .map(t->t=t+1);
-     *  
-     *  
+     *
+     *
      *  //FutureT<AnyMSeq<Stream<Future[11]>>>
      * }
      * </pre>
-     * 
+     *
      * @param f Mapping function for the wrapped Future
-     * @return FutureT that applies the map function to the wrapped Future
+     * @return FutureT that applies the transform function to the wrapped Future
      */
     @Override
     public <B> CompletableFutureT<W,B> map(final Function<? super T, ? extends B> f) {
@@ -140,11 +143,11 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     /**
      * Flat Map the wrapped Future
       * <pre>
-     * {@code 
+     * {@code
      *  FutureT.of(AnyM.fromStream(Arrays.asFuture(10))
      *             .flatMap(t->Future.completedFuture(20));
-     *  
-     *  
+     *
+     *
      *  //FutureT<AnyMSeq<Stream<Future[20]>>>
      * }
      * </pre>
@@ -162,10 +165,10 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return (AnyM) run;
     }
 
-    @Override
-    public <B> CompletableFutureT<W,B> flatMap(final Function<? super T, ? extends MonadicValue<? extends B>> f) {
 
-        final AnyM<W,CompletableFuture<? extends B>> mapped = run.map(o -> o.thenCompose(f.andThen(m->m.toCompletableFuture())));
+    public <B> CompletableFutureT<W,B> flatMap(final Function<? super T, ? extends CompletableFuture<? extends B>> f) {
+
+        final AnyM<W,CompletableFuture<? extends B>> mapped = run.map(o -> o.thenCompose(f.andThen(s->s.toCompletableFuture())));
         return of(narrow(mapped));
 
     }
@@ -173,13 +176,13 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     /**
      * Lift a function into one that accepts and returns an FutureT
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling  / iteration (via Future) and iteration (via Stream) to an existing function
      * <pre>
-     * {@code 
+     * {@code
         Function<Integer,Integer> add2 = i -> i+2;
     	Function<FutureT<Integer>, FutureT<Integer>> optTAdd2 = FutureT.lift(add2);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
@@ -188,14 +191,14 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
-    	
-    	
+
+
     	//Future.completedFuture(List[3,4]);
-     * 
-     * 
+     *
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param fn Function to enhance with functionality from Future and another monad type
      * @return Function that accepts and returns an FutureT
      */
@@ -206,19 +209,19 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     /**
      * Lift a BiFunction into one that accepts and returns  FutureTs
      * This allows multiple monad types to add functionality to existing function and methods
-     * 
+     *
      * e.g. to add list handling / iteration (via Future), iteration (via Stream)  and asynchronous execution (Future)
      * to an existing function
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
     	BiFunction<Integer,Integer,Integer> add = (a,b) -> a+b;
     	BiFunction<FutureT<Integer>,FutureT<Integer>,FutureT<Integer>> optTAdd2 = FutureT.lift2(add);
-    	
+
     	Stream<Integer> withNulls = Stream.of(1,2,3);
     	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
     	AnyMSeq<CompletableFuture<Integer>> streamOpt = reactiveStream.map(Future::completedFuture);
-    	
+
     	CompletableFuture<CompletableFuture<Integer>> two = Future.completedFuture(Future.completedFuture(2));
     	AnyMSeq<CompletableFuture<Integer>> future=  AnyM.fromFuture(two);
     	List<Integer> results = optTAdd2.applyHKT(FutureT.of(streamOpt),FutureT.of(future))
@@ -226,7 +229,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     									.<Stream<CompletableFuture<Integer>>>unwrap()
     									.map(Future::join)
     									.collect(CyclopsCollectors.toList());
-    									
+
     		//Future.completedFuture(List[3,4,5]);
       }
       </pre>
@@ -241,7 +244,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     /**
      * Construct an FutureT from an AnyM that contains a monad type that contains type other than Future
      * The values in the underlying monad will be mapped to CompletableFuture<A>
-     * 
+     *
      * @param anyM AnyM that doesn't contain a monad wrapping an Future
      * @return FutureT
      */
@@ -255,7 +258,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
     /**
      * Construct an FutureT from an AnyM that wraps a monad containing  Futures
-     * 
+     *
      * @param monads AnyM that contains a monad wrapping an Future
      * @return FutureT
      */
@@ -266,7 +269,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -274,7 +277,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return String.format("CompletableFutureT[%s]", run.unwrap().toString());
     }
 
-    
+
 
 
     public <R> CompletableFutureT<W,R> unitIterator(final Iterator<R> it) {
@@ -298,9 +301,9 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return of(run.unit(new CompletableFuture<>()));
     }
 
-    
 
-   
+
+
     @Override
     public int hashCode() {
         return run.hashCode();
@@ -315,7 +318,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.aol.cyclops2.types.Value, java.util.function.BiFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
      */
     @Override
     public <T2, R> CompletableFutureT<W,R> combine(Value<? extends T2> app,
@@ -324,11 +327,11 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Combiner)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
      */
     @Override
     public CompletableFutureT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        
+
         return (CompletableFutureT<W, T>)super.zip(combiner, app);
     }
 
@@ -338,18 +341,18 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn) {
-        
-        return super.iterate(fn);
+    public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
+
+        return super.iterate(fn,alt);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#generate()
      */
     @Override
-    public AnyM<W, ? extends ReactiveSeq<T>> generate() {
-        
-        return super.generate();
+    public AnyM<W, ? extends ReactiveSeq<T>> generate(T alt) {
+
+        return super.generate(alt);
     }
 
     /* (non-Javadoc)
@@ -358,7 +361,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     @Override
     public <T2, R> CompletableFutureT<W, R> zip(Iterable<? extends T2> iterable,
                                                 BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (CompletableFutureT<W, R>)super.zip(iterable, fn);
     }
 
@@ -367,7 +370,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public <T2, R> CompletableFutureT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        
+
         return (CompletableFutureT<W, R>)super.zipP(publisher,fn);
     }
 
@@ -376,7 +379,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public <U> CompletableFutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        
+
         return (CompletableFutureT)super.zipS(other);
     }
 
@@ -386,56 +389,56 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public <U> CompletableFutureT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        
+
         return (CompletableFutureT)super.zip(other);
     }
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> CompletableFutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (CompletableFutureT<W, R>)super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> CompletableFutureT<W, R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                                  BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                                 Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        
+                                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+
         return (CompletableFutureT<W, R>)super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> CompletableFutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (CompletableFutureT<W, R>)super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> CompletableFutureT<W, R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                              BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        
+                                                             Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+
         return (CompletableFutureT<W, R>)super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
@@ -445,7 +448,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     @Override
     public <R1, R> CompletableFutureT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (CompletableFutureT<W, R>)super.forEach2(value1, yieldingFunction);
     }
 
@@ -456,7 +459,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     public <R1, R> CompletableFutureT<W, R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                      BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                                      BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
-        
+
         return (CompletableFutureT<W, R>)super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
@@ -467,7 +470,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public <R> CompletableFutureT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        
+
         return (CompletableFutureT<W, R>)super.flatMapIterable(mapper);
     }
 
@@ -476,13 +479,13 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      */
     @Override
     public <R> CompletableFutureT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        
+
         return (CompletableFutureT<W, R>)super.flatMapPublisher(mapper);
     }
     public <T2, R1, R2, R3, R> CompletableFutureT<W,R> forEach4M(Function<? super T, ? extends CompletableFutureT<W,R1>> value1,
                                                                  BiFunction<? super T, ? super R1, ? extends CompletableFutureT<W,R2>> value2,
-                                                                 Fn3<? super T, ? super R1, ? super R2, ? extends CompletableFutureT<W,R3>> value3,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T, ? super R1, ? super R2, ? extends CompletableFutureT<W,R3>> value3,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                 .flatMapT(in2-> value2.apply(in,in2)
                         .flatMapT(in3->value3.apply(in,in2,in3)
@@ -491,9 +494,9 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
     public <T2, R1, R2, R3, R> CompletableFutureT<W,R> forEach4M(Function<? super T, ? extends CompletableFutureT<W,R1>> value1,
                                                                  BiFunction<? super T, ? super R1, ? extends CompletableFutureT<W,R2>> value2,
-                                                                 Fn3<? super T, ? super R1, ? super R2, ? extends CompletableFutureT<W,R3>> value3,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                 Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                 Function3<? super T, ? super R1, ? super R2, ? extends CompletableFutureT<W,R3>> value3,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMapT(in->value1.apply(in)
                     .flatMapT(in2-> value2.apply(in,in2)
                             .flatMapT(in3->value3.apply(in,in2,in3)
@@ -504,7 +507,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
     public <T2, R1, R2, R> CompletableFutureT<W,R> forEach3M(Function<? super T, ? extends CompletableFutureT<W,R1>> value1,
                                                              BiFunction<? super T, ? super R1, ? extends CompletableFutureT<W,R2>> value2,
-                                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
                                                  .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -513,8 +516,8 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
     public <T2, R1, R2, R> CompletableFutureT<W,R> forEach3M(Function<? super T, ? extends CompletableFutureT<W,R1>> value1,
                                                              BiFunction<? super T, ? super R1, ? extends CompletableFutureT<W,R2>> value2,
-                                                             Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                                             Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                             Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2).filter(in3->filterFunction.apply(in,in2,in3))
                                                                                      .map(in3->yieldingFunction.apply(in,in2,in3))));
@@ -542,10 +545,6 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return toString();
     }
 
-    @Override
-    public <U> CompletableFutureT<W,U> cast(Class<? extends U> type) {
-        return (CompletableFutureT<W,U>)super.cast(type);
-    }
 
     @Override
     public <U> CompletableFutureT<W,U> ofType(Class<? extends U> type) {
@@ -598,7 +597,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     @Override
-    public <S, U, R> CompletableFutureT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    public <S, U, R> CompletableFutureT<W,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (CompletableFutureT<W,R>)super.zip3(second,third, fn3);
     }
 
@@ -608,7 +607,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
     }
 
     @Override
-    public <T2, T3, T4, R> CompletableFutureT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    public <T2, T3, T4, R> CompletableFutureT<W,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (CompletableFutureT<W,R>)super.zip4(second,third,fourth,fn);
     }
 }

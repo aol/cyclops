@@ -115,12 +115,21 @@ Unlike PStacks, PVector append new data to the persistent List when plusAll is c
 ====
 [source,java]
 ----
+<<<<<<< HEAD
+PVectorX<String> list = PVectorX.of("suspended","b","c");
+Vector<String> list = PVectors.of("suspended","b","c");
+List<String> zero = PVectors.zero();
+PVectorX<String> single = PVectorX.singleton("1");
+Vector<String> single = PVectors.singleton("1");
+Vector<String> list = PVector.fromCollection(Arrays.asList("suspended","b","c"));
+=======
 PVectorX<String> list = PVectorX.of("a","b","c");
 PVector<String> list = PVectors.of("a","b","c");
 List<String> zero = PVectors.zero();
 PVectorX<String> single = PVectorX.singleton("1");
 PVector<String> single = PVectors.singleton("1");
 PVector<String> list = PVector.fromCollection(Arrays.asList("a","b","c"));
+>>>>>>> master
 ----
 ====
 
@@ -129,14 +138,22 @@ PVector<String> list = PVector.fromCollection(Arrays.asList("a","b","c"));
 [source,java]
 ----
 PVectorX<Integer> list = PVectorX.fromStream(Stream.of(1,2,3));
-PVector<Integer> list = PVectors.fromStream(Stream.of(1,2,3));
+Vector<Integer> list = PVectors.fromStream(Stream.of(1,2,3));
  //list = [1,2,3]
  
+<<<<<<< HEAD
+Vector<String> list = SequenceM.of("suspended","b","c").mapReduce(PVectors.toPVector()
+//list = ["suspended","b","c"]
+
+Vector<String> list = PVectors.toPVector().reduce(Stream.of("suspended","b","c")));
+//list = ["suspended","b","c"]
+=======
 PVector<String> list = SequenceM.of("a","b","c").mapReduce(PVectors.toPVector()
 //list = ["a","b","c"]
 
 PVector<String> list = PVectors.toPVector().reduce(Stream.of("a","b","c")));
 //list = ["a","b","c"]
+>>>>>>> master
 ----
 ====
 ===== PSets

@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.aol.cyclops2.react.async.subscription.Subscription;
+import com.oath.cyclops.react.async.subscription.Subscription;
 import cyclops.async.QueueFactories;
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.async.wait.DirectWaitStrategy;
 import cyclops.async.wait.WaitStrategy;
-import com.aol.cyclops2.internal.react.exceptions.SimpleReactProcessingException;
-import com.aol.cyclops2.react.async.subscription.AlwaysContinue;
-import com.aol.cyclops2.react.async.subscription.Continueable;
-import com.aol.cyclops2.types.futurestream.Continuation;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
+import com.oath.cyclops.react.async.subscription.AlwaysContinue;
+import com.oath.cyclops.react.async.subscription.Continueable;
+import com.oath.cyclops.types.futurestream.Continuation;
+import com.oath.cyclops.util.ExceptionSoftener;
+import com.oath.cyclops.util.SimpleTimer;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -34,46 +34,46 @@ import lombok.experimental.Wither;
 
 /**
  * Inspired by scalaz-streams async.Queue (functionally similar, but wraps a JDK Queue - wait-free or Blocking)
- * 
+ *
  * A Queue that takes data from one or more input Streams and provides them to
  * one or more emitted Streams
- * 
+ *
  * Interface specifies a BlockingQueue, but non-BlockingQueues (such as ConcurrentLinkedQueue can be used
  * in conjunction with an implementation of the Continuation interface
  * @see QueueFactories#unboundedNonBlockingQueue() )
- * 
- * 
+ *
+ *
  * Example transfering data using a Queue between two streams
  * <pre>
- * {@code 
+ * {@code
  *  Queue<String> transferQueue = QueueFactories.<String>boundedQueue(4)
                                                  .build();
-        
+
         new LazyReact(Executors.newFixedThreadPool(4)).generate(()->"data")
                                                       .map(d->"emitted on " + Thread.currentThread().getId())
                                                       .peek(System.out::println)
                                                       .peek(d->transferQueue.offer(d))
                                                       .run();
-        
+
 
         transferQueue.reactiveStream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);
-        
-        
-        
-        
+
+
+
+
         while(true){
           //  System.out.println(inputQueue.size());
         }
- * 
- * 
+ *
+ *
  * }
  * </pre>
- * 
- * 
- * 
+ *
+ *
+ *
  * @author johnmcclean, thomas kountis
  *
  * @param <T>
@@ -116,7 +116,7 @@ public class Queue<T> implements Adapter<T> {
 
     /**
      * Construct an async.Queue backed by a JDK Queue from the provided QueueFactory
-     * 
+     *
      * @param factory QueueFactory to extract JDK Queue from
      */
     public Queue(final QueueFactory<T> factory) {
@@ -147,7 +147,7 @@ public class Queue<T> implements Adapter<T> {
     /**
      * Queue accepts a BlockingQueue to make use of Blocking semantics
      *
-     * 
+     *
      * @param queue
      *            BlockingQueue to back this Queue
      */
@@ -175,7 +175,7 @@ public class Queue<T> implements Adapter<T> {
     /**
      * @return Sequential Infinite (until Queue is closed) Stream of data from
      *         this Queue
-     * 
+     *
      */
     @Override
     public ReactiveSeq<T> stream() {
@@ -185,16 +185,16 @@ public class Queue<T> implements Adapter<T> {
     /**
      * Return a standard (unextended) JDK Stream connected to this Queue
      * To disconnect cleanly close the queue
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
-     * 
+     *
      * @param closeScalingFactor Scaling factor for Queue closed messages to propagate to connected parallel Streams.
      *              Scaling Factor may need to be high to reach all connect parallel threads.
-     * 
+     *
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream(int closeScalingFactor){
@@ -205,21 +205,21 @@ public class Queue<T> implements Adapter<T> {
         do{
             update = listeningStreams.get()+ connected*closeScalingFactor;
         }while(!listeningStreams.compareAndSet(listeningStreams.get(), update));
-        
+
         return closingStream(this::get, new AlwaysContinue());
     }
-    
+
     /**
      * Return a standard (unextended) JDK Stream connected to this Queue
      * To disconnect cleanly close the queue
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *        use queue.reactiveStream().parallel() to convert to a parallel Stream
      *  }
      * </pre>
      * @see Queue#jdkStream(int) for an alternative that sends more poision pills for use with parallel Streams.
-     * 
+     *
      * @return Java 8 Stream connnected to this Queue
      */
     public Stream<T> jdkStream() {
@@ -336,10 +336,10 @@ public class Queue<T> implements Adapter<T> {
     /**
      * @return Infinite (until Queue is closed) Stream of CompletableFutures
      *         that can be used as input into a SimpleReact concurrent dataflow
-     * 
+     *
      *         This Stream itself is Sequential, SimpleReact will applyHKT
      *         concurrency / parralellism via the constituent CompletableFutures
-     * 
+     *
      */
     @Override
     public ReactiveSeq<CompletableFuture<T>> streamCompletableFutures() {
@@ -360,7 +360,7 @@ public class Queue<T> implements Adapter<T> {
 
         if (!open && queue.size() == 0)
             throw new ClosedQueueException();
-        
+
         final SimpleTimer timer = new SimpleTimer();
         try {
 
@@ -454,7 +454,7 @@ public class Queue<T> implements Adapter<T> {
 
     /**
      * Exception thrown if Queue closed
-     * 
+     *
      * @author johnmcclean
      *
      */
@@ -481,7 +481,7 @@ public class Queue<T> implements Adapter<T> {
 
     /**
      * Exception thrown if Queue polling timesout
-     * 
+     *
      * @author johnmcclean
      *
      */
@@ -509,10 +509,10 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Add a singleUnsafe data point to the queue
-     * 
+     * Add a single data point to the queue
+     *
      * If the queue is a bounded queue and is full, will return false
-     * 
+     *
      * @param data Data to add
      * @return true if successfully added.
      */
@@ -533,11 +533,11 @@ public class Queue<T> implements Adapter<T> {
     }
 
     /**
-     * Offer a singleUnsafe datapoint to this Queue
-     * 
+     * Offer a single datapoint to this Queue
+     *
      * If the queue is a bounded queue and is full it will block until space comes available or until
      * offer time out is reached (default is Integer.MAX_VALUE DAYS).
-     * 
+     *
      * @param data
      *            data to add
      * @return self
@@ -583,34 +583,34 @@ public class Queue<T> implements Adapter<T> {
             return data;
     }
 
-   
+
     /**
      * Close this Queue
      * Poison Pills are used to communicate closure to connected Streams
      * A Poison Pill is added per connected Stream to the Queue
      * If a BlockingQueue is backing this async.Queue it will block until
      * able to add to the Queue.
-     * 
+     *
      * @return true if closed
      */
     @Override
     public boolean close() {
         this.open = false;
-        
+
         for (int i = 0; i < listeningStreams.get(); i++) {
            try{
               this.queue.offer((T) POISON_PILL);
            }catch(Exception e){
-                    
+
            }
-            
+
         }
-        
+
         return true;
     }
 
     /**
-     * 
+     *
      * @param pillsToSend Number of poison pills to send to connected Streams
      */
     public void disconnectStreams(int pillsToSend){
@@ -618,12 +618,12 @@ public class Queue<T> implements Adapter<T> {
             try{
                this.queue.offer((T) POISON_PILL);
             }catch(Exception e){
-                     
+
             }
-             
+
          }
     }
-    
+
     public void closeAndClear() {
 
         this.open = false;

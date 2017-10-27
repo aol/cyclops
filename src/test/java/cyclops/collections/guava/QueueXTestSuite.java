@@ -15,17 +15,17 @@ import junit.framework.TestSuite;
     QueueXTestSuite.QTest.class
  })
 public class QueueXTestSuite {
-    
+
     public static class QTest {
         public static Test suite() {
             return new QTest().allTests();
         }
-     
+
         public TestSuite allTests() {
             TestSuite suite =
-                new TestSuite("com.aol.cyclops2.function.collections.extensions.guava");
+                new TestSuite("com.oath.cyclops.function.collections.extensions.guava");
             suite.addTest(testForOneToWayUseMySet());
-            
+
             return suite;
         }
         public Test testForOneToWayUseMySet() {
@@ -37,7 +37,7 @@ public class QueueXTestSuite {
                             CollectionFeature.ALLOWS_NULL_VALUES,
                             CollectionFeature.FAILS_FAST_ON_CONCURRENT_MODIFICATION,
                             CollectionFeature.SUPPORTS_ADD,
-                           
+
                             CollectionFeature.SUPPORTS_REMOVE,
                             CollectionFeature.SUPPORTS_ITERATOR_REMOVE,
                             CollectionFeature.SUPPORTS_REMOVE
@@ -45,5 +45,5 @@ public class QueueXTestSuite {
                     .createTestSuite();
         }
     }
-    
+
 }

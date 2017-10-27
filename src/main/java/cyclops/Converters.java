@@ -1,11 +1,11 @@
 package cyclops;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.foldable.To;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.persistent.*;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.MapX;
 import cyclops.companion.Reducers;
-import org.pcollections.*;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -30,47 +30,47 @@ public interface Converters {
 
     public static <K,V> HashMap<K,V> HashMap(MapX<K,V> vec){
         return vec.unwrapIfInstance(HashMap.class,
-                ()-> vec.collect(Collectors.toMap(k->k.v1(),v->v.v2(),(a,b)->a,()->new HashMap<K,V>())));
+                ()-> vec.collect(Collectors.toMap(k->k._1(),v->v._2(),(a,b)->a,()->new HashMap<K,V>())));
     }
     public static <K,V> LinkedHashMap<K,V> LinkedHashMap(MapX<K,V> vec){
         return vec.unwrapIfInstance(LinkedHashMap.class,
-                ()-> vec.collect(Collectors.toMap(k->k.v1(),v->v.v2(),(a,b)->a,()->new LinkedHashMap<K,V>())));
+                ()-> vec.collect(Collectors.toMap(k->k._1(),v->v._2(),(a,b)->a,()->new LinkedHashMap<K,V>())));
     }
     public static <K,V> ConcurrentHashMap<K,V> ConcurrentHashMap(MapX<K,V> vec){
         return vec.unwrapIfInstance(ConcurrentHashMap.class,
-                ()-> vec.collect(Collectors.toMap(k->k.v1(),v->v.v2(),(a,b)->a,()->new ConcurrentHashMap<K,V>())));
+                ()-> vec.collect(Collectors.toMap(k->k._1(),v->v._2(),(a,b)->a,()->new ConcurrentHashMap<K,V>())));
     }
     public static <K extends Enum<K>,V> EnumMap<K,V> EnumHashMap(MapX<K,V> vec){
         return vec.unwrapIfInstance(EnumMap.class,
                 ()-> new EnumMap<K,V>((Map<K,V>)vec.unwrap()));
     }
-    public static <T> PBag<T> PBag(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PBag.class,
+    public static <T> PersistentBag<T> PBag(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentBag.class,
                 ()->Reducers.<T>toPBag().mapReduce(vec.stream()));
     }
-    public static <K,V> PMap<K,V> PMap(PersistentMapX<K,V> vec){
+    public static <K,V> PersistentMap<K,V> PMap(PersistentMapX<K,V> vec){
         return vec.unwrapIfInstance(PersistentMapX.class,
                 ()-> Reducers.<K,V>toPMap().mapReduce(vec.stream()));
     }
-    public static <T> POrderedSet<T> POrderedSet(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentSortedSet<T> POrderedSet(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPOrderedSet().mapReduce(vec.stream()));
     }
-    public static <T> PQueue<T> PQueue(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentQueue<T> PQueue(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPQueue().mapReduce(vec.stream()));
     }
-    public static <T> PSet<T> PSet(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
+    public static <T> PersistentSet<T> PSet(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
                 ()->Reducers.<T>toPSet().mapReduce(vec.stream()));
     }
-    public static <T> PStack<T> PStack(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PStack.class,
-                ()->Reducers.<T>toPStack().mapReduce(vec.stream()));
+    public static <T> PersistentList<T> PStack(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
+                ()->Reducers.<T>toPList().mapReduce(vec.stream()));
     }
-    public static <T> PVector<T> PVector(CollectionX<T> vec){
-        return vec.unwrapIfInstance(PVector.class,
-                ()-> Reducers.<T>toPVector().mapReduce(vec.stream()));
+    public static <T> PersistentList<T> PVector(CollectionX<T> vec){
+        return vec.unwrapIfInstance(PersistentList.class,
+                ()-> Reducers.<T>toPList().mapReduce(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 
@@ -92,17 +92,7 @@ public interface Converters {
         return vec.unwrapIfInstance(LinkedBlockingDeque.class,
                 ()-> vec.collect(Collectors.toCollection(()->new LinkedBlockingDeque<T>())));
     }
-    /**
-    public static <T> SList<T> List(CollectionX<T> vec){
-        return vec.unwrapIfInstance(SList.class,
-                ()-> Reducers.<T>toList().mapReduce(vec.stream()));
-    }
 
-    public static <T> Stream<T> Stream(CollectionX<T> vec){
-        return vec.unwrapIfInstance(cyclops.collections.adt.Stream.class,
-                ()-> Reducers.<T>toStream().mapReduce(vec.stream()));
-    }
-     **/
     public static <T> ArrayList<T> ArrayList(CollectionX<T> vec){
 
         return vec.unwrapIfInstance(ArrayList.class,

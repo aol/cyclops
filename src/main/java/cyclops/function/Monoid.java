@@ -1,12 +1,12 @@
 package cyclops.function;
 
 import cyclops.companion.Semigroups;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.data.ImmutableList;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.typeclasses.Cokleisli;
 import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
 import org.reactivestreams.Publisher;
 
 import java.util.Arrays;
@@ -60,53 +60,53 @@ public interface Monoid<T> extends Semigroup<T> {
      * @param toReduce Stream to reduce
      * @return Reduced value
      */
-    default T reduce(final Stream<T> toReduce) {
+    default T foldLeft(final Stream<T> toReduce) {
         return toReduce.reduce(zero(), this);
     }
+    default  ReactiveSeq<T> foldLeftAsync(final Publisher<T> toFold){
+        return Spouts.from(toFold).reduceAll(this.zero(),this);
+    }
+    default  T foldLeft(final Iterable<T> toFold){
+        return ReactiveSeq.fromIterable(toFold).foldLeft(this);
+    }
+    default  T foldLeft(final ReactiveSeq<T> toFold){
+        return toFold.foldLeft(this);
+    }
 
+
+    default  T fold(final T toFold){
+        return foldLeft(Arrays.asList(zero(),toFold));
+    }
+
+
+    default  T foldRight(final ImmutableList<T> toFold){
+        return toFold.foldRight(this);
+    }
+    default  T foldRight(final ReactiveSeq<T> toFold){
+        return toFold.foldRight(this);
+    }
+    default  T foldRight(final Iterable<T> toFold){
+        return ReactiveSeq.fromIterable(toFold).foldRight(this);
+    }
+    default ReactiveSeq<T> foldRightAsync(final Publisher<T> toReduce) {
+        return Spouts.from(toReduce).reduceAll(zero(), this);
+    }
+
+    default <A> T foldMap(final Publisher<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+        ReactiveSeq<T> toReduce = Spouts.from(toFoldMap).map(mapFn);
+        return toReduce.reduce(zero(),this);
+    }
     default <A> T foldMap(final Stream<A> toFoldMap, Function<? super A, ? extends T> mapFn){
         Stream<T> toReduce = toFoldMap.map(mapFn);
         return toReduce.reduce(zero(),this);
     }
-    default  T foldLeft(final T toFold){
-        return reduceI(Arrays.asList(zero(),toFold));
-    }
-    default  T foldRight(final T toFold){
-        return foldRightI(Arrays.asList(zero(),toFold));
-    }
-    default  T foldLeft(final Stream<T> toFold){
-        return reduce(toFold);
-    }
-    default  T foldRight(final Stream<T> toFold){
-        return ReactiveSeq.fromStream(toFold).foldRight(this);
-    }
-    default T reduceI(final Iterable<T> toReduce) {
-        return ReactiveSeq.fromIterable(toReduce).reduce(zero(), this);
-    }
-
-    default <A> T foldMapI(final Iterable<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+    default <A> T foldMap(final Iterable<A> toFoldMap, Function<? super A, ? extends T> mapFn){
         ReactiveSeq<T> toReduce = ReactiveSeq.fromIterable(toFoldMap).map(mapFn);
         return toReduce.reduce(zero(),this);
     }
-    default  T foldLeftI(final Iterable<T> toFold){
-        return reduceI(toFold);
-    }
-    default  T foldRightI(final Iterable<T> toFold){
-        return ReactiveSeq.fromIterable(toFold).foldRight(this);
-    }
-    default T reduceP(final Publisher<T> toReduce) {
-        return Spouts.from(toReduce).reduce(zero(), this);
-    }
-
-    default <A> T foldMapP(final Publisher<A> toFoldMap, Function<? super A, ? extends T> mapFn){
-        ReactiveSeq<T> toReduce = Spouts.from(toFoldMap).map(mapFn);
+    default <A> T foldMap(final ReactiveSeq<A> toFoldMap, Function<? super A, ? extends T> mapFn){
+        ReactiveSeq<T> toReduce = toFoldMap.map(mapFn);
         return toReduce.reduce(zero(),this);
-    }
-    default  T foldLeftP(final Publisher<T> toFold){
-        return reduceP(toFold);
-    }
-    default  T foldRightP(final Publisher<T> toFold){
-        return Spouts.from(toFold).foldRight(this);
     }
 
     default <W,R> MonoidK<W,R> toMonoidK(Kleisli<W,T,R> widen,Cokleisli<W,R,T> narrow){

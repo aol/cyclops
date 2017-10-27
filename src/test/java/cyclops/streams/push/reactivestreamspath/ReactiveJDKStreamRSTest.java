@@ -1,9 +1,9 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 
 import java.util.ArrayList;

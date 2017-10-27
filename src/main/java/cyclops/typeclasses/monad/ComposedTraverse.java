@@ -1,6 +1,6 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
@@ -20,7 +20,7 @@ public class ComposedTraverse<W1, W2> {
     public <H, A, B> Higher<H,Higher<W1,Higher<W2,B>>> traverse(Applicative<H> applicative, Function<? super A,? extends Higher<H,B>> fn, Higher<W1, Higher<W2, A>> ds){
         Higher<H, Higher<W1, Higher<W2, B>>> v = traverse1.traverseA(applicative, ga -> traverse2.traverseA(applicative, fn, ga),ds);
         return applicative.map_(v,i->i);
-    } 
+    }
 
 
 }

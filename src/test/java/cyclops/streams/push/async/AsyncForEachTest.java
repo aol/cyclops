@@ -1,8 +1,8 @@
 package cyclops.streams.push.async;
 
 import cyclops.companion.Streams;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

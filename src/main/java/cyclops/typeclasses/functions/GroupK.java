@@ -1,9 +1,8 @@
 package cyclops.typeclasses.functions;
 
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.function.Group;
-import cyclops.function.Monoid;
 
 import java.util.function.Function;
 

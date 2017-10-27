@@ -4,18 +4,17 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.typeclasses.*;
 
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.Witness.optional;
@@ -33,10 +32,10 @@ import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
-import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import cyclops.reactive.ReactiveSeq;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
@@ -44,16 +43,16 @@ import lombok.experimental.UtilityClass;
 
 /**
  * Utility class for working with JDK Optionals
- * 
+ *
  * @author johnmcclean
  *
  */
 @UtilityClass
 public class Optionals {
 
-    public static  <T,R> Optional<R> tailRec(T initial, Function<? super T, ? extends Optional<? extends Xor<T, R>>> fn) {
-        Optional<? extends Xor<T, R>> next[] = new Optional[1];
-        next[0] = Optional.of(Xor.secondary(initial));
+    public static  <T,R> Optional<R> tailRec(T initial, Function<? super T, ? extends Optional<? extends Either<T, R>>> fn) {
+        Optional<? extends Either<T, R>> next[] = new Optional[1];
+        next[0] = Optional.of(Either.left(initial));
         boolean cont = true;
         do {
             cont = Optionals.visit(next[0],p -> p.visit(s -> {
@@ -61,7 +60,7 @@ public class Optionals {
                 return true;
             }, pr -> false), () -> false);
         } while (cont);
-        return next[0].map(Xor::get);
+        return next[0].map(x->x.orElse(null));
     }
     public static  <T> Kleisli<optional,Optional<T>,T> kindKleisli(){
         return Kleisli.of(Optionals.Instances.monad(), Optionals::widen);
@@ -107,7 +106,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach4;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach4;
      *
     forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -128,8 +127,8 @@ public class Optionals {
     public static <T1, T2, T3, R1, R2, R3, R> Optional<R> forEach4(Optional<? extends T1> value1,
                                                                    Function<? super T1, ? extends Optional<R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                                   Fn3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                   Function3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -155,7 +154,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach4;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach4;
      *
      *  forEach4(Optional.just(1),
     a-> Optional.just(a+1),
@@ -178,9 +177,9 @@ public class Optionals {
     public static <T1, T2, T3, R1, R2, R3, R> Optional<R> forEach4(Optional<? extends T1> value1,
                                                                    Function<? super T1, ? extends Optional<R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                                   Fn3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                   Function3<? super T1, ? super R1, ? super R2, ? extends Optional<R3>> value4,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -206,7 +205,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach3;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach3;
      *
     forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -225,7 +224,7 @@ public class Optionals {
     public static <T1, T2, R1, R2, R> Optional<R> forEach3(Optional<? extends T1> value1,
                                                            Function<? super T1, ? extends Optional<R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                           Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                           Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -248,7 +247,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach3;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach3;
      *
      *  forEach3(Optional.just(1),
     a-> Optional.just(a+1),
@@ -269,8 +268,8 @@ public class Optionals {
     public static <T1, T2, R1, R2, R> Optional<R> forEach3(Optional<? extends T1> value1,
                                                            Function<? super T1, ? extends Optional<R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Optional<R2>> value3,
-                                                           Fn3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                                                           Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                           Function3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                                                           Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.flatMap(in -> {
 
@@ -294,7 +293,7 @@ public class Optionals {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.Optionals.forEach;
+     *   import static com.oath.cyclops.reactor.Optionals.forEach;
      *
     forEach(Optional.just(1),
     a-> Optional.just(a+1),
@@ -329,7 +328,7 @@ public class Optionals {
      * <pre>
      * {@code
      *
-     *  import static com.aol.cyclops2.reactor.Optionals.forEach;
+     *  import static com.oath.cyclops.reactor.Optionals.forEach;
      *
      *  forEach(Optional.just(1),
     a-> Optional.just(a+1),
@@ -376,20 +375,20 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are zero the result
      * is an zero Optional
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     *  
+     *
      *  Optional<ListX<Integer>> opts = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
         //Optional.zero();
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
@@ -401,17 +400,17 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * Only successes are retained. By constrast with {@link Optionals#sequence(CollectionX)} Optional#zero types are
      * tolerated and ignored.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     * 
+     *
      * Optional<ListX<Integer>> maybes = Optionals.sequencePresent(ListX.of(just, none, Optional.of(1)));
        //Optional.of(ListX.of(10, 1));
      * }
      * </pre>
-     * 
+     *
      * @param opts Optionals to Sequence
      * @return Optional with a List of values
      */
@@ -422,20 +421,20 @@ public class Optionals {
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
      * By constrast with {@link Optional#sequencePresent(CollectionX)} if any Optional types are zero
      * the return type will be an zero Optional
-     * 
+     *
      * <pre>
      * {@code
-     * 
+     *
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-     *  
+     *
      *  Optional<ListX<Integer>> maybes = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
         //Optional.zero();
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param opts Maybes to Sequence
      * @return  Optional with a List of values
      */
@@ -448,42 +447,42 @@ public class Optionals {
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Optionals.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
+
      * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
        //Optional.of(PersistentSetX.of(10, 1)));
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param reducer Reducer to accumulate values with
      * @return Optional with reduced value
      */
-    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R> reducer) {
+    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R,T> reducer) {
         return sequencePresent(optionals).map(s -> s.mapReduce(reducer));
     }
     /**
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to
      * convert the data from each Optional before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
+
      *  Optional<String> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), i -> "" + i,
                                                      Monoids.stringConcat);
         //Optional.of("101")
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param mapper Mapping function to be applied to the result of each Optional
      * @param reducer Monoid to combine values from each Optional
@@ -495,22 +494,22 @@ public class Optionals {
                                                  .reduce(reducer));
     }
     /**
-     * Accumulate the results only from those Optionals which have a value present, using the 
+     * Accumulate the results only from those Optionals which have a value present, using the
      * supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
-        
-     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)), 
+
+     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)),
                                                      );
         //Optional.of("101")
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param optionals Optionals to accumulate
      * @param mapper Mapping function to be applied to the result of each Optional
      * @param reducer Monoid to combine values from each Optional
@@ -523,16 +522,16 @@ public class Optionals {
 
     /**
      * Combine an Optional with the provided value using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.combine(Optional.of(10),Maybe.just(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
      * @param f Optional to combine with a value
@@ -548,19 +547,19 @@ public class Optionals {
     }
     /**
      * Combine an Optional with the provided Optional using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.combine(Optional.of(10),Optional.of(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param f Optional to combine with a value
      * @param v Optional to combine
      * @param fn Combining function
@@ -574,14 +573,14 @@ public class Optionals {
     /**
      * Combine an Optional with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.zip(Optional.of(10),Arrays.asList(20), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
      * @param f Optional to combine with first element in Iterable (if present)
@@ -599,17 +598,17 @@ public class Optionals {
     /**
      * Combine an Optional with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  Optionals.zip(Flux.just(10),Optional.of(10), this::add)
      *  //Optional[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param p Publisher to combine
      * @param f  Optional to combine with
      * @param fn Combining function
@@ -623,7 +622,7 @@ public class Optionals {
     }
     /**
      * Narrow covariant type parameter
-     * 
+     *
      * @param broad Optional with covariant type parameter
      * @return Narrowed Optional
      */
@@ -697,7 +696,7 @@ public class Optionals {
 
                 @Override
                 public <T> Maybe<Unfoldable<optional>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -851,7 +850,7 @@ public class Optionals {
 
 
                 @Override
-                public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Either<T, R>>> fn) {
                     Optional<R> x = Optionals.tailRec(initial, fn.andThen(a -> OptionalKind.narrowK(a)));
                     return OptionalKind.widen(x);
 
@@ -928,7 +927,7 @@ public class Optionals {
         public static <T,R> Foldable<optional> foldable(){
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
             BiFunction<Monoid<T>,Higher<optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
+            Function3<Monoid<R>, Function<T, R>, Higher<optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<optional> comonad(){
@@ -973,7 +972,7 @@ public class Optionals {
     public static final class OptionalKind<T> implements Higher<optional, T> {
         private final Optional<T> boxed;
 
-       
+
         /**
          * @return An HKT encoded zero Optional
          */

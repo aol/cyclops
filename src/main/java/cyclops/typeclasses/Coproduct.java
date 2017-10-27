@@ -1,18 +1,15 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.hkt.Higher3;
-import com.aol.cyclops2.types.Filters;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.functor.Transformable;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher3;
+import com.oath.cyclops.types.Filters;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.CompletableFutures.CompletableFutureKind;
 import cyclops.companion.Optionals;
@@ -20,14 +17,13 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
-import cyclops.control.lazy.Either;
+import cyclops.control.LazyEither;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
-import cyclops.monads.WitnessType;
-import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.comonad.Comonad;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
@@ -38,49 +34,45 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@EqualsAndHashCode(of="xor")
+@EqualsAndHashCode(of="either")
 @Getter
 public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T>,
                                             Transformable<T>, To<Coproduct<W1,W2,T>> {
 
-    private final Xor<Higher<W1,T>,Higher<W2,T>> xor;
+    private final Either<Higher<W1,T>,Higher<W2,T>> xor;
     private final InstanceDefinitions<W1> def1;
     private final InstanceDefinitions<W2> def2;
 
 
 
-    public static  <W1,W2,T> Coproduct<W1,W2,T> of(Xor<Higher<W1,T>,
-            Higher<W2,T>> xor,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
-        return new Coproduct<>((Xor)xor,def1,def2);
+    public static  <W1,W2,T> Coproduct<W1,W2,T> of(Either<Higher<W1,T>,
+                    Higher<W2,T>> xor, InstanceDefinitions<W1> def1, InstanceDefinitions<W2> def2){
+        return new Coproduct<>((Either)xor,def1,def2);
     }
-    
+
     public static  <W1,W2,T> Coproduct<W1,W2,T> right(Higher<W2,T> right,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
-        return new Coproduct<>(Xor.primary(right),def1,def2);
+        return new Coproduct<>(Either.right(right),def1,def2);
     }
     public static  <W1,W2,T> Coproduct<W1,W2,T> left(Higher<W1,T> left,InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2){
-        return new Coproduct<>(Xor.secondary(left),def1,def2);
+        return new Coproduct<>(Either.left(left),def1,def2);
     }
-    
+
     public Coproduct<W1,W2,T> filter(Predicate<? super T> test) {
         return of(xor.map(m -> def2.<T, T>monadZero().visit(s->s.filter(test, m),()->m))
-               .secondaryMap(m -> def1.<T, T>monadZero().visit(s->s.filter(test, m),()->m)),def1,def2);
+               .mapLeft(m -> def1.<T, T>monadZero().visit(s->s.filter(test, m),()->m)),def1,def2);
     }
 
     public <R>  Coproduct<W1,W2,R> coflatMap(final Function<? super  Coproduct<W1,W2,T>, R> mapper){
@@ -104,10 +96,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     }
 
     public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
-        return of(xor.secondaryFlatMap(s -> Xor.secondary(semigroupK.apply(s, add))),def1,def2);
+        return of(xor.flatMapLeft(s -> Either.left(semigroupK.apply(s, add))),def1,def2);
     }
     public Coproduct<W1,W2,T> plusRight(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
-        return of(xor.flatMap(p -> Xor.primary(semigroupK.apply(p, add))),def1,def2);
+        return of(xor.flatMap(p -> Either.right(semigroupK.apply(p, add))),def1,def2);
     }
 
     public Product<W1,W2,T> product(MonoidK<W1,T> m1, MonoidK<W2,T> m2){
@@ -123,10 +115,6 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return (Coproduct<W1,W2,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <U>  Coproduct<W1,W2,U> cast(Class<? extends U> type) {
-        return (Coproduct<W1,W2,U>)Transformable.super.cast(type);
-    }
 
 
 
@@ -138,7 +126,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return of(xor.map(m->{
             Higher<W2, ? extends R> x = def2.<T, R>functor().map(fn, m);
             return (Higher<W2, R>)x;
-        }).secondaryMap(m->{
+        }).mapLeft(m->{
             Higher<W1, ? extends R> x = def1.<T, R>functor().map(fn, m);
             return (Higher<W1, R>)x;
         }),def1,def2);
@@ -147,7 +135,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return of(xor.map(m->{
         Higher<W2, ? extends R> x = def2.<T, R>traverse().mapWithIndex(f, m);
         return (Higher<W2, R>)x;
-    }).secondaryMap(m->{
+    }).mapLeft(m->{
         Higher<W1, ? extends R> x = def1.<T, R>traverse().mapWithIndex(f, m);
         return (Higher<W1, R>)x;
     }),def1,def2);
@@ -157,10 +145,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return mapWithIndex(Tuple::tuple);
     }
 
-    public Xor<Higher<W1,T>,Higher<W2,T>> asXor(){
+    public Either<Higher<W1,T>,Higher<W2,T>> asXor(){
         return xor;
     }
-    public Xor<Active<W1,T>,Active<W2,T>> asActiveXor(){
+    public Either<Active<W1,T>,Active<W2,T>> asActiveXor(){
         return xor.bimap(s->Active.of(s,def1),p->Active.of(p,def2));
     }
 
@@ -208,8 +196,8 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public Maybe<Plus> plus(){
         MonadPlus<W1> plus1 = def1.monadPlus().visit(p->p,()->null);
         MonadPlus<W2> plus2 = def2.monadPlus().visit(p->p,()->null);
-        return xor.visit(s->def1.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none(),
-                                p->def2.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.none());
+        return xor.visit(s->def1.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.nothing(),
+                                p->def2.monadPlus().isPresent() ? Maybe.just(new Plus(plus1,plus2)) : Maybe.nothing());
     }
 
     public Unfolds unfoldsDefault(){
@@ -223,7 +211,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         Unfoldable<W1> unf1 = def1.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
         Unfoldable<W2> unf2 = def2.unfoldable().visit(a->  a ,()-> new Unfoldable.UnsafeValueUnfoldable<>());
 
-        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none(),p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.none());
+        return xor.visit(s-> def1.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.nothing(), p-> def2.unfoldable().isPresent() ? Maybe.just(new Unfolds(unf1,unf2)) : Maybe.nothing());
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -232,12 +220,12 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         private final  MonadPlus<W2> plus2;
         public Coproduct<W1,W2,T> plus(Coproduct<W1,W2,T> a){
 
-            if(xor.isSecondary() && a.xor.isSecondary()){
-                    Higher<W1, T> plused = plus1.plus(xor.secondaryGet(), a.xor.secondaryGet());
+            if(xor.isLeft() && a.xor.isLeft()){
+                    Higher<W1, T> plused = plus1.plus(xor.leftOrElse(null), a.xor.leftOrElse(null));
                     return Coproduct.left(plused,def1,def2);
             }
-            if(xor.isPrimary() && a.xor.isPrimary()){
-                Higher<W2, T> plused = plus2.plus(xor.get(), a.getXor().get());
+            if(xor.isRight() && a.xor.isRight()){
+                Higher<W2, T> plused = plus2.plus(xor.orElse(null), a.getXor().orElse(null));
                 return Coproduct.right(plused,def1,def2);
             }
             return Coproduct.this;
@@ -245,12 +233,12 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         }
         public Coproduct<W1,W2,T> sum(ListX<Coproduct<W1,W2,T>> l){
             ListX<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
-            if(xor.isSecondary()){
-                Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.secondaryGet()));
+            if(xor.isLeft()){
+                Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.leftOrElse(null)));
                 return Coproduct.left(summed,def1,def2);
             }
-            if(xor.isPrimary()){
-                Higher<W2, T> summed = plus2.sum(list.map(c -> c.xor.get()));
+            if(xor.isRight()){
+                Higher<W2, T> summed = plus2.sum(list.map(c -> c.xor.orElse(null)));
                 return Coproduct.right(summed,def1,def2);
             }
             return Coproduct.this;
@@ -282,9 +270,9 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     }
     public Coproduct<W1,W2,T> reverse() {
         return xor.visit(l -> {
-            return Coproduct.of(Xor.secondary(def1.traverse().reverse(l)), def1, def2);
+            return Coproduct.of(Either.left(def1.traverse().reverse(l)), def1, def2);
         }, r -> {
-            return Coproduct.of(Xor.primary(def2.traverse().reverse(r)), def1, def2);
+            return Coproduct.of(Either.right(def2.traverse().reverse(r)), def1, def2);
         });
 
     }
@@ -306,18 +294,18 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public class Unfolds{
         private final Unfoldable<W1> unf1;
         private final Unfoldable<W2> unf2;
-        public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn){
-            Xor<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Xor.secondary(unf1.unfold(b, fn)), r -> Xor.primary(unf2.unfold(b, fn)));
+        public <R, T> Coproduct<W1,W2, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
+            Either<Higher<W1,R>,Higher<W2,R>> res = xor.visit(left -> Either.left(unf1.unfold(b, fn)), r -> Either.right(unf2.unfold(b, fn)));
             Coproduct<W1, W2, R> cop = Coproduct.of(res, def1, def2);
             return cop;
         }
 
         public <T> Coproduct<W1,W2,T> replicate(int n, T value) {
-            return unfold(n,i -> Optional.of(tuple(value, i-1)));
+            return unfold(n,i -> Option.some(tuple(value, i-1)));
         }
 
         public <R> Coproduct<W1,W2,R> none() {
-            return unfold((T) null, t -> Optional.<Tuple2<R, T>>empty());
+            return unfold((T) null, t -> Option.<Tuple2<R, T>>none());
         }
         public <T> Coproduct<W1,W2,T> one(T a) {
             return replicate(1, a);
@@ -331,9 +319,9 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public static <W1,W2,T,C2, R> Higher<C2, Coproduct<W1,W2,R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,Coproduct<W1,W2,T> n){
 
         return n.xor.visit(it->{
-            return applicative.map(x->of(Xor.secondary(x),n.def1,n.def2),n.def1.traverse().traverseA(applicative, fn, it));
+            return applicative.map(x->of(Either.left(x),n.def1,n.def2),n.def1.traverse().traverseA(applicative, fn, it));
         },it->{
-            return applicative.map(x->of(Xor.primary(x),n.def1,n.def2),n.def2.traverse().traverseA(applicative, fn, it));
+            return applicative.map(x->of(Either.right(x),n.def1,n.def2),n.def2.traverse().traverseA(applicative, fn, it));
         });
 
     }
@@ -346,63 +334,63 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
 
     public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(VectorX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(list),def1, VectorX.Instances.definitions());
+        return new Coproduct<>(Either.right(list),def1, VectorX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Xor.primary(VectorX.of(values)),def1, VectorX.Instances.definitions());
+        return new Coproduct<>(Either.right(VectorX.of(values)),def1, VectorX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(LinkedListX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(list),def1, LinkedListX.Instances.definitions());
+        return new Coproduct<>(Either.right(list),def1, LinkedListX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Xor.primary(LinkedListX.of(values)),def1, LinkedListX.Instances.definitions());
+        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListX.Instances.definitions());
     }
 
 
     public static  <W1,T> Coproduct<W1,list,T> listX(List<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(ListX.fromIterable(list)),def1, ListX.Instances.definitions());
+        return new Coproduct<>(Either.right(ListX.fromIterable(list)),def1, ListX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,list,T> listX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Xor.primary(ListX.of(values)),def1, ListX.Instances.definitions());
+        return new Coproduct<>(Either.right(ListX.of(values)),def1, ListX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(Stream<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(StreamKind.widen(stream)),def1, Streams.Instances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, Streams.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Xor.primary(StreamKind.of(values)),def1, Streams.Instances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.of(values)),def1, Streams.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(ReactiveSeq<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(stream),def1,ReactiveSeq.Instances.definitions());
+        return new Coproduct<>(Either.right(stream),def1,ReactiveSeq.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Xor.primary(ReactiveSeq.of(values)),def1,ReactiveSeq.Instances.definitions());
+        return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1,ReactiveSeq.Instances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> success(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Try.success(value)),def1, Try.Instances.definitions());
+        return new Coproduct<>(Either.right(Try.success(value)),def1, Try.Instances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> failure(X value,InstanceDefinitions<W1> def1){
-        return new Coproduct<W1,Higher<tryType,X>,T>(Xor.primary(Try.failure(value)),def1,Try.Instances.definitions());
+        return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1,Try.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,future,T> futureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Future.of(value, ex)),def1,Future.Instances.definitions());
+        return new Coproduct<>(Either.right(Future.of(value, ex)),def1,Future.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,completableFuture,T> completableFutureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.Instances.definitions());
+        return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,eval,T> later(Supplier<T> value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Eval.later(value)),def1,Eval.Instances.definitions());
+        return new Coproduct<>(LazyEither.right(Eval.later(value)),def1,Eval.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,optional,T> ofNullable(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());
+        return new Coproduct<>(Either.right(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,maybe,T> just(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Maybe.just(value)),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.just(value)),def1,Maybe.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,maybe,T> none(InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Maybe.none()),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.nothing()),def1,Maybe.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,maybe,T> maybeNullabe(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Xor.primary(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());
     }
     public static <W1,W2,T> Coproduct<W1,W2,T> narrowK(Higher<Higher<Higher<coproduct, W1>, W2>, T> ds){
         return (Coproduct<W1,W2,T>)ds;
@@ -462,8 +450,8 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return new Unfoldable<Higher<Higher<coproduct, W1>, W2>>(){
 
                 @Override
-                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Optional<Tuple2<R, T>>> fn) {
-                    return cop.unfolds().get().unfold(b,fn);
+                public <R, T> Higher<Higher<Higher<coproduct, W1>, W2>, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+                    return cop.unfolds().orElse(null).unfold(b,fn);
                 }
             };
         }

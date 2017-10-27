@@ -1,22 +1,21 @@
 package cyclops.typeclasses;
 
 
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.function.Fn1;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.functor.Transformable;
+import cyclops.function.Function1;
 
-import cyclops.monads.WitnessType;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
-public class Cokleisli<W,T,R> implements Fn1<Higher<W,T>,R>,
+public class Cokleisli<W,T,R> implements Function1<Higher<W,T>,R>,
                                             Transformable<R>{
 
-    public final Fn1<Higher<W, T>,R> fn;
+    public final Function1<Higher<W, T>,R> fn;
 
 
     @Override
@@ -39,10 +38,10 @@ public class Cokleisli<W,T,R> implements Fn1<Higher<W,T>,R>,
 
 
     public static <W,T,R> Cokleisli<W,T,R> cokleisli(Function<? super Higher<W,T>,? extends R> fn){
-        return new Cokleisli<W,T, R>(Fn1.narrow(fn));
+        return new Cokleisli<W,T, R>(Function1.narrow(fn));
     }
     public static <W,T,R> Cokleisli<W,T,R> of(Function<? super Higher<W,T>,? extends R> fn){
-        return new Cokleisli<W,T, R>(Fn1.narrow(fn));
+        return new Cokleisli<W,T, R>(Function1.narrow(fn));
     }
 
 

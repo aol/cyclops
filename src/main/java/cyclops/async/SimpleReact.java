@@ -1,10 +1,10 @@
 package cyclops.async;
 
-import com.aol.cyclops2.internal.react.SimpleReactStreamImpl;
-import com.aol.cyclops2.internal.react.stream.ReactBuilder;
-import com.aol.cyclops2.react.ThreadPools;
-import com.aol.cyclops2.types.futurestream.SimpleReactStream;
-import cyclops.stream.Spouts;
+import com.oath.cyclops.internal.react.SimpleReactStreamImpl;
+import com.oath.cyclops.internal.react.stream.ReactBuilder;
+import com.oath.cyclops.react.ThreadPools;
+import com.oath.cyclops.types.futurestream.SimpleReactStream;
+import cyclops.reactive.Spouts;
 import lombok.Getter;
 import lombok.experimental.Builder;
 import lombok.experimental.Wither;
@@ -18,52 +18,52 @@ import java.util.function.Supplier;
 import java.util.stream.*;
 
 /**
- * 
+ *
  * Builder class for SimpleReact Stream types
- * 
+ *
  * SimpleReact streams are finite eager parallel Streams with a concise API.
  * Awesome for loading discrete batches of files or remote resources.
  * Useful for doing shortcircuiting querying operations against remote services.
  *
- * Confgure 
+ * Confgure
  *      Executors
  *      Parallelism / concurrent tasks
  *      Caching
  *      Object pooling
  *
- 
+
    E.g implementing a Quorum
  * <pre>
- * {@code 
+ * {@code
  *   new SimpleReact().react(this:query,this:query,this:query,this:query)
-                .transform(this:process)
+                .map(this:process)
                 .block(status -> status.getAllCompleted() >2 && status.getElapsedMillis()>200);
 
-     //short circuit if 2 results after 200ms 
- * 
- * 
+     //short circuit if 2 results after 200ms
+ *
+ *
  * }
  * </pre>
- * 
+ *
  * E.g. loading files
  * <pre>
- * {@code 
+ * {@code
  *   List<File> files;
- *   
+ *
  *   new SimpleReact().from(files)
  *                    .thenAsync(FileUtils::load)
-                      .transform(this:process)
+                      .map(this:process)
                       .block();
 
- * 
- * 
+ *
+ *
  * }
  * </pre>
- *  
+ *
  *  In general if you have a small discrete data sets SimpleReact may be a fit.
  *  If you need infinite  / continuous Stream processing & more advanced features use LazyReact
  *  (Even flatMap is relatively limited in SimpleReact Stream - for advanced operations @see LazyReact)
- * 
+ *
  * @author johnmcclean
  *
  */
@@ -87,7 +87,7 @@ public class SimpleReact implements ReactBuilder {
      * Construct a SimpleReact builder using standard thread pool.
      * By default, unless ThreadPools is configured otherwise this will be sized
      * to the available processors
-     * 
+     *
      * @see ThreadPools#getStandard()
      */
     public SimpleReact() {
@@ -96,7 +96,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Construct a SimpleReact builder from the provided Executor, Retrier.
-     * 
+     *
      * @param executor Task executor to execute tasks on
      * @param retrier Retrier to use for asyncrhonous retry
      * @param async If false, subsequent tasks are executed on the completing thread
@@ -116,7 +116,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Construct a SimpleReact builder from the provided Executor
-     * 
+     *
      * @param executor Task executor to execute tasks on
      */
     public SimpleReact(final Executor executor) {
@@ -126,7 +126,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * 
+     *
      * @param executor Task executor to execute tasks on
      * @param retrier
      * @param queueCopier Task executor to transfer results during flatMap operations
@@ -143,9 +143,9 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * 
+     *
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
-     * 
+     *
      * @param actions
      *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
@@ -160,7 +160,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Construct a SimpleReactStream from an Publisher
-     * 
+     *
      * @param publisher
      *            to construct SimpleReactStream from
      * @return SimpleReactStream
@@ -173,9 +173,9 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * 
+     *
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
-     * 
+     *
      * @param actions
      *           Iterator over Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
@@ -190,9 +190,9 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * 
+     *
      * Start a reactiveBuffer dataflow with a list of one-off-suppliers
-     * 
+     *
      * @param actions
      *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
@@ -208,9 +208,9 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * 
+     *
      * Start a reactiveBuffer dataflow with an array of one-off-suppliers
-     * 
+     *
      * @param actions Array of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
      * @return Next stage in the reactiveBuffer flow
@@ -224,7 +224,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * This internal method has been left protected, so it can be mocked / stubbed as some of the entry points are final
-     * 
+     *
      */
     @SafeVarargs
     private final <U> SimpleReactStream<U> reactI(final Supplier<U>... actions) {
@@ -237,7 +237,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
-     * 
+     *
      * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -249,7 +249,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer flow from a Collection using an Iterator
-     * 
+     *
      * @param collection - Collection SimpleReact will iterate over at the skip of the flow
      *
      * @return Next stage in the reactiveBuffer flow
@@ -264,7 +264,7 @@ public class SimpleReact implements ReactBuilder {
     }
 
     /**
-     * @return  An Eager SimpleReact instance 
+     * @return  An Eager SimpleReact instance
      *  @see SimpleReact#SimpleReact()
      */
     public static SimpleReact parallelBuilder() {
@@ -273,8 +273,8 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Construct a new SimpleReact builder, with a new task executor and retry executor
-     * with configured number of threads 
-     * 
+     * with configured number of threads
+     *
      * @param parallelism Number of threads task executor should have
      * @return eager SimpleReact instance
      */
@@ -289,7 +289,7 @@ public class SimpleReact implements ReactBuilder {
     /**
      * @return new eager SimpleReact builder configured with standard parallel executor
      * By default this is the ForkJoinPool common instance but is configurable in the ThreadPools class
-     * 
+     *
      * @see ThreadPools#getStandard()
      * see RetryBuilder#getDefaultInstance()
      */
@@ -332,7 +332,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer flow from a JDK Iterator
-     * 
+     *
      * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -344,7 +344,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer flow from a JDK Iterator
-     * 
+     *
      * @param iter SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -359,7 +359,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream of CompletableFutures.
-     * 
+     *
      * @param stream of CompletableFutures that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -371,7 +371,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
-     * 
+     *
      * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -383,7 +383,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
-     * 
+     *
      * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -395,7 +395,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Start a reactiveBuffer dataflow from a reactiveStream.
-     * 
+     *
      * @param stream that will be used to drive the reactiveBuffer dataflow
      * @return Next stage in the reactiveBuffer flow
      */
@@ -415,7 +415,7 @@ public class SimpleReact implements ReactBuilder {
 
     /**
      * Construct a simpleReactStream from an Array of CompletableFutures
-     * 
+     *
      * @param cf CompletableFutures to turn into a Stream
      * @return SimpleReactStream from an Array of CompletableFutures
      */

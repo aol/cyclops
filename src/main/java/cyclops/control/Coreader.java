@@ -1,14 +1,18 @@
 package cyclops.control;
 
+import com.oath.cyclops.hkt.Higher2;
+import cyclops.monads.Witness.coreader;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Coreader<R, T> {
+public final class Coreader<R, T> implements Higher2<coreader,R,T>,Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final T extract;
     private final R ask;

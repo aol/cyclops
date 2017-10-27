@@ -1,7 +1,7 @@
 package cyclops.async;
 
-import static com.aol.cyclops2.types.futurestream.BaseSimpleReactStream.parallel;
-import static cyclops.stream.ReactiveSeq.of;
+import static com.oath.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops2.types.futurestream.BaseSimpleReactStream;
+import com.oath.cyclops.types.futurestream.BaseSimpleReactStream;
 
 public class QueueTest {
 
@@ -67,9 +67,9 @@ public class QueueTest {
 	public void parallelStreamClose(){
 	    int cores = Runtime.getRuntime()
 	                       .availableProcessors();
-	    
+
         System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*2));
-        
+
         for(int k=0; k < 100;k++) {
             System.gc();
             System.out.println(k);
@@ -89,11 +89,11 @@ public class QueueTest {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                
+
                 queue.disconnectStreams(1000);
                }
             }).start();
-            
+
             Stream<Integer> stream = queue.jdkStream(100);
 
             stream = stream.parallel();
@@ -108,18 +108,18 @@ public class QueueTest {
 	    public void parallelStreamCloseNoData(){
 	        int cores = Runtime.getRuntime().availableProcessors();
 	        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(cores*16));
-	        
+
 	        for(int k=0; k < 1000;k++) {
 	            System.out.println(k);
 	            Queue<Integer> queue = QueueFactories.<Integer>boundedQueue(5000).build();
-	            
+
 	            new Thread(() -> {
 	                while(!queue.isOpen()){
 	                    System.out.println("Queue isn't open yet!");
 	                }
 	                System.err.println("Closing " + queue.close());
 	            }).start();
-	            
+
 	            Stream<Integer> stream = queue.jdkStream();
 
 	            stream = stream.parallel();
@@ -154,8 +154,8 @@ public class QueueTest {
 	}
 	@Test
 	public void parallelStream(){
-	    
-	    
+
+
 	    success = false;
 	    AtomicLong threadId = new AtomicLong(Thread.currentThread().getId());
 	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(2000).build();
@@ -167,7 +167,7 @@ public class QueueTest {
         q.jdkStream()
           .parallel()
           .peek(System.out::println)
-          .peek(i-> { 
+          .peek(i-> {
               System.out.println(Thread.currentThread().getId());
               if(threadId.get()!= Thread.currentThread().getId()){
               System.out.println("closing");
@@ -176,13 +176,13 @@ public class QueueTest {
           }})
           .peek(i->System.out.println(Thread.currentThread().getId()))
           .forEach(System.out::println);
-        
+
         assertTrue(success);
-            
+
 	}
 	@Test
     public void parallelStreamSmallBounds(){
-        
+
         for(int x=0;x<10;x++){
             System.out.println("Run  " + x);
         success = false;
@@ -196,7 +196,7 @@ public class QueueTest {
         q.jdkStream()
           .parallel()
           .peek(System.out::println)
-          .peek(i-> { 
+          .peek(i-> {
               System.out.println(Thread.currentThread().getId());
               if(threadId.get()!= Thread.currentThread().getId()){
               System.out.println("closing");
@@ -205,25 +205,25 @@ public class QueueTest {
           }})
           .peek(i->System.out.println(Thread.currentThread().getId()))
           .forEach(System.out::println);
-        
+
         assertTrue(success);
         }
-            
+
     }
 	@Test
 	public void closeQueue(){
 	    Queue<Integer> q = QueueFactories.<Integer>boundedQueue(100).build();
 	    q.add(1);
-	    
+
 	    new Thread(()->q.close()).run();
 	    q.stream().forEach(System.out::println);
 	}
-	
+
 	@Test
 	public void backPressureTest() {
-		
-		
-		
+
+
+
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>(2));
 		new SimpleReact().ofAsync(() -> {
 			q.offer(1);
@@ -319,7 +319,7 @@ public class QueueTest {
 		return ret;
 	}
 
-	
+
 	@Test
 	public void testAdd() {
 		for(int i=0;i<1000;i++){
@@ -338,9 +338,9 @@ public class QueueTest {
 				q.add(5);
 				return found.getAndAdd(1);
 			}).block();
-	
+
 		//	sleep(10);
-			
+
 			assertThat(found.get(), is(4));
 		}
 
@@ -474,7 +474,7 @@ public class QueueTest {
 	@Test
 	public void queueTestTimeout() {
 
-		
+
 		Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<Integer>())
 				.withTimeout(1).withTimeUnit(TimeUnit.MILLISECONDS);
 
@@ -489,7 +489,7 @@ public class QueueTest {
 		assertThat(results.size(), equalTo(4));
 
 		assertThat(results, hasItem("*5"));
-		
+
 
 	}
 

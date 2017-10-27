@@ -1,11 +1,14 @@
 package cyclops.collections.standard;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,22 +17,26 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.types.foldable.Evaluation;
-import com.aol.cyclops2.util.SimpleTimer;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.util.SimpleTimer;
+import cyclops.collections.AbstractSetTest;
+import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
+import cyclops.collections.mutable.SetX;
+import cyclops.control.Option;
 import cyclops.function.FluentFunctions;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import cyclops.collections.mutable.SortedSetX;
-import cyclops.collections.AbstractCollectionXTest;
 
-public class SortedSetXTest extends AbstractCollectionXTest {
+public class SortedSetXTest extends AbstractSetTest {
 
     @Override
     public <T> FluentCollectionX<T> of(T... values) {
@@ -44,10 +51,15 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
 
     AtomicLong counter = new AtomicLong(0);
+    @Override
+    protected <T> CollectionX<T> fromStream(Stream<T> s) {
+        return SortedSetX.sortedSetX(ReactiveSeq.fromStream(s));
+    }
     @Before
     public void setup(){
 
         counter = new AtomicLong(0);
+        super.setup();
     }
     @Test
     public void combinations2NoOrder2() {
@@ -55,7 +67,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
         //ListX.of(1, 2, 3).combinations(2).map(t->t.toListX()).printOut();
         CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
         st.toListX().printOut();
-       // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
+       // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().getValue(0).size(),
         //        equalTo(2));
     }
     @Test
@@ -92,7 +104,7 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
 
     private Integer logAndUnwrap(Tuple2<Integer, Long> t) {
-        return t.v1;
+        return t._1();
     }
 
 
@@ -108,16 +120,16 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     public void coflatMap(){
        assertThat(SortedSetX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
-        
+                   .singleOrElse(null),equalTo(6));
+
     }
-   
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
-     * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
+     * com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#
      * zero()
      */
     @Override
@@ -129,8 +141,8 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     @Override
     public void forEach2() {
 
+        System.out.println(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b));
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9), (a, b) -> a + b)
-                              .toList()
                               .size(),
                    equalTo(12));
     }
@@ -156,7 +168,64 @@ public class SortedSetXTest extends AbstractCollectionXTest {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return SortedSetX.unfold(seed, unfolder);
     }
+
+    @Test
+    public void allCombinations3NoOrd() {
+        ListX<SetX<Integer>> x = SortedSetX.of(1, 2, 3).combinations().map(s -> s.to().setX()).to().listX();
+        System.out.println(x);
+        assertTrue(x.containsValue(SetX.empty()));
+        assertTrue(x.containsValue(SetX.of(1)));
+        assertTrue(x.containsValue(SetX.of(2)));
+        assertTrue(x.containsValue(SetX.of(3)));
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
+        assertTrue(x.containsValue(SetX.of(1,2,3)));
+
+    }
+    @Test
+    public void combinations2NoOrd() {
+        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
+        assertTrue(x.containsValue(SetX.of(1,2)));
+        assertTrue(x.containsValue(SetX.of(1,3)));
+        assertTrue(x.containsValue(SetX.of(2,3)));
+    }
+    @Test
+    public void testOfTypeNoOrd() {
+
+
+
+        SortedSetX<Number> set = SortedSetX.<Number>of(1, 10l, 2, 20l, 3);
+        SortedSetX<Integer> setA = set.ofType(Integer.class);
+        assertThat(setA.toListX(),containsInAnyOrder(1, 2, 3));
+
+    }
+    @Test @Ignore
+    public void slidingNoOrd() {
+        SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
+
+        list.containsValue(VectorX.of(1,2));
+        VectorX<Integer> vec = list.elementAt(0).orElse(null);
+
+        System.out.println(vec);
+        System.out.println("same" +vec.equals(VectorX.of(1,2)));
+        System.out.println(list.containsValue(VectorX.of(1,2)));
+        assertTrue(list.containsValue(VectorX.of(1,2)));
+    }
+    @Test @Ignore
+    public void batchWhileCollection(){
+        assertThat(of(1,2,3,4,5,6)
+                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .toList().size(),equalTo(2));
+        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+
+        assertTrue(x.toSetX().containsValue(ListX.of(1,2,3)));
+        assertTrue(x.toSetX().containsValue(ListX.of(4,5,6)));
+
+    }
+
 }

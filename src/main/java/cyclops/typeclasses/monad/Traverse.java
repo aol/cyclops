@@ -1,38 +1,29 @@
 package cyclops.typeclasses.monad;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
-import cyclops.companion.Monoids;
 import cyclops.control.Constant;
 import cyclops.control.Maybe;
-import cyclops.control.Maybe.Nothing;
 import cyclops.control.State;
 import cyclops.function.Monoid;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.constant;
-import cyclops.monads.Witness.state;
 import cyclops.typeclasses.foldable.Foldable;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.pcollections.ConsPStack;
-import org.pcollections.PStack;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.control.Constant.Instances.applicative;
 import static cyclops.control.State.state;
-import static org.jooq.lambda.tuple.Tuple.tuple;
+import static cyclops.data.tuple.Tuple.tuple;
 
 //HighJ Traverse, ScalaZ Traverse and Cats Traverse Influences
 public interface Traverse<CRE> extends Applicative<CRE>{
-    
+
    <C2,T,R> Higher<C2, Higher<CRE, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
                                                  Higher<CRE, T> ds);
-   
+
     <C2,T> Higher<C2, Higher<CRE, T>> sequenceA(Applicative<C2> applicative,
                                                 Higher<CRE, Higher<C2, T>> ds);
 
@@ -73,7 +64,7 @@ public interface Traverse<CRE> extends Applicative<CRE>{
         return runTraverseS(t ->
                         State.<LinkedListX<T>>get()
                                 .forEach2(e -> State.put(e.tail()), (a, b) -> a.head())
-                , t2.v2, t2.v1).v2;
+                , t2._2(), t2._1())._2();
 
     }
     default <T, R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> ds) {
@@ -83,7 +74,7 @@ public interface Traverse<CRE> extends Applicative<CRE>{
 
         State<Long,  Higher<CRE, R>> st = State.narrowK(traverseA(State.Instances.applicative(),
                 a -> state((Long s) -> tuple(s + 1, f.apply(a, s))), ds));
-        return st.run(0l).v2;
+        return st.run(0l)._2();
 
     }
 
@@ -93,11 +84,11 @@ public interface Traverse<CRE> extends Applicative<CRE>{
         State<Maybe<T2>,  Higher<CRE, R>> st = State.narrowK(traverseA(State.Instances.applicative(),
                 a -> {
 
-                    State<Maybe<T2>,R> xz = state((Maybe<T2> s) -> tuple(list.hasNext() ? Maybe.just(list.next()) : Maybe.none(), f.apply(a, s)));
+                    State<Maybe<T2>,R> xz = state((Maybe<T2> s) -> tuple(list.hasNext() ? Maybe.just(list.next()) : Maybe.nothing(), f.apply(a, s)));
                     return xz;
                 }, ds));
-        Maybe<T2> opt = list.hasNext() ? Maybe.of(list.next()) : Maybe.none();
-        return st.run(opt).v2;
+        Maybe<T2> opt = list.hasNext() ? Maybe.of(list.next()) : Maybe.nothing();
+        return st.run(opt)._2();
 
     }
     default <T,R> Higher<CRE,Tuple2<T,Long>> zipWithIndex(Higher<CRE, T> ds) {

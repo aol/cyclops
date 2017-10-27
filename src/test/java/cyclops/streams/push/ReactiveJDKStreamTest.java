@@ -1,8 +1,7 @@
 package cyclops.streams.push;
 
-import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
 import java.util.ArrayList;

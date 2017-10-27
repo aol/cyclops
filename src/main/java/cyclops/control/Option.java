@@ -1,37 +1,30 @@
 package cyclops.control;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.internal.stream.spliterators.push.PublisherToOperator;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Present;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.recoverable.Recoverable;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.matching.Sealed2;
+import com.oath.cyclops.types.*;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.recoverable.Recoverable;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Optionals;
 import cyclops.function.*;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
-import org.jooq.lambda.tuple.Tuple3;
-import org.jooq.lambda.tuple.Tuple4;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /*
@@ -39,9 +32,13 @@ import java.util.stream.Stream;
  Less powerful, but may perform better than Maybe (simpler Object structure)
  */
 public interface Option<T> extends To<Option<T>>,
-                                   MonadicValue<T>,
+  OrElseValue<T,Option<T>>,
+  MonadicValue<T>,
                                    Recoverable<T>,
-                                   Iterable<T>{
+                                   Sealed2<T,Option.None<T>>,
+                                   Iterable<T>,
+                                     Serializable{
+
 
 
 
@@ -49,10 +46,11 @@ public interface Option<T> extends To<Option<T>>,
     final static Option EMPTY = new Option.None<>();
 
     /**
-     * @return Get the zero Maybe (singleUnsafe instance)
+     * @return Get the zero Maybe (single instance)
      */
     @SuppressWarnings("unchecked")
     static <T> Option<T> none() {
+
         return EMPTY;
     }
 
@@ -65,21 +63,21 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     default <R> Option<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return (Option<R>) MonadicValue.super.flatMapI(mapper);
     }
 
-    default Option<T> recoverWith(Option<T> opt){
+    default Option<T> orElseUse(Option<T> opt){
         if(isPresent())
             return this;
         return opt;
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     default <R> Option<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -90,7 +88,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Maybe  that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -110,7 +108,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     *  Construct a Maybe  that contains a singleUnsafe value extracted from the supplied Iterable
+     *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -345,7 +343,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Reducer<R> reducer) {
+    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -437,7 +435,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     @Override
-    default <S, U, R> Option<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Fn3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    default <S, U, R> Option<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
         return (Option<R>)MonadicValue.super.zip3(second,third,fn3);
     }
 
@@ -447,7 +445,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     @Override
-    default <T2, T3, T4, R> Option<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Fn4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    default <T2, T3, T4, R> Option<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (Option<R>)MonadicValue.super.zip4(second,third,fourth,fn);
     }
 
@@ -457,54 +455,54 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-         * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+         * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
          */
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Option<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     default <T2, R1, R2, R3, R> Option<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     default <T2, R1, R2, R> Option<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Option<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Option<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -514,7 +512,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     default <R1, R> Option<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -533,21 +531,21 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.
+     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
      * cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
     default <T2, R> Option<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> app.visit(i -> Option.just(tuple.v2.apply(i)), () -> Option.none()));
+                .apply(v))).flatMap(tuple -> app.visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
     }
 
     /*
      * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
      * java.util.function.BiFunction)
      */
     @Override
@@ -555,7 +553,7 @@ public interface Option<T> extends To<Option<T>>,
 
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).flatMap(tuple -> Option.fromIterable(app)
-                .visit(i -> Option.just(tuple.v2.apply(i)), () -> Option.none()));
+                .visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
     }
 
 
@@ -563,20 +561,20 @@ public interface Option<T> extends To<Option<T>>,
      * Equivalent to combine, but accepts a Publisher and takes the first value
      * only from that publisher. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
      * org.reactivestreams.Publisher)
      */
     @Override
     default <T2, R> Option<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).flatMap(tuple -> Option.fromPublisher(app)
-                .visit(i -> Option.just(tuple.v2.apply(i)), () -> Option.none()));
+                .visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
 
     }
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.Applicative#combine(java.util.function.BinaryOperator, com.aol.cyclops2.types.Applicative)
+     * @see com.oath.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
      */
     @Override
     default  Option<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
@@ -588,7 +586,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -600,7 +598,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     default <U> Option<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -612,7 +610,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     default <U> Option<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -621,7 +619,7 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#unit(java.lang.Object)
+     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
     default <T> Option<T> unit(final T unit) {
@@ -632,7 +630,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     default <R> Option<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -642,7 +640,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * cojoin (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     default Option<MonadicValue<T>> nest() {
@@ -652,8 +650,8 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.aol.cyclops2.types.MonadicValue2)
+     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
+     * com.oath.cyclops.types.MonadicValue2)
      */
     @Override
     default Option<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -663,14 +661,14 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.value.Value#toMaybe()
+     * @see com.oath.cyclops.value.Value#toMaybe()
      */
     @Override
     default Maybe<T> toMaybe(){
         return lazy();
     }
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     boolean isPresent();
@@ -684,19 +682,19 @@ public interface Option<T> extends To<Option<T>>,
     Option<T> recoverWith(Supplier<? extends Option<T>> fn);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#map(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
     <R> Option<R> map(Function<? super T, ? extends R> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     <R> Option<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
+     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
     <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);
@@ -704,7 +702,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#filter(java.util.function.
+     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.
      * Predicate)
      */
     @Override
@@ -713,7 +711,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
      */
     @Override
     default <U> Option<U> ofType(final Class<? extends U> type) {
@@ -725,7 +723,7 @@ public interface Option<T> extends To<Option<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Filters#filterNot(java.util.function.
+     * com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.
      * Predicate)
      */
     @Override
@@ -737,7 +735,7 @@ public interface Option<T> extends To<Option<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Filters#notNull()
+     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
     default Option<T> notNull() {
@@ -745,22 +743,12 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<T>) MonadicValue.super.notNull();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#cast(java.lang.Class)
-     */
-    @Override
-    default <U> Option<U> cast(final Class<? extends U> type) {
-
-        return (Option<U>) MonadicValue.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Functor#peek(java.util.function.Consumer)
+     * com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
      */
     @Override
     default Option<T> peek(final Consumer<? super T> c) {
@@ -768,23 +756,35 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<T>) MonadicValue.super.peek(c);
     }
 
+    @Override
+    default <T1> Option<T1> emptyUnit(){
+        return Option.none();
+    }
 
     /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Functor#trampoline(java.util.function.
-     * Function)
-     */
+         * (non-Javadoc)
+         *
+         * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
+         * Function)
+         */
     @Override
     default <R> Option<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
         return (Option<R>) MonadicValue.super.trampoline(mapper);
     }
+
+    public static <T> Option<T> fromNullable(T t) {
+        if(t==null)
+            return none();
+        return some(t);
+    }
+
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class Some<T> implements Option<T>, Present {
+    public static final class Some<T> implements Option<T>, Present<T> {
+        private static final long serialVersionUID = 1L;
         private final T value;
 
-        @Override
+
         public T get() {
             return value;
         }
@@ -829,6 +829,10 @@ public interface Option<T> extends To<Option<T>>,
         public Option<T> filter(Predicate<? super T> fn) {
             return fn.test(value) ? this : None.NOTHING_EAGER;
         }
+        @Override
+        public String toString() {
+            return mkString();
+        }
         /*
        * (non-Javadoc)
        *
@@ -851,18 +855,29 @@ public interface Option<T> extends To<Option<T>>,
                 return Objects.equals(value,s.value);
             }
             if (obj instanceof Present)
-                return Objects.equals(value, ((Maybe) obj).get());
+                return Objects.equals(value, ((Maybe) obj).orElse(null));
             else if (obj instanceof Option) {
                 Option<T> opt = (Option<T>)obj;
                 if(opt.isPresent())
-                    return Objects.equals(value,opt.get());
+                    return Objects.equals(value,opt.orElse(null));
 
             }
             return false;
         }
+
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return fn1.apply(value);
+        }
+
+        @Override
+        public T orElse(T alt) {
+            return value;
+        }
     }
     public static class None<T> implements Option<T> {
-        static None NOTHING_EAGER = new None();
+        private static final long serialVersionUID = 1L;
+        public static None NOTHING_EAGER = new None();
 
         @Override
         public <R> Option<R> map(final Function<? super T, ? extends R> mapper) {
@@ -880,10 +895,7 @@ public interface Option<T> extends To<Option<T>>,
             return NOTHING_EAGER;
         }
 
-        @Override
-        public T get() {
-            throw new NoSuchElementException("No value present");
-        }
+
 
         @Override
         public Option<T> recover(final T value) {
@@ -956,6 +968,11 @@ public interface Option<T> extends To<Option<T>>,
         @Override
         public void forEach(Consumer<? super T> action) {
 
+        }
+
+        @Override
+        public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            return fn2.apply(this);
         }
     }
 

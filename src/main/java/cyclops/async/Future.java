@@ -1,47 +1,43 @@
 package cyclops.async;
 
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
-import com.aol.cyclops2.hkt.Higher;
-import com.aol.cyclops2.react.Status;
-import com.aol.cyclops2.react.collectors.lazy.Blocker;
-import com.aol.cyclops2.react.threads.SequentialElasticPools;
-import com.aol.cyclops2.types.MonadicValue;
-import com.aol.cyclops2.types.Value;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.To;
-import com.aol.cyclops2.types.reactive.Completable;
-import com.aol.cyclops2.types.reactive.ValueSubscriber;
-import com.aol.cyclops2.types.recoverable.RecoverableFrom;
-import com.aol.cyclops2.util.ExceptionSoftener;
-import cyclops.collections.box.Mutable;
-import cyclops.collections.mutable.ListX;
-import cyclops.companion.CompletableFutures;
-import cyclops.companion.Monoids;
-import cyclops.control.Eval;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.Higher;
+
+import com.oath.cyclops.react.threads.SequentialElasticPools;
+import com.oath.cyclops.types.OrElseValue;
+import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Xor;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.future;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.FutureT;
-import cyclops.stream.ReactiveSeq;
-import cyclops.typeclasses.Active;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.Coproduct;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Nested;
-import cyclops.typeclasses.Product;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
+
+import com.oath.cyclops.react.Status;
+import com.oath.cyclops.react.collectors.lazy.Blocker;
+import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
+
+import cyclops.companion.Monoids;
+import com.oath.cyclops.util.box.Mutable;
+import cyclops.control.*;
+
+import com.oath.cyclops.util.ExceptionSoftener;
+
+import cyclops.collections.mutable.ListX;
+import cyclops.companion.CompletableFutures;
+
+import com.oath.cyclops.types.reactive.ValueSubscriber;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
+import cyclops.monads.AnyM;
+import cyclops.reactive.ReactiveSeq;
+
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -53,7 +49,7 @@ import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.MonadRec;
 import cyclops.typeclasses.monad.MonadZero;
 import cyclops.typeclasses.monad.Traverse;
-import java.util.Iterator;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -72,16 +68,22 @@ import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.UtilityClass;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
+
+
+import java.util.concurrent.*;
+
+import static cyclops.monads.Witness.future.*;
+
 
 /**
  * A Wrapper around CompletableFuture that implements cyclops2-react interfaces and provides a more standard api
  *
  * e.g.
- *   map instead of thenApply
+ *   transform instead of thenApply
  *   flatMap instead of thenCompose
  *   combine instead of thenCombine (applicative functor ap)
  *
@@ -95,12 +97,14 @@ public class Future<T> implements To<Future<T>>,
                                   MonadicValue<T>,
                                   Completable<T>,
                                   Higher<future,T>,
-                                  RecoverableFrom<Throwable,T> {
-    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Xor<T, R>>> fn){
+                                  RecoverableFrom<Throwable,T>,
+  OrElseValue<T,Future<T>> {
+
+    public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
         SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
         return Future.of(()->{
-            Future<? extends Xor<T, R>> next[] = new Future[1];
-            next[0]=Future.ofResult(Xor.secondary(initial));
+            Future<? extends Either<T, R>> next[] = new Future[1];
+            next[0]=Future.ofResult(Either.left(initial));
             boolean cont = true;
             do {
                 cont = next[0].visit(p ->  p.visit(s -> {
@@ -108,7 +112,7 @@ public class Future<T> implements To<Future<T>>,
                     return true;
                 }, pr -> false), () -> false);
             }while(cont);
-            return next[0].map(Xor::get);
+            return next[0].map(x->x.orElse(null));
         }, sr.getExecutor()).flatMap(i->i)
                 .peek(e->SequentialElasticPools.simpleReact.populate(sr)).recover(t->{
                     SequentialElasticPools.simpleReact.populate(sr);
@@ -256,7 +260,7 @@ public class Future<T> implements To<Future<T>>,
      * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
-        strings.get().size()
+        strings.getValue().size()
         //1
      *
      * }
@@ -289,7 +293,7 @@ public class Future<T> implements To<Future<T>>,
      * Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1),Future.future(),Future.future());
 
 
-    strings.get().size()
+    strings.getValue().size()
     //1
      *
      * }
@@ -321,7 +325,7 @@ public class Future<T> implements To<Future<T>>,
        Future<Integer> result = Future.firstSuccess(Future.of(()->1),ft);
 
        ft.complete(10);
-       result.get() //1
+       result.getValue() //1
      * }
      * </pre>
      *
@@ -349,7 +353,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
      *
      *
      * <pre>
@@ -375,7 +379,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future asyncrhonously that contains a singleUnsafe value extracted from the supplied Iterable
+     * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
      *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -397,7 +401,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Future syncrhonously that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
@@ -441,7 +445,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a singleUnsafe value extracted from the supplied Iterable
+     * Construct a Future syncrhonously that contains a single value extracted from the supplied Iterable
      *
      * <pre>
      * {@code
@@ -485,7 +489,8 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated with lazy the value or error in provided Try
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
-        return Future.of(value);
+
+        return value.visit(s->Future.ofResult(s),e->Future.<T>of(CompletableFutures.error(e)));
     }
 
     /**
@@ -599,7 +604,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future with a Stream
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromFuture), Witness.future.INSTANCE)
+        return AnyM.sequence(fts.map(AnyM::fromFuture), INSTANCE)
                    .map(ReactiveSeq::fromStream)
                    .to(Witness::future);
     }
@@ -625,11 +630,11 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
        return Future.of(CompletableFutures.accumulateSuccess(fts.map(Future::getFuture), reducer));
     }
     /**
-     * Asynchronously accumulate the results of Futures, a singleUnsafe failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
      * {@code
      *
@@ -645,7 +650,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -695,7 +700,7 @@ public class Future<T> implements To<Future<T>>,
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * A singleUnsafe Failure results in a Failed  Future.
+     * A single Failure results in a Failed  Future.
      *
      * <pre>
      * {@code
@@ -720,7 +725,7 @@ public class Future<T> implements To<Future<T>>,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }
      *
-     * A singleUnsafe Failure results in a Failed  Future.
+     * A single Failure results in a Failed  Future.
      *
      * <pre>
      * {@code
@@ -742,54 +747,54 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> Future<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Future<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.QuadFunction, com.aol.cyclops2.util.function.QuadFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
      */
     @Override
     public <T2, R1, R2, R3, R> Future<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
                                                   BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                                  Fn3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                  Fn4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                  Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                  Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Future<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> Future<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Future<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.aol.cyclops2.util.function.TriFunction, com.aol.cyclops2.util.function.TriFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
      */
     @Override
     public <T2, R1, R2, R> Future<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
                                               BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-                                              Fn3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-                                              Fn3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                              Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                              Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Future<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> Future<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -799,7 +804,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
+     * @see com.oath.cyclops.types.MonadicValue#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
      */
     @Override
     public <R1, R> Future<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
@@ -809,11 +814,6 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
-
-    @Override
-    public Eval<T> toEvalAlways() {
-        return Eval.fromFuture(this);
-    }
 
     @Override
     public Maybe<T> toMaybe() {
@@ -867,14 +867,20 @@ public class Future<T> implements To<Future<T>>,
      * @return Result of the executed Function
      */
     public <R> R visit(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
-        return visitAsync(success,failure).get();
+        try {
+            return success.apply(future.join());
+        }catch(Throwable t){
+            return failure.apply(t);
+        }
 
     }
+
+
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#coflatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
     @Override
     public <R> Future<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
@@ -884,7 +890,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * cojoin (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue#nest()
+     * @see com.oath.cyclops.types.MonadicValue#nest()
      */
     @Override
     public Future<MonadicValue<T>> nest() {
@@ -894,8 +900,8 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.aol.cyclops2.types.MonadicValue2)
+     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
+     * com.oath.cyclops.types.MonadicValue2)
      */
     @Override
     public Future<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
@@ -906,7 +912,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.ConvertableFunctor#map(java.util.function.Function)
+     * com.oath.cyclops.types.ConvertableFunctor#transform(java.util.function.Function)
      */
     @Override
     public <R> Future<R> map(final Function<? super T, ? extends R> fn) {
@@ -914,7 +920,7 @@ public class Future<T> implements To<Future<T>>,
                               future.thenApply(fn));
     }
     /**
-     * Asyncrhonous map operation
+     * Asyncrhonous transform operation
      *
      * @see CompletableFuture#thenApplyAsync(Function, Executor)
      *
@@ -932,14 +938,22 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see java.util.function.Supplier#get()
+     * @see java.util.function.Supplier#getValue()
      */
-    @Override
-    public T get() {
+
+    public T getOrElse(T alt) {
         try {
             return future.join();
         } catch (final Throwable t) {
-            throw ExceptionSoftener.throwSoftenedException(t.getCause());
+            return alt;
+        }
+    }
+
+    public Try<T,Throwable> get(){
+        try {
+            return Try.success(future.join());
+        } catch (final CompletionException t) {
+            return Try.failure(t.getCause());
         }
     }
 
@@ -988,20 +1002,12 @@ public class Future<T> implements To<Future<T>>,
         return future.isCompletedExceptionally();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Value#iterator()
-     */
-    @Override
-    public Iterator<T> iterator() {
-        return toStream().iterator();
-    }
+
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Pure#unit(java.lang.Object)
+     * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
      */
     @Override
     public <T> Future<T> unit(final T unit) {
@@ -1009,23 +1015,28 @@ public class Future<T> implements To<Future<T>>,
                               CompletableFuture.completedFuture(unit));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.Value#reactiveStream()
-     */
     @Override
-    public ReactiveSeq<T> stream() {
-        return ReactiveSeq.generate(() -> Try.withCatch(() -> get()))
-                          .limit(1)
-                          .filter(t -> t.isSuccess())
-                          .map(Value::get);
+    public <T1> Future<T1> emptyUnit() {
+        return future();
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.FlatMap#flatten()
+     * @see com.oath.cyclops.types.Value#reactiveStream()
+     */
+    @Override
+    public ReactiveSeq<T> stream() {
+        return ReactiveSeq.generate(() -> get())
+                          .limit(1)
+                          .filter(t -> t.isSuccess())
+                          .map(t->t.orElse(null));
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.oath.cyclops.types.FlatMap#flatten()
      */
     public static <R> Future<R> flatten(Future<? extends Future<R>> nested) {
         return nested.flatMap(Function.identity());
@@ -1035,13 +1046,17 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.MonadicValue#flatMap(java.util.function.Function)
+     * com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-        return Future.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t)
-                                                                                     .toFuture()
-                                                                                     .getFuture()));
+        return Future.<R>of(future.<R>thenCompose(t -> (CompletionStage<R>) Future.fromMonadicValue(mapper.apply(t)).getFuture()));
+    }
+
+    private static <R> Future<R> fromMonadicValue(MonadicValue<R> apply) {
+        if(apply instanceof Future)
+            return (Future<R>)apply;
+        return Future.fromPublisher(apply);
     }
 
     /**
@@ -1059,64 +1074,40 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toXor()
+     * @see com.oath.cyclops.types.Value#toLazyEither()
      */
-    @Override
-    public Xor<Throwable, T> toXor() {
+    public Either<Throwable, T> toXor() {
         try {
-            return Xor.primary(future.join());
+            return Either.right(future.join());
         } catch (final Throwable t) {
-            return Xor.<Throwable, T> secondary(t.getCause());
+            return Either.<Throwable, T>left(t.getCause());
         }
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#toIor()
+     * @see com.oath.cyclops.types.Value#toIor()
      */
-    @Override
     public Ior<Throwable, T> toIor() {
         try {
-            return Ior.primary(future.join());
+            return Ior.right(future.join());
         } catch (final Throwable t) {
-            return Ior.<Throwable, T> secondary(t.getCause());
+            return Ior.<Throwable, T>left(t.getCause());
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.closures.Convertable#toFuture()
-     */
-    @Override
-    public Future<T> toFuture() {
-        return this;
-    }
 
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.closures.Convertable#toCompletableFuture()
+     * @see com.oath.cyclops.closures.Convertable#toCompletableFuture()
      */
-    @Override
     public CompletableFuture<T> toCompletableFuture() {
         return this.future;
     }
 
 
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.aol.cyclops2.closures.Convertable#toCompletableFutureAsync(java.util.
-     * concurrent.Executor)
-     */
-    @Override
-    public CompletableFuture<T> toCompletableFutureAsync(final Executor exec) {
-        return this.future;
-    }
 
     /**
      * Returns a new Future that, when this Future completes exceptionally is
@@ -1169,22 +1160,12 @@ public class Future<T> implements To<Future<T>>,
                                 .exceptionally(failure));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.lambda.monads.Transformable#cast(java.lang.Class)
-     */
-    @Override
-    public <U> Future<U> cast(final Class<? extends U> type) {
-
-        return (Future<U>) MonadicValue.super.cast(type);
-    }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.lambda.monads.Transformable#peek(java.util.function.Consumer)
+     * com.oath.cyclops.lambda.monads.Transformable#peek(java.util.function.Consumer)
      */
     @Override
     public Future<T> peek(final Consumer<? super T> c) {
@@ -1195,7 +1176,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.lambda.monads.Transformable#trampoline(java.util.function.
+     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.
      * Function)
      */
     @Override
@@ -1242,7 +1223,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.foldable.Convertable#isPresent()
+     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
      */
     @Override
     public boolean isPresent() {
@@ -1252,7 +1233,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Value#mkString()
+     * @see com.oath.cyclops.types.Value#mkString()
      */
     @Override
     public String mkString() {
@@ -1268,7 +1249,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Filters#filter(java.util.function.Predicate)
+     * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filter(final Predicate<? super T> fn) {
@@ -1278,7 +1259,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Filters#ofType(java.lang.Class)
+     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
      */
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
@@ -1290,7 +1271,7 @@ public class Future<T> implements To<Future<T>>,
      * (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.Filters#filterNot(java.util.function.Predicate)
+     * com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
@@ -1301,7 +1282,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Filters#notNull()
+     * @see com.oath.cyclops.types.Filters#notNull()
      */
     @Override
     public Maybe<T> notNull() {
@@ -1309,53 +1290,14 @@ public class Future<T> implements To<Future<T>>,
         return (Maybe<T>) MonadicValue.super.notNull();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.aol.cyclops2.types.foldable.Convertable#optional()
-     */
-    @Override
-    public Optional<T> toOptional() {
-        if (future.isDone() && future.isCompletedExceptionally())
-            return Optional.empty();
-
-        try {
-            return Optional.ofNullable(get());
-        } catch (final Throwable t) {
-            return Optional.empty();
-        }
-
-    }
-    public Option<T> toOption() {
-        if (future.isDone() && future.isCompletedExceptionally())
-            return Option.none();
-
-        try {
-            return Option.some(get());
-        } catch (final Throwable t) {
-            return Option.none();
-        }
-
-    }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.aol.cyclops2.types.foldable.Convertable#toFutureAsync(java.util.concurrent.
-     * Executor)
-     */
-    @Override
-    public Future<T> toFutureAsync(final Executor ex) {
-        return this;
-    }
 
     /*
      * Apply a function across two values at once. (non-Javadoc)
      *
      * @see
-     * com.aol.cyclops2.types.applicative.ApplicativeFunctor#combine(com.aol.
+     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
      * cyclops2.types.Value, java.util.function.BiFunction)
      */
     @Override
@@ -1370,7 +1312,7 @@ public class Future<T> implements To<Future<T>>,
      * Equivalent to combine, but accepts an Iterable and takes the first value
      * only from that iterable. (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable,
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1385,7 +1327,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.function.BiFunction,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
      * org.reactivestreams.Publisher)
      */
     @Override
@@ -1428,7 +1370,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream,
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
      * java.util.function.BiFunction)
      */
     @Override
@@ -1439,7 +1381,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.util.stream.Stream)
+     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
@@ -1451,7 +1393,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.aol.cyclops2.types.Zippable#zip(java.lang.Iterable)
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
      */
     @Override
     public <U> Future<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
@@ -1460,7 +1402,7 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -1469,7 +1411,7 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.aol.cyclops2.types.MonadicValue#flatMapP(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
     public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
@@ -1485,6 +1427,17 @@ public class Future<T> implements To<Future<T>>,
     public CompletableFuture<T> getFuture() {
         return this.future;
     }
+
+    @Override
+    public <R> R visit(Function<? super T,? extends R> success, Supplier<? extends R> failure){
+        try {
+            return success.apply(future.join());
+        }catch(Throwable t){
+            return failure.get();
+        }
+    }
+
+
     /**
      * Companion class for creating Type Class instances for working with Futures
      * @author johnmcclean
@@ -1546,12 +1499,12 @@ public class Future<T> implements To<Future<T>>,
 
                 @Override
                 public <T> Maybe<Comonad<future>> comonad() {
-                    return Maybe.just(Instances.comonad());
+                    return Maybe.nothing();
                 }
 
                 @Override
                 public <T> Maybe<Unfoldable<future>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -1706,7 +1659,7 @@ public class Future<T> implements To<Future<T>>,
             return new MonadRec<future>(){
 
                 @Override
-                public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<future, R> tailRec(T initial, Function<? super T, ? extends Higher<future, ? extends Either<T, R>>> fn) {
                     return Future.tailRec(initial,fn.andThen(Future::narrowK));
                 }
             };
@@ -1753,39 +1706,65 @@ public class Future<T> implements To<Future<T>>,
             return General.monadPlus(monadZero(),m2);
         }
 
-        /**
-         * @return Type class for traversables with traverse / sequence operations
-         */
-        public static <C2,T> Traverse<future> traverse(){
 
-            return General.traverseByTraverse(applicative(), Instances::traverseA);
+        public static <L> Traverse<future> traverse() {
+            return new Traverse<future>() {
+
+                @Override
+                public <T> Higher<future, T> unit(T value) {
+                    return Instances.<T>unit().unit(value);
+                }
+
+                @Override
+                public <C2, T, R> Higher<C2, Higher<future, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<future, T> ds) {
+                    Future<T> maybe = Future.narrowK(ds);
+                    return maybe.visit(right->applicative.map(m->Future.ofResult(m), fn.apply(right)),left->  applicative.unit(Future.ofError(left)));
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<future, T>> sequenceA(Applicative<C2> applicative, Higher<future, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+
+
+                @Override
+                public <T, R> Higher<future, R> ap(Higher<future, ? extends Function<T, R>> fn, Higher<future, T> apply) {
+                    return applicative().ap(fn,apply);
+
+                }
+
+                @Override
+                public <T, R> Higher<future, R> map(Function<? super T, ? extends R> fn, Higher<future, T> ds) {
+                    return functor().map(fn,ds);
+                }
+
+            };
+        }
+        public static <L> Foldable<future> foldable() {
+            return new Foldable<future>() {
+
+
+                @Override
+                public <T> T foldRight(Monoid<T> monoid, Higher<future, T> ds) {
+                    Future<T> ft = Future.narrowK(ds);
+                    return ft.fold(monoid);
+                }
+
+                @Override
+                public <T> T foldLeft(Monoid<T> monoid, Higher<future, T> ds) {
+                    Future<T> ft = Future.narrowK(ds);
+                    return ft.fold(monoid);
+                }
+
+                @Override
+                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<future, T> nestedA) {
+                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+                }
+            };
         }
 
-        /**
-         *
-         * <pre>
-         * {@code
-         * int sum  = Futures.foldable()
-        .foldLeft(0, (a,b)->a+b, Future.widen(Future.ofResult(4)));
 
-        //4
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return Type class for folding / reduction operations
-         */
-        public static <T,R> Foldable<future> foldable(){
-            BiFunction<Monoid<T>,Higher<future,T>,T> foldRightFn =  (m,l)-> m.apply(m.zero(), Future.narrowK(l).get());
-            BiFunction<Monoid<T>,Higher<future,T>,T> foldLeftFn = (m,l)->  m.apply(m.zero(), Future.narrowK(l).get());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.future, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
-            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-        }
-        public static <T> Comonad<future> comonad(){
-            Function<? super Higher<future, T>, ? extends T> extractFn = maybe -> maybe.convert(Future::narrowK).get();
-            return General.comonad(functor(), unit(), extractFn);
-        }
 
         private <T> Future<T> of(T value){
             return Future.ofResult(value);
@@ -1802,11 +1781,8 @@ public class Future<T> implements To<Future<T>>,
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<future, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                          Higher<future, T> ds){
-            Future<T> future = Future.narrowK(ds);
-            return applicative.map(Future::ofResult, fn.apply(future.get()));
-        }
 
     }
+
+
 }

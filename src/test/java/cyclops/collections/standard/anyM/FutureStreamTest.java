@@ -6,20 +6,18 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.util.Date;
-
-import com.aol.cyclops2.react.ThreadPools;
+import com.oath.cyclops.react.ThreadPools;
 import cyclops.async.LazyReact;
 import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.monads.Witness.futureStream;
-import cyclops.stream.FutureStream;
+import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
 import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.anyM.AnyMSeq;
+import com.oath.cyclops.types.anyM.AnyMSeq;
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<futureStream> {
     int count = 0;
@@ -41,7 +39,7 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
 		return AnyM.fromFutureStream(new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values));
 	}
 	/* (non-Javadoc)
-	 * @see com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#zero()
+	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
 	public <T> AnyMSeq<futureStream,T> empty() {
@@ -49,22 +47,22 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
 	}
 	@Test
 	public void when(){
-		
+
 		String res=	of(1,2,3).visit((x,xs)->
 								xs.join(x>2? "hello" : "world"),()->"boo!");
-					
+
 		assertThat(res,equalTo("2world3"));
 	}
 	@Test
 	public void whenGreaterThan2(){
 		String res=	of(5,2,3).visit((x,xs)->
 								xs.join(x>2? "hello" : "world"),()->"boo!");
-				
+
 		assertThat(res,equalTo("2hello3"));
 	}
 	@Test
 	public void when2(){
-		
+
 		Integer res =	of(1,2,3).visit((x,xs)->x,()->10);
 		System.out.println(res);
 	}
@@ -80,16 +78,7 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
         assertThat(res, equalTo("2world3"));
     }
 
-	@Test
-    public void cast(){
-        assertThat(of(1,2,3).cast(String.class).toListX(),equalTo(ListX.of()));
-    }
-	@Test
-    public void testCastPast() {
-        of(1, "a", 2, "b", 3).cast(Date.class).map(d -> d.getTime())
-                .toList();
-    }
-    
+
     @Test
     public void testParallelFlatMap() {
         assertThat(new LazyReact(ThreadPools.getCommonFreeThread()).fromStream(Stream.generate(() -> 1).limit(1000)).parallel()

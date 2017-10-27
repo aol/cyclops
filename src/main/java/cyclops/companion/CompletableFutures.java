@@ -1,23 +1,20 @@
 package cyclops.companion;
 
-import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 
-import com.aol.cyclops2.types.reactive.Completable;
-import cyclops.monads.transformers.FutureT;
 import cyclops.typeclasses.*;
-import cyclops.control.Xor;
+import cyclops.control.Either;
 import cyclops.monads.Witness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
 import cyclops.control.Maybe;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.Witness.completableFuture;
@@ -34,24 +31,29 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import com.aol.cyclops2.data.collections.extensions.CollectionX;
+import cyclops.reactive.ReactiveSeq;
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.types.Value;
+import com.oath.cyclops.types.Value;
 import cyclops.monads.Witness;
 
 import lombok.experimental.UtilityClass;
 
 /**
  * Utilty methods for working with JDK CompletableFutures
- * 
+ *
  * @author johnmcclean
  *
  */
 @UtilityClass
 public class CompletableFutures {
 
-    public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Xor<T, R>>> fn){
+    public static <T> CompletableFuture<T> error(Throwable t){
+        CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(t);
+        return cf;
+    }
+    public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Either<T, R>>> fn){
         Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(Future::of));
         return Future.narrowK(x).getFuture();
     }
@@ -101,7 +103,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach4;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach4;
      *
     forEach4(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -122,8 +124,8 @@ public class CompletableFutures {
     public static <T1, T2, T3, R1, R2, R3, R> CompletableFuture<R> forEach4(CompletableFuture<? extends T1> value1,
                                                                             Function<? super T1, ? extends CompletableFuture<R1>> value2,
                                                                             BiFunction<? super T1, ? super R1, ? extends CompletableFuture<R2>> value3,
-                                                                            Fn3<? super T1, ? super R1, ? super R2, ? extends CompletableFuture<R3>> value4,
-                                                                            Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                            Function3<? super T1, ? super R1, ? super R2, ? extends CompletableFuture<R3>> value4,
+                                                                            Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return value1.thenCompose(in -> {
 
@@ -150,7 +152,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach3;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach3;
      *
     forEach3(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -169,7 +171,7 @@ public class CompletableFutures {
     public static <T1, T2, R1, R2, R> CompletableFuture<R> forEach3(CompletableFuture<? extends T1> value1,
                                                                     Function<? super T1, ? extends CompletableFuture<R1>> value2,
                                                                     BiFunction<? super T1, ? super R1, ? extends CompletableFuture<R2>> value3,
-                                                                    Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                                    Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return value1.thenCompose(in -> {
 
@@ -195,7 +197,7 @@ public class CompletableFutures {
      *  <pre>
      * {@code
      *
-     *   import static com.aol.cyclops2.reactor.CompletableFutures.forEach;
+     *   import static com.oath.cyclops.reactor.CompletableFutures.forEach;
      *
     forEach(CompletableFuture.just(1),
     a-> CompletableFuture.just(a+1),
@@ -226,18 +228,18 @@ public class CompletableFutures {
 
     /**
      * Asynchronous sequence operation that convert a Collection of Futures to a Future with a List
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   CompletableFuture<ListX<Integer>> futures =CompletableFuture.sequence(ListX.of(
      *                                                          CompletableFuture.completedFuture(10),
      *                                                          CompletableFuture.completedFuture(1)));
          //ListX.of(10,1)
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to Sequence into a Future with a List
      * @return Future with a List
      */
@@ -246,18 +248,18 @@ public class CompletableFutures {
     }
     /**
      * Asynchronous sequence operation that convert a Stream of Futures to a Future with a Stream
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *   CompletableFuture<ListX<Integer>> futures =CompletableFuture.sequence(ListX.of(
      *                                                          CompletableFuture.completedFuture(10),
      *                                                          CompletableFuture.completedFuture(1)));
          //ListX.of(10,1)
-     * 
+     *
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Stream of Futures to Sequence into a Future with a Stream
      * @return Future with a Stream
      */
@@ -265,31 +267,31 @@ public class CompletableFutures {
         return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), completableFuture.INSTANCE)
                 .map(ReactiveSeq::fromStream)
                 .to(Witness::completableFuture);
-        
+
     }
     /**
-     * 
+     *
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
      * Also @see {@link CompletableFutures#accumulate(CollectionX, Reducer)} if you would like a failure to result in a CompletableFuture
      * with an error
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * CompletableFuture<Integer> just = CompletableFuture.completedFuture(10);
       CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException())
                                                .getFuture();
-       
+
      * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
-       
+
        //CompletableFuture[PersistentSetX[10,1]]
      *  }
      *  </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Reducer to accumulate results
      * @return CompletableFuture asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         CompletableFuture<R> result = new CompletableFuture<>();
         Stream<T> successes = fts.stream()
                                                     .filter(ft->!ft.isCompletedExceptionally())
@@ -297,21 +299,21 @@ public class CompletableFutures {
         CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
                         .thenRun(()-> result.complete(reducer.mapReduce(successes)))
                         .exceptionally(e->{ result.complete(reducer.mapReduce(successes)); return null;});
-        
-        return result;    
+
+        return result;
     }
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * CompletableFuture<String> future = CompletableFutures.accumulate(ListX.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
         //CompletableFuture["101"]
      * }
      * </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param mapper Mapping function to be applied to the result of each Future
      * @param reducer Monoid to combine values from each Future
@@ -326,23 +328,23 @@ public class CompletableFutures {
         CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
                         .thenRun(()-> result.complete(successes.reduce(reducer)))
                         .exceptionally(e->{ result.complete(successes.reduce(reducer)); return null;});
-        
-        return result;    
+
+        return result;
     }
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
      * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum, ListX.of(just,CompletableFuture.completedFuture(1)));
        //CompletableFuture[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
@@ -355,43 +357,43 @@ public class CompletableFutures {
         CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
                         .thenRun(()-> result.complete(successes.reduce(reducer)))
                         .exceptionally(e->{ result.complete(successes.reduce(reducer)); return null;});
-        
-        return result;    
+
+        return result;
     }
     /**
-     * Asynchronously accumulate the results of Futures, a singleUnsafe failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
+     * Asynchronously accumulate the results of Futures, a single failure will cause a failed result, using the supplied Reducer {@see cyclops2.Reducers}
      * <pre>
-     * {@code 
-     * 
+     * {@code
+     *
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
        CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException()).getFuture();
-       
+
      * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
-       
+
        //CompletableFuture[PersistentSetX[10,1]]
      *  }
      *  </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R> reducer) {
+    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).thenApply(s -> s.mapReduce(reducer));
     }
     /**
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to
      * convert the data from each Future before reducing them using the supplied supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * A singleUnsafe Failure results in a Failed  Future.
-     * 
+     * A single Failure results in a Failed  Future.
+     *
      * <pre>
-     * {@code 
+     * {@code
      * CompletableFuture<String> future = Future.accumulate(ListX.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
         //CompletableFuture["101"]
      * }
      * </pre>
-     * 
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param mapper Mapping function to be applied to the result of each Future
      * @param reducer Monoid to combine values from each Future
@@ -406,19 +408,19 @@ public class CompletableFutures {
      * Asynchronously accumulate the results only from the provided Futures,
      *  reducing them using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
      * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
-     * 
-     * A singleUnsafe Failure results in a Failed  Future.
-     * 
+     *
+     * A single Failure results in a Failed  Future.
+     *
      * <pre>
-     * {@code 
+     * {@code
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
-     * 
+     *
      * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum,ListX.of(just,CompletableFuture.completableFuture(1)));
        //CompletableFuture[11]
      * }
      * </pre>
-     * 
-     * 
+     *
+     *
      * @param fts Collection of Futures to accumulate successes
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
@@ -430,19 +432,19 @@ public class CompletableFutures {
     }
     /**
      * Schedule the population of a CompletableFuture from the provided Supplier, the provided Cron (Quartz format) expression will be used to
-     * trigger the population of the CompletableFuture. The provided ScheduledExecutorService provided the thread on which the 
+     * trigger the population of the CompletableFuture. The provided ScheduledExecutorService provided the thread on which the
      * Supplier will be executed.
-     * 
+     *
      * <pre>
-     * {@code 
-     *  
+     * {@code
+     *
      *    CompletableFuture<String> future = CompletableFutures.schedule("* * * * * ?", Executors.newScheduledThreadPool(1), ()->"hello");
-     *    
+     *
      *    //CompletableFuture["hello"]
-     * 
+     *
      * }</pre>
-     * 
-     * 
+     *
+     *
      * @param cron Cron expression in Quartz format
      * @param ex ScheduledExecutorService used to execute the provided Supplier
      * @param t The Supplier to execute to populate the CompletableFuture
@@ -453,17 +455,17 @@ public class CompletableFutures {
                       .getFuture();
     }
     /**
-     * Schedule the population of a CompletableFuture from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the 
+     * Schedule the population of a CompletableFuture from the provided Supplier after the specified delay. The provided ScheduledExecutorService provided the thread on which the
      * Supplier will be executed.
      * <pre>
-     * {@code 
-     *  
+     * {@code
+     *
      *    CompletableFuture<String> future = CompletableFutures.schedule(10l, Executors.newScheduledThreadPool(1), ()->"hello");
-     *    
+     *
      *    //CompletableFuture["hello"]
-     * 
+     *
      * }</pre>
-     * 
+     *
      * @param delay Delay after which the CompletableFuture should be populated
      * @param ex ScheduledExecutorService used to execute the provided Supplier
      * @param t he Supplier to execute to populate the CompletableFuture
@@ -475,19 +477,19 @@ public class CompletableFutures {
     }
     /**
      * Combine a CompletableFuture with the provided Value asynchronously (if not completed) using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFutures.combine(CompletableFuture.completedFuture(10),Maybe.just(20), this::add)
      *  //CompletableFuture [30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param f CompletableFuture  to combine with a value
      * @param v Value  to combine with
      * @param fn Combining function
@@ -502,19 +504,19 @@ public class CompletableFutures {
 
     /**
      * Combine a CompletableFuture with the provided CompletableFuture asynchronously (if not completed) using the supplied BiFunction
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFutures.combine(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(20), this::add)
      *  //CompletableFuture [30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
-     * 
+     *
      * @param f CompletableFuture  to combine with a value
      * @param v Value  to combine with
      * @param fn Combining function
@@ -529,14 +531,14 @@ public class CompletableFutures {
     /**
      * Combine an CompletableFuture with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFutures.zip(CompletableFuture.completedFuture(10),Arrays.asList(20), this::add)
      *  //CompletableFuture[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
      * </pre>
      * @param f CompletableFuture to combine with first element in Iterable (if present)
@@ -553,17 +555,17 @@ public class CompletableFutures {
     /**
      * Combine an CompletableFuture with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
-     * {@code 
+     * {@code
      *  CompletableFutures.zip(Flux.just(10),CompletableFuture.completedResult(10), this::add)
      *  //CompletableFuture[30]
-     *  
+     *
      *  private int add(int a, int b) {
             return a + b;
         }
-     *  
+     *
      * }
-     * </pre> 
-     * 
+     * </pre>
+     *
      * @param p Publisher to combine
      * @param f  CompletableFuture to combine with
      * @param fn Combining function
@@ -577,7 +579,7 @@ public class CompletableFutures {
     }
     /**
      * Narrow covariant type parameter
-     * 
+     *
      * @param broad CompletableFuture with covariant type parameter
      * @return Narrowed Optional
      */
@@ -650,7 +652,7 @@ public class CompletableFutures {
 
                 @Override
                 public <T> Maybe<Unfoldable<completableFuture>> unfoldable() {
-                    return Maybe.none();
+                    return Maybe.nothing();
                 }
             };
         }
@@ -864,7 +866,7 @@ public class CompletableFutures {
         public static <T,R> Foldable<completableFuture> foldable(){
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldRightFn =  (m, l)-> m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
             BiFunction<Monoid<T>,Higher<completableFuture,T>,T> foldLeftFn = (m, l)->  m.apply(m.zero(), CompletableFutureKind.narrowK(l).join());
-            Fn3<Monoid<R>, Function<T, R>, Higher<Witness.completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).foldLeft(m);
+            Function3<Monoid<R>, Function<T, R>, Higher<completableFuture, T>, R> foldMapFn = (m, f, l)-> Future.of(CompletableFutureKind.narrowK(l).thenApply(f)).fold(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
         public static <T> Comonad<completableFuture> comonad(){
@@ -897,7 +899,7 @@ public class CompletableFutures {
             return new  MonadRec<completableFuture>(){
 
                 @Override
-                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Xor<T, R>>> fn) {
+                public <T, R> Higher<completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<completableFuture, ? extends Either<T, R>>> fn) {
                     Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
                     return CompletableFutureKind.narrowFuture(x);
                 }

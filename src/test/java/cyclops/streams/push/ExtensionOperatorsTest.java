@@ -7,9 +7,9 @@ import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import cyclops.stream.Streamable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -100,7 +100,7 @@ public class ExtensionOperatorsTest {
 	public void elapsedIsPositive(){
 		
 		
-		assertTrue(Spouts.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0));
+		assertTrue(Spouts.of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
 	}
 	@Test
 	public void timeStamp(){
@@ -108,61 +108,61 @@ public class ExtensionOperatorsTest {
 		
 		assertTrue(Spouts.of(1,2,3,4,5)
 							.timestamp()
-							.allMatch(t-> t.v2 <= System.currentTimeMillis()));
+							.allMatch(t-> t._2() <= System.currentTimeMillis()));
 		
 
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Spouts.of(1).elementAt(0).v1,equalTo(1));
+		assertThat(Spouts.of(1).elementAtAndStream(0)._1(),equalTo(1));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(Spouts.of(1,2,3,4,5).elementAt(2).v1,equalTo(3));
+		assertThat(Spouts.of(1,2,3,4,5).elementAtAndStream(2)._1(),equalTo(3));
 	}
 	@Test
 	public void getMultpleStream(){
-		assertThat(Spouts.of(1,2,3,4,5).elementAt(2).v2.toList(),equalTo(Arrays.asList(1,2,3,4,5)));
+		assertThat(Spouts.of(1,2,3,4,5).elementAtAndStream(2)._2().toList(),equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getMultiple1(){
-		Spouts.of(1).elementAt(1);
+		Spouts.of(1).elementAtAndStream(1);
 	}
 	@Test(expected=NoSuchElementException.class)
 	public void getEmpty(){
-		Spouts.of().elementAt(0);
+		Spouts.of().elementAtAndStream(0);
 	}
 	@Test
 	public void get0(){
-		assertTrue(Spouts.of(1).get(0).isPresent());
+		assertTrue(Spouts.of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(Spouts.of(1,2,3,4,5).get(2).get(),equalTo(3));
+		assertThat(Spouts.of(1,2,3,4,5).elementAt(2).toOptional().get(),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
-		assertFalse(Spouts.of(1).get(1).isPresent());
+		assertFalse(Spouts.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(Spouts.of().get(0).isPresent());
+		assertFalse(Spouts.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){
-		assertThat(Spouts.of(1).singleUnsafe(),equalTo(1));
+		assertThat(Spouts.of(1).singleOrElse(null),equalTo(1));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void singleEmpty(){
-		Spouts.of().singleUnsafe();
+		assertNull(Spouts.of().singleOrElse(null));
 	}
-	@Test(expected=UnsupportedOperationException.class)
+	@Test
 	public void single2(){
-		Spouts.of(1,2).singleUnsafe();
+		assertNull(Spouts.of(1,2).singleOrElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(Spouts.of(1).single().get(),equalTo(1));
+		assertThat(Spouts.of(1).single().toOptional().get(),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
@@ -244,7 +244,7 @@ public class ExtensionOperatorsTest {
 	    System.out.println("Hello world!");
         Future result = Future.future();
 
-        Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).forEachSubscribe(e -> {
+        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).forEachSubscribe(e -> {
             System.out.println("Value recieved " + e);
             result.complete(e);
           //  sub[0].cancel();
@@ -260,8 +260,8 @@ public class ExtensionOperatorsTest {
             }
         }).request(1l);
 
-        assertThat(result.get(),equalTo(ListX.of(5)));
-        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectStream(Collectors.toList()).findFirst());
+        assertThat(result.orElse(null),equalTo(ListX.of(5)));
+        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
 
 
 		assertThat(Spouts.of(1,2,3,4,5)
@@ -363,8 +363,8 @@ public class ExtensionOperatorsTest {
 	}
 	@Test
 	public void splitBy(){
-		assertThat( Spouts.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( Spouts.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
+		assertThat( Spouts.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( Spouts.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void testLazy(){
@@ -430,15 +430,6 @@ public class ExtensionOperatorsTest {
 	}
 
 	@Test
-	public void testCastPast() {
-		Spouts.of(1, "a", 2, "b", 3, null).cast(Date.class).map(d -> d.getTime());
-	
-
-
-
-	}
-	
-	@Test
 	public void flatMapCompletableFuture(){
 		assertThat(Spouts.of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
 				  								.collect(Collectors.toList()),
@@ -459,10 +450,7 @@ public class ExtensionOperatorsTest {
 
 
 	}
-	@Test(expected=ClassCastException.class)
-	public void cast(){
-		Spouts.of(1,2,3).cast(String.class).collect(Collectors.toList());
-	}
+
 	@Test
 	public void xMatch(){
 		assertTrue(Spouts.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));

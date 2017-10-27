@@ -1,10 +1,10 @@
 package cyclops.streams.future;
 
-import com.aol.cyclops2.streams.BaseSequentialTest;
+import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
-import cyclops.stream.ReactiveSeq;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import java.util.stream.Stream;
@@ -24,8 +24,8 @@ public class FutureSequentialTest extends BaseSequentialTest {
     @Test
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t.v1.limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t.v2.limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().limit(1).toList(),equalTo(ListX.of(1)));
     }
     @Test
     public void limitReplay() {
@@ -38,7 +38,7 @@ public class FutureSequentialTest extends BaseSequentialTest {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
         assertThat(stream.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.v1.limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
 
     }
 

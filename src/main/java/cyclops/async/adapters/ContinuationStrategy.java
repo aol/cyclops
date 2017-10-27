@@ -1,6 +1,6 @@
 package cyclops.async.adapters;
 
-import com.aol.cyclops2.types.futurestream.Continuation;
+import com.oath.cyclops.types.futurestream.Continuation;
 
 public interface ContinuationStrategy {
 

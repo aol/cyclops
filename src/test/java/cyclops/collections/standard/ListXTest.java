@@ -1,16 +1,17 @@
 package cyclops.collections.standard;
 
-import com.aol.cyclops2.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.CollectionXTestsWithNulls;
-import com.aol.cyclops2.types.Zippable;
-import com.aol.cyclops2.types.foldable.Evaluation;
+import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
+import cyclops.control.Option;
 import cyclops.monads.Witness;
-import cyclops.stream.ReactiveSeq;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.reactive.Spouts;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,9 +35,9 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void withTest(){
 
 
-        assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").with(0, "x"));
-        assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").with(1, "x"));
-        assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").with(2, "x"));
+        assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").updateAt(0, "x"));
+        assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").updateAt(1, "x"));
+        assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").updateAt(2, "x"));
     }
 
     int times =0;
@@ -45,6 +46,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void setup(){
         times = 0;
         counter = new AtomicLong(0);
+        super.setup();
     }
     @Test
     public void asyncTest() throws InterruptedException {
@@ -139,8 +141,8 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public void coflatMap(){
        assertThat(ListX.of(1,2,3)
                    .coflatMap(s->s.sumInt(i->i))
-                   .singleUnsafe(),equalTo(6));
-        
+                   .singleOrElse(null),equalTo(6));
+
     }
     @Test
     public void multipaths() {
@@ -166,20 +168,20 @@ public class ListXTest extends CollectionXTestsWithNulls {
                                    .map(i->i*2)
                                    .to(r->r.toSetX())
                                    .to(s->s.toListX());
-        
+
         assertThat(list,equalTo(ListX.of(2,4,6)));
     }
     @Test
     public void zipSemigroup(){
         BinaryOperator<Zippable<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
         assertThat(sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6)),equalTo(ListX.of(5,7,9)));
-        
+
     }
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
-     * com.aol.cyclops2.function.collections.extensions.AbstractCollectionXTest#
+     * com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#
      * zero()
      */
     @Override
@@ -190,23 +192,23 @@ public class ListXTest extends CollectionXTestsWithNulls {
 
     @Test
     public void when(){
-        
+
         String res= of(1,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                    
+
         assertThat(res,equalTo("2world3"));
     }
     @Test
     public void whenGreaterThan2(){
         String res= of(5,2,3).visit((x,xs)->
                                 xs.join(x>2? "hello" : "world"),()->"boo!");
-                
+
         assertThat(res,equalTo("2hello3"));
     }
-    
+
     @Test
     public void when2(){
-        
+
         Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
         System.out.println(res);
     }
@@ -216,8 +218,8 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
-        
-        
+
+
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
@@ -226,7 +228,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
      *
      * Eval e; //int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h->
      * (int)h>5, h-> 0 ) // .flatMap(h-> head.when());
-     * 
+     *
      * ht.headMaybe().when(some-> Matchable.of(some).matches(
      * c->c.hasValues(1,2,3).then(i->"hello world"),
      * c->c.hasValues('b','b','c').then(i->"boo!") ),()->"hello");
@@ -255,8 +257,39 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Override
-    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Optional<Tuple2<T, U>>> unfolder) {
+    public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ListX.unfold(seed, unfolder);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusAtOutOfRange(){
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(0,1)
+                .insertAt(0,2)
+                .insertAt(0,5);
+
+
+
+
+        assertThat(vec.removeAt(-1),equalTo(of(5,2,1)));
+
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusAtOutOfRange2(){
+        IterableX<Integer> vec = this.<Integer>empty();
+        vec = vec.insertAt(0,1)
+                .insertAt(0,2)
+                .insertAt(0,5);
+
+
+
+
+
+        assertThat(vec.removeAt(500),equalTo(of(5,2,1)));
+
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void minusOne(){
+        assertThat(of().removeAt(1).size(),equalTo(0));
     }
 
 }

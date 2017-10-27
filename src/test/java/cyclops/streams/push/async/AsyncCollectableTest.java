@@ -1,13 +1,14 @@
 package cyclops.streams.push.async;
 
-import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
-import cyclops.stream.Spouts;
-import org.jooq.lambda.Collectable;
+import com.oath.cyclops.react.lazy.sequence.CollectableTest;
+import com.oath.cyclops.types.foldable.Folds;
+import cyclops.reactive.Spouts;
+
 
 public class AsyncCollectableTest extends CollectableTest {
 
 
-    public <T> Collectable<T> of(T... values){
+    public <T> Folds<T> of(T... values){
 
         return Spouts.<T>async(s->{
             Thread t = new Thread(()-> {
@@ -17,7 +18,7 @@ public class AsyncCollectableTest extends CollectableTest {
                 s.onComplete();
             });
             t.start();
-        }).collectors();
+        });
     }
 
 }

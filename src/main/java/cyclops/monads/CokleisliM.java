@@ -1,19 +1,19 @@
 package cyclops.monads;
 
 
-import com.aol.cyclops2.types.functor.Transformable;
-import cyclops.function.Fn1;
+import com.oath.cyclops.types.functor.Transformable;
+import cyclops.function.Function1;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.jooq.lambda.tuple.Tuple2;
+import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
-public class CokleisliM<T,R,W extends WitnessType<W>> implements Fn1<AnyM<W,T>,R>,
+public class CokleisliM<T,R,W extends WitnessType<W>> implements Function1<AnyM<W,T>,R>,
                                                                 Transformable<R>{
 
-    public final Fn1<AnyM<W, T>,R> fn;
+    public final Function1<AnyM<W, T>,R> fn;
 
 
     @Override
@@ -36,7 +36,7 @@ public class CokleisliM<T,R,W extends WitnessType<W>> implements Fn1<AnyM<W,T>,R
 
 
     public static <T,R,W extends WitnessType<W>> CokleisliM<T,R,W> cokleisli(Function<? super AnyM<W,T>,? extends R> fn){
-        return new CokleisliM<T, R, W>(Fn1.narrow(fn));
+        return new CokleisliM<T, R, W>(Function1.narrow(fn));
     }
 
 

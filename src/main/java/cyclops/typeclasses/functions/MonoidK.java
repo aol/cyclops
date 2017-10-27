@@ -1,7 +1,7 @@
 package cyclops.typeclasses.functions;
 
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.function.Monoid;
 
 public interface MonoidK<W,T> extends SemigroupK<W,T>, Monoid<Higher<W,T>> {

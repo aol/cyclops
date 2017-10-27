@@ -15,17 +15,17 @@ import junit.framework.TestSuite;
     ListXTestSuite.LTest.class
  })
 public class ListXTestSuite {
-    
+
     public static class LTest {
         public static Test suite() {
             return new LTest().allTests();
         }
-     
+
         public TestSuite allTests() {
             TestSuite suite =
-                new TestSuite("com.aol.cyclops2.function.collections.extensions.guava");
+                new TestSuite("com.oath.cyclops.function.collections.extensions.guava");
             suite.addTest(testForOneToWayUseMySet());
-            
+
             return suite;
         }
         public Test testForOneToWayUseMySet() {
@@ -45,5 +45,5 @@ public class ListXTestSuite {
                     .createTestSuite();
         }
     }
-    
+
 }

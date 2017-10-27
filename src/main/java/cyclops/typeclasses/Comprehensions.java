@@ -1,8 +1,8 @@
 package cyclops.typeclasses;
 
-import com.aol.cyclops2.hkt.Higher;
-import cyclops.function.Fn3;
-import cyclops.function.Fn4;
+import com.oath.cyclops.hkt.Higher;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.monad.MonadZero;
 import lombok.AccessLevel;
@@ -26,8 +26,8 @@ public class Comprehensions<W1> {
     public  <T1, T2, T3, R1, R2, R3, R> Higher<W1,R> forEach4(Higher<W1,T1> value1,
                                                                    Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                                    BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
-                                                                   Fn3<? super T1, ? super R1, ? super R2, ? extends Higher<W1,R3>> value4,
-                                                                   Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                   Function3<? super T1, ? super R1, ? super R2, ? extends Higher<W1,R3>> value4,
+                                                                   Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return monad.flatMap_(value1,in -> {
 
@@ -52,7 +52,7 @@ public class Comprehensions<W1> {
     public  <T1, T2, R1, R2, R> Higher<W1,R> forEach3(Higher<W1,T1> value1,
                                                            Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                            BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
-                                                           Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                           Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return monad.flatMap_(value1,in -> {
 
@@ -88,9 +88,9 @@ public class Comprehensions<W1> {
         public  <T1, T2, T3, R1, R2, R3, R> Higher<W1,R> forEach4(Higher<W1,? extends T1> value1,
                                                                   Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                                   BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
-                                                                  Fn3<? super T1, ? super R1, ? super R2, ? extends Higher<W1,R3>> value4,
-                                                                  Fn4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-                                                                  Fn4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                                  Function3<? super T1, ? super R1, ? super R2, ? extends Higher<W1,R3>> value4,
+                                                                  Function4<? super T1, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                                  Function4<? super T1, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
             return monadZero.flatMap_(value1,in -> {
 
@@ -111,8 +111,8 @@ public class Comprehensions<W1> {
         public  <T1, T2, R1, R2, R> Higher<W1,R> forEach3(Higher<W1,? extends T1> value1,
                                                           Function<? super T1, ? extends Higher<W1,R1>> value2,
                                                           BiFunction<? super T1, ? super R1, ? extends Higher<W1,R2>> value3,
-                                                          Fn3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
-                                                          Fn3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                                          Function3<? super T1, ? super R1, ? super R2, Boolean> filterFunction,
+                                                          Function3<? super T1, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
             return monadZero.flatMap_(value1,in -> {
 

@@ -1,15 +1,12 @@
 package cyclops.function;
 
-import com.aol.cyclops2.types.functor.Transformable;
-import com.aol.cyclops2.util.ExceptionSoftener;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
-import cyclops.control.Reader;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -35,7 +32,7 @@ public interface Effect extends Runnable{
         return ()->future(ex);
     }
     default Effect asyncAndBlock(Executor ex){
-        return ()->future(ex).join();
+        return ()->future(ex).getFuture().join();
     }
     default void run(){
         try {
@@ -77,7 +74,7 @@ public interface Effect extends Runnable{
         };
     }
 
-    default <R> Fn0<R> supply(R r){
+    default <R> Function0<R> supply(R r){
         return ()->{
             run();
             return r;
@@ -91,7 +88,7 @@ public interface Effect extends Runnable{
         }
         return success.get();
     }
-    default <R> Fn0<R> supplyOr(R success,R failure){
+    default <R> Function0<R> supplyOr(R success, R failure){
         return ()->{
             try {
                 run();

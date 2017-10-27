@@ -1,15 +1,16 @@
 package cyclops.collections.standard;
 
-import org.jooq.lambda.Collectable;
+import com.oath.cyclops.types.foldable.Folds;
+
 
 import cyclops.collections.mutable.ListX;
-import com.aol.cyclops2.react.lazy.sequence.CollectableTest;
+import com.oath.cyclops.react.lazy.sequence.CollectableTest;
 
 public class ListXCollectableTest extends CollectableTest {
 
     @Override
-    public <T> Collectable<T> of(T... values) {
-       return  ListX.of(values).collectors();
+    public <T> Folds<T> of(T... values) {
+       return  ListX.of(values);
     }
 
 }

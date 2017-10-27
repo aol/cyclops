@@ -1,26 +1,23 @@
 package cyclops.typeclasses.functions;
 
-import com.aol.cyclops2.hkt.Higher;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 import cyclops.control.Maybe;
-import cyclops.function.Fn1;
-import cyclops.monads.Witness;
+import cyclops.function.Function1;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.maybe;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.Witness.reactiveSeq;
-import cyclops.stream.ReactiveSeq;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.NaturalTransformation;
 import lombok.AllArgsConstructor;
 
-import java.util.function.Function;
-
 
 @AllArgsConstructor
-public class FunctionK<W1,W2,T> implements Fn1<Higher<W1,T>,Higher<W2,T>> {
-    Fn1<Higher<W1,T>,Higher<W2,T>> fn1;
+public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> {
+    Function1<Higher<W1,T>,Higher<W2,T>> fn1;
     InstanceDefinitions<W2> def2;
     @Override
     public Higher<W2, T> apply(Higher<W1, T> a){
@@ -39,7 +36,7 @@ public class FunctionK<W1,W2,T> implements Fn1<Higher<W1,T>,Higher<W2,T>> {
         };
     }
 
-    public static <W1,W2,T> FunctionK<W1,W2,T> of(Fn1<Higher<W1,T>,Higher<W2,T>> fn1,InstanceDefinitions<W2> def2){
+    public static <W1,W2,T> FunctionK<W1,W2,T> of(Function1<Higher<W1,T>,Higher<W2,T>> fn1, InstanceDefinitions<W2> def2){
         return new FunctionK<>(fn1,def2);
     }
 
