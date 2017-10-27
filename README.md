@@ -8,7 +8,7 @@ This is the 10.x branch for 2.x branch click the link below
 * [1.x](https://github.com/aol/cyclops-react/tree/1.x)
 
 
-# Getting cyclops-react
+# Getting Cyclops X
 
 * The latest version is [cyclops:10.0.0-M1](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M1)
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
