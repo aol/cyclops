@@ -148,7 +148,7 @@ public interface ListView<T> extends List<T>
 
     @Override
     public T remove(int index) {
-      return null;
+      return get(index);
     }
 
 

@@ -17,7 +17,8 @@ public interface PersistentSortedSet<T> extends PersistentSet<T> {
 
     Option<T> get(int index);
 
-  Comparator<? super T> comparator();
+    Comparator<? super T> comparator();
+
   default SortedSetView<T> sortedSetView(){
     return new SortedSetView.Impl<>(this);
   }
