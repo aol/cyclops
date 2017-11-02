@@ -1,11 +1,22 @@
 package com.oath.cyclops.data.collections.extensions;
 
+import com.oath.cyclops.types.persistent.PersistentMap;
+import cyclops.data.tuple.Tuple2;
+
 import java.util.Collection;
 import java.util.Map;
 
 public interface FluentMapX<K, V> extends Map<K, V> {
     default FluentMapX<K, V> plus(final K key, final V value) {
         put(key, value);
+        return this;
+    }
+
+    default FluentMapX<K, V> plusAll(final PersistentMap<? extends K, ? extends V> map) {
+
+        for(Tuple2<? extends K,? extends V> t2 : map){
+            put(t2._1(),t2._2());
+        }
         return this;
     }
 

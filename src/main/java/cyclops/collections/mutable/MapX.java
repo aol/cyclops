@@ -1,8 +1,8 @@
 package cyclops.collections.mutable;
 
-import com.oath.cyclops.data.collections.extensions.FluentMapX;
-import com.oath.cyclops.data.collections.extensions.standard.MapXImpl;
 import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.persistent.PersistentMap;
+import com.oath.cyclops.data.collections.extensions.standard.MapXImpl;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
@@ -11,11 +11,12 @@ import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableFilterable;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.control.Trampoline;
+import com.oath.cyclops.data.collections.extensions.FluentMapX;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -223,7 +224,15 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#insertAt(java.util.Map)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#plusAll(com.oath.cyclops.types.persistent.PersistentMap)
+     */
+    @Override
+    default MapX<K, V> plusAll(final PersistentMap<? extends K, ? extends V> map) {
+        return (MapX<K, V>) FluentMapX.super.plusAll(map);
+    }
+
+    /* (non-Javadoc)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
      */
     @Override
     default MapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {

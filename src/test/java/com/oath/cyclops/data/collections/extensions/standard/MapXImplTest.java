@@ -10,8 +10,8 @@ import static org.junit.Assert.assertThat;
 
 public class MapXImplTest {
 
-	@Test
-	public void testPlusAll() {
+  @Test
+  public void testPlusAll() {
     Map map = new HashMap();
     map.put(1, "a");
     map.put(2, "b");
@@ -35,7 +35,7 @@ public class MapXImplTest {
     map.put(2, "b");
     MapXImpl mapX = new MapXImpl(map);
 
-    mapX.plusAll(null);
+    mapX.plusAll((Map) null);
     assertThat(mapX.size(), equalTo(2));
     assertThat(mapX.get(1), equalTo("a"));
     assertThat(mapX.get(2), equalTo("b"));
