@@ -23,6 +23,8 @@ import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -615,8 +617,8 @@ public interface Spouts {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(Monoid<Higher<reactiveSeq, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(MonoidK<reactiveSeq> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -804,9 +806,7 @@ public interface Spouts {
          * @return Type class for combining Lists by concatenation
          */
         public static <T> MonadPlus<reactiveSeq> monadPlus(){
-            Monoid<ReactiveSeq<T>> m = Monoid.of(ReactiveSeq.empty(), Spouts.Instances::concat);
-            Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+            return General.monadPlus(monadZero(), MonoidKs.combineReactiveSeq());
         }
         /**
          *
@@ -824,9 +824,9 @@ public interface Spouts {
          * @param m Monoid to use for combining Lists
          * @return Type class for combining Lists
          */
-        public static <T> MonadPlus<reactiveSeq> monadPlus(Monoid<ReactiveSeq<T>> m){
-            Monoid<Higher<reactiveSeq,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+        public static <T> MonadPlus<reactiveSeq> monadPlus(MonoidK<reactiveSeq> m){
+
+            return General.monadPlus(monadZero(),m);
         }
         public static <T,R> MonadRec<reactiveSeq> monadRec(Executor ex){
 
@@ -922,12 +922,12 @@ public interface Spouts {
         /**
          * Convert the HigherKindedType definition for a List into
          *
-         * @param List Type Constructor to convert back into narrowed type
+         * @param completableList Type Constructor to convert back into narrowed type
          * @return List from Higher Kinded Type
          */
         public static <T> ReactiveSeq<T> narrow(final Higher<reactiveSeq, T> completableList) {
 
-            return ((ReactiveSeq<T>) completableList);//.narrow();
+            return ((ReactiveSeq<T>) completableList);
 
         }
     }

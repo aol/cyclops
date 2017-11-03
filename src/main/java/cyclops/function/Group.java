@@ -27,9 +27,7 @@ public interface Group<T> extends Monoid<T> {
 
     }
 
-    default <W,R> GroupK<W,R> toGroupK(Kleisli<W,T,R> widen,Cokleisli<W,R,T> narrow){
-        return  GroupK.of(t->widen.apply(invert(narrow.apply(t))),toMonoidK(widen, narrow));
-    }
+
      public static <T> Group<T> of(UnaryOperator<T> inverse,Monoid<T> monoid){
          return new Group<T>() {
 

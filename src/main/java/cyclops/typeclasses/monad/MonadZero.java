@@ -20,28 +20,19 @@ import java.util.function.Predicate;
 public interface MonadZero<CRE> extends Monad<CRE>, Filterable<CRE> {
 
 
-    /**
-     * e.g. for Optional we can use Optional.zero()
-     *
-     * @return Identity value or zero value for the HKT type, the generic type is unknown
-     */
-    public <T> Higher<CRE, T> zero();
+    <T> Higher<CRE, T> zero();
 
-    /* (non-Javadoc)
-     * @see com.aol.com.oath.cyclops.hkt.typeclasses.Filterable#filter(java.util.function.Predicate, com.aol.com.oath.cyclops.hkt.alias.Higher)
-     */
+
     @Override
     default <T> Higher<CRE,T> filter(Predicate<? super T> predicate, Higher<CRE, T> ds){
 
-        return flatMap((T in)->predicate.test(in) ? ds : narrowZero(),ds);
+        return flatMap((T in)->predicate.test(in) ? ds : zero(),ds);
     }
     default <T> Higher<CRE,T> filter_(Higher<CRE, T> ds,Predicate<? super T> predicate){
 
         return filter(predicate,ds);
     }
 
-    default <T> Higher<CRE,T> narrowZero(){
-        return  (Higher)zero();
-    }
+
 
 }

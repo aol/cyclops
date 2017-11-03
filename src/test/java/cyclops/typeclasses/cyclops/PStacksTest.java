@@ -11,6 +11,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.linkedListX;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -103,11 +104,10 @@ public class PStacksTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<LinkedListX<Integer>> m = Monoid.of(LinkedListX.empty(), (a, b)->a.isEmpty() ? b : a);
-        LinkedListX<Integer> list = LinkedListX.Instances.<Integer>monadPlus(m)
+        LinkedListX<Integer> list = LinkedListX.Instances.<Integer>monadPlus(MonoidKs.linkedListXConcat())
                                       .plus(LinkedListX.of(5), LinkedListX.of(10))
                                       .convert(LinkedListX::narrowK);
-        assertThat(list,equalTo(LinkedListX.of(5)));
+        assertThat(list,equalTo(LinkedListX.of(10,5)));
     }
     @Test
     public void  foldLeft(){

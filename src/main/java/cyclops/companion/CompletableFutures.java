@@ -23,6 +23,8 @@ import cyclops.monads.transformers.CompletableFutureT;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -580,8 +582,8 @@ public class CompletableFutures {
     /**
      * Narrow covariant type parameter
      *
-     * @param broad CompletableFuture with covariant type parameter
-     * @return Narrowed Optional
+     * @param f CompletableFuture with covariant type parameter
+     * @return Narrowed Future
      */
     public static <T> CompletableFuture<T> narrow(final CompletableFuture<? extends T> f) {
         return (CompletableFuture<T>) f;
@@ -631,8 +633,8 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<completableFuture>> monadPlus(Monoid<Higher<completableFuture, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -799,45 +801,15 @@ public class CompletableFutures {
 
             return General.monadZero(monad(), CompletableFutureKind.widen(new CompletableFuture<T>()));
         }
-        /**
-         * <pre>
-         * {@code
-         *  CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus()
-        .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture()), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK3);
-        //CompletableFuture.completedFuture(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining CompletableFutures by concatenation
-         */
-        public static <T> MonadPlus<completableFuture> monadPlus(){
-            Monoid<CompletableFuture<T>> mn = Monoids.firstCompleteCompletableFuture();
-            Monoid<CompletableFutureKind<T>> m = Monoid.of(CompletableFutureKind.widen(mn.zero()), (f, g)-> CompletableFutureKind.widen(
-                    mn.apply(CompletableFutureKind.narrowK(f), CompletableFutureKind.narrowK(g))));
 
-            Monoid<Higher<completableFuture,?>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+        public static <T> MonadPlus<completableFuture> monadPlus(){
+
+            return General.monadPlus(monadZero(), MonoidKs.firstCompleteCompletableFuture());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<CompletableFutureKind<Integer>> m = Monoid.of(CompletableFutureKind.widen(CompletableFuture.completedFuture()), (a,b)->a.isEmpty() ? b : a);
-        CompletableFutureKind<Integer> future = CompletableFutures.<Integer>monadPlus(m)
-        .plus(CompletableFutureKind.widen(CompletableFuture.completedFuture(5)), CompletableFutureKind.widen(CompletableFuture.completedFuture(10)))
-        .convert(CompletableFutureKind::narrowK3);
-        //CompletableFuture.completedFuture(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining CompletableFutures
-         * @return Type class for combining CompletableFutures
-         */
-        public static  <T> MonadPlus<completableFuture> monadPlus(Monoid<CompletableFutureKind<T>> m){
-            Monoid<Higher<completableFuture,?>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static  <T> MonadPlus<completableFuture> monadPlus(MonoidK<completableFuture> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**
@@ -961,7 +933,7 @@ public class CompletableFutures {
          * If the supplied CompletableFuture implements CompletableFutureKind it is returned already, otherwise it
          * is wrapped into a CompletableFuture implementation that does implement CompletableFutureKind
          *
-         * @param CompletableFuture CompletableFuture to widen to a CompletableFutureKind
+         * @param completableFuture CompletableFuture to widen to a CompletableFutureKind
          * @return CompletableFutureKind encoding HKT info about CompletableFutures
          */
         public static <T> CompletableFutureKind<T> widen(final CompletionStage<T> completableFuture) {
@@ -989,7 +961,7 @@ public class CompletableFutures {
         /**
          * Convert the HigherKindedType definition for a CompletableFuture into
          *
-         * @param CompletableFuture Type Constructor to convert back into narrowed type
+         * @param completableFuture Type Constructor to convert back into narrowed type
          * @return CompletableFuture from Higher Kinded Type
          */
         public static <T> CompletableFuture<T> narrowK(final Higher<completableFuture, T> completableFuture) {

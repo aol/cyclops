@@ -41,6 +41,8 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.Applicative;
@@ -229,11 +231,12 @@ public class Future<T> implements To<Future<T>>,
      * @return First Future to complete
      */
     public static <T> Future<T> anyOf(Future<T>... fts) {
+      CompletableFuture<T>[] array = new CompletableFuture[fts.length];
+      for(int i=0;i<fts.length;i++){
+        array[i] = fts[i].getFuture();
+      }
 
-       return (Future<T>) Future.ofResult( (CompletableFuture<T>)CompletableFuture.anyOf(Stream.of(fts)
-                                                                              .map(Future::getFuture)
-                                                                              .collect(Collectors.toList())
-                                                                              .toArray(new CompletableFuture[0])));
+       return (Future<T>) Future.of(CompletableFuture.anyOf(array));
     }
     /**
      * Wait until all the provided Future's to complete
@@ -245,11 +248,11 @@ public class Future<T> implements To<Future<T>>,
      *         from a provided Future that failed.
      */
     public static <T> Future<T> allOf(Future<T>... fts) {
-
-        return (Future<T>) Future.ofResult((CompletableFuture<T>)CompletableFuture.allOf(Stream.of(fts)
-                                                                      .map(Future::getFuture)
-                                                                      .collect(Collectors.toList())
-                                                                      .toArray(new CompletableFuture[0])));
+      CompletableFuture<T>[] array = new CompletableFuture[fts.length];
+      for(int i=0;i<fts.length;i++){
+        array[i] = fts[i].getFuture();
+      }
+        return (Future<T>) Future.of(CompletableFuture.allOf(array));
      }
     /**
      * Block until a Quorum of results have returned as determined by the provided Predicate
@@ -1483,8 +1486,8 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<future>> monadPlus(Monoid<Higher<future, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<future>> monadPlus(MonoidK<future> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1665,45 +1668,15 @@ public class Future<T> implements To<Future<T>>,
             };
         }
 
-        /**
-         * <pre>
-         * {@code
-         *  Future<Integer> future = Futures.<Integer>monadPlus()
-        .plus(Future.widen(Future.future()), Future.widen(Future.ofResult(10)))
-        .convert(Future::narrowK3);
-        //Future[10]
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Futures by concatenation
-         */
-        public static <T> MonadPlus<future> monadPlus(){
-            Monoid<Future<T>> mn = Monoids.firstSuccessfulFuture();
-            Monoid<Future<T>> m = Monoid.of(mn.zero(), (f,g)->
-                    mn.apply(Future.narrowK(f), Future.narrowK(g)));
 
-            Monoid<Higher<future,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+        public static <T> MonadPlus<future> monadPlus(){
+
+            return General.monadPlus(monadZero(), MonoidKs.firstSuccessfulFuture());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<Future<Integer>> m = Monoid.of(Future.widen(Future.future()()), (a,b)->a.isDone() ? b : a);
-        Future<Integer> future = Futures.<Integer>monadPlus(m)
-        .plus(Future.widen(Future.ofResult(5)), Future.widen(Future.ofResult(10)))
-        .convert(Future::narrowK3);
-        //Future(5)
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Futures
-         * @return Type class for combining Futures
-         */
-        public static <T> MonadPlus<future> monadPlus(Monoid<Future<T>> m){
-            Monoid<Higher<future,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<future> monadPlus(MonoidK<future> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
 

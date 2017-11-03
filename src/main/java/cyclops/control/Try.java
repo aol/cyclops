@@ -35,6 +35,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.*;
@@ -1399,7 +1400,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(Monoid<Higher<Higher<tryType, L>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
                     return Maybe.nothing();
                 }
 

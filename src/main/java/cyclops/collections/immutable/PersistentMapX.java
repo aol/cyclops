@@ -31,7 +31,7 @@ import com.oath.cyclops.types.functor.Transformable;
 
 public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
                                                 PersistentMap<K, V>,
-  Unwrapable,
+                                                Unwrapable,
                                                 BiTransformable<K, V>,
                                                 Transformable<V>,
                                                 IterableFilterable<Tuple2<K, V>>,
