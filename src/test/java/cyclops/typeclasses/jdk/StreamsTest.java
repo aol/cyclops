@@ -108,17 +108,7 @@ public class StreamsTest {
                                       .convert(StreamKind::narrowK);
         assertThat(list.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
-    /**
-    @Test
-    public void monadPlusNonEmpty(){
 
-        Monoid<StreamKind<Integer>> m = Monoid.of(StreamKind.widen(Stream.of()), (a,b)->a.isEmpty() ? b : a);
-        StreamKind<Integer> list = Streams.<Integer>monadPlus(m)
-                                      .insertAt(StreamKind.widen(Stream.of(5)), StreamKind.widen(Stream.of(10)))
-                                      .convert(StreamKind::narrowK3);
-        assertThat(list,equalTo(Arrays.asList(5)));
-    }
-**/
     @Test
     public void  foldLeft(){
         int sum  = Streams.Instances.foldable()

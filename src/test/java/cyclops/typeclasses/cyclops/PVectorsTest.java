@@ -108,7 +108,7 @@ public class PVectorsTest {
         VectorX<Integer> list = VectorX.Instances.<Integer>monadPlus(MonoidKs.vectorXConcat())
                                       .plus(VectorX.of(5), VectorX.of(10))
                                       .convert(VectorX::narrowK);
-        assertThat(list,equalTo(VectorX.of(5)));
+        assertThat(list,equalTo(VectorX.of(5,10)));
     }
     @Test
     public void  foldLeft(){

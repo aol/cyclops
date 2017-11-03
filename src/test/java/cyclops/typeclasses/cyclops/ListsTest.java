@@ -119,7 +119,7 @@ public class ListsTest {
         ListX<Integer> list = ListX.Instances.<Integer>monadPlus(MonoidKs.listXConcat())
                                       .plus(ListX.of(5), ListX.of(10))
                                       .convert(ListX::narrowK);
-        assertThat(list,equalTo(Arrays.asList(5)));
+        assertThat(list,equalTo(Arrays.asList(5,10)));
     }
     @Test
     public void  foldLeft(){

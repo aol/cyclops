@@ -109,7 +109,7 @@ public class DequesTest {
         DequeX<Integer> list = DequeX.Instances.<Integer>monadPlus(MonoidKs.dequeXConcat())
                                       .plus(DequeX.of(5), DequeX.of(10))
                                       .convert(DequeX::narrowK);
-        assertThat(list.toArray(),equalTo(DequeX.of(5).toArray()));
+        assertThat(list.toArray(),equalTo(DequeX.of(5,10).toArray()));
     }
     @Test
     public void  foldLeft(){

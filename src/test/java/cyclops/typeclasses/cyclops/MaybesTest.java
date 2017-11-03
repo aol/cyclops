@@ -108,7 +108,7 @@ public class MaybesTest {
         Maybe<Integer> opt = Maybe.Instances.<Integer>monadPlus(MonoidKs.firstPresentMaybe())
                                       .plus(Maybe.of(5), Maybe.of(10))
                                       .convert(Maybe::narrowK);
-        assertThat(opt,equalTo(Maybe.of(10)));
+        assertThat(opt,equalTo(Maybe.of(5)));
     }
     @Test
     public void  foldLeft(){

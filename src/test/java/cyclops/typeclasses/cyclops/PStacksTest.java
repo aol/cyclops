@@ -107,7 +107,7 @@ public class PStacksTest {
         LinkedListX<Integer> list = LinkedListX.Instances.<Integer>monadPlus(MonoidKs.linkedListXConcat())
                                       .plus(LinkedListX.of(5), LinkedListX.of(10))
                                       .convert(LinkedListX::narrowK);
-        assertThat(list,equalTo(LinkedListX.of(5)));
+        assertThat(list,equalTo(LinkedListX.of(10,5)));
     }
     @Test
     public void  foldLeft(){

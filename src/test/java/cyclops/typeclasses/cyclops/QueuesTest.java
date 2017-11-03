@@ -108,7 +108,7 @@ public class QueuesTest {
         QueueX<Integer> list = QueueX.Instances.<Integer>monadPlus(MonoidKs.queueXConcat())
                                       .plus(QueueX.of(5),QueueX.of(10))
                                       .convert(QueueX::narrowK);
-        assertThat(list.toArray(),equalTo(QueueX.of(5).toArray()));
+        assertThat(list.toArray(),equalTo(QueueX.of(5,10).toArray()));
     }
     @Test
     public void  foldLeft(){

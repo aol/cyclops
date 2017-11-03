@@ -108,7 +108,7 @@ public class PQueuesTest {
         PersistentQueueX<Integer> list = PersistentQueueX.Instances.<Integer>monadPlus(MonoidKs.persistentQueueXConcat())
                                       .plus(PersistentQueueX.of(5), PersistentQueueX.of(10))
                                       .convert(PersistentQueueX::narrowK);
-        assertThat(list.toArray(),equalTo(PersistentQueueX.of(5).toArray()));
+        assertThat(list.toArray(),equalTo(PersistentQueueX.of(5,10).toArray()));
     }
     @Test
     public void  foldLeft(){

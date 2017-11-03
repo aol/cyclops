@@ -231,11 +231,12 @@ public class Future<T> implements To<Future<T>>,
      * @return First Future to complete
      */
     public static <T> Future<T> anyOf(Future<T>... fts) {
+      CompletableFuture<T>[] array = new CompletableFuture[fts.length];
+      for(int i=0;i<fts.length;i++){
+        array[i] = fts[i].getFuture();
+      }
 
-       return (Future<T>) Future.ofResult( (CompletableFuture<T>)CompletableFuture.anyOf(Stream.of(fts)
-                                                                              .map(Future::getFuture)
-                                                                              .collect(Collectors.toList())
-                                                                              .toArray(new CompletableFuture[0])));
+       return (Future<T>) Future.of(CompletableFuture.anyOf(array));
     }
     /**
      * Wait until all the provided Future's to complete
@@ -247,11 +248,11 @@ public class Future<T> implements To<Future<T>>,
      *         from a provided Future that failed.
      */
     public static <T> Future<T> allOf(Future<T>... fts) {
-
-        return (Future<T>) Future.ofResult((CompletableFuture<T>)CompletableFuture.allOf(Stream.of(fts)
-                                                                      .map(Future::getFuture)
-                                                                      .collect(Collectors.toList())
-                                                                      .toArray(new CompletableFuture[0])));
+      CompletableFuture<T>[] array = new CompletableFuture[fts.length];
+      for(int i=0;i<fts.length;i++){
+        array[i] = fts[i].getFuture();
+      }
+        return (Future<T>) Future.of(CompletableFuture.allOf(array));
      }
     /**
      * Block until a Quorum of results have returned as determined by the provided Predicate

@@ -110,7 +110,8 @@ public class FuturesTest {
         Future<Integer> opt = Future.Instances.<Integer>monadPlus(MonoidKs.firstCompleteFuture())
                                       .plus(Future.ofResult(5), Future.ofResult(10))
                                       .convert(Future::narrowK);
-        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult(10).toCompletableFuture().join()));
+        System.out.println(opt.getFuture().join().getClass());
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult(5).toCompletableFuture().join()));
     }
     @Test
     public void  foldLeft(){
