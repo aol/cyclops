@@ -11,6 +11,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.queue;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -104,8 +105,7 @@ public class QueuesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<QueueX<Integer>> m = Monoid.of(QueueX.of(), (a, b)->a.isEmpty() ? b : a);
-        QueueX<Integer> list = QueueX.Instances.<Integer>monadPlus(m)
+        QueueX<Integer> list = QueueX.Instances.<Integer>monadPlus(MonoidKs.queueXConcat())
                                       .plus(QueueX.of(5),QueueX.of(10))
                                       .convert(QueueX::narrowK);
         assertThat(list.toArray(),equalTo(QueueX.of(5).toArray()));

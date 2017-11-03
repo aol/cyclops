@@ -10,6 +10,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.maybe;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -103,8 +104,8 @@ public class MaybesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<Maybe<Integer>> m = Monoid.of(Maybe.nothing(), (a, b)->a.isPresent() ? b : a);
-        Maybe<Integer> opt = Maybe.Instances.<Integer>monadPlus(m)
+
+        Maybe<Integer> opt = Maybe.Instances.<Integer>monadPlus(MonoidKs.firstPresentMaybe())
                                       .plus(Maybe.of(5), Maybe.of(10))
                                       .convert(Maybe::narrowK);
         assertThat(opt,equalTo(Maybe.of(10)));

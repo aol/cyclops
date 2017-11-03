@@ -1321,7 +1321,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
                 @Override
                 public <T> Maybe<MonadPlus<vectorX>> monadPlus(MonoidK<vectorX> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1518,7 +1518,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return General.monadPlus(monadZero(), MonoidKs.vectorXConcat());
         }
 
-        public static <T> MonadPlus<vectorX> monadPlus(MonoidK<vectorX> m){
+        public static  MonadPlus<vectorX> monadPlus(MonoidK<vectorX> m){
 
             return General.monadPlus(monadZero(),m);
         }

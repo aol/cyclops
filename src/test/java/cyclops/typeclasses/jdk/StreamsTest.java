@@ -1,4 +1,4 @@
-package com.aol.cyclops.hkt.instances.jdk;
+package cyclops.typeclasses.jdk;
 
 import static cyclops.companion.Streams.StreamKind.widen;
 import static cyclops.function.Lambda.l1;

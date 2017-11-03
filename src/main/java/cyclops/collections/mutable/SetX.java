@@ -24,6 +24,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1233,7 +1234,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
                 @Override
                 public <T> Maybe<MonadPlus<set>> monadPlus(MonoidK<set> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1417,42 +1418,15 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
             return General.monadZero(monad(), SetX.empty());
         }
-        /**
-         * <pre>
-         * {@code
-         *  SetX<Integer> set = Sets.<Integer>monadPlus()
-        .plus(SetX.widen(Arrays.asSet()), SetX.widen(Arrays.asSet(10)))
-        .convert(SetX::narrowK3);
-        //Arrays.asSet(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Sets by concatenation
-         */
+
         public static <T> MonadPlus<set> monadPlus(){
-            Monoid<SetX<T>> m = Monoid.of(SetX.empty(), Instances::concat);
-            Monoid<Higher<set,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.setXConcat());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<SetX<Integer>> m = Monoid.of(SetX.widen(Arrays.asSet()), (a,b)->a.isEmpty() ? b : a);
-        SetX<Integer> set = Sets.<Integer>monadPlus(m)
-        .plus(SetX.widen(Arrays.asSet(5)), SetX.widen(Arrays.asSet(10)))
-        .convert(SetX::narrowK3);
-        //Arrays.asSet(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Sets
-         * @return Type class for combining Sets
-         */
-        public static <T> MonadPlus<set> monadPlus(Monoid<SetX<T>> m){
-            Monoid<Higher<set,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<set> monadPlus(MonoidK<set> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**
@@ -1559,12 +1533,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         /**
          * Convert the HigherKindedType definition for a Set into
          *
-         * @param Set Type Constructor to convert back into narrowed type
+         * @param completableSet Type Constructor to convert back into narrowed type
          * @return Set from Higher Kinded Type
          */
         public static <T> SetX<T> narrow(final Higher<set, T> completableSet) {
 
-            return ((SetX<T>) completableSet);//.narrow();
+            return ((SetX<T>) completableSet);
 
         }
     }

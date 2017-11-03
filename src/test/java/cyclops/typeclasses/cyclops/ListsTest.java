@@ -12,6 +12,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.list;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
@@ -115,8 +116,7 @@ public class ListsTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<ListX<Integer>> m = Monoid.of(ListX.empty(), (a, b)->a.isEmpty() ? b : a);
-        ListX<Integer> list = ListX.Instances.<Integer>monadPlus(m)
+        ListX<Integer> list = ListX.Instances.<Integer>monadPlus(MonoidKs.listXConcat())
                                       .plus(ListX.of(5), ListX.of(10))
                                       .convert(ListX::narrowK);
         assertThat(list,equalTo(Arrays.asList(5)));

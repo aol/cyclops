@@ -10,6 +10,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.persistentQueueX;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -103,8 +104,8 @@ public class PQueuesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<PersistentQueueX<Integer>> m = Monoid.of(PersistentQueueX.empty(), (a, b)->a.isEmpty() ? b : a);
-        PersistentQueueX<Integer> list = PersistentQueueX.Instances.<Integer>monadPlus(m)
+
+        PersistentQueueX<Integer> list = PersistentQueueX.Instances.<Integer>monadPlus(MonoidKs.persistentQueueXConcat())
                                       .plus(PersistentQueueX.of(5), PersistentQueueX.of(10))
                                       .convert(PersistentQueueX::narrowK);
         assertThat(list.toArray(),equalTo(PersistentQueueX.of(5).toArray()));

@@ -24,6 +24,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1253,7 +1254,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
                 @Override
                 public <T> Maybe<MonadPlus<queue>> monadPlus(MonoidK<queue> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1427,22 +1428,10 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
             return General.monadZero(monad(), QueueX.empty());
         }
-        /**
-         * <pre>
-         * {@code
-         *  QueueX<Integer> queue = Queues.<Integer>monadPlus()
-        .plus(QueueX.of()), QueueX.of(10)))
-        .convert(QueueX::narrowK3);
-        //QueueX.of(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Queues by concatenation
-         */
+
         public static <T> MonadPlus<queue> monadPlus(){
-            Monoid<QueueX<T>> m = Monoid.of(QueueX.empty(), Instances::concat);
-            Monoid<Higher<queue,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.queueXConcat());
         }
         public static <T,R> MonadRec<queue> monadRec(){
 
@@ -1453,25 +1442,10 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
             };
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<QueueX<Integer>> m = Monoid.of(QueueX.of()), (a,b)->a.isEmpty() ? b : a);
-        QueueX<Integer> queue = Queues.<Integer>monadPlus(m)
-        .plus(QueueX.of(5)), QueueX.of(10)))
-        .convert(QueueX::narrowK3);
-        //QueueX.of(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Queues
-         * @return Type class for combining Queues
-         */
-        public static <T> MonadPlus<queue> monadPlus(Monoid<QueueX<T>> m){
-            Monoid<Higher<queue,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<queue> monadPlus(MonoidK<queue> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

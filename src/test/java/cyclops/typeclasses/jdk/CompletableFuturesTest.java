@@ -18,6 +18,7 @@ import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
 import cyclops.monads.Witness.completableFuture;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -113,8 +114,7 @@ public class CompletableFuturesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<CompletableFutureKind<Integer>> m = Monoid.of(widen(new CompletableFuture<>()), (a, b)->a.toCompletableFuture().isDone() ? b : a);
-        CompletableFuture<Integer> opt = CompletableFutures.Instances.<Integer>monadPlus(m)
+        CompletableFuture<Integer> opt = CompletableFutures.Instances.<Integer>monadPlus(MonoidKs.firstCompleteCompletableFuture())
                                       .plus(widen(CompletableFuture.completedFuture(5)), widen(CompletableFuture.completedFuture(10)))
                                       .convert(CompletableFutureKind::narrowK);
         assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture(10).join()));
