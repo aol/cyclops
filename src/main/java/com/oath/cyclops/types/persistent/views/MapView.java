@@ -60,23 +60,33 @@ public interface MapView<K,V> extends Map<K,V>
 
   @Override
   @Deprecated
-  V put(K key, V value);
+  default V put(K key, V value){
+     return value;
+  }
 
   @Override
   @Deprecated
-  V remove(Object key);
+  default V remove(Object key){
+    return get(key);
+  }
 
   @Override
   @Deprecated
-  void clear();
+  default void clear(){
+
+  }
 
   @Override
   @Deprecated
-  void putAll(Map<? extends K, ? extends V> m);
+  default void putAll(Map<? extends K, ? extends V> m){
+
+  }
 
   @Override
   @Deprecated
-  void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);
+  default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function){
+
+  }
 
   @AllArgsConstructor
   public static class Impl<K,V> extends AbstractMap<K,V> implements MapView<K,V> {
@@ -119,5 +129,30 @@ public interface MapView<K,V> extends Map<K,V>
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
 
     }
+    @Override
+    @Deprecated
+    public V put(K key, V value){
+      return value;
+    }
+
+    @Override
+    @Deprecated
+    public V remove(Object key){
+      return get(key);
+    }
+
+    @Override
+    @Deprecated
+    public void clear(){
+
+    }
+
+    @Override
+    @Deprecated
+    public void putAll(Map<? extends K, ? extends V> m){
+
+    }
+
+
   }
 }

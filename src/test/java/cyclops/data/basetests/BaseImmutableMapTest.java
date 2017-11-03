@@ -9,7 +9,9 @@ import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -85,7 +87,7 @@ public abstract  class BaseImmutableMapTest {
         assertThat(this.<String,Integer>empty().onEmptySwitch(()-> fromMap(MapXs.of("hello",10))).get("hello"),equalTo(Option.some(10)));
     }
 
-    
+
 
     @Test
     public void testOf() {
@@ -107,7 +109,7 @@ public abstract  class BaseImmutableMapTest {
         assertThat(of("1",1,"2",2).javaMap(),equalTo(map));
     }
 
-   
+
 
     @Test
     public void testMapKV() {
@@ -254,4 +256,17 @@ public abstract  class BaseImmutableMapTest {
         assertThat(map2.stream().map(t->t._2()).sumInt(i->i),equalTo(map.stream().map(t->t._2()).sumInt(i->i)*10));
 
     }
+  @Test
+  public void viewTest(){
+    Map<Integer,String> map = of(1,"hello",2,"world").mapView();
+    Map<Integer,String> hashMap = MapXs.of(1,"hello",2,"world");
+    assertThat(map.size(),equalTo(2));
+    assertThat(map,equalTo(hashMap));
+
+    assertThat(map.put(1,"hello"),equalTo("hello"));
+
+    assertThat(map.remove(1),equalTo("hello"));
+    assertThat(map.remove((Object)1),equalTo("hello"));
+
+  }
 }
