@@ -101,7 +101,7 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
         assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
 
-    @Test
+  @Test
   public void viewTest(){
       List<Integer> list = of(1,2,3).listView();
       assertThat(list.size(),equalTo(3));
