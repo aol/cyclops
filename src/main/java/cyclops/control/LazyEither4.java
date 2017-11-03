@@ -21,6 +21,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -1628,7 +1629,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus(Monoid<Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
                     return Maybe.nothing();
                 }
 

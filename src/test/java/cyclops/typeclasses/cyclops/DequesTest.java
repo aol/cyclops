@@ -11,6 +11,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.deque;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -104,11 +105,11 @@ public class DequesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<DequeX<Integer>> m = Monoid.of(DequeX.of(), (a, b)->a.isEmpty() ? b : a);
-        DequeX<Integer> list = DequeX.Instances.<Integer>monadPlus(m)
+
+        DequeX<Integer> list = DequeX.Instances.<Integer>monadPlus(MonoidKs.dequeXConcat())
                                       .plus(DequeX.of(5), DequeX.of(10))
                                       .convert(DequeX::narrowK);
-        assertThat(list.toArray(),equalTo(DequeX.of(5).toArray()));
+        assertThat(list.toArray(),equalTo(DequeX.of(5,10).toArray()));
     }
     @Test
     public void  foldLeft(){

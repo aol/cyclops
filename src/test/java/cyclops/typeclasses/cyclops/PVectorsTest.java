@@ -11,6 +11,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.vectorX;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 
@@ -104,11 +105,10 @@ public class PVectorsTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<VectorX<Integer>> m = Monoid.of(VectorX.empty(), (a, b)->a.isEmpty() ? b : a);
-        VectorX<Integer> list = VectorX.Instances.<Integer>monadPlus(m)
+        VectorX<Integer> list = VectorX.Instances.<Integer>monadPlus(MonoidKs.vectorXConcat())
                                       .plus(VectorX.of(5), VectorX.of(10))
                                       .convert(VectorX::narrowK);
-        assertThat(list,equalTo(VectorX.of(5)));
+        assertThat(list,equalTo(VectorX.of(5,10)));
     }
     @Test
     public void  foldLeft(){

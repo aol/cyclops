@@ -6,6 +6,7 @@ import cyclops.function.Monoid;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
@@ -233,9 +234,14 @@ public interface General {
     }
     @AllArgsConstructor
     static class GeneralMonadPlus<CRE,T> implements MonadPlus<CRE> {
-        Monoid<Higher<CRE, ?>> monoid;
+        MonoidK<CRE> monoid;
         Monad<CRE> monad;
 
+
+
+      public <T> Higher<CRE,T> plus(Higher<CRE, T> a, Higher<CRE, T> b) {
+        return this.monoid.apply(a, b);
+      }
 
         @Override
         public <T, R> Higher<CRE, R> flatMap(Function<? super T, ? extends Higher<CRE, R>> fn, Higher<CRE, T> ds) {
@@ -259,17 +265,21 @@ public interface General {
 
 
 
-        @Override
-        public Monoid<Higher<CRE, ?>> monoid() {
-            return (Monoid)monoid;
+
+        public MonoidK<CRE> monoid() {
+            return monoid;
         }
 
     }
     @AllArgsConstructor
     static class SupplierMonadPlus<CRE,T,B> implements MonadPlus<CRE>{
-        Monoid<Higher<CRE, T>> monoid;
+        MonoidK<CRE> monoid;
         MonadZero<CRE> monad;
 
+      public <T> Higher<CRE,T> plus(Higher<CRE, T> a, Higher<CRE, T> b){
+
+        return this.monoid.apply(a, b);
+      }
 
         @Override
         public <T, R> Higher<CRE, R> flatMap(Function<? super T, ? extends Higher<CRE, R>> fn, Higher<CRE, T> ds) {
@@ -296,20 +306,20 @@ public interface General {
             return monad.zero();
         }
 
-        @Override
-        public Monoid<Higher<CRE, ?>> monoid() {
-            return (Monoid)monoid;
+
+        public MonoidK<CRE> monoid() {
+            return monoid;
         }
 
     }
     static  <CRE,A,B> GeneralMonadPlus<CRE,A> monadPlus(Monad<CRE> monad,
-                                                        Monoid<Higher<CRE, ?>> monoid) {
+                                                        MonoidK<CRE> monoid) {
 
         return new GeneralMonadPlus<CRE,A>(monoid,monad);
 
     }
     static  <CRE,A,B> SupplierMonadPlus<CRE,A,B> monadPlus(MonadZero<CRE> monad,
-                                                           Monoid<Higher<CRE, A>> monoid) {
+                                                           MonoidK<CRE> monoid) {
 
         return new SupplierMonadPlus<CRE,A,B>(monoid,monad);
 

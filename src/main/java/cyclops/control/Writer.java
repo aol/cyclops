@@ -11,6 +11,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -280,7 +281,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus(Monoid<Higher<Higher<writer, W>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus(MonoidK<Higher<writer, W>> m) {
                     return Maybe.nothing();
                 }
 

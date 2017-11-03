@@ -27,6 +27,8 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1209,8 +1211,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus(Monoid<Higher<persistentSetX, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus(MonoidK<persistentSetX> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1394,42 +1396,16 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
             return General.monadZero(monad(), PersistentSetX.empty());
         }
-        /**
-         * <pre>
-         * {@code
-         *  PersistentSetX<Integer> persistentSetX = Sets.<Integer>monadPlus()
-        .plus(PersistentSetX.widen(Arrays.asSet()), PersistentSetX.widen(Arrays.asSet(10)))
-        .convert(PersistentSetX::narrowK3);
-        //Arrays.asSet(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Sets by concatenation
-         */
+
         public static <T> MonadPlus<persistentSetX> monadPlus(){
             Monoid<PersistentSetX<T>> m = Monoid.of(PersistentSetX.empty(), Instances::concat);
             Monoid<Higher<persistentSetX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+            return General.monadPlus(monadZero(), MonoidKs.persistentSetXConcat());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<PersistentSetX<Integer>> m = Monoid.of(PersistentSetX.widen(Arrays.asSet()), (a,b)->a.isEmpty() ? b : a);
-        PersistentSetX<Integer> persistentSetX = Sets.<Integer>monadPlus(m)
-        .plus(PersistentSetX.widen(Arrays.asSet(5)), PersistentSetX.widen(Arrays.asSet(10)))
-        .convert(PersistentSetX::narrowK3);
-        //Arrays.asSet(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Sets
-         * @return Type class for combining Sets
-         */
-        public static <T> MonadPlus<persistentSetX> monadPlus(Monoid<PersistentSetX<T>> m){
-            Monoid<Higher<persistentSetX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<persistentSetX> monadPlus(MonoidK<persistentSetX> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**
@@ -1524,7 +1500,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         /**
          * Convert the HigherKindedType definition for a Set into
          *
-         * @param Set Type Constructor to convert back into narrowed type
+         * @param completableSet Type Constructor to convert back into narrowed type
          * @return Set from Higher Kinded Type
          */
         public static <T> PersistentSetX<T> narrow(final Higher<persistentSetX, T> completableSet) {

@@ -13,6 +13,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -154,7 +155,7 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<identity>> monadPlus(Monoid<Higher<identity, T>> m) {
+                public <T> Maybe<MonadPlus<identity>> monadPlus(MonoidK<identity> m) {
                     return Maybe.nothing();
                 }
 

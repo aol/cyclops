@@ -8,6 +8,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.future;
+import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
 import static cyclops.function.Lambda.l1;
@@ -106,11 +107,11 @@ public class FuturesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<Future<Integer>> m = Monoid.of(Future.future(), (a, b)->a.toCompletableFuture().isDone() ? b : a);
-        Future<Integer> opt = Future.Instances.<Integer>monadPlus(m)
+        Future<Integer> opt = Future.Instances.<Integer>monadPlus(MonoidKs.firstCompleteFuture())
                                       .plus(Future.ofResult(5), Future.ofResult(10))
                                       .convert(Future::narrowK);
-        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult(10).toCompletableFuture().join()));
+        System.out.println(opt.getFuture().join().getClass());
+        assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult(5).toCompletableFuture().join()));
     }
     @Test
     public void  foldLeft(){

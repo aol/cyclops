@@ -23,6 +23,8 @@ import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -389,7 +391,7 @@ public class Optionals {
      * </pre>
      *
      *
-     * @param maybes Maybes to Sequence
+     * @param opts Maybes to Sequence
      * @return  Maybe with a List of values
      */
     public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {
@@ -419,7 +421,7 @@ public class Optionals {
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * By constrast with {@link Optional#sequencePresent(CollectionX)} if any Optional types are zero
+     * By constrast with {@link Optionals#sequencePresent(CollectionX)} if any Optional types are zero
      * the return type will be an zero Optional
      *
      * <pre>
@@ -511,7 +513,6 @@ public class Optionals {
      * </pre>
      *
      * @param optionals Optionals to accumulate
-     * @param mapper Mapping function to be applied to the result of each Optional
      * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
@@ -623,7 +624,7 @@ public class Optionals {
     /**
      * Narrow covariant type parameter
      *
-     * @param broad Optional with covariant type parameter
+     * @param optional Optional with covariant type parameter
      * @return Narrowed Optional
      */
     public static <T> Optional<T> narrow(final Optional<? extends T> optional) {
@@ -675,8 +676,8 @@ public class Optionals {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<optional>> monadPlus(Monoid<Higher<optional, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -873,12 +874,8 @@ public class Optionals {
          * @return Type class for combining Optionals by concatenation
          */
         public static <T> MonadPlus<optional> monadPlus(){
-            Monoid<Optional<T>> mn = Monoids.firstPresentOptional();
-            Monoid<OptionalKind<T>> m = Monoid.of(OptionalKind.widen(mn.zero()), (f, g)-> OptionalKind.widen(
-                    mn.apply(OptionalKind.narrowK(f), OptionalKind.narrowK(g))));
 
-            Monoid<Higher<optional,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+            return General.monadPlus(monadZero(), MonoidKs.firstPresentOptional());
         }
         /**
          *
@@ -893,11 +890,10 @@ public class Optionals {
          * }
          * </pre>
          *
-         * @param m Monoid to use for combining Optionals
+         * @param m2 Monoid to use for combining Optionals
          * @return Type class for combining Optionals
          */
-        public static <T> MonadPlus<optional> monadPlus(Monoid<OptionalKind<T>> m){
-            Monoid<Higher<optional,T>> m2= (Monoid)m;
+        public static <T> MonadPlus<optional> monadPlus(MonoidK<optional> m2){
             return General.monadPlus(monadZero(),m2);
         }
 

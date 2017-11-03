@@ -27,6 +27,8 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -53,7 +55,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
-        PersistentQueue<T>,
+                                             PersistentQueue<T>,
                                              LazyCollectionX<T>,
                                              OnEmptySwitch<T, PersistentQueue<T>>,
                                              Higher<persistentQueueX,T>{
@@ -1384,8 +1386,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(Monoid<Higher<persistentQueueX, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(MonoidK<persistentQueueX> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1574,9 +1576,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
          * @return Type class for combining PQueues by concatenation
          */
         public static <T> MonadPlus<persistentQueueX> monadPlus(){
-            Monoid<PersistentQueueX<T>> m = Monoid.of(PersistentQueueX.empty(), Instances::concat);
-            Monoid<Higher<persistentQueueX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.persistentQueueXConcat());
         }
         public static <T,R> MonadRec<persistentQueueX> monadRec(){
 
@@ -1587,25 +1588,10 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
             };
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<PersistentQueueX<Integer>> m = Monoid.of(Arrays.asPQueue()), (a,b)->a.isEmpty() ? b : a);
-        PersistentQueueX<Integer> list = PQueues.<Integer>monadPlus(m)
-        .plus(Arrays.asPQueue(5)), Arrays.asPQueue(10)))
-        .convert(PersistentQueueX::narrowK3);
-        //Arrays.asPQueue(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining PQueues
-         * @return Type class for combining PQueues
-         */
-        public static <T> MonadPlus<persistentQueueX> monadPlus(Monoid<PersistentQueueX<T>> m){
-            Monoid<Higher<persistentQueueX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static MonadPlus<persistentQueueX> monadPlus(MonoidK<persistentQueueX> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

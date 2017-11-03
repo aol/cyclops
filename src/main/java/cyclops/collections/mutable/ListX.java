@@ -8,6 +8,7 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.*;
 
+import cyclops.monads.Witness;
 import cyclops.typeclasses.*;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -26,6 +27,7 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -180,8 +182,9 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<list>> monadPlus(Monoid<Higher<list, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<list>> monadPlus(MonoidK<list> m) {
+                  MonadPlus<list> x = Instances.monadPlus(m);
+                  return Maybe.just(x);
                 }
 
                 @Override
@@ -366,42 +369,26 @@ public interface ListX<T> extends To<ListX<T>>,
 
             return General.monadZero(monad(), ListX.empty());
         }
-        /**
-         * <pre>
-         * {@code
-         *  ListX<Integer> list = Lists.<Integer>monadPlus()
-        .plus(ListX.widen(Arrays.asList()), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK3);
-        //Arrays.asList(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Lists by concatenation
-         */
+
         public static <T> MonadPlus<list> monadPlus(){
-            Monoid<ListX<T>> m = Monoid.of(ListX.empty(), Instances::concat);
-            Monoid<Higher<list,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            MonoidK<list> m = new MonoidK<list>() {
+              @Override
+              public <T> Higher<list, T> zero() {
+                return ListX.empty();
+              }
+
+              @Override
+              public <T> Higher<list, T> apply(Higher<list, T> t1, Higher<list, T> t2) {
+                return Instances.concat(narrowK(t1),narrowK(t2));
+              }
+            };
+            return General.monadPlus(monadZero(),m);
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<ListX<Integer>> m = Monoid.of(ListX.widen(Arrays.asList()), (a,b)->a.isEmpty() ? b : a);
-        ListX<Integer> list = Lists.<Integer>monadPlus(m)
-        .plus(ListX.widen(Arrays.asList(5)), ListX.widen(Arrays.asList(10)))
-        .convert(ListX::narrowK3);
-        //Arrays.asList(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Lists
-         * @return Type class for combining Lists
-         */
-        public static <T> MonadPlus<list> monadPlus(Monoid<ListX<T>> m){
-            Monoid<Higher<list,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<list> monadPlus(MonoidK<list> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

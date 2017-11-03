@@ -4,6 +4,7 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
@@ -16,6 +17,8 @@ import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
+import cyclops.function.Semigroup;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 
@@ -23,15 +26,48 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 
-public class MonoidKs {
+public interface MonoidKs {
 
 
-    public static <T>  MonoidK<optional,T> optionalPresent() {
-        return  MonoidK.of(OptionalKind.empty(),SemigroupKs.optionalPresent());
+    public static MonoidK<optional> optionalPresent() {
+      return new MonoidK<optional>() {
+        @Override
+        public <T> Higher<optional, T> zero() {
+          return OptionalKind.empty();
+        }
+
+        @Override
+        public <T> Higher<optional, T> apply(Higher<optional, T> t1, Higher<optional, T> t2) {
+          return SemigroupKs.optionalPresent().apply(t1,t2);
+        }
+      };
     }
-    public static <T> MonoidK<list,T> listXConcat() {
-        return MonoidK.of(ListX.empty(),SemigroupKs.listXConcat());
+    public static MonoidK<list> listXConcat() {
+        return new MonoidK<list>() {
+          @Override
+          public <T> Higher<list, T> zero() {
+            return ListX.empty();
+          }
+
+          @Override
+          public <T> Higher<list, T> apply(Higher<list, T> t1, Higher<list, T> t2) {
+            return SemigroupKs.listXConcat().apply(t1,t2);
+          }
+        };
     }
+  public static  MonoidK<deque> dequeXConcat() {
+    return new MonoidK<deque>() {
+      @Override
+      public <T> Higher<deque, T> zero() {
+        return DequeX.empty();
+      }
+
+      @Override
+      public <T> Higher<deque, T> apply(Higher<deque, T> t1, Higher<deque, T> t2) {
+        return SemigroupKs.dequeXConcat().apply(t1,t2);
+      }
+    };
+  }
 
 
 
@@ -39,67 +75,105 @@ public class MonoidKs {
     /**
      * @return A combiner for SetX (concatenates two SetX into a single SetX)
      */
-    static <T> MonoidK<set,T> setXConcat() {
-        return MonoidK.of(SetX.empty(),SemigroupKs.setXConcat());
+    static MonoidK<set> setXConcat() {
+        return new MonoidK<set>() {
+          @Override
+          public <T> Higher<set, T> zero() {
+            return SetX.empty();
+          }
+
+          @Override
+          public <T> Higher<set, T> apply(Higher<set, T> t1, Higher<set, T> t2) {
+            return SemigroupKs.setXConcat().apply(t1,t2);
+          }
+        };
+
     }
 
-    /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
 
-    static <T> MonoidK<sortedSet,T> sortedSetXConcat() {
-        return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
-    }*/
 
     /**
      * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
      */
-    static <T> MonoidK<queue,T> queueXConcat() {
-        return MonoidK.of(QueueX.empty(),SemigroupKs.queueXConcat());
+    static MonoidK<queue> queueXConcat() {
+        return new MonoidK<queue>() {
+          @Override
+          public <T> Higher<queue, T> zero() {
+            return QueueX.empty();
+          }
+
+          @Override
+          public <T> Higher<queue, T> apply(Higher<queue, T> t1, Higher<queue, T> t2) {
+            return SemigroupKs.queueXConcat().apply(t1,t2);
+          }
+        };
     }
 
-    /**
-     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
-     */
-    static <T> MonoidK<deque,T> dequeXConcat() {
-        return MonoidK.of(DequeX.empty(),SemigroupKs.dequeXConcat());
-    }
 
     /**
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> MonoidK<linkedListX,T> linkedListXConcat() {
-        return MonoidK.of(LinkedListX.empty(),SemigroupKs.linkedListXConcat());
+    static MonoidK<linkedListX> linkedListXConcat() {
+        return new MonoidK<linkedListX>() {
+          @Override
+          public <T> Higher<linkedListX, T> zero() {
+            return LinkedListX.empty();
+          }
+
+          @Override
+          public <T> Higher<linkedListX, T> apply(Higher<linkedListX, T> t1, Higher<linkedListX, T> t2) {
+            return SemigroupKs.linkedListXConcat().apply(t1,t2);
+          }
+        };
     }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> MonoidK<vectorX,T> vectorXConcat() {
-        return MonoidK.of(VectorX.empty(),SemigroupKs.vectorXConcat());
+    static MonoidK<vectorX> vectorXConcat() {
+      return new MonoidK<vectorX>() {
+        @Override
+        public <T> Higher<vectorX, T> zero() {
+          return VectorX.empty();
+        }
+
+        @Override
+        public <T> Higher<vectorX, T> apply(Higher<vectorX, T> t1, Higher<vectorX, T> t2) {
+          return SemigroupKs.vectorXConcat().apply(t1, t2);
+        }
+      };
     }
-
-    /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
-
-    static <T> MonoidK<persistentSetX,T> persistentSetXConcat() {
-        return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
-    }
-     */
-    /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
-
-    static <T> MonoidK<OrderedsetX,T> orderedSetXConcat() {
-        return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
-    }*/
 
     /**
      * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
      */
-    static <T> MonoidK<persistentQueueX,T> persistentQueueXConcat() {
-        return MonoidK.of(PersistentQueueX.empty(),SemigroupKs.persistentQueueXConcat());
+    static MonoidK<persistentQueueX> persistentQueueXConcat() {
+        return new MonoidK<persistentQueueX>() {
+          @Override
+          public <T> Higher<persistentQueueX, T> zero() {
+            return PersistentQueueX.empty();
+          }
+
+          @Override
+          public <T> Higher<persistentQueueX, T> apply(Higher<persistentQueueX, T> t1, Higher<persistentQueueX, T> t2) {
+            return SemigroupKs.persistentQueueXConcat().apply(t1,t2);
+          }
+        };
     }
 
+  static MonoidK<persistentSetX> persistentSetXConcat() {
+    return new MonoidK<persistentSetX>() {
+      @Override
+      public <T> Higher<persistentSetX, T> zero() {
+        return PersistentSetX.empty();
+      }
 
+      @Override
+      public <T> Higher<persistentSetX, T> apply(Higher<persistentSetX, T> t1, Higher<persistentSetX, T> t2) {
+        return SemigroupKs.persistentSetXConcat().apply(t1,t2);
+      }
+    };
+  }
 
 
 
@@ -107,19 +181,59 @@ public class MonoidKs {
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
      */
-    static <T> MonoidK<reactiveSeq,T> combineReactiveSeq() {
-        return MonoidK.of(ReactiveSeq.empty(),SemigroupKs.combineReactiveSeq());
+    static MonoidK<reactiveSeq> combineReactiveSeq() {
+        return new MonoidK<reactiveSeq>() {
+          @Override
+          public <T> Higher<reactiveSeq, T> zero() {
+            return ReactiveSeq.empty();
+          }
+
+          @Override
+          public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> t1, Higher<reactiveSeq, T> t2) {
+            return SemigroupKs.combineReactiveSeq().apply(t1,t2);
+          }
+        };
     }
 
-    static <T> MonoidK<reactiveSeq,T> firstNonEmptyReactiveSeq() {
-        return MonoidK.of(ReactiveSeq.empty(),SemigroupKs.firstNonEmptyReactiveSeq());
+    static MonoidK<reactiveSeq> firstNonEmptyReactiveSeq() {
+        return new MonoidK<reactiveSeq>() {
+          @Override
+          public <T> Higher<reactiveSeq, T> zero() {
+            return ReactiveSeq.empty();
+          }
+
+          @Override
+          public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> t1, Higher<reactiveSeq, T> t2) {
+            return SemigroupKs.firstNonEmptyReactiveSeq().apply(t1,t2);
+          }
+        };
     }
-    static <T> MonoidK<reactiveSeq,T> ambReactiveSeq() {
-        return MonoidK.of(ReactiveSeq.empty(),SemigroupKs.ambReactiveSeq());
+    static MonoidK<reactiveSeq> ambReactiveSeq() {
+        return new MonoidK<reactiveSeq>() {
+          @Override
+          public <T> Higher<reactiveSeq, T> zero() {
+            return ReactiveSeq.empty();
+          }
+
+          @Override
+          public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> t1, Higher<reactiveSeq, T> t2) {
+            return SemigroupKs.ambReactiveSeq().apply(t1,t2);
+          }
+        };
     }
 
-    static <T> MonoidK<reactiveSeq,T> mergeLatestReactiveSeq() {
-        return MonoidK.of(ReactiveSeq.empty(),SemigroupKs.mergeLatestReactiveSeq());
+    static MonoidK<reactiveSeq> mergeLatestReactiveSeq() {
+        return new MonoidK<reactiveSeq>() {
+          @Override
+          public <T> Higher<reactiveSeq, T> zero() {
+            return ReactiveSeq.empty();
+          }
+
+          @Override
+          public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> t1, Higher<reactiveSeq, T> t2) {
+            return SemigroupKs.mergeLatestReactiveSeq().apply(t1,t2);
+          }
+        };
     }
 
 
@@ -127,129 +241,239 @@ public class MonoidKs {
     /**
      * @return Combination of two Stream's : b is appended to a
      */
-    static <T> MonoidK<stream,T> combineStream() {
-        return MonoidK.of(Streams.StreamKind.widen(Stream.empty()),SemigroupKs.combineStream());
+    static MonoidK<stream> combineStream() {
+        return new MonoidK<stream>() {
+          @Override
+          public <T> Higher<stream, T> zero() {
+            return Streams.StreamKind.widen(Stream.empty());
+          }
+
+          @Override
+          public <T> Higher<stream, T> apply(Higher<stream, T> t1, Higher<stream, T> t2) {
+            return SemigroupKs.combineStream().apply(t1,t2);
+          }
+        };
     }
 
 
     /**
      * @return Combine two CompletableFuture's by taking the first present
      */
-    static <T> MonoidK<completableFuture,T> firstCompleteCompletableFuture() {
-        return MonoidK.of(CompletableFutures.CompletableFutureKind.widen(new CompletableFuture<>()),SemigroupKs.firstCompleteCompletableFuture());
+    static MonoidK<completableFuture> firstCompleteCompletableFuture() {
+        return new MonoidK<completableFuture>() {
+          @Override
+          public <T> Higher<completableFuture, T> zero() {
+            return CompletableFutures.CompletableFutureKind.widen(new CompletableFuture<>());
+          }
+
+          @Override
+          public <T> Higher<completableFuture, T> apply(Higher<completableFuture, T> t1, Higher<completableFuture, T> t2) {
+            return SemigroupKs.firstCompleteCompletableFuture().apply(t1,t2);
+          }
+        };
     }
     /**
      * @return Combine two Future's by taking the first result
      */
-    static <T> MonoidK<future,T> firstCompleteFuture() {
-            return MonoidK.of(Future.future(),SemigroupKs.firstCompleteFuture());
+    static MonoidK<future> firstCompleteFuture() {
+            return new MonoidK<future>() {
+              @Override
+              public <T> Higher<future, T> zero() {
+                return Future.future();
+              }
+
+              @Override
+              public <T> Higher<future, T> apply(Higher<future, T> t1, Higher<future, T> t2) {
+                return SemigroupKs.firstCompleteFuture().apply(t1,t2);
+              }
+            };
     }
 
 
     /**
      * @return Combine two Future's by taking the first successful
      */
-    static <T> MonoidK<future,T> firstSuccessfulFuture() {
-        return MonoidK.of(Future.future(),SemigroupKs.firstSuccessfulFuture());
+    static MonoidK<future> firstSuccessfulFuture() {
+        return new MonoidK<future>() {
+          @Override
+          public <T> Higher<future, T> zero() {
+            return Future.future();
+          }
+
+          @Override
+          public <T> Higher<future, T> apply(Higher<future, T> t1, Higher<future, T> t2) {
+            return SemigroupKs.firstSuccessfulFuture().apply(t1,t2);
+          }
+        };
     }
     /**
      * @return Combine two Xor's by taking the first right
      */
-    static <ST,PT> MonoidK<Higher<either,ST>,PT> firstPrimaryXor(ST zero) {
-        return MonoidK.of(Either.left(zero),SemigroupKs.firstPrimaryXor());
+    static <ST> MonoidK<Higher<either,ST>> firstRightEither(ST zero) {
+        return new MonoidK<Higher<either, ST>>() {
+          @Override
+          public <T> Higher<Higher<either, ST>, T> zero() {
+            return Either.left(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<either, ST>, T> apply(Higher<Higher<either, ST>, T> t1, Higher<Higher<either, ST>, T> t2) {
+            return SemigroupKs.<ST>firstRightEither().apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Xor's by taking the first left
-     */
-    static <ST,PT> MonoidK<Higher<either,ST>,PT> firstSecondaryXor(PT zero) {
-        return MonoidK.of(Either.right(zero),SemigroupKs.firstSecondaryXor());
-    }
+
     /**
      * @return Combine two Xor's by taking the last right
      */
-    static <ST,PT> MonoidK<Higher<either,ST>,PT> lastPrimaryXor(ST zero) {
-        return MonoidK.of(Either.left(zero),SemigroupKs.lastPrimaryXor());
+    static <ST> MonoidK<Higher<either,ST>> lastRightEither(ST zero) {
+        return new MonoidK<Higher<either, ST>>() {
+          @Override
+          public <T> Higher<Higher<either, ST>, T> zero() {
+            return Either.left(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<either, ST>, T> apply(Higher<Higher<either, ST>, T> t1, Higher<Higher<either, ST>, T> t2) {
+            return SemigroupKs.<ST>lastRightEither().<T>apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Xor's by taking the last left
-     */
-    static <ST,PT> MonoidK<Higher<either,ST>,PT> lastSecondaryXor(PT zero) {
-        return MonoidK.of(Either.right(zero),SemigroupKs.lastSecondaryXor());
-    }
+
     /**
      * @return Combine two Try's by taking the first right
      */
-    static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> firstTrySuccess(X zero) {
-        return MonoidK.of(Try.failure(zero),SemigroupKs.firstTrySuccess());
+    static <X extends Throwable> MonoidK<Higher<tryType,X>> firstTrySuccess(X zero) {
+        return new MonoidK<Higher<tryType, X>>() {
+          @Override
+          public <T> Higher<Higher<tryType, X>, T> zero() {
+            return Try.failure(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<tryType, X>, T> apply(Higher<Higher<tryType, X>, T> t1, Higher<Higher<tryType, X>, T> t2) {
+            return SemigroupKs.<X>firstTrySuccess().apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Try's by taking the first left
-     */
-    static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> firstTryFailure(T zero) {
-        return MonoidK.of(Try.success(zero),SemigroupKs.firstTryFailure());
-    }
+
     /**
      * @return Combine two Tryr's by taking the last right
      */
-    static<T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTrySuccess(X zero) {
-        return MonoidK.of(Try.failure(zero),SemigroupKs.lastTrySuccess());
+    static<X extends Throwable> MonoidK<Higher<tryType,X>> lastTrySuccess(X zero) {
+        return new MonoidK<Higher<tryType, X>>() {
+          @Override
+          public <T> Higher<Higher<tryType, X>, T> zero() {
+            return Try.failure(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<tryType, X>, T> apply(Higher<Higher<tryType, X>, T> t1, Higher<Higher<tryType, X>, T> t2) {
+            return SemigroupKs.<X>lastTrySuccess().apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Try's by taking the last left
-     */
-    static <T,X extends Throwable> MonoidK<Higher<tryType,X>,T> lastTryFailure(T zero) {
-        return MonoidK.of(Try.success(zero),SemigroupKs.lastTryFailure());
-    }
+
     /**
      * @return Combine two Ior's by taking the first right
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstPrimaryIor(ST zero) {
-        return MonoidK.of(Ior.left(zero),SemigroupKs.firstPrimaryIor());
+    static <ST> MonoidK<Higher<ior,ST>> firstPrimaryIor(ST zero) {
+        return new MonoidK<Higher<ior, ST>>() {
+          @Override
+          public <T> Higher<Higher<ior, ST>, T> zero() {
+            return Ior.left(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<ior, ST>, T> apply(Higher<Higher<ior, ST>, T> t1, Higher<Higher<ior, ST>, T> t2) {
+            return SemigroupKs.<ST>firstPrimaryIor().apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Ior's by taking the first left
-     */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> firstSecondaryIor(PT zero) {
-        return MonoidK.of(Ior.right(zero),SemigroupKs.firstSecondaryIor());
-    }
+
     /**
      * @return Combine two Ior's by taking the last right
      */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastPrimaryIor(ST zero) {
-        return MonoidK.of(Ior.left(zero),SemigroupKs.lastPrimaryIor());
+    static <ST> MonoidK<Higher<ior,ST>> lastPrimaryIor(ST zero) {
+        return new MonoidK<Higher<ior, ST>>() {
+          @Override
+          public <T> Higher<Higher<ior, ST>, T> zero() {
+            return Ior.left(zero);
+          }
+
+          @Override
+          public <T> Higher<Higher<ior, ST>, T> apply(Higher<Higher<ior, ST>, T> t1, Higher<Higher<ior, ST>, T> t2) {
+            return SemigroupKs.<ST>lastPrimaryIor().apply(t1,t2);
+          }
+        };
     }
-    /**
-     * @return Combine two Ior's by taking the last left
-     */
-    static <ST,PT> MonoidK<Higher<ior,ST>,PT> lastSecondaryIor(PT zero) {
-        return MonoidK.of(Ior.right(zero),SemigroupKs.lastSecondaryIor());
-    }
+
 
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static <T> MonoidK<maybe,T> firstPresentMaybe() {
-        return MonoidK.of(Maybe.nothing(),SemigroupKs.firstPresentMaybe());
+    static MonoidK<maybe> firstPresentMaybe() {
+        return new MonoidK<maybe>() {
+          @Override
+          public <T> Higher<maybe, T> zero() {
+            return Maybe.nothing();
+          }
+
+          @Override
+          public <T> Higher<maybe, T> apply(Higher<maybe, T> t1, Higher<maybe, T> t2) {
+            return SemigroupKs.firstPresentMaybe().apply(t1,t2);
+          }
+        };
     }
 
     /**
      * @return Combine two optionals by taking the first present
      */
-    static <T> MonoidK<optional,T> firstPresentOptional() {
-        return MonoidK.of(OptionalKind.empty(),SemigroupKs.firstPresentOptional());
+    static <T> MonoidK<optional> firstPresentOptional() {
+        return new MonoidK<optional>() {
+          @Override
+          public <T> Higher<optional, T> zero() {
+            return OptionalKind.empty();
+          }
+
+          @Override
+          public <T> Higher<optional, T> apply(Higher<optional, T> t1, Higher<optional, T> t2) {
+            return SemigroupKs.firstPresentOptional().apply(t1,t2);
+          }
+        };
     }
 
     /**
      * @return Combine two Maybes by taking the last present
      */
-    static <T> MonoidK<maybe,T> lastPresentMaybe() {
-        return MonoidK.of(Maybe.nothing(),SemigroupKs.lastPresentMaybe());
+    static <T> MonoidK<maybe> lastPresentMaybe() {
+        return new MonoidK<maybe>() {
+          @Override
+          public <T> Higher<maybe, T> zero() {
+            return Maybe.nothing();
+          }
+
+          @Override
+          public <T> Higher<maybe, T> apply(Higher<maybe, T> t1, Higher<maybe, T> t2) {
+            return SemigroupKs.lastPresentMaybe().apply(t1,t2);
+          }
+        };
     }
 
     /**
      * @return Combine two optionals by taking the last present
      */
-    static <T> MonoidK<optional,T> lastPresentOptional() {
-        return MonoidK.of(OptionalKind.empty(),SemigroupKs.lastPresentOptional());
+    static <T> MonoidK<optional> lastPresentOptional() {
+        return new MonoidK<optional>() {
+          @Override
+          public <T> Higher<optional, T> zero() {
+            return OptionalKind.empty();
+          }
+
+          @Override
+          public <T> Higher<optional, T> apply(Higher<optional, T> t1, Higher<optional, T> t2) {
+            return SemigroupKs.lastPresentOptional().apply(t1,t2);
+          }
+        };
     }
 }
