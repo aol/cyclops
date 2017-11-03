@@ -23,6 +23,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -1397,7 +1398,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(Monoid<Higher<Higher<Higher<lazyEither3, L1>, L2>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(MonoidK<Higher<Higher<lazyEither3, L1>, L2>> m) {
                     return Maybe.nothing();
                 }
 

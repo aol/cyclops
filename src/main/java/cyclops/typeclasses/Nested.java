@@ -18,15 +18,18 @@ import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.ImmutableList;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Group;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
@@ -299,7 +302,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         }
         public Maybe<Nested<W1,W2,T>> sum(ListX<C> list){
             return Nested.this.plus().flatMap(s ->
-                    Maybe.just(sum(narrow.apply(s.monoid2().zero()), (C a, C b) -> narrow.apply(s.monoid2().apply(widen.apply(a), widen.apply(b))), list))
+                    Maybe.just(sum(narrow.apply(s.monoid().zero()), (C a, C b) -> narrow.apply(s.monoid().apply(widen.apply(a), widen.apply(b))), list))
             );
         }
 
@@ -343,7 +346,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
 
 
-    public Nested<W1,W2,T> plusNested(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+    public Nested<W1,W2,T> plusNested(SemigroupK<W2> semigroupK, Higher<W2,T> add){
         return of(def1.functor().map(i -> semigroupK.apply(i, add),nested), def1, def2);
     }
 
@@ -357,10 +360,10 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public class Plus{
         private final  MonadPlus<W1> plus1;
         private final  MonadPlus<W2> plus2;
-        public Monoid<Higher<W2,T>> monoid2(){
-            return def2.monadPlus().orElse(null).narrowMonoid();
+        public Monoid<Higher<W2,T>> monoid(){
+            return def2.monadPlus().orElse(null).monoid().asMonoid();
         }
-        public Nested<W1,W2,T> sum(ListX<Nested<W1,W2, T>> list){
+        public Nested<W1,W2,T> sum(ImmutableList<Nested<W1,W2, T>> list){
             return of(plus1.sum(list.plus(Nested.this).map(x -> x.nested)),def1,def2);
         }
 
@@ -652,7 +655,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(Monoid<Higher<Higher<Higher<nested, W1>, W2>, T>> m) {
+            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<Witness.nested, W1>, W2>> m) {
                 return Maybe.nothing();
             }
 

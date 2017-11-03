@@ -23,6 +23,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1231,7 +1232,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<set>> monadPlus(Monoid<Higher<set, T>> m) {
+                public <T> Maybe<MonadPlus<set>> monadPlus(MonoidK<set> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
 

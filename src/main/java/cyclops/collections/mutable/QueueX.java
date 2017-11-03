@@ -23,6 +23,7 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1251,7 +1252,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<queue>> monadPlus(Monoid<Higher<queue, T>> m) {
+                public <T> Maybe<MonadPlus<queue>> monadPlus(MonoidK<queue> m) {
                     return Maybe.just(Instances.monadPlus((Monoid)m));
                 }
 

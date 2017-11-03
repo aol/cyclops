@@ -10,14 +10,17 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.ImmutableList;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -191,10 +194,10 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
 
 
-    public Active<W1,T> activeFirst(SemigroupK<W1,T> sg, Higher<W1,T> concat){
+    public Active<W1,T> activeFirst(SemigroupK<W1> sg, Higher<W1,T> concat){
         return Active.of(sg.apply(run._1(),concat),def1);
     }
-    public Active<W2,T> activeSecond(SemigroupK<W2,T> sg, Higher<W2,T> concat){
+    public Active<W2,T> activeSecond(SemigroupK<W2> sg, Higher<W2,T> concat){
         return Active.of(sg.apply(run._2(),concat),def2);
     }
 
@@ -204,10 +207,10 @@ public class Product<W1,W2,T> implements  Filters<T>,
     public <R> R visitA(BiFunction<? super Active<W1,? super T>,? super Active<W2,? super T>, ? extends R> visitor){
         return run.transform((a, b)->visitor.apply(Active.of(a,def1),Active.of(b,def2)));
     }
-    public Product<W1,W2,T> plusFirst(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
+    public Product<W1,W2,T> plusFirst(SemigroupK<W1> semigroupK, Higher<W1,T> add){
         return of(Tuple.tuple(semigroupK.apply(run._1(),add),run._2()),def1,def2);
     }
-    public Product<W1,W2,T> plusSecond(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+    public Product<W1,W2,T> plusSecond(SemigroupK<W2> semigroupK, Higher<W2,T> add){
         return of(Tuple.tuple(run._1(),semigroupK.apply(run._2(),add)),def1,def2);
     }
     public Product<W2,W1,T> swap(){
@@ -264,7 +267,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
             Active<W2, T> r2 = Active.of(run._2(), def2).plus(plus2).plusA(a._2());
             return of(r1,r2);
         }
-        public Product<W1,W2,T> sum(ListX<Product<W1,W2,T>> list){
+        public Product<W1,W2,T> sum(ImmutableList<Product<W1,W2,T>> list){
 
             Active<W1, T> r1 = Active.of(run._1(), def1).plus(plus1).sumA(list.map(p->p.asActiveTuple()._1()));
             Active<W2, T> r2 = Active.of(run._2(), def2).plus(plus2).sumA(list.map(p->p.asActiveTuple()._2()));
@@ -597,21 +600,33 @@ public class Product<W1,W2,T> implements  Filters<T>,
                             return monad().flatMap(fn, ds);
                         }
 
-                        @Override
-                        public Monoid<Higher<Higher<Higher<product, W1>, W2>, ?>> monoid() {
-                            return Monoid.of(monadZero().orElse(null).zero(), (a, b) -> {
-                                Product<W1, W2, ?> p1 = narrowK(a);
-                                Product<W1, W2, ?> p2 = narrowK(b);
-                                return p1.zip((Product) p2);
-                            });
-                        }
+                      @Override
+                      public <T> MonoidK<Higher<Higher<product, W1>, W2>> monoid() {
+                        return new MonoidK<Higher<Higher<product, W1>, W2>>() {
+                          @Override
+                          public <T> Higher<Higher<Higher<product, W1>, W2>, T> zero() {
+                            return monadZero().orElse(null).zero();
+                          }
+
+                          @Override
+                          public <T> Higher<Higher<Higher<product, W1>, W2>, T> apply(Higher<Higher<Higher<product, W1>, W2>, T> a, Higher<Higher<Higher<product, W1>, W2>, T> b) {
+                            Product<W1, W2, ?> p1 = narrowK(a);
+                            Product<W1, W2, ?> p2 = narrowK(b);
+                            return p1.zip((Product) p2);
+                          }
+                        };
+                      }
+
+
+
+
                     };
                 });
             });
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus(Monoid<Higher<Higher<Higher<product, W1>, W2>, T>> m) {
+        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<product, W1>, W2>> m) {
             return def1.monadPlus().flatMap(x -> {
                 return def2.monadPlus().map(y -> {
                     return new MonadPlus<Higher<Higher<product, W1>, W2>>() {
@@ -636,10 +651,11 @@ public class Product<W1,W2,T> implements  Filters<T>,
                             return monad().flatMap(fn, ds);
                         }
 
-                        @Override
-                        public Monoid<Higher<Higher<Higher<product, W1>, W2>, ?>> monoid() {
-                            return (Monoid)m;
-                        }
+                      @Override
+                      public <T> MonoidK<Higher<Higher<product, W1>, W2>> monoid() {
+                        return m;
+                      }
+
                     };
                 });
             });

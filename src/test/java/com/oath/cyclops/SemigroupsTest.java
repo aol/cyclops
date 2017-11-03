@@ -37,13 +37,7 @@ import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 public class SemigroupsTest {
 
-    @Test
-    public void kinds(){
-        Semigroup<Maybe<Integer>> m = Semigroups.combineZippables(Semigroups.intMax);
-        SemigroupK<maybe, Integer> x = m.toSemigroupK(Maybe.kindKleisli(), Maybe.kindCokleisli());
 
-        assertThat(x.apply(Maybe.just(10),Maybe.just(2)),equalTo(Maybe.just(10)));
-    }
     @Test
     public void testMutableListConcat() {
         List<Integer> list1 = new ArrayList<>();

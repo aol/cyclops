@@ -20,6 +20,7 @@ import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
@@ -228,7 +229,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<tuple1>> monadPlus(Monoid<Higher<tuple1, T>> m) {
+                public <T> Maybe<MonadPlus<tuple1>> monadPlus(MonoidK<tuple1> m) {
                     return Maybe.nothing();
                 }
 

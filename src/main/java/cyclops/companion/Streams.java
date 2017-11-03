@@ -33,6 +33,8 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -502,9 +504,9 @@ public class Streams {
      * }
      * </pre>
      *
-     * @param Stream - the Stream to consume data from
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming events from the Stream
+     * @param stream - the Stream to consume data from
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming events from the Stream
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x, final Consumer<? super T> consumerElement) {
@@ -539,11 +541,10 @@ public class Streams {
      * }
      * </pre>
      *
-     * @param Stream - the Stream to consume data from
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
-     * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
      */
     public static <T, X extends Throwable> Subscription forEach(final Stream<T> stream, final long x,
@@ -581,9 +582,9 @@ public class Streams {
      *     The take!
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from
-     * @param numberOfElements To consume from the Stream at this time
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from
+     * @param x To consume from the Stream at this time
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
@@ -615,8 +616,8 @@ public class Streams {
      *
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      */
     public static <T, X extends Throwable> void forEach(final Stream<T> stream, final Consumer<? super T> consumerElement,
@@ -650,8 +651,8 @@ public class Streams {
      *
      * }
      * </pre>
-     * @param Stream - the Stream to consume data from
-     * @param consumer To accept incoming elements from the Stream
+     * @param stream - the Stream to consume data from
+     * @param consumerElement To accept incoming elements from the Stream
      * @param consumerError To accept incoming processing errors from the Stream
      * @param onComplete To run after an onComplete event
      * @return Subscription so that further processing can be continued or cancelled.
@@ -973,7 +974,8 @@ public class Streams {
      * }
      * </pre>
      *
-     * @param stream to append
+     * @param stream1 to append to
+     * @param append to append with
      * @return Stream with Stream appended
      */
     public static final <T> Stream<T> appendStream(final Stream<T> stream1, final Stream<T> append) {
@@ -993,7 +995,8 @@ public class Streams {
      * }
      * </pre>
      *
-     * @param stream to Prepend
+     * @param stream1 to Prepend to
+     * @param prepend to Prepend with
      * @return Stream with Stream prepended
      */
     public static final <T> Stream<T> prependStream(final Stream<T> stream1, final Stream<T> prepend) {
@@ -1086,8 +1089,9 @@ public class Streams {
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
+     * @param stream to insert in
      * @param pos to insert Stream at
-     * @param stream to insert
+     * @param insert to insert
      * @return newly conjoined Stream
      */
     public static final <T> Stream<T> insertStreamAt(final Stream<T> stream1, final int pos, final Stream<T> insert) {
@@ -2908,8 +2912,8 @@ public class Streams {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<stream>> monadPlus(Monoid<Higher<stream, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<stream>> monadPlus(MonoidK<stream> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -3083,51 +3087,23 @@ public class Streams {
             Supplier<Higher<stream, T>> zero = ()->StreamKind.widen(Stream.of());
             return General.<stream,T,R>monadZero(monad(), zero,filter);
         }
-        public static <T,R> MonadRec<stream> monadRec(){
+        public static <T,R> MonadRec<stream> monadRec() {
 
-            return new MonadRec<stream>(){
-                @Override
-                public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream,? extends Either<T, R>>> fn) {
-                    return widen(ReactiveSeq.tailRec(initial,fn.andThen(s->ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
-                }
-            };
+          return new MonadRec<stream>() {
+            @Override
+            public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream, ? extends Either<T, R>>> fn) {
+              return widen(ReactiveSeq.tailRec(initial, fn.andThen(s -> ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
+            }
+          };
         }
-        /**
-         * <pre>
-         * {@code
-         *  StreamKind<Integer> list = Streams.<Integer>monadPlus()
-        .plus(StreamKind.widen(Stream.of()), StreamKind.widen(Stream.of(10)))
-        .convert(StreamKind::narrow);
-        //Stream.of(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining Streams by concatenation
-         */
         public static <T> MonadPlus<stream> monadPlus(){
-            Monoid<StreamKind<T>> m = Monoid.of(StreamKind.widen(Stream.of()), Instances::concat);
-            Monoid<Higher<stream,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.combineStream());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<StreamKind<Integer>> m = Monoid.of(StreamKind.widen(Stream.of()), (a,b)->a.isEmpty() ? b : a);
-        StreamKind<Integer> list = Streams.<Integer>monadPlus(m)
-        .plus(StreamKind.widen(Stream.of(5)), StreamKind.widen(Stream.of(10)))
-        .convert(StreamKind::narrow);
-        //Stream.of(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Streams
-         * @return Type class for combining Streams
-         */
-        public static <T> MonadPlus<stream> monadPlus(Monoid<StreamKind<T>> m){
-            Monoid<Higher<stream,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<stream> monadPlus(MonoidK<stream> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**
@@ -3216,7 +3192,7 @@ public class Streams {
          * If the supplied Stream implements StreamKind it is returned already, otherwise it
          * is wrapped into a Stream implementation that does implement StreamKind
          *
-         * @param Stream Stream to widen to a StreamKind
+         * @param stream Stream to widen to a StreamKind
          * @return StreamKind encoding HKT info about Streams
          */
         public static <T> StreamKind<T> widen(final Stream<T> stream) {
@@ -3248,7 +3224,7 @@ public class Streams {
         /**
          * Convert the HigherKindedType definition for a Stream into
          *
-         * @param Stream Type Constructor to convert back into narrowed type
+         * @param stream Type Constructor to convert back into narrowed type
          * @return StreamX from Higher Kinded Type
          */
         public static <T> Stream<T> narrow(final Higher<stream, T> stream) {

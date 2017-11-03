@@ -11,6 +11,7 @@ import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
@@ -21,104 +22,158 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 
-public class SemigroupKs{
+public interface SemigroupKs{
 
 
 
-    public static <T>  SemigroupK<optional,T> optionalPresent() {
-        return (a, b) -> OptionalKind.narrowK(a).isPresent() ? a : b;
+    public static SemigroupK<optional> optionalPresent() {
+        return new SemigroupK<optional>() {
+          @Override
+          public <T> Higher<optional, T> apply(Higher<optional, T> a, Higher<optional, T> b) {
+            return  OptionalKind.narrowK(a).isPresent() ? a : b;
+          }
+        };
     }
-    public static <T> SemigroupK<list,T> listXConcat() {
-        return (a, b) -> ListX.narrowK(a).plusAll(ListX.narrowK(b));
+    public static SemigroupK<list> listXConcat() {
+      return new SemigroupK<list>() {
+
+        @Override
+        public <T> Higher<list, T> apply(Higher<list, T> a, Higher<list, T> b) {
+          return ListX.narrowK(a).plusAll(ListX.narrowK(b));
+        }
+      };
+
+    }
+
+
+    static SemigroupK<set> setXConcat() {
+      return new SemigroupK<set>() {
+        @Override
+        public <T> Higher<set, T> apply(Higher<set, T> a, Higher<set, T> b) {
+          return SetX.narrowK(a).plusAll(SetX.narrowK(b));
+        }
+      };
+
     }
 
 
 
+    static SemigroupK<queue> queueXConcat() {
+      return new SemigroupK<queue>() {
 
-    /**
-     * @return A combiner for SetX (concatenates two SetX into a single SetX)
-     */
-    static <T> SemigroupK<set,T> setXConcat() {
-        return (a, b) -> SetX.narrowK(a).plusAll(SetX.narrowK(b));
-    }
-
-    /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
-
-    static <T> SemigroupK<sortedSet,T> sortedSetXConcat() {
-        return (a, b) -> SortedSetX.narrowK(a).insertAt(SortedSetX.narrowK(b));
-    }*/
-
-    /**
-     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
-     */
-    static <T> SemigroupK<queue,T> queueXConcat() {
-        return (a, b) -> QueueX.narrowK(a).plusAll(QueueX.narrowK(b));
+        @Override
+        public <T> Higher<queue, T> apply(Higher<queue, T> a, Higher<queue, T> b) {
+          return QueueX.narrowK(a).plusAll(QueueX.narrowK(b));
+        }
+      };
     }
 
     /**
      * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
      */
-    static <T> SemigroupK<deque,T> dequeXConcat() {
-        return (a, b) -> DequeX.narrowK(a).plusAll(DequeX.narrowK(b));
+    static SemigroupK<deque> dequeXConcat() {
+      return new SemigroupK<deque>() {
+
+        @Override
+        public <T> Higher<deque, T> apply(Higher<deque, T> a, Higher<deque, T> b) {
+          return DequeX.narrowK(a).plusAll(DequeX.narrowK(b));
+        }
+      };
+
     }
 
     /**
      * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
      */
-    static <T> SemigroupK<linkedListX,T> linkedListXConcat() {
-        return (a, b) -> LinkedListX.narrowK(a).plusAll(LinkedListX.narrowK(b));
+    static SemigroupK<linkedListX> linkedListXConcat() {
+      return new SemigroupK<linkedListX>() {
+
+        @Override
+        public <T> Higher<linkedListX, T> apply(Higher<linkedListX, T> a, Higher<linkedListX, T> b) {
+          return LinkedListX.narrowK(a).plusAll(LinkedListX.narrowK(b));
+        }
+      };
+
     }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
-    static <T> SemigroupK<vectorX,T> vectorXConcat() {
-        return (a, b) -> VectorX.narrowK(a).plusAll(VectorX.narrowK(b));
-    }
+    static SemigroupK<vectorX> vectorXConcat() {
+      return new SemigroupK<vectorX>() {
 
-    /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
-
-    static <T> SemigroupK<persistentSetX,T> persistentSetXConcat() {
-        return (a, b) -> PersistentSetX.narrowK(a).insertAt(PersistentSetX.narrowK(b));
-    }
-     */
-    /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
-
-    static <T> SemigroupK<OrderedsetX,T> orderedSetXConcat() {
-        return (a, b) -> OrderedSetX.narrowK(a).insertAt(OrderedSetX.narrowK(b));
-    }*/
-
-    /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
-     */
-    static <T> SemigroupK<persistentQueueX,T> persistentQueueXConcat() {
-        return (a, b) -> PersistentQueueX.narrowK(a).plusAll(PersistentQueueX.narrowK(b));
+        @Override
+        public <T> Higher<vectorX, T> apply(Higher<vectorX, T> a, Higher<vectorX, T> b) {
+          return VectorX.narrowK(a).plusAll(VectorX.narrowK(b));
+        }
+      };
     }
 
 
+    static SemigroupK<persistentQueueX> persistentQueueXConcat() {
+      return new SemigroupK<persistentQueueX>() {
 
+        @Override
+        public <T> Higher<persistentQueueX, T> apply(Higher<persistentQueueX, T> a, Higher<persistentQueueX, T> b) {
+          return PersistentQueueX.narrowK(a).plusAll(PersistentQueueX.narrowK(b));
+        }
+      };
+    }
+  static SemigroupK<persistentSetX> persistentSetXConcat() {
+    return new SemigroupK<persistentSetX>() {
 
+      @Override
+      public <T> Higher<persistentSetX, T> apply(Higher<persistentSetX, T> a, Higher<persistentSetX, T> b) {
+        return PersistentSetX.narrowK(a).plusAll(PersistentSetX.narrowK(b));
+      }
+    };
+  }
 
 
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
      */
-    static <T> SemigroupK<reactiveSeq,T> combineReactiveSeq() {
-        return (a, b) -> ReactiveSeq.narrowK(a).appendS(ReactiveSeq.narrowK(b));
+    static SemigroupK<reactiveSeq> combineReactiveSeq() {
+      return new SemigroupK<reactiveSeq>() {
+
+        @Override
+        public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> a, Higher<reactiveSeq, T> b) {
+          return  ReactiveSeq.narrowK(a).appendS(ReactiveSeq.narrowK(b));
+        }
+      };
+
     }
 
-    static <T> SemigroupK<reactiveSeq,T> firstNonEmptyReactiveSeq() {
-        return (a, b) -> ReactiveSeq.narrowK(a).onEmptySwitch(()->ReactiveSeq.narrowK(b));
+    static SemigroupK<reactiveSeq> firstNonEmptyReactiveSeq() {
+      return new SemigroupK<reactiveSeq>() {
+
+        @Override
+        public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> a, Higher<reactiveSeq, T> b) {
+          return  ReactiveSeq.narrowK(a).onEmptySwitch(()->ReactiveSeq.narrowK(b));
+        }
+      };
+
     }
-    static <T> SemigroupK<reactiveSeq,T> ambReactiveSeq() {
-        return (a,b)->Spouts.amb(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
+    static SemigroupK<reactiveSeq> ambReactiveSeq() {
+      return new SemigroupK<reactiveSeq>() {
+
+        @Override
+        public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> a, Higher<reactiveSeq, T> b) {
+          return Spouts.amb(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
+        }
+      };
+
     }
 
-    static <T> SemigroupK<reactiveSeq,T> mergeLatestReactiveSeq() {
-        return (a,b) -> Spouts.mergeLatest(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
+    static SemigroupK<reactiveSeq> mergeLatestReactiveSeq() {
+      return new SemigroupK<reactiveSeq>() {
+
+        @Override
+        public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> a, Higher<reactiveSeq, T> b) {
+          return Spouts.mergeLatest(ReactiveSeq.narrowK(a),ReactiveSeq.narrowK(b));
+        }
+      };
+
     }
 
 
@@ -126,132 +181,266 @@ public class SemigroupKs{
     /**
      * @return Combination of two Stream's : b is appended to a
      */
-    static <T> SemigroupK<stream,T> combineStream() {
-        return (a, b) ->  Streams.StreamKind.widen(Stream.concat(Streams.StreamKind.narrow(a), Streams.StreamKind.narrow(b)));
+    static SemigroupK<stream> combineStream() {
+      return new SemigroupK<stream>() {
+
+        @Override
+        public <T> Higher<stream, T> apply(Higher<stream, T> a, Higher<stream, T> b) {
+          return Streams.StreamKind.widen(Stream.concat(Streams.StreamKind.narrow(a), Streams.StreamKind.narrow(b)));
+        }
+      };
+
     }
 
 
     /**
      * @return Combine two CompletableFuture's by taking the first present
      */
-    static <T> SemigroupK<completableFuture,T> firstCompleteCompletableFuture() {
-        return (a, b) -> {
-            CompletableFuture x = CompletableFuture.anyOf(CompletableFutures.CompletableFutureKind.<T>narrowK(a), CompletableFutures.CompletableFutureKind.<T>narrowK(b));
-            return CompletableFutures.CompletableFutureKind.widen(x);
-        };
+    static SemigroupK<completableFuture> firstCompleteCompletableFuture() {
+      return new SemigroupK<completableFuture>() {
+
+        @Override
+        public <T> Higher<completableFuture, T> apply(Higher<completableFuture, T> a, Higher<completableFuture, T> b) {
+          CompletableFuture x = CompletableFuture.anyOf(CompletableFutures.CompletableFutureKind.<T>narrowK(a), CompletableFutures.CompletableFutureKind.<T>narrowK(b));
+          return CompletableFutures.CompletableFutureKind.widen(x);
+        }
+      };
+
     }
     /**
      * @return Combine two Future's by taking the first result
      */
-    static <T> SemigroupK<future,T> firstCompleteFuture() {
-        return (a, b) -> Future.anyOf(Future.narrowK(a),Future.narrowK(b));
+    static  SemigroupK<future> firstCompleteFuture() {
+      return new SemigroupK<future>() {
+
+        @Override
+        public <T> Higher<future, T> apply(Higher<future, T> a, Higher<future, T> b) {
+          return Future.anyOf(Future.narrowK(a),Future.narrowK(b));
+        }
+      };
+
     }
 
 
     /**
      * @return Combine two Future's by taking the first successful
      */
-    static <T> SemigroupK<future,T> firstSuccessfulFuture() {
-        return (a, b) -> Future.firstSuccess(Future.narrowK(a),Future.narrowK(b));
+    static  SemigroupK<future> firstSuccessfulFuture() {
+      return new SemigroupK<future>() {
+
+        @Override
+        public <T> Higher<future, T> apply(Higher<future, T> a, Higher<future, T> b) {
+          return Future.firstSuccess(Future.narrowK(a),Future.narrowK(b));
+        }
+      };
+
     }
     /**
      * @return Combine two Xor's by taking the first right
      */
-    static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstPrimaryXor() {
-        return  (a, b) -> Either.narrowK(a).isRight() ? a : b;
+    static <ST> SemigroupK<Higher<either,ST>> firstRightEither() {
+      return new SemigroupK<Higher<either,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<either,ST>, T> apply(Higher<Higher<either,ST>, T> a, Higher<Higher<either,ST>, T> b) {
+          return Either.narrowK(a).isRight() ? a : b;
+        }
+      };
+
     }
     /**
      * @return Combine two Xor's by taking the first left
      */
-    static <ST,PT> SemigroupK<Higher<either,ST>,PT> firstSecondaryXor() {
-        return  (a, b) -> Either.narrowK(a).isLeft() ? a : b;
+    static <ST> SemigroupK<Higher<either,ST>> firstLeftEither() {
+      return new SemigroupK<Higher<either,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<either,ST>, T> apply(Higher<Higher<either,ST>, T> a, Higher<Higher<either,ST>, T> b) {
+          return  Either.narrowK(a).isLeft() ? a : b;
+        }
+      };
     }
     /**
      * @return Combine two Xor's by taking the last right
      */
-    static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastPrimaryXor() {
-        return  (a, b) -> Either.narrowK(b).isRight() ? b : a;
+    static <ST> SemigroupK<Higher<either,ST>> lastRightEither() {
+      return new SemigroupK<Higher<either,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<either,ST>, T> apply(Higher<Higher<either,ST>, T> a, Higher<Higher<either,ST>, T> b) {
+          return Either.narrowK(b).isRight() ? b : a;
+        }
+      };
+
     }
     /**
      * @return Combine two Xor's by taking the last left
      */
-    static <ST,PT> SemigroupK<Higher<either,ST>,PT> lastSecondaryXor() {
-        return  (a, b) -> Either.narrowK(b).isLeft() ? b : a;
+    static <ST> SemigroupK<Higher<either,ST>> lastLeftEither() {
+      return new SemigroupK<Higher<either,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<either,ST>, T> apply(Higher<Higher<either,ST>, T> a, Higher<Higher<either,ST>, T> b) {
+          return Either.narrowK(b).isLeft() ? b : a;
+        }
+      };
     }
     /**
      * @return Combine two Try's by taking the first right
      */
-    static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTrySuccess() {
-        return  (a, b) -> Try.narrowK(a).isSuccess() ? a : b;
+    static <X extends Throwable> SemigroupK<Higher<tryType,X>> firstTrySuccess() {
+      return new SemigroupK<Higher<tryType,X>>() {
+
+        @Override
+        public <T> Higher<Higher<tryType,X>, T> apply(Higher<Higher<tryType,X>, T> a, Higher<Higher<tryType,X>, T> b) {
+          return Try.narrowK(a).isSuccess() ? a : b;
+        }
+      };
+
     }
     /**
      * @return Combine two Try's by taking the first left
      */
-    static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> firstTryFailure() {
-        return  (a, b) -> Try.narrowK(a).isFailure() ? a : b;
+    static <X extends Throwable> SemigroupK<Higher<tryType,X>> firstTryFailure() {
+      return new SemigroupK<Higher<tryType,X>>() {
+
+        @Override
+        public <T> Higher<Higher<tryType,X>, T> apply(Higher<Higher<tryType,X>, T> a, Higher<Higher<tryType,X>, T> b) {
+          return Try.narrowK(a).isFailure() ? a : b;
+        }
+      };
+
     }
     /**
      * @return Combine two Tryr's by taking the last right
      */
-    static<T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTrySuccess() {
-        return  (a, b) -> Try.narrowK(b).isSuccess() ? b : a;
+    static<X extends Throwable> SemigroupK<Higher<tryType,X>> lastTrySuccess() {
+      return new SemigroupK<Higher<tryType,X>>() {
+
+        @Override
+        public <T> Higher<Higher<tryType,X>, T> apply(Higher<Higher<tryType,X>, T> a, Higher<Higher<tryType,X>, T> b) {
+          return Try.narrowK(b).isSuccess() ? b : a;
+        }
+      };
+
     }
     /**
      * @return Combine two Try's by taking the last left
      */
-    static <T,X extends Throwable> SemigroupK<Higher<tryType,X>,T> lastTryFailure() {
-        return  (a, b) -> Try.narrowK(b).isFailure() ? b : a;
+    static <X extends Throwable> SemigroupK<Higher<tryType,X>> lastTryFailure() {
+      return new SemigroupK<Higher<tryType,X>>() {
+
+        @Override
+        public <T> Higher<Higher<tryType,X>, T> apply(Higher<Higher<tryType,X>, T> a, Higher<Higher<tryType,X>, T> b) {
+          return Try.narrowK(b).isFailure() ? b : a;
+        }
+      };
+
     }
     /**
      * @return Combine two Ior's by taking the first right
      */
-    static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isRight() ? a : b;
+    static <ST> SemigroupK<Higher<ior,ST>> firstPrimaryIor() {
+      return new SemigroupK<Higher<ior,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<ior,ST>, T> apply(Higher<Higher<ior,ST>, T> a, Higher<Higher<ior,ST>, T> b) {
+          return Ior.narrowK(a).isRight() ? a : b;
+        }
+      };
+
     }
     /**
      * @return Combine two Ior's by taking the first left
      */
-    static <ST,PT> SemigroupK<Higher<ior,ST>,PT> firstSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(a).isLeft() ? a : b;
+    static <ST> SemigroupK<Higher<ior,ST>> firstSecondaryIor() {
+      return new SemigroupK<Higher<ior,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<ior,ST>, T> apply(Higher<Higher<ior,ST>, T> a, Higher<Higher<ior,ST>, T> b) {
+          return Ior.narrowK(a).isLeft() ? a : b;
+        }
+      };
+
     }
     /**
      * @return Combine two Ior's by taking the last right
      */
-    static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastPrimaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isRight() ? b : a;
+    static <ST> SemigroupK<Higher<ior,ST>> lastPrimaryIor() {
+      return new SemigroupK<Higher<ior,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<ior,ST>, T> apply(Higher<Higher<ior,ST>, T> a, Higher<Higher<ior,ST>, T> b) {
+          return Ior.narrowK(b).isRight() ? b : a;
+        }
+      };
+
     }
     /**
      * @return Combine two Ior's by taking the last left
      */
-    static <ST,PT> SemigroupK<Higher<ior,ST>,PT> lastSecondaryIor() {
-        return  (a, b) -> Ior.narrowK(b).isLeft() ? b : a;
+    static <ST> SemigroupK<Higher<ior,ST>> lastSecondaryIor() {
+      return new SemigroupK<Higher<ior,ST>>() {
+
+        @Override
+        public <T> Higher<Higher<ior,ST>, T> apply(Higher<Higher<ior,ST>, T> a, Higher<Higher<ior,ST>, T> b) {
+          return Ior.narrowK(b).isLeft() ? b : a;
+        }
+      };
+
     }
 
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static <T> SemigroupK<maybe,T> firstPresentMaybe() {
-        return (a, b) -> Maybe.narrowK(a).isPresent() ? a : b;
+    static SemigroupK<maybe> firstPresentMaybe() {
+      return new SemigroupK<maybe>() {
+
+        @Override
+        public <T> Higher<maybe, T> apply(Higher<maybe, T> a, Higher<maybe, T> b) {
+          return Maybe.narrowK(a).isPresent() ? a : b;
+        }
+      };
+
     }
 
     /**
      * @return Combine two optionals by taking the first present
      */
-    static <T> SemigroupK<optional,T> firstPresentOptional() {
-        return (a, b) -> OptionalKind.narrowK(a).isPresent() ? a : b;
+    static SemigroupK<optional> firstPresentOptional() {
+      return new SemigroupK<optional>() {
+
+        @Override
+        public <T> Higher<optional, T> apply(Higher<optional, T> a, Higher<optional, T> b) {
+          return OptionalKind.narrowK(a).isPresent() ? a : b;
+        }
+      };
+
     }
 
     /**
      * @return Combine two Maybes by taking the last present
      */
-    static <T> SemigroupK<maybe,T> lastPresentMaybe() {
-        return (a, b) -> Maybe.narrowK(b).isPresent() ? b : a;
+    static SemigroupK<maybe> lastPresentMaybe() {
+      return new SemigroupK<maybe>() {
+        @Override
+        public <T> Higher<maybe, T> apply(Higher<maybe, T> a, Higher<maybe, T> b) {
+          return  Maybe.narrowK(b).isPresent() ? b : a;
+        }
+      };
+
     }
 
     /**
      * @return Combine two optionals by taking the last present
      */
-    static <T> SemigroupK<optional,T> lastPresentOptional() {
-        return (a, b) -> OptionalKind.narrowK(b).isPresent() ? b : a;
+    static SemigroupK<optional> lastPresentOptional() {
+      return new SemigroupK<optional>() {
+        @Override
+        public <T> Higher<optional, T> apply(Higher<optional, T> a, Higher<optional, T> b) {
+          return OptionalKind.narrowK(b).isPresent() ? b : a;
+        }
+      };
+
     }
 }

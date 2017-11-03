@@ -1,11 +1,10 @@
 package cyclops.typeclasses;
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Maybe;
-import cyclops.function.Monoid;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
@@ -44,7 +43,7 @@ public interface InstanceDefinitions<W> {
     }
 
 
-    <T> Maybe<MonadPlus<W>> monadPlus(Monoid<Higher<W,T>> m);
+    <T> Maybe<MonadPlus<W>> monadPlus(MonoidK<W> m);
 
 
 

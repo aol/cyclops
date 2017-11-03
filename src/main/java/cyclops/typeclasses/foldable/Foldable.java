@@ -69,8 +69,8 @@ public interface Foldable<CRE> {
         return foldMap(Monoids.functionComposition(), fn, ds).apply(b);
     }
 
-    default <C2,T,R> Higher<C2,T> foldK(MonoidK<C2,T> monoid, Higher<CRE,Higher<C2,T>> ds) {
-        return foldLeft(monoid, ds);
+    default <C2,T,R> Higher<C2,T> foldK(MonoidK<C2> monoid, Higher<CRE,Higher<C2,T>> ds) {
+        return foldLeft(monoid.asMonoid(), ds);
     }
 
     default <T> long size(Higher<CRE, T> ds) {
