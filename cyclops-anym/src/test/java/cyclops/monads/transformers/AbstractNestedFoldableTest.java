@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import com.oath.anym.transformers.FoldableTransformerSeq;
-import cyclops.monads.DataWitnessType;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

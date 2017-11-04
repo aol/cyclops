@@ -4,13 +4,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.util.box.Mutable;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.ior;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Ior;
 
-public class IorAnyMValueTest extends BaseAnyMValueTest<Witness.ior> {
+public class IorAnyMValueTest extends BaseAnyMValueTest<ior> {
     @Before
     public void setUp() throws Exception {
         just = AnyM.fromIor(Ior.right(10));

@@ -8,7 +8,8 @@ import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 public class FunctionsTest {
   @Before
   public void setup(){
