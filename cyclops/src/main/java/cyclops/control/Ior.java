@@ -563,6 +563,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                    .to(Witness::ior);
     }
 
+
     /**
      * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
 

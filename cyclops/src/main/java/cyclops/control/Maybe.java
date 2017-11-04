@@ -6,6 +6,7 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -155,7 +156,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
     /**
-     * Create a reactiveBuffer CompletableMaybe
+     * Create a reactive CompletableMaybe
      * <pre>
      *     {@code
      *     CompletableMaybe<Integer,Integer> completable = Maybe.maybe();
@@ -565,14 +566,26 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param maybes Maybes to Sequence
      * @return Maybe with a List of values
      */
-    public static <T> Maybe<ListX<T>> sequenceJust(final CollectionX<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.stream().filter(Maybe::isPresent).map(AnyM::fromMaybe).toListX(), maybe.INSTANCE)
-                .to(Witness::maybe);
+    public static <T> Maybe<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Maybe<T>> maybes) {
+        return sequence(maybes.filter(Maybe::isPresent).stream());
     }
+  public static  <T> Maybe<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Maybe<T>> stream) {
 
+    Maybe<ReactiveSeq<T>> identity = Maybe.just(ReactiveSeq.empty());
+
+    BiFunction<Maybe<ReactiveSeq<T>>,Maybe<T>,Maybe<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> Maybe<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Maybe<T>> stream) {
+    ReactiveSeq<Maybe<R>> s = stream.map(h -> h.map(fn));
+    return sequence(s);
+  }
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / zero
+     * By constrast with {@link Maybe#sequenceJust(IterableX)} if any Maybe types are None / zero
      * the return type will be an zero Maybe / None
      *
      * <pre>
@@ -591,14 +604,14 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
-    public static <T> Maybe<ListX<T>> sequence(final CollectionX<Maybe<T>> maybes) {
-        return sequence(maybes.stream()).map(s -> s.toListX());
+    public static <T> Maybe<ReactiveSeq<T>> sequence(final IterableX<? extends Maybe<T>> maybes) {
+        return sequence(maybes.stream());
 
     }
 
     /**
      * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
+     * By constrast with {@link Maybe#sequenceJust(IterableX)} Maybe#zero/ None types are
      * result in the returned Maybe being Maybe.zero / None
      *
      *
@@ -606,15 +619,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * {@code
      *
      *  Maybe<Integer> just = Maybe.of(10);
-    Maybe<Integer> none = Maybe.none();
+      Maybe<Integer> none = Maybe.none();
 
-<<<<<<< HEAD
      *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
-        //Maybe.none();
-=======
-     *  Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Stream.of(just, none, Maybe.of(1)));
-    //Maybe.none();
->>>>>>> master
+      //Maybe.none();
+
      *
      * }
      * </pre>
@@ -623,16 +632,14 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param maybes Maybes to Sequence
      * @return  Maybe with a Stream of values
      */
-    public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<Maybe<T>> maybes) {
-        return AnyM.sequence(maybes.map(AnyM::fromMaybe), maybe.INSTANCE)
-                .map(ReactiveSeq::fromStream)
-                .to(Witness::maybe);
+    public static <T> Maybe<ReactiveSeq<T>> sequence(final Stream<? extends Maybe<T>> maybes) {
+        return sequence(ReactiveSeq.fromStream(maybes));
 
 
     }
 
     /**
-     * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
+     * Accummulating operation using the supplied Reducer (@see cyclops.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Maybes.
      *
      * <pre>
@@ -649,7 +656,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Reducer<R,T> reducer) {
+    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -675,7 +682,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final CollectionX<Maybe<T>> maybes, final Function<? super T, R> mapper,
+    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Function<? super T, R> mapper,
                                                  final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -701,7 +708,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final CollectionX<Maybe<T>> maybes) {
+    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final IterableX<Maybe<T>> maybes) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 

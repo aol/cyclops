@@ -26,6 +26,7 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 
@@ -338,7 +339,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param xors Trys to sequence
      * @return Try Sequenced
      */
-    public static <ST extends Throwable, PT> Either<ListX<ST>, ListX<PT>> sequenceSuccess(final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<ST, ReactiveSeq<PT>> sequenceSuccess(final IterableX<Try<PT,ST>> xors) {
         return Either.sequenceRight(xors.map(t->t.xor));
     }
     /**
@@ -357,7 +358,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Reducer<R,PT> reducer) {
+    public static <ST extends Throwable, PT, R> Either<ST, R> accumulateSuccesses(final IterableX<Try<PT,ST>> xors, final Reducer<R,PT> reducer) {
         return sequenceSuccess(xors).map(s -> s.mapReduce(reducer));
     }
 
@@ -382,7 +383,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateSuccesses(final CollectionX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
+    public static <ST extends Throwable, PT, R> Either<ST, R> accumulateSuccesses(final IterableX<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
                                                                                  final Monoid<R> reducer) {
         return sequenceSuccess(xors).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -406,7 +407,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer  Reducer to accumulate results
      * @return  Try populated with the accumulate success operation
      */
-    public static <ST extends Throwable, PT> Either<?, PT> accumulateSuccesses(final Monoid<PT> reducer, final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<ST, PT> accumulateSuccesses(final Monoid<PT> reducer, final IterableX<Try<PT,ST>> xors) {
         return sequenceSuccess(xors).map(s -> s.reduce(reducer));
     }
 
@@ -428,7 +429,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer  Semigroup to combine values from each Try
      * @return Try populated with the accumulate Secondary operation
      */
-    public static <ST extends Throwable, PT> Either<?, ST> accumulateFailures(final Monoid<ST> reducer, final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<Throwable, ST> accumulateFailures(final Monoid<ST> reducer, final IterableX<Try<PT,ST>> xors) {
         return sequenceFailures(xors).map(s -> s.reduce(reducer));
     }
 
