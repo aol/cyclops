@@ -21,7 +21,6 @@ import com.oath.cyclops.internal.stream.spliterators.ints.ReversingIntArraySplit
 import com.oath.cyclops.internal.stream.spliterators.ints.ReversingRangeIntSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.longs.ReversingLongArraySpliterator;
 import com.oath.cyclops.internal.stream.spliterators.longs.ReversingRangeLongSpliterator;
-import com.oath.cyclops.types.anyM.AnyMSeq;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.futurestream.Continuation;
@@ -42,11 +41,9 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.AnyM;
 import cyclops.monads.DataWitness;
 import cyclops.monads.DataWitness.reactiveSeq;
-import cyclops.monads.DataWitnessType;
-import cyclops.monads.transformers.StreamT;
+
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -2605,10 +2602,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     boolean startsWith(Stream<T> stream);
 
-    /**
-     * @return this ReactiveSeq converted to AnyM format
-     */
-    public AnyMSeq<reactiveSeq,T> anyM();
+
 
     /*
      * (non-Javadoc)
@@ -2650,22 +2644,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     <R> ReactiveSeq<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn);
 
-    /**
-     * Allows flatMap return type to be any Monad type
-     *
-     * <pre>
-     * {@code
-     * 	assertThat(ReactiveSeq.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
-     *
-     * }
-     * </pre>
-     *
-     *
-     * @param fn
-     *            to be applied
-     * @return new stage in Sequence with flatMap operation to be lazily applied
-     */
-    <R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<Witness.stream,? extends R>> fn);
 
     /**
      * FlatMap where the result is a Collection, flattens the resultant
@@ -4076,9 +4054,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                                .permutations();
         return streamable.reactiveSeq();
     }
-    default StreamT<reactiveSeq,T> permutationsT() {
-        return StreamT.fromReactiveSeq(permutations());
-    }
+
 
     /**
      * Return a Stream with elements before the provided skip index removed,
@@ -4123,13 +4099,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<ReactiveSeq<T>> combinations(final int size) {
         return Streams.combinations(size,toArray());
     }
-    default StreamT<reactiveSeq,T> combinationsT(final int size) {
-        return StreamT.fromReactiveSeq(combinations(size));
-    }
 
-    default <W extends WitnessType<W>> StreamT<W, T> liftM(W witness) {
-        return StreamT.of(witness.adapter().unit(this));
-    }
     /**
      * <pre>
      * {@code
@@ -4151,9 +4121,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                  .prepend(ReactiveSeq.<T>empty());
 
     }
-    default StreamT<reactiveSeq,T> combinationsT() {
-        return StreamT.fromReactiveSeq(combinations());
-    }
+
 
     /**
      * Execute this Stream on a schedule

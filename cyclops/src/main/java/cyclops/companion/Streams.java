@@ -17,7 +17,7 @@ import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.*;
-import cyclops.monads.AnyM;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import com.oath.cyclops.util.box.Mutable;
@@ -1089,7 +1089,7 @@ public class Streams {
     		assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
      * }
      * </pre>
-     * @param stream to insert in
+     * @param stream1 to insert in
      * @param pos to insert Stream at
      * @param insert to insert
      * @return newly conjoined Stream

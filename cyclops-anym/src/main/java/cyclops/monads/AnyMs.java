@@ -10,6 +10,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.monads.transformers.*;
+import cyclops.reactive.ReactiveSeq;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -55,7 +56,20 @@ public interface AnyMs {
   public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
     return OptionalT.of(witness.adapter().unit(opt));
   }
+  public static <T> StreamT<DataWitness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s,final int size) {
+    return StreamT.fromReactiveSeq(s.combinations(size));
+  }
 
+  public static <W extends WitnessType<W>,T> StreamT<W, T> liftM(ReactiveSeq<T> s, W witness) {
+    return StreamT.of(witness.adapter().unit(s));
+  }
+  public static <T> StreamT<DataWitness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s) {
+    return StreamT.fromReactiveSeq(s.combinations());
+  }
+
+  public static  <T> StreamT<DataWitness.reactiveSeq,T> permutationsT(ReactiveSeq<T> s) {
+    return StreamT.fromReactiveSeq(s.permutations());
+  }
   /**
    *  Generic zip function. E.g. Zipping a Stream and an Optional
    *
