@@ -255,21 +255,21 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testSequenceLazy() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
         assertThat(maybes, equalTo(CompletableMaybeTest.just(1).flatMap(i -> Maybe.nothing())));
     }
 
     @Test
     public void testSequence() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
 
         assertThat(maybes, equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testSequenceJust() {
-        Maybe<ListX<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
         assertThat(maybes, equalTo(Maybe.of(ListX.of(10, 1))));
     }
 

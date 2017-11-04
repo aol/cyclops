@@ -10,6 +10,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -95,8 +96,8 @@ public class Ior2Test {
 
 	@Test
     public void testSequenceSecondary() {
-        Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.right(1)));
-        assertThat(iors,equalTo(Ior.right(ListX.of("none"))));
+    Ior<Integer, ReactiveSeq<String>> iors = Ior.sequenceLeft(ListX.of(just, none, Ior.right(1)));
+        assertThat(iors.map(s->s.toList()),equalTo(Ior.right(ListX.of("none"))));
     }
 
 	@Test
@@ -117,8 +118,8 @@ public class Ior2Test {
     }
 	@Test
 	public void testSequence() {
-		Ior<ListX<String>,ListX<Integer>> maybes =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
-		assertThat(maybes,equalTo(Ior.right(ListX.of(10,1))));
+    Ior<String, ReactiveSeq<Integer>> maybes = Ior.sequenceRight(ListX.of(just, none, Ior.right(1)));
+		assertThat(maybes.map(s->s.toList()),equalTo(Ior.right(ListX.of(10,1))));
 	}
 
 	@Test

@@ -5,6 +5,7 @@ import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
+import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Semigroups;
@@ -200,6 +201,26 @@ public class StreamTest {
     List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
     assertThat(zip.get(0),equalTo(1));
     assertThat(zip.get(1),equalTo(2));
+
+  }
+  @Test
+  public void lazy(){
+
+
+    ListX<VectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
+      .map(i->i*2)
+      .filter(i->i<4)
+      .sliding(2)
+      .map(vec -> vec.map(i->"value is " + i));
+
+
+    ListX.of(1,2,3,5,6,7,8)
+      .map(i->i*2)
+      .filter(i->i<4)
+      .slidingT(2)
+      .map(i->"value is " + i)
+      .unwrap()
+      .to(Witness::reactiveSeq);
 
   }
 

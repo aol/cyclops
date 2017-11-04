@@ -71,26 +71,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         .printOut();
     }
 
-    @Test
-    public void lazy(){
 
-
-        ListX<VectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
-                                                .map(i->i*2)
-                                                .filter(i->i<4)
-                                                .sliding(2)
-                                                .map(vec -> vec.map(i->"value is " + i));
-
-
-          ListX.of(1,2,3,5,6,7,8)
-                .map(i->i*2)
-                .filter(i->i<4)
-                .slidingT(2)
-                .map(i->"value is " + i)
-                .unwrap()
-                  .to(Witness::reactiveSeq);
-
-    }
 
     @Test
     public void coflatMapTest(){

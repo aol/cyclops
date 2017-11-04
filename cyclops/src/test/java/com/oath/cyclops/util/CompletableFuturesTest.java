@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.concurrent.CompletableFuture;
 
 import cyclops.companion.CompletableFutures;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,18 +30,18 @@ public class CompletableFuturesTest {
 
     @Test
     public void testSequenceError() {
-        CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just,none));
+        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(ListX.of(just,none));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
     }
     @Test
     public void testSequenceErrorAsync() {
-        CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,active));
+        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,active));
         assertThat(maybes.isDone(),equalTo(false));
     }
     @Test
     public void testSequenceTwo() {
-        CompletableFuture<ListX<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,just2));
-        assertThat(maybes.join(),equalTo(ListX.of(10,20)));
+        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,just2));
+        assertThat(maybes.join().toList(),equalTo(ListX.of(10,20)));
     }
 
 }
