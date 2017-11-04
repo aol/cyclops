@@ -1208,7 +1208,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().sortedSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().sortedSetX(Evaluation.LAZY);
     }
 
 }

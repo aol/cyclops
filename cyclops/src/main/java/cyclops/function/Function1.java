@@ -12,17 +12,11 @@ import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.monads.function.AnyMFunction1;
-
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.transformers.ListT;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import cyclops.monads.DataWitnessType;
 import cyclops.async.Future;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.typeclasses.functor.Functor;
@@ -82,9 +76,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     default <W1,W2> Function1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
         return (T1)-> functor.map(this,hktTransform.apply(T1));
     }
-    default <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>> Function1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
-        return (T1)-> hktTransform.apply(T1).map(this);
-    }
+
 
     default Function1<T,Maybe<R>> lift(){
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
@@ -99,9 +91,6 @@ public interface Function1<T,  R> extends Function<T,R>{
        return (T1)-> Option.ofNullable(apply(T1));
     }
 
-    default <W extends WitnessType<W>> AnyMFunction1<W, T,R> liftF(){
-        return AnyM.liftF(this);
-    }
 
 
     default Function1<T,R> memoize(){
@@ -217,15 +206,7 @@ public interface Function1<T,  R> extends Function<T,R>{
 
 
 
-        default <W extends WitnessType<W>> AnyM<W, R> mapF(AnyM<W, T1> functor) {
-            return functor.map(this);
-        }
-        default <W extends WitnessType<W>> FutureT<W,R> mapF(FutureT<W,T1> future) {
-            return future.map(this);
-        }
-        default <W extends WitnessType<W>> ListT<W,R> mapF(ListT<W,T1> list) {
-            return list.map(this);
-        }
+
         default ListX<R> mapF(ListX<T1> list) {
             return list.map(this);
         }
@@ -277,16 +258,12 @@ public interface Function1<T,  R> extends Function<T,R>{
         default Function1<T1, Future<R>> liftFuture() {
             return in -> Future.ofResult(apply(in));
         }
-        default <W extends WitnessType<W>> Function1<T1, FutureT<W,R>> liftFutureT(W witness) {
-            return liftFuture().andThen(f->f.liftM(witness));
-        }
+
 
         default Function1<T1, ListX<R>> liftList() {
             return in -> ListX.of(apply(in));
         }
-        default <W extends WitnessType<W>> Function1<T1, ListT<W,R>> liftListT(W witness) {
-            return liftList().andThen(l->l.liftM(witness));
-        }
+
 
         default Function1<T1, LinkedListX<R>> liftLinkedListX() {
             return in -> LinkedListX.of(apply(in));

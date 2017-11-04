@@ -1695,6 +1695,6 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().dequeX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().dequeX(Evaluation.LAZY);
     }
 }

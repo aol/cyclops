@@ -155,9 +155,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX<T>)list;
     }
 
-    default <W extends WitnessType<W>> ListT<W, T> liftM(W witness) {
-        return ListT.of(witness.adapter().unit(this));
-    }
+
     /**
      * Narrow a covariant LinkedListX
      *
@@ -408,9 +406,6 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                        .mapReduce(stream);
     }
 
-    default AnyMSeq<linkedListX,T> anyM(){
-        return AnyM.fromLinkedListX(this);
-    }
     @Override
     default LinkedListX<T> materialize() {
         return (LinkedListX<T>)LazyCollectionX.super.materialize();
@@ -727,21 +722,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     public LinkedListX<T> removeValue(T remove);
 
-    /**
-     * @param i
-     * @param e
-     * @return
-     * @see org.pcollections.PStack#with(int, java.lang.Object)
-     */
+
     @Override
     public LinkedListX<T> updateAt(int i, T e);
 
-    /**
-     * @param i
-     * @param e
-     * @return
-     * @see org.pcollections.PStack#plus(int, java.lang.Object)
-     */
+
     @Override
     public LinkedListX<T> insertAt(int i, T e);
 
@@ -751,20 +736,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     public LinkedListX<T> plusAll(Iterable<? extends T> list);
 
-    /**
-     * @param i
-     * @param list
-     * @return
-     * @see org.pcollections.PStack#plusAll(int, java.util.Collection)
-     */
+
     @Override
     public LinkedListX<T> insertAt(int i, Iterable<? extends T> list);
 
-    /**
-     * @param i
-     * @return
-     * @see org.pcollections.PStack#minus(int)
-     */
+
     @Override
     public LinkedListX<T> removeAt(int i);
 

@@ -314,7 +314,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param fn Transformation function
      * @return An Either4 with a transformed list
      */
-    public static <LT1,LT2, LT3,LT4,PT,R> LazyEither5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<R>> traverse(final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, LT3,LT4,PT,R> LazyEither5<LT1,LT2,LT3,LT4,ReactiveSeq<R>> traverse(final IterableX<LazyEither5<LT1, LT2, LT3, LT4, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -340,7 +340,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param reducer  Reducer to accumulate results
      * @return  Either4 populated with the accumulate right operation
      */
-    public static <LT1,LT2,LT3,LT4, RT> LazyEither5<ListX<LT1>, ListX<LT2>,ListX<LT3>,ListX<LT4>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, RT>> xors) {
+    public static <LT1,LT2,LT3,LT4, RT> LazyEither5<LT1,LT2,LT3,LT4,RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither5<LT1, LT2, LT3, LT4, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 

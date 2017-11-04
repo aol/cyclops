@@ -3,7 +3,6 @@ package com.oath.cyclops.types.traversable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.FilterableTransformable;
-import com.oath.cyclops.types.functor.TransformerTraversable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -31,11 +30,10 @@ import java.util.stream.*;
  * @param <T> The data type of the elements in this Traversable
  */
 public interface Traversable<T> extends Publisher<T>,
-  OnEmpty<T>,
-  Zippable<T>,
+                                        OnEmpty<T>,
+                                        Zippable<T>,
                                         IterableFilterable<T>,
                                         FilterableTransformable<T>,
-  TransformerTraversable<T>,
                                         Sequential<T>{
 
     default Traversable<T> removeAt(long index){

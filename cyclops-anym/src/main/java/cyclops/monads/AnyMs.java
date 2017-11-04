@@ -1,6 +1,10 @@
 package cyclops.monads;
 
+import com.oath.anym.AnyMSeq;
+import com.oath.anym.AnyMValue;
+import com.oath.cyclops.hkt.Higher;
 import cyclops.async.Future;
+import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Functions;
@@ -8,13 +12,17 @@ import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.control.State;
 import cyclops.function.Function1;
 import cyclops.monads.transformers.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Nested;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public interface AnyMs {
@@ -50,24 +58,27 @@ public interface AnyMs {
   public static <W extends WitnessType<W>,T> FutureT<W, T> liftM(Future<T> f, W witness) {
     return FutureT.of(witness.adapter().unit(f));
   }
+  default <W extends WitnessType<W>,T> ListT<W, T> liftM(LinkedListX<T> l, W witness) {
+    return ListT.of(witness.adapter().unit(l));
+  }
   public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
     return CompletableFutureT.of(witness.adapter().unit(opt));
   }
   public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
     return OptionalT.of(witness.adapter().unit(opt));
   }
-  public static <T> StreamT<DataWitness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s,final int size) {
+  public static <T> StreamT<Witness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s,final int size) {
     return StreamT.fromReactiveSeq(s.combinations(size));
   }
 
   public static <W extends WitnessType<W>,T> StreamT<W, T> liftM(ReactiveSeq<T> s, W witness) {
     return StreamT.of(witness.adapter().unit(s));
   }
-  public static <T> StreamT<DataWitness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s) {
+  public static <T> StreamT<Witness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s) {
     return StreamT.fromReactiveSeq(s.combinations());
   }
 
-  public static  <T> StreamT<DataWitness.reactiveSeq,T> permutationsT(ReactiveSeq<T> s) {
+  public static  <T> StreamT<Witness.reactiveSeq,T> permutationsT(ReactiveSeq<T> s) {
     return StreamT.fromReactiveSeq(s.permutations());
   }
   /**
@@ -92,5 +103,12 @@ public interface AnyMs {
                                                   final BiFunction<? super T, ? super S, ? extends R> zipper) {
     return Streams.zipSequence(stream, second.to(Witness::stream), zipper);
   }
+  public static <W extends WitnessType<W>,T> Either<AnyMValue<W,T>, AnyMSeq<W,T>> anyM(final AnyM<W,T> anyM) {
+    return anyM instanceof AnyMValue ? Either.left((AnyMValue<W,T>) anyM) : Either.right((AnyMSeq<W,T>) anyM);
+  }
+
+
+
+
 
 }

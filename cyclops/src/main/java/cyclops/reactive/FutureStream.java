@@ -11,7 +11,6 @@ import com.oath.cyclops.react.SimpleReactFailedStageException;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.anyM.AnyMSeq;
 import com.oath.cyclops.types.futurestream.*;
 import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
@@ -35,7 +34,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
+
 import cyclops.monads.DataWitness;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
@@ -55,9 +54,9 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
-  LazyStream<U>,
+                                         LazyStream<U>,
                                             ReactiveSeq<U>,
-  LazyToQueue<U>,
+                                          LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
     @Override
@@ -1776,11 +1775,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return  (FutureStream<R>)LazySimpleReactStream.super.flatMap(flatFn);
     }
 
-    @Override
-    default <R> FutureStream<R> flatMapAnyM(final Function<? super U, AnyM<Witness.stream,? extends R>> flatFn) {
-
-        return (FutureStream<R>) LazySimpleReactStream.super.flatMap(flatFn.andThen(anyM -> Witness.stream(anyM)));
-    }
 
     /**
      * Perform a flatMap operation where the CompletableFuture type returned is flattened from the resulting Stream
@@ -1949,7 +1943,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * </code>
      *
-     * @see #intersperse(Stream, Object)
      */
     @Override
     default FutureStream<U> intersperse(final U value) {
@@ -2150,8 +2143,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * </code>
      *
-     * @see #partitionFutureStream(Predicate)
-     * @see #partition(Stream, Predicate)
      */
     @Override
     default Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition(final Predicate<? super U> predicate) {
@@ -2202,7 +2193,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      *</code>
      *
-     * @see #zipWithIndex(Stream)
      *
      *
      */
@@ -2323,8 +2313,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipWhile(i &gt; i &lt;
      * 3)
      *
-     *
-     * @see #skipWhile(Stream, Predicate)
      */
     @Override
     default FutureStream<U> skipWhile(final Predicate<? super U> predicate) {
@@ -2340,7 +2328,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipUntil(i &gt; i == 3)
      *
      *
-     * @see #skipUntil(Stream, Predicate)
      */
     @Override
     default FutureStream<U> skipUntil(final Predicate<? super U> predicate) {
@@ -2356,7 +2343,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
      *
      *
-     * @see #limitWhile(Stream, Predicate)
      */
     @Override
     default FutureStream<U> limitWhile(final Predicate<? super U> predicate) {
@@ -2371,8 +2357,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
      *
-     *
-     * @see #limitUntil(Stream, Predicate)
      */
     @Override
     default FutureStream<U> limitUntil(final Predicate<? super U> predicate) {
@@ -3006,13 +2990,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                           .endsWith(stream);
     }
 
-    /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#anyM()
-     */
-    @Override
-    default AnyMSeq<Witness.reactiveSeq,U> anyM() {
-        return AnyM.fromStream(this);
-    }
 
     /*
      * @see cyclops2.reactiveStream.ReactiveSeq#flatMapI(java.util.function.Function)

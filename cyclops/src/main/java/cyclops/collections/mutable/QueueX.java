@@ -1537,7 +1537,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().queueX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().queueX(Evaluation.LAZY);
     }
 
 }

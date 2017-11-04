@@ -237,7 +237,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         return Active.of(this, Instances.definitions(value));
     }
 
-    public <W2,R> Nested<Higher<Witness.state,S>,W2,R> mapM(S value, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    public <W2,R> Nested<Higher<state,S>,W2,R> mapM(S value, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(value), defs);
     }
     public static <S,T> State<S,T> narrowK2(final Higher2<state, S,T> t) {

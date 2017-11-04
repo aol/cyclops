@@ -99,7 +99,7 @@ import static cyclops.data.tuple.Tuple.tuple;
  * @param <T> Nested Data Type
  */
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
-@EqualsAndHashCode(of={"nest"})
+@EqualsAndHashCode(of={"nested"})
 public class Nested<W1,W2,T> implements Transformable<T>,
                                         Higher3<nested,W1,W2,T>,To<Nested<W1,W2,T>> {
 
@@ -655,7 +655,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<Witness.nested, W1>, W2>> m) {
+            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<DataWitness.nested, W1>, W2>> m) {
                 return Maybe.nothing();
             }
 

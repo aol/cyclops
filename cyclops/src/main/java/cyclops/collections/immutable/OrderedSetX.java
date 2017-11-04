@@ -1169,7 +1169,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().orderedSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().orderedSetX(Evaluation.LAZY);
     }
 
 }

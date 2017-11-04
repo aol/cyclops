@@ -1556,7 +1556,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().setX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().setX(Evaluation.LAZY);
     }
 
 }

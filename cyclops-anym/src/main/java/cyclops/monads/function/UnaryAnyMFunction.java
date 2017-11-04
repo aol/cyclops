@@ -1,7 +1,8 @@
-package cyclops.function;
+package cyclops.monads.function;
 
 import cyclops.monads.AnyM;
-import cyclops.monads.DataWitnessType;
+
+import cyclops.monads.WitnessType;
 import cyclops.monads.function.AnyMFunction1;
 
 import java.util.function.UnaryOperator;

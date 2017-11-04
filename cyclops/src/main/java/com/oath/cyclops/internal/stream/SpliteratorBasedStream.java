@@ -21,7 +21,6 @@ import cyclops.control.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.DataWitness;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 
 import cyclops.data.tuple.Tuple;
@@ -360,10 +359,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
 
-    @Override
-    public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<Witness.stream,? extends R>> fn) {
-        return createSeq(Streams.flatMapAnyM(this, fn), reversible);
-    }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
@@ -377,10 +372,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     /**
-     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to forEachAsync asynchronously also. A default limit of 10k active publishers is enforced, along with a default limit of 5k queued values before
-     * backpressure is applied.
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order
      *
      * @param mapper
      * @return
@@ -390,10 +382,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     /**
-     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously, users can use the overloaded @see {@link IterableFunctor#flatMapPublisher(Function, int, QueueFactory)}
-     * method to forEachAsync asynchronously also. Active publishers are limited by the maxConcurrency parameter, along with a default limit of 5k queued values before
-     * backpressure is applied.
+     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order
      *
      * @param mapper
      * @return

@@ -4,7 +4,7 @@ package com.oath.cyclops.internal.stream;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.util.ExceptionSoftener;
-import com.oath.anym.internal.adapters.StreamAdapter;
+
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
@@ -17,7 +17,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
+
 import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -399,10 +399,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     }
 
-    @Override
-    public final <R> ReactiveSeq<R> flatMapAnyM(final Function<? super T, AnyM<Witness.stream, ? extends R>> fn) {
-        return createSeq(Streams.flatMapAnyM(this, fn));
-    }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
@@ -470,12 +466,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    protected <R> ReactiveSeq<R> createSeq(Stream<R> rStream) {
-        if (StreamAdapter.stream instanceof ReactiveSeq)
-            return (ReactiveSeq) rStream;
-        if (StreamAdapter.stream instanceof Iterable)
-            return new ReactiveStreamX<>(new IterableSourceOperator<>((Iterable<R>) rStream));
-        return new ReactiveStreamX<>(new SpliteratorToOperator<>(rStream.spliterator()));
+    protected <R> ReactiveSeq<R> createSeq(Stream<R> stream) {
+        if (stream instanceof ReactiveSeq)
+            return (ReactiveSeq) stream;
+        if (stream instanceof Iterable)
+            return new ReactiveStreamX<>(new IterableSourceOperator<>((Iterable<R>) stream));
+        return new ReactiveStreamX<>(new SpliteratorToOperator<>(stream.spliterator()));
     }
 
     @Override
