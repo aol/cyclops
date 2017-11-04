@@ -1,6 +1,7 @@
 package com.oath.anym.internal.monads;
 
 import com.oath.anym.extensability.FunctionalAdapter;
+import cyclops.monads.AnyMs;
 import cyclops.monads.WitnessType;
 
 import lombok.AccessLevel;

@@ -10,8 +10,11 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
+import cyclops.data.ImmutableList;
+import cyclops.data.LazySeq;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
@@ -40,6 +43,7 @@ import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * eXclusive Or (Either)
@@ -490,7 +494,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         return visit(s -> left(left), p -> right(p));
     }
     /**
-     *  Turn a toX of Eithers into a single Either with Lists of values.
+     *  Turn a Collection of Eithers into a single Either with Lists of values.
      *  Right and left types are swapped during this operation.
      *
      * <pre>
@@ -507,10 +511,22 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param xors Eithers to sequence
      * @return Either sequenced and swapped
      */
-    public static <ST, PT> Either<ListX<PT>, ListX<ST>> sequenceLeft(final CollectionX<Either<ST, PT>> xors) {
-        return AnyM.sequence(xors.stream().filter(Either::isLeft).map(i->AnyM.fromLazyEither(i.swap())).toListX(), either.INSTANCE)
-                    .to(Witness::either);
+    public static <ST, PT> Either<PT, ReactiveSeq<ST>> sequenceLeft(final IterableX<Either<ST, PT>> xors) {
+        return sequence(xors.stream().filter(Either::isLeft).map(i->i.swap())).map(s->ReactiveSeq.fromStream(s));
     }
+  public static  <L,T> Either<L,Stream<T>> sequence(Stream<? extends Either<L,T>> stream) {
+
+    Either<L, Stream<T>> identity = Either.right(ReactiveSeq.empty());
+
+    BiFunction<Either<L,Stream<T>>,Either<L,T>,Either<L,Stream<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->ReactiveSeq.fromStream(a).append(b));
+
+    BinaryOperator<Either<L,Stream<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->ReactiveSeq.fromStream(z1).appendS(z2));
+
+   return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L,T,R> Either<L,Stream<R>> traverse(Function<? super T,? extends R> fn,Stream<Either<L,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
     /**
      * Accumulate the result of the Left types in the Collection of Eithers provided using the supplied Reducer  {@see cyclops2.Reducers}.
      *
@@ -527,7 +543,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate left operation
      */
-    public static <LT, RT, R> Either<ListX<RT>, R> accumulateLeft(final CollectionX<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
+    public static <LT, RT, R> Either<RT, R> accumulateLeft(final IterableX<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
         return sequenceLeft(xors).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -554,7 +570,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Semigroup to combine values from each Ior
      * @return Either populated with the accumulate Left operation
      */
-    public static <ST, PT, R> Either<ListX<PT>, R> accumulateLeft(final CollectionX<Either<ST, PT>> xors, final Function<? super ST, R> mapper,
+    public static <ST, PT, R> Either<PT, R> accumulateLeft(final IterableX<Either<ST, PT>> xors, final Function<? super ST, R> mapper,
                                                                   final Monoid<R> reducer) {
         return sequenceLeft(xors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
@@ -581,9 +597,8 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param eithers Eithers to sequence
      * @return Either Sequenced
      */
-    public static <ST, PT> Either<ListX<ST>, ListX<PT>> sequenceRight(final CollectionX<Either<ST, PT>> eithers) {
-        return AnyM.sequence(eithers.stream().filter(Either::isRight).map(AnyM::fromLazyEither).toListX(), either.INSTANCE)
-                    .to(Witness::either);
+    public static <ST, PT> Either<ST, ReactiveSeq<PT>> sequenceRight(final IterableX<Either<ST, PT>> eithers) {
+        return sequence(eithers.stream().filter(Either::isRight)).map(s->ReactiveSeq.fromStream(s));
     }
     /**
      * Accumulate the result of the Right types in the Collection of Eithers provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -601,7 +616,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate right operation
      */
-    public static <LT, RT, R> Either<ListX<LT>, R> accumulateRight(final CollectionX<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
+    public static <LT, RT, R> Either<LT, R> accumulateRight(final IterableX<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
         return sequenceRight(xors).map(s -> s.mapReduce(reducer));
     }
 
@@ -626,7 +641,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate right operation
      */
-    public static <ST, PT, R> Either<ListX<ST>, R> accumulateRight(final CollectionX<Either<ST, PT>> xors, final Function<? super PT, R> mapper,
+    public static <ST, PT, R> Either<ST, R> accumulateRight(final IterableX<Either<ST, PT>> xors, final Function<? super PT, R> mapper,
                                                                    final Monoid<R> reducer) {
         return sequenceRight(xors).map(s -> s.map(mapper)
                                                .reduce(reducer));
@@ -652,7 +667,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer  Reducer to accumulate results
      * @return  Either populated with the accumulate right operation
      */
-    public static <ST, PT> Either<ListX<ST>, PT> accumulateRight(final Monoid<PT> reducer, final CollectionX<Either<ST, PT>> xors) {
+    public static <ST, PT> Either<ST, PT> accumulateRight(final Monoid<PT> reducer, final IterableX<Either<ST, PT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
 
@@ -688,7 +703,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param reducer  Semigroup to combine values from each Either
      * @return Either populated with the accumulate Left operation
      */
-    public static <ST, PT> Either<ListX<PT>, ST> accumulateLeft(final Monoid<ST> reducer, final CollectionX<Either<ST, PT>> xors) {
+    public static <ST, PT> Either<PT, ST> accumulateLeft(final Monoid<ST> reducer, final IterableX<Either<ST, PT>> xors) {
         return sequenceLeft(xors).map(s -> s.reduce(reducer));
     }
 

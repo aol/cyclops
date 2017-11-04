@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static cyclops.companion.Streams.zipSequence;
-import static cyclops2.monads.AnyM.fromStream;
+import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor
 public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {

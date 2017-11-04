@@ -2,7 +2,8 @@ package com.oath.anym.internal.monads;
 
 import java.util.Objects;
 
-import com.oath.cyclops.types.anyM.AnyMValue;
+
+import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.FunctionalAdapter;
 import cyclops.monads.WitnessType;
 

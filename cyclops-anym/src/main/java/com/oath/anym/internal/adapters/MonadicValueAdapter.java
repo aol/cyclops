@@ -1,15 +1,16 @@
 package com.oath.anym.internal.adapters;
 
-import static cyclops2.monads.AnyM.fromMonadicValue;
-import static cyclops2.monads.Witness.monadicValue;
+import static cyclops.monads.AnyM.fromMonadicValue;
+import static cyclops.monads.Witness.monadicValue;
 
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.oath.anym.AnyMValue;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.anyM.AnyMValue;
+
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 import com.oath.anym.extensability.FunctionalAdapter;
 import cyclops.control.Option;

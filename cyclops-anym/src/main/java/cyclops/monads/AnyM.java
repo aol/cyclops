@@ -81,7 +81,8 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  * Wrapper for Any Monad type
  *
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}.
- * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior},
+ *
  * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  *
  * Use AnyM to create your monad wrapper.
@@ -1257,14 +1258,6 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
     /**
      * Convert a Collection of Monads to a Monad with a List
-     *
-     * <pre>
-     * {@code
-        List<CompletableFuture<Integer>> futures = createFutures();
-        AnyM<List<Integer>> futureList = AnyMonads.sequence(AsAnyMList.anyMList(futures));
-
-       //where AnyM wraps  CompletableFuture<List<Integer>>
-      }</pre>
      *
      *
      * @param seq Collection of monads to convert

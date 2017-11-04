@@ -1,10 +1,11 @@
 package cyclops.monads;
 
+import com.oath.anym.AnyMSeq;
+import com.oath.anym.AnyMValue;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import com.oath.cyclops.types.anyM.AnyMValue;
+
 import com.oath.anym.extensability.FunctionalAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
@@ -68,13 +69,13 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  * @param <T> type data wrapped by the underlying monad
  */
 public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
-  Unwrapable,
+                                                                Unwrapable,
                                                                 EmptyUnit<T>,
                                                                 Unit<T>,
                                                                 Folds<T>,
                                                                 Transformable<T>,
                                                                 ToStream<T>,
-  Zippable<T>,
+                                                                Zippable<T>,
                                                                 Publisher<T> {
     @Override
     default ReactiveSeq<T> reactiveSeq() {
