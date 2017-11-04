@@ -6,6 +6,7 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
 import com.oath.cyclops.types.foldable.To;
@@ -320,8 +321,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ListX<T>> sequence(final CollectionX<Eval<T>> evals) {
-        return sequence(evals.stream()).map(s -> s.to().listX());
+    public static <T> Eval<ReactiveSeq<T>> sequence(final IterableX<? extends Eval<T>> evals) {
+        return sequence(evals.stream());
 
     }
 
@@ -340,11 +341,22 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return  Eval with a  list of values
      */
     public static <T> Eval<ReactiveSeq<T>> sequence(final Stream<? extends Eval<T>> evals) {
-        return AnyM.sequence(evals.map(AnyM::fromEval), eval.INSTANCE)
-                   .map(ReactiveSeq::fromStream)
-                   .to(Witness::eval);
+        return sequence(ReactiveSeq.fromStream(evals));
     }
+  public static  <T> Eval<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Eval<T>> stream) {
 
+    Eval<ReactiveSeq<T>> identity = Eval.now(ReactiveSeq.empty());
+
+    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> Eval<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Eval<T>> stream) {
+    ReactiveSeq<Eval<R>> s = stream.map(h -> h.map(fn));
+    return sequence(s);
+  }
     /**
      * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
      *
@@ -360,7 +372,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Reducer<R,T> reducer) {
+    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Reducer<R,T> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
@@ -380,7 +392,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return  Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final CollectionX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
                                           .reduce(reducer)
                                           );
@@ -402,7 +414,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return Eval with a value
      */
-    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final CollectionX<Eval<T>> evals) {
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final IterableX<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
 
