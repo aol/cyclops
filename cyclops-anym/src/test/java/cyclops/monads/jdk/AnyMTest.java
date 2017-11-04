@@ -1,6 +1,7 @@
 package cyclops.monads.jdk;
 
 
+import static cyclops.monads.AnyM.fromStream;
 import static cyclops2.monads.AnyM.fromStream;
 import static cyclops2.monads.AnyM.ofValue;
 import static java.util.Arrays.asList;
@@ -28,7 +29,7 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 
 import lombok.val;
 
@@ -67,7 +68,7 @@ public class AnyMTest {
 
 	@Test
 	public void testForEach() {
-		   AnyM.fromStream(Stream.of(asList(1,3)))
+		   fromStream(Stream.of(asList(1,3)))
 				  				.flatMap(c->AnyM.fromArray(c))
 				  				.stream()
 				  				.forEach(System.out::println);
@@ -89,8 +90,8 @@ public class AnyMTest {
 	@Test
 	public void test() {
 
-		  List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
-				  				.flatMap(c->AnyM.fromStream(c.stream()))
+		  List<Integer> list = fromStream(Stream.of(asList(1,3)))
+				  				.flatMap(c-> fromStream(c.stream()))
 				  				.stream()
 				  				.map(i->i*2)
 				  				.peek(System.out::println)
@@ -127,7 +128,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testCycleReduce(){
-		assertThat(AnyM.fromStream(Stream.of(1,2,2)).stream()
+		assertThat(fromStream(Stream.of(1,2,2)).stream()
 											.cycle(Reducers.toCountInt(),3)
 											.collect(Collectors.toList()),
 											equalTo(Arrays.asList(3,3,3)));
@@ -164,7 +165,7 @@ public class AnyMTest {
 	public void testToListFlatten(){
 
 
-		assertThat(AnyM.fromStream(Stream.of(1,2,3,null))
+		assertThat(fromStream(Stream.of(1,2,3,null))
 					.map(Maybe::ofNullable)
 					.filter(Maybe::isPresent)
 				    .map(Maybe::toOptional)
@@ -208,7 +209,7 @@ public class AnyMTest {
 
 	@Test
 	public void testFlatMap(){
-		AnyMSeq<Witness.stream,List<Integer>> m  = AnyM.fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
+		AnyMSeq<Witness.stream,List<Integer>> m  = fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
 		AnyM<Witness.stream,Integer> intM = m.flatMap( c -> fromStream(c.stream()));
 		List<Integer> list = intM.stream().toList();
 		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
@@ -252,7 +253,7 @@ public class AnyMTest {
 
 	@Test
 	public void sliding(){
-		List<VectorX<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
+		List<VectorX<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(2)
 									.collect(Collectors.toList());
@@ -263,7 +264,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void slidingIncrement(){
-		List<VectorX<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
+		List<VectorX<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(3,2)
 									.collect(Collectors.toList());
@@ -275,7 +276,7 @@ public class AnyMTest {
 	@Test
 	public void grouped(){
 
-		List<List<Integer>> list = AnyM.fromStream(Stream.of(1,2,3,4,5,6))
+		List<List<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.grouped(3)
 									.collect(Collectors.toList());
@@ -295,14 +296,14 @@ public class AnyMTest {
 	}
 	@Test
 	public void startsWithIterator(){
-		assertTrue(AnyM.fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).stream()));
+		assertTrue(fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).stream()));
 	}
 
 	@Test
     public void scanLeft() {
         assertEquals(
             asList("", "a", "ab", "abc"),
-            AnyM.fromStream(Stream.of("a", "b", "c"))
+            fromStream(Stream.of("a", "b", "c"))
             		.stream()
             		.scanLeft(Reducers.toString(""))
             		.toList());
@@ -315,7 +316,7 @@ public class AnyMTest {
 	public void reducer1(){
 		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-		val result = AnyM.fromStream(Stream.of(1,2,3,4))
+		val result = fromStream(Stream.of(1,2,3,4))
 						.stream()
 						.reduce(Arrays.asList(sum,mult).stream() );
 
@@ -327,7 +328,7 @@ public class AnyMTest {
 
 	@Test
 	public void aggregate(){
-		List<Integer> result = AnyM.fromStream(Stream.of(1,2,3,4))
+		List<Integer> result = fromStream(Stream.of(1,2,3,4))
 								.aggregate(AnyM.fromArray(5))
 								.stream()
 							    .flatMap(List::stream)
@@ -353,31 +354,31 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSortedCompartor(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().sorted((a, b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted((a, b) -> b-a).toList(),equalTo(Arrays.asList(7,6,4,3)));
 	}
 	@Test
 	public void testSkip(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().skip(2).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().skip(2).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipUntil(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipWhile(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testLimit(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().limit(2).toList(),equalTo(Arrays.asList(4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().limit(2).toList(),equalTo(Arrays.asList(4,3)));
 	}
 	@Test
 	public void testLimitUntil(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
 	}
 	@Test
 	public void testLimitWhile(){
-		assertThat(AnyM.fromStream(Stream.of(4,3,6,7)).stream().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
 	}
 
 	@Test

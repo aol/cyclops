@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 public class StreamTest {

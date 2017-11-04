@@ -1,5 +1,8 @@
 package cyclops.monads.collections.mutable;
 
+import com.oath.anym.AnyMSeq;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -8,8 +11,9 @@ import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.async.LazyReact;
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.oath.cyclops.hkt.DataWitness.futureStream;
+
+
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
@@ -17,7 +21,7 @@ import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.ListX;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<futureStream> {
     int count = 0;

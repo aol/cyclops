@@ -1,7 +1,10 @@
 package cyclops.monads.anym;
 
-import com.oath.cyclops.hkt.DataWitness.*;
-import static com.oath.cyclops.Matchers.equivalent;
+import com.oath.anym.AnyMValue;
+import cyclops.monads.Matchers;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -19,7 +22,7 @@ import org.junit.Test;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
-import com.oath.cyclops.types.anyM.AnyMValue;
+
 
 
 public class AnyMValueTest {
@@ -52,7 +55,7 @@ public class AnyMValueTest {
                 .collect(Collectors.toList());
 
 
-        AnyM<completableFuture,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures),Witness.completableFuture.INSTANCE);
+        AnyM<completableFuture,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures), Witness.completableFuture.INSTANCE);
 
 
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();

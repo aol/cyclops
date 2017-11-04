@@ -1,6 +1,6 @@
 package cyclops.monads.anym;
 
-import static cyclops2.monads.Witness.*;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -20,9 +20,16 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import cyclops.monads.DataWitnessType;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.list;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.Witness.set;
+import cyclops.monads.Witness.stream;
+import cyclops.monads.WitnessType;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -31,7 +38,7 @@ import cyclops.control.Maybe;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 
 import reactor.core.publisher.Flux;
 
