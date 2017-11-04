@@ -398,7 +398,7 @@ completableMaybe.complete(value)
 
 ## Higher level abstractions
 
-### cyclops.monads
+### cyclops2.monads
 
 | type | description | characteristics |
 |------|-------------|-----------------|
@@ -408,7 +408,7 @@ completableMaybe.complete(value)
 | Kleisli    | A functional interface that represents a manipulatable function that takes a  value and returns a monad            | Higher kinded                 |
 | Cokleisli    | A functional interface that represents a manipulatable function that takes a monad and returns a value           | Higher kinded                 |
 
-#### cyclops.monads.transformers
+#### cyclops2.monads.transformers
 
 | type | description | characteristics |
 |------|-------------|-----------------|
