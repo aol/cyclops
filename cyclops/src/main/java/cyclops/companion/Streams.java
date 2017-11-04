@@ -1615,28 +1615,7 @@ public class Streams {
 
     }
 
-    /**
-     *  Generic zip function. E.g. Zipping a Stream and an Optional
-     *
-     * <pre>
-     * {@code
-     * Stream<List<Integer>> zipped = Streams.zip(Stream.of(1,2,3)
-    									,fromEither5(Optional.of(2)),
-    										(a,b) -> Arrays.asList(a,b));
 
-
-    	List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(0);
-    	assertThat(zip.getValue(0),equalTo(1));
-    	assertThat(zip.getValue(1),equalTo(2));
-     *
-     * }
-     * </pre>
-
-     */
-    public final static <T, S, R> Stream<R> zipAnyM(final Stream<T> stream, final AnyM<stream,? extends S> second,
-            final BiFunction<? super T, ? super S, ? extends R> zipper) {
-        return zipSequence(stream, second.to(Witness::stream), zipper);
-    }
 
     /**
      * Zip this Monad with a Stream
