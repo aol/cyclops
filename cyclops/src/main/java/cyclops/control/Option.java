@@ -5,6 +5,7 @@ import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.Recoverable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -243,8 +244,8 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#zero/ None types are
+     * Sequence operation, take a Collection of Options and turn it into a Maybe with a Collection
+     * Only successes are retained. By constrast with {@link Option#sequence(IterableX)} Option#none/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -260,18 +261,14 @@ public interface Option<T> extends To<Option<T>>,
      * @param maybes Maybes to Sequence
      * @return Maybe with a List of values
      */
-    public static <T> Option<ListX<T>> sequenceJust(final CollectionX<Option<T>> maybes) {
-        return AnyM.sequence(maybes.stream()
-                                    .filter(Option::isPresent)
-                                    .map(Option::toMaybe)
-                            .map(AnyM::fromMaybe).toListX(), Witness.maybe.INSTANCE)
-                .to(Witness::maybe).toOption();
+    public static <T> Option<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Option<T>> maybes) {
+        return sequence(maybes.stream().filter(Option::isPresent));
     }
 
     /**
-     * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} if any Maybe types are None / zero
-     * the return type will be an zero Maybe / None
+     * Sequence operation, take a Collection of Options and turn it into a Option with a Collection
+     * By constrast with {@link Option#sequenceJust(IterableX)} if any Option types are None / zero
+     * the return type will be an zero Option / None
      *
      * <pre>
      * {@code
@@ -289,8 +286,8 @@ public interface Option<T> extends To<Option<T>>,
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
-    public static <T> Option<ListX<T>> sequence(final CollectionX<Option<T>> maybes) {
-        return sequence(maybes.stream()).map(s -> s.toListX());
+    public static <T> Option<ReactiveSeq<T>> sequence(final IterableX<? extends Option<T>> maybes) {
+        return sequence(maybes.stream());
 
     }
 
@@ -316,14 +313,25 @@ public interface Option<T> extends To<Option<T>>,
      * @param maybes Maybes to Sequence
      * @return  Maybe with a Stream of values
      */
-    public static <T> Option<ReactiveSeq<T>> sequence(final Stream<Option<T>> maybes) {
-        return AnyM.sequence(maybes.map(Option::toMaybe).map(AnyM::fromMaybe), Witness.maybe.INSTANCE)
-                .map(ReactiveSeq::fromStream)
-                .to(Witness::maybe).toOption();
+    public static <T> Option<ReactiveSeq<T>> sequence(final Stream<? extends Option<T>> maybes) {
+        return sequence(ReactiveSeq.fromStream(maybes));
 
 
     }
+  public static  <T> Option<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Option<T>> stream) {
 
+    Option<ReactiveSeq<T>> identity = Option.some(ReactiveSeq.empty());
+
+    BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<Option<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> Option<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Option<T>> stream) {
+    ReactiveSeq<Option<R>> s = stream.map(h -> h.map(fn));
+    return sequence(s);
+  }
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Maybes.
@@ -342,7 +350,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Reducer<R,T> reducer) {
+    public static <T, R> Option<R> accumulateJust(final IterableX<Option<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -368,7 +376,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final CollectionX<Option<T>> maybes, final Function<? super T, R> mapper,
+    public static <T, R> Option<R> accumulateJust(final IterableX<Option<T>> maybes, final Function<? super T, R> mapper,
                                                  final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -376,7 +384,7 @@ public interface Option<T> extends To<Option<T>>,
 
     /**
      * Accumulate the results only from those Maybes which have a value present, using the supplied Monoid (a combining BiFunction/BinaryOperator and identity element that takes two
-     * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
+     * input values of the same type and returns the combined result) {@see cyclops.Monoids }.
 
      *
      * <pre>
@@ -394,7 +402,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Option<T> accumulateJust(final Monoid<T> reducer,final CollectionX<Option<T>> maybes) {
+    public static <T> Option<T> accumulateJust(final Monoid<T> reducer,final IterableX<Option<T>> maybes) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
