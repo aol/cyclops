@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.*;
 import cyclops.control.Maybe;
-import cyclops.monads.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;

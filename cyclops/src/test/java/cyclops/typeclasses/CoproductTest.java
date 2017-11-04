@@ -3,8 +3,8 @@ package cyclops.typeclasses;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.Maybe;
-import cyclops.monads.DataWitness.maybe;
-import cyclops.monads.DataWitness.stream;
+import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.stream;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;

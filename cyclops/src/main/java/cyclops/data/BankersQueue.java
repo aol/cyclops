@@ -12,7 +12,7 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.bankersQueue;
+import com.oath.cyclops.hkt.DataWitness.bankersQueue;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

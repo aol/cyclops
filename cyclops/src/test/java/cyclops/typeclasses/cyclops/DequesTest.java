@@ -9,7 +9,7 @@ import cyclops.collections.mutable.DequeX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.deque;
+import com.oath.cyclops.hkt.DataWitness.deque;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

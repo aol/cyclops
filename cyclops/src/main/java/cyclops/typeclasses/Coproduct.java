@@ -23,7 +23,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;

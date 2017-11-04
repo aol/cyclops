@@ -1,7 +1,7 @@
 package cyclops.control;
 
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.monads.DataWitness.coreader;
+import com.oath.cyclops.hkt.DataWitness.coreader;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -9,7 +9,6 @@ import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
-import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 
 import java.io.BufferedReader;

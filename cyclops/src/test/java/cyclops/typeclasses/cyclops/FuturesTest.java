@@ -6,7 +6,7 @@ import cyclops.async.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.future;
+import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

@@ -35,7 +35,6 @@ import cyclops.function.Function4;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
-import cyclops.monads.DataWitness;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

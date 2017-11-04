@@ -9,7 +9,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.vectorX;
+import com.oath.cyclops.hkt.DataWitness.vectorX;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

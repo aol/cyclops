@@ -4,7 +4,7 @@ package cyclops.data;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.multiMapHK;
+import com.oath.cyclops.hkt.DataWitness.multiMapHK;
 import cyclops.typeclasses.Pure;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

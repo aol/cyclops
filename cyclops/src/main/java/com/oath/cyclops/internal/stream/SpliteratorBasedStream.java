@@ -20,7 +20,6 @@ import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 
 import cyclops.data.tuple.Tuple;

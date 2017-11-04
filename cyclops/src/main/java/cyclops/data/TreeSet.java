@@ -8,7 +8,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.monads.DataWitness.treeSet;
+import com.oath.cyclops.hkt.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

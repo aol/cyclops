@@ -13,6 +13,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 
+import com.oath.anym.transformers.TransformerTraversable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
@@ -45,7 +46,7 @@ import cyclops.function.Function3;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
-public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, IterableX<T>, Publisher<T> {
+public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,TransformerTraversable<T>,IterableX<T>, Publisher<T> {
 
 
     default <R> AnyMSeq<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){

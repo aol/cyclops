@@ -8,7 +8,7 @@ import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.DataWitness.linkedHashMap;
+import com.oath.cyclops.hkt.DataWitness.linkedHashMap;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

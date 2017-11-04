@@ -13,7 +13,7 @@ import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.monads.DataWitness.persistentSetX;
+import com.oath.cyclops.hkt.DataWitness.persistentSetX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;

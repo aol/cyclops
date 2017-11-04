@@ -7,7 +7,7 @@ import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.DataWitness.treeMap;
+import com.oath.cyclops.hkt.DataWitness.treeMap;
 import cyclops.data.base.RedBlackTree;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

@@ -14,12 +14,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import cyclops.control.Option;
-import cyclops.monads.DataWitness;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentBiFunction;
 import cyclops.function.FluentFunctions.FluentFunction;
@@ -220,17 +218,7 @@ public class FluentTriFunctionTest {
                    equalTo(Option.some(6)));
     }
 
-    @Test
-    public void testLiftM() {
 
-        AnyM<Witness.list,Integer> result = FluentFunctions.of(this::add)
-                                              .<Witness.list>liftF3()
-                                              .apply(AnyM.listOf(1, 2, 3, 4), AnyM.listOf(1), AnyM.listOf(10));
-
-        assertThat(result.stream()
-                         .toList(),
-                   equalTo(Arrays.asList(12, 13, 14, 15)));
-    }
 
     @Test
     public void testTry() {

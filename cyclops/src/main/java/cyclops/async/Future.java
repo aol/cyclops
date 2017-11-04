@@ -12,8 +12,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.future;
+import com.oath.cyclops.hkt.DataWitness.future;
 
 import cyclops.typeclasses.*;
 

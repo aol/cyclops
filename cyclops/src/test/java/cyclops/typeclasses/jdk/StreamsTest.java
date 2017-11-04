@@ -16,7 +16,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.stream;
+import com.oath.cyclops.hkt.DataWitness.stream;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

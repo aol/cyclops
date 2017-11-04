@@ -10,7 +10,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.monads.DataWitness.intMap;
+import com.oath.cyclops.hkt.DataWitness.intMap;
 import cyclops.control.Eval;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.data.tuple.Tuple3;

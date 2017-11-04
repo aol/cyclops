@@ -9,7 +9,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.linkedListX;
+import com.oath.cyclops.hkt.DataWitness.linkedListX;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

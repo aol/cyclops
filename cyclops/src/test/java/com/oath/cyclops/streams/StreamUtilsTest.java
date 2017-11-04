@@ -29,7 +29,6 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 
@@ -238,30 +237,7 @@ utilResultList:[1]
 				equalTo(Arrays.asList(4,3)));
 	}
 
-	@Test
-	public void zipOptional(){
-		Stream<List<Integer>> zipped = Streams.zipAnyM(Stream.of(1,2,3)
-										,AnyM.fromArray(2),
-											(a,b) -> Arrays.asList(a,b));
 
-
-		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
-		assertThat(zip.get(0),equalTo(1));
-		assertThat(zip.get(1),equalTo(2));
-
-	}
-	@Test
-	public void zipOptionalSequence(){
-		Stream<List<Integer>> zipped = Streams.zipAnyM(Stream.of(1,2,3)
-										,AnyM.fromArray(2),
-											(a,b) -> Arrays.asList(a,b));
-
-
-		List<Integer> zip = zipped.collect(Collectors.toList()).get(0);
-		assertThat(zip.get(0),equalTo(1));
-		assertThat(zip.get(1),equalTo(2));
-
-	}
 	@Test
 	public void zipStream(){
 		Stream<List<Integer>> zipped = Streams.zipStream(Stream.of(1,2,3)

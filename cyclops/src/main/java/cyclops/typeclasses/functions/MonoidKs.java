@@ -17,8 +17,7 @@ import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;

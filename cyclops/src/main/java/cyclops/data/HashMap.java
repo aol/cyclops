@@ -7,7 +7,7 @@ import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.DataWitness.hashMap;
+import com.oath.cyclops.hkt.DataWitness.hashMap;
 import cyclops.data.base.HAMT;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

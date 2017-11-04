@@ -15,12 +15,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 
 import cyclops.control.Option;
-import cyclops.monads.DataWitness;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentFunction;
 import cyclops.function.FluentFunctions.FluentSupplier;
@@ -191,16 +189,7 @@ public class FluentBiFunctionTest {
 						.liftOption()
 						.apply(Option.ofNullable(nullValue),Option.of(1));
 	}
-	@Test
-	public void testLiftM(){
 
-		AnyM<Witness.list,Integer> result = FluentFunctions.of(this::add)
-											  .<Witness.list>liftF()
-											  .apply(AnyM.listOf(1,2,3,4),AnyM.listOf(1));
-
-		assertThat(result.stream().toList(),
-					equalTo(Arrays.asList(2,3,4,5)));
-	}
 	@Test
 	public void testTry(){
 

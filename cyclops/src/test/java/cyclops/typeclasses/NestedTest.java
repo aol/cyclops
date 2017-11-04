@@ -5,10 +5,10 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.monads.DataWitness.future;
-import cyclops.monads.DataWitness.list;
-import cyclops.monads.DataWitness.optional;
-import cyclops.monads.DataWitness.reactiveSeq;
+import com.oath.cyclops.hkt.DataWitness.future;
+import com.oath.cyclops.hkt.DataWitness.list;
+import com.oath.cyclops.hkt.DataWitness.optional;
+import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
@@ -13,10 +12,8 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import cyclops.async.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.eval;
+import com.oath.cyclops.hkt.DataWitness.eval;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

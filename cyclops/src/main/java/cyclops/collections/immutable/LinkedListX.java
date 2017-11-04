@@ -15,7 +15,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.monads.DataWitness.linkedListX;
+import com.oath.cyclops.hkt.DataWitness.linkedListX;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;

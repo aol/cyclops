@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.Filters;
@@ -12,10 +11,8 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.ior;
+import com.oath.cyclops.hkt.DataWitness.ior;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;

@@ -16,7 +16,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.monads.DataWitness.vectorX;
+import com.oath.cyclops.hkt.DataWitness.vectorX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;

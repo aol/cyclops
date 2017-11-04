@@ -2,7 +2,7 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.zipper;
+import com.oath.cyclops.hkt.DataWitness.zipper;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

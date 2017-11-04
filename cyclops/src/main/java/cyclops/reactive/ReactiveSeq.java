@@ -41,8 +41,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.reactiveSeq;
+import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

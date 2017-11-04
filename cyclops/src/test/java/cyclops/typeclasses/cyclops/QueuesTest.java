@@ -9,7 +9,7 @@ import cyclops.collections.mutable.QueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import cyclops.monads.DataWitness.queue;
+import com.oath.cyclops.hkt.DataWitness.queue;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

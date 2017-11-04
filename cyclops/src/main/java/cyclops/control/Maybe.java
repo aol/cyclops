@@ -16,14 +16,12 @@ import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
 
-import cyclops.monads.DataWitness;
 import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.DataWitness.maybe;
-import cyclops.monads.DataWitness.optional;
+import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.optional;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;

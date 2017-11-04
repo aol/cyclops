@@ -27,11 +27,9 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.tryType;
+import com.oath.cyclops.hkt.DataWitness.tryType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;

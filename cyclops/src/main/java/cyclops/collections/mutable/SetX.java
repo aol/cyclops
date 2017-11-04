@@ -11,7 +11,7 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.set;
+import com.oath.cyclops.hkt.DataWitness.set;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
