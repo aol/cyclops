@@ -11,6 +11,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 import cyclops.monads.DataWitness;
@@ -458,9 +459,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param iors Iors to sequence
      * @return Ior sequenced and swapped
      */
-    public static <ST, PT> Ior<ListX<PT>, ListX<ST>> sequenceLeft(final CollectionX<? extends Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.stream().filterNot(Ior::isRight).map(i->AnyM.fromIor(i.swap())).toListX(), ior.INSTANCE)
-                   .to(Witness::ior);
+    public static <ST, PT> Ior<PT, ReactiveSeq<ST>> sequenceLeft(final IterableX<? extends Ior<ST, PT>> iors) {
+        return sequence(iors.stream().filterNot(Ior::isRight).map(Ior::swap));
 
     }
 
@@ -479,7 +479,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate left operation
      */
-    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateLeft(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
+    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final IterableX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
         return sequenceLeft(iors).map(s -> s.mapReduce(reducer));
     }
 
@@ -506,7 +506,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Semigroup to combine values from each Ior
      * @return Ior populated with the accumulate Secondary operation
      */
-    public static <ST, PT, R> Ior<ListX<PT>, R> accumulateLeft(final CollectionX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
+    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final IterableX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
                                                                final Monoid<R> reducer) {
         return sequenceLeft(iors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
@@ -534,7 +534,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
      */
-    public static <ST, PT> Ior<ListX<PT>, ST> accumulateLeft(final Monoid<ST> reducer, final CollectionX<Ior<ST, PT>> iors) {
+    public static <ST, PT> Ior<PT, ST> accumulateLeft(final Monoid<ST> reducer, final IterableX<Ior<ST, PT>> iors) {
         return sequenceLeft(iors).map(s -> s.reduce(reducer));
     }
 
@@ -548,7 +548,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
        Ior<String,Integer> none = Ior.left("none");
 
 
-     * Ior<ListX<String>,ListX<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
+     * Ior<String,ReactiveSeq<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
        //Ior.right(ListX.of(10,1)));
      *
      * }</pre>
@@ -558,11 +558,22 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param iors Iors to sequence
      * @return Ior Sequenced
      */
-    public static <ST, PT> Ior<ListX<ST>, ListX<PT>> sequenceRight(final CollectionX<Ior<ST, PT>> iors) {
-        return AnyM.sequence(iors.stream().filterNot(Ior::isLeft).map(AnyM::fromIor).toListX(), ior.INSTANCE)
-                   .to(Witness::ior);
+    public static <ST, PT> Ior<ST, ReactiveSeq<PT>> sequenceRight(final IterableX<Ior<ST, PT>> iors) {
+        return sequence(iors.stream().filterNot(Ior::isLeft));
     }
+  public static  <L,T> Ior<L,ReactiveSeq<T>> sequence(ReactiveSeq<? extends Ior<L,T>> stream) {
 
+    Ior<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+
+    BiFunction<Ior<L,ReactiveSeq<T>>,Ior<L,T>,Ior<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<Ior<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L,T,R> Ior<L,ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Ior<L,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
 
     /**
      * Accumulate the result of the Primary types in the Collection of Iors provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -580,7 +591,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ListX<ST>, R> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
+    public static <ST, PT, R> Ior<ST, R> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
         return sequenceRight(iors).map(s -> s.mapReduce(reducer));
     }
 
@@ -605,7 +616,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ListX<ST>, R> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
+    public static <ST, PT, R> Ior<ST, R> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
                                                                 final Semigroup<R> reducer) {
         return sequenceRight(iors).map(s -> s.map(mapper)
                                                .reduce(reducer)
@@ -633,7 +644,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer  Reducer to accumulate results
      * @return  Ior populated with the accumulate right operation
      */
-    public static <ST, PT> Ior<ListX<ST>, PT> accumulateRight(final CollectionX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
+    public static <ST, PT> Ior<ST, PT> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
         return sequenceRight(iors).map(s -> s.reduce(reducer)
                                                .get());
     }
