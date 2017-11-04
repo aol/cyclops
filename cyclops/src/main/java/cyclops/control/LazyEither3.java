@@ -12,6 +12,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -49,10 +50,10 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
-  OrElseValue<RT,LazyEither3<LT1,LT2,RT>>,
+                                                OrElseValue<RT,LazyEither3<LT1,LT2,RT>>,
                                                 Unit<RT>,
                                                 Transformable<RT>,
-  Filters<RT>,
+                                                 Filters<RT>,
                                                 BiTransformable<LT2, RT>,
                                                 To<LazyEither3<LT1, LT2, RT>>,
                                                 Sealed3<LT1,LT2,RT>,
@@ -229,7 +230,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                         .recover(t-> LazyEither3.<Throwable,LT2,RT>left1(t.getCause()))));
     }
     /**
-     *  Turn a toX of Either3 into a single Either with Lists of values.
+     *  Turn an IterableX of Either3 into a single Either with Lists of values.
      *
      * <pre>
      * {@code
@@ -238,8 +239,8 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
        Either3<String,String,Integer> none = Either3.left("none");
 
 
-     * Either3<ListX<String>,ListX<String>,ListX<Integer>> xors =Either3.sequence(ListX.of(just,none,Either3.right(1)));
-       //Eitehr.right(ListX.of(10,1)));
+     * Either3<String,String,ReactiveSeq<Integer>> xors =Either3.sequence(ListX.of(just,none,Either3.right(1)));
+       //Eitehr.right(ReactiveSeq.of(10,1)));
      *
      * }</pre>
      *
@@ -248,20 +249,32 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2, PT> LazyEither3<ListX<LT1>,ListX<LT2>,ListX<PT>> sequence(final CollectionX<LazyEither3<LT1, LT2, PT>> xors) {
+    public static <LT1,LT2, PT> LazyEither3<LT1,LT2,ReactiveSeq<PT>> sequence(final IterableX<? extends LazyEither3<LT1, LT2, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(LazyEither3::isRight).map(AnyM::fromEither3).to().listX(), lazyEither3.INSTANCE)
-                .to(Witness::lazyEither3);
+        return sequence(xors.stream().filter(LazyEither3::isRight));
     }
+  public static  <L1,L2,T> LazyEither3<L1,L2,ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither3<L1,L2,T>> stream) {
+
+    LazyEither3<L1,L2, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+
+    BiFunction<LazyEither3<L1,L2,ReactiveSeq<T>>,LazyEither3<L1,L2,T>,LazyEither3<L1,L2,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<LazyEither3<L1,L2,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L1,L2,T,R> LazyEither3<L1,L2,ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<LazyEither3<L1,L2,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
     /**
-     * TraverseOps a Collection of Either3 producing an Either3 with a ListX, applying the transformation function to every
+     * Traverse a Collection of Either3 producing an Either3 with a ListX, applying the transformation function to every
      * element in the list
      *
      * @param xors Either3s to sequence and transform
      * @param fn Transformation function
      * @return An Either3 with a transformed list
      */
-    public static <LT1,LT2, PT,R> LazyEither3<ListX<LT1>,ListX<LT2>,ListX<R>> traverse(final CollectionX<LazyEither3<LT1, LT2, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, PT,R> LazyEither3<LT1,LT2,ReactiveSeq<R>> traverse(final IterableX<LazyEither3<LT1, LT2, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -287,7 +300,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @param reducer  Reducer to accumulate results
      * @return  Either3 populated with the accumulate right operation
      */
-    public static <LT1,LT2, RT> LazyEither3<ListX<LT1>, ListX<LT2>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither3<LT1, LT2, RT>> xors) {
+    public static <LT1,LT2, RT> LazyEither3<LT1,LT2, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither3<LT1, LT2, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 

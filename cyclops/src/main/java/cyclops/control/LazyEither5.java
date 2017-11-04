@@ -9,6 +9,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -45,12 +46,12 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
-  Filters<RT>,
+                                                        Filters<RT>,
                                                         BiTransformable<LT4, RT>,
                                                         To<LazyEither5<LT1, LT2,LT3, LT4,RT>>,
-  OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
+                                                        OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
                                                         Unit<RT>,
-  Value<RT> {
+                                                        Value<RT> {
 
 
     Option<RT> get();
@@ -288,11 +289,23 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2,LT3,LT4,PT> LazyEither5<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<LT4>,ListX<PT>> sequence(final CollectionX<LazyEither5<LT1, LT2, LT3, LT4, PT>> xors) {
+    public static <LT1,LT2,LT3,LT4,PT> LazyEither5<LT1,LT2,LT3,LT4,ReactiveSeq<PT>> sequence(final IterableX<? extends LazyEither5<LT1, LT2, LT3, LT4, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(LazyEither5::isRight).map(AnyM::fromEither5).to().listX(), Witness.lazyEither5.INSTANCE)
-                .to(Witness::lazyEither5);
+        return sequence(xors.stream().filter(LazyEither5::isRight));
     }
+  public static  <L1,L2,L3,L4,T> LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither5<L1, L2, L3, L4, T>> stream) {
+
+    LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+
+    BiFunction<LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>>,LazyEither5<L1, L2, L3, L4, T>,LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L1,L2,L3,L4,T,R> LazyEither5<L1, L2, L3, L4, ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<LazyEither5<L1, L2, L3,L4,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
     /**
      * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
      * element in the list
