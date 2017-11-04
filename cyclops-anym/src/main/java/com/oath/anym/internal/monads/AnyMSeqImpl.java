@@ -1,8 +1,9 @@
 package com.oath.anym.internal.monads;
 
+import com.oath.anym.AnyMSeq;
 import com.oath.anym.extensability.FunctionalAdapter;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 import cyclops.monads.WitnessType;
 
 import java.util.Objects;

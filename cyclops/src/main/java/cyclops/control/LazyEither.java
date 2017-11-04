@@ -3,6 +3,7 @@ package cyclops.control;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.async.Future;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Stream;
 
 /**
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
@@ -383,7 +385,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     /**
-     *  Turn a toX of Eithers into a single Either with Lists of values.
+     *  Turn an IterableX of Eithers into a single Either with Lists of values.
      *
      * <pre>
      * {@code
@@ -402,21 +404,30 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param xors Either to sequence
      * @return Either Sequenced
      */
-    public static <LT1, PT> LazyEither<ListX<LT1>,ListX<PT>> sequenceRight(final CollectionX<LazyEither<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<LT1,ReactiveSeq<PT>> sequenceRight(final IterableX<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(LazyEither::isRight).map(AnyM::fromLazyEither).to().listX(), lazyEither.INSTANCE)
-                .to(Witness::lazyEither);
+        return sequence(xors.stream().filter(LazyEither::isRight));
     }
-    public static <LT1, PT> LazyEither<ListX<LT1>,ListX<PT>> sequenceLeft(final CollectionX<LazyEither<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<ReactiveSeq<LT1>,PT> sequenceLeft(final IterableX<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        LazyEither<ListX<PT>,ListX<LT1>> res = AnyM.sequence(xors.stream()
-                                 .filter(LazyEither::isRight)
-                                 .map(i->AnyM.fromLazyEither(i.swap())).to()
-                                 .listX(),
-                                lazyEither.INSTANCE)
-                    .to(Witness::lazyEither);
+      LazyEither<PT, ReactiveSeq<LT1>> res = sequence(xors.stream()
+                            .filter(LazyEither::isRight)
+                        .map(i -> i.swap()));
         return res.swap();
     }
+  public static  <L,T> LazyEither<L,ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither<L,T>> stream) {
+
+    LazyEither<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+
+    BiFunction<LazyEither<L,ReactiveSeq<T>>,LazyEither<L,T>,LazyEither<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<LazyEither<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L,T,R> LazyEither<L,ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<LazyEither<L,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
     /**
      * TraverseOps a Collection of Either producting an Either3 with a ListX, applying the transformation function to every
      * element in the list
@@ -425,10 +436,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param fn Transformation function
      * @return An Either with a transformed list
      */
-    public static <LT1, PT,R> LazyEither<ListX<LT1>,ListX<R>> traverseRight(final CollectionX<LazyEither<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1, PT,R> LazyEither<LT1,ReactiveSeq<R>> traverseRight(final IterableX<LazyEither<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequenceRight(xors).map(l->l.map(fn));
     }
-    public static <LT1, PT,R> LazyEither<ListX<R>,ListX<PT>> traverseLeft(final CollectionX<LazyEither<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
+    public static <LT1, PT,R> LazyEither<ReactiveSeq<R>,PT> traverseLeft(final IterableX<LazyEither<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
         return  sequenceLeft(xors).mapLeft(l->l.map(fn));
     }
 
@@ -454,7 +465,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param reducer  Reducer to accumulate results
      * @return  Either populated with the accumulate right operation
      */
-    public static <LT1, RT> LazyEither<ListX<LT1>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither<LT1, RT>> xors) {
+    public static <LT1, RT> LazyEither<LT1, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither<LT1, RT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
 
@@ -656,7 +667,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return this.map(t -> unit(t));
     }
 
-
+  default <T2, R> LazyEither<LT, R> zip(final Ior<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
+    return flatMap(t->app.map(t2->fn.apply(t,t2)).toEither());
+  }
+  default <T2, R> LazyEither<LT, R> zip(final Either<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
+    return flatMap(t->app.map(t2->fn.apply(t,t2)));
+  }
 
     /*
      * (non-Javadoc)

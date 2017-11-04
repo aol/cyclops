@@ -1,8 +1,8 @@
 package com.oath.anym.internal.adapters;
 
-import static cyclops2.monads.AnyM.fromStream;
+import static cyclops.monads.AnyM.fromStream;
 import static cyclops.companion.Streams.zipSequence;
-import static cyclops2.monads.Witness.stream;
+import static cyclops.monads.Witness.stream;
 
 import java.util.Iterator;
 import java.util.function.Function;

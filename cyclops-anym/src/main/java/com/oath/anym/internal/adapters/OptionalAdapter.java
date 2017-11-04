@@ -1,7 +1,7 @@
 package com.oath.anym.internal.adapters;
 
-import static cyclops2.monads.AnyM.fromOptional;
-import static cyclops2.monads.Witness.optional;
+import static cyclops.monads.AnyM.fromOptional;
+import static cyclops.monads.Witness.optional;
 import static cyclops.companion.Optionals.combine;
 
 import java.util.Iterator;
@@ -10,7 +10,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.oath.cyclops.types.anyM.AnyMValue;
+
+import com.oath.anym.AnyMValue;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;

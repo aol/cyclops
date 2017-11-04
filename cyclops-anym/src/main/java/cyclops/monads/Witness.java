@@ -8,6 +8,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+import com.oath.anym.internal.adapters.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.async.Future;
@@ -171,7 +172,7 @@ public interface Witness {
 
         @Override
         public  FunctionalAdapter<sortedSet> adapter() {
-            return new CollectionXAdapter<Witness.sortedSet>(SortedSetX::empty,
+            return new CollectionXAdapter<sortedSet>(SortedSetX::empty,
                     SortedSetX::of,SortedSetX::fromIterator,this);
         }
 

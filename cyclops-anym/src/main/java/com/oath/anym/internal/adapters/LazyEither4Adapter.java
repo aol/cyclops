@@ -1,6 +1,7 @@
 package com.oath.anym.internal.adapters;
 
-import com.oath.cyclops.types.anyM.AnyMValue;
+
+import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 import com.oath.anym.extensability.FunctionalAdapter;
 import com.oath.anym.extensability.ValueAdapter;
