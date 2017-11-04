@@ -3,12 +3,12 @@ package cyclops.function;
 import cyclops.control.Option;
 import cyclops.control.Reader;
 import cyclops.function.checked.*;
-import cyclops.monads.AnyM;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Try;
 import com.oath.cyclops.util.box.MutableInt;
 import cyclops.function.checked.CheckedTriFunction;
-import cyclops.monads.DataWitnessType;
+
 import com.oath.cyclops.util.ExceptionSoftener;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -970,12 +970,7 @@ public class FluentFunctions {
             return FluentFunctions.of((t1) -> Try.withCatch(() -> fn.apply(t1), classes));
         }
 
-        /**
-         * @return A function that accepts and reurns an AnyM type
 
-        public  <W extends WitnessType<W>> FluentFunction<AnyM<W,T>, AnyM<W,R>> liftF() {
-            return FluentFunctions.of(AnyM.liftF(fn));
-        }*/
 
         /**
          * @param ex Executor to execute this function on
@@ -1735,12 +1730,7 @@ public class FluentFunctions {
             return FluentFunctions.of((t1, t2, t3) -> Try.withCatch(() -> fn.apply(t1, t2, t3), classes));
         }
 
-        /**
-         * @return Lift this TriFunction into one that accepts and returns generic monad types (AnyM)
-         */
-        public  <W extends WitnessType<W>> FluentTriFunction<AnyM<W,T1>, AnyM<W,T2>, AnyM<W,T3>, AnyM<W,R>> liftF3() {
-            return FluentFunctions.of(AnyM.liftF3(fn));
-        }
+
 
         /**
          * Convert this TriFunction into one that executes asynchronously and returns a CompleteableFuture with the result

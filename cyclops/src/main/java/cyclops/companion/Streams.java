@@ -2171,11 +2171,6 @@ public class Streams {
         return (Stream<T>)stream;
     }
 
-    public final static <T, R> Stream<R> flatMapAnyM(final Stream<T> stream, final Function<? super T, AnyM<stream,? extends R>> fn) {
-        return stream.flatMap(fn.<Stream<R>>andThen(anyM->narrow(stream(anyM))));
-
-
-    }
 
     /**
      * flatMap operation that allows a Collection to be returned
@@ -2910,15 +2905,15 @@ public class Streams {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<Witness.stream>> unfoldable() {
+                public <T> Maybe<Unfoldable<DataWitness.stream>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };
         }
-        public static Unfoldable<Witness.stream> unfoldable(){
-            return new Unfoldable<Witness.stream>() {
+        public static Unfoldable<DataWitness.stream> unfoldable(){
+            return new Unfoldable<DataWitness.stream>() {
                 @Override
-                public <R, T> Higher<Witness.stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+                public <R, T> Higher<DataWitness.stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
                     return StreamKind.widen(ReactiveSeq.unfold(b,fn));
                 }
             };

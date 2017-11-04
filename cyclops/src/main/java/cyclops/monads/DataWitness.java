@@ -1,7 +1,6 @@
 package cyclops.monads;
 
 
-import com.oath.anym.extensability.FunctionalAdapter;
 
 public interface DataWitness {
 

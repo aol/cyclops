@@ -1,9 +1,10 @@
-package com.oath.cyclops.types.functor;
+package com.oath.anym.transformers;
 
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import cyclops.monads.DataWitness.reactiveSeq;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.collections.mutable.ListX;
@@ -44,7 +45,7 @@ public interface TransformerTraversable<T>{
      * @param groupSize Size of each batch of elements to be grouped into Lists
      * @return List Transformer view into batched / grouped data
      */
-    default ListT<reactiveSeq,T> groupedT(final int groupSize) {
+    default ListT<Witness.reactiveSeq,T> groupedT(final int groupSize) {
         return ListT.fromStream(stream().grouped(groupSize));
     }
 

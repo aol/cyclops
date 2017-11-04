@@ -1,13 +1,10 @@
 package cyclops.companion;
 
-import cyclops.monads.AnyM;
 import cyclops.control.Either;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.Topic;
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import com.oath.cyclops.types.anyM.AnyMValue;
-import cyclops.monads.DataWitnessType;
+
 
 import java.util.concurrent.BlockingQueue;
 
@@ -72,52 +69,6 @@ public class Eithers {
                             .toLazyEither()
                             .swap();
     }*/
-
-    /**
-     * Pattern MatchType on a Future handling success and failure cases differently
-     * <pre>
-     * {@code
-     *  Eval<Integer> result = Xors.future(Future.ofResult(1))
-                                         .matches(c-> c.is( when(some(1)), transform(10)),
-                                                  c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
-                                                  otherwise(3));
-
-        //Eval.now[10]
-     *
-     *  Eval<Integer> result = Xors.future(Future.ofError(new RuntimeException()))
-                                         .matches(c-> c.is( when(some(10)), transform(2)),
-                                                  c->c.is(when(instanceOf(RuntimeException.class)), transform(2)),
-                                                  otherwise(3));
-
-       //Eval.now(2)
-     *
-     *
-     * }
-     * </pre>
-     *
-     *
-     *
-     *
-     * @param future Future to fold on
-     * @return Pattern Matcher for Futures
-
-    public static <T1> MXor<T1, Throwable> future(final Future<T1> future) {
-        return () -> future.toLazyEither()
-                           .swap();
-    }
-USE EITHER
-    public static <T1, X extends Throwable> MXor<T1, X> tryMatch(final Try<T1, X> fold) {
-        return () -> fold.toLazyEither()
-                          .swap();
-    }
-*/
-
-    public static <W extends WitnessType<W>,T> Either<AnyMValue<W,T>, AnyMSeq<W,T>> anyM(final AnyM<W,T> anyM) {
-        return anyM instanceof AnyMValue ? Either.left((AnyMValue<W,T>) anyM) : Either.right((AnyMSeq<W,T>) anyM);
-    }
-
-
-
 
 
 

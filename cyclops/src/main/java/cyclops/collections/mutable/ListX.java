@@ -1784,6 +1784,6 @@ public interface ListX<T> extends To<ListX<T>>,
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty());
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().listX(Evaluation.LAZY);
     }
 }

@@ -14,11 +14,8 @@ import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.monads.DataWitness.supplier;
-import cyclops.monads.function.AnyMFunction0;
 import cyclops.free.Free;
-import cyclops.monads.DataWitnessType;
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.transformers.ListT;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.functor.Functor;
 
@@ -62,9 +59,7 @@ public interface Function0<R> extends Supplier<R>{
        return ()-> Option.ofNullable(apply());
     }
 
-    default <W extends WitnessType<W>> AnyMFunction0<W,R> liftF(W witness){
-        return ()-> witness.adapter().unit(this.get());
-    }
+
 
     default Function0<R> memoize(){
         return Memoize.memoizeSupplier(this);
@@ -134,16 +129,12 @@ public interface Function0<R> extends Supplier<R>{
         default Function0<Future<R>> liftFuture() {
             return () -> Future.ofResult(apply());
         }
-        default <W extends WitnessType<W>> Function0<FutureT<W,R>> liftFutureT(W witness) {
-            return liftFuture().andThen(f->f.liftM(witness));
-        }
+
 
         default Function0<ListX<R>> liftList() {
             return () -> ListX.of(apply());
         }
-        default <W extends WitnessType<W>> Function0<ListT<W,R>> liftListT(W witness) {
-            return liftList().andThen(l->l.liftM(witness));
-        }
+
 
         default Function0<LinkedListX<R>> liftPStack() {
             return () -> LinkedListX.of(apply());

@@ -12,13 +12,9 @@ import cyclops.control.Option;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
-import cyclops.monads.function.AnyMFunction2;
-import cyclops.monads.transformers.FutureT;
-import cyclops.monads.transformers.ListT;
+
 import cyclops.collections.mutable.ListX;
-import cyclops.monads.DataWitnessType;
 import cyclops.async.Future;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 
 @FunctionalInterface
@@ -34,8 +30,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
     public R apply(T1 a, T2 b);
 
 
-    default <W extends WitnessType<W>> AnyMFunction2<W,T1,T2,R> liftF(){return AnyM.liftF2(this);
-    }
+
 
 
     default Function2<T1, T2,  Maybe<R>> lift(){
@@ -104,9 +99,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
         default <R1> Function2<T1, T2, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
             return (a,b)-> f.apply(apply(a,b)).apply(a);
         }
-        default <W extends WitnessType<W>> Function2<AnyM<W,T1>,AnyM<W,T2>,AnyM<W,R>> anyMZip() {
-            return (a,b) -> (AnyM<W,R>)a.zip(b,this);
-        }
+
 
 
         default Function2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamZip() {
@@ -122,12 +115,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
         default Function2<Future<T1>, Future<T2>, Future<R>> futureM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default <W extends WitnessType<W>> Function2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTM(W witness) {
-            return (a,b) -> a.forEach2M(x->b,this);
-        }
-        default <W extends WitnessType<W>> Function2<FutureT<W,T1>,FutureT<W,T2>, FutureT<W,R>> futureTZip(W witness) {
-            return (a,b) -> a.zip(b,this);
-        }
+
 
         default Function2<ListX<T1>,ListX<T2>, ListX<R>> listXZip() {
             return (a,b) -> a.zip(b,this);
@@ -147,12 +135,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
             return (a,b) -> a.zip(b,this);
         }
 
-        default <W extends WitnessType<W>> Function2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTM(W witness) {
-            return (a,b) -> a.forEach2M(x->b,this);
-        }
-        default <W extends WitnessType<W>> Function2<ListT<W,T1>,ListT<W,T2>, ListT<W,R>> listTZip(W witness) {
-            return (a,b) -> a.zip(b,this);
-        }
+
     }
 
 }

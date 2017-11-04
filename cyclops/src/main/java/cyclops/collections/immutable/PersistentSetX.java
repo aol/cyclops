@@ -1523,7 +1523,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ListX.empty()).to().persistentSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().persistentSetX(Evaluation.LAZY);
     }
 
 }

@@ -1,14 +1,14 @@
 package com.oath.cyclops.internal.stream;
 
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.AnyM;
+
 import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 
@@ -212,11 +212,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-    @Override
-    public AnyMSeq<Witness.reactiveSeq,T> anyM() {
-        return AnyM.fromStream(this);
-
-    }
     @Override
     public final <R> ReactiveSeq<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
         return createSeq(Streams.flatMapStream(this, fn));

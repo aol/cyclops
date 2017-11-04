@@ -132,7 +132,7 @@ public interface Seq<T> extends ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
+        ReactiveSeq<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ReactiveSeq.empty());
         return Seq.fromIterator(x.iterator());
     }
     static <T> Seq<T> fill(T t, int max){

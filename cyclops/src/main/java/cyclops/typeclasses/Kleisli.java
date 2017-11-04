@@ -8,7 +8,7 @@ import cyclops.function.Function1;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 
-import cyclops.monads.DataWitnessType;
+
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -274,7 +274,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     public static class Instances{
 
-        public static <W extends  WitnessType<W>,IN> Functor<Higher<Higher<kleisli,W>,IN>> functor(){
+        public static <W,IN> Functor<Higher<Higher<kleisli,W>,IN>> functor(){
             return new Functor<Higher<Higher<kleisli,W>,IN>> (){
                 @Override
                 public <T, R> Higher<Higher<Higher<kleisli, W>, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<kleisli, W>, IN>, T> ds) {

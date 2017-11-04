@@ -79,7 +79,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 break;
 
         }
-        ListX<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ListX.empty());
+        ReactiveSeq<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ReactiveSeq.empty());
         return LazySeq.fromIterator(x.iterator());
     }
     static <T> LazySeq<T> fill(T t){

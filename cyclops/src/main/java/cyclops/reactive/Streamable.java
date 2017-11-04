@@ -15,7 +15,6 @@ import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.AnyM;
 import cyclops.monads.DataWitness;
 import lombok.AllArgsConstructor;
 import lombok.val;
@@ -1668,28 +1667,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return reactiveSeq().startsWith(iterator);
     }
 
-    /**
-     * @return this Streamable converted to AnyM format
-     */
-    default AnyM<Witness.streamable,T> anyM() {
-        return AnyM.fromStreamable(this);
-    }
 
-    /**
-     * Allows flatMap return type to be any Monad type
-     * <pre>
-     * {@code
-     * 	assertThat(Streamable.of(1,2,3)).flatMapAnyM(i-> fromEither5(CompletableFuture.completedFuture(i+2))).toList(),equalTo(Arrays.asList(3,4,5)));
 
-     * }</pre>
-     *
-     *
-     * @param fn to be applied
-     * @return new stage in Sequence with flatMap operation to be lazily applied
-     */
-    default <R> Streamable<R> flatMapAnyM(final Function<? super T, ? extends AnyM<Witness.streamable,? extends R>> fn) {
-        return flatMap(fn.andThen(Witness::streamable));
-    }
 
     public static <T> Streamable<T> narrow(Streamable<? extends T> broad){
         return (Streamable<T>)broad;
