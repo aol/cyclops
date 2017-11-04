@@ -1091,18 +1091,7 @@ public abstract class AbstractIterableXTest {
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
-	int peek = 0;
-	@Test
-	public void testPeek() {
-		peek = 0 ;
-		   AnyM.fromStream(Stream.of(asList(1,3)))
-				  				.flatMap(c->AnyM.fromStream(c.stream()))
-				  				.stream()
-				  				.map(i->i*2)
-				  				.peek(i-> peek=i)
-				  				.collect(java.util.stream.Collectors.toList());
-		assertThat(peek,equalTo(6));
-	}
+
 
 	@Test
 	public void headAndTailTest(){

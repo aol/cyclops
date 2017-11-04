@@ -12,6 +12,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.Eval.CompletableEval;
 import cyclops.control.Eval.Module.Later;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -105,7 +106,7 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testSequence() {
-		Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(just,CompletableEvalTest.now(1)));
+		Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(ListX.of(just,CompletableEvalTest.now(1)));
 		assertThat(maybes,equalTo(Eval.now(ListX.of(10,1))));
 	}
 

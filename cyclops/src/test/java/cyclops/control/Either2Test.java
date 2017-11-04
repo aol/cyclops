@@ -10,6 +10,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,8 +39,8 @@ public class Either2Test {
 
 	@Test
     public void testSequenceSecondary() {
-        Either<ListX<Integer>,ListX<String>> xors = Either.sequenceLeft(ListX.of(just,none, Either.right(1)));
-        assertThat(xors,equalTo(Either.right(ListX.of("none"))));
+    Either<Integer, ReactiveSeq<String>> xors = Either.sequenceLeft(ListX.of(just, none, Either.right(1)));
+        assertThat(xors.map(s->s.toList()),equalTo(Either.right(ListX.of("none"))));
     }
 
     @Test
@@ -96,8 +97,8 @@ public class Either2Test {
 	@Test
 	public void testSequence() {
 		Either.sequenceRight(ListX.of(just, Either.right(1))).printOut();
-		Either<ListX<String>,ListX<Integer>> maybes = Either.sequenceRight(ListX.of(just,none, Either.right(1)));
-		assertThat(maybes,equalTo(Either.right(ListX.of(10,1))));
+    Either<String, ReactiveSeq<Integer>> maybes = Either.sequenceRight(ListX.of(just, none, Either.right(1)));
+		assertThat(maybes.map(s->s.toList()),equalTo(Either.right(ListX.of(10,1))));
 	}
 
 	@Test

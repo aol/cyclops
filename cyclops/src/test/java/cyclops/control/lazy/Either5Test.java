@@ -12,6 +12,7 @@ import cyclops.control.LazyEither5;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -107,26 +108,26 @@ public class Either5Test {
     @Test
     public void testTraverseLeft1() {
         ListX<LazyEither5<Integer,String,String,String,String>> list = ListX.of(just,none, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap1);
-        LazyEither5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.traverse(list, s->"hello:"+s);
-        assertThat(xors,equalTo(LazyEither5.right(ListX.of("hello:none"))));
+      LazyEither5<Integer, String, String, String, ReactiveSeq<String>> xors = LazyEither5.traverse(list, s -> "hello:" + s);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither5.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
         ListX<LazyEither5<Integer,String,String,String,String>> list = ListX.of(just,none, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap1);
-        LazyEither5<ListX<Integer>,ListX<String>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.sequence(list);
-        assertThat(xors,equalTo(LazyEither5.right(ListX.of("none"))));
+      LazyEither5<Integer,String,String,String,ReactiveSeq<String>> xors   = LazyEither5.sequence(list);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither5.right(ListX.of("none"))));
     }
     @Test
     public void testSequenceLeft2() {
         ListX<LazyEither5<String,Integer,String,String,String>> list = ListX.of(just,left2, LazyEither5.<String,String,String,String,Integer>right(1)).map(LazyEither5::swap2);
-        LazyEither5<ListX<String>,ListX<Integer>,ListX<String>,ListX<String>,ListX<String>> xors   = LazyEither5.sequence(list);
-        assertThat(xors,equalTo(LazyEither5.right(ListX.of("left2"))));
+      LazyEither5<String, Integer, String, String, ReactiveSeq<String>> xors = LazyEither5.sequence(list);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither5.right(ListX.of("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-        LazyEither5<ListX<String>,ListX<String>,ListX<String>,ListX<String>,Integer> iors = LazyEither5.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither5.right(10)));
+      LazyEither5<String, String, String, String, Integer> iors = LazyEither5.accumulate(Monoids.intSum, ListX.of(none, just, LazyEither5.right(10)));
         assertThat(iors,equalTo(LazyEither5.right(20)));
     }
 

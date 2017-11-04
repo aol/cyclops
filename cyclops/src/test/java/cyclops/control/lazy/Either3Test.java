@@ -15,6 +15,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -139,26 +140,26 @@ public class Either3Test {
     @Test
     public void testTraverseLeft1() {
         ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
-        LazyEither3<ListX<Integer>,ListX<String>,ListX<String>> xors   = LazyEither3.traverse(list, s->"hello:"+s);
+      LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.traverse(list, s -> "hello:" + s);
         assertThat(xors,equalTo(LazyEither3.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
         ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
-        LazyEither3<ListX<Integer>,ListX<String>,ListX<String>> xors   = LazyEither3.sequence(list);
-        assertThat(xors,equalTo(LazyEither3.right(ListX.of("none"))));
+      LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.sequence(list);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("none"))));
     }
     @Test
     public void testSequenceLeft2() {
-        ListX<LazyEither3<String,Integer,String>> list = ListX.of(just,left2, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap2);
-        LazyEither3<ListX<String>,ListX<Integer>,ListX<String>> xors   = LazyEither3.sequence(list);
-        assertThat(xors,equalTo(LazyEither3.right(ListX.of("left2"))));
+      ListX<LazyEither3<String, Integer, String>> list = ListX.of(just, left2, LazyEither3.<String, String, Integer>right(1)).map(LazyEither3::swap2);
+      LazyEither3<String, Integer, ReactiveSeq<String>> xors = LazyEither3.sequence(list);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-        LazyEither3<ListX<String>,ListX<String>,Integer> iors = LazyEither3.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither3.right(10)));
+      LazyEither3<String, String, Integer> iors = LazyEither3.accumulate(Monoids.intSum, ListX.of(none, just, LazyEither3.right(10)));
         assertThat(iors,equalTo(LazyEither3.right(20)));
     }
 

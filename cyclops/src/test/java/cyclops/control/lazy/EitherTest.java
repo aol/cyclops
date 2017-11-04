@@ -14,6 +14,7 @@ import cyclops.control.LazyEither.CompletableEither;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -104,18 +105,18 @@ public class EitherTest {
     @Test
     public void testTraverseLeft1() {
         ListX<LazyEither<Integer,String>> list = ListX.of(just,none, LazyEither.<String,Integer>right(1)).map(LazyEither::swap);
-        LazyEither<ListX<Integer>,ListX<String>> xors   = LazyEither.traverseRight(list, s->"hello:"+s);
-        assertThat(xors,equalTo(LazyEither.right(ListX.of("hello:none"))));
+      LazyEither<Integer, ReactiveSeq<String>> xors = LazyEither.traverseRight(list, s -> "hello:" + s);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
         ListX<LazyEither<Integer,String>> list = ListX.of(just,none, LazyEither.<String,Integer>right(1)).map(LazyEither::swap);
-        LazyEither<ListX<Integer>,ListX<String>> xors   = LazyEither.sequenceRight(list);
-        assertThat(xors,equalTo(LazyEither.right(ListX.of("none"))));
+      LazyEither<Integer, ReactiveSeq<String>> xors = LazyEither.sequenceRight(list);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither.right(ListX.of("none"))));
     }
     @Test
     public void testAccumulate() {
-        LazyEither<ListX<String>,Integer> iors = LazyEither.accumulate(Monoids.intSum,ListX.of(none,just, LazyEither.right(10)));
+      LazyEither<String, Integer> iors = LazyEither.accumulate(Monoids.intSum, ListX.of(none, just, LazyEither.right(10)));
         assertThat(iors,equalTo(LazyEither.right(20)));
     }
 
@@ -163,8 +164,8 @@ public class EitherTest {
 
     @Test
     public void testSequenceSecondary() {
-        Either<ListX<Integer>,ListX<String>> xors = Either.sequenceLeft(ListX.of(just,none, LazyEither.right(1)));
-        assertThat(xors,equalTo(LazyEither.right(ListX.of("none"))));
+      Either<Integer, ReactiveSeq<String>> xors = Either.sequenceLeft(ListX.of(just, none, LazyEither.right(1)));
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither.right(ListX.of("none"))));
     }
 
     @Test
@@ -224,8 +225,8 @@ public class EitherTest {
 
     @Test
     public void testSequence() {
-        Either<ListX<String>,ListX<Integer>> maybes = Either.sequenceRight(ListX.of(just,none, LazyEither.right(1)));
-        assertThat(maybes,equalTo(LazyEither.right(ListX.of(10,1))));
+      Either<String, ReactiveSeq<Integer>> maybes = Either.sequenceRight(ListX.of(just, none, LazyEither.right(1)));
+        assertThat(maybes.map(s->s.toList()),equalTo(LazyEither.right(ListX.of(10,1))));
     }
 
     @Test @Ignore  //pending https://github.com/aol/cyclops-react/issues/390

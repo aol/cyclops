@@ -12,6 +12,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -168,22 +169,22 @@ public class OptionTest implements Printable {
 
     @Test
     public void testSequenceLazy() {
-        Option<ListX<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
 
         assertThat(maybes, equalTo(Option.some(1).flatMap(i -> Option.none())));
     }
 
     @Test
     public void testSequence() {
-        Option<ListX<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
 
         assertThat(maybes, equalTo(Option.none()));
     }
 
     @Test
     public void testSequenceJust() {
-        Option<ListX<Integer>> maybes = Option.sequenceJust(ListX.of(eager, none, Option.some(1)));
-        assertThat(maybes, equalTo(Option.some(ListX.of(10, 1))));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequenceJust(ListX.of(eager, none, Option.some(1)));
+        assertThat(maybes.map(s->s.toList()), equalTo(Option.some(ListX.of(10, 1))));
     }
 
     @Test
