@@ -134,7 +134,7 @@ throw new IOException();
  * }
  * </pre>
  *
- * By public Try does not catch exception within it's operators such as transform / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#of(Object, Class...)}
+ * By public Try does not catch exception within it's operators such as transform / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#success(Object, Class...)}
  * <pre>
  * {@code
  *  Try.of(2, RuntimeException.class)
@@ -267,7 +267,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param xors Trys to sequence
      * @return Try sequenced and swapped
      */
-    public static <ST extends Throwable, PT> Either<ListX<PT>, ListX<ST>> sequenceFailures(final CollectionX<Try<PT,ST>> xors) {
+    public static <ST extends Throwable, PT> Either<PT, ReactiveSeq<ST>> sequenceFailures(final IterableX<Try<PT,ST>> xors) {
         return Either.sequenceLeft(xors.map(t->t.xor));
     }
     /**
@@ -286,8 +286,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer Reducer to accumulate results
      * @return Try populated with the accumulate failure operation
      */
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
-        return sequenceFailures(xors).map(s -> s.mapReduce(reducer));
+    public static <ST extends Throwable, PT, R> Either<PT, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
+
+      return sequenceFailures(xors).map(r -> r.mapReduce(reducer));
     }
     /**
      * Accumulate the results only from those Trys which have a Secondary type present, using the supplied mapping function to
@@ -429,8 +430,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @param reducer  Semigroup to combine values from each Try
      * @return Try populated with the accumulate Secondary operation
      */
-    public static <ST extends Throwable, PT> Either<Throwable, ST> accumulateFailures(final Monoid<ST> reducer, final IterableX<Try<PT,ST>> xors) {
-        return sequenceFailures(xors).map(s -> s.reduce(reducer));
+    public static <ST extends Throwable, PT> Either<PT, ST> accumulateFailures(final Monoid<ST> reducer, final IterableX<Try<PT,ST>> xors) {
+      return sequenceFailures(xors).map(s -> s.reduce(reducer));
     }
 
 
