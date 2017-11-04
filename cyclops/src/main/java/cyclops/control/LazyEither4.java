@@ -10,6 +10,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
@@ -292,11 +293,23 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2,LT3, PT> LazyEither4<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<PT>> sequence(final CollectionX<LazyEither4<LT1, LT2, LT3, PT>> xors) {
+    public static <LT1,LT2,LT3, PT> LazyEither4<LT1,LT2,LT3,ReactiveSeq<PT>> sequence(final IterableX<? extends LazyEither4<LT1, LT2, LT3, PT>> xors) {
         Objects.requireNonNull(xors);
-        return AnyM.sequence(xors.stream().filter(LazyEither4::isRight).map(AnyM::fromEither4).to().listX(), lazyEither4.INSTANCE)
-                .to(Witness::lazyEither4);
+        return sequence(xors.stream().filter(LazyEither4::isRight));
     }
+  public static  <L1,L2,L3,T> LazyEither4<L1, L2, L3, ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither4<L1, L2, L3, T>> stream) {
+
+    LazyEither4<L1, L2, L3, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
+
+    BiFunction<LazyEither4<L1, L2, L3, ReactiveSeq<T>>,LazyEither4<L1, L2, L3, T>,LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <L1,L2,L3,T,R> LazyEither4<L1, L2, L3, ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<LazyEither4<L1, L2, L3,T>> stream) {
+    return sequence(stream.map(h->h.map(fn)));
+  }
     /**
      * TraverseOps a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
      * element in the list
@@ -305,7 +318,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param fn Transformation function
      * @return An Either4 with a transformed list
      */
-    public static <LT1,LT2, LT3,PT,R> LazyEither4<ListX<LT1>,ListX<LT2>,ListX<LT3>,ListX<R>> traverse(final CollectionX<LazyEither4<LT1, LT2, LT3, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, LT3,PT,R> LazyEither4<LT1,LT2,LT3,ReactiveSeq<R>> traverse(final IterableX<LazyEither4<LT1, LT2, LT3, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -331,7 +344,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param reducer  Reducer to accumulate results
      * @return  Either4 populated with the accumulate right operation
      */
-    public static <LT1,LT2,LT3, RT> LazyEither4<ListX<LT1>, ListX<LT2>,ListX<LT3>, RT> accumulate(final Monoid<RT> reducer, final CollectionX<LazyEither4<LT1, LT2, LT3, RT>> xors) {
+    public static <LT1,LT2,LT3, RT> LazyEither4<LT1, LT2,LT3, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither4<LT1, LT2, LT3, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 
