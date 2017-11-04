@@ -1,16 +1,20 @@
 package cyclops.monads;
 
+import cyclops.async.Future;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Functions;
+import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
-import cyclops.monads.transformers.EitherT;
-import cyclops.monads.transformers.EvalT;
-import cyclops.monads.transformers.ListT;
-import cyclops.monads.transformers.MaybeT;
+import cyclops.monads.transformers.*;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public interface AnyMs {
   /**
@@ -41,6 +45,38 @@ public interface AnyMs {
   }
   public static  <W extends WitnessType<W>,T> MaybeT<W, T> liftM(Maybe<T> m, W witness) {
     return MaybeT.of(witness.adapter().unit(m));
+  }
+  public static <W extends WitnessType<W>,T> FutureT<W, T> liftM(Future<T> f, W witness) {
+    return FutureT.of(witness.adapter().unit(f));
+  }
+  public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
+    return CompletableFutureT.of(witness.adapter().unit(opt));
+  }
+  public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
+    return OptionalT.of(witness.adapter().unit(opt));
+  }
+
+  /**
+   *  Generic zip function. E.g. Zipping a Stream and an Optional
+   *
+   * <pre>
+   * {@code
+   * Stream<List<Integer>> zipped = Streams.zip(Stream.of(1,2,3)
+  ,fromEither5(Optional.of(2)),
+  (a,b) -> Arrays.asList(a,b));
+
+
+  List<Integer> zip = zipped.collect(CyclopsCollectors.toList()).getValue(0);
+  assertThat(zip.getValue(0),equalTo(1));
+  assertThat(zip.getValue(1),equalTo(2));
+   *
+   * }
+   * </pre>
+
+   */
+  public  static <T, S, R> Stream<R> zipAnyM(final Stream<T> stream, final AnyM<Witness.stream,? extends S> second,
+                                                  final BiFunction<? super T, ? super S, ? extends R> zipper) {
+    return Streams.zipSequence(stream, second.to(Witness::stream), zipper);
   }
 
 }

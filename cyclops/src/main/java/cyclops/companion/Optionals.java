@@ -4,10 +4,13 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.Option;
 import cyclops.typeclasses.*;
 
 import cyclops.control.Either;
@@ -18,8 +21,6 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.DataWitness.optional;
-import cyclops.monads.DataWitnessType;
-import cyclops.monads.transformers.OptionalT;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -32,7 +33,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
-import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
@@ -74,9 +74,7 @@ public class Optionals {
         return Cokleisli.of(Optionals.OptionalKind::narrowK);
     }
 
-   public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
-        return OptionalT.of(witness.adapter().unit(opt));
-    }
+
     public static <W1,T> Nested<optional,W1,T> nested(Optional<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
         return Nested.of(OptionalKind.widen(nested), Instances.definitions(),def2);
     }
@@ -375,7 +373,7 @@ public class Optionals {
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * By constrast with {@link Optionals#sequencePresent(CollectionX)}, if any Optionals are zero the result
+     * By constrast with {@link Optionals#sequencePresent(IterableX)}, if any Optionals are zero the result
      * is an zero Optional
      *
      * <pre>
@@ -394,13 +392,13 @@ public class Optionals {
      * @param opts Maybes to Sequence
      * @return  Maybe with a List of values
      */
-    public static <T> Optional<ListX<T>> sequence(final CollectionX<Optional<T>> opts) {
-        return sequence(opts.stream()).map(s -> s.to().listX());
+    public static <T> Optional<ReactiveSeq<T>> sequence(final IterableX<? extends Optional<T>> opts) {
+        return sequence(opts.stream());
 
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * Only successes are retained. By constrast with {@link Optionals#sequence(CollectionX)} Optional#zero types are
+     * Only successes are retained. By constrast with {@link Optionals#sequence(IterableX)} Optional#zero types are
      * tolerated and ignored.
      *
      * <pre>
@@ -416,12 +414,12 @@ public class Optionals {
      * @param opts Optionals to Sequence
      * @return Optional with a List of values
      */
-    public static <T> Optional<ListX<T>> sequencePresent(final CollectionX<Optional<T>> opts) {
-       return sequence(opts.stream().filter(Optional::isPresent)).map(s->s.to().listX());
+    public static <T> Optional<ReactiveSeq<T>> sequencePresent(final IterableX<? extends Optional<T>> opts) {
+       return sequence(opts.stream().filter(Optional::isPresent));
     }
     /**
      * Sequence operation, take a Collection of Optionals and turn it into a Optional with a Collection
-     * By constrast with {@link Optionals#sequencePresent(CollectionX)} if any Optional types are zero
+     * By constrast with {@link Optionals#sequencePresent(IterableX)} if any Optional types are zero
      * the return type will be an zero Optional
      *
      * <pre>
@@ -440,12 +438,24 @@ public class Optionals {
      * @param opts Maybes to Sequence
      * @return  Optional with a List of values
      */
-    public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<Optional<T>> opts) {
-        return AnyM.sequence(opts.map(AnyM::fromOptional), optional.INSTANCE)
-                   .map(ReactiveSeq::fromStream)
-                   .to(Witness::optional);
+    public static <T> Optional<ReactiveSeq<T>> sequence(final Stream<? extends Optional<T>> opts) {
+        return sequence(ReactiveSeq.fromStream(opts));
 
     }
+  public static  <T> Optional<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Optional<T>> stream) {
+
+    Optional<ReactiveSeq<T>> identity = Optional.of(ReactiveSeq.empty());
+
+    BiFunction<Optional<ReactiveSeq<T>>,Optional<T>,Optional<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.append(b));
+
+    BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> Optional<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Optional<T>> stream) {
+    ReactiveSeq<Optional<R>> s = stream.map(h -> h.map(fn));
+    return sequence(s);
+  }
     /**
      * Accummulating operation using the supplied Reducer (@see cyclops2.Reducers). A typical use case is to accumulate into a Persistent Collection type.
      * Accumulates the present results, ignores zero Optionals.
@@ -465,7 +475,7 @@ public class Optionals {
      * @param reducer Reducer to accumulate values with
      * @return Optional with reduced value
      */
-    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Reducer<R,T> reducer) {
+    public static <T, R> Optional<R> accumulatePresent(final IterableX<Optional<T>> optionals, final Reducer<R,T> reducer) {
         return sequencePresent(optionals).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -490,7 +500,7 @@ public class Optionals {
      * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
-    public static <T, R> Optional<R> accumulatePresent(final CollectionX<Optional<T>> optionals, final Function<? super T, R> mapper,
+    public static <T, R> Optional<R> accumulatePresent(final IterableX<Optional<T>> optionals, final Function<? super T, R> mapper,
             final Monoid<R> reducer) {
         return sequencePresent(optionals).map(s -> s.map(mapper)
                                                  .reduce(reducer));
@@ -516,7 +526,7 @@ public class Optionals {
      * @param reducer Monoid to combine values from each Optional
      * @return Optional with reduced value
      */
-    public static <T> Optional<T> accumulatePresent(final Monoid<T> reducer, final CollectionX<Optional<T>> optionals) {
+    public static <T> Optional<T> accumulatePresent(final Monoid<T> reducer, final IterableX<Optional<T>> optionals) {
         return sequencePresent(optionals).map(s -> s
                                                  .reduce(reducer));
     }
@@ -568,7 +578,7 @@ public class Optionals {
      */
     public static <T1, T2, R> Optional<R> combine(final Optional<? extends T1> f, final Optional<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
-        return combine(f,Maybe.fromOptional(v),fn);
+        return combine(f,Option.fromOptional(v),fn);
     }
 
     /**
@@ -591,11 +601,16 @@ public class Optionals {
      */
     public static <T1, T2, R> Optional<R> zip(final Optional<? extends T1> f, final Iterable<? extends T2> v,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
-        return narrow(Maybe.fromOptional(f)
+        return narrow(Option.fromOptional(f)
                            .zip(v, fn)
                            .toOptional());
     }
-
+  public static <T1, T2, R> Optional<R> zip(final Optional<? extends T1> f, final Optional<? extends T2> v,
+                                            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
+    return narrow(Option.fromOptional(f)
+      .zip(Option.fromOptional(v), fn)
+      .toOptional());
+  }
     /**
      * Combine an Optional with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>

@@ -8,13 +8,13 @@ import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.DataWitness;
 import cyclops.monads.DataWitness.future;
-import cyclops.monads.DataWitnessType;
-import cyclops.monads.transformers.FutureT;
+
 import cyclops.typeclasses.*;
 
 import com.oath.cyclops.react.Status;
@@ -34,7 +34,6 @@ import cyclops.companion.CompletableFutures;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 
 import cyclops.typeclasses.comonad.Comonad;
@@ -76,8 +75,6 @@ import org.reactivestreams.Subscription;
 
 
 import java.util.concurrent.*;
-
-import static cyclops2.monads.Witness.future.*;
 
 
 /**
@@ -144,9 +141,7 @@ public class Future<T> implements To<Future<T>>,
     public <W2,R> Nested<future,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
-    public <W extends WitnessType<W>> FutureT<W, T> liftM(W witness) {
-        return FutureT.of(witness.adapter().unit(this));
-    }
+
 
 
     @Override
@@ -585,8 +580,8 @@ public class Future<T> implements To<Future<T>>,
      * @param fts Collection of Futures to Sequence into a Future with a List
      * @return Future with a List
      */
-    public static <T> Future<ListX<T>> sequence(final CollectionX<Future<T>> fts) {
-        return sequence(fts.stream()).map(s -> s.toListX());
+    public static <T> Future<ReactiveSeq<T>> sequence(final IterableX<? extends Future<T>> fts) {
+        return sequence(fts.stream());
 
     }
 
@@ -606,15 +601,27 @@ public class Future<T> implements To<Future<T>>,
      * @return Future with a Stream
      */
     public static <T> Future<ReactiveSeq<T>> sequence(final Stream<? extends Future<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromFuture), INSTANCE)
-                   .map(ReactiveSeq::fromStream)
-                   .to(Witness::future);
+        return sequence(ReactiveSeq.fromStream(fts));
     }
+  public static  <T> Future<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Future<T>> stream) {
+
+    Future<ReactiveSeq<T>> identity = Future.ofResult(ReactiveSeq.empty());
+
+    BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+
+    BinaryOperator<Future<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> Future<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Future<T>> stream) {
+    ReactiveSeq<Future<R>> s = stream.map(h -> h.map(fn));
+    return sequence(s);
+  }
 
     /**
      *
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
-     * Also @see {@link Future#accumulate(CollectionX, Reducer)} if you would like a failure to result in a Future
+     * Also @see {@link Future#accumulate(IterableX, Reducer)} if you would like a failure to result in a Future
      * with an error
      * <pre>
      * {@code
@@ -632,7 +639,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
+    public static <T, R> Future<R> accumulateSuccess(final IterableX<Future<T>> fts, final Reducer<R,T> reducer) {
        return Future.of(CompletableFutures.accumulateSuccess(fts.map(Future::getFuture), reducer));
     }
     /**
@@ -652,7 +659,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Reducer<R,T> reducer) {
+    public static <T, R> Future<R> accumulate(final IterableX<Future<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -672,7 +679,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
      */
-    public static <T, R> Future<R> accumulateSuccess(final CollectionX<Future<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+    public static <T, R> Future<R> accumulateSuccess(final IterableX<Future<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return Future.of(CompletableFutures.accumulateSuccess(fts.map(Future::getFuture),mapper,reducer));
     }
 
@@ -694,7 +701,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
      */
-    public static <T> Future<T> accumulateSuccess(final Monoid<T> reducer, final CollectionX<Future<T>> fts ) {
+    public static <T> Future<T> accumulateSuccess(final Monoid<T> reducer, final IterableX<Future<T>> fts ) {
         return Future.of(CompletableFutures.accumulateSuccess(reducer,fts.map(Future::getFuture)));
     }
 
@@ -741,7 +748,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
      */
-    public static <T> Future<T> accumulate(final Monoid<T> reducer, final CollectionX<Future<T>> fts) {
+    public static <T> Future<T> accumulate(final Monoid<T> reducer, final IterableX<Future<T>> fts) {
         return sequence(fts).map(s -> s.reduce(reducer)
                                       );
     }

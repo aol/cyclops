@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.hkt.Higher;
 
+import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.LazyEither;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import cyclops.monads.DataWitness.future;
@@ -18,8 +20,7 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.DataWitness.completableFuture;
-import cyclops.monads.DataWitnessType;
-import cyclops.monads.transformers.CompletableFutureT;
+
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -32,7 +33,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.ListX;
@@ -94,9 +94,7 @@ public class CompletableFutures {
     }
 
 
-    public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
-        return CompletableFutureT.of(witness.adapter().unit(opt));
-    }
+
 
     /**
      * Perform a For Comprehension over a CompletableFuture, accepting 3 generating function.
@@ -245,8 +243,8 @@ public class CompletableFutures {
      * @param fts Collection of Futures to Sequence into a Future with a List
      * @return Future with a List
      */
-    public static <T> CompletableFuture<ListX<T>> sequence(final CollectionX<CompletableFuture<T>> fts) {
-        return sequence(fts.stream()).thenApply(s -> s.toListX());
+    public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final IterableX<? extends CompletableFuture<T>> fts) {
+        return sequence(fts.stream());
     }
     /**
      * Asynchronous sequence operation that convert a Stream of Futures to a Future with a Stream
@@ -265,16 +263,28 @@ public class CompletableFutures {
      * @param fts Stream of Futures to Sequence into a Future with a Stream
      * @return Future with a Stream
      */
-    public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<CompletableFuture<T>> fts) {
-        return AnyM.sequence(fts.map(AnyM::fromCompletableFuture), completableFuture.INSTANCE)
-                .map(ReactiveSeq::fromStream)
-                .to(Witness::completableFuture);
+    public static <T> CompletableFuture<ReactiveSeq<T>> sequence(final Stream<? extends CompletableFuture<T>> fts) {
+        return sequence(ReactiveSeq.fromStream((fts)));
 
     }
+  public static  <T> CompletableFuture<ReactiveSeq<T>> sequence(ReactiveSeq<? extends CompletableFuture<T>> stream) {
+
+    CompletableFuture<ReactiveSeq<T>> identity = CompletableFuture.completedFuture(ReactiveSeq.empty());
+
+    BiFunction<CompletableFuture<ReactiveSeq<T>>,CompletableFuture<T>,CompletableFuture<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.append(b));
+
+    BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendS(z2));
+
+    return stream.reduce(identity,combineToStream,combineStreams);
+  }
+  public static <T,R> CompletableFuture<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<CompletableFuture<T>> stream) {
+    ReactiveSeq<CompletableFuture<R>> s = stream.map(h -> h.thenApply(fn));
+    return sequence(s);
+  }
     /**
      *
      * Asynchronously accumulate the results only from those Futures which have completed successfully.
-     * Also @see {@link CompletableFutures#accumulate(CollectionX, Reducer)} if you would like a failure to result in a CompletableFuture
+     * Also @see {@link CompletableFutures#accumulate(IterableX, Reducer)} if you would like a failure to result in a CompletableFuture
      * with an error
      * <pre>
      * {@code
@@ -293,12 +303,12 @@ public class CompletableFutures {
      * @param reducer Reducer to accumulate results
      * @return CompletableFuture asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
+    public static <T, R> CompletableFuture<R> accumulateSuccess(final IterableX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         CompletableFuture<R> result = new CompletableFuture<>();
         Stream<T> successes = fts.stream()
                                                     .filter(ft->!ft.isCompletedExceptionally())
                                                     .map(CompletableFuture::join);
-        CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
+        CompletableFuture.allOf(fts.toArray(i->new CompletableFuture[i]))
                         .thenRun(()-> result.complete(reducer.mapReduce(successes)))
                         .exceptionally(e->{ result.complete(reducer.mapReduce(successes)); return null;});
 
@@ -321,13 +331,13 @@ public class CompletableFutures {
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
-    public static <T, R> CompletableFuture<R> accumulateSuccess(final CollectionX<CompletableFuture<T>> fts,final Function<? super T, R> mapper,final Monoid<R> reducer) {
+    public static <T, R> CompletableFuture<R> accumulateSuccess(final IterableX<CompletableFuture<T>> fts,final Function<? super T, R> mapper,final Monoid<R> reducer) {
         CompletableFuture<R> result = new CompletableFuture<>();
         ReactiveSeq<R> successes = fts.stream()
                                       .filter(ft->!ft.isCompletedExceptionally())
                                       .map(CompletableFuture::join)
                                       .map(mapper);
-        CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
+        CompletableFuture.allOf(fts.toArray(i->new CompletableFuture[i]))
                         .thenRun(()-> result.complete(successes.reduce(reducer)))
                         .exceptionally(e->{ result.complete(successes.reduce(reducer)); return null;});
 
@@ -351,12 +361,12 @@ public class CompletableFutures {
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
-    public static <T, R> CompletableFuture<T> accumulateSuccess(final Monoid<T> reducer,final CollectionX<CompletableFuture<T>> fts) {
+    public static <T, R> CompletableFuture<T> accumulateSuccess(final Monoid<T> reducer,final IterableX<CompletableFuture<T>> fts) {
         CompletableFuture<T> result = new CompletableFuture<>();
         ReactiveSeq<T> successes = fts.stream()
                                       .filter(ft->!ft.isCompletedExceptionally())
                                       .map(CompletableFuture::join);
-        CompletableFuture.allOf(fts.toArray(new CompletableFuture[0]))
+        CompletableFuture.allOf(fts.toArray(i->new CompletableFuture[i]))
                         .thenRun(()-> result.complete(successes.reduce(reducer)))
                         .exceptionally(e->{ result.complete(successes.reduce(reducer)); return null;});
 
@@ -380,7 +390,7 @@ public class CompletableFutures {
      * @param reducer Reducer to accumulate results
      * @return Future asynchronously populated with the accumulate success operation
      */
-    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
+    public static <T, R> CompletableFuture<R> accumulate(final IterableX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
         return sequence(fts).thenApply(s -> s.mapReduce(reducer));
     }
     /**
@@ -401,7 +411,7 @@ public class CompletableFutures {
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
-    public static <T, R> CompletableFuture<R> accumulate(final CollectionX<CompletableFuture<T>> fts, final Function<? super T, R> mapper,
+    public static <T, R> CompletableFuture<R> accumulate(final IterableX<CompletableFuture<T>> fts, final Function<? super T, R> mapper,
             final Monoid<R> reducer) {
         return sequence(fts).thenApply(s -> s.map(mapper)
                                              .reduce(reducer));
@@ -427,7 +437,7 @@ public class CompletableFutures {
      * @param reducer Monoid to combine values from each Future
      * @return CompletableFuture asynchronously populated with the accumulate operation
      */
-    public static <T> CompletableFuture<T> accumulate(final Monoid<T> reducer, final CollectionX<CompletableFuture<T>> fts
+    public static <T> CompletableFuture<T> accumulate(final Monoid<T> reducer, final IterableX<CompletableFuture<T>> fts
            ) {
         return sequence(fts).thenApply(s -> s
                                              .reduce(reducer));
@@ -554,6 +564,10 @@ public class CompletableFutures {
                              .zip(v, fn)
                              .getFuture());
     }
+  public static <T1, T2, R> CompletableFuture<R> zip(final CompletableFuture<? extends T1> f, final CompletableFuture<? extends T2> v,
+                                                     final BiFunction<? super T1, ? super T2, ? extends R> fn) {
+    return zip(f,Future.of(v),fn);
+  }
     /**
      * Combine an CompletableFuture with the provided Publisher (selecting one element if present) using the supplied BiFunction
      * <pre>
