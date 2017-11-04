@@ -3,7 +3,7 @@ package cyclops.function;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.control.Maybe;
-import cyclops.monads.DataWitness.predicate;
+import com.oath.cyclops.hkt.DataWitness.predicate;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Value;

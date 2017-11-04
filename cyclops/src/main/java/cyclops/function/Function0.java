@@ -13,7 +13,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.supplier;
+import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.free.Free;
 
 import cyclops.reactive.ReactiveSeq;

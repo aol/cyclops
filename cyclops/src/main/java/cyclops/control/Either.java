@@ -13,16 +13,11 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
-import cyclops.data.ImmutableList;
-import cyclops.data.LazySeq;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
 
-import cyclops.monads.DataWitness;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import cyclops.monads.DataWitness.either;
+import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;

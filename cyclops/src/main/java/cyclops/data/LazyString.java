@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.lazyString;
+import com.oath.cyclops.hkt.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

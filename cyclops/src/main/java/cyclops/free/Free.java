@@ -9,7 +9,7 @@ import cyclops.control.LazyEither3;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Function5;
-import cyclops.monads.DataWitness.free;
+import com.oath.cyclops.hkt.DataWitness.free;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;

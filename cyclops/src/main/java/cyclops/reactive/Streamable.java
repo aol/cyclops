@@ -15,7 +15,6 @@ import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.DataWitness;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import cyclops.data.tuple.Tuple;

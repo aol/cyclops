@@ -11,7 +11,7 @@ import cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+
 
 public class FlatMapSequenceMTest {
 
@@ -21,8 +21,7 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCrossType(){
-		AnyM.fromOptional(Optional.of(Arrays.asList(1,2,3)))
-		.stream().forEach(System.out::println);
+
 
 		assertThat(LazyReact.sequentialBuilder().of(Arrays.asList(1,2,3)).flatMapStream(i->Stream.of(i.size())).toList(),equalTo(Arrays.asList(3)));
 	}
@@ -49,14 +48,7 @@ public class FlatMapSequenceMTest {
 
 		assertThat(LazyReact.sequentialBuilder().of(1,2,3).flatMapCompletableFuture(i-> CompletableFuture.completedFuture(i+2)).toList(),equalTo(Arrays.asList(3,4,5)));
 	}
-	@Test
-	public void flatMapSeqToSequenceM(){
 
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3)
-		                           .flatMapAnyM(i-> AnyM.fromStream(Stream.of(i+2)))
-		                           .toList(),
-		                           equalTo(Arrays.asList(3,4,5)));
-	}
 
 
 }

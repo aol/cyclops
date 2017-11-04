@@ -5,7 +5,6 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -323,13 +322,7 @@ public class AsyncRSExtensionOperatorsTest {
         assertTrue(Spouts.<Integer>of()
                 .endsWith(Stream.of()));
     }
-    @Test
-    public void anyMTest(){
-        List<Integer> list = of(1,2,3,4,5,6)
-                .anyM().filter(i->i>3).stream().toList();
 
-        assertThat(list,equalTo(Arrays.asList(4,5,6)));
-    }
     @Test
     public void streamable(){
         Streamable<Integer> repeat = of(1,2,3,4,5,6)
@@ -372,28 +365,7 @@ public class AsyncRSExtensionOperatorsTest {
         col.forEach(System.out::println);
         assertThat(col.size(),equalTo(5));
     }
-    int peek = 0;
-    @Test
-    public void testPeek() {
-        peek = 0 ;
-        AnyM.fromStream(Stream.of(asList(1,3)))
-                .flatMap(c->AnyM.fromStream(c.stream()))
-                .stream()
-                .map(i->i*2)
-                .peek(i-> peek=i)
-                .collect(Collectors.toList());
-        assertThat(peek,equalTo(6));
-    }
-    @Test
-    public void testMap() {
-        List<Integer> list = AnyM.fromStream(Stream.of(asList(1,3)))
-                .flatMap(c->AnyM.fromStream(c.stream()))
-                .stream()
-                .map(i->i*2)
-                .peek(System.out::println)
-                .collect(Collectors.toList());
-        assertThat(Arrays.asList(2,6),equalTo(list));
-    }
+
     @Test
     public void headAndTailTest(){
         Stream<String> s = Stream.of("hello","world");
@@ -418,12 +390,7 @@ public class AsyncRSExtensionOperatorsTest {
     }
 
 
-    @Test
-    public void flatMapCompletableFuture(){
-        assertThat(of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
-                        .collect(Collectors.toList()),
-                equalTo(Arrays.asList(3,4,5)));
-    }
+
     @Test
     public void flatMapMaybe(){
         assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)

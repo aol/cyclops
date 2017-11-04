@@ -7,7 +7,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.val;
@@ -250,12 +250,12 @@ public class FutureTest {
 
     @Test
     public void testSequence() {
-        Future<ListX<Integer>> maybes = Future.sequence(ListX.of(just, Future.ofResult(1)));
-        assertThat(maybes.orElse(ListX.empty()),equalTo(ListX.of(10,1)));
+        Future<ReactiveSeq<Integer>> maybes = Future.sequence(ListX.of(just, Future.ofResult(1)));
+        assertThat(maybes.map(s->s.toList()).orElse(ListX.empty()),equalTo(ListX.of(10,1)));
     }
     @Test
     public void testSequenceCF() {
-        CompletableFuture<ListX<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
+        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
 
     }
@@ -625,14 +625,7 @@ public class FutureTest {
         assertThat(Future.ofError(new RuntimeException()).recover(() -> true).get(), equalTo(Try.success(true)));
     }
 
-    @Test
-    public void testFlatMapIterable() {
-        Future<Integer> f = just.flatMapI(i -> Arrays.asList(i, 20, 30));
-        assertThat(f.orElse(-10), equalTo(10));
 
-        f = just.flatMapI(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
-        assertThat(f.orElse(-50), equalTo(20));
-    }
 
     @Test
     public void testFlatMapPublisher() {

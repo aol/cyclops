@@ -5,8 +5,8 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Eval;
 
-import cyclops.monads.DataWitness.cofree;
-import cyclops.monads.DataWitness.eval;
+import com.oath.cyclops.hkt.DataWitness.cofree;
+import com.oath.cyclops.hkt.DataWitness.eval;
 import cyclops.typeclasses.NaturalTransformation;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.functor.Functor;

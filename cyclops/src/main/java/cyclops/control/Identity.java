@@ -5,7 +5,7 @@ import com.oath.cyclops.matching.Deconstruct;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.identity;
+import com.oath.cyclops.hkt.DataWitness.identity;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;

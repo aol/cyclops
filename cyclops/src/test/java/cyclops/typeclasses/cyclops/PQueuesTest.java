@@ -8,7 +8,7 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
-import cyclops.monads.DataWitness.persistentQueueX;
+import com.oath.cyclops.hkt.DataWitness.persistentQueueX;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 

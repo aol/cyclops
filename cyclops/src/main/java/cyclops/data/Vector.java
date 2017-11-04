@@ -9,7 +9,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.monads.DataWitness.vector;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

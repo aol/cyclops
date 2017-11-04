@@ -3,9 +3,9 @@ package cyclops.typeclasses;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.monads.DataWitness.list;
-import cyclops.monads.DataWitness.reactiveSeq;
-import cyclops.monads.DataWitness.vectorX;
+import com.oath.cyclops.hkt.DataWitness.list;
+import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
+import com.oath.cyclops.hkt.DataWitness.vectorX;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

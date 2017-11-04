@@ -2,8 +2,8 @@ package cyclops.control;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher4;
-import cyclops.monads.DataWitness.rws;
-import cyclops.monads.DataWitness.supplier;
+import com.oath.cyclops.hkt.DataWitness.rws;
+import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

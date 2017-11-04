@@ -13,7 +13,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.deque;
+import com.oath.cyclops.hkt.DataWitness.deque;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;

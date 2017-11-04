@@ -16,11 +16,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import cyclops.monads.DataWitness;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
 import cyclops.function.FluentFunctions;
 import cyclops.function.FluentFunctions.FluentSupplier;
 import cyclops.control.Try;
@@ -250,16 +248,7 @@ public class FluentFunctionTest {
 						.lift()
 						.apply(1);
 	}
-	@Test
-	public void testLiftM(){
 
-		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::addOne)
-											  .<Witness.stream>liftF()
-											  .apply(AnyM.streamOf(1,2,3,4));
-
-		assertThat(result.stream().toList(),
-					equalTo(Arrays.asList(2,3,4,5)));
-	}
 	@Test
 	public void testTry(){
 

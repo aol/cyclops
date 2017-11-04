@@ -9,7 +9,6 @@ import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.collections.immutable.*;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;

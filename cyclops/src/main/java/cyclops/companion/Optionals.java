@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -20,7 +19,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.DataWitness.optional;
+import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -35,10 +34,7 @@ import org.reactivestreams.Publisher;
 
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Value;
-import cyclops.monads.DataWitness;
 
 import lombok.experimental.UtilityClass;
 

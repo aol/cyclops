@@ -1,9 +1,8 @@
 package com.oath.cyclops.functions.fluent;
 
-import cyclops.monads.AnyM;
+
 import cyclops.function.FluentFunctions;
 import cyclops.control.Try;
-import cyclops.monads.DataWitness;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.junit.Before;
@@ -170,16 +169,7 @@ public class FluentSupplierTest {
 						.lift()
 						.get();
 	}
-	@Test
-	public void testLiftM(){
 
-		AnyM<Witness.stream,Integer> result = FluentFunctions.of(this::getOne)
-											  .<Witness.stream>liftF(Witness.stream.INSTANCE)
-											  .get();
-
-		assertThat(result.stream().toList(),
-					equalTo(Arrays.asList(1)));
-	}
 	@Test
 	public void testTry(){
 

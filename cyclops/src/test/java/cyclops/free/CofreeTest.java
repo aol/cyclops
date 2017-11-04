@@ -2,7 +2,7 @@ package cyclops.free;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Identity;
-import cyclops.monads.DataWitness.identity;
+import com.oath.cyclops.hkt.DataWitness.identity;
 import org.junit.Test;
 
 import static cyclops.control.Identity.Instances.functor;

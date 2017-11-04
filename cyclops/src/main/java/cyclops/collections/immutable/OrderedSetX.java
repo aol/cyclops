@@ -16,7 +16,6 @@ import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import cyclops.monads.DataWitness.orderedSetX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.collections.mutable.ListX;

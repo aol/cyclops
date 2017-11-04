@@ -7,7 +7,7 @@ import static cyclops.free.CharToy.output;
 
 import cyclops.control.Either;
 import cyclops.function.Function0;
-import cyclops.monads.DataWitness.supplier;
+import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 

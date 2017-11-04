@@ -7,10 +7,9 @@ import java.util.stream.Stream;
 import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.control.LazyEither;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
-import cyclops.monads.DataWitness.future;
+import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.async.Future;
@@ -19,7 +18,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.monads.DataWitness.completableFuture;
+import com.oath.cyclops.hkt.DataWitness.completableFuture;
 
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -34,10 +33,7 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Value;
-import cyclops.monads.DataWitness;
 
 import lombok.experimental.UtilityClass;
 

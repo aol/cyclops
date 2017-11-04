@@ -20,7 +20,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
-import cyclops.monads.DataWitness.kleisli;
+import com.oath.cyclops.hkt.DataWitness.kleisli;
 
 
 /**

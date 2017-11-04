@@ -22,7 +22,6 @@ import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Monoid;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;

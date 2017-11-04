@@ -18,7 +18,6 @@ import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.function.Monoid;
 
-import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;

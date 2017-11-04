@@ -6,7 +6,7 @@ import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.writer;
+import com.oath.cyclops.hkt.DataWitness.writer;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

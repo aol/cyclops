@@ -5,7 +5,7 @@ import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
 import cyclops.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.trieMap;
+import com.oath.cyclops.hkt.DataWitness.trieMap;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

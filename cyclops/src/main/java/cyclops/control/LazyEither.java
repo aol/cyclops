@@ -1,16 +1,12 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.lazyEither;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -26,7 +22,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
  * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly

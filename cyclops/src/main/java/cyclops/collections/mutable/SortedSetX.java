@@ -10,7 +10,6 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.sortedSet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;

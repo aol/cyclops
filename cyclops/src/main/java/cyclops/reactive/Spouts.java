@@ -18,7 +18,7 @@ import cyclops.async.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
-import cyclops.monads.DataWitness.reactiveSeq;
+import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

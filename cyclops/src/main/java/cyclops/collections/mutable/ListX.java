@@ -8,7 +8,6 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.*;
 
-import cyclops.monads.DataWitness;
 import cyclops.typeclasses.*;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -44,7 +43,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static cyclops.monads.DataWitness.list;
+import static com.oath.cyclops.hkt.DataWitness.list;
 
 /**
  * An eXtended List type, that offers additional functional style operators such as bimap, filter and more

@@ -15,7 +15,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 
-import cyclops.monads.DataWitness.optional;
+import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;

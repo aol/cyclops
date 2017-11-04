@@ -20,7 +20,6 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
-import cyclops.monads.DataWitness.bagX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;

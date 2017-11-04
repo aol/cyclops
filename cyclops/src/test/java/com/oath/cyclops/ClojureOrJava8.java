@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import cyclops.monads.AnyM;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
@@ -36,12 +36,7 @@ public class ClojureOrJava8 {
         List<Integer> mapped = org.map(i->i*2);
 
     }
-    @Test
-    public void comonad(){
-        AnyM.fromOptional(Optional.of(1))
-            .coflatMap(v->v.isPresent()?v.toOptional().get() : 10);
 
-    }
 
     public void java8TransformList(){
 
@@ -57,25 +52,7 @@ public class ClojureOrJava8 {
         return "s";
     }
 
-    @Test
-    public void listT(){
 
-
-        ReactiveSeq.of(10,20,30)
-                   .sliding(2,1)
-                   .map(list->list.map(i->i*2)
-                                  .map(this::loadData))
-                   .forEach(list->System.out.println("next list " + list));
-
-        ReactiveSeq.of(10,20,30,40,50)
-                   .slidingT(2,1)  //create a sliding view, returns a List Transformer
-                   .map(i->i*2)  //we now have a Stream of Lists, but still operate on each individual integer
-                   .map(this::loadData)
-                   .unwrap()
-                   .forEach(list->System.out.println("next list " + list));
-
-
-    }
     public String processJob(String job){
         return job;
 

@@ -7,7 +7,7 @@ import com.oath.cyclops.types.foldable.Folds;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 
-import cyclops.monads.DataWitness.diet;
+import com.oath.cyclops.hkt.DataWitness.diet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;

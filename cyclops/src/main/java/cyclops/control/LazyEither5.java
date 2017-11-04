@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.Value;
@@ -11,10 +10,8 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
-import cyclops.collections.mutable.ListX;
 import cyclops.function.*;
 
-import cyclops.monads.DataWitness;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

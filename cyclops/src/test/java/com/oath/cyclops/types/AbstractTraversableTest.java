@@ -35,7 +35,6 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 
@@ -515,7 +514,7 @@ public abstract class AbstractTraversableTest {
         @Test
         public void testSorted() {
 
-            AnyM.fromList(ListX.of(tuple(2, 2), tuple(1, 1))).printOut();
+
             Traversable<Tuple2<Integer, Integer>> t1 = of(tuple(2, 2), tuple(1, 1));
 
             List<Tuple2<Integer, Integer>> s1 = t1.sorted().stream().toList();

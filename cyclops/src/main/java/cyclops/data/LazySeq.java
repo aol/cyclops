@@ -15,7 +15,7 @@ import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
-import cyclops.monads.DataWitness.lazySeq;
+import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

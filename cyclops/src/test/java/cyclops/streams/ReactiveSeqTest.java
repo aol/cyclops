@@ -11,7 +11,6 @@ import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.async.Future;
 import cyclops.control.Eval;
-import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -810,29 +809,7 @@ public class ReactiveSeqTest {
                 .toListX(),equalTo(ListX.of(1,2,3)));
 
     }
-    @Test
-    public void anyMIteration(){
-        Iterator<Integer> it = AnyM.fromStream(of(1,2,3))
-                                  .combine((a, b)->a.equals(b), Semigroups.intSum)
-                                    .iterator();
-        List<Integer> list = new ArrayList<>();
-        while(it.hasNext()){
-            list.add(it.next());
-        }
 
-        assertThat(list,equalTo(ListX.of(1,2,3)));
-    }
-    @Test
-    public void combineNoOrderAnyM(){
-
-
-
-
-        assertThat(AnyM.fromStream(of(1,2,3))
-                        .combine((a, b)->a.equals(b), Semigroups.intSum)
-                        .toListX(),equalTo(ListX.of(1,2,3)));
-
-    }
     @Test @Ignore
     public void testIterator(){
         ReactiveSubscriber<String> pushable = Spouts.reactiveSubscriber();

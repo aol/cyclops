@@ -8,7 +8,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.nonEmptyList;
+import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;

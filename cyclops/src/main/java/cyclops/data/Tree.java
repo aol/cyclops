@@ -2,7 +2,7 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
-import cyclops.monads.DataWitness.tree;
+import com.oath.cyclops.hkt.DataWitness.tree;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

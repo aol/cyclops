@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Option;
-import cyclops.monads.DataWitness.range;
+import com.oath.cyclops.hkt.DataWitness.range;
 import cyclops.function.Ordering;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.Enumeration;

@@ -9,9 +9,7 @@ import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 
-import cyclops.monads.DataWitness;
-import cyclops.monads.DataWitness.constant;
-import cyclops.monads.DataWitness.constant;
+import com.oath.cyclops.hkt.DataWitness.constant;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;

@@ -9,7 +9,7 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
-import cyclops.monads.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;

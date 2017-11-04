@@ -1,7 +1,7 @@
 package cyclops.free;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.monads.DataWitness.yoneda;
+import com.oath.cyclops.hkt.DataWitness.yoneda;
 import cyclops.typeclasses.functor.Functor;
 
 import java.util.function.Function;
