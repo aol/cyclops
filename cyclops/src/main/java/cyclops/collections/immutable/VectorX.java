@@ -560,6 +560,10 @@ public interface VectorX<T> extends To<VectorX<T>>,
     default VectorX<T> filter(final Predicate<? super T> pred) {
         return (VectorX<T>) LazyCollectionX.super.filter(pred);
     }
+    @Override
+    default VectorX<T> peek(final Consumer<? super T> c) {
+      return (VectorX<T>) LazyCollectionX.super.peek(c);
+    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
