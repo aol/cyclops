@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
-
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 
 import com.oath.anym.transformers.FoldableTransformerSeq;
 
+import cyclops.monads.WitnessType;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;

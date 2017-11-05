@@ -6,23 +6,26 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.mutable.ListX;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.stream;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.oath.cyclops.types.anyM.AnyMSeq;
-public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<Witness.stream>{
+
+public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<stream> {
 
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> of(T... values) {
+	public <T> AnyMSeq<stream,T> of(T... values) {
 		return AnyM.fromStream(Stream.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.stream,T> empty() {
+	public <T> AnyMSeq<stream,T> empty() {
 		return AnyM.fromStream(Stream.empty());
 	}
 

@@ -68,11 +68,9 @@ public class KleisliMTest {
     }
     @Test
     public void example(){
-        KleisliM<reactiveSeq, Integer, Integer> k1 = t -> ReactiveSeq.iterate(0, i->i<t, i->i+1)
-                                                                            .anyM();
+        KleisliM<reactiveSeq, Integer, Integer> k1 = t -> AnyM.fromStream(ReactiveSeq.iterate(0, i->i<t, i->i+1));
 
-        assertThat(ListX.iterate(10,10,i->i+1),equalTo(k1.flatMap(i-> t-> ReactiveSeq.of(t+i)
-                                      .anyM())
+        assertThat(ListX.iterate(10,10,i->i+1),equalTo(k1.flatMap(i-> t-> AnyM.fromStream(ReactiveSeq.of(t+i)))
                 .apply(10)
                 .collect(Collectors.toList())));
     }

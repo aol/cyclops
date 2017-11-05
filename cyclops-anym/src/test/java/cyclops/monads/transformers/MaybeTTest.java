@@ -1,6 +1,8 @@
 package cyclops.monads.transformers;
 
-
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.LinkedListX;
@@ -35,7 +37,7 @@ public class MaybeTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = Maybe.just(10).liftM(Witness.optional.INSTANCE);
+		just = AnyMs.liftM(Maybe.just(10),Witness.optional.INSTANCE);
 		none = MaybeT.of(AnyM.ofNullable(null));
 		one = MaybeT.of(AnyM.ofNullable(Maybe.just(1)));
 	}

@@ -1,25 +1,28 @@
 package cyclops.monads.collections.mutable;
 
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.mutable.QueueX;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.queue;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class QueueXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.queue> {
+public class QueueXTest extends AbstractAnyMSeqOrderedDependentTest<queue> {
 
 	@Override
-	public <T> AnyMSeq<Witness.queue,T> of(T... values) {
+	public <T> AnyMSeq<queue,T> of(T... values) {
 		return AnyM.fromQueue(QueueX.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.queue,T> empty() {
+	public <T> AnyMSeq<queue,T> empty() {
 		return AnyM.fromQueue(QueueX.empty());
 	}
 	@Test

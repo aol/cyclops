@@ -1,7 +1,7 @@
 package cyclops.monads.jdk;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static cyclops2.monads.Witness.*;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +11,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.completableFuture;
+import cyclops.monads.Witness.optional;
+import cyclops.monads.Witness.stream;
 import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
@@ -34,7 +38,7 @@ public class MonadTest {
                 .collect(Collectors.toList());
 
 
-        AnyM<completableFuture,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures), Witness.completableFuture.INSTANCE);
+        AnyM<completableFuture,ListX<Integer>> futureList = AnyM.sequence(AnyM.listFromCompletableFuture(futures), completableFuture.INSTANCE);
 
 
         List<Integer> collected = futureList.<CompletableFuture<List<Integer>>>unwrap().join();

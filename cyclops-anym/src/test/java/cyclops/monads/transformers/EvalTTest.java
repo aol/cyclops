@@ -1,6 +1,9 @@
 package cyclops.monads.transformers;
 
 
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -35,7 +38,7 @@ public class EvalTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = Eval.now(10).liftM(Witness.optional.INSTANCE);
+		just = AnyMs.liftM(Eval.now(10),Witness.optional.INSTANCE);
 		none = EvalT.of(AnyM.ofNullable(null));
 		one = EvalT.of(AnyM.ofNullable(Eval.now(1)));
 	}

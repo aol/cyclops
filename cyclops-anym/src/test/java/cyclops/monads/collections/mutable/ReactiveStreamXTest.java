@@ -1,9 +1,12 @@
 package cyclops.monads.collections.mutable;
 
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -14,7 +17,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
-public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq> {
+public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<reactiveSeq> {
     int count =0;
 
     boolean complete = false;
@@ -85,9 +88,9 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
         System.out.println("Cycle until!");
         ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX().materialize();
         count=0;
-        ListX<Integer> b= Witness.reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).toListX();
+        ListX<Integer> b= reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).toListX();
         count=0;
-        ListX<Integer> c= Witness.reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).toListX();
+        ListX<Integer> c= reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).toListX();
         count=0;
         ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
         System.out.println("A " + a);
@@ -107,14 +110,14 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<Wit
 
     }
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
+	public <T> AnyMSeq<reactiveSeq,T> of(T... values) {
 		return AnyM.fromStream(Spouts.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
+	public <T> AnyMSeq<reactiveSeq,T> empty() {
 		return AnyM.fromStream(Spouts.empty());
 	}
 	@Test

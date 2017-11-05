@@ -1,10 +1,13 @@
 package cyclops.monads.collections.persistent;
 
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import cyclops.collections.AbstractAnyMSeqTest;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.data.Comparators;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.orderedSetX;
+import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Test;
 
 import java.util.stream.Stream;
@@ -12,10 +15,10 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
+public class OrderedSetXTest extends AbstractAnyMSeqTest<orderedSetX> {
 
 	@Override
-	public <T> AnyMSeq<Witness.orderedSetX,T> of(T... values) {
+	public <T> AnyMSeq<orderedSetX,T> of(T... values) {
 		return AnyM.fromOrderedSetX(OrderedSetX.of(Comparators.naturalOrderIdentityComparator(),values));
 	}
 
@@ -23,7 +26,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<Witness.orderedSetX> {
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.orderedSetX,T> empty() {
+	public <T> AnyMSeq<orderedSetX,T> empty() {
 		return AnyM.fromOrderedSetX(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()));
 	}
 	 /* (non-Javadoc)

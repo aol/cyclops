@@ -1,15 +1,17 @@
 package cyclops.monads.control;
 
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.*;
 
-import static cyclops2.monads.AnyM.success;
+
+import static cyclops.monads.AnyM.success;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.tryType;
 import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
@@ -35,7 +37,7 @@ public class LiftTryTest {
 	public void testLiftError(){
 		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 
-		AnyM<tryType,Integer> result = divide.apply(success(2, ArithmeticException.class),Try.success(0,ArithmeticException.class).anyM());
+		AnyM<tryType,Integer> result = divide.apply(success(2, ArithmeticException.class),Try.success(0,ArithmeticException.class).to(AnyM::fromTry));
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(true));
 	}
@@ -44,7 +46,7 @@ public class LiftTryTest {
 	public void testLiftErrorAndStream(){
 		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 
-		AnyM<tryType,Integer> result = divide.apply(success(20, ArithmeticException.class), Try.success(4).anyM());
+		AnyM<tryType,Integer> result = divide.apply(success(20, ArithmeticException.class), Try.success(4).to(AnyM::fromTry));
 		System.out.println(result);
 		assertThat(result.<Try<Integer,ArithmeticException>>unwrap().isFailure(),equalTo(false));
 	}
@@ -54,7 +56,7 @@ public class LiftTryTest {
 
 		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 
-		AnyM<tryType,Integer> result = divide.apply(Try.success(2, ArithmeticException.class).anyM(), Try.success(4).anyM());
+		AnyM<tryType,Integer> result = divide.apply(AnyM.fromTry(Try.success(2, ArithmeticException.class)), Try.success(4).to(AnyM::fromTry));
 
 		assertThat(result.<Try<List<Integer>,ArithmeticException>>unwrap().orElse(null),equalTo(0));
 
@@ -64,7 +66,7 @@ public class LiftTryTest {
 	public void testLiftNoExceptionType(){
 		AnyMFunction2<tryType,Integer,Integer,Integer> divide = AnyM.liftF2(this::divide);
 
-		AnyM<tryType,Integer> result = divide.apply(Try.success(2).anyM(),Try.success(0).anyM());
+		AnyM<tryType,Integer> result = divide.apply(Try.success(2).to(AnyM::fromTry),Try.success(0).to(AnyM::fromTry));
 		System.out.println(result);
 		fail("exception should be thrown");
 	}

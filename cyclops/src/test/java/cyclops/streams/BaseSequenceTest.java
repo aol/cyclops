@@ -1,4 +1,4 @@
-package cyclops.monads.transformers.seq;
+package cyclops.streams;
 
 import static cyclops.reactive.ReactiveSeq.of;
 import static java.util.Arrays.asList;

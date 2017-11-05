@@ -1,6 +1,8 @@
 package cyclops.monads.transformers;
 
-
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.companion.Optionals;
@@ -14,7 +16,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import com.oath.cyclops.hkt.DataWitness.optional;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class OptionalTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = Optionals.liftM(Optional.of(10), optional.INSTANCE);
+		just = AnyMs.liftM(Optional.of(10), optional.INSTANCE);
 		none = OptionalT.of(AnyM.ofNullable(null));
 		one = OptionalT.of(AnyM.ofNullable(Optional.of(1)));
 	}

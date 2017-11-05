@@ -3,23 +3,27 @@ package cyclops.monads.collections.mutable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
+
+import com.oath.anym.AnyMSeq;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.reactiveSeq;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.anyM.AnyMSeq;
-public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<Witness.reactiveSeq> {
+
+public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<reactiveSeq> {
 
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> of(T... values) {
+	public <T> AnyMSeq<reactiveSeq,T> of(T... values) {
 		return AnyM.fromStream(ReactiveSeq.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.reactiveSeq,T> empty() {
+	public <T> AnyMSeq<reactiveSeq,T> empty() {
 		return AnyM.fromStream(ReactiveSeq.empty());
 	}
 	@Test

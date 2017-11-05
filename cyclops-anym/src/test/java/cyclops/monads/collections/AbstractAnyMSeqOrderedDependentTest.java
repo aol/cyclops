@@ -1,5 +1,6 @@
 package cyclops.monads.collections;
 
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.Semigroups;
 import cyclops.monads.WitnessType;

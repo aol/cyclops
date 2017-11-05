@@ -1,11 +1,14 @@
 package cyclops.monads.collections.mutable;
 
-import cyclops.collections.AbstractAnyMSeqTest;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.mutable.SortedSetX;
 import cyclops.monads.AnyM;
-import com.oath.cyclops.hkt.DataWitness.sortedSet;
+
 import cyclops.data.tuple.Tuple2;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.sortedSet;
+import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,7 +19,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class SortedSetXTest extends AbstractAnyMSeqTest<sortedSet>{
+public class SortedSetXTest extends AbstractAnyMSeqTest<sortedSet> {
 
 	@Override
 	public <T> AnyMSeq<sortedSet,T> of(T... values) {

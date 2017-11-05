@@ -1,26 +1,28 @@
 package cyclops.monads.collections.persistent;
 
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.linkedListX;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class LinkedListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.linkedListX>{
+public class LinkedListXTest extends AbstractAnyMSeqOrderedDependentTest<linkedListX> {
 
 	@Override
-	public <T> AnyMSeq<Witness.linkedListX,T> of(T... values) {
+	public <T> AnyMSeq<linkedListX,T> of(T... values) {
 		return AnyM.fromLinkedListX(LinkedListX.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.linkedListX,T> empty() {
+	public <T> AnyMSeq<linkedListX,T> empty() {
 		return AnyM.fromLinkedListX(LinkedListX.empty());
 	}
 	@Test
