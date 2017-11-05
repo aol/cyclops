@@ -3,7 +3,7 @@ package com.oath.anym.extensability;
 import java.util.function.Function;
 
 import cyclops.monads.AnyM;
-import cyclops.monads.DataWitnessType;
+
 import cyclops.monads.WitnessType;
 
 

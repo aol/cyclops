@@ -58,6 +58,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                           LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
+
+  default  <R> R toType(Function<? super FutureStream<U>,? extends R> fn){
+    return fn.apply(this);
+  }
     @Override
     default ListX<ReactiveSeq<U>> multicast(int num) {
         return stream().multicast(num);

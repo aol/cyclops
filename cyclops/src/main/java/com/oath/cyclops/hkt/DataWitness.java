@@ -42,7 +42,7 @@ public interface DataWitness {
   public static enum reactiveSeq {}
 
   public static enum sortedSet {}
-  public static enum set implements cyclops.monads.WitnessType<set>, cyclops.monads.WitnessType<set> {}
+  public static enum set {}
   public static enum list {}
   public static enum linkedListX {}
   public static enum vectorX {}
