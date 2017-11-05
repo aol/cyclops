@@ -116,6 +116,12 @@ public class StreamTest {
       .coflatMap(v->v.isPresent()?v.toOptional().get() : 10);
 
   }
+  public int loadData(int size){
+    List<String> list = new ArrayList<>();
+    for(int i=0;i<size;i++)
+      list.add(""+size);
+    return list.size();
+  }
   @Test
   public void listTExample(){
 
@@ -127,6 +133,7 @@ public class StreamTest {
       .forEach(list->System.out.println("next list " + list));
 
     ReactiveSeq.of(10,20,30,40,50)
+      .to(AnyM::fromStream)
       .slidingT(2,1)  //create a sliding view, returns a List Transformer
       .map(i->i*2)  //we now have a Stream of Lists, but still operate on each individual integer
       .map(this::loadData)
@@ -136,9 +143,10 @@ public class StreamTest {
 
   }
   @Test
-  public void anyMTest(){
+  public void anyMTestFS(){
+
     List<Integer> list = LazyReact.sequentialBuilder().of(1,2,3,4,5,6)
-      .anyM().filter(i->i>3).stream().toList();
+      .toType(AnyM::fromFutureStream).filter(i->i>3).stream().toList();
 
     assertThat(list,equalTo(Arrays.asList(4,5,6)));
   }
@@ -217,6 +225,7 @@ public class StreamTest {
     ListX.of(1,2,3,5,6,7,8)
       .map(i->i*2)
       .filter(i->i<4)
+      .to(AnyM::fromList)
       .slidingT(2)
       .map(i->"value is " + i)
       .unwrap()
