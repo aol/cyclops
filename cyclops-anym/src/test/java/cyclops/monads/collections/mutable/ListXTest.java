@@ -3,23 +3,26 @@ package cyclops.monads.collections.mutable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import com.oath.anym.AnyMSeq;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.list;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.ListX;
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
-import com.oath.cyclops.types.anyM.AnyMSeq;
-public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<Witness.list>{
+
+public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<list> {
 
 	@Override
-	public <T> AnyMSeq<Witness.list,T> of(T... values) {
+	public <T> AnyMSeq<list,T> of(T... values) {
 		return AnyM.fromList(ListX.of(values));
 	}
 	/* (non-Javadoc)
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.list,T> empty() {
+	public <T> AnyMSeq<list,T> empty() {
 		return AnyM.fromList(ListX.empty());
 	}
 	@Test

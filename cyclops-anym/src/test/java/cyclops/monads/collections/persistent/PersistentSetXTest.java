@@ -1,10 +1,11 @@
 package cyclops.monads.collections.persistent;
 
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import cyclops.collections.AbstractAnyMSeqTest;
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Ignore;
 import org.junit.Test;
 

@@ -2,8 +2,7 @@ package cyclops.monads.jdk;
 
 
 import static cyclops.monads.AnyM.fromStream;
-import static cyclops2.monads.AnyM.fromStream;
-import static cyclops2.monads.AnyM.ofValue;
+
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
@@ -19,7 +18,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.VectorX;
+import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.reactive.ReactiveSeq;

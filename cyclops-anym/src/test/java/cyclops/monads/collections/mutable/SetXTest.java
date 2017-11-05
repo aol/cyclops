@@ -1,13 +1,16 @@
 package cyclops.monads.collections.mutable;
 
-import cyclops.collections.AbstractAnyMSeqTest;
-import com.oath.cyclops.hkt.DataWitness.set;
+import com.oath.anym.AnyMSeq;
+
 import cyclops.data.tuple.Tuple2;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.set;
+import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.collections.mutable.SetX;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 
 import java.util.List;
 

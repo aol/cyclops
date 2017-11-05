@@ -1,10 +1,13 @@
 package cyclops.monads.collections.persistent;
 
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import cyclops.collections.AbstractAnyMSeqTest;
+
+import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.BagX;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.bagX;
+import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -15,10 +18,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
+public class BagXTest extends AbstractAnyMSeqTest<bagX> {
 
 	@Override
-	public <T> AnyMSeq<Witness.bagX,T> of(T... values) {
+	public <T> AnyMSeq<bagX,T> of(T... values) {
 		return AnyM.fromBagX(BagX.of(values));
 	}
 
@@ -26,7 +29,7 @@ public class BagXTest extends AbstractAnyMSeqTest<Witness.bagX> {
 	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
 	 */
 	@Override
-	public <T> AnyMSeq<Witness.bagX,T> empty() {
+	public <T> AnyMSeq<bagX,T> empty() {
 		return AnyM.fromBagX(BagX.empty());
 	}
 	 /* (non-Javadoc)

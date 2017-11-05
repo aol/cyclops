@@ -1,5 +1,7 @@
 package cyclops.monads.transformers;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 

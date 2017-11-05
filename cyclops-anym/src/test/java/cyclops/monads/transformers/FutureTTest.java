@@ -1,6 +1,9 @@
 package cyclops.monads.transformers;
 
 
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -20,7 +23,6 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
-import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.companion.Streams;
 import cyclops.async.Future;
 import cyclops.monads.AnyM;
@@ -42,7 +44,7 @@ public class FutureTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = Future.ofResult(10).liftM(optional.INSTANCE);
+		just = AnyMs.liftM(Future.ofResult(10),optional.INSTANCE);
 		none = FutureT.of(AnyM.ofNullable(null));
 		one = FutureT.of(AnyM.ofNullable(Future.ofResult(1)));
 	}

@@ -5,12 +5,15 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import cyclops.collections.AbstractAnyMSeqOrderedDependentTest;
+
+import com.oath.anym.AnyMSeq;
+import cyclops.monads.Witness;
+import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.reactive.Streamable;
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.streamable> {
 
 	@Override

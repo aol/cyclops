@@ -1,5 +1,7 @@
 package cyclops.monads.transformers;
-
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
@@ -14,7 +16,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import com.oath.cyclops.hkt.DataWitness.optional;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,7 +38,7 @@ public class XorTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = Either.<Throwable,Integer>right(10).liftM(optional.INSTANCE);
+		just = AnyMs.liftM(Either.<Throwable,Integer>right(10),optional.INSTANCE);
 		none = EitherT.of(AnyM.ofNullable(null));
 		one = EitherT.of(AnyM.ofNullable(LazyEither.right(1)));
 

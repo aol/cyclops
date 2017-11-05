@@ -1,6 +1,7 @@
 package cyclops.monads.anym;
 
-
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertEquals;
@@ -25,10 +26,7 @@ import com.oath.anym.AnyMSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.monads.Witness;
-import cyclops.monads.Witness.list;
-import cyclops.monads.Witness.optional;
-import cyclops.monads.Witness.set;
-import cyclops.monads.Witness.stream;
+import cyclops.monads.Witness.*;
 import cyclops.monads.WitnessType;
 import org.junit.Test;
 
@@ -126,7 +124,7 @@ public class AnyMTest {
     public void flatMapValueFirstList(){
 
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapI(i->ListX.of(10,i).anyM())
+            .flatMapI(i->ListX.of(10,i))
             .toMaybe();
        assertThat(l,equalTo(Maybe.of(10)));
     }

@@ -1,7 +1,10 @@
 package cyclops.monads.transformers;
 
+import com.oath.anym.AnyMValue;
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 
-import com.oath.cyclops.types.anyM.AnyMValue;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
@@ -15,7 +18,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import com.oath.cyclops.hkt.DataWitness.optional;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,7 +42,7 @@ public class CompletableFutureTTest implements Printable {
 	public void setUp() throws Exception {
 
 
-		just = CompletableFutures.liftM(CompletableFutures.ofResult(10), optional.INSTANCE);
+		just = AnyMs.liftM(CompletableFutures.ofResult(10), optional.INSTANCE);
 		none = CompletableFutureT.of(AnyM.ofNullable(null));
         AnyMValue<optional, CompletableFuture<Integer>> x = AnyM.ofNullable(CompletableFuture.completedFuture(1));
 		one = CompletableFutureT.of(x);

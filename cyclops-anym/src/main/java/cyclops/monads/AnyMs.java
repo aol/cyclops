@@ -43,34 +43,64 @@ public interface AnyMs {
   public static  <W extends WitnessType<W>,T> ListT<W, T> liftM(VectorX<T> v, W witness) {
     return ListT.of(witness.adapter().unit(v));
   }
+  public static <W extends WitnessType<W>,T> Function<W,ListT<W, T>> liftM(VectorX<T> s) {
+    return w->liftM(s,w);
+  }
   public static  <W extends WitnessType<W>,T> ListT<W, T> liftM(ListX<T> l, W witness) {
     return ListT.of(witness.adapter().unit(l));
+  }
+  public static <W extends WitnessType<W>,T> Function<W,ListT<W, T>> liftM(ListX<T> s) {
+    return w->liftM(s,w);
   }
   public static  <W extends WitnessType<W>,ST,PT> EitherT<W, ST,PT> liftM(Either<ST,PT> e, W witness) {
     return EitherT.of(witness.adapter().unit(e));
   }
+  public static <W extends WitnessType<W>,ST,PT> Function<W,EitherT<W, ST,PT>> liftM(Either<ST,PT>  s) {
+    return w->liftM(s,w);
+  }
   public static  <W extends WitnessType<W>,T> EvalT<W, T> liftM(Eval<T> e, W witness) {
     return EvalT.of(witness.adapter().unit(e));
+  }
+  public static <W extends WitnessType<W>,T> Function<W,EvalT<W, T>> liftM(Eval<T> s) {
+    return w->liftM(s,w);
   }
   public static  <W extends WitnessType<W>,T> MaybeT<W, T> liftM(Maybe<T> m, W witness) {
     return MaybeT.of(witness.adapter().unit(m));
   }
+  public static <W extends WitnessType<W>,T> Function<W,MaybeT<W, T>> liftM(Maybe<T> s) {
+    return w->liftM(s,w);
+  }
   public static <W extends WitnessType<W>,T> FutureT<W, T> liftM(Future<T> f, W witness) {
     return FutureT.of(witness.adapter().unit(f));
   }
-  default <W extends WitnessType<W>,T> ListT<W, T> liftM(LinkedListX<T> l, W witness) {
+  public static <W extends WitnessType<W>,T> Function<W,FutureT<W, T>> liftM(Future<T> s) {
+    return w->liftM(s,w);
+  }
+  public static <W extends WitnessType<W>,T> ListT<W, T> liftM(LinkedListX<T> l, W witness) {
     return ListT.of(witness.adapter().unit(l));
+  }
+  public static <W extends WitnessType<W>,T> Function<W,ListT<W, T>> liftM(LinkedListX<T> s) {
+    return w->liftM(s,w);
   }
   public static <T,W extends WitnessType<W>> CompletableFutureT<W, T> liftM(CompletableFuture<T> opt, W witness) {
     return CompletableFutureT.of(witness.adapter().unit(opt));
   }
+  public static <W extends WitnessType<W>,T> Function<W,CompletableFutureT<W, T>> liftM(CompletableFuture<T> s) {
+    return w->liftM(s,w);
+  }
   public static <T,W extends WitnessType<W>> OptionalT<W, T> liftM(Optional<T> opt, W witness) {
     return OptionalT.of(witness.adapter().unit(opt));
+  }
+  public static <T,W extends WitnessType<W>> Function<W,OptionalT<W, T>> liftM(Optional<T> opt) {
+    return w->liftM(opt,w);
   }
   public static <T> StreamT<Witness.reactiveSeq,T> combinationsT(ReactiveSeq<T> s,final int size) {
     return StreamT.fromReactiveSeq(s.combinations(size));
   }
 
+  public static <W extends WitnessType<W>,T> Function<W,StreamT<W, T>> liftM(ReactiveSeq<T> s) {
+    return w->liftM(s,w);
+  }
   public static <W extends WitnessType<W>,T> StreamT<W, T> liftM(ReactiveSeq<T> s, W witness) {
     return StreamT.of(witness.adapter().unit(s));
   }

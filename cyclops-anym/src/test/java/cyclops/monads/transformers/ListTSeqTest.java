@@ -1,5 +1,7 @@
 package cyclops.monads.transformers;
 
+import cyclops.monads.Witness;
+import cyclops.monads.Witness.*;
 import cyclops.control.Maybe;
 import cyclops.collections.mutable.ListX;
 import cyclops.monads.Witness;
