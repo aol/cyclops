@@ -70,7 +70,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                  Deconstruct1<T>,
-  MonadicValue<T>,
+                                  MonadicValue<T>,
                                     Higher<eval ,T>{
 
 

@@ -6,6 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Option;
@@ -18,7 +19,7 @@ import cyclops.async.Future;
 import cyclops.reactive.ReactiveSeq;
 
 @FunctionalInterface
-public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R> {
+public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<T1,T2,R>> {
 
     public static <T1, T2, T3,R> Function2<T1,T2, R> λ(final Function2<T1,T2, R> triFunc){
         return triFunc;
