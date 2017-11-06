@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
@@ -26,7 +27,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 @FunctionalInterface
-public interface Function0<R> extends Supplier<R>{
+public interface Function0<R> extends Supplier<R> {
 
 
     public static <  T3,R> Function0< R> λ(final Function0<R> triFunc){
@@ -35,6 +36,10 @@ public interface Function0<R> extends Supplier<R>{
     public static <  T3,R> Function0<? extends R> λv(final Function0<? extends R> triFunc){
         return triFunc;
     }
+
+  default <R2> R2 toType(Function<? super Function0<R>, ? extends R2> reduce){
+    return reduce.apply(this);
+  }
 
     default Future<R> future(Executor ex){
         return Future.of(CompletableFuture.supplyAsync(this,ex));

@@ -16,12 +16,14 @@ import java.util.function.Function;
  */
 @FunctionalInterface
 public interface AnyMFunction1<W extends WitnessType<W>,T1,R> extends KleisliM<W,AnyM<W,T1>,R> {
+
   static <W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T,R> Function1<AnyM<W1,T>,AnyM<W2,R>> liftAnyM(Function<? super T, ? extends R> fn,Function<AnyM<W1,T>,AnyM<W2,T>> hktTransform){
     return (T1)-> hktTransform.apply(T1).map(fn);
   }
   static <W extends WitnessType<W>,T,R> AnyMFunction1<W, T,R> liftF(Function<? super T, ? extends R> fn){
     return AnyM.liftF(fn);
   }
+
   static <W extends WitnessType<W>,T,R> AnyM<W, R> mapF(Function<? super T, ? extends R> fn,AnyM<W, T> functor) {
     return functor.map(fn);
   }

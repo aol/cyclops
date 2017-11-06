@@ -88,9 +88,9 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<rea
         System.out.println("Cycle until!");
         ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX().materialize();
         count=0;
-        ListX<Integer> b= reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).toListX();
+        ListX<Integer> b= Witness.reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).toListX();
         count=0;
-        ListX<Integer> c= reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).toListX();
+        ListX<Integer> c= Witness.reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).toListX();
         count=0;
         ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
         System.out.println("A " + a);

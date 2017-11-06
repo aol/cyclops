@@ -17,11 +17,12 @@ public class Uncurry extends UncurryConsumer {
                                  .apply(t2);
     }
 
-    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> uncurry3(final Function<T1, Function<T2, Function<T3, R>>> triFunc) {
+    public static <T1, T2, T3, R> Function3<T1, T2, T3, R> uncurry3(final Function<T1, ? extends Function<T2, ? extends Function<T3, R>>> triFunc) {
         return (t1, t2, t3) -> triFunc.apply(t1)
                                       .apply(t2)
                                       .apply(t3);
     }
+
 
     public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> uncurry4(
             final Function<T1, Function<T2, Function<T3, Function<T4, R>>>> quadFunc) {

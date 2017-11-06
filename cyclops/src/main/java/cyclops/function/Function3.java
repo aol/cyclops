@@ -4,6 +4,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
+import com.oath.cyclops.types.foldable.To;
 import cyclops.async.Future;
 
 import cyclops.control.Option;
@@ -20,13 +21,15 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
     public static <T1, T2, T3,R> Function3<? super T1,? super T2,? super T3,? extends R> λv(final Function3<? super T1,? super T2,? super T3,? extends R> triFunc){
         return triFunc;
     }
-    
+
     public R apply(S1 a, S2 b, S3 c);
 
 
-    
-    
-    
+  default <R2> R2 toType3(Function<? super Function3<? super S1, ? super S2, ? super S3,? extends R>, ? extends R2> reduce){
+    return reduce.apply(this);
+  }
+
+
     default Function3<S1, S2, S3, Maybe<R>> lift3(){
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3))));
@@ -43,7 +46,7 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)-> Option.ofNullable(host.apply(s1,s2,s3));
     }
-    
+
     default Function3<S1,S2,S3,R> memoize3(){
         return Memoize.memoizeTriFunction(this);
     }
@@ -77,7 +80,7 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
      * }</pre>
      *
      *
-     * @param cache Cache implementation wrapper
+     * @param c Cache implementation wrapper
      *
      * @return A caching (memoizing) version of this BiFunction, outputs for all inputs will be cached (unless ejected from the cache)
      */
@@ -95,8 +98,8 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
     default Function1<? super S1,Function1<? super S2,Function1<? super S3,? extends  R>>> curry(){
         return CurryVariance.curry3(this);
     }
-    
-    
+
+
     default Function1<S2, Function1<S3, R>> apply(final S1 s) {
         return Curry.curry3(this)
                     .apply(s);

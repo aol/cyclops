@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
@@ -34,6 +35,10 @@ public interface Function1<T,  R> extends Function<T,R>{
     public static <T1,  T3,R> Function1<? super T1,? extends R> λv(final Function1<? super T1,? extends R> triFunc){
         return triFunc;
     }
+
+  default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
+    return reduce.apply(this);
+  }
 
     default Function0<R> applyLazy(T t){
         return ()->apply(t);
