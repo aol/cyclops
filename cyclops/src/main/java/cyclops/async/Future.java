@@ -10,6 +10,8 @@ import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.hkt.DataWitness.future;
@@ -1325,7 +1327,9 @@ public class Future<T> implements To<Future<T>>,
      */
     @Override
     public <T2, R> Future<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
+      if (app instanceof Future) {
+        return Future.of(future.thenCombine(((Future<T2>) app).getFuture(), fn));
+      }
         return (Future<R>) MonadicValue.super.zip(app, fn);
     }
 
@@ -1340,11 +1344,15 @@ public class Future<T> implements To<Future<T>>,
      */
     @Override
     public <T2, R> Future<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Future<R>) MonadicValue.super.zipP(app,fn);
+      if (app instanceof Future) {
+        return Future.of(future.thenCombine(((Future<T2>) app).getFuture(), fn));
+      }
+      return (Future<R>) MonadicValue.super.zipP(app,fn);
 
     }
 
-    /**
+
+  /**
      * Create a Future object that asyncrhonously populates using the Common
      * ForkJoinPool from the user provided Supplier
      *

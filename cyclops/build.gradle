@@ -121,7 +121,7 @@ javadoc {
 
 modifyPom {
   project {
-    name 'cyclops-react'
+    name 'cyclops'
     description 'Platform for Functional Reactive Programming with Java 8'
     url 'https://github.com/aol/cyclops-react'
     inceptionYear '2015'
