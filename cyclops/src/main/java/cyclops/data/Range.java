@@ -6,7 +6,6 @@ import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.range;
 import cyclops.function.Ordering;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;

@@ -375,17 +375,6 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
     //cojoin
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#nest()
@@ -814,6 +803,9 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     }
     default <T2, R> Either<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
+    }
+    default <T2, R> Either<ST, R> zip(final Publisher<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+      return zip(Either.fromPublisher(app),fn);
     }
 
     default Either<LinkedListX<ST>, PT> list() {

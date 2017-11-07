@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
@@ -574,29 +573,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<ReactiveSeq<T>>)ImmutableList.super.combinations();
     }
 
-    @Override
-    default LazySeq<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (LazySeq<T>)ImmutableList.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> LazySeq<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (LazySeq<R>)ImmutableList.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> LazySeq<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (LazySeq<R>)ImmutableList.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> LazySeq<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (LazySeq<R>)ImmutableList.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> LazySeq<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (LazySeq<R>)ImmutableList.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> LazySeq<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (LazySeq<R>)ImmutableList.super.zip(fn, publisher);
     }
 
     @Override
@@ -605,8 +584,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default <U> LazySeq<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (LazySeq)ImmutableList.super.zipP(other);
+    default <U> LazySeq<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (LazySeq)ImmutableList.super.zipWithPublisher(other);
     }
 
     @Override

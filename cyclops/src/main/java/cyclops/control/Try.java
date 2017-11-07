@@ -514,6 +514,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * @return Try populated with first value from Iterable
      */
     public static <T, X extends Throwable> Try<T, X> fromIterable(final Iterable<T> iterable, T alt) {
+      if(iterable instanceof Try){
+        return (Try)iterable;
+      }
         return new Try<>(LazyEither.fromIterable(iterable,alt), new Class[0]);
     }
 

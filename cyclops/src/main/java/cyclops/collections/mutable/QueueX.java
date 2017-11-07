@@ -6,7 +6,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.*;
 import cyclops.typeclasses.*;
-import com.oath.cyclops.types.Zippable;
 
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.immutable.VectorX;
@@ -634,14 +633,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
 
-
-    @Override
-    default <U, R> QueueX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (QueueX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    @Override
+  @Override
     default QueueX<VectorX<T>> sliding(final int windowSize) {
         return (QueueX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
     }
@@ -750,9 +742,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> QueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> QueueX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (QueueX) LazyCollectionX.super.zipS(other);
+        return (QueueX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1162,36 +1154,16 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<T>) queueX;
     }
 
-    @Override
-    default QueueX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (QueueX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> QueueX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (QueueX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> QueueX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (QueueX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> QueueX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (QueueX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> QueueX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (QueueX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> QueueX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (QueueX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> QueueX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (QueueX)LazyCollectionX.super.zipP(other);
+    default <U> QueueX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (QueueX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

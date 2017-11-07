@@ -9,7 +9,6 @@ import cyclops.control.Trampoline;
 
 import com.oath.cyclops.hkt.DataWitness.diet;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.Enumeration;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple2;

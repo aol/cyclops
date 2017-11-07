@@ -2,7 +2,6 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
@@ -273,39 +272,18 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().retainAll(values));
     }
 
-    @Override
-    default ImmutableSet<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return unitStream(stream().zip(combiner,app));
+  @Override
+    default <T2, R> ImmutableSet<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return unitStream(stream().zip(fn, publisher));
     }
 
-    @Override
-    default <R> ImmutableSet<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWith(fn));
-    }
-
-    @Override
-    default <R> ImmutableSet<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWithS(fn));
-    }
-
-    @Override
-    default <R> ImmutableSet<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWithP(fn));
-    }
-
-    @Override
-    default <T2, R> ImmutableSet<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return unitStream(stream().zipP(publisher,fn));
-    }
-
-    @Override
     default <U, R> ImmutableSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return unitStream(stream().zipS(other,zipper));
+        return unitStream(stream().zipWithStream(other,zipper));
     }
 
     @Override
-    default <U> ImmutableSet<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return unitStream(stream().zipP(other));
+    default <U> ImmutableSet<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return unitStream(stream().zipWithPublisher(other));
     }
 
     @Override
@@ -401,9 +379,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
-    @Override
     default <U> ImmutableSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return unitStream(stream().zipS(other));
+        return unitStream(stream().zipWithStream(other));
     }
 
     @Override

@@ -148,7 +148,8 @@ public class MaybeTest implements Printable {
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(Maybe.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
+
+        assertThat(sumMaybes.apply(Maybe.just(1),Maybe.just(5)),equalTo(Maybe.just(6)));
 
     }
 
@@ -192,12 +193,12 @@ public class MaybeTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(just.combineEager(add, none), equalTo(just));
-        assertThat(none.combineEager(add, just), equalTo(Maybe.of(0)));
-        assertThat(none.combineEager(add, none), equalTo(Maybe.of(0)));
-        assertThat(just.combineEager(add, Maybe.just(10)), equalTo(Maybe.just(20)));
+        assertThat(just.zip(add, none), equalTo(just));
+        assertThat(none.zip(add, just), equalTo(Maybe.of(0)));
+        assertThat(none.zip(add, none), equalTo(Maybe.of(0)));
+        assertThat(just.zip(add, Maybe.just(10)), equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
-        assertThat(just.combineEager(firstNonNull, none), equalTo(just));
+        assertThat(just.zip(firstNonNull, none), equalTo(just));
 
     }
 

@@ -13,6 +13,8 @@ import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import lombok.AllArgsConstructor;
@@ -164,21 +166,37 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return Streamable.fromIterable(IterableX.super.zip(other, zipper));
     }
 
+    default <U, R> Streamable<R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-
-    @Override
-    default <U, R> Streamable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return Streamable.fromIterable(IterableX.super.zipS(other, zipper));
+        return Streamable.fromIterable(IterableX.super.zipWithStream(other, zipper));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
-     */
-    @Override
-    default <U> Streamable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+  @Override
+  default <T2, R> Streamable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+    return Streamable.fromIterable(IterableX.super.zip(fn,publisher));
+  }
 
-        return Streamable.fromIterable(IterableX.super.zipS(other));
+  @Override
+  default <U> Streamable<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+    return Streamable.fromIterable(IterableX.super.zipWithPublisher(other));
+  }
+
+  @Override
+  default <S, U, R> Streamable<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    return Streamable.fromIterable(IterableX.super.zip3(second,third,fn3));
+  }
+
+  @Override
+  default <T2, T3, T4, R> Streamable<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    return Streamable.fromIterable(IterableX.super.zip4(second,third,fourth,fn));
+  }
+
+  /* (non-Javadoc)
+       * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
+       */
+    default <U> Streamable<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+
+        return Streamable.fromIterable(IterableX.super.zipWithStream(other));
     }
 
     /* (non-Javadoc)

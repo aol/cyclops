@@ -4,7 +4,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
@@ -64,19 +64,9 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
 
-    /* (non-Javadoc)
-     * @see AnyM#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
-     */
-    @Override
-    default AnyMValue2<W,T2,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-
-        return (AnyMValue2<W,T2,T>)AnyMValue.super.zip(combiner, app);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
+   */
     @Override
     default <R> AnyMValue2<W,T2,R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
         return mapper.andThen(r -> unit(r))
@@ -107,29 +97,14 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     }
 
-    @Override
-    default <R> AnyMValue2<W,T2,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue2<W,T2,R>)AnyM2.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> AnyMValue2<W,T2,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue2<W,T2,R>)AnyM2.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> AnyMValue2<W,T2,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (AnyMValue2<W,T2,R>)AnyM2.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> AnyMValue2<W,T2,R> retry(final Function<? super T, ? extends R> fn) {
         return (AnyMValue2<W,T2,R>)AnyM2.super.retry(fn);
     }
 
     @Override
-    default <U> AnyMValue2<W,T2,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (AnyMValue2)AnyM2.super.zipP(other);
+    default <U> AnyMValue2<W,T2,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (AnyMValue2)AnyM2.super.zipWithPublisher(other);
     }
 
     @Override
@@ -286,7 +261,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     default <R> AnyMValue2<W,T2,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){
         if(unwrap() instanceof MonadicValue){
             MonadicValue<T> unwrap = unwrap();
-            FunctionalAdapter<W> a= adapter();
+            MonadAdapter<W> a= adapter();
             MonadicValue<? extends R> mapped = unwrap.flatMap(fn);
             return AnyM.<W,T2,R>ofValue2(mapped,a);
 
@@ -322,21 +297,8 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         return Either.left(this);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.fromEither5.AnyMValue2#ap(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> AnyMValue2<W,T2,R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (this.unwrap() instanceof MonadicValue) {
 
-            return (AnyMValue2<W, T2,R>) AnyM.ofValue( ((MonadicValue<T>) unwrap()).combine(app, fn),adapter());
-        }
-        return (AnyMValue2<W, T2,R>) AnyMValue.super.combine(app, fn);
-    }
-
-
-
-    @Override
+  @Override
     default <T2, R> AnyMValue2<W,T2,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         if (this.unwrap() instanceof Zippable) {
             return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zip(app, fn));
@@ -348,11 +310,11 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
      * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> AnyMValue2<W,T2,R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> AnyMValue2<W,T2,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         if (this.unwrap() instanceof Zippable) {
-            return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zipP(app,fn));
+            return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zip(fn, app));
         }
-        return (AnyMValue2<W,T2,R>) AnyMValue.super.zipP(app,fn);
+        return (AnyMValue2<W,T2,R>) AnyMValue.super.zip(fn, app);
     }
 
 
@@ -396,11 +358,6 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     @Override
     default <R1, R> AnyMValue2<W,T2,R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1, final BiFunction<? super T, ? super R1, Boolean> filterFunction, final BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         return (AnyMValue2<W,T2,R>)AnyMValue.super.forEach2(value1,filterFunction,yieldingFunction);
-    }
-
-    @Override
-    default AnyMValue2<W,T2,T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return (AnyMValue2<W,T2,T>)AnyMValue.super.combineEager(monoid,v2);
     }
 
 

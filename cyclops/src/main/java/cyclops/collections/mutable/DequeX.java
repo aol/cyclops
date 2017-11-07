@@ -7,7 +7,6 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.typeclasses.*;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 
 import cyclops.collections.immutable.VectorX;
@@ -714,19 +713,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> DequeX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (DequeX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX#sliding(int)
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX#sliding(int)
+   */
     @Override
     default DequeX<VectorX<T>> sliding(final int windowSize) {
         return (DequeX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
@@ -867,9 +856,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.oath.cyclops.lambda.monads.Traversable#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> DequeX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> DequeX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (DequeX) LazyCollectionX.super.zipS(other);
+        return (DequeX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1310,36 +1299,16 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>) dequeX;
     }
 
-    @Override
-    default DequeX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (DequeX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> DequeX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (DequeX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> DequeX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (DequeX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> DequeX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (DequeX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> DequeX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (DequeX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> DequeX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (DequeX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> DequeX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (DequeX)LazyCollectionX.super.zipP(other);
+    default <U> DequeX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (DequeX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

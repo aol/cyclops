@@ -17,9 +17,7 @@ import com.oath.anym.transformers.TransformerTraversable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import com.oath.cyclops.types.Zippable;
-import com.oath.anym.extensability.FunctionalAdapter;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.collections.mutable.*;
 import cyclops.collections.immutable.*;
 import cyclops.monads.WitnessType;
@@ -374,7 +372,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
         return fromIterable(IterableX.super.onEmptyGet(supplier));
     }
-    FunctionalAdapter<W> adapter();
+    MonadAdapter<W> adapter();
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
@@ -465,7 +463,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
-    @Override
     default <U, R> AnyMSeq<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return fromIterable(IterableX.super.zipS(other, zipper));
@@ -476,7 +473,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
      */
-    @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
         return fromIterable(IterableX.super.zipS(other));
@@ -1084,37 +1080,16 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-
-    @Override
-    default AnyMSeq<W,T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return fromIterable(IterableX.super.zip(combiner,app));
-    }
-
-    @Override
-    default <R> AnyMSeq<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return fromIterable(IterableX.super.zipWith(fn));
-    }
-
-    @Override
-    default <R> AnyMSeq<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return fromIterable(IterableX.super.zipWithS(fn));
-    }
-
-    @Override
-    default <R> AnyMSeq<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return fromIterable(IterableX.super.zipWithP(fn));
-    }
-
-    @Override
-    default <T2, R> AnyMSeq<W,R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return fromIterable(IterableX.super.zipP(publisher,fn));
+  @Override
+    default <T2, R> AnyMSeq<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return fromIterable(IterableX.super.zip(fn, publisher));
     }
 
 
 
     @Override
-    default <U> AnyMSeq<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return fromIterable(IterableX.super.zipP(other));
+    default <U> AnyMSeq<W,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return fromIterable(IterableX.super.zipWithPublisher(other));
     }
 
 

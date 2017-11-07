@@ -1,6 +1,5 @@
 package cyclops.data;
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
@@ -592,29 +591,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<ReactiveSeq<T>>)ImmutableQueue.super.combinations();
     }
 
-    @Override
-    default BankersQueue<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (BankersQueue<T>)ImmutableQueue.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> BankersQueue<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (BankersQueue<R>)ImmutableQueue.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> BankersQueue<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (BankersQueue<R>)ImmutableQueue.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> BankersQueue<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (BankersQueue<R>)ImmutableQueue.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> BankersQueue<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (BankersQueue<R>)ImmutableQueue.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> BankersQueue<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (BankersQueue<R>)ImmutableQueue.super.zip(fn, publisher);
     }
 
     @Override
@@ -623,8 +602,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default <U> BankersQueue<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (BankersQueue)ImmutableQueue.super.zipP(other);
+    default <U> BankersQueue<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (BankersQueue)ImmutableQueue.super.zipWithPublisher(other);
     }
 
     @Override

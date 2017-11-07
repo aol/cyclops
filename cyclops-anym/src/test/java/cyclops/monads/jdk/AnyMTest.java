@@ -241,7 +241,7 @@ public class AnyMTest {
 	public void zipStream(){
 		Stream<List<Integer>> zipped = fromStream(Stream.of(1,2,3))
 											.stream()
-											.zipS(Stream.of(2,3,4),
+											.zipWithStream(Stream.of(2,3,4),
 													(a,b) -> Arrays.asList(a,b))
 													.stream();
 

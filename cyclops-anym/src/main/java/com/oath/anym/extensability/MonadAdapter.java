@@ -2,6 +2,7 @@ package com.oath.anym.extensability;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -10,6 +11,10 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
+
+import static cyclops.monads.AnyM.fromCollectionX;
+import static cyclops.monads.Witness.collectionX;
 
 /**
  * Interface for defining how Comprehensions should work for a type
@@ -37,18 +42,23 @@ import lombok.AllArgsConstructor;
  *
  * @param <W> Monadic Type being wrapped
  */
-//TODO rename MonadAdapter
-public interface FunctionalAdapter<W extends WitnessType<W>> {
+public interface MonadAdapter<W extends WitnessType<W>> {
 
 
-    default <R> R visit(Function<? super FunctionalAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
+    default <R> R visit(Function<? super MonadAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
         return fn1.apply(this);
     }
     default <T,T2,R> AnyM<W,R> ap2(AnyM<W,? extends Function<? super T,? extends Function<? super T2,? extends R>>> fn, AnyM<W,T> apply, AnyM<W,T2> apply2){
         return  ap(ap(fn, apply), apply2);
     }
 
-    public <T,R> AnyM<W,R> ap(AnyM<W, ? extends Function<? super T,? extends R>> fn, AnyM<W,T> apply);
+    <T,T2,R> AnyM<W,R> zip(AnyM<W,T> t,Iterable<T2> t2,  BiFunction<? super T, ? super T2,? extends R> fn);
+
+    <T,T2,R> AnyM<W,R> zip(AnyM<W,T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2,? extends R> fn);
+
+    default <T,R> AnyM<W,R> ap(AnyM<W, ? extends Function<? super T,? extends R>> fn, AnyM<W,T> apply){
+      return zip(apply,(Publisher<Function<? super T,? extends R>>)fn,(a,b)->b.apply(a));
+    }
 
     default <T> AnyM<W,T> filter(AnyM<W,T> t,  Predicate<? super T> fn){
         return t;

@@ -10,7 +10,6 @@ import com.oath.cyclops.internal.stream.FutureOpterationsImpl;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.futurestream.*;
 import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
@@ -164,29 +163,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().retainAll(values));
     }
 
-    @Override
-    default FutureStream<U> zip(BinaryOperator<Zippable<U>> combiner, final Zippable<U> app) {
-        return fromStream(stream().zip(combiner,app));
-    }
-
-    @Override
-    default <R> FutureStream<R> zipWith(Iterable<Function<? super U, ? extends R>> fn) {
-        return fromStream(stream().zipWith(fn));
-    }
-
-    @Override
-    default <R> FutureStream<R> zipWithS(Stream<Function<? super U, ? extends R>> fn) {
-        return fromStream(stream().zipWithS(fn));
-    }
-
-    @Override
-    default <R> FutureStream<R> zipWithP(Publisher<Function<? super U, ? extends R>> fn) {
-        return fromStream(stream().zipWithP(fn));
-    }
-
-    @Override
-    default <U1> FutureStream<Tuple2<U, U1>> zipP(final Publisher<? extends U1> other) {
-        return fromStream(stream().zipP(other));
+  @Override
+    default <U1> FutureStream<Tuple2<U, U1>> zipWithPublisher(final Publisher<? extends U1> other) {
+        return fromStream(stream().zipWithPublisher(other));
     }
 
     @Override
@@ -465,9 +444,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> FutureStream<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super U, ? super T2, ? extends R> fn) {
+    default <T2, R> FutureStream<R> zip(BiFunction<? super U, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
 
-        return (FutureStream<R>)ReactiveSeq.super.zipP(publisher,fn);
+        return (FutureStream<R>)ReactiveSeq.super.zip(fn, publisher);
     }
 
     /**
@@ -2208,7 +2187,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     @Override
-    default <T> FutureStream<Tuple2<U, T>> zipS(final Stream<? extends T> other) {
+    default <T> FutureStream<Tuple2<U, T>> zipWithStream(final Stream<? extends T> other) {
         return fromStream(LazyFutureStreamFunctions.zip(this, other));
     }
 
@@ -2220,7 +2199,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     @Override
-    default <T, R> FutureStream<R> zipS(final Stream<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
+    default <T, R> FutureStream<R> zipWithStream(final Stream<? extends T> other, final BiFunction<? super U, ? super T, ? extends R> zipper) {
         return fromStream(LazyFutureStreamFunctions.zip(this, ReactiveSeq.oneShotStream(other), zipper));
     }
 

@@ -11,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.types.Zippable;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.traversable.IterableX;
@@ -872,34 +871,14 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
 
-    @Override
-    public ListT<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (ListT) FoldableTransformerSeq.super.zip(combiner,app);
+  @Override
+    public <T2, R> ListT<W,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (ListT) FoldableTransformerSeq.super.zip(fn, publisher);
     }
 
     @Override
-    public <R> ListT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (ListT) FoldableTransformerSeq.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> ListT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (ListT) FoldableTransformerSeq.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> ListT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (ListT) FoldableTransformerSeq.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> ListT<W,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (ListT) FoldableTransformerSeq.super.zipP(publisher,fn);
-    }
-
-    @Override
-    public <U> ListT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (ListT) FoldableTransformerSeq.super.zipP(other);
+    public <U> ListT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (ListT) FoldableTransformerSeq.super.zipWithPublisher(other);
     }
 
     @Override

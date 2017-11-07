@@ -2,8 +2,6 @@ package cyclops.monads.transformers;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.anym.transformers.ValueTransformer;
 
 import com.oath.cyclops.types.foldable.To;
@@ -303,29 +301,10 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> OptionalT<W,R> combine(Value<? extends T2> app,
-                                          BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (OptionalT<W,R>)super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
-     */
-    @Override
-    public OptionalT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-
-        return (OptionalT<W, T>)super.zip(combiner, app);
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
+   */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
 
@@ -355,24 +334,15 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
      * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> OptionalT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> OptionalT<W, R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
 
-        return (OptionalT<W, R>)super.zipP(publisher,fn);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
-     */
-    @Override
-    public <U> OptionalT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-
-        return (OptionalT)super.zipS(other);
+        return (OptionalT<W, R>)super.zip(fn, publisher);
     }
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
+   */
     @Override
     public <U> OptionalT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
 
@@ -547,35 +517,15 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return (OptionalT<W,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <R> OptionalT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (OptionalT<W,R>)super.zipWith(fn);
-    }
-
-    @Override
-    public <R> OptionalT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (OptionalT<W,R>)super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> OptionalT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (OptionalT<W,R>)super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     public <R> OptionalT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (OptionalT<W,R>)super.trampoline(mapper);
     }
 
-    @Override
-    public <U, R> OptionalT<W,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (OptionalT<W,R>)super.zipS(other,zipper);
-    }
-
-    @Override
-    public <U> OptionalT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (OptionalT)super.zipP(other);
-    }
+   @Override
+   public <U> OptionalT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (OptionalT)super.zipWithPublisher(other);
+   }
 
     @Override
     public <S, U> OptionalT<W,Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {

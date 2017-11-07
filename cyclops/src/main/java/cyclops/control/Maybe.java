@@ -7,6 +7,8 @@ import com.oath.cyclops.types.Present;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.data.tuple.*;
+import cyclops.reactive.Spouts;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -35,10 +37,6 @@ import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -548,7 +546,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * Only successes are retained. By constrast with {@link Maybe#sequence(CollectionX)} Maybe#zero/ None types are
+     * Only successes are retained. By constrast with {@link Maybe#sequence(IterableX)} Maybe#zero/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -710,29 +708,14 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
-    @Override
-    default <R> Maybe<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Maybe<R>)Option.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> Maybe<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Maybe<R>)Option.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> Maybe<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Maybe<R>)Option.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> Maybe<R> retry(final Function<? super T, ? extends R> fn) {
         return (Maybe<R>)Option.super.retry(fn);
     }
 
     @Override
-    default <U> Maybe<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (Maybe)Option.super.zipP(other);
+    default <U> Maybe<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (Maybe)Option.super.zipWithPublisher(other);
     }
 
     @Override
@@ -833,96 +816,35 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
 
-    /*
-     * Apply a function across to values at once. If this Maybe is none, or the
-     * supplied value represents none Maybe.none is returned. Otherwise a Maybe
-     * with the function applied with this value and the supplied value is
-     * returned
-     *
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
-     * cyclops2.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Maybe<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> app.visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
-    }
-
-    /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
-     * only from that iterable. (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-     * java.util.function.BiFunction)
-     */
+  /*
+   * Equivalent to combine, but accepts an Iterable and takes the first value
+   * only from that iterable. (non-Javadoc)
+   *
+   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
+   * java.util.function.BiFunction)
+   */
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> Maybe.fromIterable(app)
-                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
+        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(tuple -> Maybe.fromIterable(app)
+                      .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
     }
 
 
-    /*
-     * Equivalent to combine, but accepts a Publisher and takes the first value
-     * only from that publisher. (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
-     * org.reactivestreams.Publisher)
-     */
+
     @Override
-    default <T2, R> Maybe<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> Maybe.fromPublisher(app)
-                .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
-
+    default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+      return narrow(Spouts.from(this)
+        .zip(fn, app)
+        .takeOne());
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
-     */
-    @Override
-    default  Maybe<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Maybe<T>)Option.super.zip(combiner, app);
-    }
-
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Maybe<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (Maybe<R>) Option.super.zipS(other, zipper);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
-     */
-    @Override
-    default <U> Maybe<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-
-        return (Maybe) Option.super.zipS(other);
-    }
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
+   */
     @Override
     default <U> Maybe<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
@@ -958,22 +880,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         return (Maybe<MonadicValue<T>>) Option.super.nest();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.oath.cyclops.types.MonadicValue2)
-     */
-    @Override
-    default Maybe<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return (Maybe<T>) Option.super.combineEager(monoid, v2);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.value.Value#toMaybe()
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see com.oath.cyclops.value.Value#toMaybe()
+   */
     @Override
     default Maybe<T> toMaybe() {
         return this;
@@ -1798,10 +1709,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * <pre>
          * {@code
          *  Monoid<Maybe<Integer>> m = Monoid.of(Maybe.widen(Maybe.just()), (a,b)->a.isEmpty() ? b : a);
-        Maybe<Integer> maybe = Maybes.<Integer>monadPlus(m)
-        .plus(Maybe.widen(Maybe.just(5)), Maybe.widen(Maybe.just(10)))
-        .convert(Maybe::narrowK3);
-        //Maybe[5]
+            Maybe<Integer> maybe = Maybes.<Integer>monadPlus(m)
+                                         .plus(Maybe.just(5), Maybe.just(10))
+                                         .convert(Maybe::narrowK3);
+              //Maybe[5]
          *
          * }
          * </pre>
@@ -1850,7 +1761,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return Maybe.of(value);
         }
         private static <T,R> Maybe<R> ap(Maybe<Function< T, R>> lt,  Maybe<T> maybe){
-            return lt.combine(maybe, (a,b)->a.apply(b)).toMaybe();
+            return lt.zip(maybe, (a,b)->a.apply(b)).toMaybe();
 
         }
         private static <T,R> Higher<maybe,R> flatMap( Higher<maybe,T> lt, Function<? super T, ? extends  Higher<maybe,R>> fn){
@@ -1873,5 +1784,224 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
     }
+
+  public static class Comprehensions {
+
+    public static <T,F,R1, R2, R3,R4,R5,R6,R7> Maybe<R7> forEach(Maybe<T> free,
+                                                                        Function<? super T, ? extends Maybe<R1>> value2,
+                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3,
+                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Maybe<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Maybe<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Maybe<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Maybe<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Maybe<R7>> value8
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Maybe<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Maybe<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Maybe<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Maybe<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f.flatMap(inf->{
+                    Maybe<R7> g = value8.apply(Tuple.tuple(in,ina,inb,inc,ind,ine,inf));
+                    return g;
+
+                  });
+
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4,R5,R6> Maybe<R6> forEach(Maybe<T> free,
+                                                                     Function<? super T, ? extends Maybe<R1>> value2,
+                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3,
+                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Maybe<R3>> value4,
+                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Maybe<R4>> value5,
+                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Maybe<R5>> value6,
+                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Maybe<R6>> value7
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Maybe<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Maybe<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Maybe<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Maybe<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f;
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+
+    public static <T,F,R1, R2, R3,R4,R5> Maybe<R5> forEach(Maybe<T> free,
+                                                                  Function<? super T, ? extends Maybe<R1>> value2,
+                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3,
+                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Maybe<R3>> value4,
+                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Maybe<R4>> value5,
+                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Maybe<R5>> value6
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Maybe<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Maybe<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Maybe<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e;
+              });
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4> Maybe<R4> forEach(Maybe<T> free,
+                                                               Function<? super T, ? extends Maybe<R1>> value2,
+                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3,
+                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Maybe<R3>> value4,
+                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Maybe<R4>> value5
+
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Maybe<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Maybe<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d;
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3> Maybe<R3> forEach(Maybe<T> free,
+                                                            Function<? super T, ? extends Maybe<R1>> value2,
+                                                            Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3,
+                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Maybe<R3>> value4
+
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Maybe<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c;
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2> Maybe<R2> forEach(Maybe<T> free,
+                                                        Function<? super T, ? extends Maybe<R1>> value2,
+                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Maybe<R2>> value3
+
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Maybe<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b;
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1> Maybe<R1> forEach(Maybe<T> free,
+                                                    Function<? super T, ? extends Maybe<R1>> value2
+
+
+    ) {
+
+      return free.flatMap(in -> {
+
+        Maybe<R1> a = value2.apply(in);
+        return a;
+
+
+      });
+
+    }
+
+
+  }
+
 
 }

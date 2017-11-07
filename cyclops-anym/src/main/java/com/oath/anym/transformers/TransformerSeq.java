@@ -10,7 +10,6 @@ import java.util.stream.*;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.collections.immutable.*;
@@ -259,39 +258,15 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    @Override
-    default Traversable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.zip(combiner,app));
+  @Override
+    default <T2, R> Traversable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zip(fn, publisher));
         return unitAnyM(zipped);
     }
 
     @Override
-    default <R> Traversable<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWith(fn));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <R> Traversable<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWithS(fn));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <R> Traversable<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipWithP(fn));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <T2, R> Traversable<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> s.zipP(publisher,fn));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        AnyM<W, Traversable<Tuple2<T, U>>> zipped = transformerStream().map(s -> s.zipP(other));
+    default <U> Traversable<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        AnyM<W, Traversable<Tuple2<T, U>>> zipped = transformerStream().map(s -> s.zipWithPublisher(other));
         return unitAnyM(zipped);
     }
 
@@ -310,7 +285,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     /* (non-Javadoc)
          * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
          */
-    @Override
     default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return zip((Iterable<? extends U>) ReactiveSeq.fromStream(other), zipper);
 
@@ -319,7 +293,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#zipStream(java.util.stream.Stream)
      */
-    @Override
     default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
         final Streamable<? extends U> streamable = Streamable.fromStream(other);
         return unitAnyM(transformerStream().map(s -> s.zipS(streamable.stream())));

@@ -3,7 +3,6 @@ package cyclops.monads.transformers;
 import java.util.Iterator;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -12,8 +11,6 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
@@ -43,8 +40,8 @@ import cyclops.function.Function3;
  */
 public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<FutureT<W,T>>,
-        Transformable<T>,
-  Filters<T> {
+                                                                  Transformable<T>,
+                                                                  Filters<T> {
 
     private final AnyM<W,Future<T>> run;
 
@@ -310,29 +307,10 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> FutureT<W,R> combine(Value<? extends T2> app,
-            BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (FutureT<W,R>)super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
-     */
-    @Override
-    public FutureT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-
-        return (FutureT<W, T>)super.zip(combiner, app);
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
+   */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
 
@@ -362,24 +340,15 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
      * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> FutureT<W, R> zipP(Publisher<? extends T2> publisher,BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> FutureT<W, R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
 
-        return (FutureT<W, R>)super.zipP(publisher,fn);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
-     */
-    @Override
-    public <U> FutureT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-
-        return (FutureT)super.zipS(other);
+        return (FutureT<W, R>)super.zip(fn, publisher);
     }
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
+   */
     @Override
     public <U> FutureT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
 
@@ -554,34 +523,14 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (FutureT<W,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <R> FutureT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (FutureT<W,R>)super.zipWith(fn);
-    }
-
-    @Override
-    public <R> FutureT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (FutureT<W,R>)super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> FutureT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (FutureT<W,R>)super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     public <R> FutureT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (FutureT<W,R>)super.trampoline(mapper);
     }
 
-    @Override
-    public <U, R> FutureT<W,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (FutureT<W,R>)super.zipS(other,zipper);
-    }
-
-    @Override
-    public <U> FutureT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (FutureT)super.zipP(other);
+  @Override
+    public <U> FutureT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (FutureT)super.zipWithPublisher(other);
     }
 
     @Override

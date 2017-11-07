@@ -3,16 +3,19 @@ package com.oath.anym.internal.adapters;
 
 import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Ior;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.ior;
+import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -29,9 +32,20 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
         return false;
     }
 
+  @Override
+  public <T, T2, R> AnyM<ior, R> zip(AnyM<ior, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    if(t2.iterator().hasNext())
+      return AnyM.fromIor(Witness.ior(t).zip(Ior.fromIterable(t2,null),fn));
+    return AnyM.<ior,R>fromIor(Ior.left(null));
+  }
 
+  @Override
+  public <T, T2, R> AnyM<ior, R> zip(AnyM<ior, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-    public <T> Option<T> get(AnyMValue<ior,T> t){
+    return zip(t, (Iterable<T2>)ReactiveSeq.fromPublisher(t2),fn);
+  }
+
+  public <T> Option<T> get(AnyMValue<ior,T> t){
         return ior(t).toOption();
     }
     @Override
@@ -39,7 +53,7 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
         return ior(t);
     }
 
-    public <R> R visit(Function<? super FunctionalAdapter<ior>,? extends R> fn1, Function<? super ValueAdapter<ior>, ? extends R> fn2){
+    public <R> R visit(Function<? super MonadAdapter<ior>,? extends R> fn1, Function<? super ValueAdapter<ior>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

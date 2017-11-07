@@ -1163,7 +1163,7 @@ public abstract class AbstractIterableXTest {
     public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyStream() throws Exception {
 
 
-        final IterableX<Integer> zipped = of(1,2,3).zipS(ReactiveSeq.<Integer>empty(), (a, b) -> a + b);
+        final IterableX<Integer> zipped = of(1,2,3).zipWithStream(ReactiveSeq.<Integer>empty(), (a, b) -> a + b);
 
 
         assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
@@ -1172,7 +1172,7 @@ public abstract class AbstractIterableXTest {
     public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyPublisherWith() throws Exception {
 
 
-        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithP(ReactiveSeq.empty());
+        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithPublisher(ReactiveSeq.empty());
 
 
         assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
@@ -1182,7 +1182,7 @@ public abstract class AbstractIterableXTest {
     public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyStreamWith() throws Exception {
 
 
-        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithS(ReactiveSeq.empty());
+        final IterableX<Tuple2<Integer,Integer>> zipped = of(1,2,3).zipWithStream(ReactiveSeq.empty());
 
 
         assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
@@ -1191,7 +1191,7 @@ public abstract class AbstractIterableXTest {
     public void shouldReturnEmptySeqWhenZipNonEmptyWithEmptyPublisher() throws Exception {
 
 
-        final IterableX<Integer> zipped = of(1,2,3).zipP(ReactiveSeq.<Integer>empty(), (a, b) -> a + b);
+        final IterableX<Integer> zipped = of(1,2,3).zip((a, b) -> a + b, ReactiveSeq.<Integer>empty());
 
 
         assertTrue(zipped.collect(java.util.stream.Collectors.toList()).isEmpty());
@@ -1259,7 +1259,7 @@ public abstract class AbstractIterableXTest {
 	}
     @Test
     public void testZipPDifferingLength() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zipP(Spouts.of("a", "b", "c", "d")).toList();
+        List<Tuple2<Integer, String>> list = of(1, 2).zipWithPublisher(Spouts.of("a", "b", "c", "d")).toList();
 
         assertEquals(2, list.size());
         assertTrue(of(1, 2).containsValue(list.get(0)._1()));
@@ -1273,7 +1273,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testZipSDifferingLength() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zipS(ReactiveSeq.of("a", "b", "c", "d")).toList();
+        List<Tuple2<Integer, String>> list = of(1, 2).zipWithStream(ReactiveSeq.of("a", "b", "c", "d")).toList();
 
         assertEquals(2, list.size());
         assertTrue(of(1, 2).containsValue(list.get(0)._1()));
@@ -1287,7 +1287,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testZipPDifferingLengthT2() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zipP(Spouts.of("a", "b", "c", "d"),Tuple2::of).toList();
+        List<Tuple2<Integer, String>> list = of(1, 2).zip(Tuple2::of, Spouts.of("a", "b", "c", "d")).toList();
 
         assertEquals(2, list.size());
         assertTrue(of(1, 2).containsValue(list.get(0)._1()));
@@ -1301,7 +1301,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testZipSDifferingLengthT2() {
-        List<Tuple2<Integer, String>> list = of(1, 2).zipS(ReactiveSeq.of("a", "b", "c", "d"),Tuple2::of).toList();
+        List<Tuple2<Integer, String>> list = of(1, 2).zipWithStream(ReactiveSeq.of("a", "b", "c", "d"),Tuple2::of).toList();
 
         assertEquals(2, list.size());
         assertTrue(of(1, 2).containsValue(list.get(0)._1()));
@@ -1313,29 +1313,8 @@ public abstract class AbstractIterableXTest {
         assertTrue(asList("a", "b", "c", "d").contains(list.get(1)._2()));
 
     }
-    @Test
-    public void testZipWithPDifferingLengthT2() {
-        Function<Integer, Tuple2<Integer, String>> f1 = i -> Tuple.tuple(i, "a");
-        Function<Integer, Tuple2<Integer, String>> f2 = i -> Tuple.tuple(i, "b");
-        Publisher<Function<? super Integer, ? extends Tuple2<Integer, String>>> s = Spouts.of(f1, f2);
-
-        List<Tuple2<Integer, String>> list = of(1, 2).<Tuple2<Integer, String>>zipWithP(s).toList();
-
-        assertEquals(2, list.size());
 
 
-    }
-    @Test
-    public void testZipWithSDifferingLengthT2() {
-        Function<Integer, Tuple2<Integer, String>> f1 = i -> Tuple.tuple(i, "a");
-        Function<Integer, Tuple2<Integer, String>> f2 = i -> Tuple.tuple(i, "b");
-        Stream<Function<? super Integer, ? extends Tuple2<Integer, String>>> s = Spouts.of(f1, f2);
-
-        List<Tuple2<Integer, String>> list = this.<Integer>of(1, 2).<Tuple2<Integer, String>>zipWithS(s).toList();
-
-        assertEquals(2, list.size());
-
-    }
 
 
 	@Test
@@ -1512,7 +1491,7 @@ public abstract class AbstractIterableXTest {
 	    @Test
 	    public void zip2(){
 	        List<Tuple2<Integer,Integer>> list =
-	                of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
+	                of(1,2,3,4,5,6).zipWithStream(Stream.of(100,200,300,400))
 	                                                .peek(it -> System.out.println(it))
 
 	                                                .collect(java.util.stream.Collectors.toList());

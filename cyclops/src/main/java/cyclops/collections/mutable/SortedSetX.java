@@ -1,7 +1,6 @@
 package cyclops.collections.mutable;
 
 import com.oath.cyclops.data.collections.extensions.lazy.LazySortedSetX;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
@@ -576,12 +575,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
 
-    @Override
-    default <U, R> SortedSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (SortedSetX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    @Override
+  @Override
     default SortedSetX<VectorX<T>> sliding(final int windowSize) {
         return (SortedSetX<VectorX<T>>) (SortedSetX<T>) LazyCollectionX.super.sliding(windowSize);
     }
@@ -687,9 +681,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> SortedSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> SortedSetX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (SortedSetX) LazyCollectionX.super.zipS(other);
+        return (SortedSetX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1105,36 +1099,16 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
-    @Override
-    default SortedSetX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (SortedSetX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> SortedSetX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> SortedSetX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> SortedSetX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> SortedSetX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> SortedSetX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (SortedSetX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> SortedSetX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (SortedSetX)LazyCollectionX.super.zipP(other);
+    default <U> SortedSetX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (SortedSetX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

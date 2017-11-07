@@ -1,6 +1,5 @@
 package com.oath.cyclops.types.traversable;
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
@@ -35,7 +34,7 @@ import java.util.stream.Stream;
  */
 @FunctionalInterface
 public interface IterableX<T> extends ExtendedTraversable<T>,
-  Folds<T>,
+                                                Folds<T>,
                                                 Iterable<T>,
                                                 ReactiveStreamsTerminalOperations<T> {
 
@@ -104,7 +103,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *  }
      *  </pre>
      *
-     * Similar to @see {@link ReactiveSeq#futureOperations(Executor)}, but returns Future
+     *
      *
      * @param fn Folding function
      * @param ex Executor to perform fold on
@@ -325,38 +324,23 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (IterableX<T>)ExtendedTraversable.super.zip(combiner,app);
+    default <T2, R> IterableX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+      return (IterableX<R>)ExtendedTraversable.super.zip(fn, publisher);
     }
 
     @Override
-    default <R> IterableX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (IterableX<R>)ExtendedTraversable.super.zipWith(fn);
+    default <U> IterableX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+      return (IterableX)ExtendedTraversable.super.zipWithStream(other);
     }
 
     @Override
-    default <R> IterableX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (IterableX<R>)ExtendedTraversable.super.zipWithS(fn);
+    default <T2, R> IterableX<R> zipWithStream(final Stream<? extends T2> other,final BiFunction<? super T, ? super T2, ? extends R> fn) {
+      return (IterableX<R>)ExtendedTraversable.super.zipWithStream(other,fn);
     }
 
     @Override
-    default <R> IterableX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (IterableX<R>)ExtendedTraversable.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> IterableX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (IterableX<R>)ExtendedTraversable.super.zipP(publisher,fn);
-    }
-
-    @Override
-    default <U, R> IterableX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (IterableX<R>)ExtendedTraversable.super.zipS(other,zipper);
-    }
-
-    @Override
-    default <U> IterableX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (IterableX)ExtendedTraversable.super.zipP(other);
+    default <U> IterableX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (IterableX)ExtendedTraversable.super.zipWithPublisher(other);
     }
 
     @Override
@@ -450,12 +434,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<ListX<T>>)ExtendedTraversable.super.groupedStatefullyUntil(predicate);
     }
 
-    @Override
-    default <U> IterableX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (IterableX)ExtendedTraversable.super.zipS(other);
-    }
-
-    @Override
+  @Override
     default IterableX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
         return (IterableX<ListX<T>>)ExtendedTraversable.super.groupedWhile(predicate);
     }

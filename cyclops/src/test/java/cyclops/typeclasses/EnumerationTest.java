@@ -1,5 +1,6 @@
 package cyclops.typeclasses;
 
+import cyclops.data.Enumeration;
 import org.junit.Test;
 
 import static cyclops.typeclasses.EnumerationTest.Days.Monday;

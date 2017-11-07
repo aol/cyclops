@@ -58,8 +58,8 @@ public class FutureTest {
 
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
 
-        just.combineEager(add,none).printOut();
-        assertThat(just.combineEager(add,none).orElse(-1),equalTo(just.orElse(-1)));
+        just.zip(add,none).printOut();
+        assertThat(just.zip(add,none).orElse(-1),equalTo(just.orElse(-1)));
 
 
     }
@@ -139,11 +139,9 @@ public class FutureTest {
     @Test
     public void testZip(){
         assertThat(Future.ofResult(10).zip(Eval.now(20),(a, b)->a+b).orElse(-100),equalTo(30));
-        assertThat(Future.ofResult(10).zipP(Eval.now(20),(a, b)->a+b).orElse(-100),equalTo(30));
-        assertThat(Future.ofResult(10).zipS(Stream.of(20),(a, b)->a+b).orElse(-100),equalTo(30));
+        assertThat(Future.ofResult(10).zip((a, b)->a+b, Eval.now(20)).orElse(-100),equalTo(30));
         assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20),(a, b)->a+b).orElse(-100),equalTo(30));
         assertThat(Future.ofResult(10).zip(ReactiveSeq.of(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
-        assertThat(Future.ofResult(10).zipS(Stream.of(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
         assertThat(Future.ofResult(10).zip(Eval.now(20)).orElse(null),equalTo(Tuple.tuple(10,20)));
     }
 
@@ -152,8 +150,8 @@ public class FutureTest {
     @Test
     public void apNonBlocking(){
 
-      val f =  Future.of(()->{ sleep(1000l); return "hello";},ex)
-                      .combine(Future.of(()->" world",ex),String::concat);
+       Future<String> f =  Future.of(()->{ sleep(1000l); return "hello";},ex)
+                                .zip(Future.of(()->" world",ex),String::concat);
 
 
       System.out.println("hello");
@@ -223,9 +221,9 @@ public class FutureTest {
     public void combine2(){
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
 
-        assertThat(just.combineEager(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
+        assertThat(just.zip(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.combineEager(firstNonNull,none).get(),equalTo(just.get()));
+        assertThat(just.zip(firstNonNull,none).get(),equalTo(just.get()));
 
     }
     @Test

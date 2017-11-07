@@ -59,38 +59,20 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     @Override
-    default Traversable<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return traversable().zip(combiner,app);
+    default <T2, R> Traversable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return traversable().zip(fn, publisher);
+    }
+
+    default <U> Traversable<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+      return traversable().zipWithStream(other);
+    }
+    default <T2,R> Traversable<R> zipWithStream(final Stream<? extends T2> other,final BiFunction<? super T, ? super T2, ? extends R> fn) {
+       return traversable().zipWithStream(other,fn);
     }
 
     @Override
-    default <R> Traversable<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return traversable().zipWith(fn);
-    }
-
-    @Override
-    default <R> Traversable<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return zipS(fn,(a,b)->b.apply(a));
-    }
-
-    @Override
-    default <R> Traversable<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return zipP(fn,(a,b)->b.apply(a));
-    }
-
-    @Override
-    default <T2, R> Traversable<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return traversable().zipP(publisher,fn);
-    }
-
-    @Override
-    default <U, R> Traversable<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return traversable().zipS(other,zipper);
-    }
-
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return traversable().zipP(other);
+    default <U> Traversable<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return traversable().zipWithPublisher(other);
     }
 
     @Override
@@ -454,18 +436,7 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().groupedStatefullyUntil(predicate);
     }
 
-    /**
-     * Zip (combine) this Zippable with the supplied Stream combining both into a Tuple2
-     *
-     * @param other Stream to combine with
-     * @return Combined Zippable
-     */
-    @Override
-    default <U> Traversable<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return traversable().zipS(other);
-    }
-
-    /**
+  /**
      * Create a Traversable batched by List, where each batch is populated while
      * the predicate holds
      *

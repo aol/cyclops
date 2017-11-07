@@ -87,51 +87,51 @@ public class ReactiveZippingRSTest {
 		List<Tuple2<Integer,Integer>> list =
 				of(1,2,3,4,5,6).zip(of(100,200,300,400))
 												.peek(it -> System.out.println(it))
-												
+
 												.to(Streamable::fromStream).collect(Collectors.toList());
 		System.out.println(list);
-		
+
 		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
-		
+
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
-		
+
 		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
-		
+
+
 	}
 	@Test
 	public void zip3(){
 		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400),of('a','b','c'))
 												.peek(it -> System.out.println(it))
-												
+
 												.to(Streamable::fromStream).collect(Collectors.toList());
-		
+
 		System.out.println(list);
 		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,not(hasItem(400)));
-		
+
 		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
+
 		List<Character> three = Spouts.fromIterable(list).map(t -> t._3()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-		
-		
+
+
 	}
 	@Test
 	public void zip4(){
 		List<Tuple4<Integer,Integer,Character,String>> list =
 				of(1,2,3,4,5,6).zip4(of(100,200,300,400),of('a','b','c'),of("hello","world"))
 												.peek(it -> System.out.println(it))
-												
+
 												.to(Streamable::fromStream).collect(Collectors.toList());
 		System.out.println(list);
 		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
@@ -139,100 +139,100 @@ public class ReactiveZippingRSTest {
 		assertThat(right,hasItem(200));
 		assertThat(right,not(hasItem(300)));
 		assertThat(right,not(hasItem(400)));
-		
+
 		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
-		
+
 		List<Character> three = Spouts.fromIterable(list).map(t -> t._3()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList('a','b','c'),hasItem(three.get(0)));
-	
+
 		List<String> four = Spouts.fromIterable(list).map(t -> t._4()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList("hello","world"),hasItem(four.get(0)));
-		
-		
+
+
 	}
-	
+
 	@Test
 	public void zip2of(){
-		
+
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
 											.peek(it -> System.out.println(it))
 											.to(Streamable::fromStream).collect(Collectors.toList());
-				
-	
+
+
 		List<Integer> right = Spouts.fromIterable(list).map(t -> t._2()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(right,hasItem(100));
 		assertThat(right,hasItem(200));
 		assertThat(right,hasItem(300));
 		assertThat(right,hasItem(400));
-		
+
 		List<Integer> left = Spouts.fromIterable(list).map(t -> t._1()).to(Streamable::fromStream).collect(Collectors.toList());
 		assertThat(Arrays.asList(1,2,3,4,5,6),hasItem(left.get(0)));
 
 	}
 	@Test
 	public void zipInOrder(){
-		
+
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400))
 													.to(Streamable::fromStream).collect(Collectors.toList());
-		
+
 		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
 		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
-		
-		
-		
+
+
+
 	}
 
 	@Test
 	public void zipEmpty() throws Exception {
-		
-		
+
+
 		final ReactiveSeq<Integer> zipped = empty.zip(ReactiveSeq.<Integer>of(), (a, b) -> a + b);
 		assertTrue(zipped.to(Streamable::fromStream).collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipEmptyWithNonEmpty() throws Exception {
-		
-		
-		
+
+
+
 		final ReactiveSeq<Integer> zipped = empty.zip(nonEmpty, (a, b) -> a + b);
 		assertTrue(zipped.to(Streamable::fromStream).collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldReturnEmptySeqWhenZipNonEmptyWithEmpty() throws Exception {
-		
-		
+
+
 		final ReactiveSeq<Integer> zipped = nonEmpty.zip(empty, (a, b) -> a + b);
 
-		
+
 		assertTrue(zipped.to(Streamable::fromStream).collect(Collectors.toList()).isEmpty());
 	}
 
 	@Test
 	public void shouldZipTwoFiniteSequencesOfSameSize() throws Exception {
-		
+
 		final ReactiveSeq<String> first = of("A", "B", "C");
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
 
-		
+
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),is(3));
 	}
 
-	
+
 
 	@Test
 	public void shouldTrimSecondFixedSeqIfLonger() throws Exception {
 		final ReactiveSeq<String> first = of("A", "B", "C");
 		final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),is(3));
@@ -244,7 +244,7 @@ public class ReactiveZippingRSTest {
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -260,14 +260,14 @@ public class ReactiveZippingRSTest {
 
 	}
 
-	
+
 	@Test
 	public void shouldTrimSecondFixedSeqIfLongerStream() throws Exception {
 		final ReactiveSeq<String> first = of("A", "B", "C");
 		final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
-		
-		final ReactiveSeq<String> zipped = first.zipS(second, (a, b) -> a + b);
+
+		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),is(3));
 	}
@@ -276,9 +276,9 @@ public class ReactiveZippingRSTest {
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
 		final ReactiveSeq<String> first = of("A", "B", "C","D");
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zipS(second, (a, b) -> a + b);
+		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),equalTo(3));
 	}
 
@@ -299,7 +299,7 @@ public class ReactiveZippingRSTest {
 		final ReactiveSeq<String> first = of("A", "B", "C");
 		final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
-		
+
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),is(3));
@@ -311,11 +311,11 @@ public class ReactiveZippingRSTest {
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
 		final ReactiveSeq<String> zipped = first.zip(second, (a, b) -> a + b);
 
-		
+
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),equalTo(3));
 	}
 
-	
+
 	@Test
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().to(Streamable::fromStream).toList());

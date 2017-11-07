@@ -32,8 +32,8 @@ import java.util.stream.Stream;
  */
 public interface CollectionX<T> extends IterableX<T>,
                                         Collection<T> ,
-  Unwrapable,
-  Unit<T> {
+                                        Unwrapable,
+                                        Unit<T> {
 
     boolean isLazy();
     boolean isEager();
@@ -458,18 +458,21 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     <U, R> CollectionX<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
 
+     @Override
+     <T2, R> CollectionX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
-    @Override
-    <U, R> CollectionX<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper);
+      @Override
+      <U> CollectionX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
-     */
-    @Override
-    <U> CollectionX<Tuple2<T, U>> zipS(Stream<? extends U> other);
+      @Override
+      <S, U, R> CollectionX<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) ;
+
+      <T2, T3, T4, R> CollectionX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn);
+
+  /* (non-Javadoc)
+      * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
+      */
+    <U> CollectionX<Tuple2<T, U>> zipWithStream(Stream<? extends U> other);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#zipWithIndex()

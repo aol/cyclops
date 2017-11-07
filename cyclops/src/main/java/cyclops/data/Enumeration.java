@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.data;
 
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;

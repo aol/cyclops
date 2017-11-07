@@ -48,19 +48,10 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return stream().findAny().orElseThrow((Supplier<X>)s);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    public <T2, R> ValueTransformer<W,R> combine(Value<? extends T2> app,
-            BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return unitAnyM(this.transformerStream().map(v->v.combine(app, fn)));
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.types.Traversable#forEachAsync(org.reactivestreams.Subscriber)
+   */
      @Override
     public void subscribe(final Subscriber<? super T> s) {
 
@@ -70,20 +61,9 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
 
 
 
-   // <T> TransformerSeq<W,T> unitStream(ReactiveSeq<T> traversable);
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Combiner#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
-     */
-
-    public  ValueTransformer<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return this.unitAnyM(this.transformerStream().map(v->v.zip(combiner, app)));
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#iterate(java.util.function.UnaryOperator)
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.types.Value#iterate(java.util.function.UnaryOperator)
+   */
   //@TODO Return StreamT
     public AnyM<W,? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T altSeed) {
 
@@ -111,18 +91,13 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
 
-    public <T2, R> ValueTransformer<W,R> zipP(Publisher<? extends T2> publisher,BiFunction<? super T, ? super T2, ? extends R> f) {
+    public <T2, R> ValueTransformer<W,R> zip(BiFunction<? super T, ? super T2, ? extends R> f, Publisher<? extends T2> publisher) {
 
-        return unitAnyM(this.transformerStream().map(v->v.zipP(publisher,f)));
+        return unitAnyM(this.transformerStream().map(v->v.zip(f, publisher)));
     }
      /* (non-Javadoc)
      * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
      */
-
-    public <U> ValueTransformer<W,Tuple2<T,U>> zipS(Stream<? extends U> other) {
-
-        return this.unitAnyM(this.transformerStream().map(v->v.zipS(other)));
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)

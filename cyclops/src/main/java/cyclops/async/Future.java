@@ -10,8 +10,6 @@ import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Trampoline;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.hkt.DataWitness.future;
@@ -87,9 +85,9 @@ import java.util.concurrent.*;
  *   combine instead of thenCombine (applicative functor ap)
  *
  * @author johnmcclean
-        *
-        * @param <T> Type of wrapped future value
-        */
+ *
+ * @param <T> Type of wrapped future value
+ */
 @AllArgsConstructor
 @EqualsAndHashCode
 public class Future<T> implements To<Future<T>>,
@@ -97,7 +95,7 @@ public class Future<T> implements To<Future<T>>,
                                   Completable<T>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T>,
-  OrElseValue<T,Future<T>> {
+                                  OrElseValue<T,Future<T>> {
 
     public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
         SimpleReact sr = SequentialElasticPools.simpleReact.nextReactor();
@@ -414,6 +412,8 @@ public class Future<T> implements To<Future<T>>,
      * @return Future populated syncrhonously from Publisher
      */
     public static <T> Future<T> fromPublisher(final Publisher<T> pub) {
+      if(pub instanceof Future)
+        return (Future<T>)pub;
         Future<T> result = future();
 
         pub.subscribe(new Subscriber<T>() {
@@ -907,23 +907,12 @@ public class Future<T> implements To<Future<T>>,
         return (Future<MonadicValue<T>>) MonadicValue.super.nest();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.oath.cyclops.types.MonadicValue2)
-     */
-    @Override
-    public Future<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return (Future<T>) MonadicValue.super.combineEager(monoid, v2);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.ConvertableFunctor#transform(java.util.function.Function)
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * com.oath.cyclops.types.ConvertableFunctor#transform(java.util.function.Function)
+   */
     @Override
     public <R> Future<R> map(final Function<? super T, ? extends R> fn) {
         return new Future<R>(
@@ -1301,36 +1290,17 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
-
-
-    /*
-     * Apply a function across two values at once. (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
-     * cyclops2.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> Future<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (app instanceof Future) {
-            return Future.of(future.thenCombine(((Future<T2>) app).getFuture(), fn));
-        }
-        return (Future<R>) MonadicValue.super.zip(app, fn);
-    }
-
-    /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
-     * only from that iterable. (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-     * java.util.function.BiFunction)
-     */
+  /*
+   * Equivalent to combine, but accepts an Iterable and takes the first value
+   * only from that iterable. (non-Javadoc)
+   *
+   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
+   * java.util.function.BiFunction)
+   */
     @Override
     public <T2, R> Future<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-      if (app instanceof Future) {
-        return Future.of(future.thenCombine(((Future<T2>) app).getFuture(), fn));
-      }
-        return (Future<R>) MonadicValue.super.zip(app, fn);
+
+      return Future.of(future.thenCombine(Future.fromIterable(app).getFuture(), fn));
     }
 
     /*
@@ -1343,12 +1313,8 @@ public class Future<T> implements To<Future<T>>,
      * org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> Future<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-      if (app instanceof Future) {
-        return Future.of(future.thenCombine(((Future<T2>) app).getFuture(), fn));
-      }
-      return (Future<R>) MonadicValue.super.zipP(app,fn);
-
+    public <T2, R> Future<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+        return Future.of(future.thenCombine(Future.fromPublisher(app).getFuture(), fn));
     }
 
 
@@ -1383,28 +1349,6 @@ public class Future<T> implements To<Future<T>>,
 
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    public <U, R> Future<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Future<R>) MonadicValue.super.zipS(other, zipper);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
-     */
-    @Override
-    public <U> Future<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (Future) MonadicValue.super.zipS(other);
-    }
-
-
 
     /*
      * (non-Javadoc)
@@ -1433,12 +1377,12 @@ public class Future<T> implements To<Future<T>>,
     public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (Future<R>) MonadicValue.super.flatMapP(mapper);
     }
-
+/**
     @Override
     public Future<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
         return (Future<T>)MonadicValue.super.zip(combiner, app);
     }
-
+**/
 
     public CompletableFuture<T> getFuture() {
         return this.future;
@@ -1756,7 +1700,7 @@ public class Future<T> implements To<Future<T>>,
             return Future.ofResult(value);
         }
         private static <T,R> Future<R> ap(Future<Function< T, R>> lt,  Future<T> future){
-            return lt.combine(future, (a,b)->a.apply(b));
+            return lt.zip(future, (a,b)->a.apply(b));
 
         }
         private static <T,R> Higher<future,R> flatMap( Higher<future,T> lt, Function<? super T, ? extends  Higher<future,R>> fn){

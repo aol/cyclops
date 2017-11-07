@@ -1,7 +1,6 @@
 package cyclops.data;
 
 import cyclops.function.Ordering;
-import cyclops.typeclasses.Enumeration;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -317,29 +316,9 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<ReactiveSeq<T>>)ImmutableList.super.combinations();
     }
 
-    @Override
-    public Vector<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Vector<T>)ImmutableList.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R> Vector<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Vector<R>)ImmutableList.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> Vector<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Vector<R>)ImmutableList.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> Vector<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Vector<R>)ImmutableList.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> Vector<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Vector<R>)ImmutableList.super.zipP(publisher,fn);
+  @Override
+    public <T2, R> Vector<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (Vector<R>)ImmutableList.super.zip(fn, publisher);
     }
 
     @Override
@@ -348,8 +327,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public <U> Vector<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (Vector)ImmutableList.super.zipP(other);
+    public <U> Vector<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (Vector)ImmutableList.super.zipWithPublisher(other);
     }
 
     @Override

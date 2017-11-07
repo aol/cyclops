@@ -1,7 +1,6 @@
 package cyclops.monads.transformers;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
@@ -851,34 +850,14 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
 
-    @Override
-    public StreamT<W,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (StreamT) FoldableTransformerSeq.super.zip(combiner,app);
+  @Override
+    public <T2, R> StreamT<W,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (StreamT) FoldableTransformerSeq.super.zip(fn, publisher);
     }
 
     @Override
-    public <R> StreamT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (StreamT) FoldableTransformerSeq.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> StreamT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (StreamT) FoldableTransformerSeq.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> StreamT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (StreamT) FoldableTransformerSeq.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> StreamT<W,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (StreamT) FoldableTransformerSeq.super.zipP(publisher,fn);
-    }
-
-    @Override
-    public <U> StreamT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (StreamT) FoldableTransformerSeq.super.zipP(other);
+    public <U> StreamT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (StreamT) FoldableTransformerSeq.super.zipWithPublisher(other);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
@@ -306,29 +305,9 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return (TrieSet<ReactiveSeq<T>>)ImmutableSet.super.combinations();
     }
 
-    @Override
-    public TrieSet<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (TrieSet<T>)ImmutableSet.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R> TrieSet<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (TrieSet<R>)ImmutableSet.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> TrieSet<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (TrieSet<R>)ImmutableSet.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> TrieSet<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (TrieSet<R>)ImmutableSet.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> TrieSet<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (TrieSet<R>)ImmutableSet.super.zipP(publisher,fn);
+  @Override
+    public <T2, R> TrieSet<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (TrieSet<R>)ImmutableSet.super.zip(fn, publisher);
     }
 
     @Override
@@ -337,8 +316,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <U> TrieSet<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (TrieSet)ImmutableSet.super.zipP(other);
+    public <U> TrieSet<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (TrieSet)ImmutableSet.super.zipWithPublisher(other);
     }
 
     @Override

@@ -527,57 +527,7 @@ public class Optionals {
                                                  .reduce(reducer));
     }
 
-    /**
-     * Combine an Optional with the provided value using the supplied BiFunction
-     *
-     * <pre>
-     * {@code
-     *  Optionals.combine(Optional.of(10),Maybe.just(20), this::add)
-     *  //Optional[30]
-     *
-     *  private int add(int a, int b) {
-            return a + b;
-        }
-     *
-     * }
-     * </pre>
-     * @param f Optional to combine with a value
-     * @param v Value to combine
-     * @param fn Combining function
-     * @return Optional combined with supplied value
-     */
-    public static <T1, T2, R> Optional<R> combine(final Optional<? extends T1> f, final Value<? extends T2> v,
-            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
-        return narrow(Maybe.fromOptional(f)
-                           .combine(v, fn)
-                           .toOptional());
-    }
-    /**
-     * Combine an Optional with the provided Optional using the supplied BiFunction
-     *
-     * <pre>
-     * {@code
-     *  Optionals.combine(Optional.of(10),Optional.of(20), this::add)
-     *  //Optional[30]
-     *
-     *  private int add(int a, int b) {
-            return a + b;
-        }
-     *
-     * }
-     * </pre>
-     *
-     * @param f Optional to combine with a value
-     * @param v Optional to combine
-     * @param fn Combining function
-     * @return Optional combined with supplied value, or zero Optional if no value present
-     */
-    public static <T1, T2, R> Optional<R> combine(final Optional<? extends T1> f, final Optional<? extends T2> v,
-            final BiFunction<? super T1, ? super T2, ? extends R> fn) {
-        return combine(f,Option.fromOptional(v),fn);
-    }
-
-    /**
+  /**
      * Combine an Optional with the provided Iterable (selecting one element if present) using the supplied BiFunction
      * <pre>
      * {@code
@@ -629,7 +579,7 @@ public class Optionals {
     public static <T1, T2, R> Optional<R> zip(final Publisher<? extends T2> p, final Optional<? extends T1> f,
             final BiFunction<? super T1, ? super T2, ? extends R> fn) {
         return narrow(Maybe.fromOptional(f)
-                           .zipP(p, fn)
+                           .zip(fn, p)
                            .toOptional());
     }
     /**
@@ -946,7 +896,7 @@ public class Optionals {
             return OptionalKind.widen(Optional.of(value));
         }
         private static <T,R> OptionalKind<R> ap(OptionalKind<Function< T, R>> lt, OptionalKind<T> list){
-            return OptionalKind.widen(Maybe.fromOptionalKind(lt).combine(Maybe.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
+            return OptionalKind.widen(Maybe.fromOptionalKind(lt).zip(Maybe.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
 
         }
         private static <T,R> Higher<optional,R> flatMap(Higher<optional,T> lt, Function<? super T, ? extends  Higher<optional,R>> fn){
