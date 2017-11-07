@@ -4,16 +4,19 @@ import static cyclops.monads.AnyM.fromCollectionX;
 import static cyclops.monads.Witness.collectionX;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.oath.anym.AnyMSeq;
 import cyclops.monads.AnyM;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.monads.Witness;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 @AllArgsConstructor
 public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends AbstractFunctionalAdapter<W> {
@@ -52,7 +55,17 @@ public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends
 
     }
 
-    @Override
+  @Override
+  public <T, T2, R> AnyM<W, R> zip(AnyM<W, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return fromCollectionX(collectionX(t).zip(t2, fn),witness);
+  }
+
+  @Override
+  public <T, T2, R> AnyM<W, R> zip(AnyM<W, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return fromCollectionX(collectionX(t).zip(fn, t2),witness);
+  }
+
+  @Override
     public <T, R> AnyM<W, R> ap(AnyM<W, ? extends Function<? super T,? extends R>> fn, AnyM<W, T> apply) {
          return fromCollectionX(collectionX(apply).zip(collectionX(fn),(a,b)->b.apply(a)),witness);
 

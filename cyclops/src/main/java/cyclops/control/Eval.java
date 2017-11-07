@@ -4,7 +4,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
@@ -42,7 +41,7 @@ import java.util.stream.Stream;
 /**
  * Represents a computation that can be deferred (always), cached (later) or immediate(now).
  * Supports tail recursion via transform / flatMap.
- * Unrestricted are always Lazy even when performed against a Now instance.
+ * Eval are always Lazy even when performed against a Now instance.
  * Heavily inspired by Cats Eval @link https://github.com/typelevel/cats/blob/master/core/src/main/scala/cats/Eval.scala
  *
  * Tail Recursion example
@@ -458,7 +457,6 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#combineEager(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue)
      */
-    @Override
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
@@ -485,14 +483,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-    @Override
-    default Eval<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Eval)MonadicValue.super.zip(combiner, app);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#nest()
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.types.MonadicValue#nest()
+   */
     @Override
     default Eval<MonadicValue<T>> nest() {
         return (Eval<MonadicValue<T>>) MonadicValue.super.nest();
@@ -578,52 +571,17 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>) broad;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Eval<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return (Eval<R>) MonadicValue.super.combine(app, fn);
-    }
-
-    /* Equivalent to combine, but accepts an Iterable and takes the first value only from that iterable.
-     * (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
     @Override
     default <T2, R> Eval<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (Eval<R>) MonadicValue.super.zip(app, fn);
-    }
-
-    /* Equivalent to combine, but accepts a Publisher and takes the first value only from that publisher.
-     *
-     * (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> Eval<R> zipP( final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Eval<R>) MonadicValue.super.zipP(app,fn);
-
+        return  fromIterable(ReactiveSeq.fromIterable(this).zip(app,fn));
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
     @Override
-    default <U, R> Eval<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <T2, R> Eval<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+        return Eval.fromPublisher(Spouts.from(this).zip(fn,app));
 
-        return (Eval<R>) MonadicValue.super.zipS(other, zipper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
-     */
-    @Override
-    default <U> Eval<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (Eval) MonadicValue.super.zipS(other);
     }
 
 
@@ -635,29 +593,14 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval) MonadicValue.super.zip(other);
     }
 
-    @Override
-    default <R> Eval<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Eval<R>)MonadicValue.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> Eval<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Eval<R>)MonadicValue.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> Eval<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Eval<R>)MonadicValue.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> Eval<R> retry(final Function<? super T, ? extends R> fn) {
         return (Eval<R>)MonadicValue.super.retry(fn);
     }
 
     @Override
-    default <U> Eval<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (Eval)MonadicValue.super.zipP(other);
+    default <U> Eval<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (Eval)MonadicValue.super.zipWithPublisher(other);
     }
 
     @Override
@@ -1023,7 +966,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             }
             @Override
             public T get() {
-//@TODO
+
                 Eval<T> eval = input.visit(i->i,()->null);
                 return eval.get();
             }
@@ -1419,7 +1362,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             return Eval.now(value);
         }
         private static <T,R> Eval<R> ap(Eval<Function< T, R>> lt,  Eval<T> maybe){
-            return lt.combine(maybe, (a,b)->a.apply(b));
+            return lt.zip(maybe, (a,b)->a.apply(b));
 
         }
         private static <T,R> Higher<eval,R> flatMap( Higher<eval,T> lt, Function<? super T, ? extends  Higher<eval,R>> fn){
@@ -1437,5 +1380,223 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         }
 
     }
+  public static class Comprehensions {
+
+    public static <T,F,R1, R2, R3,R4,R5,R6,R7> Eval<R7> forEach(Eval<T> eval,
+                                                                        Function<? super T, ? extends Eval<R1>> value2,
+                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Eval<R7>> value8
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Eval<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Eval<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Eval<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Eval<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f.flatMap(inf->{
+                    Eval<R7> g = value8.apply(Tuple.tuple(in,ina,inb,inc,ind,ine,inf));
+                    return g;
+
+                  });
+
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4,R5,R6> Eval<R6> forEach(Eval<T> eval,
+                                                                     Function<? super T, ? extends Eval<R1>> value2,
+                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
+                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Eval<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Eval<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Eval<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Eval<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f;
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+
+    public static <T,F,R1, R2, R3,R4,R5> Eval<R5> forEach(Eval<T> eval,
+                                                                  Function<? super T, ? extends Eval<R1>> value2,
+                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Eval<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Eval<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Eval<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e;
+              });
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4> Eval<R4> forEach(Eval<T> eval,
+                                                               Function<? super T, ? extends Eval<R1>> value2,
+                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5
+
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Eval<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Eval<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d;
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3> Eval<R3> forEach(Eval<T> eval,
+                                                            Function<? super T, ? extends Eval<R1>> value2,
+                                                            Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4
+
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Eval<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c;
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2> Eval<R2> forEach(Eval<T> eval,
+                                                        Function<? super T, ? extends Eval<R1>> value2,
+                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3
+
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Eval<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b;
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1> Eval<R1> forEach(Eval<T> eval,
+                                                    Function<? super T, ? extends Eval<R1>> value2
+
+
+    ) {
+
+      return eval.flatMap(in -> {
+
+        Eval<R1> a = value2.apply(in);
+        return a;
+
+
+      });
+
+    }
+
+
+  }
+
 
 }

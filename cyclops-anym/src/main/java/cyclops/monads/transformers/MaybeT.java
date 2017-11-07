@@ -2,8 +2,6 @@ package cyclops.monads.transformers;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
@@ -37,8 +35,8 @@ import java.util.stream.Stream;
 //@TODO should be OptionT
 public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<MaybeT<W,T>>,
-        Transformable<T>,
-  Filters<T> {
+                                                                  Transformable<T>,
+                                                                  Filters<T> {
 
     private final AnyM<W,Maybe<T>> run;
 
@@ -301,29 +299,10 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(com.oath.cyclops.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    public <T2, R> MaybeT<W,R> combine(Value<? extends T2> app,
-                                       BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (MaybeT<W,R>)super.combine(app, fn);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Combiner)
-     */
-    @Override
-    public MaybeT<W, T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-
-        return (MaybeT<W, T>)super.zip(combiner, app);
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#iterate(java.util.function.UnaryOperator)
+   */
     @Override
     public AnyM<W, ? extends ReactiveSeq<T>> iterate(UnaryOperator<T> fn, T alt) {
 
@@ -353,24 +332,15 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
      * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
      */
     @Override
-    public <T2, R> MaybeT<W, R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    public <T2, R> MaybeT<W, R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
 
-        return (MaybeT<W, R>)super.zipP(publisher,fn);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.util.stream.Stream)
-     */
-    @Override
-    public <U> MaybeT<W, Tuple2<T, U>> zipS(Stream<? extends U> other) {
-
-        return (MaybeT)super.zipS(other);
+        return (MaybeT<W, R>)super.zip(fn, publisher);
     }
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
-     */
+  /* (non-Javadoc)
+   * @see cyclops2.monads.transformers.values.ValueTransformer#zip(java.lang.Iterable)
+   */
     @Override
     public <U> MaybeT<W, Tuple2<T, U>> zip(Iterable<? extends U> other) {
 
@@ -545,34 +515,14 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return (MaybeT<W,T>)Filters.super.notNull();
     }
 
-    @Override
-    public <R> MaybeT<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (MaybeT<W,R>)super.zipWith(fn);
-    }
-
-    @Override
-    public <R> MaybeT<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (MaybeT<W,R>)super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> MaybeT<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (MaybeT<W,R>)super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     public <R> MaybeT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (MaybeT<W,R>)super.trampoline(mapper);
     }
 
-    @Override
-    public <U, R> MaybeT<W,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (MaybeT<W,R>)super.zipS(other,zipper);
-    }
-
-    @Override
-    public <U> MaybeT<W,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (MaybeT)super.zipP(other);
+  @Override
+    public <U> MaybeT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (MaybeT)super.zipWithPublisher(other);
     }
 
     @Override

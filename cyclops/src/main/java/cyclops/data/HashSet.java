@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
@@ -362,29 +361,9 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
         return (HashSet<ReactiveSeq<T>>)ImmutableSet.super.combinations();
     }
 
-    @Override
-    public HashSet<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (HashSet<T>)ImmutableSet.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R> HashSet<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (HashSet<R>)ImmutableSet.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> HashSet<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (HashSet<R>)ImmutableSet.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> HashSet<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (HashSet<R>)ImmutableSet.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> HashSet<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (HashSet<R>)ImmutableSet.super.zipP(publisher,fn);
+  @Override
+    public <T2, R> HashSet<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (HashSet<R>)ImmutableSet.super.zip(fn, publisher);
     }
 
     @Override
@@ -393,8 +372,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public <U> HashSet<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (HashSet)ImmutableSet.super.zipP(other);
+    public <U> HashSet<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (HashSet)ImmutableSet.super.zipWithPublisher(other);
     }
 
     @Override

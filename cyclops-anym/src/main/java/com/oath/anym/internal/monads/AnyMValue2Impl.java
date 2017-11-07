@@ -2,14 +2,14 @@ package com.oath.anym.internal.monads;
 
 
 import com.oath.anym.AnyMValue2;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.monads.WitnessType;
 
 import java.util.Objects;
 
 public class AnyMValue2Impl<W extends WitnessType<W>,T2,T> extends BaseAnyMImpl<W,T>implements AnyMValue2<W,T2,T> {
 
-    public AnyMValue2Impl(final Object monad, FunctionalAdapter<W> adapter) {
+    public AnyMValue2Impl(final Object monad, MonadAdapter<W> adapter) {
         super(monad,adapter);
 
     }

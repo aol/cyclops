@@ -70,7 +70,7 @@ import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.either;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Optionals;
 
@@ -112,7 +112,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             Folds<T>,
                                                             Transformable<T>,
                                                             ToStream<T>,
-  Zippable<T>,
+                                                            Zippable<T>,
                                                             Publisher<T>,
   Filters<T> {
     @Override
@@ -166,29 +166,14 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return  (AnyM<W,T>)adapter().unitIterable(t);
     }
 
-    @Override
-    default <R> AnyM<W,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (AnyM<W,R>)Zippable.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> AnyM<W,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (AnyM<W,R>)Zippable.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> AnyM<W,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (AnyM<W,R>)Zippable.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn) {
         return (AnyM<W,R>)Zippable.super.retry(fn);
     }
 
     @Override
-    default <U> AnyM<W,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (AnyM)Zippable.super.zipP(other);
+    default <U> AnyM<W,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (AnyM)Zippable.super.zipWithPublisher(other);
     }
 
     @Override
@@ -772,17 +757,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * @param xor Xor to wrap inside an AnyM
      * @return AnyM instance that wraps the provided Xor
      */
-    public static <ST,T> AnyMValue2<either,ST,T> fromLazyEither(final Either<ST, T> xor) {
+    public static <ST,T> AnyMValue2<either,ST,T> fromEither(final Either<ST, T> xor) {
         Objects.requireNonNull(xor);
         return AnyMFactory.instance.value2(xor, either.INSTANCE);
     }
     public static <ST,T> AnyMValue2<either,ST,T> lazyRight(final T p) {
         Objects.requireNonNull(p);
-        return fromLazyEither(Either.right(p));
+        return fromEither(Either.right(p));
     }
     public static <ST,T> AnyMValue2<either,ST,T> lazyLeft(final ST s) {
         Objects.requireNonNull(s);
-        return fromLazyEither(Either.left(s));
+        return fromEither(Either.left(s));
     }
 
     /**
@@ -949,11 +934,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value2(monad,witness);
     }
-    public static <W extends WitnessType<W>,T2,T> AnyMValue2<W,T2,T> ofValue2(final Object monad,FunctionalAdapter<?> adapter) {
+    public static <W extends WitnessType<W>,T2,T> AnyMValue2<W,T2,T> ofValue2(final Object monad,MonadAdapter<?> adapter) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value2(monad,adapter);
     }
-    public static <W extends WitnessType<W>,T> AnyMValue<W,T> ofValue(final Object monad,FunctionalAdapter<?> adapter) {
+    public static <W extends WitnessType<W>,T> AnyMValue<W,T> ofValue(final Object monad,MonadAdapter<?> adapter) {
         Objects.requireNonNull(monad);
         return AnyMFactory.instance.value(monad,adapter);
     }
@@ -1162,7 +1147,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      */
     public static <ST, T> ListX<AnyMValue2<either,ST,T>> listFromXor(final Iterable<Either<ST, T>> anyM) {
         return StreamSupport.stream(anyM.spliterator(), false)
-                            .map(i -> AnyM.fromLazyEither(i))
+                            .map(i -> AnyM.fromEither(i))
                             .collect(ListX.listXCollector());
     }
 
@@ -1290,19 +1275,19 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     static class AnyMFactory {
         static AnyMFactory instance = new AnyMFactory();
 
-        public <W extends WitnessType<W>,T> AnyMValue<W,T> value(final Object o,FunctionalAdapter<?> adapter) {
+        public <W extends WitnessType<W>,T> AnyMValue<W,T> value(final Object o,MonadAdapter<?> adapter) {
             if (o instanceof AnyMValue)
                 return (AnyMValue<W,T>) o;
 
             return new AnyMValueImpl<W,T>(
-                                        o,(FunctionalAdapter)adapter);
+                                        o,(MonadAdapter)adapter);
         }
-        public <W extends WitnessType<W>,T2,T> AnyMValue2<W,T2,T> value2(final Object o,FunctionalAdapter<?> adapter) {
+        public <W extends WitnessType<W>,T2,T> AnyMValue2<W,T2,T> value2(final Object o,MonadAdapter<?> adapter) {
             if (o instanceof AnyMValue)
                 return (AnyMValue2<W,T2,T>) o;
 
             return new AnyMValue2Impl<W,T2,T>(
-                    o,(FunctionalAdapter)adapter);
+                    o,(MonadAdapter)adapter);
         }
 
         /**
@@ -1337,7 +1322,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                 return (AnyMSeq<W,T>) o;
             return new AnyMSeqImpl<W,T>(o,comp.adapter());
         }
-        public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp, FunctionalAdapter adapter) {
+        public <W extends WitnessType<W>,T> AnyMSeq<W,T> seq(final Object o, WitnessType comp, MonadAdapter adapter) {
             if (o instanceof AnyMSeq)
                 return (AnyMSeq<W,T>) o;
             return new AnyMSeqImpl<W,T>(o,comp.adapter());
@@ -1345,7 +1330,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
     }
     public static  <W extends WitnessType<W>,T> AnyM<W,Stream<T>> sequence(Stream<? extends AnyM<W,T>> stream, W witness) {
-        FunctionalAdapter<W> c = witness.adapter();
+        MonadAdapter<W> c = witness.adapter();
         AnyM<W,Stream<T>> identity = c.unit(ReactiveSeq.empty());
 
         BiFunction<AnyM<W,Stream<T>>,AnyM<W,T>,AnyM<W,Stream<T>>> combineToStream = (acc,next) -> c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
@@ -1357,7 +1342,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static  <W extends WitnessType<W>,T,R> AnyM<W,Stream<R>> traverse(Function<T,R> fn,Stream<AnyM<W,T>> stream, W witness) {
        return sequence(stream.map(h->h.map(fn)),witness);
     }
-    FunctionalAdapter<W> adapter();
+    MonadAdapter<W> adapter();
 
     public static <W extends WitnessType<W>,T> AnyM<W, T> narrow(AnyM<W, ? extends T> anyM){
         return (AnyM<W,T>)anyM;
@@ -1539,32 +1524,17 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return (AnyM<W,T>)Filters.super.notNull();
     }
 
-    @Override
-    default AnyM<W,T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (AnyM<W,T>)Zippable.super.zip(combiner,app);
-    }
-
-    @Override
+  @Override
     default <T2, R> AnyM<W,R> zip(final Iterable<? extends T2> iterable, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyM<W,R>)Zippable.super.zip(iterable,fn);
+        return adapter().zip(this,iterable,fn);
     }
 
     @Override
-    default <T2, R> AnyM<W,R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (AnyM<W,R>)Zippable.super.zipP(publisher,fn);
+    default <T2, R> AnyM<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+      return adapter().zip(this,publisher,fn);
     }
 
-    @Override
-    default <U, R> AnyM<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (AnyM<W,R>)Zippable.super.zipS(other,zipper);
-    }
-
-    @Override
-    default <U> AnyM<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (AnyM)Zippable.super.zipS(other);
-    }
-
-    @Override
+  @Override
     default <U> AnyM<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return (AnyM)Zippable.super.zip(other);
     }

@@ -3,7 +3,6 @@ package cyclops.monads.anym.value;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.either;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,8 +14,8 @@ import com.oath.cyclops.util.box.Mutable;
 public class XorAnyMValueTest extends BaseAnyMValueTest<either> {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromLazyEither(Either.right(10));
-        none = AnyM.fromLazyEither(Either.left(null));
+        just = AnyM.fromEither(Either.right(10));
+        none = AnyM.fromEither(Either.left(null));
     }
     @Test
     public void testPeek() {

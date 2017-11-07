@@ -5,7 +5,6 @@ import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
@@ -375,29 +374,9 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<ReactiveSeq<T>>)ImmutableList.super.combinations();
     }
 
-    @Override
-    default Seq<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Seq<T>)ImmutableList.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> Seq<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Seq<R>)ImmutableList.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> Seq<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Seq<R>)ImmutableList.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> Seq<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Seq<R>)ImmutableList.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> Seq<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (Seq<R>)ImmutableList.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> Seq<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (Seq<R>)ImmutableList.super.zip(fn, publisher);
     }
 
     @Override
@@ -406,8 +385,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default <U> Seq<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (Seq)ImmutableList.super.zipP(other);
+    default <U> Seq<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (Seq)ImmutableList.super.zipWithPublisher(other);
     }
 
     @Override

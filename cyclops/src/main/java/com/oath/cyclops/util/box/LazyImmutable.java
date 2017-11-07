@@ -6,6 +6,7 @@ import com.oath.cyclops.types.foldable.To;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import lombok.ToString;
+import org.reactivestreams.Subscriber;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -39,8 +40,7 @@ import java.util.function.Supplier;
  * @param <T>
  */
 @ToString
-
-public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Transformable<T>, Zippable<T> {
+public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consumer<T>, Transformable<T>, Iterable<T> {
     private final static Object UNSET = new Object();
     private final AtomicReference value = new AtomicReference<>(
                                                                 UNSET);
@@ -50,7 +50,8 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     public LazyImmutable() {
     }
 
-    /**
+
+  /**
      * @return Current value
      */
     @Override
@@ -195,7 +196,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     @Override
     public LazyImmutable<T> peek(final Consumer<? super T> c) {
 
-        return (LazyImmutable<T>) Zippable.super.peek(c);
+        return (LazyImmutable<T>) Transformable.super.peek(c);
     }
 
     /* (non-Javadoc)
@@ -204,7 +205,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
     @Override
     public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LazyImmutable<R>) Zippable.super.trampoline(mapper);
+        return (LazyImmutable<R>) Transformable.super.trampoline(mapper);
     }
 
     /* (non-Javadoc)

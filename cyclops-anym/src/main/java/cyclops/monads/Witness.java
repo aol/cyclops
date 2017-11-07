@@ -22,7 +22,7 @@ import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 
 public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{
@@ -138,7 +138,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<stream> adapter() {
+        public MonadAdapter<stream> adapter() {
             return StreamAdapter.stream;
         }
 
@@ -147,7 +147,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<futureStream> adapter() {
+        public MonadAdapter<futureStream> adapter() {
             return StreamAdapter.futureStream;
         }
 
@@ -157,7 +157,7 @@ public interface Witness {
         REACTIVE,CO_REACTIVE;
 
         @Override
-        public  FunctionalAdapter<reactiveSeq> adapter() {
+        public MonadAdapter<reactiveSeq> adapter() {
             if(ordinal()==0)
                 return ReactiveAdapter.reactiveSeq;
             return StreamAdapter.reactiveSeq;
@@ -171,7 +171,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<sortedSet> adapter() {
+        public MonadAdapter<sortedSet> adapter() {
             return new CollectionXAdapter<sortedSet>(SortedSetX::empty,
                     SortedSetX::of,SortedSetX::fromIterator,this);
         }
@@ -181,7 +181,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<set> adapter() {
+        public MonadAdapter<set> adapter() {
             return new CollectionXAdapter<Witness.set>(SetX::empty,
                     SetX::of,SetX::fromIterator,this);
         }
@@ -191,7 +191,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<list> adapter() {
+        public MonadAdapter<list> adapter() {
             return new CollectionXAdapter<Witness.list>(ListX::empty,
                     ListX::of,ListX::fromIterator,this);
         }
@@ -201,7 +201,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<linkedListX> adapter() {
+        public MonadAdapter<linkedListX> adapter() {
             return new CollectionXAdapter<linkedListX>(LinkedListX::empty,
                     LinkedListX::of, LinkedListX::fromIterator,this);
         }
@@ -211,7 +211,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<vectorX> adapter() {
+        public MonadAdapter<vectorX> adapter() {
             return new CollectionXAdapter<vectorX>(VectorX::empty,
                     VectorX::of, VectorX::fromIterator,this);
         }
@@ -221,7 +221,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<persistentQueueX> adapter() {
+        public MonadAdapter<persistentQueueX> adapter() {
             return new CollectionXAdapter<persistentQueueX>(PersistentQueueX::empty,
                     PersistentQueueX::of, PersistentQueueX::fromIterator,this);
         }
@@ -231,7 +231,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<persistentSetX> adapter() {
+        public MonadAdapter<persistentSetX> adapter() {
             return new CollectionXAdapter<persistentSetX>(PersistentSetX::empty,
                     PersistentSetX::of, PersistentSetX::fromIterator,this);
         }
@@ -241,7 +241,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<orderedSetX> adapter() {
+        public MonadAdapter<orderedSetX> adapter() {
             return new CollectionXAdapter<orderedSetX>(OrderedSetX::empty,
                     OrderedSetX::identityOrNatural, OrderedSetX::fromIterator,this);
         }
@@ -251,7 +251,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<bagX> adapter() {
+        public MonadAdapter<bagX> adapter() {
             return new CollectionXAdapter<bagX>(BagX::empty,
                     BagX::of, BagX::fromIterator,this);
         }
@@ -261,7 +261,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<deque> adapter() {
+        public MonadAdapter<deque> adapter() {
             return new CollectionXAdapter<Witness.deque>(DequeX::empty,
                     DequeX::of,DequeX::fromIterator,this);
         }
@@ -271,7 +271,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public  FunctionalAdapter<queue> adapter() {
+        public MonadAdapter<queue> adapter() {
             return new CollectionXAdapter<Witness.queue>(QueueX::empty,
                     QueueX::of,QueueX::fromIterator,this);
         }
@@ -281,7 +281,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<streamable> adapter() {
+        public MonadAdapter<streamable> adapter() {
             return StreamableAdapter.streamable;
         }
 
@@ -292,7 +292,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<tryType> adapter() {
+        public MonadAdapter<tryType> adapter() {
             return new TryAdapter();
         }
 
@@ -302,7 +302,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<ior> adapter() {
+        public MonadAdapter<ior> adapter() {
             return new IorAdapter();
         }
 
@@ -312,7 +312,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<lazyEither> adapter() {
+        public MonadAdapter<lazyEither> adapter() {
             return new LazyEitherAdapter();
         }
 
@@ -322,7 +322,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<lazyEither3> adapter() {
+        public MonadAdapter<lazyEither3> adapter() {
             return new LazyEither3Adapter();
         }
 
@@ -332,7 +332,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<lazyEither4> adapter() {
+        public MonadAdapter<lazyEither4> adapter() {
             return new LazyEither4Adapter();
         }
 
@@ -342,7 +342,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<lazyEither5> adapter() {
+        public MonadAdapter<lazyEither5> adapter() {
             return new LazyEither5Adapter();
         }
 
@@ -352,7 +352,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<either> adapter() {
+        public MonadAdapter<either> adapter() {
             return new EitherAdapter();
         }
 
@@ -362,7 +362,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<eval> adapter() {
+        public MonadAdapter<eval> adapter() {
             return new MonadicValueAdapter<eval>(()->Eval.now(null),
                     Eval::now,Eval::fromIterable,false,this);
         }
@@ -373,7 +373,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<maybe> adapter() {
+        public MonadAdapter<maybe> adapter() {
             return new MonadicValueAdapter<Witness.maybe>(()->Maybe.nothing(),
                     Maybe::just,Maybe::fromIterable,true,this);
         }
@@ -384,7 +384,7 @@ public interface Witness {
 
 
         @Override
-        public FunctionalAdapter<future> adapter() {
+        public MonadAdapter<future> adapter() {
             return new MonadicValueAdapter<Witness.future>(Future::future,
                     Future::ofResult, Future::fromIterable,false,this);
         }
@@ -394,7 +394,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<completableFuture> adapter() {
+        public MonadAdapter<completableFuture> adapter() {
             return FutureAdapter.completableFuture;
         }
 
@@ -404,7 +404,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<optional> adapter() {
+        public MonadAdapter<optional> adapter() {
             return OptionalAdapter.optional;
         }
 
@@ -414,7 +414,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<reader> adapter() {
+        public MonadAdapter<reader> adapter() {
             return null;
         }
 
@@ -423,7 +423,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<supplier> adapter() {
+        public MonadAdapter<supplier> adapter() {
             return null;
         }
 
@@ -432,7 +432,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<yoneda> adapter() {
+        public MonadAdapter<yoneda> adapter() {
             return null;
         }
 
@@ -441,7 +441,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<coyoneda> adapter() {
+        public MonadAdapter<coyoneda> adapter() {
             return null;
         }
 
@@ -450,7 +450,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<coreader> adapter() {
+        public MonadAdapter<coreader> adapter() {
             return null;
         }
 
@@ -459,7 +459,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<kleisli> adapter() {
+        public MonadAdapter<kleisli> adapter() {
             return null;
         }
 
@@ -468,7 +468,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<rws> adapter() {
+        public MonadAdapter<rws> adapter() {
             return null;
         }
 
@@ -477,7 +477,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<state> adapter() {
+        public MonadAdapter<state> adapter() {
             return null;
         }
 
@@ -486,7 +486,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<writer> adapter() {
+        public MonadAdapter<writer> adapter() {
             return null;
         }
 
@@ -495,7 +495,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<constant> adapter() {
+        public MonadAdapter<constant> adapter() {
             return null;
         }
 
@@ -504,7 +504,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<cofree> adapter() {
+        public MonadAdapter<cofree> adapter() {
             return null;
         }
 
@@ -513,7 +513,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<identity> adapter() {
+        public MonadAdapter<identity> adapter() {
             return new IdentityAdapter();
         }
 
@@ -522,7 +522,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<product> adapter() {
+        public MonadAdapter<product> adapter() {
             return null;
         }
 
@@ -531,7 +531,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<coproduct> adapter() {
+        public MonadAdapter<coproduct> adapter() {
             return null;
         }
 
@@ -540,7 +540,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<nested> adapter() {
+        public MonadAdapter<nested> adapter() {
             return null;
         }
 
@@ -549,7 +549,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<free> adapter() {
+        public MonadAdapter<free> adapter() {
             return null;
         }
 
@@ -558,7 +558,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<freeAp> adapter() {
+        public MonadAdapter<freeAp> adapter() {
             return null;
         }
 
@@ -567,7 +567,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<predicate> adapter() {
+        public MonadAdapter<predicate> adapter() {
             return null;
         }
 
@@ -576,7 +576,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<tuple1> adapter() {
+        public MonadAdapter<tuple1> adapter() {
             return null;
         }
 
@@ -585,7 +585,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<tuple2> adapter() {
+        public MonadAdapter<tuple2> adapter() {
             return null;
         }
 
@@ -594,7 +594,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<tuple3> adapter() {
+        public MonadAdapter<tuple3> adapter() {
             return null;
         }
 
@@ -603,7 +603,7 @@ public interface Witness {
         INSTANCE;
 
         @Override
-        public FunctionalAdapter<tuple4> adapter() {
+        public MonadAdapter<tuple4> adapter() {
             return null;
         }
 

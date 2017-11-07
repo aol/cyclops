@@ -605,7 +605,7 @@ public class ReactiveSeqTest {
     @Test
     public void rangeLong(){
         ReactiveSeq.rangeLong(0,5).reverse().reverse().reverse().printOut();
-        of('a').zipS(ReactiveSeq.rangeLong(0,100)).printOut();
+        of('a').zipWithStream(ReactiveSeq.rangeLong(0,100)).printOut();
     }
     @Test
     public void testParallel(){
@@ -771,7 +771,7 @@ public class ReactiveSeqTest {
         pushable.onNext("hello3");
         pushable.onComplete();
        // reactiveStream.printOut();
-        stream.limitLast(2).zipS(Stream.of(1,2)).printOut();
+        stream.limitLast(2).zipWithStream(Stream.of(1,2)).printOut();
     }
 
     @Test
@@ -874,7 +874,7 @@ public class ReactiveSeqTest {
             pushable.onComplete();
         }).start();
 
-        assertThat(stream.zipS(Stream.of(1,2)).toList().size(),equalTo(1));
+        assertThat(stream.zipWithStream(Stream.of(1,2)).toList().size(),equalTo(1));
         assertFalse(active.get());
     }
 

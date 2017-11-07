@@ -4,7 +4,6 @@ import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 
@@ -614,15 +613,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
 
-    @Override
-    default <U, R> PersistentSetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (PersistentSetX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
+   */
     @Override
     default PersistentSetX<ReactiveSeq<T>> permutations() {
 
@@ -734,8 +727,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> PersistentSetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (PersistentSetX) LazyCollectionX.super.zipS(other);
+    default <U> PersistentSetX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+        return (PersistentSetX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1120,36 +1113,17 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     static <T> PersistentSetX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);
     }
-    @Override
-    default PersistentSetX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (PersistentSetX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
 
-    @Override
-    default <R> PersistentSetX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> PersistentSetX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> PersistentSetX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> PersistentSetX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> PersistentSetX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (PersistentSetX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> PersistentSetX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (PersistentSetX)LazyCollectionX.super.zipP(other);
+    default <U> PersistentSetX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (PersistentSetX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

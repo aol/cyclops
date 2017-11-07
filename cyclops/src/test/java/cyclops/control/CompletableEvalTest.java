@@ -343,7 +343,7 @@ public class CompletableEvalTest {
     }
     @Test
     public void testZipPubEvalLazy(){
-        assertTrue(Eval.later(()->10).zipP(Eval.later(()->20),this::add) instanceof Later);
+        assertTrue(Eval.later(()->10).zip(this::add, Eval.later(()->20)) instanceof Later);
     }
 
 	private int add3(int a, int b, int c){

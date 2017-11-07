@@ -52,14 +52,14 @@ public class EvalTest {
                 .orElseGet(() -> "bad");
         assertThat(times,equalTo(1));
     }
-    
+
     @Test
     public void laterExample(){
-        
+
       Eval<Integer> delayed =   Eval.later(()->loadData())
                                     .map(this::process);
-        
-        
+
+
     }
 
     @Test
@@ -109,27 +109,25 @@ public class EvalTest {
     @Test
     public void testZip(){
         assertThat(Eval.now(10).zip(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Eval.now(10).zipP(Eval.now(20),(a,b)->a+b).get(),equalTo(30));
-        assertThat(Eval.now(10).zipS(Stream.of(20),(a,b)->a+b).get(),equalTo(30));
+        assertThat(Eval.now(10).zip((a, b)->a+b, Eval.now(20)).get(),equalTo(30));
         assertThat(Eval.now(10).zip(ReactiveSeq.of(20),(a,b)->a+b).get(),equalTo(30));
         assertThat(Eval.now(10).zip(ReactiveSeq.of(20)).get(),equalTo(Tuple.tuple(10,20)));
-        assertThat(Eval.now(10).zipS(Stream.of(20)).get(),equalTo(Tuple.tuple(10,20)));
         assertThat(Eval.now(10).zip(Eval.now(20)).get(),equalTo(Tuple.tuple(10,20)));
     }
-    
+
     private String loadData(){
         return "data";
     }
     private Integer process(String process){
         return 2;
     }
-    
+
     @Test
     public void odd(){
         System.out.println(even(Eval.now(200000)).get());
     }
     public Eval<String> odd(Eval<Integer> n )  {
-       
+
        return n.flatMap(x->even(Eval.now(x-1)));
     }
     public Eval<String> even(Eval<Integer> n )  {
@@ -137,7 +135,7 @@ public class EvalTest {
             return x<=0 ? Eval.now("done") : odd(Eval.now(x-1));
         });
      }
-   
+
 	@Test
 	public void now(){
 		assertThat(Eval.now(1).map(i->i+2).get(),equalTo(3));
@@ -150,7 +148,7 @@ public class EvalTest {
 	@Test
 	public void laterCaches(){
 		count = 0;
-		Eval<Integer> eval = Eval.later(()->{ 
+		Eval<Integer> eval = Eval.later(()->{
 			count++;
 			return 1;
 		});
@@ -166,7 +164,7 @@ public class EvalTest {
 	@Test
 	public void alwaysDoesNotCache(){
 		count = 0;
-		Eval<Integer> eval = Eval.always(()->{ 
+		Eval<Integer> eval = Eval.always(()->{
 			count++;
 			return 1;
 		});
@@ -208,5 +206,5 @@ public class EvalTest {
 
 
 
-	
+
 }

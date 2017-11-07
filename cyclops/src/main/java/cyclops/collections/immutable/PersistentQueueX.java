@@ -9,7 +9,6 @@ import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.data.BankersQueue;
 import cyclops.typeclasses.*;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -719,21 +718,14 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> PersistentQueueX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (PersistentQueueX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * permutations()
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see
+   * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
+   * permutations()
+   */
     @Override
     default PersistentQueueX<ReactiveSeq<T>> permutations() {
 
@@ -869,9 +861,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * zip(java.util.stream.Stream)
      */
     @Override
-    default <U> PersistentQueueX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> PersistentQueueX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (PersistentQueueX) LazyCollectionX.super.zipS(other);
+        return (PersistentQueueX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1294,36 +1286,16 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
-    @Override
-    default PersistentQueueX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (PersistentQueueX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> PersistentQueueX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (PersistentQueueX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> PersistentQueueX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (PersistentQueueX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> PersistentQueueX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (PersistentQueueX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> PersistentQueueX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (PersistentQueueX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> PersistentQueueX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (PersistentQueueX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> PersistentQueueX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (PersistentQueueX)LazyCollectionX.super.zipP(other);
+    default <U> PersistentQueueX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (PersistentQueueX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

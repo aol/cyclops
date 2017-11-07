@@ -6,14 +6,13 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.react.ThreadPools;
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.control.*;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.Active;
-import cyclops.typeclasses.Enumeration;
+import cyclops.data.Enumeration;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.oath.cyclops.internal.stream.OneShotStreamX;
 import com.oath.cyclops.internal.stream.spliterators.doubles.ReversingDoubleArraySpliterator;
@@ -1020,20 +1019,19 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default <U, R> ReactiveSeq<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ReactiveSeq<R>)zipS(ReactiveSeq.fromIterable(other),zipper);
+        return (ReactiveSeq<R>) zipWithStream(ReactiveSeq.fromIterable(other),zipper);
     }
 
     @Override
-    default <U, R> ReactiveSeq<R> zipP(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ReactiveSeq<R> zip(final BiFunction<? super T, ? super U, ? extends R> zipper, final Publisher<? extends U> other) {
 
-        return zipS(ReactiveSeq.fromPublisher(other), zipper);
+        return zipWithStream(ReactiveSeq.fromPublisher(other), zipper);
     }
 
 
 
 
-    @Override
-    <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
+    <U, R> ReactiveSeq<R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper);
 
 
 
@@ -1272,10 +1270,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-
-
-
-
     /**
      * Zip 2 streams into one
      *
@@ -1287,17 +1281,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      *
      */
-    @Override
-    <U> ReactiveSeq<Tuple2<T, U>> zipS(final Stream<? extends U> other);
+    <U> ReactiveSeq<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other);
 
     default <U, R> ReactiveSeq<R> zipLatest(final Publisher<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-         return zipP(other, zipper);
+         return zip(zipper, other);
     }
 
     @Override
     default <U> ReactiveSeq<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return zipS(ReactiveSeq.fromIterable(other));
+        return zipWithStream(ReactiveSeq.fromIterable(other));
     }
 
 
@@ -1394,7 +1387,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<Tuple2<T, Long>> zipWithIndex() {
-        return zipS(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
+        return zipWithStream(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
     }
 
 
@@ -4673,29 +4666,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return !findAny().isPresent();
     }
 
-    @Override
-    default ReactiveSeq<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (ReactiveSeq<T>)IterableX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> ReactiveSeq<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)IterableX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> ReactiveSeq<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)IterableX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> ReactiveSeq<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (ReactiveSeq<R>)IterableX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <U> ReactiveSeq<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (ReactiveSeq)IterableX.super.zipP(other, Tuple::tuple);
+  @Override
+    default <U> ReactiveSeq<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (ReactiveSeq)IterableX.super.zip(Tuple::tuple, other);
     }
 
     @Override

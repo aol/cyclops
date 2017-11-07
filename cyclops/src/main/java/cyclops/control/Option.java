@@ -1,20 +1,16 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.Recoverable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.async.Future;
+import cyclops.data.tuple.*;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
@@ -291,7 +287,7 @@ public interface Option<T> extends To<Option<T>>,
 
     /**
      * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(CollectionX)} Maybe#zero/ None types are
+     * By constrast with {@link Maybe#sequenceJust(IterableX)} Maybe#zero/ None types are
      * result in the returned Maybe being Option.zero / None
      *
      *
@@ -404,29 +400,14 @@ public interface Option<T> extends To<Option<T>>,
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
-    @Override
-    default <R> Option<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (Option<R>)MonadicValue.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> Option<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (Option<R>)MonadicValue.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> Option<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (Option<R>)MonadicValue.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> Option<R> retry(final Function<? super T, ? extends R> fn) {
         return (Option<R>)MonadicValue.super.retry(fn);
     }
 
     @Override
-    default <U> Option<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (Option)MonadicValue.super.zipP(other);
+    default <U> Option<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (Option)MonadicValue.super.zipWithPublisher(other);
     }
 
     @Override
@@ -527,32 +508,13 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
-    /*
-     * Apply a function across to values at once. If this Maybe is none, or the
-     * supplied value represents none Option.none is returned. Otherwise a Maybe
-     * with the function applied with this value and the supplied value is
-     * returned
-     *
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.applicative.ApplicativeFunctor#combine(com.aol.
-     * cyclops2.types.Value, java.util.function.BiFunction)
-     */
-    @Override
-    default <T2, R> Option<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> app.visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
-    }
-
-    /*
-     * Equivalent to combine, but accepts an Iterable and takes the first value
-     * only from that iterable. (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-     * java.util.function.BiFunction)
-     */
+  /*
+   * Equivalent to combine, but accepts an Iterable and takes the first value
+   * only from that iterable. (non-Javadoc)
+   *
+   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
+   * java.util.function.BiFunction)
+   */
     @Override
     default <T2, R> Option<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
@@ -570,7 +532,7 @@ public interface Option<T> extends To<Option<T>>,
      * org.reactivestreams.Publisher)
      */
     @Override
-    default <T2, R> Option<R> zipP(final Publisher<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    default <T2, R> Option<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return map(v -> Tuple.tuple(v, Curry.curry2(fn)
                 .apply(v))).flatMap(tuple -> Option.fromPublisher(app)
                 .visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
@@ -578,45 +540,11 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Applicative#combine(java.util.function.BinaryOperator, com.oath.cyclops.types.Applicative)
-     */
-    @Override
-    default  Option<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Option<T>)MonadicValue.super.zip(combiner, app);
-    }
-
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream,
-     * java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> Option<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (Option<R>) MonadicValue.super.zipS(other, zipper);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.stream.Stream)
-     */
-    @Override
-    default <U> Option<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-
-        return (Option) MonadicValue.super.zipS(other);
-    }
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
+   */
     @Override
     default <U> Option<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
@@ -652,22 +580,11 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<MonadicValue<T>>) MonadicValue.super.nest();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid,
-     * com.oath.cyclops.types.MonadicValue2)
-     */
-    @Override
-    default Option<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return (Option<T>) MonadicValue.super.combineEager(monoid, v2);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.value.Value#toMaybe()
-     */
+  /*
+   * (non-Javadoc)
+   *
+   * @see com.oath.cyclops.value.Value#toMaybe()
+   */
     @Override
     default Maybe<T> toMaybe(){
         return lazy();
@@ -980,5 +897,223 @@ public interface Option<T> extends To<Option<T>>,
             return fn2.apply(this);
         }
     }
+  public static class Comprehensions {
+
+    public static <T,F,R1, R2, R3,R4,R5,R6,R7> Option<R7> forEach(Option<T> option,
+                                                                        Function<? super T, ? extends Option<R1>> value2,
+                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3,
+                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Option<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Option<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Option<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Option<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Option<R7>> value8
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Option<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Option<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Option<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Option<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f.flatMap(inf->{
+                    Option<R7> g = value8.apply(Tuple.tuple(in,ina,inb,inc,ind,ine,inf));
+                    return g;
+
+                  });
+
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4,R5,R6> Option<R6> forEach(Option<T> option,
+                                                                     Function<? super T, ? extends Option<R1>> value2,
+                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3,
+                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Option<R3>> value4,
+                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Option<R4>> value5,
+                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Option<R5>> value6,
+                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Option<R6>> value7
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Option<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Option<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Option<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Option<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f;
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+
+    public static <T,F,R1, R2, R3,R4,R5> Option<R5> forEach(Option<T> option,
+                                                                  Function<? super T, ? extends Option<R1>> value2,
+                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3,
+                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Option<R3>> value4,
+                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Option<R4>> value5,
+                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Option<R5>> value6
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Option<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Option<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Option<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e;
+              });
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4> Option<R4> forEach(Option<T> option,
+                                                               Function<? super T, ? extends Option<R1>> value2,
+                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3,
+                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Option<R3>> value4,
+                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Option<R4>> value5
+
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Option<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Option<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d;
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3> Option<R3> forEach(Option<T> option,
+                                                            Function<? super T, ? extends Option<R1>> value2,
+                                                            Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3,
+                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Option<R3>> value4
+
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Option<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c;
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2> Option<R2> forEach(Option<T> option,
+                                                        Function<? super T, ? extends Option<R1>> value2,
+                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Option<R2>> value3
+
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Option<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b;
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1> Option<R1> forEach(Option<T> option,
+                                                    Function<? super T, ? extends Option<R1>> value2
+
+
+    ) {
+
+      return option.flatMap(in -> {
+
+        Option<R1> a = value2.apply(in);
+        return a;
+
+
+      });
+
+    }
+
+
+  }
+
 
 }

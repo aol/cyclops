@@ -60,7 +60,7 @@ public class ZipAsyncTest {
     @Test
     public void zipErrors(){
         Future future = Future.future();
-        Spouts.of(1,2,3).zipP(Spouts.reactiveStream(Fixtures.threeErrorsSource))
+        Spouts.of(1,2,3).zipWithPublisher(Spouts.reactiveStream(Fixtures.threeErrorsSource))
                 .forEach(System.out::println,System.out::println,()->future.complete(1));
         future.get();
 
@@ -204,7 +204,7 @@ public class ZipAsyncTest {
 
        ListX<Tuple2<Integer,Integer>> list = Spouts.of(1,2,3,4,5)
                                                     .peek(System.out::println)
-                                                    .zipS(nextAsync())
+                                                    .zipWithStream(nextAsync())
                                                     .toListX();
 
        System.out.println("List creation is non-blocking");
@@ -231,19 +231,19 @@ public class ZipAsyncTest {
 
        Spouts.of(1, 2, 3, 4, 5)
                // .peek(System.out::println)
-                .zipS(nextAsync())
+                .zipWithStream(nextAsync())
                 .collectAll(Collectors.toList())
                 .forEach(System.out::println);
 
        System.out.println(Spouts.of(1, 2, 3, 4, 5)
                                 .peek(System.out::println)
-                                .zipS(nextAsync())
+                                .zipWithStream(nextAsync())
                                 .collectAll(Collectors.toList())
                                 .singleOrElse(null));
 
         System.out.println(Spouts.of(1, 2, 3, 4, 5)
                 .peek(System.out::println)
-                .zipS(nextAsync())
+                .zipWithStream(nextAsync())
                 .collectAll(Collectors.toList())
                 .findFirst().get());
 
@@ -253,7 +253,7 @@ public class ZipAsyncTest {
     public void asyncZip(){
         System.out.println(Thread.currentThread().getId());
         Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync())
+                .zipWithStream(nextAsync())
                 .grouped(2)
                 .flatMap(i->i.stream())
                 .toListX()
@@ -266,7 +266,7 @@ public class ZipAsyncTest {
 
 
         assertThat(Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync())
+                .zipWithStream(nextAsync())
                 .grouped(2)
                 .flatMap(i->i.stream())
                 .toListX(),equalTo(ListX.of(Tuple.tuple(1,1),Tuple.tuple(2,2))));

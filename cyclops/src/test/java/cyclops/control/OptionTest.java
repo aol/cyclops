@@ -62,12 +62,7 @@ public class OptionTest implements Printable {
         assertFalse(lazy);
 
     }
-    @Test
-    public void testZipMonoid(){
-        BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(Option.some(1).zip(sumMaybes, Option.some(5)),equalTo(Option.some(6)));
 
-    }
 
 
 
@@ -100,12 +95,12 @@ public class OptionTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(eager.combineEager(add, none), equalTo(eager));
-        assertThat(none.combineEager(add, eager), equalTo(Option.some(0)));
-        assertThat(none.combineEager(add, none), equalTo(Option.some(0)));
-        assertThat(eager.combineEager(add, Option.some(10)), equalTo(Option.some(20)));
+        assertThat(eager.zip(add, none), equalTo(eager));
+        assertThat(none.zip(add, eager), equalTo(Option.some(0)));
+        assertThat(none.zip(add, none), equalTo(Option.some(0)));
+        assertThat(eager.zip(add, Option.some(10)), equalTo(Option.some(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
-        assertThat(eager.combineEager(firstNonNull, none), equalTo(eager));
+        assertThat(eager.zip(firstNonNull, none), equalTo(eager));
 
     }
 

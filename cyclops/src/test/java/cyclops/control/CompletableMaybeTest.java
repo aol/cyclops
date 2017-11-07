@@ -132,7 +132,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testZipMonoid(){
         BinaryOperator<Zippable<Integer>> sumMaybes = Semigroups.combineScalarFunctors(Semigroups.intSum);
-        assertThat(CompletableMaybeTest.just(1).zip(sumMaybes, Maybe.just(5)),equalTo(Maybe.just(6)));
+        assertThat(sumMaybes.apply(Maybe.just(5),Maybe.just(1)),equalTo(Maybe.just(6)));
 
     }
 
@@ -141,11 +141,9 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testZip() {
         assertThat(CompletableMaybeTest.just(10).zip(Eval.now(20), (a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zipP(Eval.now(20),(a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zipS(Stream.of(20), (a, b) -> a + b).orElse(null), equalTo(30));
-        assertThat(CompletableMaybeTest.just(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).orElse(null), equalTo(30));
+        assertThat(CompletableMaybeTest.just(10).zip((a, b) -> a + b, Eval.now(20)).orElse(null), equalTo(30));
+              assertThat(CompletableMaybeTest.just(10).zip(ReactiveSeq.of(20), (a, b) -> a + b).orElse(null), equalTo(30));
         assertThat(CompletableMaybeTest.just(10).zip(ReactiveSeq.of(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
-        assertThat(CompletableMaybeTest.just(10).zipS(Stream.of(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
         assertThat(CompletableMaybeTest.just(10).zip(Eval.now(20)).orElse(null), equalTo(Tuple.tuple(10, 20)));
     }
 
@@ -178,10 +176,10 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(just.combineEager(add, none), equalTo(Maybe.just(10)));
-        assertThat(none.combineEager(add, just), equalTo(Maybe.of(0)));
-        assertThat(none.combineEager(add, none), equalTo(Maybe.of(0)));
-        assertThat(just.combineEager(add, CompletableMaybeTest.just(10)), equalTo(Maybe.just(20)));
+        assertThat(just.zip(add, none), equalTo(Maybe.just(10)));
+        assertThat(none.zip(add, just), equalTo(Maybe.of(0)));
+        assertThat(none.zip(add, none), equalTo(Maybe.of(0)));
+        assertThat(just.zip(add, CompletableMaybeTest.just(10)), equalTo(Maybe.just(20)));
 
 
     }

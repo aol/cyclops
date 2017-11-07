@@ -12,7 +12,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import cyclops.collections.immutable.VectorX;
@@ -62,34 +61,14 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().recover(exceptionClass,fn));
     }
 
-    @Override
-    default LazyCollectionX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return fromStream(stream().zip(combiner,app));
+  @Override
+    default <T2, R> LazyCollectionX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return fromStream(stream().zip(fn, publisher));
     }
 
     @Override
-    default <R> LazyCollectionX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return fromStream(stream().zipWith(fn));
-    }
-
-    @Override
-    default <R> LazyCollectionX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return fromStream(stream().zipWithS(fn));
-    }
-
-    @Override
-    default <R> LazyCollectionX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return fromStream(stream().zipWithP(fn));
-    }
-
-    @Override
-    default <T2, R> LazyCollectionX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return fromStream(stream().zipP(publisher,fn));
-    }
-
-    @Override
-    default <U> LazyCollectionX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return fromStream(stream().zipP(other));
+    default <U> LazyCollectionX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return fromStream(stream().zipWithPublisher(other));
     }
 
     @Override
@@ -272,18 +251,9 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
-    @Override
-    default <U, R> LazyCollectionX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return fromStream(stream().zipS(other, zipper));
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.CollectionX#sliding(int)
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.data.collections.extensions.CollectionX#sliding(int)
+   */
     @Override
     default LazyCollectionX<VectorX<T>> sliding(final int windowSize) {
         return fromStream(stream().sliding(windowSize));
@@ -418,9 +388,9 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> LazyCollectionX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> LazyCollectionX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return fromStream(stream().zipS(other));
+        return fromStream(stream().zipWithStream(other));
     }
 
 

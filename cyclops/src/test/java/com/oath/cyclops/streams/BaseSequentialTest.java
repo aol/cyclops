@@ -1076,7 +1076,7 @@ public class BaseSequentialTest {
 
     @Test
     public void zip2() {
-        assertThat(of(1, 2).zipS(of('a', 'b')).toList(), equalTo(ListX.of(tuple(1, 'a'), tuple(2, 'b'))));
+        assertThat(of(1, 2).zipWithStream(of('a', 'b')).toList(), equalTo(ListX.of(tuple(1, 'a'), tuple(2, 'b'))));
     }
 
     @Test

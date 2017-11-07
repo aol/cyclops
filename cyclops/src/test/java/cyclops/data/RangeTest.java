@@ -3,14 +3,11 @@ package cyclops.data;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.Enumeration;
-import cyclops.typeclasses.EnumerationTest;
 import cyclops.typeclasses.EnumerationTest.Days;
 import cyclops.typeclasses.Ord;
 import org.junit.Test;
-import sun.security.provider.Sun;
 
-import static cyclops.typeclasses.Enumeration.enums;
+import static cyclops.data.Enumeration.enums;
 import static cyclops.typeclasses.EnumerationTest.Days.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;

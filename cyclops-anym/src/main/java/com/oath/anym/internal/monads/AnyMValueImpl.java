@@ -4,12 +4,12 @@ import java.util.Objects;
 
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.monads.WitnessType;
 
 public class AnyMValueImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMValue<W,T> {
 
-    public AnyMValueImpl(final Object monad,FunctionalAdapter<W> adapter) {
+    public AnyMValueImpl(final Object monad,MonadAdapter<W> adapter) {
         super(monad,adapter);
 
     }

@@ -1056,7 +1056,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <U, R> ReactiveSeq<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ReactiveSeq<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         Operator<U> right;
         if (other instanceof ReactiveStreamX) {
             right = ((ReactiveStreamX<U>) other).source;
@@ -1253,7 +1253,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <U> ReactiveSeq<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    public <U> ReactiveSeq<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         Operator<U> right;
         if (other instanceof ReactiveStreamX) {
             right = ((ReactiveStreamX<U>) other).source;

@@ -145,49 +145,20 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
         return xor.visit(a->a.stream(),b->b.stream());
     }
 
-    @Override
-    public XorM<W1,W2,T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (XorM<W1,W2,T>)Zippable.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (XorM<W1,W2,R>)Zippable.super.zipWith(fn);
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (XorM<W1,W2,R>)Zippable.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (XorM<W1,W2,R>)Zippable.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     public <T2, R>  XorM<W1,W2,R> zip(Iterable<? extends T2> iterable, BiFunction<? super T, ? super T2, ? extends R> fn) {
         return of(xor.map(a->a.zip(iterable,fn)).mapLeft(a->a.zip(iterable,fn)));
     }
 
     @Override
-    public <T2, R>  XorM<W1,W2,R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return of(xor.map(a->a.zipP(publisher,fn)).mapLeft(a->a.zipP(publisher,fn)));
+    public <T2, R>  XorM<W1,W2,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return of(xor.map(a->a.zip(fn, publisher)).mapLeft(a->a.zip(fn, publisher)));
     }
 
-    @Override
-    public <U, R>  XorM<W1,W2,R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return of(xor.map(a->a.zipS(other,zipper)).mapLeft(a->a.zipS(other,zipper)));
-    }
 
     @Override
-    public <U>  XorM<W1,W2,Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (XorM)Zippable.super.zipS(other);
-    }
-
-    @Override
-    public <U>  XorM<W1,W2,Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (XorM)Zippable.super.zipP(other);
+    public <U>  XorM<W1,W2,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (XorM)Zippable.super.zipWithPublisher(other);
     }
 
     @Override

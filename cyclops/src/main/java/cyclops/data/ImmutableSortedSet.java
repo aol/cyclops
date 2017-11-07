@@ -2,7 +2,6 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.persistent.PersistentSortedSet;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.collections.immutable.OrderedSetX;
@@ -203,39 +202,19 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return unitStream(stream().retainAll(values),comparator());
     }
 
-    @Override
-    default ImmutableSortedSet<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return unitStream(stream().zip(combiner,app),comparator());
-    }
-
-    @Override
-    default <R> ImmutableSortedSet<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWith(fn));
-    }
-
-    @Override
-    default <R> ImmutableSortedSet<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWithS(fn));
-    }
-
-    @Override
-    default <R> ImmutableSortedSet<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return unitStream(stream().zipWithP(fn));
-    }
-
-    @Override
-    default <T2, R> ImmutableSortedSet<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return unitStream(stream().zipP(publisher,fn));
+  @Override
+    default <T2, R> ImmutableSortedSet<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return unitStream(stream().zip(fn, publisher));
     }
 
     @Override
     default <U, R> ImmutableSortedSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return unitStream(stream().zipS(other,zipper));
+        return unitStream(stream().zipWithStream(other,zipper));
     }
 
     @Override
-    default <U> ImmutableSortedSet<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return unitStream(stream().zipP(other));
+    default <U> ImmutableSortedSet<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return unitStream(stream().zipWithPublisher(other));
     }
 
     @Override
@@ -333,7 +312,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
     @Override
     default <U> ImmutableSortedSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return unitStream(stream().zipS(other));
+        return unitStream(stream().zipWithStream(other));
     }
 
     @Override

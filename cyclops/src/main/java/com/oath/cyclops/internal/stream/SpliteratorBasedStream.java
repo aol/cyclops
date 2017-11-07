@@ -134,12 +134,12 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final <S> ReactiveSeq<Tuple2<T, S>> zipS(final Stream<? extends S> second) {
+    public final <S> ReactiveSeq<Tuple2<T, S>> zipWithStream(final Stream<? extends S> second) {
         return createSeq( new ZippingSpliterator<>(get(),second.spliterator(),(a, b) -> new Tuple2<>(
                                                         a, b)));
     }
     @Override
-    public final <U, R> ReactiveSeq<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper){
+    public final <U, R> ReactiveSeq<R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper){
         return createSeq( new ZippingSpliterator<>(get(),other.spliterator(),zipper));
     }
     @Override

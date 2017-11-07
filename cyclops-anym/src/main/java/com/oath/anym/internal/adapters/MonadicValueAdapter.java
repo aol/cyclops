@@ -12,7 +12,7 @@ import com.oath.anym.AnyMValue;
 import com.oath.cyclops.types.MonadicValue;
 
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -54,7 +54,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
         return monadicValue(t);
     }
 
-    public <R> R visit(Function<? super FunctionalAdapter<W>,? extends R> fn1, Function<? super ValueAdapter<W>, ? extends R> fn2){
+    public <R> R visit(Function<? super MonadAdapter<W>,? extends R> fn1, Function<? super ValueAdapter<W>, ? extends R> fn2){
         return fn2.apply(this);
     }
 
@@ -74,7 +74,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
     @Override
     public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T, ? extends R>> fn, AnyM<W, T> apply) {
-         return fromMonadicValue(monadicValue(apply).combine(monadicValue(fn),(a,b)->b.apply(a)),witness);
+         return fromMonadicValue(monadicValue(apply).zip(monadicValue(fn),(a,b)->b.apply(a)),witness);
 
     }
 

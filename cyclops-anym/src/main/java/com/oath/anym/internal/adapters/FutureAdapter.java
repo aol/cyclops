@@ -2,10 +2,10 @@ package com.oath.anym.internal.adapters;
 
 import static cyclops.monads.AnyM.fromCompletableFuture;
 import static cyclops.monads.Witness.completableFuture;
-import static cyclops.companion.CompletableFutures.combine;
 
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -20,6 +20,7 @@ import com.oath.anym.extensability.ValueAdapter;
 import cyclops.companion.CompletableFutures;
 
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 @AllArgsConstructor
 public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> implements ValueAdapter<completableFuture> {
@@ -58,10 +59,17 @@ public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> 
         return Future.of(completableFuture(t));
     }
 
+  @Override
+  public <T, T2, R> AnyM<completableFuture, R> zip(AnyM<completableFuture, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return fromCompletableFuture(CompletableFutures.zip(completableFuture(t),t2,fn));
+  }
 
+  @Override
+  public <T, T2, R> AnyM<completableFuture, R> zip(AnyM<completableFuture, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return fromCompletableFuture(CompletableFutures.zip(t2,completableFuture(t),fn));
+  }
 
-
-    @Override
+  @Override
     public <T> AnyM<completableFuture, T> empty() {
         return fromCompletableFuture(this.<T>getEmpty().get());
     }
@@ -69,7 +77,7 @@ public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> 
 
     @Override
     public <T, R> AnyM<completableFuture, R> ap(AnyM<completableFuture, ? extends Function<? super T, ? extends R>> fn, AnyM<completableFuture, T> apply) {
-         return fromCompletableFuture(combine(completableFuture(apply), completableFuture(fn),(a,b)->b.apply(a)));
+         return fromCompletableFuture(CompletableFutures.zip(completableFuture(apply), completableFuture(fn),(a,b)->b.apply(a)));
     }
 
     @Override
@@ -79,7 +87,7 @@ public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> 
     }
 
     @Override
-    public <T, R> AnyM<Witness.completableFuture, R> map(AnyM<Witness.completableFuture, T> t, Function<? super T, ? extends R> fn) {
+    public <T, R> AnyM<completableFuture, R> map(AnyM<completableFuture, T> t, Function<? super T, ? extends R> fn) {
         return fromCompletableFuture(completableFuture(t).<R>thenApply(fn));
     }
 

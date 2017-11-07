@@ -6,7 +6,7 @@ import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.Zippable;
 
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
@@ -128,29 +128,14 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return  (AnyM2<W,T2,T>)adapter().unitIterable(t);
     }
 
-    @Override
-    default <R> AnyM2<W,T2,R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (AnyM2<W,T2,R>)AnyM.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> AnyM2<W,T2,R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (AnyM2<W,T2,R>)AnyM.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> AnyM2<W,T2,R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (AnyM2<W,T2,R>)AnyM.super.zipWithP(fn);
-    }
-
-    @Override
+  @Override
     default <R> AnyM2<W,T2,R> retry(final Function<? super T, ? extends R> fn) {
         return (AnyM2<W,T2,R>)AnyM.super.retry(fn);
     }
 
     @Override
-    default <U> AnyM2<W,T2,Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (AnyM2)AnyM.super.zipP(other);
+    default <U> AnyM2<W,T2,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (AnyM2)AnyM.super.zipWithPublisher(other);
     }
 
     @Override
@@ -488,7 +473,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
 
     public static  <W extends WitnessType<W>,T2,T> AnyM2<W,T2,Stream<T>> sequence(Stream<? extends AnyM2<W, T2,T>> stream, W witness) {
-        FunctionalAdapter<W> c = witness.adapter();
+        MonadAdapter<W> c = witness.adapter();
         AnyM2<W,T2,Stream<T>> identity = ( AnyM2)c.unit(ReactiveSeq.empty());
 
         BiFunction<AnyM2<W,T2,Stream<T>>,AnyM2<W,T2,T>,AnyM2<W,T2,Stream<T>>> combineToStream = (acc, next) -> (AnyM2)c.ap2(c.unit(Lambda.l2((Stream<T> a)->(T b)->ReactiveSeq.concat(a,ReactiveSeq.of(b)))),acc,next);
@@ -500,7 +485,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     public static  <W extends WitnessType<W>,T2,T,R> AnyM2<W,T2,Stream<R>> traverse(Function<T, R> fn, Stream<AnyM2<W, T2,T>> stream, W witness) {
        return sequence(stream.map(h->h.map(fn)),witness);
     }
-    FunctionalAdapter<W> adapter();
+    MonadAdapter<W> adapter();
 
     public static <W extends WitnessType<W>,T2,T> AnyM2<W, T2,T> narrow(AnyM2<W, ? extends T,? extends T2> anyM){
         return (AnyM2<W,T2,T>)anyM;

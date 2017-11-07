@@ -2,7 +2,6 @@ package cyclops.collections.mutable;
 
 import com.oath.cyclops.data.collections.extensions.lazy.LazySetX;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.Zippable;
 
 import com.oath.cyclops.types.foldable.Evaluation;
 
@@ -599,14 +598,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<R>) LazyCollectionX.super.zip(other, zipper);
     }
 
-    @Override
-    default <U, R> SetX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (SetX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-
-    @Override
+  @Override
     default SetX<VectorX<T>> sliding(final int windowSize) {
         return (SetX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
     }
@@ -729,9 +722,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> SetX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> SetX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (SetX) LazyCollectionX.super.zipS(other);
+        return (SetX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1127,36 +1120,16 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
 
-    @Override
-    default SetX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (SetX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
-
-    @Override
-    default <R> SetX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (SetX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> SetX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (SetX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> SetX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (SetX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> SetX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (SetX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> SetX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (SetX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> SetX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (SetX)LazyCollectionX.super.zipP(other);
+    default <U> SetX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (SetX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

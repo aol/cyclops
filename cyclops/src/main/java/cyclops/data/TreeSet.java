@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
@@ -405,29 +404,9 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         return (TreeSet<ReactiveSeq<T>>)ImmutableSortedSet.super.combinations();
     }
 
-    @Override
-    public TreeSet<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (TreeSet<T>)ImmutableSortedSet.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R> TreeSet<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (TreeSet<R>)ImmutableSortedSet.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> TreeSet<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (TreeSet<R>)ImmutableSortedSet.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> TreeSet<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (TreeSet<R>)ImmutableSortedSet.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> TreeSet<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (TreeSet<R>)ImmutableSortedSet.super.zipP(publisher,fn);
+  @Override
+    public <T2, R> TreeSet<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (TreeSet<R>)ImmutableSortedSet.super.zip(fn, publisher);
     }
 
     @Override
@@ -436,8 +415,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public <U> TreeSet<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (TreeSet)ImmutableSortedSet.super.zipP(other);
+    public <U> TreeSet<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (TreeSet)ImmutableSortedSet.super.zipWithPublisher(other);
     }
 
     @Override

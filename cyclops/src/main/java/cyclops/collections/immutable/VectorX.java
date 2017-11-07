@@ -11,7 +11,6 @@ import cyclops.async.Future;
 import cyclops.control.*;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -737,16 +736,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
 
-
-    @Override
-    default <U, R> VectorX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (VectorX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
+   */
     @Override
     default VectorX<ReactiveSeq<T>> permutations() {
 
@@ -849,9 +841,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zipStream(java.util.stream.Stream)
      */
     @Override
-    default <U> VectorX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    default <U> VectorX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (VectorX) LazyCollectionX.super.zipS(other);
+        return (VectorX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1226,36 +1218,17 @@ public interface VectorX<T> extends To<VectorX<T>>,
     default VectorX<T> plusLoop(Supplier<Option<T>> supplier) {
         return (VectorX<T>)LazyCollectionX.super.plusLoop(supplier);
     }
-    @Override
-    default VectorX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (VectorX<T>)LazyCollectionX.super.zip(combiner,app);
-    }
 
-    @Override
-    default <R> VectorX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (VectorX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> VectorX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (VectorX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> VectorX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (VectorX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> VectorX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (VectorX<R>)LazyCollectionX.super.zipP(publisher,fn);
+  @Override
+    default <T2, R> VectorX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (VectorX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
 
 
     @Override
-    default <U> VectorX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (VectorX)LazyCollectionX.super.zipP(other);
+    default <U> VectorX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (VectorX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

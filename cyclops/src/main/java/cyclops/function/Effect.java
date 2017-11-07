@@ -25,6 +25,7 @@ public interface Effect extends Runnable{
         t.start();
         return t;
     }
+
     default Future<Void> future(Executor ex){
         return Future.of(CompletableFuture.runAsync(this,ex));
     }
@@ -246,4 +247,5 @@ public interface Effect extends Runnable{
         return this.flatMap(()->  value2.get().andThen(yieldingFunction));
 
     }
+
 }

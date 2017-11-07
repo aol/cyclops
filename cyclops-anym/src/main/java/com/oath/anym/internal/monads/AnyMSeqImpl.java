@@ -1,7 +1,7 @@
 package com.oath.anym.internal.monads;
 
 import com.oath.anym.AnyMSeq;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.reactive.ReactiveSeq;
 
 import cyclops.monads.WitnessType;
@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class AnyMSeqImpl<W extends WitnessType<W>,T> extends BaseAnyMImpl<W,T>implements AnyMSeq<W,T> {
 
-    public AnyMSeqImpl(final Object monad,  FunctionalAdapter<W> adapter) {
+    public AnyMSeqImpl(final Object monad,  MonadAdapter<W> adapter) {
         super(monad,adapter);
 
     }

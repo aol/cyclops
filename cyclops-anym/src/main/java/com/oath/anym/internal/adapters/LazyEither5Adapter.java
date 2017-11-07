@@ -3,7 +3,7 @@ package com.oath.anym.internal.adapters;
 
 import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Option;
 import cyclops.control.Either;
@@ -38,7 +38,7 @@ public class LazyEither5Adapter extends AbstractFunctionalAdapter<lazyEither5> i
         return either5(t);
     }
 
-    public <R> R visit(Function<? super FunctionalAdapter<lazyEither5>,? extends R> fn1, Function<? super ValueAdapter<lazyEither5>, ? extends R> fn2){
+    public <R> R visit(Function<? super MonadAdapter<lazyEither5>,? extends R> fn1, Function<? super ValueAdapter<lazyEither5>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

@@ -1,6 +1,6 @@
 package com.oath.anym.internal.monads;
 
-import com.oath.anym.extensability.FunctionalAdapter;
+import com.oath.anym.extensability.MonadAdapter;
 import cyclops.monads.AnyMs;
 import cyclops.monads.WitnessType;
 
@@ -19,9 +19,9 @@ import lombok.AllArgsConstructor;
 public abstract class BaseAnyMImpl<W extends WitnessType<W>,T> {
 
     protected final Object monad;
-    protected final FunctionalAdapter<W> adapter;
+    protected final MonadAdapter<W> adapter;
 
-    public FunctionalAdapter<W> adapter(){
+    public MonadAdapter<W> adapter(){
         return adapter;
     }
 

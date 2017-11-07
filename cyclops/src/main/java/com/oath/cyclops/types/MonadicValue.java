@@ -347,7 +347,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * }
      * </pre>
      *
-     * @param monad1
+     * @param value1
      *            Nested monadic type to iterate over
      * @param filterFunction
      *            Filter to applyHKT over elements before passing non-filtered
@@ -369,55 +369,6 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
 
 
-    /**
-     * Eagerly combine two MonadicValues using the supplied monoid (@see ApplicativeFunctor for type appropraite i.e. maybe / async alternatives)
-     *
-     * <pre>
-     * {@code
-     *
-     *  Monoid<Integer> add = Monoid.of(1,SemigroupK.intSum);
-     *  Maybe.of(10).combineEager(add,Maybe.none());
-     *  //Maybe[10]
-     *
-     *  Maybe.none().combineEager(add,Maybe.of(10));
-     *  //Maybe[10]
-     *
-     *  Maybe.none().combineEager(add,Maybe.none());
-     *  //Maybe.none()
-     *
-     *  Maybe.of(10).combineEager(add,Maybe.of(10));
-     *  //Maybe[20]
-     *
-     *  Monoid<Integer> firstNonNull = Monoid.of(null , SemigroupK.firstNonNull());
-     *  Maybe.of(10).combineEager(firstNonNull,Maybe.of(10));
-     *  //Maybe[10]
-     * }</pre>
-     *
-     * @param monoid
-     * @param v2
-     * @return
-     */
-    default MonadicValue<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
-        return unit(this.<T> flatMap(t1 -> v2.map(t2 -> monoid
-                                                              .apply(t1, t2)))
-                        .orElseGet(() -> orElseGet(() -> monoid.zero())));
-    }
-
-    /**
-     * A flattening transformation operation (@see {@link java.util.Optional#flatMap(Function)}
-     *
-     * <pre>
-     * {@code
-     *   Eval.now(1).map(i->i+2).flatMap(i->Eval.later(()->i*3);
-     *   //Eval[9]
-     *
-     * }</pre>
-     *
-     *
-     * @param mapper transformation function
-     * @return MonadicValue
-
-    <R> MonadicValue<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);*/
 
     /**
      * A flattening transformation operation that takes the first value from the returned Iterable.
@@ -470,53 +421,6 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         });
 
 
-    }
-    /**
-     * Lazily combine this ApplicativeFunctor with the supplied value via the supplied BiFunction
-     *
-     * Example
-     * <pre>
-     * {@code
-     *   Maybe<Integer> some = Maybe.just(10);
-     *   just.combine(Eval.now(20), this::add);
-     *   //Some[30]
-     *
-     *   Maybe<Integer> none = Maybe.none();
-     *   none.combine(Eval.now(20), this::add);
-     *   //None
-     *
-     * }
-     * </pre>
-     *
-     * @param app Value to combine with this one.
-     * @param fn BiFunction to combine them
-     * @return New Applicativefunctor that represents the combined values
-     */
-    default <T2, R> MonadicValue<R> combine(final Value<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).map(tuple -> app.visit(i -> tuple._2().apply(i), () -> tuple._1()));
-    }
-    /* (non-Javadoc)
-    * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
-    */
-    @Override
-    default <T2, R> MonadicValue<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).map(tuple -> Maybe.fromIterable(app)
-                .visit(i -> tuple._2().apply(i), () -> tuple._1()));
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> MonadicValue<R> zipP(final Publisher<? extends T2> app,final BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-        return (MonadicValue<R>) map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).map(tuple -> Maybe.fromPublisher(app)
-                .visit(i -> tuple._2().apply(i), () -> tuple._1()));
     }
 
 

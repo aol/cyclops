@@ -1,7 +1,6 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
@@ -345,29 +344,9 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<ReactiveSeq<T>>)ImmutableList.super.combinations();
     }
 
-    @Override
-    public IntMap<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (IntMap<T>)ImmutableList.super.zip(combiner,app);
-    }
-
-    @Override
-    public <R> IntMap<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (IntMap<R>)ImmutableList.super.zipWith(fn);
-    }
-
-    @Override
-    public <R> IntMap<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (IntMap<R>)ImmutableList.super.zipWithS(fn);
-    }
-
-    @Override
-    public <R> IntMap<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (IntMap<R>)ImmutableList.super.zipWithP(fn);
-    }
-
-    @Override
-    public <T2, R> IntMap<R> zipP(Publisher<? extends T2> publisher, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (IntMap<R>)ImmutableList.super.zipP(publisher,fn);
+  @Override
+    public <T2, R> IntMap<R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
+        return (IntMap<R>)ImmutableList.super.zip(fn, publisher);
     }
 
     @Override
@@ -376,8 +355,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public <U> IntMap<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
-        return (IntMap)ImmutableList.super.zipP(other);
+    public <U> IntMap<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+        return (IntMap)ImmutableList.super.zipWithPublisher(other);
     }
 
     @Override

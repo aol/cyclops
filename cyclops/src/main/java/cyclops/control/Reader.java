@@ -399,4 +399,6 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
         Function1<T, R> x = this.andThen(v -> monoid.apply(monoid.zero(), v));
         return x.apply(t);
     }
+
+
 }

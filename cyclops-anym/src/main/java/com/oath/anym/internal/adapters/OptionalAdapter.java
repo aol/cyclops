@@ -2,7 +2,6 @@ package com.oath.anym.internal.adapters;
 
 import static cyclops.monads.AnyM.fromOptional;
 import static cyclops.monads.Witness.optional;
-import static cyclops.companion.Optionals.combine;
 
 import java.util.Iterator;
 import java.util.Optional;

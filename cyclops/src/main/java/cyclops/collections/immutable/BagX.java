@@ -2,7 +2,6 @@ package cyclops.collections.immutable;
 
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
@@ -604,16 +603,9 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
 
-
-    @Override
-    default <U, R> BagX<R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
-
-        return (BagX<R>) LazyCollectionX.super.zipS(other, zipper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
-     */
+  /* (non-Javadoc)
+   * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#permutations()
+   */
     @Override
     default BagX<ReactiveSeq<T>> permutations() {
 
@@ -717,8 +709,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#zip(java.util.stream.Stream)
      */
     @Override
-    default <U> BagX<Tuple2<T, U>> zipS(final Stream<? extends U> other) {
-        return (BagX) LazyCollectionX.super.zipS(other);
+    default <U> BagX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+        return (BagX) LazyCollectionX.super.zipWithStream(other);
     }
 
 
@@ -1098,34 +1090,15 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     static <T> BagX<T> fromIterator(Iterator<T> iterator) {
         return fromIterable(()->iterator);
     }
-    @Override
-    default BagX<T> zip(BinaryOperator<Zippable<T>> combiner, final Zippable<T> app) {
-        return (BagX<T>)LazyCollectionX.super.zip(combiner,app);
+
+  @Override
+    default <T2, R> BagX<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
+        return (BagX<R>)LazyCollectionX.super.zip(fn, publisher);
     }
 
     @Override
-    default <R> BagX<R> zipWith(Iterable<Function<? super T, ? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.zipWith(fn);
-    }
-
-    @Override
-    default <R> BagX<R> zipWithS(Stream<Function<? super T, ? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.zipWithS(fn);
-    }
-
-    @Override
-    default <R> BagX<R> zipWithP(Publisher<Function<? super T, ? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.zipWithP(fn);
-    }
-
-    @Override
-    default <T2, R> BagX<R> zipP(final Publisher<? extends T2> publisher, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return (BagX<R>)LazyCollectionX.super.zipP(publisher,fn);
-    }
-
-    @Override
-    default <U> BagX<Tuple2<T, U>> zipP(final Publisher<? extends U> other) {
-        return (BagX)LazyCollectionX.super.zipP(other);
+    default <U> BagX<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
+        return (BagX)LazyCollectionX.super.zipWithPublisher(other);
     }
 
 

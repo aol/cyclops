@@ -2,8 +2,7 @@ package cyclops.control;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple1;
+import cyclops.data.tuple.*;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.identity;
 import cyclops.typeclasses.*;
@@ -20,6 +19,7 @@ import lombok.AllArgsConstructor;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -76,6 +76,9 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
         return narrow(fn.apply(value));
     }
 
+    public <T2,R> Identity<R> zip(Identity<? extends T2> id,BiFunction<? super T,? super T2, ? extends R> fn){
+      return flatMap(a->id.map(b->fn.apply(a,b)));
+    }
     public Tuple1<T> toTuple(){
         return Tuple1.of(value);
     }
@@ -342,5 +345,223 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
     public static  <T> Cokleisli<identity,T,Identity<T>> kindCokleisli(){
         return Cokleisli.of(Identity::narrowK);
     }
+
+  public static class Comprehensions {
+
+    public static <T,F,R1, R2, R3,R4,R5,R6,R7> Identity<R7> forEach(Identity<T> id,
+                                                                        Function<? super T, ? extends Identity<R1>> value2,
+                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3,
+                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Identity<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Identity<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Identity<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Identity<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Identity<R7>> value8
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Identity<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Identity<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Identity<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Identity<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f.flatMap(inf->{
+                    Identity<R7> g = value8.apply(Tuple.tuple(in,ina,inb,inc,ind,ine,inf));
+                    return g;
+
+                  });
+
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4,R5,R6> Identity<R6> forEach(Identity<T> id,
+                                                                     Function<? super T, ? extends Identity<R1>> value2,
+                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3,
+                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Identity<R3>> value4,
+                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Identity<R4>> value5,
+                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Identity<R5>> value6,
+                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Identity<R6>> value7
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Identity<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Identity<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Identity<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e.flatMap(ine->{
+                  Identity<R6> f = value7.apply(Tuple.tuple(in,ina,inb,inc,ind,ine));
+                  return f;
+                });
+              });
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+
+    public static <T,F,R1, R2, R3,R4,R5> Identity<R5> forEach(Identity<T> id,
+                                                                  Function<? super T, ? extends Identity<R1>> value2,
+                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3,
+                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Identity<R3>> value4,
+                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Identity<R4>> value5,
+                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Identity<R5>> value6
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Identity<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Identity<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d.flatMap(ind->{
+                Identity<R5> e = value6.apply(Tuple.tuple(in,ina,inb,inc,ind));
+                return e;
+              });
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3,R4> Identity<R4> forEach(Identity<T> id,
+                                                               Function<? super T, ? extends Identity<R1>> value2,
+                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3,
+                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Identity<R3>> value4,
+                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Identity<R4>> value5
+
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Identity<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c.flatMap(inc->{
+              Identity<R4> d = value5.apply(Tuple.tuple(in,ina,inb,inc));
+              return d;
+            });
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2, R3> Identity<R3> forEach(Identity<T> id,
+                                                            Function<? super T, ? extends Identity<R1>> value2,
+                                                            Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3,
+                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Identity<R3>> value4
+
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b.flatMap(inb -> {
+
+            Identity<R3> c = value4.apply(Tuple.tuple(in,ina,inb));
+
+            return c;
+
+          });
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1, R2> Identity<R2> forEach(Identity<T> id,
+                                                        Function<? super T, ? extends Identity<R1>> value2,
+                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Identity<R2>> value3
+
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a.flatMap(ina -> {
+          Identity<R2> b = value3.apply(Tuple.tuple(in,ina));
+          return b;
+
+
+        });
+
+
+      });
+
+    }
+    public static <T,F,R1> Identity<R1> forEach(Identity<T> id,
+                                                    Function<? super T, ? extends Identity<R1>> value2
+
+
+    ) {
+
+      return id.flatMap(in -> {
+
+        Identity<R1> a = value2.apply(in);
+        return a;
+
+
+      });
+
+    }
+
+
+  }
 
 }

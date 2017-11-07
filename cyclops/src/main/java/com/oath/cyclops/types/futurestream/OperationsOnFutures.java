@@ -320,7 +320,7 @@ public interface OperationsOnFutures<T> {
         return (FutureStream) fromStreamOfFutures((Stream) this.getLastActive()
                                                                    .injectFuturesSeq()
                                                                    .map(f -> f.toCompletableFuture())
-                                                                   .zipS(other)
+                                                                   .zipWithStream(other)
                                                                    .map(t -> t._1().thenApply(r -> Tuple.tuple(r, t._2())))
                                                                    .map(cf -> FastFuture.fromCompletableFuture(cf)));
 
