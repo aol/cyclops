@@ -5,6 +5,7 @@ import static cyclops.monads.Witness.optional;
 
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -22,7 +23,7 @@ import cyclops.companion.Optionals;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional> implements ValueAdapter<Witness.optional> {
+public class OptionalAdapter extends AbstractFunctionalAdapter<optional> implements ValueAdapter<optional> {
 
     private final Supplier<Optional<?>> empty;
     private final Function<?,Optional<?>> unit;
@@ -30,7 +31,9 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
 
     public final static OptionalAdapter optional = new OptionalAdapter(()->Optional.empty(),t->Optional.of(t));
 
-    private <U> Supplier<Optional<U>> getEmpty(){
+
+
+  private <U> Supplier<Optional<U>> getEmpty(){
         return (Supplier)empty;
     }
     private <U> Function<U,Optional<U>>  getUnit(){
@@ -39,7 +42,7 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     private <U> Function<Iterator<U>,Optional<U>>  getUnitIterator(){
         return  it->it.hasNext() ? this.<U>getUnit().apply(it.next()) : this.<U>getEmpty().get();
     }
-    public <T> Option<T> get(AnyMValue<Witness.optional,T> t){
+    public <T> Option<T> get(AnyMValue<optional,T> t){
         return Option.fromOptional((Optional<T>)t.unwrap());
     }
 
@@ -63,7 +66,7 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
 
     @Override
     public <T, R> AnyM<optional, R> ap(AnyM<optional, ? extends Function<? super T,? extends R>> fn, AnyM<optional, T> apply) {
-         return fromOptional(combine(optional(apply), optional(fn),(a,b)->b.apply(a)));
+         return fromOptional(Optionals.zip(optional(apply), optional(fn),(a,b)->b.apply(a)));
     }
 
     @Override
@@ -78,12 +81,12 @@ public class OptionalAdapter extends AbstractFunctionalAdapter<Witness.optional>
     }
 
     @Override
-    public <T> AnyM<Witness.optional, T> unit(T o) {
+    public <T> AnyM<optional, T> unit(T o) {
         return fromOptional(this.<T>getUnit().apply(o));
     }
 
     @Override
-    public <T, R> AnyM<Witness.optional, R> map(AnyM<Witness.optional, T> t, Function<? super T, ? extends R> fn) {
+    public <T, R> AnyM<optional, R> map(AnyM<optional, T> t, Function<? super T, ? extends R> fn) {
         return fromOptional(optional(t).<R>map(fn));
     }
 }

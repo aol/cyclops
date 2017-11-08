@@ -28,10 +28,11 @@ import java.util.stream.Stream;
 public interface Option<T> extends To<Option<T>>,
                                     OrElseValue<T,Option<T>>,
                                     MonadicValue<T>,
-                                   Recoverable<T>,
-                                   Sealed2<T,Option.None<T>>,
-                                   Iterable<T>,
-                                     Serializable{
+                                    Zippable<T>,
+                                    Recoverable<T>,
+                                    Sealed2<T,Option.None<T>>,
+                                    Iterable<T>,
+                                    Serializable{
 
 
 
@@ -407,7 +408,7 @@ public interface Option<T> extends To<Option<T>>,
 
     @Override
     default <U> Option<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (Option)MonadicValue.super.zipWithPublisher(other);
+        return (Option)Zippable.super.zipWithPublisher(other);
     }
 
     @Override
@@ -417,22 +418,22 @@ public interface Option<T> extends To<Option<T>>,
 
     @Override
     default <S, U> Option<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (Option)MonadicValue.super.zip3(second,third);
+        return (Option)Zippable.super.zip3(second,third);
     }
 
     @Override
     default <S, U, R> Option<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (Option<R>)MonadicValue.super.zip3(second,third,fn3);
+        return (Option<R>)Zippable.super.zip3(second,third,fn3);
     }
 
     @Override
     default <T2, T3, T4> Option<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (Option)MonadicValue.super.zip4(second,third,fourth);
+        return (Option)Zippable.super.zip4(second,third,fourth);
     }
 
     @Override
     default <T2, T3, T4, R> Option<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (Option<R>)MonadicValue.super.zip4(second,third,fourth,fn);
+        return (Option<R>)Zippable.super.zip4(second,third,fourth,fn);
     }
 
     @Override
@@ -508,34 +509,17 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
-  /*
-   * Equivalent to combine, but accepts an Iterable and takes the first value
-   * only from that iterable. (non-Javadoc)
-   *
-   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-   * java.util.function.BiFunction)
-   */
     @Override
     default <T2, R> Option<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> Option.fromIterable(app)
-                .visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
+      return flatMap(a->Option.fromIterable(app).map(b->fn.apply(a,b)));
     }
 
 
-    /*
-     * Equivalent to combine, but accepts a Publisher and takes the first value
-     * only from that publisher. (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Zippable#zip(java.util.function.BiFunction,
-     * org.reactivestreams.Publisher)
-     */
+
     @Override
     default <T2, R> Option<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn)
-                .apply(v))).flatMap(tuple -> Option.fromPublisher(app)
-                .visit(i -> Option.just(tuple._2().apply(i)), () -> Option.none()));
+      return flatMap(a->Option.fromPublisher(app).map(b->fn.apply(a,b)));
 
     }
 
@@ -548,7 +532,7 @@ public interface Option<T> extends To<Option<T>>,
     @Override
     default <U> Option<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
-        return (Option) MonadicValue.super.zip(other);
+        return (Option) Zippable.super.zip(other);
     }
 
     /* (non-Javadoc)

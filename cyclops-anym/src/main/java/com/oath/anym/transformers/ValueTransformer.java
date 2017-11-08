@@ -27,7 +27,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
   Zippable<T> {
     public abstract <R> ValueTransformer<W,R> empty();
    // public abstract <R> ValueTransformer<W,R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> f);
-    public abstract AnyM<W,? extends MonadicValue<T>> transformerStream();
+    public abstract <X extends MonadicValue<T> & Zippable<T>> AnyM<W,? extends X> transformerStream();
     protected abstract <R> ValueTransformer<W,R> unitAnyM(AnyM<W,? super MonadicValue<R>> anyM);
 
     public boolean isPresent(){

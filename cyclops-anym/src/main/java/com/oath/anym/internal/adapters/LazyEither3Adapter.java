@@ -14,8 +14,11 @@ import cyclops.monads.Witness.lazyEither3;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
+import static cyclops.monads.Witness.lazyEither3;
 
 @AllArgsConstructor
 public class LazyEither3Adapter extends AbstractFunctionalAdapter<lazyEither3> implements ValueAdapter<lazyEither3> {
@@ -29,7 +32,7 @@ public class LazyEither3Adapter extends AbstractFunctionalAdapter<lazyEither3> i
 
 
 
-    public <T> Option<T> get(AnyMValue<lazyEither3,T> t){
+  public <T> Option<T> get(AnyMValue<lazyEither3,T> t){
         return either3(t).toOption();
     }
     @Override
@@ -66,13 +69,13 @@ public class LazyEither3Adapter extends AbstractFunctionalAdapter<lazyEither3> i
     public <T, R> AnyM<lazyEither3, R> flatMap(AnyM<lazyEither3, T> t,
                                                Function<? super T, ? extends AnyM<lazyEither3, ? extends R>> fn) {
 
-        return AnyM.fromEither3(Witness.lazyEither3(t).flatMap(fn.andThen(Witness::lazyEither3)));
+        return AnyM.fromEither3(lazyEither3(t).flatMap(fn.andThen(Witness::lazyEither3)));
 
     }
 
     @Override
     public <T, R> AnyM<lazyEither3, R> map(AnyM<lazyEither3, T> t, Function<? super T, ? extends R> fn) {
-        return AnyM.fromEither3(Witness.lazyEither3(t).map(fn));
+        return AnyM.fromEither3(lazyEither3(t).map(fn));
     }
 
     @Override

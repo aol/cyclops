@@ -10,9 +10,7 @@ import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.ior;
-import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -32,20 +30,8 @@ public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueA
         return false;
     }
 
-  @Override
-  public <T, T2, R> AnyM<ior, R> zip(AnyM<ior, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    if(t2.iterator().hasNext())
-      return AnyM.fromIor(Witness.ior(t).zip(Ior.fromIterable(t2,null),fn));
-    return AnyM.<ior,R>fromIor(Ior.left(null));
-  }
 
-  @Override
-  public <T, T2, R> AnyM<ior, R> zip(AnyM<ior, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-
-    return zip(t, (Iterable<T2>)ReactiveSeq.fromPublisher(t2),fn);
-  }
-
-  public <T> Option<T> get(AnyMValue<ior,T> t){
+    public <T> Option<T> get(AnyMValue<ior,T> t){
         return ior(t).toOption();
     }
     @Override

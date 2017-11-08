@@ -5,15 +5,12 @@ import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
-import cyclops.control.Ior;
 import cyclops.control.Option;
 import cyclops.control.Try;
 
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.tryType;
 import lombok.AllArgsConstructor;
-import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -45,17 +42,7 @@ public class TryAdapter extends AbstractFunctionalAdapter<tryType> implements Va
         return fn2.apply(this);
     }
 
-  @Override
-  public <T, T2, R> AnyM<tryType, R> zip(AnyM<tryType, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    if(t2.iterator().hasNext())
-      return AnyM.fromTry(toTry(t).zip(Try.fromIterable(t2,null),fn));
-    return  empty();
-  }
 
-  @Override
-  public <T, T2, R> AnyM<tryType, R> zip(AnyM<tryType, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return AnyM.fromTry(toTry(t).zip(Try.fromPublisher(t2),fn));
-  }
 
   public <T> Try<T,Throwable> tryType(AnyM<tryType, T> t){
         return (Try<T,Throwable>)t.unwrap();

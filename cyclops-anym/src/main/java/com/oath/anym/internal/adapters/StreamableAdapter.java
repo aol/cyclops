@@ -9,17 +9,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import cyclops.companion.Streams;
 import cyclops.monads.AnyM;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
 import cyclops.monads.Witness;
 
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 
 import lombok.AllArgsConstructor;
-import org.reactivestreams.Publisher;
 
 @AllArgsConstructor
 public class StreamableAdapter extends AbstractFunctionalAdapter<streamable> {
@@ -45,18 +41,11 @@ public class StreamableAdapter extends AbstractFunctionalAdapter<streamable> {
     }
 
   @Override
-  public <T, T2, R> AnyM<streamable, R> zip(AnyM<streamable, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+  public <T, T2, R> AnyM<Witness.streamable, R> zip(AnyM<Witness.streamable, ? extends T> t, AnyM<Witness.streamable, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
     return AnyM.fromStreamable(streamable(t).zip(t2,fn));
   }
 
   @Override
-  public <T, T2, R> AnyM<streamable, R> zip(AnyM<streamable, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return AnyM.fromStreamable(streamable(t).zip(fn,t2));
-  }
-
-
-
-    @Override
     public <T> AnyM<streamable, T> filter(AnyM<streamable, T> t, Predicate<? super T> fn) {
         return fromStreamable(streamable(t).filter(fn));
     }

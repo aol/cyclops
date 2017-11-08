@@ -70,6 +70,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     default <T2, R> LazyEither3<LT1, LT2,R> zip(final LazyEither3<LT1, LT2,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
+    default <T2, R>  LazyEither3<LT1, LT2,R> zip(final Publisher<? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
+    return zip(LazyEither.fromPublisher(app),fn);
+  }
 
     /**
      * Create a reactiveBuffer CompletableEither

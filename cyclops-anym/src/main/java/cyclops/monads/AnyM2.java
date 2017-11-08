@@ -45,7 +45,7 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  * Wrapper for Any Monad type
  *
  * There are two subsclass of AnyM - @see {@link AnyMValue} and  @see {@link AnyMSeq}.
- * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior}, {@link FeatureToggle}
+ * AnyMValue is used to represent Monads that wrap a single value such as {@link Optional}, {@link CompletableFuture}, {@link Maybe}, {@link Eval}, {@link Either}, {@link Try}, {@link Ior}
  * AnyMSeq is used to represent Monads that wrap an aggregation of values such as {@link Stream}, {@link FutureStream}, {@link List}, {@link Set}, {@link Streamable}
  *
  * Use AnyM to create your monad wrapper.
@@ -75,7 +75,6 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                                                                 Folds<T>,
                                                                 Transformable<T>,
                                                                 ToStream<T>,
-                                                                Zippable<T>,
                                                                 Publisher<T> {
     @Override
     default ReactiveSeq<T> reactiveSeq() {
@@ -128,14 +127,9 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return  (AnyM2<W,T2,T>)adapter().unitIterable(t);
     }
 
-  @Override
+    @Override
     default <R> AnyM2<W,T2,R> retry(final Function<? super T, ? extends R> fn) {
         return (AnyM2<W,T2,R>)AnyM.super.retry(fn);
-    }
-
-    @Override
-    default <U> AnyM2<W,T2,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (AnyM2)AnyM.super.zipWithPublisher(other);
     }
 
     @Override
@@ -143,25 +137,6 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return (AnyM2<W,T2,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
 
-    @Override
-    default <S, U> AnyM2<W,T2,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (AnyM2)AnyM.super.zip3(second,third);
-    }
-
-    @Override
-    default <S, U, R> AnyM2<W,T2,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (AnyM2<W,T2,R>)AnyM.super.zip3(second,third,fn3);
-    }
-
-    @Override
-    default <T2, T3, T4> AnyM2<W,T2,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (AnyM2)AnyM.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    default <T2, T3, T4, R> AnyM2<W,T2,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (AnyM2<W,T2,R>)AnyM.super.zip4(second,third,fourth,fn);
-    }
 
 
     /**

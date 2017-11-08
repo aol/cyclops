@@ -38,6 +38,7 @@ import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.tuple.Tuple;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.transformers.FutureT;
@@ -112,7 +113,6 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             Folds<T>,
                                                             Transformable<T>,
                                                             ToStream<T>,
-                                                            Zippable<T>,
                                                             Publisher<T>,
   Filters<T> {
     @Override
@@ -168,41 +168,15 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
   @Override
     default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyM<W,R>)Zippable.super.retry(fn);
+        return (AnyM<W,R>)Transformable.super.retry(fn);
     }
 
-    @Override
-    default <U> AnyM<W,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (AnyM)Zippable.super.zipWithPublisher(other);
-    }
+  @Override
+  default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+    return (AnyM<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+  }
 
-    @Override
-    default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyM<W,R>)Zippable.super.retry(fn,retries,delay,timeUnit);
-    }
-
-    @Override
-    default <S, U> AnyM<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (AnyM)Zippable.super.zip3(second,third);
-    }
-
-    @Override
-    default <S, U, R> AnyM<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (AnyM<W,R>)Zippable.super.zip3(second,third,fn3);
-    }
-
-    @Override
-    default <T2, T3, T4> AnyM<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (AnyM)Zippable.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    default <T2, T3, T4, R> AnyM<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (AnyM<W,R>)Zippable.super.zip4(second,third,fourth,fn);
-    }
-
-
-    /**
+  /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad
      *
      * <pre>
@@ -377,7 +351,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      */
     @Override
     default AnyM<W,T> peek(Consumer<? super T> c){
-        return (AnyM<W, T>) Zippable.super.peek(c);
+        return (AnyM<W, T>) Transformable.super.peek(c);
     }
 
 
@@ -1524,25 +1498,21 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return (AnyM<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    default <T2, R> AnyM<W,R> zip(final Iterable<? extends T2> iterable, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return adapter().zip(this,iterable,fn);
+
+
+    default <T2, R> AnyM<W,R> zip(final AnyM<W,? extends T2> anyM, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return adapter().zip(this,anyM,fn);
     }
 
-    @Override
-    default <T2, R> AnyM<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
-      return adapter().zip(this,publisher,fn);
-    }
 
-  @Override
-    default <U> AnyM<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (AnyM)Zippable.super.zip(other);
+    default <U> AnyM<W,Tuple2<T, U>> zip(final AnyM<W,? extends U> other) {
+        return zip(other, Tuple::tuple);
     }
 
 
 
     @Override
     default <R> AnyM<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (AnyM<W, R>) Zippable.super.trampoline(mapper);
+        return (AnyM<W, R>) Transformable.super.trampoline(mapper);
     }
 }

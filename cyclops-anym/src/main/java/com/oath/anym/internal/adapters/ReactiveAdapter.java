@@ -11,12 +11,12 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static cyclops.companion.Streams.zipSequence;
 import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor
@@ -50,7 +50,7 @@ public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFuncti
         return fromStream(stream(t).filter(fn),witness);
     }
 
-    <T> Stream<T> stream(AnyM<W,T> anyM){
+    <T> ReactiveSeq<T> stream(AnyM<W,T> anyM){
         return anyM.unwrap();
     }
 
@@ -60,9 +60,14 @@ public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFuncti
     }
 
 
-    @Override
+  @Override
+  public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return fromStream(stream(t).zip((a,b)->fn.apply(a,b),stream(t2)),witness);
+  }
+
+  @Override
     public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T,? extends R>> fn, AnyM<W, T> apply) {
-         return fromStream(zipSequence(stream(apply), stream(fn),(a,b)->b.apply(a)),witness);
+         return fromStream(stream(apply).zip((a,b)->b.apply(a),stream(fn)),witness);
     }
 
     @Override

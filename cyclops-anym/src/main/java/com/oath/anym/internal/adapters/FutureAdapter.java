@@ -20,7 +20,6 @@ import com.oath.anym.extensability.ValueAdapter;
 import cyclops.companion.CompletableFutures;
 
 import lombok.AllArgsConstructor;
-import org.reactivestreams.Publisher;
 
 @AllArgsConstructor
 public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> implements ValueAdapter<completableFuture> {
@@ -60,13 +59,8 @@ public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> 
     }
 
   @Override
-  public <T, T2, R> AnyM<completableFuture, R> zip(AnyM<completableFuture, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+  public <T, T2, R> AnyM<completableFuture, R> zip(AnyM<completableFuture, ? extends T> t, AnyM<completableFuture, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
     return fromCompletableFuture(CompletableFutures.zip(completableFuture(t),t2,fn));
-  }
-
-  @Override
-  public <T, T2, R> AnyM<completableFuture, R> zip(AnyM<completableFuture, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromCompletableFuture(CompletableFutures.zip(t2,completableFuture(t),fn));
   }
 
   @Override

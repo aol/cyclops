@@ -4,6 +4,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
@@ -69,6 +70,7 @@ import java.util.stream.Stream;
  */
 public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                  Deconstruct1<T>,
+                                 Zippable<T>,
                                   MonadicValue<T>,
                                     Higher<eval ,T>{
 
@@ -590,7 +592,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <U> Eval<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (Eval) MonadicValue.super.zip(other);
+        return (Eval) Zippable.super.zip(other);
     }
 
   @Override
@@ -600,7 +602,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     @Override
     default <U> Eval<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (Eval)MonadicValue.super.zipWithPublisher(other);
+        return (Eval)Zippable.super.zipWithPublisher(other);
     }
 
     @Override
@@ -610,22 +612,22 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     @Override
     default <S, U> Eval<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (Eval)MonadicValue.super.zip3(second,third);
+        return (Eval)Zippable.super.zip3(second,third);
     }
 
     @Override
     default <S, U, R> Eval<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (Eval<R>)MonadicValue.super.zip3(second,third,fn3);
+        return (Eval<R>)Zippable.super.zip3(second,third,fn3);
     }
 
     @Override
     default <T2, T3, T4> Eval<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (Eval)MonadicValue.super.zip4(second,third,fourth);
+        return (Eval)Zippable.super.zip4(second,third,fourth);
     }
 
     @Override
     default <T2, T3, T4, R> Eval<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (Eval<R>)MonadicValue.super.zip4(second,third,fourth,fn);
+        return (Eval<R>)Zippable.super.zip4(second,third,fourth,fn);
     }
 
     @Override

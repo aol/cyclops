@@ -60,7 +60,6 @@ import java.util.stream.Stream;
 public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> implements Filters<T>,
                                                                                        Transformable<T>,
                                                                                        Folds<T>,
-                                                                                       Zippable<T>,
                                                                                        Publisher<T>,
                                                                                        To<XorM<W1,W2,T>> {
 
@@ -145,46 +144,6 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
         return xor.visit(a->a.stream(),b->b.stream());
     }
 
-  @Override
-    public <T2, R>  XorM<W1,W2,R> zip(Iterable<? extends T2> iterable, BiFunction<? super T, ? super T2, ? extends R> fn) {
-        return of(xor.map(a->a.zip(iterable,fn)).mapLeft(a->a.zip(iterable,fn)));
-    }
-
-    @Override
-    public <T2, R>  XorM<W1,W2,R> zip(BiFunction<? super T, ? super T2, ? extends R> fn, Publisher<? extends T2> publisher) {
-        return of(xor.map(a->a.zip(fn, publisher)).mapLeft(a->a.zip(fn, publisher)));
-    }
-
-
-    @Override
-    public <U>  XorM<W1,W2,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
-        return (XorM)Zippable.super.zipWithPublisher(other);
-    }
-
-    @Override
-    public <U>  XorM<W1,W2,Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return (XorM)Zippable.super.zip(other);
-    }
-
-    @Override
-    public <S, U>  XorM<W1,W2,Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
-        return (XorM)Zippable.super.zip3(second,third);
-    }
-
-    @Override
-    public <S, U, R>  XorM<W1,W2,R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (XorM)Zippable.super.zip3(second,third,fn3);
-    }
-
-    @Override
-    public <T2, T3, T4>  XorM<W1,W2,Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
-        return (XorM)Zippable.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    public <T2, T3, T4, R>  XorM<W1,W2,R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (XorM)Zippable.super.zip4(second,third,fourth,fn);
-    }
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
