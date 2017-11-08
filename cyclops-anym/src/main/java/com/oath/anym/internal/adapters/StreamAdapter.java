@@ -17,8 +17,6 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.monads.Witness;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
-import cyclops.reactive.Spouts;
-import org.reactivestreams.Publisher;
 
 
 public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
@@ -73,13 +71,8 @@ public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  Abstract
 
 
   @Override
-  public <T, T2, R> AnyM<W, R> zip(AnyM<W, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
+  public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
     return AnyM.fromStream(Streams.zipSequence(stream(t),ReactiveSeq.fromIterable(t2),fn),witness);
-  }
-
-  @Override
-  public <T, T2, R> AnyM<W, R> zip(AnyM<W, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return AnyM.fromStream(ReactiveSeq.fromStream(stream(t)).zip(Spouts.from(t2),fn),witness);
   }
 
   @Override

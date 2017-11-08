@@ -356,9 +356,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
      */
     @Override
-    public <U, R> ListT<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ListT<W,R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return (ListT<W,R>) FoldableTransformerSeq.super.zipS(other, zipper);
+        return (ListT<W,R>) FoldableTransformerSeq.super.zipWithStream(other, zipper);
     }
 
 
@@ -367,9 +367,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
      */
     @Override
-    public <U> ListT<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
+    public <U> ListT<W,Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
-        return (ListT) FoldableTransformerSeq.super.zipS(other);
+        return (ListT) FoldableTransformerSeq.super.zipWithStream(other);
     }
 
     /* (non-Javadoc)

@@ -20,6 +20,7 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -271,7 +272,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     public static <ST, T> Either<ST, T> fromIterable(final Iterable<T> iterable) {
 
         final Iterator<T> it = iterable.iterator();
-        return Either.right(it.hasNext() ? it.next() : null);
+        return it.hasNext() ? Either.right(  it.next()) :Either.left(null);
     }
 
     /**
@@ -804,9 +805,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     default <T2, R> Either<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
-    default <T2, R> Either<ST, R> zip(final Publisher<? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
-      return zip(Either.fromPublisher(app),fn);
-    }
+
 
     default Either<LinkedListX<ST>, PT> list() {
         return mapLeft(LinkedListX::of);

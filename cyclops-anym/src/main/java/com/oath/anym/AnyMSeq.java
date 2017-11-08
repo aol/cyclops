@@ -460,22 +460,17 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.zip(other, zipper));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
-    default <U, R> AnyMSeq<W,R> zipS(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> AnyMSeq<W,R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
-        return fromIterable(IterableX.super.zipS(other, zipper));
+        return fromIterable(IterableX.super.zipWithStream(other, zipper));
     }
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
-     */
-    default <U> AnyMSeq<W,Tuple2<T, U>> zipS(final Stream<? extends U> other) {
 
-        return fromIterable(IterableX.super.zipS(other));
+    default <U> AnyMSeq<W,Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+
+        return fromIterable(IterableX.super.zipWithStream(other));
     }
 
     /* (non-Javadoc)

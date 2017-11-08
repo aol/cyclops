@@ -1026,7 +1026,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         @Test
         public void zip2(){
             List<Tuple2<Integer,Integer>> list =
-                    of(1,2,3,4,5,6).zipS(Stream.of(100,200,300,400))
+                    of(1,2,3,4,5,6).zipWithStream(Stream.of(100,200,300,400))
                                                     .peek(it -> System.out.println(it))
 
                                                     .collect(java.util.stream.Collectors.toList());

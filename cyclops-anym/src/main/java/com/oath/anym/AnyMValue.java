@@ -150,35 +150,13 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return (AnyMValue<W,R>)AnyM.super.retry(fn);
     }
 
-    @Override
-    default <U> AnyMValue<W,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (AnyMValue)AnyM.super.zipWithPublisher(other);
-    }
 
     @Override
     default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         return (AnyMValue<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
 
-    @Override
-    default <S, U> AnyMValue<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (AnyMValue)AnyM.super.zip3(second,third);
-    }
 
-    @Override
-    default <S, U, R> AnyMValue<W,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (AnyMValue<W,R>)AnyM.super.zip3(second,third,fn3);
-    }
-
-    @Override
-    default <T2, T3, T4> AnyMValue<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (AnyMValue)AnyM.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    default <T2, T3, T4, R> AnyMValue<W,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (AnyMValue<W,R>)AnyM.super.zip4(second,third,fourth,fn);
-    }
 
 
 
@@ -335,19 +313,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
 
-  @Override
-    default <T2, R> AnyMValue<W,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-      return (AnyMValue<W,R>)adapter().zip(this,app,fn);
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> AnyMValue<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return (AnyMValue<W,R>)adapter().zip(this,app,fn);
-
-    }
 
 
 
@@ -393,4 +359,13 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
         return (AnyMValue<W,R>)MonadicValue.super.forEach2(value1,filterFunction,yieldingFunction);
     }
 
+  @Override
+  default <T2, R> AnyMValue<W, R> zip(final AnyM<W, ? extends T2> anyM, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+    return (AnyMValue<W, R>)AnyM.super.zip(anyM,fn);
+  }
+
+  @Override
+  default <U> AnyMValue<W, Tuple2<T, U>> zip(final AnyM<W, ? extends U> other) {
+    return (AnyMValue)AnyM.super.zip(other);
+  }
 }

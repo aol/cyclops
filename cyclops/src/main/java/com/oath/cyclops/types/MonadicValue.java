@@ -5,6 +5,9 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Try;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
@@ -30,7 +33,7 @@ import static cyclops.matching.Api.Case;
  *
  * @param <T> Data type of element stored inside this Monad
  */
-public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, Zippable<T>, EmptyUnit<T>{
+public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, EmptyUnit<T>{
 
     default <R> Future<R> mapAsync(Function<? super T,? extends R> fn, Executor ex){
         return Future.of(()->map(fn),ex).flatMap(a->a.visit(s->Future.ofResult(s),()->Future.ofError(new NoSuchElementException())));

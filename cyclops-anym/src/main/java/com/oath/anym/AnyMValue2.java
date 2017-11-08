@@ -102,35 +102,15 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
         return (AnyMValue2<W,T2,R>)AnyM2.super.retry(fn);
     }
 
-    @Override
-    default <U> AnyMValue2<W,T2,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (AnyMValue2)AnyM2.super.zipWithPublisher(other);
-    }
+
 
     @Override
     default <R> AnyMValue2<W,T2,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
         return (AnyMValue2<W,T2,R>)AnyM2.super.retry(fn,retries,delay,timeUnit);
     }
 
-    @Override
-    default <S, U> AnyMValue2<W,T2,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (AnyMValue2)AnyM2.super.zip3(second,third);
-    }
 
-    @Override
-    default <S, U, R> AnyMValue2<W,T2,R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (AnyMValue2<W,T2,R>)AnyM2.super.zip3(second,third,fn3);
-    }
 
-    @Override
-    default <T2, T3, T4> AnyMValue2<W,T2,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (AnyMValue2)AnyM2.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    default <T2, T3, T4, R> AnyMValue2<W,T2,R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (AnyMValue2<W,T2,R>)AnyM2.super.zip4(second,third,fourth,fn);
-    }
 
 
 
@@ -296,27 +276,6 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     default Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
         return Either.left(this);
     }
-
-
-  @Override
-    default <T2, R> AnyMValue2<W,T2,R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
-        if (this.unwrap() instanceof Zippable) {
-            return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zip(app, fn));
-        }
-        return (AnyMValue2<W,T2,R>) AnyMValue.super.zip(app, fn);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.applicative.ApplicativeFunctor#zip(java.util.function.BiFunction, org.reactivestreams.Publisher)
-     */
-    @Override
-    default <T2, R> AnyMValue2<W,T2,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        if (this.unwrap() instanceof Zippable) {
-            return (AnyMValue2<W, T2,R>) adapter().unit(((Zippable) unwrap()).zip(fn, app));
-        }
-        return (AnyMValue2<W,T2,R>) AnyMValue.super.zip(fn, app);
-    }
-
 
 
     @Override

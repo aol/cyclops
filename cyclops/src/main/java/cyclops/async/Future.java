@@ -10,6 +10,9 @@ import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.hkt.DataWitness.future;
@@ -95,6 +98,7 @@ public class Future<T> implements To<Future<T>>,
                                   Completable<T>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T>,
+                                  Zippable<T>,
                                   OrElseValue<T,Future<T>> {
 
     public static  <T,R> Future<R> tailRec(T initial, Function<? super T, ? extends Future<? extends Either<T, R>>> fn){
@@ -1290,13 +1294,38 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
+  @Override
+  public <U> Future<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
+    return zip(Tuple::tuple,other);
+  }
+
+  @Override
+  public <S, U> Future<Tuple3<T, S, U>> zip3(Iterable<? extends S> second, Iterable<? extends U> third) {
+    return (Future)Zippable.super.zip3(second,third);
+  }
+
+  @Override
+  public <S, U, R> Future<R> zip3(Iterable<? extends S> second, Iterable<? extends U> third, Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
+    return (Future<R>)Zippable.super.zip3(second,third,fn3);
+  }
+
+  @Override
+  public <T2, T3, T4> Future<Tuple4<T, T2, T3, T4>> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth) {
+    return (Future)Zippable.super.zip4(second,third,fourth);
+  }
+
+  @Override
+  public <T2, T3, T4, R> Future<R> zip4(Iterable<? extends T2> second, Iterable<? extends T3> third, Iterable<? extends T4> fourth, Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
+    return (Future<R>)Zippable.super.zip4(second,third,fourth,fn);
+  }
+
   /*
-   * Equivalent to combine, but accepts an Iterable and takes the first value
-   * only from that iterable. (non-Javadoc)
-   *
-   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-   * java.util.function.BiFunction)
-   */
+     * Equivalent to combine, but accepts an Iterable and takes the first value
+     * only from that iterable. (non-Javadoc)
+     *
+     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
+     * java.util.function.BiFunction)
+     */
     @Override
     public <T2, R> Future<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
@@ -1357,7 +1386,7 @@ public class Future<T> implements To<Future<T>>,
      */
     @Override
     public <U> Future<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (Future) MonadicValue.super.zip(other);
+        return (Future) Zippable.super.zip(other);
     }
 
 
@@ -1377,12 +1406,7 @@ public class Future<T> implements To<Future<T>>,
     public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return (Future<R>) MonadicValue.super.flatMapP(mapper);
     }
-/**
-    @Override
-    public Future<T> zip(BinaryOperator<Zippable<T>> combiner, Zippable<T> app) {
-        return (Future<T>)MonadicValue.super.zip(combiner, app);
-    }
-**/
+
 
     public CompletableFuture<T> getFuture() {
         return this.future;

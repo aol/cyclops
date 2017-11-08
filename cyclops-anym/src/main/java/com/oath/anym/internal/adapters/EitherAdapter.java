@@ -4,23 +4,19 @@ import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
-import cyclops.async.Future;
 import cyclops.control.Option;
 import cyclops.control.Either;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.either;
 import lombok.AllArgsConstructor;
-import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static cyclops.monads.AnyM.fromCollectionX;
 import static cyclops.monads.AnyM.fromEither;
-import static cyclops.monads.Witness.collectionX;
 import static cyclops.monads.Witness.either;
 
 @AllArgsConstructor
@@ -28,16 +24,6 @@ public class EitherAdapter extends AbstractFunctionalAdapter<either> implements 
 
 
   @Override
-  public <T, T2, R> AnyM<either, R> zip(AnyM<either, T> t, Iterable<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromEither(either(t).zip(Either.fromIterable(t2), fn));
-  }
-
-  @Override
-  public <T, T2, R> AnyM<either, R> zip(AnyM<either, T> t, Publisher<T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromEither(either(t).zip(Either.fromPublisher(t2), fn));
-  }
-
-    @Override
     public boolean isFilterable(){
         return false;
     }
