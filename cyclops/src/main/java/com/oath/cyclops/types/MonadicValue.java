@@ -426,6 +426,9 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     }
 
+    default <T2,R> MonadicValue<R> zip(MonadicValue<T2> mv, BiFunction<? super T,? super T2, ? extends R> fn){
+       return flatMap(a->mv.map(b->fn.apply(a,b)));
+    }
 
 
 }

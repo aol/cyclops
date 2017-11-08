@@ -61,7 +61,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
   @Override
   public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromMonadicValue(monadicValue(t).zip(t2,fn),witness);
+    return fromMonadicValue(monadicValue(t).zip(monadicValue(t2),fn),witness);
   }
 
   @Override
