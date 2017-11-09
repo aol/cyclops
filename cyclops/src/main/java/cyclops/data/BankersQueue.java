@@ -502,7 +502,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         public String toString(){
             return seq().toString();
         }
-
+        private Object readResolve() {
+          return Instance;
+       }
     }
 
 

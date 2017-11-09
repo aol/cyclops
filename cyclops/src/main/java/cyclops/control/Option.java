@@ -791,6 +791,9 @@ public interface Option<T> extends To<Option<T>>,
         private static final long serialVersionUID = 1L;
         public static None NOTHING_EAGER = new None();
 
+      private Object readResolve() {
+        return NOTHING_EAGER;
+      }
         @Override
         public <R> Option<R> map(final Function<? super T, ? extends R> mapper) {
             return NOTHING_EAGER;

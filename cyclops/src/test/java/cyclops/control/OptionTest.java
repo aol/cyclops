@@ -97,12 +97,12 @@ public class OptionTest extends  AbstractValueTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(eager.zip(add, none), equalTo(eager));
-        assertThat(none.zip(add, eager), equalTo(Option.some(0)));
-        assertThat(none.zip(add, none), equalTo(Option.some(0)));
+        assertThat(eager.zip(add, none), equalTo(none));
+        assertThat(none.zip(add, eager), equalTo(none));
+        assertThat(none.zip(add, none), equalTo(none));
         assertThat(eager.zip(add, Option.some(10)), equalTo(Option.some(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
-        assertThat(eager.zip(firstNonNull, none), equalTo(eager));
+        assertThat(eager.zip(firstNonNull, none), equalTo(none));
 
     }
 
