@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import lombok.EqualsAndHashCode;
 
 import java.util.Iterator;
 import java.util.Objects;
@@ -178,15 +179,7 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
         return cur;
     }
 
-    @Override
-    public boolean equals(Object o) {
-       return this.map.equals(o);
-    }
 
-    @Override
-    public int hashCode() {
-        return this.map.hashCode();
-    }
 
     @Override
     public String toString() {
@@ -287,5 +280,22 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
   @Override
   public <K1, K2, R1, R> LinkedMap<K2, R> forEach2(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, Boolean> filterFunction, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
     return (LinkedMap<K2, R>) ImmutableMap.super.forEach2(iterable1,filterFunction,yieldingFunction);
+  }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null)
+      return false;
+
+    if(o instanceof PersistentMap){
+      PersistentMap<K,V> m = (PersistentMap<K,V>)o;
+      return equalTo(m);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(map);
   }
 }

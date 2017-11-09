@@ -4,6 +4,8 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
@@ -30,6 +32,20 @@ public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
     default ReactiveSeq<Tuple2<K,V>> stream(){
 
         return ReactiveSeq.fromIterable(this);
+    }
+
+    default boolean equalTo(PersistentMap<K,V> map){
+      if(size()!=map.size())
+        return false;
+      Iterator<Tuple2<K,V>> iterator = iterator();
+      while(iterator.hasNext()){
+        Tuple2<K, V> t2 = iterator.next();
+        if(!Objects.equals(map.getOrElse(t2._1(),null),t2._2())){
+          return false;
+        }
+
+      }
+      return true;
     }
 
 

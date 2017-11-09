@@ -116,7 +116,7 @@ public class Eval2Test {
 	@Test
 	public void testSequence() {
 		Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(ListX.of(just,Eval.now(1)));
-		assertThat(maybes,equalTo(Eval.now(ListX.of(10,1))));
+		assertThat(maybes.map(s->s.toList()),equalTo(Eval.now(ListX.of(10,1))));
 	}
 
 
@@ -357,7 +357,7 @@ public class Eval2Test {
     }
     @Test
     public void testZipPubEvalLazy(){
-        assertTrue(Eval.later(()->10).zip(this::add, Eval.later(()->20)) instanceof Later);
+        assertTrue(Eval.later(()->10).zip(this::add, Eval.later(()->20)) instanceof Eval.Module.FutureAlways);
     }
 
 	private int add3(int a, int b, int c){

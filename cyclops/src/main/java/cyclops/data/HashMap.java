@@ -234,9 +234,18 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HashMap<?, ?> hashMap = (HashMap<?, ?>) o;
-        return Objects.equals(map, hashMap.map);
+        if (o == null)
+          return false;
+        if(o instanceof HashMap){
+          HashMap<?, ?> hashMap = (HashMap<?, ?>) o;
+          return Objects.equals(map, hashMap.map);
+        }
+        if(o instanceof PersistentMap){
+          PersistentMap<K,V> m = (PersistentMap<K,V>)o;
+          return equalTo(m);
+        }
+        return false;
+
     }
 
     @Override

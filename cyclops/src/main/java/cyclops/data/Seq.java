@@ -978,7 +978,7 @@ public interface Seq<T> extends ImmutableList<T>,
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public final class Nil<T> implements Seq<T>, ImmutableList.None<T> {
-        static Nil Instance = new Nil();
+        static final Nil Instance = new Nil();
         @Override
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
             return zero;
@@ -1066,6 +1066,9 @@ public interface Seq<T> extends ImmutableList<T>,
             }
             return false;
         }
+      private Object readResolve() {
+        return Instance;
+      }
     }
 
 

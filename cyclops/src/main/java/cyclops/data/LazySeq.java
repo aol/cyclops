@@ -1144,7 +1144,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     public class Nil<T> implements LazySeq<T>, ImmutableList.None<T> {
-        static Nil Instance = new Nil();
+        static final Nil Instance = new Nil();
         private static final long serialVersionUID = 1L;
         @Override
         public LazySeq<T> append(Supplier<LazySeq<T>> list) {
@@ -1246,6 +1246,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public LazySeq<T> removeValue(T e) {
             return this;
         }
+         private Object readResolve() {
+          return Instance;
+         }
 
     }
 

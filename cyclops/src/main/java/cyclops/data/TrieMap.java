@@ -180,4 +180,21 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
     public Iterator<Tuple2<K, V>> iterator() {
         return stream().iterator();
     }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null)
+      return false;
+
+    if(o instanceof PersistentMap){
+      PersistentMap<K,V> m = (PersistentMap<K,V>)o;
+      return equalTo(m);
+    }
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(map);
+  }
 }
