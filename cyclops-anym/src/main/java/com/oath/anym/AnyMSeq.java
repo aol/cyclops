@@ -1075,12 +1075,20 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-  @Override
+    @Override
     default <T2, R> AnyMSeq<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
         return fromIterable(IterableX.super.zip(fn, publisher));
     }
 
+    @Override
+    default <T2, R> AnyMSeq<W, R> zip(final AnyM<W, ? extends T2> anyM, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+      return (AnyMSeq<W, R>)AnyM.super.zip(anyM,fn);
+    }
 
+    @Override
+    default <U> AnyMSeq<W, Tuple2<T, U>> zip(final AnyM<W, ? extends U> other) {
+      return (AnyMSeq)AnyM.super.zip(other);
+    }
 
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {

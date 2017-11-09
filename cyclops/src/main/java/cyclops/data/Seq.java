@@ -806,7 +806,7 @@ public interface Seq<T> extends ImmutableList<T>,
         private final int hash;
 
         public static <T> Cons<T> cons(T value, Seq<T> tail){
-            return new Cons<>(value,tail,tail.size()+1, Objects.hash(value,tail));
+            return new Cons<>(value,tail,tail.size()+1, 31 * Objects.hashCode(value) + Objects.hashCode(tail));
         }
 
         @Override

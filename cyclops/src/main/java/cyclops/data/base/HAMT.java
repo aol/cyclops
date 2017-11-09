@@ -5,6 +5,7 @@ import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -35,6 +36,21 @@ public final class HAMT<K, V>  implements Serializable {
 
 
 
+      default Node<K,V> put(K key, V value){
+        return plus(0,key.hashCode(),key,value);
+      }
+      default Option<V> get(K key){
+        return get(0,key.hashCode(),key);
+      }
+      default V getOrElse(K key, V alt){
+        return getOrElse(0,key.hashCode(),key,alt);
+      }
+      default boolean containsKey(K key){
+        return get(key).isPresent();
+      }
+     default Node<K,V> minus( K key){
+        return minus(0,key.hashCode(),key);
+     }
        public Node<K,V> plus(int bitShiftDepth, int hash, K key, V value);
        public Option<V> get(int bitShiftDepth, int hash, K key);
        public V getOrElse(int bitShiftDepth, int hash, K key, V alt);
@@ -44,6 +60,7 @@ public final class HAMT<K, V>  implements Serializable {
        LazySeq<Tuple2<K,V>> lazyList();
        ReactiveSeq<Tuple2<K, V>> stream();
    }
+
 
    public static final class EmptyNode<K,V> implements Node<K,V>{
        private static final long serialVersionUID = 1L;
@@ -90,6 +107,16 @@ public final class HAMT<K, V>  implements Serializable {
        public String toString(){
            return "[]";
        }
+
+     @Override
+     public int hashCode() {
+       return 1;
+     }
+
+     @Override
+     public boolean equals(Object obj) {
+       return this==obj;
+     }
    }
    @AllArgsConstructor
    @EqualsAndHashCode
@@ -107,7 +134,7 @@ public final class HAMT<K, V>  implements Serializable {
        private Node<K,V> merge(int bitShiftDepth,  ValueNode<K, V> that) {
            //hash each merge into a collision node if hashes are the same, otherwise store in new location under a BitsetNode
            if(hash==that.hash)
-                return new CollisionNode<>(hash, LazySeq.of(Tuple.tuple(key,value),that.unapply()));
+                return new CollisionNode<>(hash, Seq.of(Tuple.tuple(key,value),that.unapply()));
            //create new BitsetNode
            int mask1 = BitsetNode.mask(hash,bitShiftDepth);
            int mask2 = BitsetNode.mask(that.hash,bitShiftDepth);
@@ -258,7 +285,7 @@ public final class HAMT<K, V>  implements Serializable {
         }
 
         public String toString(){
-           return "[h:"+hash+","+bucket.toString()+"]";
+           return "[COLLISION : h:"+hash+","+bucket.toString()+"]";
         }
     }
     @AllArgsConstructor
@@ -332,14 +359,36 @@ public final class HAMT<K, V>  implements Serializable {
 
         @Override
         public Node<K, V> minus(int bitShiftDepth, int hash, K key) {
+            if(nodes.length==0)
+              return this;
             int bitPos = bitpos(hash, bitShiftDepth);
             int arrayPos = index(bitPos);
             Node<K,V> node = (absent(bitPos) ? EmptyNode.Instance : nodes[arrayPos]).minus(bitShiftDepth +BITS_IN_INDEX,hash,key);
-            int removedBit =   bitset & ~bitPos;
-            Node<K,V>[] removedNodes = new Node[nodes.length - 1];
-            System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
-            System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
-            return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
+            int removedBit = bitset & ~bitPos;
+            if(node instanceof EmptyNode){
+
+              System.out.println("Drop node");
+              Node<K, V>[] removedNodes = new Node[nodes.length - 1];
+              System.out.println(nodes.length + "  "+ removedNodes.length + " pos" +arrayPos);
+              System.out.println("at pos " + nodes[arrayPos]);
+              System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
+              System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
+              return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
+            }else{
+
+              System.out.println("Replace node! " + Integer.toBinaryString(removedBit) + " org bitset " +Integer.toBinaryString(bitset));
+              Node<K, V>[] removedNodes = new Node[nodes.length];
+              System.arraycopy(nodes, 0, removedNodes, 0, nodes.length);
+
+              // System.arraycopy(nodes, 0, removedNodes, 0, arrayPos,l);
+              //  System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
+
+              removedNodes[arrayPos] = node;
+              System.out.println("Nodes " + Arrays.toString(nodes));
+              System.out.println("Node " + node);
+              System.out.println("Removed " + Arrays.toString(removedNodes));
+              return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
+           }
         }
 
         @Override

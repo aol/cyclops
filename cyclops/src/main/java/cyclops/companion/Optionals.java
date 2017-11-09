@@ -1,9 +1,6 @@
 package cyclops.companion;
 
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
-import java.util.OptionalLong;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -48,6 +45,13 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Optionals {
 
+  public <T> Optional<T> fromIterable(Iterable<? extends T> ita){
+    Iterator<? extends T> it = ita.iterator();
+    if(it.hasNext()){
+      return Optional.of(it.next());
+    }
+    return Optional.empty();
+  }
     public static  <T,R> Optional<R> tailRec(T initial, Function<? super T, ? extends Optional<? extends Either<T, R>>> fn) {
         Optional<? extends Either<T, R>> next[] = new Optional[1];
         next[0] = Optional.of(Either.left(initial));

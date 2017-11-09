@@ -745,9 +745,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	@Test
 	public void zip2of(){
 
-		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
+		List<Tuple2<Integer,Integer>> list = of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
-											.toListX().materialize();
+											.toListX()
+                      .materialize();
 
 
 

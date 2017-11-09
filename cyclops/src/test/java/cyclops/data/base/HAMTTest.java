@@ -95,6 +95,77 @@ public class HAMTTest {
         assertTrue(node.get(0,minusOne.hashCode(),minusOne).isPresent());
         System.out.println(node);
     }
+  @Test
+  public void minusEmpty() {
+    Node<Integer, Integer> node = HAMT.<Integer, Integer>empty();
+    assertThat(node.minus(10),equalTo(node));
+  }
+    @Test
+    public void minusCollision(){
+      Node<Integer, Integer> node = HAMT.<Integer, Integer>empty();
+
+      Node<Integer, Integer> node2 = node.plus(0,10,100,80).plus(0,10,110,-1);
+
+      assertThat(node2.size(),equalTo(2));
+      System.out.println(node +  " " + node.size());
+      Node<Integer, Integer>  node3 = node2.minus(0,10,110);
+      assertThat(node3.size(),equalTo(1));
+      Node<Integer, Integer>  node4 = node2.minus(0,10,100);
+      assertThat(node4.size(),equalTo(1));
+      Node<Integer, Integer>  node5 = node2.minus(0,10,8000);
+      assertThat(node5.size(),equalTo(2));
+    }
+  @Test
+  public void minusCollision100(){
+    Node<Integer, Integer> node = HAMT.<Integer, Integer>empty();
+    for(int i=0;i<100;i++){
+      node = node.plus(0,i*30000,i*30000,i);
+    }
+
+    Node<Integer, Integer> node2 = node.plus(0,10,100,80).plus(0,10,110,-1);
+
+    assertThat(node2.size(),equalTo(102));
+    System.out.println(node +  " " + node.size());
+    Node<Integer, Integer>  node3 = node2.minus(0,10,110);
+    assertThat(node3.size(),equalTo(101));
+    Node<Integer, Integer>  node4 = node2.minus(0,10,100);
+    assertThat(node4.size(),equalTo(101));
+    Node<Integer, Integer>  node5 = node2.minus(0,10,8000);
+    assertThat(node5.size(),equalTo(102));
+  }
+  @Test
+  public void minusCollisionMinus100(){
+    Node<Integer, Integer> node = HAMT.<Integer, Integer>empty();
+    for(int i=100;i>0;i--){
+      node = node.plus(0,i*30000,i*30000,i);
+    }
+
+    Node<Integer, Integer> node2 = node.plus(0,10,100,80).plus(0,10,110,-1);
+
+    assertThat(node2.size(),equalTo(102));
+    System.out.println(node +  " " + node.size());
+    Node<Integer, Integer>  node3 = node2.minus(0,10,110);
+    assertThat(node3.size(),equalTo(101));
+    Node<Integer, Integer>  node4 = node2.minus(0,10,100);
+    assertThat(node4.size(),equalTo(101));
+    Node<Integer, Integer>  node5 = node2.minus(0,10,8000);
+    assertThat(node5.size(),equalTo(102));
+
+    for(int i=100;i>0;i--){
+      node = node.minus(0,i*30000,i*30000);
+    }
+    assertThat(node.size(),equalTo(0));
+
+  }
+  @Test
+  public void orderCompare() {
+    HAMT.Node<String, String> a =  HAMT.<String,String>empty().put("hello", "world").put("world", "hello");
+    HAMT.Node<String, String> b = HAMT.<String, String> empty().put("world", "hello").put("hello", "world");
+
+    assertThat(a,equalTo(b));
+  }
+
+
 
     @Test @Ignore
     public void problemBitsetNode(){

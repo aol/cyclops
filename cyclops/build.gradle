@@ -67,6 +67,7 @@ dependencies {
   testCompile 'io.vertx:vertx-core:3.0.0'
   testCompile 'org.testng:testng:5.14.10'
   testCompile 'io.javaslang:javaslang:2.0.2'
+  testCompile 'org.assertj:assertj-core:3.8.0'
   jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
 }
