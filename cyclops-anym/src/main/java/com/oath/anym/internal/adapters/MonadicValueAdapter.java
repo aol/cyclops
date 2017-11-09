@@ -61,7 +61,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
   @Override
   public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromMonadicValue(monadicValue(t).zip(monadicValue(t2),fn),witness);
+    return fromMonadicValue(monadicValue(t).zippableValue().zip(monadicValue(t2),fn),witness);
   }
 
   @Override
@@ -80,7 +80,9 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
     @Override
     public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T, ? extends R>> fn, AnyM<W, T> apply) {
-         return fromMonadicValue(monadicValue(apply).zip(monadicValue(fn),(a,b)->b.apply(a)),witness);
+         return fromMonadicValue(monadicValue(apply).zippableValue()
+                                                    .zip(monadicValue(fn),
+                                                      (a,b)->b.apply(a)),witness);
 
     }
 

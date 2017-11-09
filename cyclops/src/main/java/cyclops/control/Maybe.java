@@ -569,6 +569,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     Maybe<ReactiveSeq<T>> identity = Maybe.just(ReactiveSeq.empty());
 
+
     BiFunction<Maybe<ReactiveSeq<T>>,Maybe<T>,Maybe<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
@@ -816,18 +817,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     }
 
 
-  /*
-   * Equivalent to combine, but accepts an Iterable and takes the first value
-   * only from that iterable. (non-Javadoc)
-   *
-   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable,
-   * java.util.function.BiFunction)
-   */
+
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return map(v -> Tuple.tuple(v, Curry.curry2(fn).apply(v))).flatMap(tuple -> Maybe.fromIterable(app)
-                      .visit(i -> Maybe.just(tuple._2().apply(i)), () -> Maybe.nothing()));
+        return flatMap(a->Option.fromIterable(app).map(b->fn.apply(a,b)));
     }
 
 

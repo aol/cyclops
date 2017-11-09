@@ -1,5 +1,6 @@
 package cyclops.data.basetests;
 
+import cyclops.async.adapters.Topic;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
@@ -7,12 +8,14 @@ import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
 import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -23,6 +26,35 @@ public abstract  class BaseImmutableMapTest {
     protected abstract  <K,V> ImmutableMap<K,V> of(K k1,V v1);
     protected abstract <K,V> ImmutableMap<K,V> of(K k1,V v1,K k2, V v2);
     protected abstract ImmutableMap<String,Integer> fromMap(Map<String, Integer> hello);
+
+    @Test
+    public void addRemove(){
+      for(int i=0;i<100_00;i++) {
+        ImmutableMap<ReactiveSeq<Integer>,Integer> map = empty();
+        ReactiveSeq<Integer> s1 = ReactiveSeq.of(1);
+        ReactiveSeq<Integer> s2 = ReactiveSeq.of(10);
+
+        map = map.put(s1,2);
+        map = map.put(s2,20);
+
+        assertThat(map.size(), is(2));
+        map = map.remove(s1);
+        map = map.remove(s2);
+
+
+        assertThat(map.size(), is(0));
+
+
+      }
+    }
+    @Test
+    public void emptyRemoveAbsent(){
+      assertThat(empty().remove(10),equalTo(empty()));
+    }
+  @Test
+  public void singleRemoveAbset(){
+    assertThat(of(1,2).remove(10),equalTo(of(1,2)));
+  }
 
     @Test
     public void toStringTest(){
@@ -85,7 +117,7 @@ public abstract  class BaseImmutableMapTest {
         assertThat(this.<String,Integer>empty().onEmptySwitch(()-> fromMap(MapXs.of("hello",10))).get("hello"),equalTo(Option.some(10)));
     }
 
-    
+
 
     @Test
     public void testOf() {
@@ -107,7 +139,7 @@ public abstract  class BaseImmutableMapTest {
         assertThat(of("1",1,"2",2).javaMap(),equalTo(map));
     }
 
-   
+
 
     @Test
     public void testMapKV() {

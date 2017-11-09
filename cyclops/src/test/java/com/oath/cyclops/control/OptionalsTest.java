@@ -4,6 +4,7 @@ import static cyclops.companion.Optionals.visit;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
 import java.util.Optional;
 
 import cyclops.reactive.ReactiveSeq;
@@ -20,7 +21,7 @@ public class OptionalsTest {
 	}
 	@Test
     public void testSequencePresent() {
-        Optional<ReactiveSeq<Integer>> maybes =Optionals.sequencePresent(ListX.of(Optional.of(10),Optional.empty(),Optional.of(1)));
+        Optional<List<Integer>> maybes =Optionals.sequencePresent(ListX.of(Optional.of(10),Optional.empty(),Optional.of(1))).map(s->s.toList());
         assertThat(maybes,equalTo(Optional.of(ListX.of(10,1))));
     }
 	@Test

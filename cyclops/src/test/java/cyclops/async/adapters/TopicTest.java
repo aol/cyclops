@@ -264,20 +264,24 @@ public class TopicTest {
 	}
 	@Test
 	public void disconnectAllStreamsAndReconnect(){
-		Topic<Integer> topic = new Topic<>();
-		ReactiveSeq s1 = topic.stream();
-		ReactiveSeq s2 = topic.stream(); //3 Queues
+	  for(int i=0;i<100_000;i++) {
+	    System.out.println("*******CYCLE****");
+      Topic<Integer> topic = new Topic<>();
+      ReactiveSeq s1 = topic.stream();
+      ReactiveSeq s2 = topic.stream(); //3 Queues
 
 
-		topic.disconnect(s1);
-		topic.disconnect(s2);
-		assertThat(topic.getDistributor().getSubscribers().size(),is(0));
-		assertThat(topic.getStreamToQueue().size(),is(0));
 
-		topic.stream();
+      topic.disconnect(s1);
+      topic.disconnect(s2);
+      assertThat(""+topic.getDistributor().getSubscribers(),topic.getDistributor().getSubscribers().size(), is(0));
+      assertThat(topic.getStreamToQueue().size(), is(0));
 
-		assertThat(topic.getDistributor().getSubscribers().size(),is(1));
-		assertThat(topic.getStreamToQueue().size(),is(1));
+      topic.stream();
+
+      assertThat(topic.getDistributor().getSubscribers().size(), is(1));
+      assertThat(topic.getStreamToQueue().size(), is(1));
+    }
 	}
 
 

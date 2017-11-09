@@ -338,4 +338,8 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
   public <K1, K2, R1, R> HashMap<K2, R> forEach2(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, Boolean> filterFunction, BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
     return (HashMap<K2, R>) ImmutableMap.super.forEach2(iterable1,filterFunction,yieldingFunction);
   }
+
+  public String printHAMT(){
+      return this.map.toString();
+  }
 }

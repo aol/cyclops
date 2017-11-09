@@ -12,8 +12,10 @@ import cyclops.async.QueueFactories;
 import com.oath.cyclops.types.persistent.PersistentMap;
 
 
+import cyclops.control.Option;
 import cyclops.data.HashMap;
 import cyclops.data.Seq;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.react.async.subscription.Continueable;
 
@@ -34,7 +36,7 @@ public class Topic<T> implements Adapter<T> {
     @Getter(AccessLevel.PACKAGE)
     private final DistributingCollection<T> distributor = new DistributingCollection<T>();
     @Getter(AccessLevel.PACKAGE)
-    private volatile PersistentMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
+    private volatile HashMap<ReactiveSeq<?>, Queue<T>> streamToQueue = HashMap.empty();
     private final Object lock = new Object();
     private volatile int index = 0;
     private final QueueFactory<T> factory;
@@ -70,10 +72,18 @@ public class Topic<T> implements Adapter<T> {
      */
     @Synchronized("lock")
     public void disconnect(final ReactiveSeq<T> stream) {
-
+      System.out.println();
+      System.out.println("-----------DISCONECTING " + stream);
+      System.out.println();
+      System.out.println("map " +streamToQueue.mapValues(q-> System.identityHashCode(q)).printHAMT() + "  stream " + stream);
+      Option<Queue<T>> o = streamToQueue.get(stream);
+      if(!o.isPresent()){
+        streamToQueue.get(stream);
+      }
         distributor.removeQueue(streamToQueue.getOrElse(stream, new Queue<>()));
-
+      System.out.println("Remove before " + this.streamToQueue.printHAMT() + " removing " + stream);
         this.streamToQueue = streamToQueue.remove(stream);
+      System.out.println("Remove after " + streamToQueue.printHAMT());
         this.index--;
     }
 
@@ -83,6 +93,7 @@ public class Topic<T> implements Adapter<T> {
         final ReactiveSeq<R> stream = streamCreator.apply(queue);
 
         this.streamToQueue = streamToQueue.put(stream, queue);
+        System.out.println("Put " + streamToQueue);
         return stream;
     }
 
@@ -201,7 +212,9 @@ public class Topic<T> implements Adapter<T> {
 
         @Synchronized("lock")
         public void removeQueue(final Queue<T> q) {
+          System.out.println("Remove q b4" + subscribers.map(a->System.identityHashCode(a)) + " q " + System.identityHashCode(q));
             subscribers = subscribers.removeValue(q);
+          System.out.println("Remove q after " + subscribers.map(a->System.identityHashCode(a)) + " q " + System.identityHashCode(q));
         }
 
         @Override

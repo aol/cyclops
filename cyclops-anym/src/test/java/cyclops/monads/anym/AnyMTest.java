@@ -1,5 +1,6 @@
 package cyclops.monads.anym;
 
+import cyclops.companion.Optionals;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -58,7 +59,7 @@ public class AnyMTest {
 
 		Optional<Integer> rawOptional = opt.to(Witness::optional);
 
-        Optional<Tuple2<Integer, Integer>> o = opt.zip(ListX.of(2)).to(Witness::optional);
+        Optional<Tuple2<Integer, Integer>> o = opt.zip(AnyM.fromOptional(Optionals.fromIterable(ListX.of(2)))).to(Witness::optional);
         assertThat(o.get(),equalTo(Tuple.tuple(10,2)));
 
 
@@ -74,7 +75,7 @@ public class AnyMTest {
     @Test
     public void testApEval() {
 
-        assertThat(AnyM.fromEval(Eval.now(10)).combine(Eval.later(()->20),this::add).unwrap(),equalTo(Eval.now(30)));
+        assertThat(AnyM.fromEval(Eval.now(10)).zip(AnyM.fromEval(Eval.later(()->20)),this::add).unwrap(),equalTo(Eval.now(30)));
     }
     @Test
     public void anyMSetConversion() {
