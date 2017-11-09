@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.async.Future;
@@ -15,6 +16,7 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
@@ -28,7 +30,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public class OptionTest implements Printable {
+public class OptionTest extends  AbstractValueTest implements Printable {
 
     Option<Integer> eager;
     Option<Integer> none;
@@ -456,14 +458,7 @@ public class OptionTest implements Printable {
         assertThat(Streams.stream(eager.iterator()).collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
-    @Test
-    public void testForEach() {
-        Mutable<Integer> capture = Mutable.of(null);
-        none.forEach(c -> capture.set(c));
-        assertNull(capture.get());
-        eager.forEach(c -> capture.set(c));
-        assertThat(capture.get(), equalTo(10));
-    }
+
 
     @Test
     public void testSpliterator() {
@@ -511,4 +506,19 @@ public class OptionTest implements Printable {
         Option<Integer> maybe = Option.some(100).flatMapP(i -> Flux.just(10, i));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
+
+  @Override
+  protected <T> MonadicValue<T> of(T value) {
+    return Option.some(value);
+  }
+
+  @Override
+  protected <T> MonadicValue<T> empty() {
+    return Option.none();
+  }
+
+  @Override
+  protected <T> MonadicValue<T> fromPublisher(Publisher<T> p) {
+    return Option.fromPublisher(p);
+  }
 }

@@ -265,7 +265,7 @@ public class TopicTest {
 	@Test
 	public void disconnectAllStreamsAndReconnect(){
 	  for(int i=0;i<100_000;i++) {
-	    System.out.println("*******CYCLE****");
+
       Topic<Integer> topic = new Topic<>();
       ReactiveSeq s1 = topic.stream();
       ReactiveSeq s2 = topic.stream(); //3 Queues

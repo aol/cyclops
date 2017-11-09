@@ -176,9 +176,9 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(just.zip(add, none), equalTo(Maybe.just(10)));
-        assertThat(none.zip(add, just), equalTo(Maybe.of(0)));
-        assertThat(none.zip(add, none), equalTo(Maybe.of(0)));
+        assertThat(just.zip(add, none), equalTo(Maybe.nothing()));
+        assertThat(none.zip(add, just), equalTo(Maybe.nothing()));
+        assertThat(none.zip(add, none), equalTo(Maybe.nothing()));
         assertThat(just.zip(add, CompletableMaybeTest.just(10)), equalTo(Maybe.just(20)));
 
 
@@ -268,7 +268,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testSequenceJust() {
         Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
-        assertThat(maybes, equalTo(Maybe.of(ListX.of(10, 1))));
+        assertThat(maybes.map(s->s.toList()), equalTo(Maybe.of(ListX.of(10, 1))));
     }
 
     @Test

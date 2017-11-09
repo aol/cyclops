@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
@@ -9,6 +10,7 @@ import cyclops.async.Future;
 import cyclops.data.tuple.*;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -99,7 +101,11 @@ public interface Option<T> extends To<Option<T>>,
      * @return Maybe populated with first value from Publisher (Option.zero if Publisher zero)
      */
     public static <T> Option<T> fromPublisher(final Publisher<T> pub) {
-        return fromFuture(Future.fromPublisher(pub));
+        return Spouts.from(pub)
+                     .take(1)
+                     .takeOne()
+                     .toOption();
+
     }
 
     /**

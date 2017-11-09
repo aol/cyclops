@@ -116,7 +116,7 @@ public class CompletableFuturesTest {
         CompletableFuture<Integer> opt = CompletableFutures.Instances.<Integer>monadPlus(MonoidKs.firstCompleteCompletableFuture())
                                       .plus(widen(CompletableFuture.completedFuture(5)), widen(CompletableFuture.completedFuture(10)))
                                       .convert(CompletableFutureKind::narrowK);
-        assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture(10).join()));
+        assertThat(opt.toCompletableFuture().join(),equalTo(CompletableFuture.completedFuture(5).join()));
     }
     @Test
     public void  foldLeft(){
