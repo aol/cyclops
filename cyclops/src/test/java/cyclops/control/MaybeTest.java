@@ -1,5 +1,6 @@
 package cyclops.control;
 
+import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.async.LazyReact;
@@ -18,6 +19,7 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple3;
 import org.junit.Before;
 import org.junit.Test;
+import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
@@ -32,7 +34,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public class MaybeTest implements Printable {
+public class MaybeTest extends  AbstractValueTest implements Printable {
 
     Maybe<Integer> just;
     Maybe<Integer> none;
@@ -193,12 +195,12 @@ public class MaybeTest implements Printable {
     @Test
     public void combine() {
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-        assertThat(just.zip(add, none), equalTo(just));
-        assertThat(none.zip(add, just), equalTo(Maybe.of(0)));
-        assertThat(none.zip(add, none), equalTo(Maybe.of(0)));
+        assertThat(just.zip(add, none), equalTo(none));
+        assertThat(none.zip(add, just), equalTo(none));
+        assertThat(none.zip(add, none), equalTo(none));
         assertThat(just.zip(add, Maybe.just(10)), equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
-        assertThat(just.zip(firstNonNull, none), equalTo(just));
+        assertThat(just.zip(firstNonNull, none), equalTo(none));
 
     }
 
@@ -622,4 +624,19 @@ public class MaybeTest implements Printable {
 		Maybe<Integer> maybe = Maybe.of(100).flatMapP(i -> Flux.just(10, i));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
+
+  @Override
+  protected <T> MonadicValue<T> of(T value) {
+    return Maybe.just(value);
+  }
+
+  @Override
+  protected <T> MonadicValue<T> empty() {
+    return Maybe.nothing();
+  }
+
+  @Override
+  protected <T> MonadicValue<T> fromPublisher(Publisher<T> p) {
+    return Maybe.fromPublisher(p);
+  }
 }

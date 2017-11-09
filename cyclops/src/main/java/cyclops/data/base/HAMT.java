@@ -291,7 +291,7 @@ public final class HAMT<K, V>  implements Serializable {
     @AllArgsConstructor
     @EqualsAndHashCode
    public static final class BitsetNode<K,V> implements Node<K,V>{
-       private final int bitset;
+       public final int bitset;
        private final int size;
        private final Node<K,V>[] nodes;
         private static final long serialVersionUID = 1L;
@@ -364,30 +364,27 @@ public final class HAMT<K, V>  implements Serializable {
             int bitPos = bitpos(hash, bitShiftDepth);
             int arrayPos = index(bitPos);
             Node<K,V> node = (absent(bitPos) ? EmptyNode.Instance : nodes[arrayPos]).minus(bitShiftDepth +BITS_IN_INDEX,hash,key);
-            int removedBit = bitset & ~bitPos;
-            if(node instanceof EmptyNode){
 
-              System.out.println("Drop node");
+            if(node instanceof EmptyNode){
+              int removedBit = bitset & ~bitPos;
+
               Node<K, V>[] removedNodes = new Node[nodes.length - 1];
-              System.out.println(nodes.length + "  "+ removedNodes.length + " pos" +arrayPos);
-              System.out.println("at pos " + nodes[arrayPos]);
               System.arraycopy(nodes, 0, removedNodes, 0, arrayPos);
               System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
+              if(removedNodes.length==1) {
+                return removedNodes[0];
+              }
               return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
             }else{
+              int removedBit = bitset & ~bitPos;
 
-              System.out.println("Replace node! " + Integer.toBinaryString(removedBit) + " org bitset " +Integer.toBinaryString(bitset));
+
               Node<K, V>[] removedNodes = new Node[nodes.length];
               System.arraycopy(nodes, 0, removedNodes, 0, nodes.length);
 
-              // System.arraycopy(nodes, 0, removedNodes, 0, arrayPos,l);
-              //  System.arraycopy(nodes, arrayPos + 1, removedNodes, arrayPos, nodes.length - arrayPos - 1);
 
               removedNodes[arrayPos] = node;
-              System.out.println("Nodes " + Arrays.toString(nodes));
-              System.out.println("Node " + node);
-              System.out.println("Removed " + Arrays.toString(removedNodes));
-              return new BitsetNode<>(removedBit, size(removedNodes), removedNodes);
+              return new BitsetNode<>(bitset, size(removedNodes), removedNodes);
            }
         }
 

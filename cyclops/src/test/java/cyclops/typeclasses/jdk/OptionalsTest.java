@@ -123,7 +123,7 @@ public class OptionalsTest {
         OptionalKind<Integer> opt = Optionals.Instances.<Integer>monadPlus(MonoidKs.firstPresentOptional())
                                       .plus(widen(Optional.of(5)), widen(Optional.of(10)))
                                       .convert(OptionalKind::narrow);
-        assertThat(opt,equalTo(Optional.of(10)));
+        assertThat(opt,equalTo(Optional.of(5)));
     }
     @Test
     public void  foldLeft(){

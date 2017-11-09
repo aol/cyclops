@@ -140,8 +140,8 @@ public class Either3Test {
     @Test
     public void testTraverseLeft1() {
         ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
-      LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.traverse(list, s -> "hello:" + s);
-        assertThat(xors,equalTo(LazyEither3.right(ListX.of("hello:none"))));
+        LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.traverse(list, s -> "hello:" + s);
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {

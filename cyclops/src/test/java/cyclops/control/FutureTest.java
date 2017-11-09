@@ -58,8 +58,8 @@ public class FutureTest {
 
         Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
 
-        just.zip(add,none).printOut();
-        assertThat(just.zip(add,none).orElse(-1),equalTo(just.orElse(-1)));
+        System.out.println("Just " + just.zip(add,none));
+        assertThat(just.zip(add,none).orElse(-1),equalTo(none.orElse(-1)));
 
 
     }
@@ -223,7 +223,7 @@ public class FutureTest {
 
         assertThat(just.zip(add, Maybe.just(10)).toMaybe(),equalTo(Maybe.just(20)));
         Monoid<Integer> firstNonNull = Monoid.of(null , Semigroups.firstNonNull());
-        assertThat(just.zip(firstNonNull,none).get(),equalTo(just.get()));
+        assertThat(just.zip(firstNonNull,Future.ofResult(null)).get(),equalTo(just.get()));
 
     }
     @Test
