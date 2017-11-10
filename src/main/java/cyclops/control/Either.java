@@ -28,6 +28,9 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.typeclasses.functions.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -122,7 +125,7 @@ import java.util.function.*;
 public interface Either<ST, PT> extends To<Either<ST,PT>>,
                                      BiTransformable<ST,PT>,
                                      Sealed2<ST,PT>,Value<PT>,
-  OrElseValue<PT,Either<ST,PT>>,
+                                     OrElseValue<PT,Either<ST,PT>>,
                                      Unit<PT>, Transformable<PT>, Filters<PT>,
                                      Serializable,
                                      Higher2<either,ST,PT> {
@@ -1298,7 +1301,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<either, L>>> monadPlus(Monoid<Higher<Higher<either, L>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<either, L>>> monadPlus(MonoidK<Higher<either, L>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1502,14 +1505,26 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         public static <L> MonadPlus<Higher<either, L>> monadPlus() {
             Monoid m = Monoids.firstRightEither((Either) Either.narrowK(Instances.<L>monadZero().zero()));
 
-            return monadPlus(m);
+            MonoidK<Higher<either, L>> m2 = new MonoidK<Higher<either, L>>() {
+              @Override
+              public <T> Higher<Higher<either, L>, T> zero() {
+                return Instances.<L>monadPlus().zero();
+              }
+
+              @Override
+              public <T> Higher<Higher<either, L>, T> apply(Higher<Higher<either, L>, T> t1, Higher<Higher<either, L>, T> t2) {
+                return SemigroupKs.<L>firstRightEither().apply(t1,t2);
+              }
+            };
+
+            return monadPlus(m2);
         }
-        public static <L,T> MonadPlus<Higher<either, L>> monadPlus(Monoid<Higher<Higher<either, L>, T>> m) {
+        public static <L,T> MonadPlus<Higher<either, L>> monadPlus(MonoidK<Higher<either, L>> m) {
             return new MonadPlus<Higher<either, L>>() {
 
                 @Override
-                public Monoid<Higher<Higher<either, L>, ?>> monoid() {
-                    return (Monoid)m;
+                public MonoidK<Higher<either, L>> monoid() {
+                    return m;
                 }
 
                 @Override

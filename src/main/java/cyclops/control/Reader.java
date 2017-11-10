@@ -11,6 +11,7 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
@@ -217,7 +218,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus(Monoid<Higher<Higher<reader, IN>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<reader, IN>>> monadPlus(MonoidK<Higher<reader, IN>> m) {
                     return Maybe.nothing();
                 }
 

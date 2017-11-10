@@ -31,6 +31,8 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -58,7 +60,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
-        PersistentList<T>,
+                                      PersistentList<T>,
                                     LazyCollectionX<T>,
                                     IndexedSequenceX<T>,
                                     OnEmptySwitch<T, PersistentList<T>>,
@@ -1369,8 +1371,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<linkedListX>> monadPlus(Monoid<Higher<linkedListX, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<linkedListX>> monadPlus(MonoidK<linkedListX> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1545,22 +1547,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
             return General.monadZero(monad(), LinkedListX.empty());
         }
-        /**
-         * <pre>
-         * {@code
-         *  LinkedListX<Integer> list = PStacks.<Integer>monadPlus()
-        .plus(LinkedListX.widen(Arrays.asPStack()), LinkedListX.widen(Arrays.asPStack(10)))
-        .convert(LinkedListX::narrowK3);
-        //Arrays.asPStack(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining PStacks by concatenation
-         */
+
         public static <T> MonadPlus<linkedListX> monadPlus(){
-            Monoid<LinkedListX<T>> m = Monoid.of(LinkedListX.empty(), Instances::concat);
-            Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.linkedListXConcat());
         }
         public static <T,R> MonadRec<linkedListX> monadRec(){
 
@@ -1571,25 +1561,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
             };
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<LinkedListX<Integer>> m = Monoid.of(LinkedListX.widen(Arrays.asPStack()), (a,b)->a.isEmpty() ? b : a);
-        LinkedListX<Integer> list = PStacks.<Integer>monadPlus(m)
-        .plus(LinkedListX.widen(Arrays.asPStack(5)), LinkedListX.widen(Arrays.asPStack(10)))
-        .convert(LinkedListX::narrowK3);
-        //Arrays.asPStack(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining PStacks
-         * @return Type class for combining PStacks
-         */
-        public static <T> MonadPlus<linkedListX> monadPlus(Monoid<LinkedListX<T>> m){
-            Monoid<Higher<linkedListX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static MonadPlus<linkedListX> monadPlus(MonoidK<linkedListX> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

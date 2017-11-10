@@ -8,6 +8,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
+import cyclops.monads.Witness;
 import cyclops.monads.Witness.constant;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupK;
@@ -48,11 +49,27 @@ public final class Constant<T,P> implements Higher2<constant,T,P> , Supplier<T>,
     public static <T,P> Constant<T,P> narrowK(Higher<Higher<constant,T>,P> constant){
         return (Constant<T,P>) constant;
     }
-    public static <T,P> SemigroupK<Higher<constant,T>,P> semigroupK(Semigroup<T> monoid){
-        return (a, b) -> Constant.of(monoid.apply(narrowK(a).value, narrowK(b).value));
+    public static <T,P> SemigroupK<Higher<constant,T>> semigroupK(Semigroup<T> monoid){
+      return new SemigroupK<Higher<constant, T>>() {
+        @Override
+        public <T2> Higher<Higher<constant, T>, T2> apply(Higher<Higher<constant, T>, T2> t1, Higher<Higher<constant, T>, T2> t2) {
+          return Constant.of(monoid.apply(narrowK(t1).value, narrowK(t2).value));
+        }
+      };
+
     }
-    public static <T,P> MonoidK<Higher<constant,T>,P> monoidK(Monoid<T> monoid){
-       return MonoidK.of(Constant.of(monoid.zero()), (a, b) -> Constant.of(monoid.apply(narrowK(a).value, narrowK(b).value)));
+    public static <T,P> MonoidK<Higher<constant,T>> monoidK(Monoid<T> monoid){
+       return new MonoidK<Higher<constant, T>>() {
+         @Override
+         public <T2> Higher<Higher<constant, T>, T2> zero() {
+           return Constant.of(monoid.zero());
+         }
+
+         @Override
+         public <T2> Higher<Higher<constant, T>, T2> apply(Higher<Higher<constant, T>, T2> t1, Higher<Higher<constant, T>, T2> t2) {
+           return Constant.of(monoid.apply(narrowK(t1).value, narrowK(t2).value));
+         }
+       };
     }
 
     @Override

@@ -9,6 +9,7 @@ import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.reactive.ReactiveSeq;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -39,6 +40,50 @@ public class LazySeqTest extends BaseImmutableListTest {
     public <T> LazySeq<T> of(T... values) {
         return LazySeq.of(values);
     }
+
+    int count =0;
+    @Before
+    public void setup(){
+      count =0;
+    }
+
+
+
+  @Test
+  public void testLazy(){
+    of(1,2,3,4).map(i->count++);
+    assertThat(count,equalTo(1));
+    count =0;
+    of(1,2,3,4).flatMap(i->{
+      System.out.println("here!");
+      return LazySeq.of(count++);
+    });
+    assertThat(count,equalTo(1));
+    count =0;
+    of(1,2,3,4).concatMap(i->LazySeq.of(count++));
+    assertThat(count,equalTo(1));
+    count =0;
+    of(1,2,3,4).filter(i->{
+      count++;
+      return i>0;
+    });
+    assertThat(count,equalTo(1));
+
+    count =0;
+    of(1,2,3,4).zip(of(1,2,3,4),(a,b)->{
+      count++;
+      return a;
+    });
+    assertThat(count,equalTo(1));
+
+
+
+  }
+  @Test
+  public void mapLarge(){
+    LazySeq.range(0,100_000_000).map(i->count++);
+    assertThat(count,equalTo(1));
+  }
 
     @Test
     public void split(){

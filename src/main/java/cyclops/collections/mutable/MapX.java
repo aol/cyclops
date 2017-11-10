@@ -224,10 +224,18 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#insertAt(java.util.Map)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#plusAll(com.oath.cyclops.types.persistent.PersistentMap)
      */
     @Override
     default MapX<K, V> plusAll(final PersistentMap<? extends K, ? extends V> map) {
+        return (MapX<K, V>) FluentMapX.super.plusAll(map);
+    }
+
+    /* (non-Javadoc)
+     * @see com.oath.cyclops.data.collections.extensions.FluentMapX#plusAll(java.util.Map)
+     */
+    @Override
+    default MapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
         return (MapX<K, V>) FluentMapX.super.plusAll(map);
     }
 

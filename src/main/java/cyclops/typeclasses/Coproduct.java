@@ -21,6 +21,7 @@ import cyclops.control.LazyEither;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.ImmutableList;
 import cyclops.function.Monoid;
 import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
@@ -86,23 +87,23 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     public <U> Coproduct<W1,W2,U> ofType(Class<? extends U> type) {
         return (Coproduct<W1,W2,U>)Filters.super.ofType(type);
     }
-    public Active<W1,T> activeLeft(MonoidK<W1,T> m, Higher<W1,T> concat){
+    public Active<W1,T> activeLeft(MonoidK<W1> m, Higher<W1,T> concat){
         Higher<W1, T> h = xor.visit(s -> m.apply(s, concat), p -> m.zero());
         return Active.of(h,def1);
     }
-    public Active<W2,T> activeSecond(MonoidK<W2,T> m, Higher<W2,T> concat){
+    public Active<W2,T> activeSecond(MonoidK<W2> m, Higher<W2,T> concat){
         Higher<W2, T> h = xor.visit(s -> m.zero(), p -> m.apply(p, concat));
         return Active.of(h,def2);
     }
 
-    public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1,T> semigroupK, Higher<W1,T> add){
+    public Coproduct<W1,W2,T> plusLeft(SemigroupK<W1> semigroupK, Higher<W1,T> add){
         return of(xor.flatMapLeft(s -> Either.left(semigroupK.apply(s, add))),def1,def2);
     }
-    public Coproduct<W1,W2,T> plusRight(SemigroupK<W2,T> semigroupK, Higher<W2,T> add){
+    public Coproduct<W1,W2,T> plusRight(SemigroupK<W2> semigroupK, Higher<W2,T> add){
         return of(xor.flatMap(p -> Either.right(semigroupK.apply(p, add))),def1,def2);
     }
 
-    public Product<W1,W2,T> product(MonoidK<W1,T> m1, MonoidK<W2,T> m2){
+    public Product<W1,W2,T> product(MonoidK<W1> m1, MonoidK<W2> m2){
         return Product.of(xor.visit(s -> Tuple.tuple(s, m2.zero()), p -> Tuple.tuple(m1.zero(), p)),def1,def2);
     }
     @Override
@@ -231,8 +232,8 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
             return Coproduct.this;
 
         }
-        public Coproduct<W1,W2,T> sum(ListX<Coproduct<W1,W2,T>> l){
-            ListX<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
+        public Coproduct<W1,W2,T> sum(ImmutableList<Coproduct<W1,W2,T>> l){
+            ImmutableList<Coproduct<W1,W2,T>> list = l.plus(Coproduct.this);
             if(xor.isLeft()){
                 Higher<W1, T> summed = plus1.sum(list.map(c -> c.xor.leftOrElse(null)));
                 return Coproduct.left(summed,def1,def2);

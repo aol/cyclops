@@ -31,6 +31,8 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -60,7 +62,7 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
  * @param <T> the type of elements held in this collection
  */
 public interface VectorX<T> extends To<VectorX<T>>,
-        PersistentList<T>,
+                                     PersistentList<T>,
                                      IndexedSequenceX<T>,
                                      LazyCollectionX<T>,
                                      OnEmptySwitch<T, PersistentList<T>>,
@@ -1318,8 +1320,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<vectorX>> monadPlus(Monoid<Higher<vectorX, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<vectorX>> monadPlus(MonoidK<vectorX> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1510,42 +1512,15 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
             };
         }
-        /**
-         * <pre>
-         * {@code
-         *  VectorX<Integer> list = PVectors.<Integer>monadPlus()
-        .plus(Arrays.asPVector()), Arrays.asPVector(10)))
-        .convert(VectorX::narrowK3);
-        //Arrays.asPVector(10))
-         *
-         * }
-         * </pre>
-         * @return Type class for combining PVectors by concatenation
-         */
+
         public static <T> MonadPlus<vectorX> monadPlus(){
-            Monoid<VectorX<T>> m = Monoid.of(VectorX.empty(), Instances::concat);
-            Monoid<Higher<vectorX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+            return General.monadPlus(monadZero(), MonoidKs.vectorXConcat());
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<VectorX<Integer>> m = Monoid.of(Arrays.asPVector()), (a,b)->a.isEmpty() ? b : a);
-        VectorX<Integer> list = PVectors.<Integer>monadPlus(m)
-        .plus(Arrays.asPVector(5)), Arrays.asPVector(10)))
-        .convert(VectorX::narrowK3);
-        //Arrays.asPVector(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining PVectors
-         * @return Type class for combining PVectors
-         */
-        public static <T> MonadPlus<vectorX> monadPlus(Monoid<VectorX<T>> m){
-            Monoid<Higher<vectorX,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static  MonadPlus<vectorX> monadPlus(MonoidK<vectorX> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

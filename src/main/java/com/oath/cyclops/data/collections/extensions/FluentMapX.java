@@ -20,6 +20,15 @@ public interface FluentMapX<K, V> extends Map<K, V> {
         return this;
     }
 
+    default FluentMapX<K, V> plusAll(final Map<? extends K, ? extends V> map) {
+        if (map != null && map.size() > 0) {
+            map.forEach((key, value) -> {
+                put(key, value);
+            });
+        }
+        return this;
+    }
+
     default FluentMapX<K, V> minus(final K key) {
         remove(key);
         return this;
