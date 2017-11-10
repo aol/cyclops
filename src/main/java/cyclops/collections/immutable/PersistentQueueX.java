@@ -55,7 +55,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
-                                             PersistentQueue<T>,
+                                              PersistentQueue<T>,
                                              LazyCollectionX<T>,
                                              OnEmptySwitch<T, PersistentQueue<T>>,
                                              Higher<persistentQueueX,T>{

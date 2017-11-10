@@ -7,6 +7,8 @@ import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Queue;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -58,4 +60,36 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
         assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
         assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
+  @Test
+  public void listViewTest(){
+    List<Integer> list = of(1,2,3).listView();
+    assertThat(list.size(),equalTo(3));
+    assertThat(list,equalTo(Arrays.asList(1,2,3)));
+
+    assertThat(list.add(1),equalTo(false));
+    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+    assertThat(list.addAll(1,Arrays.asList(1)),equalTo(false));
+    assertThat(list.contains(2),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+    assertThat(list.remove(1),equalTo(2));
+    assertThat(list.remove((Object)1),equalTo(false));
+    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+  }
+  @Test
+  public void viewTest(){
+    Queue<Integer> list = of(1,2,3).queueView();
+    assertThat(list.size(),equalTo(3));
+
+
+    assertThat(list.add(1),equalTo(false));
+    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
+    assertThat(list.contains(2),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+    assertThat(list.remove(1),equalTo(false));
+    assertThat(list.remove((Object)1),equalTo(false));
+    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+  }
 }
