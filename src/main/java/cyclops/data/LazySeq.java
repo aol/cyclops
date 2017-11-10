@@ -488,10 +488,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
     }
 
+  @Override
+  <R> LazySeq<R> map(Function<? super T, ? extends R> fn);
 
+  @Override
+  <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
 
+  @Override
+  <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-    default LazySeq<T> appendAll(Iterable<? extends T> it) {
+  default LazySeq<T> appendAll(Iterable<? extends T> it) {
         LazySeq<T> append = narrow(fromIterable(it));
         return this.visit(cons->{
             return append.visit(c2->{
@@ -909,33 +915,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f);
 
-    default LazySeq<T> filter(Predicate<? super T> pred){
-        return foldRight(empty(),(a,l)->{
-            if(pred.test(a)){
-                return l.prepend(a);
-            }
-            return l;
-        });
-    }
-    default <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
-        return foldRight(empty(), (a, l) -> l.prepend(fn.apply(a)));
-    }
+    LazySeq<T> filter(Predicate<? super T> pred);
 
-    default <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
-        return this.visit(cons->{
-            LazySeq<R> l1 = LazySeq.narrow(LazySeq.fromIterable(fn.apply(cons.head)));
-            return l1.appendAll(cons.tail.get().flatMap(a -> fn.apply(a)));
-        },nil->empty());
-    }
-
-
-
-    default <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return this.visit(cons->{
-            LazySeq<R> l1 = LazySeq.narrow(LazySeq.fromIterable(fn.apply(cons.head)));
-            return l1.appendAll(cons.tail.get().flatMap(a -> fromIterable(fn.apply(a))));
-        },nil->empty());
-    }
     <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2);
     LazySeq<T> cycle();
     int size();
@@ -1021,6 +1002,55 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return Tuple.tuple(b2, LazySeq.cons(b2, ()->b._2()));
             })._2();
         }
+      @Override
+      public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
+        return cons(fn.apply(head()),()->tail.get().map(fn));
+      }
+
+      @Override
+      public <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
+        return flatMapI(fn);
+      }
+
+      @Override
+      public LazySeq<T> filter(Predicate<? super T> pred) {
+        return fromStream(stream().filter(pred));
+      }
+
+      @Override
+      public <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return LazySeq.fromIterator(new Iterator<R>() {
+          Iterator<? extends T> it = iterator();
+          Iterator<? extends R> active = new Iterator<R>() {
+            @Override
+            public boolean hasNext() {
+              return false;
+            }
+
+            @Override
+            public R next() {
+              return null;
+            }
+          };
+
+          @Override
+          public boolean hasNext() {
+            if (active.hasNext())
+              return true;
+            while(it.hasNext()) {
+              active = fn.apply(it.next()).iterator();
+              if (active.hasNext())
+                return true;
+            }
+            return false;
+          }
+
+          @Override
+          public R next() {
+            return active.next();
+          }
+        });
+      }
 
         @Override
         public Cons<T> cycle() {
@@ -1120,6 +1150,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
 
 
+
         @Override
         public LazySeq<T> updateAt(int i, T value) {
 
@@ -1215,8 +1246,22 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return mkString();
         }
 
+      @Override
+      public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
+        return empty();
+      }
 
-        public Nil<T> cycle(){
+      @Override
+      public <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
+        return empty();
+      }
+
+      @Override
+      public <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return empty();
+      }
+
+      public Nil<T> cycle(){
             return this;
         }
 
@@ -1268,6 +1313,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return this;
         }
 
+      @Override
+      public LazySeq<T> filter(Predicate<? super T> pred) {
+        return this;
+      }
     }
 
 }
