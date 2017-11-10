@@ -27,7 +27,6 @@ import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.Zippable;
 
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
@@ -48,8 +47,6 @@ import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
 import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;

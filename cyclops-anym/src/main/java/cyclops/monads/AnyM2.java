@@ -4,7 +4,6 @@ import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.Zippable;
 
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
@@ -27,9 +26,6 @@ import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;

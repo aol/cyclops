@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.arrayconcat;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import com.oath.cyclops.internal.stream.spliterators.push.*;
 
 import java.util.stream.Stream;
 

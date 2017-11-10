@@ -49,6 +49,6 @@ public class LimitSpliterator<T> extends Spliterators.AbstractSpliterator<T> imp
 
     @Override
     public Spliterator<T> copy() {
-        return new LimitSpliterator<>(CopyableSpliterator.copy(source),take);
+        return new LimitSpliterator<>(copy(source),take);
     }
 }

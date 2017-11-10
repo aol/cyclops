@@ -3,7 +3,6 @@ package cyclops.control;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;

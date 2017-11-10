@@ -4,7 +4,6 @@ import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.future;
 import org.junit.Before;
 

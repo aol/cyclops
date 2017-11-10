@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.grouping.sliding;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.collections.immutable.VectorX;
 
 import java.util.Arrays;

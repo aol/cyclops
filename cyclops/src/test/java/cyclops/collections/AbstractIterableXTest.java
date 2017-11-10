@@ -30,7 +30,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.io.IOException;

@@ -1,6 +1,7 @@
 package com.oath.cyclops.internal.stream;
 
 
+import cyclops.async.adapters.Queue;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.util.ExceptionSoftener;
@@ -8,7 +9,6 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.async.Future;
 import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Queue;
 import cyclops.async.adapters.QueueFactory;
 import cyclops.async.adapters.Signal;
 import cyclops.async.adapters.Topic;
@@ -32,7 +32,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.*;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +43,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+import java.util.*;
 
 import static com.oath.cyclops.internal.stream.ReactiveStreamX.Type.BACKPRESSURE;
 import static com.oath.cyclops.internal.stream.ReactiveStreamX.Type.SYNC;
@@ -408,9 +409,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
-        /**  ReactiveSeq<Publisher<R>> local = transform((Function)fn);
-         return Spouts.lazyConcat(local);
-         **/
+
         return flatMapP(1, fn);
     }
 
@@ -440,7 +439,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         if (async == Type.NO_BACKPRESSURE) {
 
             Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
-                    .build();
+                                           .build();
 
             AtomicBoolean wip = new AtomicBoolean(false);
             Continuation cont = new Continuation(() -> {
@@ -649,7 +648,6 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                             }
                             active = false;
 
-                            //  System.out.println("Sent " + sent + " x " + super.requested.getValue() + " " + completed + "  sent ? " + completeSent + " size " + data.size());
                         }
                     });
 
@@ -657,7 +655,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                 private Object nilsafeIn(Object o) {
                     if (o == null)
-                        return Queue.NILL;
+                        return cyclops.async.adapters.Queue.NILL;
                     return o;
                 }
 
@@ -712,7 +710,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
-        return Spouts.concat(this, (Stream<T>) ReactiveSeq.fromIterable(other));
+        return Spouts.concat(this, (Stream<T>) Spouts.fromIterable(other));
     }
 
     //TODO use spliterators and createSeq
@@ -988,8 +986,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Topic<T> broadcast() {
         if (async == Type.NO_BACKPRESSURE) {
             Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
-                    .build()
-                    .withTimeout(1);
+                                           .build()
+                                           .withTimeout(1);
 
             Topic<T> topic = new Topic<>(queue, QueueFactories.<T>boundedNonBlockingQueue(1000));
             AtomicBoolean wip = new AtomicBoolean(false);
@@ -1016,8 +1014,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
             return topic;
         }
         Queue<T> queue = QueueFactories.<T>boundedNonBlockingQueue(1000)
-                .build()
-                .withTimeout(1);
+                                       .build()
+                                       .withTimeout(1);
 
         Topic<T> topic = new Topic<>(queue, QueueFactories.<T>boundedNonBlockingQueue(1000));
         AtomicBoolean wip = new AtomicBoolean(false);
@@ -1099,7 +1097,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle() {
 
         ReactiveSeq<T> cycling = collectAll(Collectors.toList())
-                .map(s -> ReactiveSeq.fromIterable(s).cycle(Long.MAX_VALUE))
+                .map(s -> Spouts.fromIterable(s).cycle(Long.MAX_VALUE))
                 .flatMap(i -> i);
         return createSeq(new IterableSourceOperator<T>(cycling), SYNC);
 

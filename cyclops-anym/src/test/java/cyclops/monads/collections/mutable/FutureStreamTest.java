@@ -1,7 +1,6 @@
 package cyclops.monads.collections.mutable;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;

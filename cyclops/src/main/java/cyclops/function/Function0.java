@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;

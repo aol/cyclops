@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.map;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import com.oath.cyclops.internal.stream.spliterators.push.*;
 
 /**
  * Created by johnmcclean on 17/01/2017.
