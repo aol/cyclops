@@ -32,8 +32,8 @@ import java.util.stream.Stream;
  Less powerful, but may perform better than Maybe (simpler Object structure)
  */
 public interface Option<T> extends To<Option<T>>,
-  OrElseValue<T,Option<T>>,
-  MonadicValue<T>,
+                                   OrElseValue<T,Option<T>>,
+                                   MonadicValue<T>,
                                    Recoverable<T>,
                                    Sealed2<T,Option.None<T>>,
                                    Iterable<T>,

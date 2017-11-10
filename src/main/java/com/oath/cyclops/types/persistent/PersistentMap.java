@@ -1,5 +1,6 @@
 package com.oath.cyclops.types.persistent;
 
+import com.oath.cyclops.types.persistent.views.MapView;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
@@ -9,7 +10,9 @@ import java.util.function.Supplier;
 public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
 
     PersistentMap<K,V> put(K key, V value);
-    PersistentMap<K,V> put(Tuple2<K,V> keyAndValue);
+    default PersistentMap<K,V> put(Tuple2<K,V> keyAndValue){
+      return put(keyAndValue._1(),keyAndValue._2());
+    }
     PersistentMap<K,V> putAll(PersistentMap<? extends K, ? extends V> map);
     PersistentMap<K,V> remove(K key);
     PersistentMap<K,V> removeAll(Iterable<? extends K> keys);
@@ -32,5 +35,8 @@ public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
         return ReactiveSeq.fromIterable(this);
     }
 
+    default MapView<K,V> mapView(){
+      return new MapView.Impl<>(this);
+    }
 
 }
