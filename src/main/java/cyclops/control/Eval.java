@@ -24,6 +24,7 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -1194,7 +1195,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<eval>> monadPlus(Monoid<Higher<eval, T>> m) {
+                public <T> Maybe<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
                     return Maybe.nothing();
                 }
 

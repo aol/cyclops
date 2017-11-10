@@ -31,6 +31,8 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -300,7 +302,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * }
      * </pre>
      *
-     * @param opt Optional to construct Maybe from
+     * @param optional Optional to construct Maybe from
      * @return Maybe created from Optional
      */
     public static <T> Maybe<T> fromOptional(Higher<optional,T> optional){
@@ -326,7 +328,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     /**
      * Convert the HigherKindedType definition for a Maybe into
      *
-     * @param MaybeType Constructor to convert back into narrowed type
+     * @param maybe Constructor to convert back into narrowed type
      * @return Optional from Higher Kinded Type
      */
     public static <T> Optional<T> narrowOptional(final Higher<maybe, T> maybe) {
@@ -1598,8 +1600,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<maybe>> monadPlus(Monoid<Higher<maybe, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<maybe>> monadPlus(MonoidK<maybe> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1790,12 +1792,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * @return Type class for combining Maybes by concatenation
          */
         public static <T> MonadPlus<maybe> monadPlus(){
-            Monoid<Maybe<T>> mn = Monoids.firstPresentMaybe();
-            Monoid<Maybe<T>> m = Monoid.of(mn.zero(), (f,g)->
-                    mn.apply(Maybe.narrow(f), Maybe.narrow(g)));
 
-            Monoid<Higher<maybe,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+            return General.monadPlus(monadZero(), MonoidKs.firstPresentMaybe());
         }
         /**
          *
@@ -1813,9 +1811,9 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * @param m Monoid to use for combining Maybes
          * @return Type class for combining Maybes
          */
-        public static <T> MonadPlus<maybe> monadPlus(Monoid<Maybe<T>> m){
-            Monoid<Higher<maybe,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+        public static <T> MonadPlus<maybe> monadPlus(MonoidK<maybe> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

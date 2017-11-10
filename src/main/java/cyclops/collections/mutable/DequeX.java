@@ -26,6 +26,8 @@ import cyclops.reactive.Spouts;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -123,7 +125,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     /**
      * Widen a DequeType nest inside another HKT encoded type
      *
-     * @param deque HTK encoded type containing  a Deque to widen
+     * @param list HTK encoded type containing  a Deque to widen
      * @return HKT encoded type with a widened Deque
      */
     public static <C2,T> Higher<C2, Higher<deque,T>> widen2(Higher<C2, DequeX<T>> list){
@@ -135,7 +137,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     /**
      * Convert the raw Higher Kinded Type for Deque types into the DequeType type definition class
      *
-     * @param deque HKT encoded list into a DequeType
+     * @param list HKT encoded list into a DequeType
      * @return DequeType
      */
     public static <T> DequeX<T> narrowK(final Higher<deque, T> list) {
@@ -336,7 +338,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     /**
      * Construct a DequeX from an Iterable
      *
-     * @param iterable
+     * @param it
      *            to construct DequeX from
      * @return DequeX
      */
@@ -1305,8 +1307,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * }
      * </pre>
      *
-     * @param setX to narrow generic type
-     * @return SetX with narrowed type
+     * @param dequeX to narrow generic type
+     * @return dequeX with narrowed type
      */
     public static <T> DequeX<T> narrow(final DequeX<? extends T> dequeX) {
         return (DequeX<T>) dequeX;
@@ -1397,8 +1399,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<deque>> monadPlus(Monoid<Higher<deque, T>> m) {
-                    return Maybe.just(Instances.monadPlus((Monoid)m));
+                public <T> Maybe<MonadPlus<deque>> monadPlus(MonoidK<deque> m) {
+                    return Maybe.just(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1587,7 +1589,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         public static <T> MonadPlus<deque> monadPlus(){
             Monoid<DequeX<T>> m = Monoid.of(DequeX.empty(), Instances::concat);
             Monoid<Higher<deque,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+            return General.monadPlus(monadZero(), MonoidKs.dequeXConcat());
         }
         public static <T,R> MonadRec<deque> monadRec(){
 
@@ -1598,25 +1600,10 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
             };
         }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  Monoid<DequeX<Integer>> m = Monoid.of(DequeX.of()), (a,b)->a.isEmpty() ? b : a);
-        DequeX<Integer> list = Deques.<Integer>monadPlus(m)
-        .plus(DequeX.of(5)), DequeX.of(10)))
-        .convert(DequeX::narrowK3);
-        //DequeX.of(5))
-         *
-         * }
-         * </pre>
-         *
-         * @param m Monoid to use for combining Deques
-         * @return Type class for combining Deques
-         */
-        public static <T> MonadPlus<deque> monadPlus(Monoid<DequeX<T>> m){
-            Monoid<Higher<deque,T>> m2= (Monoid)m;
-            return General.monadPlus(monadZero(),m2);
+
+        public static <T> MonadPlus<deque> monadPlus(MonoidK<deque> m){
+
+            return General.monadPlus(monadZero(),m);
         }
 
         /**

@@ -23,6 +23,8 @@ import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
+import cyclops.typeclasses.functions.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -1222,7 +1224,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus(Monoid<Higher<Higher<ior, L>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus(MonoidK<Higher<ior, L>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1435,16 +1437,27 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
         }
         public static <L> MonadPlus<Higher<ior, L>> monadPlus() {
-            Monoid m = Monoids.firstPrimaryIor((Ior)Ior.narrowK(Instances.<L>monadZero().zero()));
 
-            return monadPlus(m);
+
+          MonoidK<Higher<ior, L>> m = new MonoidK<Higher<ior, L>>() {
+            @Override
+            public <T> Higher<Higher<ior, L>, T> zero() {
+              return Instances.<L>monadZero().zero();
+            }
+
+            @Override
+            public <T> Higher<Higher<ior, L>, T> apply(Higher<Higher<ior, L>, T> t1, Higher<Higher<ior, L>, T> t2) {
+              return SemigroupKs.<L>firstPrimaryIor().apply(t1,t2);
+            }
+          };
+          return monadPlus(m);
         }
-        public static <L,T> MonadPlus<Higher<ior, L>> monadPlus(Monoid<Higher<Higher<ior, L>, T>> m) {
+        public static <L,T> MonadPlus<Higher<ior, L>> monadPlus(MonoidK<Higher<ior, L>> m) {
             return new MonadPlus<Higher<ior, L>>() {
 
                 @Override
-                public Monoid<Higher<Higher<ior, L>, ?>> monoid() {
-                    return (Monoid)m;
+                public MonoidK<Higher<ior, L>> monoid() {
+                    return m;
                 }
 
                 @Override

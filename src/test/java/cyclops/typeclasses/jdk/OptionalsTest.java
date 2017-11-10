@@ -1,4 +1,4 @@
-package com.aol.cyclops.hkt.instances.jdk;
+package cyclops.typeclasses.jdk;
 
 import static cyclops.companion.Optionals.OptionalKind.widen;
 import static cyclops.function.Lambda.l1;
@@ -17,6 +17,7 @@ import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
 import cyclops.monads.Witness.optional;
+import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
@@ -120,8 +121,7 @@ public class OptionalsTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Monoid<OptionalKind<Integer>> m = Monoid.of(widen(Optional.empty()), (a, b)->a.isPresent() ? b : a);
-        OptionalKind<Integer> opt = Optionals.Instances.<Integer>monadPlus(m)
+        OptionalKind<Integer> opt = Optionals.Instances.<Integer>monadPlus(MonoidKs.firstPresentOptional())
                                       .plus(widen(Optional.of(5)), widen(Optional.of(10)))
                                       .convert(OptionalKind::narrow);
         assertThat(opt,equalTo(Optional.of(10)));

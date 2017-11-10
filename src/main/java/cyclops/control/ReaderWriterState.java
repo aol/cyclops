@@ -10,6 +10,7 @@ import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.free.Free;
 import cyclops.function.*;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -220,7 +221,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(Monoid<Higher<Higher<Higher<Higher<rws, R>, W>, S>, T>> m) {
+                public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(MonoidK<Higher<Higher<Higher<rws, R>, W>, S>> m) {
                     return Maybe.nothing();
                 }
 

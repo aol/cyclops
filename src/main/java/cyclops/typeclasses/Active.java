@@ -10,6 +10,7 @@ import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.ImmutableList;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
@@ -357,10 +358,10 @@ public class Active<W,T> implements Filters<T>,
     public <C,R> Active<W, R> ap(C c,Function<? super C, ? extends Higher<W, ? extends Function<T, R>>> fn) {
         return ap(fn.apply(c));
     }
-    public Active<W,T> plus(SemigroupK<W,T> semigroupK, Higher<W,T> add){
+    public Active<W,T> plus(SemigroupK<W> semigroupK, Higher<W,T> add){
         return of(semigroupK.apply(single,add),def1);
     }
-    public Active<W,T> plus(SemigroupK<W,T> semigroupK, Active<W,T> add){
+    public Active<W,T> plus(SemigroupK<W> semigroupK, Active<W,T> add){
         return of(semigroupK.apply(single,add.getSingle()),def1);
     }
 
@@ -388,21 +389,21 @@ public class Active<W,T> implements Filters<T>,
     @AllArgsConstructor
     public class Plus{
         private final MonadPlus<W> monadPlus;
-        public MonoidK<W,T> monoidK(){
-            return monadPlus.asMonoid();
+        public MonoidK<W> monoidK(){
+            return monadPlus.monoid();
         }
         public Monoid<Higher<W,T>> monoid(){
-            return monadPlus.narrowMonoid();
+            return monadPlus.monoid().asMonoid();
         }
         public Active<W,T> zero(){
-            Higher<W, T> h = monadPlus.narrowZero();
+            Higher<W, T> h = monadPlus.zero();
             return of(h, def1);
 
         }
-        public Active<W,T> sum(ListX<Higher<W, T>> list){
+        public Active<W,T> sum(ImmutableList<Higher<W, T>> list){
             return of(monadPlus.sum(list.plus(single)),def1);
         }
-        public Active<W,T> sumA(ListX<Active<W, T>> list){
+        public Active<W,T> sumA(ImmutableList<Active<W, T>> list){
             return sum(list.map(Active::getActive));
         }
         public Active<W,T> plus(Higher<W, T> a){
