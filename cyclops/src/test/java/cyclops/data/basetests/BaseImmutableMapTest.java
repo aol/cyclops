@@ -11,7 +11,9 @@ import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -286,4 +288,17 @@ public abstract  class BaseImmutableMapTest {
         assertThat(map2.stream().map(t->t._2()).sumInt(i->i),equalTo(map.stream().map(t->t._2()).sumInt(i->i)*10));
 
     }
+  @Test
+  public void viewTest(){
+    Map<Integer,String> map = of(1,"hello",2,"world").mapView();
+    Map<Integer,String> hashMap = MapXs.of(1,"hello",2,"world");
+    assertThat(map.size(),equalTo(2));
+    assertThat(map,equalTo(hashMap));
+
+    assertThat(map.put(1,"hello"),equalTo("hello"));
+
+    assertThat(map.remove(1),equalTo("hello"));
+    assertThat(map.remove((Object)1),equalTo("hello"));
+
+  }
 }

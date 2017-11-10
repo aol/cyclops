@@ -16,6 +16,12 @@ def custom = { "$rootDir/gradle/${it}.gradle" } //find custom plugins locally
 
 
 
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'simple-react', 'Implementation-Version': version
+  }
+}
+
 
 subprojects {
   /**

@@ -39,6 +39,7 @@ public interface Option<T> extends To<Option<T>>,
 
 
 
+
     @SuppressWarnings("rawtypes")
     final static Option EMPTY = new Option.None<>();
 

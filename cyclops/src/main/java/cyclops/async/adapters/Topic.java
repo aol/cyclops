@@ -131,9 +131,7 @@ public class Topic<T> implements Adapter<T> {
 
     private Queue<T> getNextQueue() {
 
-        System.out.println("Sub size " + this.distributor.getSubscribers()
-                .size());
-        System.out.println("Subs" + this.distributor.getSubscribers());
+
         if (index >= this.distributor.getSubscribers()
                                      .size()) {
 

@@ -24,9 +24,9 @@ public class ApiTest {
   @Test
   public void shouldMatchSimpleObject() {
     Option<String> of = Match("b").of(
-        Api.Case(t -> t.equals("a"), () -> "a"),
-        Api.Case(t -> t.equals("b"), () -> "b"),
-        Api.Case(t -> t.equals("c"), () -> "c")
+        Case(t -> t.equals("a"), () -> "a"),
+        Case(t -> t.equals("b"), () -> "b"),
+        Case(t -> t.equals("c"), () -> "c")
     );
     assertTrue(of.isPresent());
     Assert.assertEquals("b", of.orElse("c"));
@@ -35,9 +35,9 @@ public class ApiTest {
   @Test
   public void shouldMatchTheAnyOverride() {
     String of = Match("z").of(
-        Api.Case(t -> t.equals("a"), () -> "a"),
-        Api.Case(t -> t.equals("b"), () -> "b"),
-        Api.Case(t -> t.equals("c"), () -> "c"),
+        Case(t -> t.equals("a"), () -> "a"),
+        Case(t -> t.equals("b"), () -> "b"),
+        Case(t -> t.equals("c"), () -> "c"),
         Any(() -> "any")
     );
     assertEquals("any", of);
@@ -46,9 +46,9 @@ public class ApiTest {
   @Test
   public void shouldProvideAllOptionalConvenience() {
     String of = Match("z").of(
-        Api.Case(t -> t.equals("a"), () -> "a"),
-        Api.Case(t -> t.equals("b"), () -> "b"),
-        Api.Case(t -> t.equals("c"), () -> "c")
+        Case(t -> t.equals("a"), () -> "a"),
+        Case(t -> t.equals("b"), () -> "b"),
+        Case(t -> t.equals("c"), () -> "c")
     ).orElse("orElse");
     assertEquals("orElse", of);
   }
