@@ -72,7 +72,6 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         Future<BagX<T>> future = Future.future();
 
         public CompletableBagX(){
-            System.out.println("new!!");
             new Exception().printStackTrace();
         }
         public boolean complete(PersistentBag<T> result){
