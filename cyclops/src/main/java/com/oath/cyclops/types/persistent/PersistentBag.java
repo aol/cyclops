@@ -5,4 +5,6 @@ public interface PersistentBag<T> extends PersistentCollection<T> {
     PersistentBag<T> plusAll(Iterable<? extends T> list);
     PersistentBag<T> removeValue(T e);
     PersistentBag<T> removeAll(Iterable<? extends T> list);
+
+
 }

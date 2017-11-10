@@ -1,9 +1,13 @@
 package cyclops.data;
 
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -67,6 +71,9 @@ public class SeqTest extends BaseImmutableListTest {
         IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
 
         Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
+
+
+
     }
 
 

@@ -199,7 +199,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
-    //@TODO removeValue
+
     <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override

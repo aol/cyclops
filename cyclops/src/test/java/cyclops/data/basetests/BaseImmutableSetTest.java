@@ -15,10 +15,7 @@ import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -335,4 +332,20 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         assertTrue(empty().onEmptyTry(()->new RuntimeException("hello")).isFailure());
         assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
+  @Test
+  public void viewTest(){
+    Set<Integer> list = of(1,2,3).setView();
+    assertThat(list.size(),equalTo(3));
+    assertThat(list,equalTo(new java.util.HashSet<>(Arrays.asList(1,2,3))));
+
+    assertThat(list.add(1),equalTo(false));
+    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
+    assertThat(list.contains(2),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+    assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+    assertThat(list.remove(1),equalTo(false));
+    assertThat(list.remove((Object)1),equalTo(false));
+    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+  }
 }

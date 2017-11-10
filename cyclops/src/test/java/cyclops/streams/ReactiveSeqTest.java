@@ -51,6 +51,7 @@ public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
     @Test
     public void prependAppend(){
+
         assertThat(of(1)
                 .prependS(Stream.of(2)).append(3).prepend(4).append(5,6)
                 .prependAll(7,8)
