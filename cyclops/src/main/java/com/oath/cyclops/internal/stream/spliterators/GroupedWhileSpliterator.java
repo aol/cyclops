@@ -30,7 +30,7 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
 
     }
     public <R2> GroupedWhileSpliterator<T,C,?> compose(Function<? super R,? extends R2> fn){
-        return new GroupedWhileSpliterator<T, C,R2>(CopyableSpliterator.copy(source),factory,finalizer.andThen(fn),predicate);
+        return new GroupedWhileSpliterator<T, C,R2>(copy(source),factory,finalizer.andThen(fn),predicate);
     }
 
     C collection;
@@ -94,7 +94,7 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
 
     @Override
     public Spliterator<R> copy() {
-        return new GroupedWhileSpliterator<T, C,R>(CopyableSpliterator.copy(source),factory,finalizer,predicate);
+        return new GroupedWhileSpliterator<T, C,R>(copy(source),factory,finalizer,predicate);
     }
 
 

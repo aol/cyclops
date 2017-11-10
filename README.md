@@ -130,7 +130,7 @@ stream.map(i->"hello  " + i)
 Asynchronous stream execution
 
 ```java
-//cyclops.async.Future
+//Future
  Executor ex = Executors.newFixedThreadPool(1)
  Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
                                           .foldFuture(ex,s->s.reduce( 50,(acc,next) -> acc+next));

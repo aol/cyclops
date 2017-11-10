@@ -1,7 +1,6 @@
 package cyclops.control;
 
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
@@ -21,7 +20,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;

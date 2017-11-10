@@ -1,8 +1,8 @@
 package com.oath.cyclops.types.futurestream;
 
-import java.util.function.Supplier;
-
 import lombok.AllArgsConstructor;
+
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 public class Continuation {

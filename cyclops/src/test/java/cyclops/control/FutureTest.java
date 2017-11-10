@@ -10,7 +10,6 @@ import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import lombok.val;
 import cyclops.data.tuple.Tuple;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
 * Monad Transformer for CompletableFuture's nested within another monadic type

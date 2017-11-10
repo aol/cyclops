@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;

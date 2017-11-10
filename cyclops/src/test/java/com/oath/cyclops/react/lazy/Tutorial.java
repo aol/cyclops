@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import cyclops.async.*;
 import cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;

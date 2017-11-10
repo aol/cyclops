@@ -51,6 +51,6 @@ public class LimitWhileClosedSpliterator<T> extends Spliterators.AbstractSpliter
 
     @Override
     public Spliterator<T> copy() {
-        return new LimitWhileClosedSpliterator<>(CopyableSpliterator.copy(source),predicate);
+        return new LimitWhileClosedSpliterator<>(copy(source),predicate);
     }
 }

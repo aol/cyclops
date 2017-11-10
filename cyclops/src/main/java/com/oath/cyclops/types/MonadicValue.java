@@ -5,16 +5,10 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.async.Future;
 import cyclops.control.Try;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import cyclops.function.Monoid;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.data.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import java.util.NoSuchElementException;

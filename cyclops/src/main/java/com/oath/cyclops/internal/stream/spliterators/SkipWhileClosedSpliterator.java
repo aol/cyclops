@@ -60,6 +60,6 @@ public class SkipWhileClosedSpliterator<T> extends Spliterators.AbstractSplitera
 
     @Override
     public Spliterator<T> copy() {
-        return new SkipWhileClosedSpliterator<>(CopyableSpliterator.copy(source),predicate);
+        return new SkipWhileClosedSpliterator<>(copy(source),predicate);
     }
 }

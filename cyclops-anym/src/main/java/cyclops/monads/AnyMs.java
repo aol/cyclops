@@ -2,7 +2,6 @@ package cyclops.monads;
 
 import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
-import com.oath.cyclops.hkt.Higher;
 import cyclops.async.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
@@ -12,12 +11,9 @@ import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.control.State;
 import cyclops.function.Function1;
 import cyclops.monads.transformers.*;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Nested;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

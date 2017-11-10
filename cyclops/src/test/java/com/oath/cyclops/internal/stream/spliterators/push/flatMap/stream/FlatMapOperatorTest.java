@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.flatMap.stream;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.reactive.Spouts;
 
 import static org.hamcrest.MatcherAssert.assertThat;

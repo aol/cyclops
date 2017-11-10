@@ -61,7 +61,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public ReactiveSeq<T> cycle() {
 
         Spliterator<T> t = copy();
-        return  ReactiveSeq.fill(1)
+        return  fill(1)
                 .flatMap(i->createSeq(CopyableSpliterator.copy(t),reversible));
     }
 
@@ -164,7 +164,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     }
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return ReactiveSeq.fill(1)
+        return fill(1)
                 .limit(times)
                 .flatMap(i -> createSeq(copy(), reversible));
 

@@ -1,6 +1,5 @@
 package com.oath.cyclops.react.lazy.sequence;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;

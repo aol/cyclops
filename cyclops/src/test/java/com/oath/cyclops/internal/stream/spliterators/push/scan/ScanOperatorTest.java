@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.scan;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import com.oath.cyclops.internal.stream.spliterators.push.*;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

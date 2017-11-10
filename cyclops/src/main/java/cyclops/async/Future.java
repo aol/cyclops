@@ -9,7 +9,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.control.Trampoline;
+import cyclops.control.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -22,11 +22,9 @@ import cyclops.typeclasses.*;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.react.collectors.lazy.Blocker;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
 
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.control.*;
 
 import com.oath.cyclops.util.ExceptionSoftener;
 

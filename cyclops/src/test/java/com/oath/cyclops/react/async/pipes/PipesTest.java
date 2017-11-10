@@ -16,7 +16,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
-import cyclops.async.*;
 import cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

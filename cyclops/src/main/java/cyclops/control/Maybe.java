@@ -4,8 +4,6 @@ package cyclops.control;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
-import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.*;
 import cyclops.reactive.Spouts;
@@ -17,9 +15,7 @@ import cyclops.companion.Optionals.OptionalKind;
 import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 
-import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import com.oath.cyclops.hkt.DataWitness.maybe;

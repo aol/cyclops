@@ -5,7 +5,7 @@ import cyclops.async.adapters.Queue;
 public class AlwaysContinue implements Continueable {
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#closeQueueIfFinished(cyclops2.async.Queue)
+     * @see Continueable#closeQueueIfFinished(cyclops2.async.Queue)
      */
     @Override
     public void closeQueueIfFinished(final Queue queue) {
@@ -13,7 +13,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#addQueue(cyclops2.async.Queue)
+     * @see Continueable#addQueue(cyclops2.async.Queue)
      */
     @Override
     public void addQueue(final Queue queue) {
@@ -21,7 +21,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#registerSkip(long)
+     * @see Continueable#registerSkip(long)
      */
     @Override
     public void registerSkip(final long skip) {
@@ -29,7 +29,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#registerLimit(long)
+     * @see Continueable#registerLimit(long)
      */
     @Override
     public void registerLimit(final long limit) {
@@ -37,7 +37,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#closeAll(cyclops2.async.Queue)
+     * @see Continueable#closeAll(cyclops2.async.Queue)
      */
     @Override
     public void closeAll(final Queue queue) {
@@ -45,7 +45,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#closed()
+     * @see Continueable#closed()
      */
     @Override
     public boolean closed() {
@@ -54,7 +54,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#closeQueueIfFinishedStateless(cyclops2.async.Queue)
+     * @see Continueable#closeQueueIfFinishedStateless(cyclops2.async.Queue)
      */
     @Override
     public void closeQueueIfFinishedStateless(final Queue queue) {
@@ -62,7 +62,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#closeAll()
+     * @see Continueable#closeAll()
      */
     @Override
     public void closeAll() {
@@ -70,7 +70,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#timeLimit()
+     * @see Continueable#timeLimit()
      */
     @Override
     public long timeLimit() {
@@ -79,7 +79,7 @@ public class AlwaysContinue implements Continueable {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.react.async.subscription.Continueable#registerTimeLimit(long)
+     * @see Continueable#registerTimeLimit(long)
      */
     @Override
     public void registerTimeLimit(final long nanos) {
