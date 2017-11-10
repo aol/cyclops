@@ -325,7 +325,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         },n->this);
     }
     default LazySeq<T> dropWhile(Predicate<? super T> p) {
-        LazySeq<T> current = this;
+      LazySeq<T> current = this;
         boolean[] found = {false};
         while(!found[0] && !current.isEmpty()){
             LazySeq<T> active = current;
@@ -434,9 +434,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             }
         }
         return l.visit(c->c.head,n->alt.get());
-    }
-    default LazySeq<T> prepend(T value){
-        return cons(value,()->this);
     }
 
     @Override
@@ -899,7 +896,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default <EX extends Throwable> LazySeq<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
         return this;
     }
-
+    default LazySeq<T> prepend(T value){
+    return cons(value,()->this);
+  }
     @Override
     default LazySeq<T> prepend(Iterable<? extends T> value) {
         return (LazySeq<T>) ImmutableList.super.prepend(value);
