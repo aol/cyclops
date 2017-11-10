@@ -45,14 +45,16 @@ if (JavaVersion.current().isJava8Compatible()) {
     }
   }
 }
-
+configurations {
+  provided
+}
 dependencies {
 
 
   compile 'org.agrona:Agrona:0.9.1'
   compile 'org.reactivestreams:reactive-streams:1.0.0'
-  compileOnly 'org.projectlombok:lombok:1.16.12'
-  testCompileOnly 'org.projectlombok:lombok:1.16.12'
+  provided 'org.projectlombok:lombok:1.16.12'
+  provided 'org.projectlombok:lombok:1.16.12'
   testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
   testCompile 'com.google.guava:guava:19.0'
@@ -67,6 +69,12 @@ dependencies {
   jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
 }
+sourceSets {
+  main.compileClasspath += [configurations.provided]
+  test.compileClasspath += [configurations.provided]
+  test.runtimeClasspath += [configurations.provided]
+}
+
 
 jacocoTestReport {
   afterEvaluate {
