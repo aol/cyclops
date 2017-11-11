@@ -93,7 +93,6 @@ public class LazySeqTest extends BaseImmutableListTest {
       return arg * 2;
     }).when(mockFunction).apply(anyInt());
 
-    @SuppressWarnings("Guava")
     LazySeq<Integer> result = LazySeq.of(1, 2, 3, 4, 5)
       .map(mockFunction);
 
@@ -123,7 +122,6 @@ public class LazySeqTest extends BaseImmutableListTest {
       return arg * 2;
     }).when(mockFunction).apply(anyInt());
 
-    @SuppressWarnings("Guava")
     LazySeq<Integer> result = LazySeq.of(1, 2, 3, 4, 5)
       .map(mockFunction);
 
