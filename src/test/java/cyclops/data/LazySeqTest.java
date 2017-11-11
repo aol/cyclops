@@ -81,15 +81,11 @@ public class LazySeqTest extends BaseImmutableListTest {
 
 
   }
-  /**
-   * Test no maps are called before fetching values and map function only invoked once for each input.
-   *
-   * @throws Exception
-   */
+
   // TODO(johnmcclean): Stop ignoring this test
   @Ignore
   @Test
-  public void testLazy2() throws Exception {
+  public void testNoMapCalledBeforeFetchingAndOnlyOnceForEachInput() throws Exception {
     @SuppressWarnings("unchecked")
     Function<Integer, Integer> mockFunction = Mockito.mock(Function.class);
     Mockito.doAnswer(invocation -> {
@@ -116,15 +112,10 @@ public class LazySeqTest extends BaseImmutableListTest {
     inOrder.verifyNoMoreInteractions();
   }
 
-  /**
-   * Test that the first map is called before fetching all values and map function only invoked once for each input.
-   *
-   * @throws Exception
-   */
   // TODO(johnmcclean): Stop ignoring this test
   @Ignore
   @Test
-  public void testLazy3() throws Exception {
+  public void testFirstMapCalledBeforeFetchingOthersAfterAndAllMapsCalledOnlyOnce() throws Exception {
     @SuppressWarnings("unchecked")
     Function<Integer, Integer> mockFunction = Mockito.mock(Function.class);
     Mockito.doAnswer(invocation -> {
