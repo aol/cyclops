@@ -9,24 +9,21 @@ import java.util.function.Consumer;
  * Created by johnmcclean on 22/12/2016.
  */
 
-public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
+public class IteratableSpliterator<T> implements Spliterator<T>, CopyableSpliterator<T>{
 
     private final Iterable<T> source;
 
-    Iterator<T> active;
+    Spliterator<T> active;
 
     public IteratableSpliterator(final Iterable<T> source) {
-        super(-1,Spliterator.ORDERED);
-
         this.source = source;
-
-
     }
+
     @Override
     public void forEachRemaining(Consumer<? super T> action) {
 
         if(active==null)
-            active = source.iterator();
+            active = source.spliterator();
 
 
         active.forEachRemaining(action);
@@ -34,16 +31,38 @@ public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T
     }
 
     @Override
+    public Spliterator<T> trySplit() {
+
+        if(active==null)
+            active=source.spliterator();
+
+        return active.trySplit();
+
+  }
+
+    @Override
+    public long estimateSize() {
+
+        if(active==null)
+            active=source.spliterator();
+
+        return active.estimateSize();
+
+    }
+
+    @Override
+    public int characteristics() {
+      return active.characteristics();
+    }
+
+    @Override
     public boolean tryAdvance(Consumer<? super T> action) {
 
         if(active==null)
-            active=source.iterator();
-        if (active.hasNext()) {
-            action.accept(active.next());
-            return true;
-        }
+            active=source.spliterator();
 
-        return false;
+        return active.tryAdvance(action);
+
     }
 
     @Override
