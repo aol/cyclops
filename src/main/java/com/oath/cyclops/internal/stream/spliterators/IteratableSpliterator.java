@@ -52,7 +52,12 @@ public class IteratableSpliterator<T> implements Spliterator<T>, CopyableSpliter
 
     @Override
     public int characteristics() {
+
+      if(active==null)
+        active=source.spliterator();
+
       return active.characteristics();
+
     }
 
     @Override
