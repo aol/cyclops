@@ -25,15 +25,15 @@ jar {
 
 subprojects {
   /**
-  apply plugin: 'eclipse'
-  apply plugin: 'eclipse'
-  apply plugin: 'maven-publish'
-  apply plugin: 'com.bmuschko.nexus'
-  apply plugin: 'jacoco'
-  apply from: custom('jacoco-version')
-  apply from: custom('jacoco-config')
-  apply from: custom('jacoco-excludes')
-**/
+   apply plugin: 'eclipse'
+   apply plugin: 'eclipse'
+   apply plugin: 'maven-publish'
+   apply plugin: 'com.bmuschko.nexus'
+   apply plugin: 'jacoco'
+   apply from: custom('jacoco-version')
+   apply from: custom('jacoco-config')
+   apply from: custom('jacoco-excludes')
+   **/
   sourceCompatibility = 1.8
   targetCompatibility = 1.8
   if (JavaVersion.current().isJava8Compatible()) {

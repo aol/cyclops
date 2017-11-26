@@ -363,7 +363,10 @@ public final class HAMT<K, V>  implements Serializable {
         return this;
       int bitPos = bitpos(hash, bitShiftDepth);
       int arrayPos = index(bitPos);
-      Node<K,V> node = (absent(bitPos) ? EmptyNode.Instance : nodes[arrayPos]).minus(bitShiftDepth +BITS_IN_INDEX,hash,key);
+      boolean absent = absent(bitPos);
+      if(absent)
+        return this;
+      Node<K,V> node =  nodes[arrayPos].minus(bitShiftDepth +BITS_IN_INDEX,hash,key);
 
       if(node instanceof EmptyNode){
         int removedBit = bitset & ~bitPos;
