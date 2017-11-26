@@ -9,6 +9,7 @@ import cyclops.companion.PersistentMapXs;
 import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -29,6 +30,13 @@ public abstract  class BaseImmutableMapTest {
     protected abstract <K,V> ImmutableMap<K,V> of(K k1,V v1,K k2, V v2);
     protected abstract ImmutableMap<String,Integer> fromMap(Map<String, Integer> hello);
 
+  @Test
+  public void removeMissingKey(){
+    assertThat(of(1,"a",2,"b").remove(0),equalTo(of(1,"a",2,"b")));
+    assertThat(of(1,"a",2,"b").removeAll(0),equalTo(of(1,"a",2,"b")));
+    assertThat(of(1,"a",2,"b").remove(5),equalTo(of(1,"a",2,"b")));
+    assertThat(of(1,"a",2,"b").removeAll(5),equalTo(of(1,"a",2,"b")));
+  }
     @Test
     public void addRemove(){
       for(int i=0;i<100_00;i++) {
