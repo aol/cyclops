@@ -4,13 +4,16 @@ package cyclops.data;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
 import cyclops.control.Option;
-import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
+import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.function.Function;
@@ -19,10 +22,9 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
 
 public class LazySeqTest extends BaseImmutableListTest {
 
@@ -79,6 +81,65 @@ public class LazySeqTest extends BaseImmutableListTest {
 
 
   }
+
+  // TODO(johnmcclean): Stop ignoring this test
+  @Ignore
+  @Test
+  public void testNoMapCalledBeforeFetchingAndOnlyOnceForEachInput() throws Exception {
+    @SuppressWarnings("unchecked")
+    Function<Integer, Integer> mockFunction = Mockito.mock(Function.class);
+    Mockito.doAnswer(invocation -> {
+      int arg = (Integer) invocation.getArguments()[0];
+      return arg * 2;
+    }).when(mockFunction).apply(anyInt());
+
+    LazySeq<Integer> result = LazySeq.of(1, 2, 3, 4, 5)
+      .map(mockFunction);
+
+    InOrder inOrder = Mockito.inOrder(mockFunction);
+    inOrder.verifyNoMoreInteractions();
+
+    // Invoke twice to assert function called only once
+    assertThat(result, hasItems(2, 4, 6, 8, 10));
+    assertThat(result, hasItems(2, 4, 6, 8, 10));
+
+    inOrder.verify(mockFunction).apply(1);
+    inOrder.verify(mockFunction).apply(2);
+    inOrder.verify(mockFunction).apply(3);
+    inOrder.verify(mockFunction).apply(4);
+    inOrder.verify(mockFunction).apply(5);
+    inOrder.verifyNoMoreInteractions();
+  }
+
+  // TODO(johnmcclean): Stop ignoring this test
+  @Ignore
+  @Test
+  public void testFirstMapCalledBeforeFetchingOthersAfterAndAllMapsCalledOnlyOnce() throws Exception {
+    @SuppressWarnings("unchecked")
+    Function<Integer, Integer> mockFunction = Mockito.mock(Function.class);
+    Mockito.doAnswer(invocation -> {
+      int arg = (Integer) invocation.getArguments()[0];
+      return arg * 2;
+    }).when(mockFunction).apply(anyInt());
+
+    LazySeq<Integer> result = LazySeq.of(1, 2, 3, 4, 5)
+      .map(mockFunction);
+
+    InOrder inOrder = Mockito.inOrder(mockFunction);
+    inOrder.verify(mockFunction).apply(1);
+    inOrder.verifyNoMoreInteractions();
+
+    // Invoke twice to assert function called only once
+    assertThat(result, hasItems(2, 4, 6, 8, 10));
+    assertThat(result, hasItems(2, 4, 6, 8, 10));
+
+    inOrder.verify(mockFunction).apply(2);
+    inOrder.verify(mockFunction).apply(3);
+    inOrder.verify(mockFunction).apply(4);
+    inOrder.verify(mockFunction).apply(5);
+    inOrder.verifyNoMoreInteractions();
+  }
+
   @Test
   public void mapLarge(){
     LazySeq.range(0,100_000_000).map(i->count++);
