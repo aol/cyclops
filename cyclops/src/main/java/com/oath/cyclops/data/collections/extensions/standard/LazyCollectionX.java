@@ -597,14 +597,6 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default LazyCollectionX<T> removeAllI(final Iterable<? extends T> it) {
-        return fromStream(stream().removeAllI(it));
-
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Object[])

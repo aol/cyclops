@@ -159,7 +159,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     }
 	@Test
     public void removeAll(){
-        assertThat(of(1,2,3,4,5).removeAllI((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAll((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
 
     @Test

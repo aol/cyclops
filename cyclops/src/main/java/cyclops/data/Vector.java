@@ -106,12 +106,9 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> removeAll(Iterable<? extends T> list) {
-        return removeAllI(list);
+        return fromStream(this.stream().removeAll(list));
     }
-    @Override
-    public Vector<T> removeAllI(Iterable<? extends T> it) {
-        return (Vector<T>)ImmutableList.super.removeAllI(it);
-    }
+
     @Override
     public Vector<T> removeAt(int i) {
         return (Vector<T>)ImmutableList.super.removeAt(i);

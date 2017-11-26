@@ -883,8 +883,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> removeAllI(final Iterable<? extends T> it) {
-        return (StreamT) FoldableTransformerSeq.super.removeAllI(it);
+    public StreamT<W,T> removeAll(final Iterable<? extends T> it) {
+        return (StreamT) FoldableTransformerSeq.super.removeAll(it);
     }
 
 

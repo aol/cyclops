@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
@@ -1056,14 +1057,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
         return (VectorX<T>) LazyCollectionX.super.removeAllS(stream);
     }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default VectorX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (VectorX<T>) LazyCollectionX.super.removeAllI(it);
+    default VectorX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)

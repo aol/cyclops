@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazySortedSetX;
 import com.oath.cyclops.types.foldable.Evaluation;
 
@@ -897,13 +898,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default SortedSetX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.removeAllI(it);
+    default SortedSetX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)
@@ -1132,7 +1129,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * }
      * </pre>
      *
-     * @param sortedSetX to narrowK3 generic type
+     * @param setX to narrowK3 generic type
      * @return SortedSetX with narrowed type
      */
     public static <T> SortedSetX<T> narrow(final SortedSetX<? extends T> setX) {

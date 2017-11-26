@@ -283,9 +283,8 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.removeAllS(stream);
     }
 
-    @Override
-    default IterableX<T> removeAllI(final Iterable<? extends T> it) {
-        return (IterableX<T>)ExtendedTraversable.super.removeAllI(it);
+    default IterableX<T> removeAll(final Iterable<? extends T> it) {
+        return (IterableX<T>)ExtendedTraversable.super.removeAll(it);
     }
 
     @Override
@@ -642,10 +641,10 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
     }
 
-    //@TODO - collision with collection removeAll
+/**    //@TODO - collision with collection removeAll
     default IterableX<T> removeAll(Iterable<? extends T> value){
-        return unitIterator(stream().removeAllI(value).iterator());
-    }
+        return unitIterator(this.removeAll(value).iterator());
+    }**/
     default IterableX<T> removeFirst(Predicate<? super T> pred){
         return (IterableX<T>)ExtendedTraversable.super.removeFirst(pred);
     }

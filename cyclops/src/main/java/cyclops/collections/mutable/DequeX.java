@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyDequeX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
@@ -1089,13 +1090,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default DequeX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (DequeX<T>) LazyCollectionX.super.removeAllI(it);
+    default DequeX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)

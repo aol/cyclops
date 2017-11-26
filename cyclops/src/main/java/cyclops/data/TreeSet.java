@@ -725,10 +725,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         return (TreeSet<T>) ImmutableSortedSet.super.onEmptyGet(supplier);
     }
 
-    @Override
-    public TreeSet<T> removeAllI(Iterable<? extends T> it) {
-        return (TreeSet<T>) ImmutableSortedSet.super.removeAllI(it);
-    }
+
 
     @Override
     public TreeSet<T> removeAll(T... values) {

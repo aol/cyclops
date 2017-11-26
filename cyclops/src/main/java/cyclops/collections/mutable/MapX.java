@@ -314,9 +314,9 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAllI(it);
+        return (MapX<K, V>) IterableFilterable.super.removeAll(it);
     }
 
     /* (non-Javadoc)

@@ -138,10 +138,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().removeAllS(stream));
     }
 
-    @Override
-    default FutureStream<U> removeAllI(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllI(it));
-    }
+
 
     @Override
     default FutureStream<U> removeAll(final U... values) {
@@ -150,7 +147,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     @Override
     default FutureStream<U> retainAllI(final Iterable<? extends U> it) {
-        return fromStream(stream().removeAllI(it));
+        return fromStream(stream().retainAllI(it));
     }
 
     @Override

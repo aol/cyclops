@@ -72,7 +72,7 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> removeValue(T e);
     @Override
     default Seq<T> removeAll(Iterable<? extends T> list) {
-        return (Seq<T>)ImmutableList.super.removeAllI(list);
+        return (Seq<T>) ImmutableList.super.removeAll(list);
     }
 
     @Override
@@ -89,10 +89,7 @@ public interface Seq<T> extends ImmutableList<T>,
     default Seq<T> removeAt(long pos){
         return (Seq<T>)ImmutableList.super.removeAt(pos);
     }
-    @Override
-    default Seq<T> removeAllI(Iterable<? extends T> it) {
-        return (Seq<T>)ImmutableList.super.removeAllI(it);
-    }
+
     @Override
     default Seq<T> insertAt(int pos, T... values) {
         return (Seq<T>)ImmutableList.super.insertAt(pos,values);

@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.data.collections.extensions.standard.MutableSequenceX;
@@ -1159,7 +1160,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return this;
     }
 
-   
+
     @Override
     default ListX<T> removeValue(final T e) {
         this.remove(e);
@@ -1475,14 +1476,11 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default ListX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (ListX<T>) LazyCollectionX.super.removeAllI(it);
+    default ListX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
+
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])

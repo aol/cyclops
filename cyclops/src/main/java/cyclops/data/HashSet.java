@@ -683,10 +683,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
         return (HashSet<T>) ImmutableSet.super.onEmptyGet(supplier);
     }
 
-    @Override
-    public HashSet<T> removeAllI(Iterable<? extends T> it) {
-        return (HashSet<T>) ImmutableSet.super.removeAllI(it);
-    }
+
 
     @Override
     public HashSet<T> removeAll(T... values) {
