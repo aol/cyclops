@@ -56,6 +56,7 @@ import static cyclops.reactive.ReactiveSeq.iterate;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
@@ -2904,6 +2905,10 @@ public abstract class AbstractIterableXTest {
         List<Integer> list = ReactiveSeq.of(1,2,3,4,5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         assertThat(list.size(),equalTo(5));
     }
-
+  @Test
+  public void removeValue(){
+    assertThat(of(1,2,3).removeValue(0),equalTo(of(1,2,3)));
+    assertThat(of(1,2,3).removeValue(4),equalTo(of(1,2,3)));
+  }
 
 }

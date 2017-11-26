@@ -1,6 +1,7 @@
 package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 
@@ -73,4 +74,8 @@ public class HashMapTest {
         System.out.println(v.size());
     }
 
+  @Test
+  public void removeMissingKey(){
+    MatcherAssert.assertThat(HashMap.of(1,"a",2,"b").removeAll(0),equalTo(HashMap.of(1,"a",2,"b")));
+  }
 }

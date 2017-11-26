@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import static cyclops.data.tuple.Tuple.tuple;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -348,4 +349,5 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     assertThat(list.remove((Object)1),equalTo(false));
     assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
   }
+
 }
