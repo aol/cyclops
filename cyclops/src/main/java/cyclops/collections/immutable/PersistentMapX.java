@@ -93,11 +93,8 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     @Override
     PersistentMapX<K, V> remove(K key);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PMap#removeAll(java.util.Collection)
-     */
-    @Override
-    PersistentMapX<K, V> removeAll(Iterable<? extends K> keys);
+
+    PersistentMapX<K, V> removeAllKeys(Iterable<? extends K> keys);
 
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -204,10 +201,9 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
-    @Override
-    default PersistentMapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default PersistentMapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (PersistentMapX<K, V>) IterableFilterable.super.removeAllI(it);
+        return (PersistentMapX<K, V>) IterableFilterable.super.removeAll(it);
     }
 
     /* (non-Javadoc)

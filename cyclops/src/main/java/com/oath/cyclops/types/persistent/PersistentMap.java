@@ -17,7 +17,7 @@ public interface PersistentMap<K,V> extends Iterable<Tuple2<K,V>> {
     }
     PersistentMap<K,V> putAll(PersistentMap<? extends K, ? extends V> map);
     PersistentMap<K,V> remove(K key);
-    PersistentMap<K,V> removeAll(Iterable<? extends K> keys);
+    PersistentMap<K,V> removeAllKeys(Iterable<? extends K> keys);
 
 
     Option<V> get(K key);

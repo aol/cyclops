@@ -30,7 +30,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscription;
 
 import java.io.IOException;
@@ -316,6 +315,11 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2).removeValue(1),hasItem(2));
         assertThat(of(1,2).removeValue(1),not(hasItem(1)));
     }
+
+    @Test
+    public void removeAllTest(){
+      assertThat(of(1,2,3).removeAll(of(1,5,6,7,2)),equalTo(of(3)));
+    }
 	@Test
     public void minusAllOne(){
         assertThat(of().removeAll(of(1).toList()).size(),equalTo(0));
@@ -351,7 +355,7 @@ public abstract class AbstractIterableXTest {
     }
 	@Test
     public void removeAll(){
-        assertThat(of(1,2,3,4,5).removeAllI((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAll((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
 
     @Test

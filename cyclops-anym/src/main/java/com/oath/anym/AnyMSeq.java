@@ -1112,10 +1112,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.removeAllS(stream));
     }
 
-    @Override
-    default AnyMSeq<W,T> removeAllI(final Iterable<? extends T> it) {
-        return fromIterable(IterableX.super.removeAllI(it));
-    }
+
 
     @Override
     default AnyMSeq<W,T> removeAll(final T... values) {

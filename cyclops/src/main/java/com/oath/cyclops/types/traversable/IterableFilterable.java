@@ -34,7 +34,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param it  an Iterable of elements to removeValue
      * @return Filters with all supplied elements removed
      */
-    default Filters<T> removeAllI(final Iterable<? extends T> it) {
+    default Filters<T> removeAll(final Iterable<? extends T> it) {
         return removeAllS(Streams.stream(it));
     }
 

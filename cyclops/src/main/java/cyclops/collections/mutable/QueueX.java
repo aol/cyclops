@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyQueueX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
@@ -958,13 +959,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default QueueX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (QueueX<T>) LazyCollectionX.super.removeAllI(it);
+    default QueueX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)

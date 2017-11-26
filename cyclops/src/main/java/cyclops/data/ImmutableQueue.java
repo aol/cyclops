@@ -58,10 +58,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return set;
     }
 
-    @Override
-    default ImmutableQueue<T> removeAll(Iterable<? extends T> list){
-        return unitStream(stream().removeAllI(list));
-    }
 
     <R> ImmutableQueue<R> unitStream(Stream<R> stream);
     <R> ImmutableQueue<R> unitIterable(Iterable<R> it);
@@ -385,9 +381,8 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().removeAllS(stream));
     }
 
-    @Override
-    default ImmutableQueue<T> removeAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
+    default ImmutableQueue<T> removeAll(Iterable<? extends T> it) {
+        return unitStream(stream().removeAll(it));
     }
 
     @Override

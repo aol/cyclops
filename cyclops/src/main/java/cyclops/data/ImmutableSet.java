@@ -54,11 +54,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> removeAll(Iterable<? extends T> list){
-        return unitStream(stream().removeAllI(list));
-    }
-
-    @Override
     default <U> ImmutableSet<U> ofType(Class<? extends U> type) {
         return (ImmutableSet<U>)IterableX.super.ofType(type);
     }
@@ -247,9 +242,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().removeAllS(stream));
     }
 
-    @Override
-    default ImmutableSet<T> removeAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
+    default ImmutableSet<T> removeAll(Iterable<? extends T> it) {
+        return unitStream(stream().removeAll(it));
     }
 
     @Override

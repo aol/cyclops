@@ -1,5 +1,6 @@
 package cyclops.collections.immutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -923,14 +924,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default BagX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (BagX<T>) LazyCollectionX.super.removeAllI(it);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
@@ -1111,7 +1105,12 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
 
-    public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Either<T, R>>> fn) {
+  @Override
+  default BagX<T> removeAll(CollectionX<? extends T> it) {
+    return removeAll(narrowIterable());
+  }
+
+  public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Either<T, R>>> fn) {
         return ListX.tailRec(initial,fn).to().bagX(Evaluation.LAZY);
     }
 

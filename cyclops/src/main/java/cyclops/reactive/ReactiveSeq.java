@@ -145,10 +145,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return append(value);
     }
 
-    @Override
-    default ReactiveSeq<T> removeAll(Iterable<? extends T> value) {
-        return removeAllI(value);
-    }
 
     @Override
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -4626,9 +4622,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>)IterableX.super.removeAllS(stream);
     }
 
-    @Override
-    default ReactiveSeq<T> removeAllI(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)IterableX.super.removeAllI(it);
+    default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>) this.removeAll(it);
     }
 
     @Override

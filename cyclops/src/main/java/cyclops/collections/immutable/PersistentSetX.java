@@ -1,5 +1,6 @@
 package cyclops.collections.immutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
@@ -942,21 +943,16 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default PersistentSetX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (PersistentSetX<T>) LazyCollectionX.super.removeAllI(it);
-    }
-
-    /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
      */
     @Override
     default PersistentSetX<T> removeAll(final T... values) {
 
         return (PersistentSetX<T>) LazyCollectionX.super.removeAll(values);
+    }
+    @Override
+    default PersistentSetX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)

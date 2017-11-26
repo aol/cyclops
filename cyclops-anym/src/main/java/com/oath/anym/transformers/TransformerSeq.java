@@ -162,8 +162,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> removeAllI(final Iterable<? extends T> it) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAllI(it));
+    default Traversable<T> removeAll(final Iterable<? extends T> it) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable) this.removeAll(it));
         return unitAnyM(zipped);
     }
 

@@ -904,8 +904,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> removeAllI(final Iterable<? extends T> it) {
-        return (ListT) FoldableTransformerSeq.super.removeAllI(it);
+    public ListT<W,T> removeAll(final Iterable<? extends T> it) {
+        return (ListT) FoldableTransformerSeq.super.removeAll(it);
     }
 
 

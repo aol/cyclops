@@ -379,10 +379,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().removeAllS(stream));
     }
 
-    @Override
-    default ImmutableList<T> removeAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
-    }
+
     @Override
     default ImmutableList<T> removeAt(long pos) {
         return unitStream(stream().removeAt(pos));

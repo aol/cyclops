@@ -4,6 +4,7 @@ package cyclops.data.tuple;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.data.Comparators;
 import cyclops.data.HashMap;
+import cyclops.function.Function7;
 import cyclops.function.Function8;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -171,6 +172,9 @@ public class Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> implements To<Tuple8<T1,T2,T3,T4,T5
         return result;
     }
 
+  public <R1> R1 transform(Function8<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6, ? super T7,? super T8, ? extends R1> fn){
+    return fn.apply(_1(),_2(),_3(),_4(),_5(),_6(),_7(),_8());
+  }
     public Tuple8<T1,T2,T3,T4,T5,T6,T7,T8> eager(){
         return of(_1(),_2(),_3(),_4(),_5(),_6(),_7(),_8());
     }

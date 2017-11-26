@@ -51,7 +51,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
     @Override
     default ImmutableSortedSet<T> removeAll(Iterable<? extends T> list){
-        return unitStream(stream().removeAllI(list));
+        return unitStream(stream().removeAll(list));
     }
 
     default OrderedSetX<T> orderedSetX(){
@@ -177,10 +177,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return unitStream(stream().removeAllS(stream),comparator());
     }
 
-    @Override
-    default ImmutableSortedSet<T> removeAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it),comparator());
-    }
+
 
     @Override
     default ImmutableSortedSet<T> removeAll(T... values) {

@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.data.Comparators;
 import cyclops.data.TreeSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
@@ -938,13 +939,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         return (OrderedSetX<T>) LazyCollectionX.super.removeAllS(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default OrderedSetX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (OrderedSetX<T>) LazyCollectionX.super.removeAllI(it);
+    default OrderedSetX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)
