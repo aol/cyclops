@@ -1159,11 +1159,9 @@ public interface ListX<T> extends To<ListX<T>>,
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX#removeValue(java.lang.Object)
-     */
+   
     @Override
-    default ListX<T> removeValue(final Object e) {
+    default ListX<T> removeValue(final T e) {
         this.remove(e);
         return this;
     }
