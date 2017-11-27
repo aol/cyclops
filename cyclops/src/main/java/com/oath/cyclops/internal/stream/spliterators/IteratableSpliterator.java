@@ -9,69 +9,45 @@ import java.util.function.Consumer;
  * Created by johnmcclean on 22/12/2016.
  */
 
-public class IteratableSpliterator<T> implements Spliterator<T>, CopyableSpliterator<T>{
+public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
-    private final Iterable<T> source;
+  private final Iterable<T> source;
 
-    Spliterator<T> active;
+  Iterator<T> active;
 
-    public IteratableSpliterator(final Iterable<T> source) {
-        this.source = source;
-    }
+  public IteratableSpliterator(final Iterable<T> source) {
+    super(-1,Spliterator.ORDERED);
 
-    @Override
-    public void forEachRemaining(Consumer<? super T> action) {
-
-        if(active==null)
-            active = source.spliterator();
+    this.source = source;
 
 
-        active.forEachRemaining(action);
+  }
+  @Override
+  public void forEachRemaining(Consumer<? super T> action) {
 
-    }
+    if(active==null)
+      active = source.iterator();
 
-    @Override
-    public Spliterator<T> trySplit() {
 
-        if(active==null)
-            active=source.spliterator();
-
-        return active.trySplit();
+    active.forEachRemaining(action);
 
   }
 
-    @Override
-    public long estimateSize() {
+  @Override
+  public boolean tryAdvance(Consumer<? super T> action) {
 
-        if(active==null)
-            active=source.spliterator();
-
-        return active.estimateSize();
-
+    if(active==null)
+      active=source.iterator();
+    if (active.hasNext()) {
+      action.accept(active.next());
+      return true;
     }
 
-    @Override
-    public int characteristics() {
+    return false;
+  }
 
-      if(active==null)
-        active=source.spliterator();
-
-      return active.characteristics();
-
-    }
-
-    @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
-
-        if(active==null)
-            active=source.spliterator();
-
-        return active.tryAdvance(action);
-
-    }
-
-    @Override
-    public Spliterator<T> copy() {
-        return new IteratableSpliterator<>(source);
-    }
+  @Override
+  public Spliterator<T> copy() {
+    return new IteratableSpliterator<>(source);
+  }
 }
