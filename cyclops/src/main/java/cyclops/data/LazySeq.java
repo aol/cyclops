@@ -135,7 +135,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     @Override
     default LazySeq<T> removeAll(Iterable<? extends T> list) {
-        return (LazySeq<T>) this.removeAll(list);
+        return (LazySeq<T>) ImmutableList.super.removeAll(list);
     }
 
     default <R> LazySeq<R> unitStream(Stream<R> stream){

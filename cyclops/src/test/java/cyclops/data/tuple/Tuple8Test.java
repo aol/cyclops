@@ -160,7 +160,7 @@ public class Tuple8Test {
 
     @Test
     public void transform(){
-      assertThat(lazyT1.transform((a,b,c,d,e,f,g,h)->a+b+c+d+e+f+g+h),equalTo("hello123481010"));
+      assertThat(lazyT1.transform((a,b,c,d,e,f,g,h)->a+b+c+d+e+f+g+h),equalTo("hello12348105"));
     }
 
 
