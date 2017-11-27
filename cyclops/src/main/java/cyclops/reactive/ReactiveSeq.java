@@ -4623,7 +4623,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>) this.removeAll(it);
+        return this.removeAllS(ReactiveSeq.fromIterable(it));
     }
 
     @Override
