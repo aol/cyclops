@@ -208,7 +208,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     public HashSet<T> removeAll(Iterable<? extends T> list) {
         HashSet<T> res = this;
         for(T next : list){
-            res = this.removeValue(next);
+            res = res.removeValue(next);
         }
         return res;
     }

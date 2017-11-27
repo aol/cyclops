@@ -3,6 +3,7 @@ package cyclops.data;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -60,5 +61,9 @@ public class HashSetTest extends BaseImmutableSetTest{
       assertThat(of(1,2,3).removeValue(0),equalTo(of(1,2,3)));
     }
 
+  @Test
+  public void removeAllTest(){
+    assertThat(HashSet.of(1,2,3).removeAll(of(1,5,6,7,2)),equalTo(HashSet.of(3)));
+  }
 
 }

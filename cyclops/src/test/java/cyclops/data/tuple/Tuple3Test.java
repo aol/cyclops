@@ -122,7 +122,7 @@ public class Tuple3Test {
 
     @Test
     public void transform(){
-       assertThat(lazyT1.transform((a,b,c)->a+b+c),equalTo("lazy105"));
+       assertThat(lazyT1.transform((a,b,c)->a+b+c),equalTo("hello12"));
     }
 
 

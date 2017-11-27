@@ -7,9 +7,11 @@ import cyclops.collections.AbstractSetTest;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
+import cyclops.data.HashSet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,6 +42,7 @@ public class PSetXTest extends AbstractSetTest {
         counter = new AtomicLong(0);
         super.setup();
     }
+
     @Test
     public void asyncTest() throws InterruptedException {
         Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))

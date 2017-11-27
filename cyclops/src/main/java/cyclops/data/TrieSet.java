@@ -628,7 +628,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
 
     @Override
     public TrieSet<T> removeAll(Iterable<? extends T> it) {
-        return (TrieSet<T>) this.removeAll(it);
+        return (TrieSet<T>) ImmutableSet.super.removeAll(it);
     }
 
     @Override
