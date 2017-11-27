@@ -198,7 +198,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<T>)ImmutableQueue.super.removeAll(values);
     }
     default BankersQueue<T> removeAll(Iterable<? extends T> it){
-        return (BankersQueue<T>) this.removeAll(it);
+        return (BankersQueue<T>) ImmutableQueue.super.removeAll(it);
     }
 
     @Override
