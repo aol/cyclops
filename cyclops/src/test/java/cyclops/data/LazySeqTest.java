@@ -46,6 +46,7 @@ public class LazySeqTest extends BaseImmutableListTest {
     int count =0;
     @Before
     public void setup(){
+      super.setup();
       count =0;
     }
 

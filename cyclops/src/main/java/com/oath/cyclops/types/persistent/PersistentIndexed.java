@@ -15,7 +15,5 @@ public interface PersistentIndexed<T> extends PersistentCollection<T> {
     T getOrElseGet(int index, Supplier<? extends T> alt);
 
 
-    default ListView<T> listView(){
-      return new ListView.Impl<>(this);
-    }
+
 }
