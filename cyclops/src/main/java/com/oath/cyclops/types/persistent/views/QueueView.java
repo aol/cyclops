@@ -16,12 +16,7 @@ public interface QueueView<T> extends Queue<T>
 
   @Override
   @Deprecated
-  T remove();
-
-  @Override
-  @Deprecated
   T poll();
-
   @Override
   @Deprecated
   boolean add(T t);
@@ -35,6 +30,7 @@ public interface QueueView<T> extends Queue<T>
   boolean addAll(Collection<? extends T> c);
 
 
+
   @Override
   @Deprecated
   boolean removeAll(Collection<?> c);
@@ -42,7 +38,6 @@ public interface QueueView<T> extends Queue<T>
   @Override
   @Deprecated
   boolean retainAll(Collection<?> c);
-
 
 
 
@@ -98,12 +93,12 @@ public interface QueueView<T> extends Queue<T>
 
     @Override
     public T poll() {
-      return host.getOrElse(0,null);
+      return peek();
     }
 
     @Override
     public T peek() {
-      return host.getOrElse(0,null);
+      return iterator().next();
     }
 
     @Override
@@ -126,7 +121,6 @@ public interface QueueView<T> extends Queue<T>
       return false;
     }
 
-
     @Override
     public boolean removeAll(Collection<?> c) {
       return false;
@@ -141,6 +135,8 @@ public interface QueueView<T> extends Queue<T>
     public void clear() {
 
     }
+
+
 
   }
 }
