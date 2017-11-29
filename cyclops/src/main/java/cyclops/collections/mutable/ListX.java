@@ -1471,9 +1471,9 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default ListX<T> removeAllS(final Stream<? extends T> stream) {
+    default ListX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (ListX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (ListX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     @Override
@@ -1495,18 +1495,18 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default ListX<T> retainAllI(final Iterable<? extends T> it) {
+    default ListX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (ListX<T>) LazyCollectionX.super.retainAllI(it);
+        return (ListX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default ListX<T> retainAllS(final Stream<? extends T> seq) {
+    default ListX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (ListX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (ListX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1641,13 +1641,13 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> append(T... values) {
-        return (ListX<T>)LazyCollectionX.super.append(values);
+    default ListX<T> appendAll(T... values) {
+        return (ListX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default ListX<T> append(T value) {
-        return (ListX<T>)LazyCollectionX.super.append(value);
+    default ListX<T> appendAll(T value) {
+        return (ListX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

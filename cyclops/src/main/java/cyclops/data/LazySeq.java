@@ -451,7 +451,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                         cons.foldRight(this,(a,b)->b.prepend(a))
                 ,nil->this);
     }
-    default LazySeq<T> append(T append) {
+    default LazySeq<T> appendAll(T append) {
         return appendAll(LazySeq.of(append));
 
     }
@@ -542,18 +542,18 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<T> removeAllS(Stream<? extends T> stream) {
-        return (LazySeq<T>)ImmutableList.super.removeAllS(stream);
+    default LazySeq<T> removeStream(Stream<? extends T> stream) {
+        return (LazySeq<T>)ImmutableList.super.removeStream(stream);
     }
 
     @Override
-    default LazySeq<T> retainAllI(Iterable<? extends T> it) {
-        return (LazySeq<T>)ImmutableList.super.retainAllI(it);
+    default LazySeq<T> retainAll(Iterable<? extends T> it) {
+        return (LazySeq<T>)ImmutableList.super.retainAll(it);
     }
 
     @Override
-    default LazySeq<T> retainAllS(Stream<? extends T> stream) {
-        return (LazySeq<T>)ImmutableList.super.retainAllS(stream);
+    default LazySeq<T> retainStream(Stream<? extends T> stream) {
+        return (LazySeq<T>)ImmutableList.super.retainStream(stream);
     }
 
     @Override
@@ -847,8 +847,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<T> append(T... values) {
-        return (LazySeq<T>) ImmutableList.super.append(values);
+    default LazySeq<T> appendAll(T... values) {
+        return (LazySeq<T>) ImmutableList.super.appendAll(values);
     }
 
     @Override
@@ -878,10 +878,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default LazySeq<T> prepend(T value){
     return cons(value,()->this);
   }
-    @Override
-    default LazySeq<T> prepend(Iterable<? extends T> value) {
-        return (LazySeq<T>) ImmutableList.super.prepend(value);
-    }
 
     @Override
     default <U extends Comparable<? super U>> LazySeq<T> sorted(Function<? super T, ? extends U> function) {

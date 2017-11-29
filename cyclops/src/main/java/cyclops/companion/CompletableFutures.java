@@ -33,7 +33,6 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.Value;
 
 import lombok.experimental.UtilityClass;
 
@@ -267,7 +266,7 @@ public class CompletableFutures {
 
     CompletableFuture<ReactiveSeq<T>> identity = CompletableFuture.completedFuture(ReactiveSeq.empty());
 
-    BiFunction<CompletableFuture<ReactiveSeq<T>>,CompletableFuture<T>,CompletableFuture<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.thenCombine(next,(a,b)->a.append(b));
+    BiFunction<CompletableFuture<ReactiveSeq<T>>,CompletableFuture<T>,CompletableFuture<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.thenCombine(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> a.thenCombine(b,(z1,z2)->z1.appendS(z2));
 

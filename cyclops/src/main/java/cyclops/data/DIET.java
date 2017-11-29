@@ -227,7 +227,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
         }
         @Override
         public ReactiveSeq<Range<T>> streamRanges() {
-            return left.streamRanges().append(focus).appendS(right.streamRanges());
+            return left.streamRanges().appendAll(focus).appendS(right.streamRanges());
         }
 
 

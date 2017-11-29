@@ -178,7 +178,7 @@ public class LazySeqTest extends BaseImmutableListTest {
          **/
       //  assertThat(Arrays.asList(1,2,3),hasItems(1,2,3));
 
-        ImmutableList<Integer> l = of(1, 2, 3, 4, 5).retainAllS(Stream.of(1, 2, 3));
+        ImmutableList<Integer> l = of(1, 2, 3, 4, 5).retainStream(Stream.of(1, 2, 3));
         for(Integer n : l)
             System.out.println("n is " +n);
 
@@ -192,7 +192,7 @@ public class LazySeqTest extends BaseImmutableListTest {
 
     @Test
     public void fromStreamTest(){
-        ImmutableList<Integer> l = of(1,2,3,4,5).retainAllS(Stream.of(1, 2, 3));
+        ImmutableList<Integer> l = of(1,2,3,4,5).retainStream(Stream.of(1, 2, 3));
 
 
         for(Integer n : l) {

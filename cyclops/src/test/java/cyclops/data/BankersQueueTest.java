@@ -155,8 +155,8 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
     }
     @Test
     public void retainAll(){
-        System.out.println(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)));
-        assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+        System.out.println(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)));
+        assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
     }
     @Test
     public void streamable(){

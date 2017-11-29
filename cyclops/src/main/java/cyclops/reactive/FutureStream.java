@@ -112,8 +112,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> append(U value){
-        return fromStream(stream().append(value));
+    default FutureStream<U> appendAll(U value){
+        return fromStream(stream().appendAll(value));
     }
 
     @Override
@@ -134,8 +134,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     @Override
-    default FutureStream<U> removeAllS(final Stream<? extends U> stream) {
-        return fromStream(stream().removeAllS(stream));
+    default FutureStream<U> removeStream(final Stream<? extends U> stream) {
+        return fromStream(stream().removeStream(stream));
     }
 
 
@@ -146,13 +146,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> retainAllI(final Iterable<? extends U> it) {
-        return fromStream(stream().retainAllI(it));
+    default FutureStream<U> retainAll(final Iterable<? extends U> it) {
+        return fromStream(stream().retainAll(it));
     }
 
     @Override
-    default FutureStream<U> retainAllS(final Stream<? extends U> stream) {
-        return fromStream(stream().retainAllS(stream));
+    default FutureStream<U> retainStream(final Stream<? extends U> stream) {
+        return fromStream(stream().retainStream(stream));
     }
 
     @Override
@@ -333,9 +333,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see org.jooq.lambda.Seq#prependAll(java.lang.Iterable)
      */
     @Override
-    default FutureStream<U> prepend(Iterable<? extends U> other) {
+    default FutureStream<U> prependAll(Iterable<? extends U> other) {
 
-        return fromStream(ReactiveSeq.oneShotStream(stream()).prepend(other));
+        return fromStream(this.prependAll(other));
     }
 
 
@@ -3016,9 +3016,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.reactiveStream.ReactiveSeq#append(java.lang.Object[])
      */
     @Override
-    default FutureStream<U> append(final U... values) {
+    default FutureStream<U> appendAll(final U... values) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .append(values));
+                                     .appendAll(values));
     }
 
     /*

@@ -529,7 +529,7 @@ public interface CollectionX<T> extends IterableX<T>,
     CollectionX<T> sorted();
 
     @Override
-    CollectionX<T> removeAllS(Stream<? extends T> stream);
+    CollectionX<T> removeStream(Stream<? extends T> stream);
 
 
   CollectionX<T> removeAll(Iterable<? extends T> it);
@@ -549,14 +549,14 @@ public interface CollectionX<T> extends IterableX<T>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.lang.Iterable)
      */
-    CollectionX<T> retainAllI(Iterable<? extends T> it);
+    CollectionX<T> retainAll(Iterable<? extends T> it);
 
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.util.stream.Stream)
      */
     @Override
-    CollectionX<T> retainAllS(Stream<? extends T> seq);
+    CollectionX<T> retainStream(Stream<? extends T> seq);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.IterableFilterable#retainAllI(java.lang.Object[])

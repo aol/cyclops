@@ -41,7 +41,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
 
     @Override
     default ImmutableSet<T> plus(T e){
-        return append(e);
+        return appendAll(e);
     }
 
     @Override
@@ -238,8 +238,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
 
     <R> ImmutableSet<R> unitStream(Stream<R> stream);
     @Override
-    default ImmutableSet<T> removeAllS(Stream<? extends T> stream) {
-        return unitStream(stream().removeAllS(stream));
+    default ImmutableSet<T> removeStream(Stream<? extends T> stream) {
+        return unitStream(stream().removeStream(stream));
     }
 
     default ImmutableSet<T> removeAll(Iterable<? extends T> it) {
@@ -252,13 +252,13 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().retainAllI(it));
+    default ImmutableSet<T> retainAll(Iterable<? extends T> it) {
+        return unitStream(stream().retainAll(it));
     }
 
     @Override
-    default ImmutableSet<T> retainAllS(Stream<? extends T> stream) {
-        return unitStream(stream().retainAllS(stream));
+    default ImmutableSet<T> retainStream(Stream<? extends T> stream) {
+        return unitStream(stream().retainStream(stream));
     }
 
     @Override
@@ -554,13 +554,13 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> append(T... values) {
-        return unitStream(stream().append(values));
+    default ImmutableSet<T> appendAll(T... values) {
+        return unitStream(stream().appendAll(values));
     }
 
     @Override
-    default ImmutableSet<T> append(T value) {
-        return unitStream(stream().append(value));
+    default ImmutableSet<T> appendAll(T value) {
+        return unitStream(stream().appendAll(value));
     }
 
     @Override
@@ -633,10 +633,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().prependAll(value));
     }
 
-    @Override
-    default ImmutableSet<T> prepend(Iterable<? extends T> value) {
-        return unitStream(stream().prepend(value));
-    }
 
     @Override
     default ImmutableSet<T> updateAt(int pos, T value) {

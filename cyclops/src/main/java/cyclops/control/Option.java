@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
@@ -324,7 +323,7 @@ public interface Option<T> extends To<Option<T>>,
 
     Option<ReactiveSeq<T>> identity = Option.some(ReactiveSeq.empty());
 
-    BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<Option<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 

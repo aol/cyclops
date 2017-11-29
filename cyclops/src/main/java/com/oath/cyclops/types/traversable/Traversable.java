@@ -1007,16 +1007,16 @@ public interface Traversable<T> extends Publisher<T>,
      *            to append
      * @return ReactiveSeq with appended values
      */
-    default Traversable<T> append(T... values){
-        return traversable().append(values);
+    default Traversable<T> appendAll(T... values){
+        return traversable().appendAll(values);
     }
     default Traversable<T> removeFirst(Predicate<? super T> pred){
         return traversable().removeFirst(pred);
     }
 
 
-    default Traversable<T> append(T value){
-        return traversable().append(value);
+    default Traversable<T> appendAll(T value){
+        return traversable().appendAll(value);
     }
 
 
@@ -1029,9 +1029,7 @@ public interface Traversable<T> extends Publisher<T>,
     default Traversable<T> prepend(T value){
         return traversable().prepend(value);
     }
-    default Traversable<T> prepend(Iterable<? extends T> value){
-        return traversable().prepend(value);
-    }
+
 
     /**
      * Prepend given values to the skip of the Stream

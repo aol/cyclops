@@ -20,7 +20,6 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -503,7 +502,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
     Either<L, Stream<T>> identity = Either.right(ReactiveSeq.empty());
 
-    BiFunction<Either<L,Stream<T>>,Either<L,T>,Either<L,Stream<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->ReactiveSeq.fromStream(a).append(b));
+    BiFunction<Either<L,Stream<T>>,Either<L,T>,Either<L,Stream<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->ReactiveSeq.fromStream(a).appendAll(b));
 
     BinaryOperator<Either<L,Stream<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->ReactiveSeq.fromStream(z1).appendS(z2));
 

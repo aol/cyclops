@@ -145,13 +145,13 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     }
 	@Test
 	public void retainAll(){
-	    assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+	    assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
 
 
 	@Test
     public void retainAllStream(){
-        assertThat(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)),hasItems(1,2,3));
+        assertThat(of(1,2,3,4,5).retainStream(Stream.of(1,2,3)),hasItems(1,2,3));
     }
 	@Test
     public void retainAllValues(){
@@ -164,7 +164,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 
     @Test
     public void removeAllStream(){
-        assertThat(of(1,2,3,4,5).removeAllS(Stream.of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeStream(Stream.of(1,2,3)),hasItems(4,5));
     }
     @Test
     public void removeAllValues(){

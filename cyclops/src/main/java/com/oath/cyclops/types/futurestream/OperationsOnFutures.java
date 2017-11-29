@@ -1107,7 +1107,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> concat(final T other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .append(FastFuture.completedFuture(other)));
+                                       .appendAll(FastFuture.completedFuture(other)));
     }
 
     /*
