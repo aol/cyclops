@@ -251,10 +251,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return cons(value,this);
     }
     default Seq<T> prependAll(Iterable<? extends T> it){
-        Seq<T> value = narrow(fromIterable(it));
-        return value.fold(cons->
-                        cons.foldRight(this,(a,b)->b.prepend(a))
-                ,nil->this);
+      return (Seq<T>)ImmutableList.super.prependAll(it);
     }
 
     default Seq<T> take(final long num) {
