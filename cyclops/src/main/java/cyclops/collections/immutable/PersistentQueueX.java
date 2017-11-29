@@ -1161,9 +1161,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * removeAll(java.util.stream.Stream)
      */
     @Override
-    default PersistentQueueX<T> removeAllS(final Stream<? extends T> stream) {
+    default PersistentQueueX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (PersistentQueueX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
 
@@ -1192,9 +1192,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * retainAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentQueueX<T> retainAllI(final Iterable<? extends T> it) {
+    default PersistentQueueX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.retainAllI(it);
+        return (PersistentQueueX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /*
@@ -1205,9 +1205,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * retainAllI(java.util.stream.Stream)
      */
     @Override
-    default PersistentQueueX<T> retainAllS(final Stream<? extends T> seq) {
+    default PersistentQueueX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (PersistentQueueX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /*

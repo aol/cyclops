@@ -279,18 +279,18 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<T> removeAllS(Stream<? extends T> stream) {
-        return (Vector<T>)ImmutableList.super.removeAllS(stream);
+    public Vector<T> removeStream(Stream<? extends T> stream) {
+        return (Vector<T>)ImmutableList.super.removeStream(stream);
     }
 
     @Override
-    public Vector<T> retainAllI(Iterable<? extends T> it) {
-        return (Vector<T>)ImmutableList.super.retainAllI(it);
+    public Vector<T> retainAll(Iterable<? extends T> it) {
+        return (Vector<T>)ImmutableList.super.retainAll(it);
     }
 
     @Override
-    public Vector<T> retainAllS(Stream<? extends T> stream) {
-        return (Vector<T>)ImmutableList.super.retainAllS(stream);
+    public Vector<T> retainStream(Stream<? extends T> stream) {
+        return (Vector<T>)ImmutableList.super.retainStream(stream);
     }
 
     @Override
@@ -576,8 +576,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<T> append(T... values) {
-        return (Vector<T>) ImmutableList.super.append(values);
+    public Vector<T> appendAll(T... values) {
+        return (Vector<T>) ImmutableList.super.appendAll(values);
     }
 
     @Override
@@ -605,10 +605,6 @@ public class Vector<T> implements ImmutableList<T>,
         return this;
     }
 
-    @Override
-    public Vector<T> prepend(Iterable<? extends T> value) {
-        return (Vector<T>) ImmutableList.super.prepend(value);
-    }
 
     @Override
     public <U extends Comparable<? super U>> Vector<T> sorted(Function<? super T, ? extends U> function) {
@@ -689,7 +685,7 @@ public class Vector<T> implements ImmutableList<T>,
             Vector<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = res.append(n);
+                res = res.appendAll(n);
             }
             v=res;
         }
@@ -763,11 +759,11 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public ImmutableList<T> prependAll(Iterable<? extends T> value) {
-        return unitStream(stream().prepend(value));
+        return unitStream(stream().prependAll(value));
     }
 
     @Override
-    public Vector<T> append(T value) {
+    public Vector<T> appendAll(T value) {
         return plus(value);
     }
 
@@ -900,7 +896,7 @@ public class Vector<T> implements ImmutableList<T>,
         }
 
         @Override
-        public ImmutableList<T> append(T value) {
+        public ImmutableList<T> appendAll(T value) {
             return empty();
         }
 

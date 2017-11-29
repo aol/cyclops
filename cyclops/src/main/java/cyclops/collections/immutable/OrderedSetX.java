@@ -934,9 +934,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default OrderedSetX<T> removeAllS(final Stream<? extends T> stream) {
+    default OrderedSetX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (OrderedSetX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     @Override
@@ -957,18 +957,18 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default OrderedSetX<T> retainAllI(final Iterable<? extends T> it) {
+    default OrderedSetX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.retainAllI(it);
+        return (OrderedSetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default OrderedSetX<T> retainAllS(final Stream<? extends T> seq) {
+    default OrderedSetX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (OrderedSetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1042,13 +1042,13 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<T> append(T... values) {
-        return (OrderedSetX<T>)LazyCollectionX.super.append(values);
+    default OrderedSetX<T> appendAll(T... values) {
+        return (OrderedSetX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default OrderedSetX<T> append(T value) {
-        return (OrderedSetX<T>)LazyCollectionX.super.append(value);
+    default OrderedSetX<T> appendAll(T value) {
+        return (OrderedSetX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

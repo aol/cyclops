@@ -37,7 +37,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
     @Override
     default ImmutableSortedSet<T> plus(T e){
-        return append(e);
+        return appendAll(e);
     }
 
     @Override
@@ -173,8 +173,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     ImmutableSortedSet<T> unitStream(Stream<T> stream, Comparator<? super T> comp);
 
     @Override
-    default ImmutableSortedSet<T> removeAllS(Stream<? extends T> stream) {
-        return unitStream(stream().removeAllS(stream),comparator());
+    default ImmutableSortedSet<T> removeStream(Stream<? extends T> stream) {
+        return unitStream(stream().removeStream(stream),comparator());
     }
 
 
@@ -185,13 +185,13 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().retainAllI(it),comparator());
+    default ImmutableSortedSet<T> retainAll(Iterable<? extends T> it) {
+        return unitStream(stream().retainAll(it),comparator());
     }
 
     @Override
-    default ImmutableSortedSet<T> retainAllS(Stream<? extends T> stream) {
-        return unitStream(stream().retainAllS(stream),comparator());
+    default ImmutableSortedSet<T> retainStream(Stream<? extends T> stream) {
+        return unitStream(stream().retainStream(stream),comparator());
     }
 
     @Override
@@ -488,13 +488,13 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> append(T... values) {
-        return unitStream(stream().append(values),comparator());
+    default ImmutableSortedSet<T> appendAll(T... values) {
+        return unitStream(stream().appendAll(values),comparator());
     }
 
     @Override
-    default ImmutableSortedSet<T> append(T value) {
-        return unitStream(stream().append(value),comparator());
+    default ImmutableSortedSet<T> appendAll(T value) {
+        return unitStream(stream().appendAll(value),comparator());
     }
 
     @Override

@@ -933,9 +933,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default SetX<T> removeAllS(final Stream<? extends T> stream) {
+    default SetX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (SetX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (SetX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     @Override
@@ -956,18 +956,18 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default SetX<T> retainAllI(final Iterable<? extends T> it) {
+    default SetX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (SetX<T>) LazyCollectionX.super.retainAllI(it);
+        return (SetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default SetX<T> retainAllS(final Stream<? extends T> seq) {
+    default SetX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (SetX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (SetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1063,13 +1063,13 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<T> append(T... values) {
-        return (SetX<T>)LazyCollectionX.super.append(values);
+    default SetX<T> appendAll(T... values) {
+        return (SetX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default SetX<T> append(T value) {
-        return (SetX<T>)LazyCollectionX.super.append(value);
+    default SetX<T> appendAll(T value) {
+        return (SetX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

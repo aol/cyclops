@@ -815,13 +815,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> append(T... values) {
-        return (StreamT) FoldableTransformerSeq.super.append(values);
+    public StreamT<W,T> appendAll(T... values) {
+        return (StreamT) FoldableTransformerSeq.super.appendAll(values);
     }
 
     @Override
-    public StreamT<W,T> append(T value) {
-        return (StreamT) FoldableTransformerSeq.super.append(value);
+    public StreamT<W,T> appendAll(T value) {
+        return (StreamT) FoldableTransformerSeq.super.appendAll(value);
     }
 
     @Override
@@ -872,8 +872,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
     @Override
-    public StreamT<W,T> removeAllS(final Stream<? extends T> stream) {
-        return (StreamT) FoldableTransformerSeq.super.removeAllS(stream);
+    public StreamT<W,T> removeStream(final Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.removeStream(stream);
     }
 
 
@@ -902,8 +902,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
     @Override
-    public StreamT<W,T> retainAllI(final Iterable<? extends T> it) {
-        return (StreamT) FoldableTransformerSeq.super.retainAllI(it);
+    public StreamT<W,T> retainAll(final Iterable<? extends T> it) {
+        return (StreamT) FoldableTransformerSeq.super.retainAll(it);
     }
 
     @Override
@@ -912,8 +912,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> retainAllS(final Stream<? extends T> stream) {
-        return (StreamT) FoldableTransformerSeq.super.retainAllS(stream);
+    public StreamT<W,T> retainStream(final Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.retainStream(stream);
     }
 
     @Override

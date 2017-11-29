@@ -156,8 +156,8 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     @Override
-    public LazyString append(Character value) {
-        return fromLazyList(string.append(value)) ;
+    public LazyString appendAll(Character value) {
+        return fromLazyList(string.appendAll(value)) ;
     }
 
     @Override

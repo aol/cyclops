@@ -717,12 +717,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     //TODO use spliterators and createSeq
     @Override
-    public ReactiveSeq<T> append(final T other) {
+    public ReactiveSeq<T> appendAll(final T other) {
         return Spouts.concat(this, Spouts.of(other));
     }
 
     @Override
-    public ReactiveSeq<T> append(final T... other) {
+    public ReactiveSeq<T> appendAll(final T... other) {
         return Spouts.concat(this, Spouts.of(other));
     }
 
@@ -731,7 +731,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return Spouts.concat((Stream<T>) (other), this);
     }
 
-    public ReactiveSeq<T> prepend(final Iterable<? extends T> other) {
+    public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {
         return Spouts.concat((Stream<T>) (other), this);
     }
 

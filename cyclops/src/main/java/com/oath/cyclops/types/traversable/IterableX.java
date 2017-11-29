@@ -279,8 +279,8 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> removeAllS(final Stream<? extends T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.removeAllS(stream);
+    default IterableX<T> removeStream(final Stream<? extends T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.removeStream(stream);
     }
 
     default IterableX<T> removeAll(final Iterable<? extends T> it) {
@@ -293,13 +293,13 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> retainAllI(final Iterable<? extends T> it) {
-        return (IterableX<T>)ExtendedTraversable.super.retainAllI(it);
+    default IterableX<T> retainAll(final Iterable<? extends T> it) {
+        return (IterableX<T>)ExtendedTraversable.super.retainAll(it);
     }
 
     @Override
-    default IterableX<T> retainAllS(final Stream<? extends T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.retainAllS(stream);
+    default IterableX<T> retainStream(final Stream<? extends T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.retainStream(stream);
     }
 
     @Override
@@ -619,14 +619,14 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> plusAll(Iterable<? extends T> list){
         IterableX<T> res = this;
         for(T next : list){
-            res = res.append(next);
+            res = res.appendAll(next);
         }
         return res;
     }
 
 
     default IterableX<T> plus(T value){
-        return append(value);
+        return appendAll(value);
     }
 
 
@@ -651,13 +651,13 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
 
 
     @Override
-    default IterableX<T> append(T... values) {
-        return (IterableX<T>)ExtendedTraversable.super.append(values);
+    default IterableX<T> appendAll(T... values) {
+        return (IterableX<T>)ExtendedTraversable.super.appendAll(values);
     }
 
     @Override
-    default IterableX<T> append(T value) {
-        return (IterableX<T>)ExtendedTraversable.super.append(value);
+    default IterableX<T> appendAll(T value) {
+        return (IterableX<T>)ExtendedTraversable.super.appendAll(value);
     }
     @Override
     default IterableX<T> appendAll(Iterable<? extends T> value){
@@ -669,10 +669,6 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
     @Override
     default IterableX<T> prepend(T value) {
-        return (IterableX<T>)ExtendedTraversable.super.prepend(value);
-    }
-    @Override
-    default IterableX<T> prepend(Iterable<? extends T> value) {
         return (IterableX<T>)ExtendedTraversable.super.prepend(value);
     }
 
@@ -744,7 +740,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         IterableX<T> back = drop(i);
 
 
-        return back.prepend(value).prepend(front);
+        return this.prependAll(front);
     }
     @Override
     default IterableX<T> insertAt(int pos, T... values) {
@@ -752,7 +748,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         IterableX<T> back = drop(pos);
 
 
-        return back.prependAll(values).prepend(front);
+        return this.prependAll(front);
     }
 
     @Override
@@ -761,7 +757,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         IterableX<T> back = drop(pos);
 
 
-        return back.prependAll(values).prepend(front);
+        return this.prependAll(front);
     }
 
 

@@ -152,7 +152,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> append(T value) {
+    default BankersQueue<T> appendAll(T value) {
         return enqueue(value);
     }
 
@@ -555,18 +555,18 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> removeAllS(Stream<? extends T> stream) {
-        return (BankersQueue<T>)ImmutableQueue.super.removeAllS(stream);
+    default BankersQueue<T> removeStream(Stream<? extends T> stream) {
+        return (BankersQueue<T>)ImmutableQueue.super.removeStream(stream);
     }
 
     @Override
-    default BankersQueue<T> retainAllI(Iterable<? extends T> it) {
-        return (BankersQueue<T>)ImmutableQueue.super.retainAllI(it);
+    default BankersQueue<T> retainAll(Iterable<? extends T> it) {
+        return (BankersQueue<T>)ImmutableQueue.super.retainAll(it);
     }
 
     @Override
-    default BankersQueue<T> retainAllS(Stream<? extends T> stream) {
-        return (BankersQueue<T>)ImmutableQueue.super.retainAllS(stream);
+    default BankersQueue<T> retainStream(Stream<? extends T> stream) {
+        return (BankersQueue<T>)ImmutableQueue.super.retainStream(stream);
     }
 
     @Override
@@ -848,8 +848,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> append(T... values) {
-        return (BankersQueue<T>) ImmutableQueue.super.append(values);
+    default BankersQueue<T> appendAll(T... values) {
+        return (BankersQueue<T>) ImmutableQueue.super.appendAll(values);
     }
 
     @Override
@@ -877,10 +877,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return this;
     }
 
-    @Override
-    default BankersQueue<T> prepend(Iterable<? extends T> value) {
-        return (BankersQueue<T>) ImmutableQueue.super.prepend(value);
-    }
 
     @Override
     default <U extends Comparable<? super U>> BankersQueue<T> sorted(Function<? super T, ? extends U> function) {

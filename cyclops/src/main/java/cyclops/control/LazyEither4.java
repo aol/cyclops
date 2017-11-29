@@ -298,7 +298,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
     LazyEither4<L1, L2, L3, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<LazyEither4<L1, L2, L3, ReactiveSeq<T>>,LazyEither4<L1, L2, L3, T>,LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<LazyEither4<L1, L2, L3, ReactiveSeq<T>>,LazyEither4<L1, L2, L3, T>,LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 

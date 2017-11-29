@@ -322,7 +322,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
 
-    public TreeSet<T> append(T append) {
+    public TreeSet<T> appendAll(T append) {
         return add(append);
     }
 
@@ -370,18 +370,18 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<T> removeAllS(Stream<? extends T> stream) {
-        return (TreeSet<T>)ImmutableSortedSet.super.removeAllS(stream);
+    public TreeSet<T> removeStream(Stream<? extends T> stream) {
+        return (TreeSet<T>)ImmutableSortedSet.super.removeStream(stream);
     }
 
     @Override
-    public TreeSet<T> retainAllI(Iterable<? extends T> it) {
-        return (TreeSet<T>)ImmutableSortedSet.super.retainAllI(it);
+    public TreeSet<T> retainAll(Iterable<? extends T> it) {
+        return (TreeSet<T>)ImmutableSortedSet.super.retainAll(it);
     }
 
     @Override
-    public TreeSet<T> retainAllS(Stream<? extends T> stream) {
-        return (TreeSet<T>)ImmutableSortedSet.super.retainAllS(stream);
+    public TreeSet<T> retainStream(Stream<? extends T> stream) {
+        return (TreeSet<T>)ImmutableSortedSet.super.retainStream(stream);
     }
 
     @Override
@@ -664,8 +664,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<T> append(T... values) {
-        return (TreeSet<T>) ImmutableSortedSet.super.append(values);
+    public TreeSet<T> appendAll(T... values) {
+        return (TreeSet<T>) ImmutableSortedSet.super.appendAll(values);
     }
 
     @Override
@@ -691,11 +691,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     @Override
     public <EX extends Throwable> TreeSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
         return this;
-    }
-
-    @Override
-    public TreeSet<T> prepend(Iterable<? extends T> value) {
-        return (TreeSet<T>) ImmutableSortedSet.super.prepend(value);
     }
 
     @Override

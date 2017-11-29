@@ -1085,9 +1085,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default DequeX<T> removeAllS(final Stream<? extends T> stream) {
+    default DequeX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (DequeX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (DequeX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     @Override
@@ -1108,18 +1108,18 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default DequeX<T> retainAllI(final Iterable<? extends T> it) {
+    default DequeX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (DequeX<T>) LazyCollectionX.super.retainAllI(it);
+        return (DequeX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default DequeX<T> retainAllS(final Stream<? extends T> seq) {
+    default DequeX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (DequeX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (DequeX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1226,13 +1226,13 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     @Override
-    default DequeX<T> append(T... values) {
-        return (DequeX<T>)LazyCollectionX.super.append(values);
+    default DequeX<T> appendAll(T... values) {
+        return (DequeX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default DequeX<T> append(T value) {
-        return (DequeX<T>)LazyCollectionX.super.append(value);
+    default DequeX<T> appendAll(T value) {
+        return (DequeX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

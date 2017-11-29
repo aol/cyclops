@@ -22,7 +22,6 @@ import cyclops.typeclasses.*;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.react.collectors.lazy.Blocker;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.Zippable;
 
 import com.oath.cyclops.util.box.Mutable;
@@ -612,7 +611,7 @@ public class Future<T> implements To<Future<T>>,
 
     Future<ReactiveSeq<T>> identity = Future.ofResult(ReactiveSeq.empty());
 
-    BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<Future<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 

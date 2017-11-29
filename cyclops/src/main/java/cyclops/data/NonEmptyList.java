@@ -135,8 +135,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public ImmutableList<T> append(T value) {
-        return of(head,tail.append(value));
+    public ImmutableList<T> appendAll(T value) {
+        return of(head,tail.appendAll(value));
     }
 
     @Override
@@ -424,8 +424,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> append(T... values) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.append(values);
+    public NonEmptyList<T> appendAll(T... values) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.appendAll(values);
     }
 
     @Override
@@ -448,10 +448,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return this;
     }
 
-    @Override
-    public NonEmptyList<T> prepend(Iterable<? extends T> value) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.prepend(value);
-    }
 
     @Override
     public <U extends Comparable<? super U>> NonEmptyList<T> sorted(Function<? super T, ? extends U> function) {

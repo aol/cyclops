@@ -1081,9 +1081,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default LinkedListX<T> removeAllS(final Stream<? extends T> stream) {
+    default LinkedListX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (LinkedListX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
 
@@ -1101,18 +1101,18 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default LinkedListX<T> retainAllI(final Iterable<? extends T> it) {
+    default LinkedListX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.retainAllI(it);
+        return (LinkedListX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default LinkedListX<T> retainAllS(final Stream<? extends T> seq) {
+    default LinkedListX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (LinkedListX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1188,13 +1188,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> append(T... values) {
-        return (LinkedListX<T>)LazyCollectionX.super.append(values);
+    default LinkedListX<T> appendAll(T... values) {
+        return (LinkedListX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default LinkedListX<T> append(T value) {
-        return (LinkedListX<T>)LazyCollectionX.super.append(value);
+    default LinkedListX<T> appendAll(T value) {
+        return (LinkedListX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

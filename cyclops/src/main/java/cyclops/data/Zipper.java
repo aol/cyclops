@@ -93,7 +93,7 @@ public class Zipper<T> implements Iterable<T>,
         return Option.some(result);
     }
     public <R> Option<Zipper<T>> next(){
-        return right.fold(c-> Option.some(new Zipper(left.append(point), c.head(), c.tail())), nil-> Option.none());
+        return right.fold(c-> Option.some(new Zipper(left.appendAll(point), c.head(), c.tail())), nil-> Option.none());
     }
     public <R> Zipper<T> next(Zipper<T> alt){
         return next().orElse(alt);
@@ -104,7 +104,7 @@ public class Zipper<T> implements Iterable<T>,
     public Zipper<T> cycleNext() {
         return left.fold(cons->right.fold(c->next().orElse(this), nil->{
 
-            return of(LazySeq.empty(),cons.head(),cons.tail().append(point));
+            return of(LazySeq.empty(),cons.head(),cons.tail().appendAll(point));
         }),nil->this);
 
     }
@@ -122,7 +122,7 @@ public class Zipper<T> implements Iterable<T>,
         return new Zipper<>(left,value,right.prepend(point));
     }
     public Zipper<T> right(T value){
-        return new Zipper<>(left.append(point),value,right);
+        return new Zipper<>(left.appendAll(point),value,right);
     }
     public Zipper<T> deleteAllLeftAndRight() {
         return new Zipper<>(LazySeq.empty(), point, LazySeq.empty());
@@ -158,7 +158,7 @@ public class Zipper<T> implements Iterable<T>,
     }
 
     public ReactiveSeq<T> stream(){
-        return left.stream().append(point).appendS(right.stream());
+        return left.stream().appendAll(point).appendS(right.stream());
     }
 
     @Override

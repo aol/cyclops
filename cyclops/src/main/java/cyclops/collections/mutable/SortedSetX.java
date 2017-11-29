@@ -893,9 +893,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default SortedSetX<T> removeAllS(final Stream<? extends T> stream) {
+    default SortedSetX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (SortedSetX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     @Override
@@ -916,18 +916,18 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default SortedSetX<T> retainAllI(final Iterable<? extends T> it) {
+    default SortedSetX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.retainAllI(it);
+        return (SortedSetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default SortedSetX<T> retainAllS(final Stream<? extends T> seq) {
+    default SortedSetX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (SortedSetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1043,13 +1043,13 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<T> append(T... values) {
-        return (SortedSetX<T>)LazyCollectionX.super.append(values);
+    default SortedSetX<T> appendAll(T... values) {
+        return (SortedSetX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default SortedSetX<T> append(T value) {
-        return (SortedSetX<T>)LazyCollectionX.super.append(value);
+    default SortedSetX<T> appendAll(T value) {
+        return (SortedSetX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

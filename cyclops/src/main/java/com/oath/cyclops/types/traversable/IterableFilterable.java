@@ -20,10 +20,10 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
     /**
      * Remove all elements in the supplied Stream from this filterable
      *
-     * @param stream of elements to removeValue
+     * @param stream of elements to remove
      * @return Filters with all supplied elements removed
      */
-    default Filters<T> removeAllS(final Stream<? extends T> stream) {
+    default Filters<T> removeStream(final Stream<? extends T> stream) {
         final Eval<Set<T>> set = Eval.later(()->stream.collect(Collectors.toSet()));
         return filterNot(i -> set.get().contains(i));
     }
@@ -35,7 +35,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @return Filters with all supplied elements removed
      */
     default Filters<T> removeAll(final Iterable<? extends T> it) {
-        return removeAllS(Streams.stream(it));
+        return removeStream(Streams.stream(it));
     }
 
     /**
@@ -45,7 +45,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @return Filters with all supplied values removed
      */
     default Filters<T> removeAll(final T... values) {
-        return removeAllS(Stream.of(values));
+        return removeStream(Stream.of(values));
 
     }
 
@@ -55,8 +55,8 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param it Iterable of elements to retain
      * @return Filters with supplied values retained, and others removed
      */
-    default Filters<T> retainAllI(final Iterable<? extends T> it) {
-        return retainAllS(Streams.stream(it));
+    default Filters<T> retainAll(final Iterable<? extends T> it) {
+        return retainStream(Streams.stream(it));
     }
 
     /**
@@ -65,7 +65,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @param stream of elements to retain
      * @return Filters with supplied values retained, and others removed
      */
-    default Filters<T> retainAllS(final Stream<? extends T> stream) {
+    default Filters<T> retainStream(final Stream<? extends T> stream) {
         final Eval<Set<T>> set = Eval.later(()->stream.collect(Collectors.toSet()));
         return filter(i -> set.get().contains(i));
     }
@@ -77,7 +77,7 @@ public interface IterableFilterable<T> extends Filters<T>, Iterable<T> {
      * @return Filters with supplied values retained, and others removed
      */
     default Filters<T> retainAll(final T... values) {
-        return retainAllS(Stream.of(values));
+        return retainStream(Stream.of(values));
     }
 
 }

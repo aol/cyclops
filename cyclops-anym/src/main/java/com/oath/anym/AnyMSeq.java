@@ -999,13 +999,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     @Override
-    default AnyMSeq<W,T> append(T... values) {
-        return fromIterable(IterableX.super.append(values));
+    default AnyMSeq<W,T> appendAll(T... values) {
+        return fromIterable(IterableX.super.appendAll(values));
     }
 
     @Override
-    default AnyMSeq<W,T> append(T value) {
-        return fromIterable(IterableX.super.append(value));
+    default AnyMSeq<W,T> appendAll(T value) {
+        return fromIterable(IterableX.super.appendAll(value));
     }
 
     @Override
@@ -1108,8 +1108,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
     @Override
-    default AnyMSeq<W,T> removeAllS(final Stream<? extends T> stream) {
-        return fromIterable(IterableX.super.removeAllS(stream));
+    default AnyMSeq<W,T> removeStream(final Stream<? extends T> stream) {
+        return fromIterable(IterableX.super.removeStream(stream));
     }
 
 
@@ -1120,13 +1120,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     @Override
-    default AnyMSeq<W,T> retainAllI(final Iterable<? extends T> it) {
-        return fromIterable(IterableX.super.retainAllI(it));
+    default AnyMSeq<W,T> retainAll(final Iterable<? extends T> it) {
+        return fromIterable(IterableX.super.retainAll(it));
     }
 
     @Override
-    default AnyMSeq<W,T> retainAllS(final Stream<? extends T> stream) {
-        return fromIterable(IterableX.super.retainAllS(stream));
+    default AnyMSeq<W,T> retainStream(final Stream<? extends T> stream) {
+        return fromIterable(IterableX.super.retainStream(stream));
     }
 
     @Override
@@ -1189,10 +1189,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.prependAll(value));
     }
 
-    @Override
-    default AnyMSeq<W,T> prepend(Iterable<? extends T> value) {
-        return fromIterable(IterableX.super.prepend(value));
-    }
 
     @Override
     default AnyMSeq<W,T> updateAt(int pos, T value) {

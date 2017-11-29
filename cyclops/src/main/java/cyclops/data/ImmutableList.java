@@ -136,9 +136,9 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> prepend(T value);
-    ImmutableList<T> prependAll(Iterable<? extends T> value);
 
-    ImmutableList<T> append(T value);
+
+    ImmutableList<T> appendAll(T value);
     ImmutableList<T> appendAll(Iterable<? extends T> value);
 
     ImmutableList<T> reverse();
@@ -375,8 +375,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<T> removeAllS(Stream<? extends T> stream) {
-        return unitStream(stream().removeAllS(stream));
+    default ImmutableList<T> removeStream(Stream<? extends T> stream) {
+        return unitStream(stream().removeStream(stream));
     }
 
 
@@ -391,13 +391,13 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().retainAllI(it));
+    default ImmutableList<T> retainAll(Iterable<? extends T> it) {
+        return unitStream(stream().retainAll(it));
     }
 
     @Override
-    default ImmutableList<T> retainAllS(Stream<? extends T> stream) {
-        return unitStream(stream().retainAllS(stream));
+    default ImmutableList<T> retainStream(Stream<? extends T> stream) {
+        return unitStream(stream().retainStream(stream));
     }
 
     @Override
@@ -707,10 +707,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<T> append(T... values) {
+    default ImmutableList<T> appendAll(T... values) {
         ImmutableList<T> res = this;
         for(T t : values){
-            res = res.append(t);
+            res = res.appendAll(t);
         }
         return res;
     }
@@ -730,7 +730,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         if(pos==0)
             return prependAll(values);
         if(pos>=size())
-            return append(values);
+            return appendAll(values);
         return unitIterable(IterableX.super.insertAt(pos,values));
     }
 
@@ -779,9 +779,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitIterable(IterableX.super.removeAll(value));
     }
 
-    @Override
-    default ImmutableList<T> prepend(Iterable<? extends T> value) {
-        return unitIterable(IterableX.super.prepend(value));
+    default ImmutableList<T> prependAll(Iterable<? extends T> value) {
+        return unitIterable(this.prependAll(value));
     }
 
     @Override
