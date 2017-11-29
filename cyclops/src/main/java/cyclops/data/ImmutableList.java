@@ -780,7 +780,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     default ImmutableList<T> prependAll(Iterable<? extends T> value) {
-        return unitIterable(this.prependAll(value));
+        return unitIterable(IterableX.super.prependAll(value));
     }
 
     @Override

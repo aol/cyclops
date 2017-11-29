@@ -641,10 +641,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
     }
 
-/**    //@TODO - collision with collection removeAll
-    default IterableX<T> removeAll(Iterable<? extends T> value){
-        return unitIterator(this.removeAll(value).iterator());
-    }**/
+
     default IterableX<T> removeFirst(Predicate<? super T> pred){
         return (IterableX<T>)ExtendedTraversable.super.removeFirst(pred);
     }
@@ -740,24 +737,33 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         IterableX<T> back = drop(i);
 
 
-        return this.prependAll(front);
+        return back.prepend(value).prependAll(front);
     }
     @Override
     default IterableX<T> insertAt(int pos, T... values) {
         IterableX<T> front = take(pos);
         IterableX<T> back = drop(pos);
+        for(int i=values.length-1;i>=0;--i){
+           back = back.prepend(values[i]);
+        }
 
 
-        return this.prependAll(front);
+        return back.prependAll(front);
     }
 
     @Override
     default IterableX<T> insertAt(int pos, Iterable<? extends T> values) {
         IterableX<T> front = take(pos);
         IterableX<T> back = drop(pos);
+        List<T> list = new ArrayList<>();
+        for(T next : values){
+          list.add(next);
+        }
+        for(int i=list.size()-1;i>=0;--i){
+          back = back.prepend(list.get(i));
+        }
 
-
-        return this.prependAll(front);
+      return back.prependAll(front);
     }
 
 
