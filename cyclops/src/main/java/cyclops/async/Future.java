@@ -1073,12 +1073,8 @@ public class Future<T> implements To<Future<T>>,
         return Future.<R> of(future.<R> thenCompose(t -> (CompletionStage<R>) mapper.apply(t)));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Value#toLazyEither()
-     */
-    public Either<Throwable, T> toXor() {
+
+    public Either<Throwable, T> toEither() {
         try {
             return Either.right(future.join());
         } catch (final Throwable t) {

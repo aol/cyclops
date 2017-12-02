@@ -119,7 +119,7 @@ public class ValueSubscriberTest {
         Either.right(1)
              .subscribe(sub);
 
-        Either<Throwable,Integer> maybe = sub.toXor();
+        Either<Throwable,Integer> maybe = sub.toEither();
         assertThat(maybe.toOptional().get(),equalTo(1));
     }
     @Test
@@ -128,7 +128,7 @@ public class ValueSubscriberTest {
         Either.<Integer,Integer>left(1)
              .subscribe(sub);
 
-        Either<Throwable,Integer> xor = sub.toXor();
+        Either<Throwable,Integer> xor = sub.toEither();
         assertThat(xor.swap().orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test
@@ -137,7 +137,7 @@ public class ValueSubscriberTest {
         Either.right(1)
              .subscribe(sub);
 
-        Either<Integer,Throwable> maybe = sub.toXor().swap();
+        Either<Integer,Throwable> maybe = sub.toEither().swap();
         assertThat(maybe.swap().orElse(null),equalTo(1));
     }
     @Test
@@ -146,7 +146,7 @@ public class ValueSubscriberTest {
         Either.<Integer,Integer>left(1)
              .subscribe(sub);
 
-        Either<Integer,Throwable> xor = sub.toXor().swap();
+        Either<Integer,Throwable> xor = sub.toEither().swap();
         assertThat(xor.orElse(null),instanceOf(NoSuchElementException.class));
     }
     @Test

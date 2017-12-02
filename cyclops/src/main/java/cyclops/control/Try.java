@@ -165,7 +165,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     return xor;
   }
 
-  public Try<T,X> withExceptions(Class<? extends X>... toCatch){
+  @SafeVarargs
+  public final Try<T,X> withExceptions(Class<? extends X>... toCatch){
     return withClasses(toCatch);
   }
 
@@ -284,7 +285,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    * @param reducer Reducer to accumulate results
    * @return Try populated with the accumulate failure operation
    */
-  public static <ST extends Throwable, PT, R> Either<PT, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
+  public static <ST extends Throwable, PT, R> Either<PT, R> accumulateFailures(final IterableX<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
 
     return sequenceFailures(xors).map(r -> r.mapReduce(reducer));
   }
@@ -311,7 +312,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    * @param reducer Semigroup to combine values from each Ior
    * @return Try populated with the accumulate Secondary operation
    */
-  public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final CollectionX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
+  public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final IterableX<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
                                                                               final Monoid<R> reducer) {
     return sequenceFailures(xors).map(s -> s.map(mapper)
       .reduce(reducer));
@@ -703,7 +704,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
   /**
    * @return Convert this Try to an Xor with the error type as the left value
    */
-  public Either<X, T> toXorWithError() {
+  public Either<X, T> toEitherWithError() {
     return xor;
   }
 

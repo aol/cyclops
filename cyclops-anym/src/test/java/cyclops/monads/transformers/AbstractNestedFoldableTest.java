@@ -125,14 +125,14 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testReduceStreamOfQextendsMonoidOfT() {
-        assertThat(of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))).singleOrElse().singleOrElse(null).length(),
+        assertThat(of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))).singleOrElse("--").singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void testReduceIterableOfQextendsMonoidOfT() {
         assertThat(of("hello","2","world","4").reduce(ListX.of(Reducers.toString(",")))
-                    .singleOrElse().singleOrElse(null).length(),
+                    .singleOrElse("booo").singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
@@ -308,12 +308,12 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testFirstValue() {
-        assertThat(of(1,2,3).firstValue().singleOrElse(null),anyOf(equalTo(1),equalTo(2),equalTo(3)));
+        assertThat(of(1,2,3).firstValue(-1).singleOrElse(null),anyOf(equalTo(1),equalTo(2),equalTo(3)));
     }
 
     @Test
     public void testSingle() {
-        assertThat(of(1).singleOrElse().singleOrElse(null),equalTo(1));
+        assertThat(of(1).singleOrElse(-1).singleOrElse(null),equalTo(1));
     }
 
     @Test

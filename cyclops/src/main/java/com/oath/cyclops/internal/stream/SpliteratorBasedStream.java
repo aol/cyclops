@@ -86,7 +86,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return LazyEither.fromLazy(Eval.later(()->{
             ValueSubscriber<T> valueSubscriber = ValueSubscriber.subscriber();
             subscribe(valueSubscriber);
-            return LazyEither.fromXor(valueSubscriber.toXor());
+            return LazyEither.fromEither(valueSubscriber.toEither());
         }));
     }
 
