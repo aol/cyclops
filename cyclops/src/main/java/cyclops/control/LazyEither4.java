@@ -611,7 +611,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                           m->Ior.left(null),
                           r->Ior.right(r));
     }
-     default Either<LT1, RT> toXor() {
+     default Either<LT1, RT> toEither() {
          return this.visit(l-> Either.left(l),
                            m-> Either.left(null),
                            m-> Either.left(null),

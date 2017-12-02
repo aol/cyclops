@@ -403,7 +403,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
      * </pre>
      *
-     * @param iterator
+     * @param stream
      * @return True if Monad starts with Iterators sequence of data
      */
     default AnyM<W,Boolean> startsWith(final Stream<T> stream) {
@@ -457,8 +457,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *
      * @return first value in this Stream
      */
-    default AnyM<W,T> firstValue() {
-        return nestedFoldables().map(s -> s.firstValue(null));
+    default AnyM<W,T> firstValue(T alt) {
+        return nestedFoldables().map(s -> s.firstValue(alt));
     }
 
     /**
@@ -479,8 +479,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @return a single value or an UnsupportedOperationException if 0/1 values
      *         in this Stream
      */
-    default AnyM<W,T> singleOrElse() {
-        return nestedFoldables().map(s -> s.singleOrElse(null));
+    default AnyM<W,T> singleOrElse(T alt) {
+        return nestedFoldables().map(s -> s.singleOrElse(alt));
 
     }
 

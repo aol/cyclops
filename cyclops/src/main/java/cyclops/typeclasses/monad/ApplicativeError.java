@@ -26,7 +26,7 @@ public interface ApplicativeError<W,E> extends Applicative<W>{
             return raiseError(mapper.apply(t));
         }
     }
-    default <T,X extends Throwable> Higher<W,T> fromXor(Either<E,T> t){
+    default <T,X extends Throwable> Higher<W,T> fromEither(Either<E,T> t){
         return t.visit(this::raiseError,a->unit(a));
     }
      default <T> Higher<W, LazyEither<E, T>> recover(Higher<W, T> ds){
