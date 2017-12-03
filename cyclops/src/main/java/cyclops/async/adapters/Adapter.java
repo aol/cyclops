@@ -5,8 +5,6 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.types.futurestream.Continuation;
-import cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Either;
 import com.oath.cyclops.react.async.subscription.Continueable;
@@ -50,22 +48,6 @@ public interface Adapter<T> {
      */
     public boolean fromStream(Stream<T> stream);
 
-    /**
-     * Generate a LazyFutureStream from the data that is passed to this Adapter using the supplied LazyReact futureStream builder
-     *
-     * @param reactor FutureStream builder used to determine parallelism and other settings for the created FutureStream
-     * @return LazyFutureStream of data from this Adapter
-     */
-    default FutureStream<T> futureStream(final LazyReact reactor) {
-        return reactor.fromStream(stream());
-    }
-
-    /**
-     * @return Sequential future reactiveStream generated from this adapter {@see  Adapter#futureStream(LazyReact) }
-     */
-    default FutureStream<T> futureStream() {
-        return new LazyReact().fromStream(stream());
-    }
 
     /**
      * @return Stream of data

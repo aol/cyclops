@@ -836,13 +836,13 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> append(T... values) {
-        return (ListT) FoldableTransformerSeq.super.append(values);
+    public ListT<W,T> appendAll(T... values) {
+        return (ListT) FoldableTransformerSeq.super.appendAll(values);
     }
 
     @Override
-    public ListT<W,T> append(T value) {
-        return (ListT) FoldableTransformerSeq.super.append(value);
+    public ListT<W,T> appendAll(T value) {
+        return (ListT) FoldableTransformerSeq.super.appendAll(value);
     }
 
     @Override
@@ -893,8 +893,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     @Override
-    public ListT<W,T> removeAllS(final Stream<? extends T> stream) {
-        return (ListT) FoldableTransformerSeq.super.removeAllS(stream);
+    public ListT<W,T> removeStream(final Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.removeStream(stream);
     }
 
 
@@ -904,8 +904,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> removeAllI(final Iterable<? extends T> it) {
-        return (ListT) FoldableTransformerSeq.super.removeAllI(it);
+    public ListT<W,T> removeAll(final Iterable<? extends T> it) {
+        return (ListT) FoldableTransformerSeq.super.removeAll(it);
     }
 
 
@@ -923,8 +923,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     @Override
-    public ListT<W,T> retainAllI(final Iterable<? extends T> it) {
-        return (ListT) FoldableTransformerSeq.super.retainAllI(it);
+    public ListT<W,T> retainAll(final Iterable<? extends T> it) {
+        return (ListT) FoldableTransformerSeq.super.retainAll(it);
     }
 
     @Override
@@ -933,8 +933,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> retainAllS(final Stream<? extends T> stream) {
-        return (ListT) FoldableTransformerSeq.super.retainAllS(stream);
+    public ListT<W,T> retainStream(final Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.retainStream(stream);
     }
 
     @Override

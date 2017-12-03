@@ -223,7 +223,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
 
-    public TrieSet<T> append(T append) {
+    public TrieSet<T> appendAll(T append) {
         return add(append);
     }
 
@@ -271,18 +271,18 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<T> removeAllS(Stream<? extends T> stream) {
-        return (TrieSet<T>)ImmutableSet.super.removeAllS(stream);
+    public TrieSet<T> removeStream(Stream<? extends T> stream) {
+        return (TrieSet<T>)ImmutableSet.super.removeStream(stream);
     }
 
     @Override
-    public TrieSet<T> retainAllI(Iterable<? extends T> it) {
-        return (TrieSet<T>)ImmutableSet.super.retainAllI(it);
+    public TrieSet<T> retainAll(Iterable<? extends T> it) {
+        return (TrieSet<T>)ImmutableSet.super.retainAll(it);
     }
 
     @Override
-    public TrieSet<T> retainAllS(Stream<? extends T> stream) {
-        return (TrieSet<T>)ImmutableSet.super.retainAllS(stream);
+    public TrieSet<T> retainStream(Stream<? extends T> stream) {
+        return (TrieSet<T>)ImmutableSet.super.retainStream(stream);
     }
 
     @Override
@@ -565,8 +565,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<T> append(T... values) {
-        return (TrieSet<T>) ImmutableSet.super.append(values);
+    public TrieSet<T> appendAll(T... values) {
+        return (TrieSet<T>) ImmutableSet.super.appendAll(values);
     }
 
     @Override
@@ -594,10 +594,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return this;
     }
 
-    @Override
-    public TrieSet<T> prepend(Iterable<? extends T> value) {
-        return (TrieSet<T>) ImmutableSet.super.prepend(value);
-    }
 
     @Override
     public <U extends Comparable<? super U>> TrieSet<T> sorted(Function<? super T, ? extends U> function) {
@@ -627,8 +623,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<T> removeAllI(Iterable<? extends T> it) {
-        return (TrieSet<T>) ImmutableSet.super.removeAllI(it);
+    public TrieSet<T> removeAll(Iterable<? extends T> it) {
+        return (TrieSet<T>) ImmutableSet.super.removeAll(it);
     }
 
     @Override

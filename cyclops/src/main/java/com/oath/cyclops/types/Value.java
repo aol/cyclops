@@ -187,7 +187,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
      * @return Try that has the same value as this Value or the provided Exception
      */
     default <X extends Throwable> Try<T, X> toTry(final X throwable) {
-        return Try.fromEither(toTry().asXor().mapLeft(t->throwable));
+        return Try.fromEither(toTry().asEither().mapLeft(t->throwable));
 
     }
 

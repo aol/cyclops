@@ -160,11 +160,11 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
     @Override
     public IntMap<T> prependAll(Iterable<? extends T> value) {
-        return unitStream(stream().prepend(value));
+        return unitStream(stream().prependAll(value));
     }
 
     @Override
-    public IntMap<T> append(T value) {
+    public IntMap<T> appendAll(T value) {
         return this.plus(value);
     }
 
@@ -310,18 +310,18 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<T> removeAllS(Stream<? extends T> stream) {
-        return (IntMap<T>)ImmutableList.super.removeAllS(stream);
+    public IntMap<T> removeStream(Stream<? extends T> stream) {
+        return (IntMap<T>)ImmutableList.super.removeStream(stream);
     }
 
     @Override
-    public IntMap<T> retainAllI(Iterable<? extends T> it) {
-        return (IntMap<T>)ImmutableList.super.retainAllI(it);
+    public IntMap<T> retainAll(Iterable<? extends T> it) {
+        return (IntMap<T>)ImmutableList.super.retainAll(it);
     }
 
     @Override
-    public IntMap<T> retainAllS(Stream<? extends T> stream) {
-        return (IntMap<T>)ImmutableList.super.retainAllS(stream);
+    public IntMap<T> retainStream(Stream<? extends T> stream) {
+        return (IntMap<T>)ImmutableList.super.retainStream(stream);
     }
 
     @Override
@@ -616,8 +616,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<T> append(T... values) {
-        return (IntMap<T>) ImmutableList.super.append(values);
+    public IntMap<T> appendAll(T... values) {
+        return (IntMap<T>) ImmutableList.super.appendAll(values);
     }
 
     @Override
@@ -645,10 +645,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return this;
     }
 
-    @Override
-    public IntMap<T> prepend(Iterable<? extends T> value) {
-        return (IntMap<T>) ImmutableList.super.prepend(value);
-    }
 
     @Override
     public <U extends Comparable<? super U>> IntMap<T> sorted(Function<? super T, ? extends U> function) {
@@ -798,7 +794,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         }
 
         @Override
-        public ImmutableList<T> append(T value) {
+        public ImmutableList<T> appendAll(T value) {
             return empty();
         }
 
@@ -931,7 +927,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             IntMap<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = res.append(n);
+                res = res.appendAll(n);
             }
             v=res;
         }

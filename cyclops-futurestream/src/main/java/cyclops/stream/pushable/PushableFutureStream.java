@@ -1,4 +1,4 @@
-package com.oath.cyclops.util.stream.pushable;
+package cyclops.stream.pushable;
 
 import cyclops.async.adapters.Queue;
 import cyclops.reactive.FutureStream;

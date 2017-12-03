@@ -130,7 +130,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
 
-    public Either<Throwable, T> toXor() {
+    public Either<Throwable, T> toEither() {
         if (orElse(null) == null && firstError.get() != UNSET) {
             return Either.left((Throwable) firstError.get());
         }

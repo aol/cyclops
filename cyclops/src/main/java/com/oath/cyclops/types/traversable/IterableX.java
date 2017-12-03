@@ -279,13 +279,12 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> removeAllS(final Stream<? extends T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.removeAllS(stream);
+    default IterableX<T> removeStream(final Stream<? extends T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.removeStream(stream);
     }
 
-    @Override
-    default IterableX<T> removeAllI(final Iterable<? extends T> it) {
-        return (IterableX<T>)ExtendedTraversable.super.removeAllI(it);
+    default IterableX<T> removeAll(final Iterable<? extends T> it) {
+        return (IterableX<T>)ExtendedTraversable.super.removeAll(it);
     }
 
     @Override
@@ -294,13 +293,13 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> retainAllI(final Iterable<? extends T> it) {
-        return (IterableX<T>)ExtendedTraversable.super.retainAllI(it);
+    default IterableX<T> retainAll(final Iterable<? extends T> it) {
+        return (IterableX<T>)ExtendedTraversable.super.retainAll(it);
     }
 
     @Override
-    default IterableX<T> retainAllS(final Stream<? extends T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.retainAllS(stream);
+    default IterableX<T> retainStream(final Stream<? extends T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.retainStream(stream);
     }
 
     @Override
@@ -620,14 +619,14 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> plusAll(Iterable<? extends T> list){
         IterableX<T> res = this;
         for(T next : list){
-            res = res.append(next);
+            res = res.appendAll(next);
         }
         return res;
     }
 
 
     default IterableX<T> plus(T value){
-        return append(value);
+        return appendAll(value);
     }
 
 
@@ -642,23 +641,20 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.removeAt(pos);
     }
 
-    //@TODO - collision with collection removeAll
-    default IterableX<T> removeAll(Iterable<? extends T> value){
-        return unitIterator(stream().removeAllI(value).iterator());
-    }
+
     default IterableX<T> removeFirst(Predicate<? super T> pred){
         return (IterableX<T>)ExtendedTraversable.super.removeFirst(pred);
     }
 
 
     @Override
-    default IterableX<T> append(T... values) {
-        return (IterableX<T>)ExtendedTraversable.super.append(values);
+    default IterableX<T> appendAll(T... values) {
+        return (IterableX<T>)ExtendedTraversable.super.appendAll(values);
     }
 
     @Override
-    default IterableX<T> append(T value) {
-        return (IterableX<T>)ExtendedTraversable.super.append(value);
+    default IterableX<T> appendAll(T value) {
+        return (IterableX<T>)ExtendedTraversable.super.appendAll(value);
     }
     @Override
     default IterableX<T> appendAll(Iterable<? extends T> value){
@@ -670,10 +666,6 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
     @Override
     default IterableX<T> prepend(T value) {
-        return (IterableX<T>)ExtendedTraversable.super.prepend(value);
-    }
-    @Override
-    default IterableX<T> prepend(Iterable<? extends T> value) {
         return (IterableX<T>)ExtendedTraversable.super.prepend(value);
     }
 
@@ -745,24 +737,33 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         IterableX<T> back = drop(i);
 
 
-        return back.prepend(value).prepend(front);
+        return back.prepend(value).prependAll(front);
     }
     @Override
     default IterableX<T> insertAt(int pos, T... values) {
         IterableX<T> front = take(pos);
         IterableX<T> back = drop(pos);
+        for(int i=values.length-1;i>=0;--i){
+           back = back.prepend(values[i]);
+        }
 
 
-        return back.prependAll(values).prepend(front);
+        return back.prependAll(front);
     }
 
     @Override
     default IterableX<T> insertAt(int pos, Iterable<? extends T> values) {
         IterableX<T> front = take(pos);
         IterableX<T> back = drop(pos);
+        List<T> list = new ArrayList<>();
+        for(T next : values){
+          list.add(next);
+        }
+        for(int i=list.size()-1;i>=0;--i){
+          back = back.prepend(list.get(i));
+        }
 
-
-        return back.prependAll(values).prepend(front);
+      return back.prependAll(front);
     }
 
 

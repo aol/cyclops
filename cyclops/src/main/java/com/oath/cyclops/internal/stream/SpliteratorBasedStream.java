@@ -86,7 +86,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return LazyEither.fromLazy(Eval.later(()->{
             ValueSubscriber<T> valueSubscriber = ValueSubscriber.subscriber();
             subscribe(valueSubscriber);
-            return LazyEither.fromXor(valueSubscriber.toXor());
+            return LazyEither.fromEither(valueSubscriber.toEither());
         }));
     }
 
@@ -575,19 +575,19 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     //TODO use spliterators and createSeq
     @Override
-    public ReactiveSeq<T> append(final T other) {
+    public ReactiveSeq<T> appendAll(final T other) {
         return ReactiveSeq.concat(get(),new SingleSpliterator<T>(other));
     }
 
     @Override
-    public ReactiveSeq<T> append(final T... other) {
+    public ReactiveSeq<T> appendAll(final T... other) {
         return ReactiveSeq.concat(get(),Stream.of(other).spliterator());
     }
     @Override
     public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
         return ReactiveSeq.concat(avoidCopy(other),get());
     }
-    public ReactiveSeq<T> prepend(final Iterable<? extends T> other) {
+    public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {
         return ReactiveSeq.concat(avoidCopy(other),get());
     }
 

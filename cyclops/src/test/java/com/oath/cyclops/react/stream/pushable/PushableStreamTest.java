@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
-import com.oath.cyclops.util.stream.pushable.PushableFutureStream;
-import com.oath.cyclops.util.stream.pushable.PushableReactiveSeq;
+import cyclops.stream.pushable.PushableFutureStream;
+import cyclops.stream.pushable.PushableReactiveSeq;
 import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
@@ -29,8 +29,8 @@ import cyclops.async.adapters.Signal;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.SetX;
-import com.oath.cyclops.util.stream.pushable.MultipleStreamSource;
-import com.oath.cyclops.util.stream.pushable.PushableStream;
+import cyclops.stream.pushable.MultipleStreamSource;
+import cyclops.stream.pushable.PushableStream;
 
 import reactor.core.publisher.Flux;
 

@@ -1,6 +1,10 @@
 package com.oath.cyclops.types.persistent;
 
+
+import com.oath.cyclops.types.persistent.views.SortedSetView;
 import cyclops.control.Option;
+
+import java.util.Comparator;
 
 public interface PersistentSortedSet<T> extends PersistentSet<T> {
     public PersistentSortedSet<T> plus(T e);
@@ -13,4 +17,9 @@ public interface PersistentSortedSet<T> extends PersistentSet<T> {
 
     Option<T> get(int index);
 
+    Comparator<? super T> comparator();
+
+  default SortedSetView<T> sortedSetView(){
+    return new SortedSetView.Impl<>(this);
+  }
 }

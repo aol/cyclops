@@ -1,5 +1,6 @@
 package cyclops.collections.immutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
@@ -936,18 +937,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default PersistentSetX<T> removeAllS(final Stream<? extends T> stream) {
+    default PersistentSetX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.removeAllS(stream);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default PersistentSetX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (PersistentSetX<T>) LazyCollectionX.super.removeAllI(it);
+        return (PersistentSetX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
     /* (non-Javadoc)
@@ -958,23 +950,27 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return (PersistentSetX<T>) LazyCollectionX.super.removeAll(values);
     }
+    @Override
+    default PersistentSetX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
+    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentSetX<T> retainAllI(final Iterable<? extends T> it) {
+    default PersistentSetX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.retainAllI(it);
+        return (PersistentSetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default PersistentSetX<T> retainAllS(final Stream<? extends T> seq) {
+    default PersistentSetX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (PersistentSetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1049,13 +1045,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<T> append(T... values) {
-        return (PersistentSetX<T>)LazyCollectionX.super.append(values);
+    default PersistentSetX<T> appendAll(T... values) {
+        return (PersistentSetX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default PersistentSetX<T> append(T value) {
-        return (PersistentSetX<T>)LazyCollectionX.super.append(value);
+    default PersistentSetX<T> appendAll(T value) {
+        return (PersistentSetX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

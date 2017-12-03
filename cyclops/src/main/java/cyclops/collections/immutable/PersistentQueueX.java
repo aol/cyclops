@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
@@ -52,7 +53,7 @@ import java.util.stream.Stream;
  * @param <T> the type of elements held in this collection
  */
 public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
-                                             PersistentQueue<T>,
+                                              PersistentQueue<T>,
                                              LazyCollectionX<T>,
                                              OnEmptySwitch<T, PersistentQueue<T>>,
                                              Higher<persistentQueueX,T>{
@@ -1160,23 +1161,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * removeAll(java.util.stream.Stream)
      */
     @Override
-    default PersistentQueueX<T> removeAllS(final Stream<? extends T> stream) {
+    default PersistentQueueX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (PersistentQueueX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * removeAll(java.lang.Iterable)
-     */
-    @Override
-    default PersistentQueueX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (PersistentQueueX<T>) LazyCollectionX.super.removeAllI(it);
-    }
 
     /*
      * (non-Javadoc)
@@ -1190,6 +1179,10 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         return (PersistentQueueX<T>) LazyCollectionX.super.removeAll(values);
     }
+    @Override
+    default PersistentQueueX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
+    }
 
     /*
      * (non-Javadoc)
@@ -1199,9 +1192,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * retainAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentQueueX<T> retainAllI(final Iterable<? extends T> it) {
+    default PersistentQueueX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.retainAllI(it);
+        return (PersistentQueueX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /*
@@ -1212,9 +1205,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * retainAllI(java.util.stream.Stream)
      */
     @Override
-    default PersistentQueueX<T> retainAllS(final Stream<? extends T> seq) {
+    default PersistentQueueX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (PersistentQueueX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /*

@@ -7,6 +7,7 @@ import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.data.Comparators;
+import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -19,11 +20,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 /*
-  A Tuple implementation that can be lazyEither eager / strict or lazy
+  A Tuple implementation that can be either eager / strict or lazy
 
 
  */
-@AllArgsConstructor//(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
                                         Serializable,
                                         Higher4<tuple4,T1,T2,T3,T4>,
@@ -98,6 +99,10 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
 
     public Tuple4<T1,T2,T3,T4> eager(){
         return of(_1(),_2(),_3(),_4());
+    }
+
+    public <R1> R1 transform(Function4<? super T1, ? super T2, ? super T3,? super T4, ? extends R1> fn){
+      return fn.apply(_1(),_2(),_3(),_4());
     }
 
     public Tuple4<T1,T2,T3,T4> memo(){

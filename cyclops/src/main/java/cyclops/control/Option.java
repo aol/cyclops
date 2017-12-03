@@ -38,6 +38,7 @@ public interface Option<T> extends To<Option<T>>,
 
 
 
+
     @SuppressWarnings("rawtypes")
     final static Option EMPTY = new Option.None<>();
 
@@ -322,7 +323,7 @@ public interface Option<T> extends To<Option<T>>,
 
     Option<ReactiveSeq<T>> identity = Option.some(ReactiveSeq.empty());
 
-    BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<Option<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 

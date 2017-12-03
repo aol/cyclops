@@ -5,7 +5,6 @@ import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.data.Comparators;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.orderedSetX;
 import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<orderedSetX> {
     }
 	@Test
 	public void prependAppend(){
-		assertThat(of(1).prependS(Stream.of(2)).append(3).prepend(4).append(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
+		assertThat(of(1).prependS(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
 				.insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
 	}
 	@Test

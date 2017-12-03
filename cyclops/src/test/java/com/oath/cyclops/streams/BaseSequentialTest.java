@@ -745,7 +745,7 @@ public class BaseSequentialTest {
     @Test
     public void append() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of(1, 2, 3).append(100, 200, 300)
+            List<String> result = of(1, 2, 3).appendAll(100, 200, 300)
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));

@@ -5,8 +5,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.oath.cyclops.internal.stream.ReversedIterator;
-import cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.internal.stream.SeqUtils;
 
@@ -19,16 +17,6 @@ import com.oath.cyclops.internal.stream.SeqUtils;
  */
 public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
 
-    /**
-     * Convert this type to a FutureStream using the provided LazyReact futureStream builder
-     * to configure parallelism / executors and more.
-     *
-     * @param react LazyReact futureStream builder (configurer)
-     * @return This convertable type converted to a FutureStream
-     */
-    default FutureStream<T> futureStream(final LazyReact react) {
-        return react.fromIterable(this);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.reactiveStream.ConvertableToReactiveSeq#reactiveSeq()

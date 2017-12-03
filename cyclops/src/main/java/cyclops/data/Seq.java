@@ -72,7 +72,7 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> removeValue(T e);
     @Override
     default Seq<T> removeAll(Iterable<? extends T> list) {
-        return (Seq<T>)ImmutableList.super.removeAllI(list);
+        return (Seq<T>) ImmutableList.super.removeAll(list);
     }
 
     @Override
@@ -89,10 +89,7 @@ public interface Seq<T> extends ImmutableList<T>,
     default Seq<T> removeAt(long pos){
         return (Seq<T>)ImmutableList.super.removeAt(pos);
     }
-    @Override
-    default Seq<T> removeAllI(Iterable<? extends T> it) {
-        return (Seq<T>)ImmutableList.super.removeAllI(it);
-    }
+
     @Override
     default Seq<T> insertAt(int pos, T... values) {
         return (Seq<T>)ImmutableList.super.insertAt(pos,values);
@@ -243,7 +240,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         return l.visit(c->c.head,n->alt.get());
     }
-    default Seq<T> append(T value){
+    default Seq<T> appendAll(T value){
         return Seq.of(value).prependAll(this);
     }
     default Seq<T> appendAll(Iterable<? extends T> it){
@@ -254,10 +251,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return cons(value,this);
     }
     default Seq<T> prependAll(Iterable<? extends T> it){
-        Seq<T> value = narrow(fromIterable(it));
-        return value.fold(cons->
-                        cons.foldRight(this,(a,b)->b.prepend(a))
-                ,nil->this);
+      return (Seq<T>)ImmutableList.super.prependAll(it);
     }
 
     default Seq<T> take(final long num) {
@@ -340,18 +334,18 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<T> removeAllS(Stream<? extends T> stream) {
-        return (Seq<T>)ImmutableList.super.removeAllS(stream);
+    default Seq<T> removeStream(Stream<? extends T> stream) {
+        return (Seq<T>)ImmutableList.super.removeStream(stream);
     }
 
     @Override
-    default Seq<T> retainAllI(Iterable<? extends T> it) {
-        return (Seq<T>)ImmutableList.super.retainAllI(it);
+    default Seq<T> retainAll(Iterable<? extends T> it) {
+        return (Seq<T>)ImmutableList.super.retainAll(it);
     }
 
     @Override
-    default Seq<T> retainAllS(Stream<? extends T> stream) {
-        return (Seq<T>)ImmutableList.super.retainAllS(stream);
+    default Seq<T> retainStream(Stream<? extends T> stream) {
+        return (Seq<T>)ImmutableList.super.retainStream(stream);
     }
 
     @Override
@@ -652,8 +646,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<T> append(T... values) {
-        return (Seq<T>) ImmutableList.super.append(values);
+    default Seq<T> appendAll(T... values) {
+        return (Seq<T>) ImmutableList.super.appendAll(values);
     }
 
     @Override
@@ -679,11 +673,6 @@ public interface Seq<T> extends ImmutableList<T>,
     @Override
     default <EX extends Throwable> Seq<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
         return this;
-    }
-
-    @Override
-    default Seq<T> prepend(Iterable<? extends T> value) {
-        return (Seq<T>) ImmutableList.super.prepend(value);
     }
 
     @Override

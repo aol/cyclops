@@ -61,8 +61,8 @@ public class PMapXImpl<K, V> implements PersistentMapX<K, V> {
 
 
     @Override
-    public PersistentMapX<K, V> removeAll(final Iterable<? extends K> keys) {
-        return withMap(map.removeAll(keys));
+    public PersistentMapX<K, V> removeAllKeys(final Iterable<? extends K> keys) {
+        return withMap(map.removeAllKeys(keys));
     }
 
 

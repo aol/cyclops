@@ -51,13 +51,13 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> append(T... values){
-        return unitAnyM(transformerStream().map(s -> s.append(values)));
+    default Traversable<T> appendAll(T... values){
+        return unitAnyM(transformerStream().map(s -> s.appendAll(values)));
     }
 
     @Override
-    default Traversable<T> append(T value){
-        return unitAnyM(transformerStream().map(s -> s.append(value)));
+    default Traversable<T> appendAll(T value){
+        return unitAnyM(transformerStream().map(s -> s.appendAll(value)));
     }
 
     @Override
@@ -149,8 +149,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     @Override
-    default Traversable<T> removeAllS(final Stream<? extends T> stream) {
-        final AnyM<W,Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAllS(stream));
+    default Traversable<T> removeStream(final Stream<? extends T> stream) {
+        final AnyM<W,Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeStream(stream));
         return unitAnyM(zipped);
     }
 
@@ -162,8 +162,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> removeAllI(final Iterable<? extends T> it) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.removeAllI(it));
+    default Traversable<T> removeAll(final Iterable<? extends T> it) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable) this.removeAll(it));
         return unitAnyM(zipped);
     }
 
@@ -188,8 +188,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> retainAllI(final Iterable<? extends T> it) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable) s.retainAllI(it));
+    default Traversable<T> retainAll(final Iterable<? extends T> it) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable) s.retainAll(it));
         return unitAnyM(zipped);
     }
 
@@ -200,8 +200,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> retainAllS(final Stream<? extends T> stream) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.retainAllS(stream));
+    default Traversable<T> retainStream(final Stream<? extends T> stream) {
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> (Traversable)s.retainStream(stream));
         return unitAnyM(zipped);
     }
 

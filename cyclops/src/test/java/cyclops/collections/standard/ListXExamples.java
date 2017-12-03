@@ -1,8 +1,6 @@
 package cyclops.collections.standard;
 
-import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.collections.mutable.ListX;
-import com.oath.cyclops.hkt.DataWitness.list;
 import org.junit.Test;
 
 /**
@@ -51,7 +49,7 @@ public class ListXExamples {
     public void append(){
 
         ListX<Integer> oneToTen = ListX.of(1,2,3,4)
-                                        .append(5,6,7,8,9,10);
+                                        .appendAll(5,6,7,8,9,10);
 
 
         ListX<Integer> alsoOneToTen = ListX.of(1,2,3,4)
