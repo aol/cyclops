@@ -142,13 +142,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> plus(T value) {
-        return append(value);
+        return appendAll(value);
     }
 
-    @Override
-    default ReactiveSeq<T> removeAll(Iterable<? extends T> value) {
-        return removeAllI(value);
-    }
 
     @Override
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
@@ -190,6 +186,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     static <E extends Enum<E>> ReactiveSeq<E> enums(Class<E> c){
         E[] values = c.getEnumConstants();
+
         return Enumeration.enums( values).stream(values[0]);
 
     }
@@ -2802,10 +2799,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to append
      * @return ReactiveSeq with appended values
      */
-    ReactiveSeq<T> append(T... values);
+    ReactiveSeq<T> appendAll(T... values);
 
 
-    ReactiveSeq<T> append(T value);
+    ReactiveSeq<T> appendAll(T value);
 
 
     ReactiveSeq<T> prepend(T value);
@@ -4587,11 +4584,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> appendAll(Iterable<? extends T> value){
         return  appendS(ReactiveSeq.fromIterable(value));
     }
-    @Override
-    default ReactiveSeq<T> prependAll(Iterable<? extends T> value){
-        return  prependS(ReactiveSeq.fromIterable(value));
-    }
-    ReactiveSeq<T> prepend(Iterable<? extends T> other);
+
+    ReactiveSeq<T> prependAll(Iterable<? extends T> other);
 
 
 
@@ -4621,13 +4615,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate);
 
     @Override
-    default ReactiveSeq<T> removeAllS(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)IterableX.super.removeAllS(stream);
+    default ReactiveSeq<T> removeStream(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)IterableX.super.removeStream(stream);
     }
 
-    @Override
-    default ReactiveSeq<T> removeAllI(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)IterableX.super.removeAllI(it);
+    default ReactiveSeq<T> removeAll(final Iterable<? extends T> it) {
+        return this.removeStream(ReactiveSeq.fromIterable(it));
     }
 
     @Override
@@ -4636,13 +4629,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     @Override
-    default ReactiveSeq<T> retainAllI(final Iterable<? extends T> it) {
-        return (ReactiveSeq<T>)IterableX.super.retainAllI(it);
+    default ReactiveSeq<T> retainAll(final Iterable<? extends T> it) {
+        return (ReactiveSeq<T>)IterableX.super.retainAll(it);
     }
 
     @Override
-    default ReactiveSeq<T> retainAllS(final Stream<? extends T> stream) {
-        return (ReactiveSeq<T>)IterableX.super.retainAllS(stream);
+    default ReactiveSeq<T> retainStream(final Stream<? extends T> stream) {
+        return (ReactiveSeq<T>)IterableX.super.retainStream(stream);
     }
 
     @Override
@@ -5238,7 +5231,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                 Higher<C2,ReactiveSeq<T>> identity = ap.unit(ReactiveSeq.empty());
 
-                BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.append(b); return a;}),acc,next);
+                BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.appendAll(b); return a;}),acc,next);
 
                 BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> { l1.appendS(l2); return l1;}),a,b); ;
 

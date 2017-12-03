@@ -11,9 +11,14 @@ import static org.junit.Assert.assertThat;
  */
 public class Tuple7Test {
     Tuple7<Integer,Integer,Integer,Integer,Integer,Integer,Integer> tuple;
+  Tuple7<String,Integer,Integer,Integer,Integer,Integer,Integer> lazyT1;
     @Before
     public void setUp() throws Exception {
         tuple = Tuple.tuple(2,5,10,10,10,10,10);
+      lazyT1 = Tuple.lazy(()->{
+        called++;
+        return "hello";
+      },()->1,()->2,()->3,()->4,()->8,()->10);
         called=  0;
 
     }
@@ -26,10 +31,7 @@ public class Tuple7Test {
     int called;
     @Test
     public void lazy() throws Exception {
-        Tuple7<String,Integer,Integer,Integer,Integer,Integer,Integer> lazyT1 = Tuple.lazy(()->{
-            called++;
-            return "hello";
-        },()->1,()->2,()->3,()->4,()->8,()->10);
+
         assertThat(called,equalTo(0));
         assertThat(lazyT1._1(),equalTo("hello"));
         assertThat(called++,equalTo(1));
@@ -149,7 +151,10 @@ public class Tuple7Test {
     }
 
 
-
+    @Test
+    public void transform(){
+      assertThat(lazyT1.transform((a,b,c,d,e,f,g)->a+b+c+d+e+f+g),equalTo("hello1234810"));
+    }
 
 
 }

@@ -104,6 +104,10 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
         return of(_1(),_2(),_3(),_4(),_5());
     }
 
+    public <R1> R1 transform(Function5<? super T1, ? super T2, ? super T3,? super T4, ? super T5, ? extends R1> fn){
+      return fn.apply(_1(),_2(),_3(),_4(),_5());
+    }
+
     public Tuple5<T1,T2,T3,T4,T5> memo(){
         Tuple5<T1,T2,T3,T4,T5> host = this;
         return new Tuple5<T1,T2,T3,T4,T5>(null,null, null,null, null){

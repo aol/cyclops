@@ -343,7 +343,7 @@ public class Pipes<K, V> {
         final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
         return get(key).peek(a -> a.stream()
                                    .subscribe(sub))
-                       .map(a -> sub.toXor())
+                       .map(a -> sub.toEither())
                        .orElse(Either.left(new NoSuchElementException(
                                                                         "no adapter for key " + key)));
     }

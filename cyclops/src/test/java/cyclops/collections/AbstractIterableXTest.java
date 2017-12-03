@@ -55,6 +55,7 @@ import static cyclops.reactive.ReactiveSeq.iterate;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
@@ -314,6 +315,11 @@ public abstract class AbstractIterableXTest {
         assertThat(of(1,2).removeValue(1),hasItem(2));
         assertThat(of(1,2).removeValue(1),not(hasItem(1)));
     }
+
+    @Test
+    public void removeAllTest(){
+      assertThat(of(1,2,3).removeAll(of(1,5,6,7,2)),equalTo(of(3)));
+    }
 	@Test
     public void minusAllOne(){
         assertThat(of().removeAll(of(1).toList()).size(),equalTo(0));
@@ -335,13 +341,13 @@ public abstract class AbstractIterableXTest {
     }
 	@Test
 	public void retainAll(){
-	    assertThat(of(1,2,3,4,5).retainAllI((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
+	    assertThat(of(1,2,3,4,5).retainAll((Iterable<Integer>)of(1,2,3)),hasItems(1,2,3));
 	}
 
 
 	@Test
     public void retainAllStream(){
-        assertThat(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)),hasItems(1,2,3));
+        assertThat(of(1,2,3,4,5).retainStream(Stream.of(1,2,3)),hasItems(1,2,3));
     }
 	@Test
     public void retainAllValues(){
@@ -349,12 +355,12 @@ public abstract class AbstractIterableXTest {
     }
 	@Test
     public void removeAll(){
-        assertThat(of(1,2,3,4,5).removeAllI((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeAll((Iterable<Integer>)of(1,2,3)),hasItems(4,5));
     }
 
     @Test
     public void removeAllStream(){
-        assertThat(of(1,2,3,4,5).removeAllS(Stream.of(1,2,3)),hasItems(4,5));
+        assertThat(of(1,2,3,4,5).removeStream(Stream.of(1,2,3)),hasItems(4,5));
     }
     @Test
     public void removeAllValues(){
@@ -2258,7 +2264,7 @@ public abstract class AbstractIterableXTest {
     @Test
     public void prependAppend(){
         assertThat(of(1)
-                    .prependS(Stream.of(2)).append(3).prepend(4).append(5,6)
+                    .prependS(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
                     .prependAll(7,8)
                     .insertAt(4,9).deleteBetween(1,2)
                 .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
@@ -2903,6 +2909,10 @@ public abstract class AbstractIterableXTest {
         List<Integer> list = ReactiveSeq.of(1,2,3,4,5).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
         assertThat(list.size(),equalTo(5));
     }
-
+  @Test
+  public void removeValue(){
+    assertThat(of(1,2,3).removeValue(0),equalTo(of(1,2,3)));
+    assertThat(of(1,2,3).removeValue(4),equalTo(of(1,2,3)));
+  }
 
 }

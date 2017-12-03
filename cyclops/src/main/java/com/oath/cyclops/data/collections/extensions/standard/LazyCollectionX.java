@@ -590,21 +590,13 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default LazyCollectionX<T> removeAllS(final Stream<? extends T> stream) {
+    default LazyCollectionX<T> removeStream(final Stream<? extends T> stream) {
 
-        return fromStream(stream().removeAllS(stream));
+        return fromStream(stream().removeStream(stream));
     }
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default LazyCollectionX<T> removeAllI(final Iterable<? extends T> it) {
-        return fromStream(stream().removeAllI(it));
-
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#removeAll(java.lang.Object[])
@@ -619,16 +611,16 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default LazyCollectionX<T> retainAllI(final Iterable<? extends T> it) {
-        return fromStream(stream().retainAllI(it));
+    default LazyCollectionX<T> retainAll(final Iterable<? extends T> it) {
+        return fromStream(stream().retainAll(it));
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default LazyCollectionX<T> retainAllS(final Stream<? extends T> stream) {
-        return fromStream(stream().retainAllS(stream));
+    default LazyCollectionX<T> retainStream(final Stream<? extends T> stream) {
+        return fromStream(stream().retainStream(stream));
     }
 
 
@@ -742,13 +734,13 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default LazyCollectionX<T> append(T... values){
-        return fromStream(stream().append(values));
+    default LazyCollectionX<T> appendAll(T... values){
+        return fromStream(stream().appendAll(values));
     }
 
     @Override
-    default LazyCollectionX<T> append(T value){
-        return fromStream(stream().append(value));
+    default LazyCollectionX<T> appendAll(T value){
+        return fromStream(stream().appendAll(value));
     }
 
     @Override
@@ -810,10 +802,6 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().prependAll(value));
     }
 
-    @Override
-    default LazyCollectionX<T> prepend(Iterable<? extends T> value) {
-        return fromStream(stream().prepend(value));
-    }
 
     @Override
     default LazyCollectionX<T> updateAt(int pos, T value) {

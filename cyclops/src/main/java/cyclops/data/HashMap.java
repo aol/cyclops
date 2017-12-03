@@ -213,7 +213,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
 
 
     @Override
-    public HashMap<K, V> removeAll(Iterable<? extends K> keys) {
+    public HashMap<K, V> removeAllKeys(Iterable<? extends K> keys) {
         HashMap<K,V> res = this;
         for(K e : keys){
             res = this.remove(e);

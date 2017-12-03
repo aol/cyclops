@@ -363,7 +363,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
     }
 
-    static <ST,PT> LazyEither<ST,PT> fromXor(Either<ST,PT> xor){
+    static <ST,PT> LazyEither<ST,PT> fromEither(Either<ST,PT> xor){
         if(xor instanceof LazyEither)
             return (LazyEither<ST,PT>)xor;
         return xor.visit(LazyEither::left, LazyEither::right);
@@ -414,7 +414,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     LazyEither<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<LazyEither<L,ReactiveSeq<T>>,LazyEither<L,T>,LazyEither<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<LazyEither<L,ReactiveSeq<T>>,LazyEither<L,T>,LazyEither<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<LazyEither<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 
@@ -784,14 +784,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return isRight();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Value#toLazyEither()
-     */
-    default Either<LT, RT> toXor() {
-        return visit(Either::left, Either::right);
-    }
 
     /*
      * (non-Javadoc)
@@ -1502,7 +1494,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public <RT1> LazyEither<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST, ? extends RT1>> mapper) {
-            Eval<? extends LazyEither<? extends ST,  ? extends RT1>> ret = value.map(mapper.andThen(LazyEither::fromXor));
+            Eval<? extends LazyEither<? extends ST,  ? extends RT1>> ret = value.map(mapper.andThen(LazyEither::fromEither));
 
 
             final Eval<LazyEither<ST, RT1>> e3 =  (Eval<LazyEither<ST,  RT1>>)ret;
@@ -1719,7 +1711,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         public <LT1> LazyEither<LT1, PT> flatMapLeft(
                 final Function<? super ST, ? extends Either<LT1, PT>> mapper) {
             Eval<? extends Either<LT1,? extends PT>> ret = value.map(mapper);
-            Eval<? extends LazyEither<? extends LT1,  ? extends PT>> et = ret.map(LazyEither::fromXor);
+            Eval<? extends LazyEither<? extends LT1,  ? extends PT>> et = ret.map(LazyEither::fromEither);
 
            final Eval<LazyEither<LT1, PT>> e3 =  (Eval<LazyEither<LT1,  PT>>)et;
            return new Lazy<>(

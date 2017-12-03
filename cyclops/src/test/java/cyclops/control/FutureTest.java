@@ -379,7 +379,7 @@ public class FutureTest {
     }
     @Test
     public void testToXorNone(){
-        Either<Throwable,Integer> xor = none.toXor();
+        Either<Throwable,Integer> xor = none.toEither();
         assertTrue(xor.isLeft());
         assertThat(xor,equalTo(Either.left(exception)));
 
@@ -393,7 +393,7 @@ public class FutureTest {
 
     @Test
     public void testToXorSecondaryNone(){
-        Either<Integer, Throwable> xorNone = none.toXor().swap();
+        Either<Integer, Throwable> xorNone = none.toEither().swap();
         assertThat(xorNone,equalTo(Either.right(exception)));
 
     }

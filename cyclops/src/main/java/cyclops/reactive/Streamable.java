@@ -698,11 +698,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         if (size == 0) {
             return Streamable.of(ReactiveSeq.empty());
         } else {
-           val combs = IntStream.range(0, size())
-                                                  .boxed()
-                    .<ReactiveSeq<T>> flatMap(i -> subStream(i + 1, size()).combinations(size - 1)
-                                                                      .map(t -> t.prepend(elementAt(i))).reactiveSeq());
-            return Streamable.fromStream(combs);
+            return Streamable.fromStream( stream().combinations(size));
         }
     }
 
@@ -1832,8 +1828,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     @Override
-    default Streamable<T> append(T value){
-        return fromStream(reactiveSeq().append(value));
+    default Streamable<T> appendAll(T value){
+        return fromStream(reactiveSeq().appendAll(value));
     }
 
     @Override
@@ -1856,8 +1852,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param values to append
      * @return Streamable with appended values
      */
-    default Streamable<T> append(final T... values) {
-        return fromStream(reactiveSeq().append(values));
+    default Streamable<T> appendAll(final T... values) {
+        return fromStream(reactiveSeq().appendAll(values));
     }
 
     /**
@@ -1878,6 +1874,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
     default Streamable<T> prependAll(final T... values) {
         return fromStream(reactiveSeq().prependAll(values));
     }
+  default Streamable<T> prependAll(final Iterable<? extends T> value) {
+    return fromStream(reactiveSeq().prependAll(value));
+  }
 
     /**
      * Insert data into a reactiveStream at given position
@@ -2366,11 +2365,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     default Streamable<T> concat(final T other) {
-        return fromStream(reactiveSeq().append(other));
+        return fromStream(reactiveSeq().appendAll(other));
     }
 
     default Streamable<T> concat(final T... other) {
-        return fromStream(reactiveSeq().append(other));
+        return fromStream(reactiveSeq().appendAll(other));
     }
 
     default <U> Streamable<T> distinct(final Function<? super T, ? extends U> keyExtractor) {

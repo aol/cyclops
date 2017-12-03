@@ -1,17 +1,17 @@
-package com.oath.cyclops.util.stream;
+package cyclops.stream;
 
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.util.stream.pushable.PushableFutureStream;
-import com.oath.cyclops.util.stream.pushable.MultipleStreamSource;
-import com.oath.cyclops.util.stream.pushable.PushableReactiveSeq;
+import cyclops.stream.pushable.PushableFutureStream;
+import cyclops.stream.pushable.MultipleStreamSource;
+import cyclops.stream.pushable.PushableReactiveSeq;
 import cyclops.async.LazyReact;
 import cyclops.async.adapters.Adapter;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.QueueFactory;
-import com.oath.cyclops.util.stream.pushable.PushableStream;
+import cyclops.stream.pushable.PushableStream;
 
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;

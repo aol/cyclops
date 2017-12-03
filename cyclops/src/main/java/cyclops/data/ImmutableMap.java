@@ -44,7 +44,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     ImmutableMap<K,V> removeAll(K... keys);
 
     @Override
-    default ImmutableMap<K, V> removeAll(Iterable<? extends K> keys){
+    default ImmutableMap<K, V> removeAllKeys(Iterable<? extends K> keys){
         ImmutableMap<K,V> res = this;
         for(K key : keys){
             res = res.remove(key);

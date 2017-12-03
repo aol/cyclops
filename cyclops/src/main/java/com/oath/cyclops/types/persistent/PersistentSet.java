@@ -1,5 +1,6 @@
 package com.oath.cyclops.types.persistent;
 
+import com.oath.cyclops.types.persistent.views.SetView;
 import cyclops.reactive.ReactiveSeq;
 
 public interface PersistentSet<T>  extends PersistentCollection<T>{
@@ -15,4 +16,7 @@ public interface PersistentSet<T>  extends PersistentCollection<T>{
         return ReactiveSeq.fromIterable(this);
     }
 
+  default SetView<T> setView(){
+    return new SetView.Impl<>(this);
+  }
 }

@@ -41,7 +41,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default ImmutableQueue<T> plus(T e){
-        return append(e);
+        return appendAll(e);
     }
 
     @Override
@@ -58,10 +58,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return set;
     }
 
-    @Override
-    default ImmutableQueue<T> removeAll(Iterable<? extends T> list){
-        return unitStream(stream().removeAllI(list));
-    }
 
     <R> ImmutableQueue<R> unitStream(Stream<R> stream);
     <R> ImmutableQueue<R> unitIterable(Iterable<R> it);
@@ -155,7 +151,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     ImmutableQueue<T> prepend(T value);
     ImmutableQueue<T> prependAll(Iterable<? extends T> value);
 
-    ImmutableQueue<T> append(T value);
+    ImmutableQueue<T> appendAll(T value);
     ImmutableQueue<T> appendAll(Iterable<? extends T> value);
 
     ImmutableQueue<T> reverse();
@@ -381,13 +377,12 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<T> removeAllS(Stream<? extends T> stream) {
-        return unitStream(stream().removeAllS(stream));
+    default ImmutableQueue<T> removeStream(Stream<? extends T> stream) {
+        return unitStream(stream().removeStream(stream));
     }
 
-    @Override
-    default ImmutableQueue<T> removeAllI(Iterable<? extends T> it) {
-        return unitStream(stream().removeAllI(it));
+    default ImmutableQueue<T> removeAll(Iterable<? extends T> it) {
+        return unitStream(stream().removeAll(it));
     }
 
     @Override
@@ -396,13 +391,13 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<T> retainAllI(Iterable<? extends T> it) {
-        return unitStream(stream().retainAllI(it));
+    default ImmutableQueue<T> retainAll(Iterable<? extends T> it) {
+        return unitStream(stream().retainAll(it));
     }
 
     @Override
-    default ImmutableQueue<T> retainAllS(Stream<? extends T> stream) {
-        return unitStream(stream().retainAllS(stream));
+    default ImmutableQueue<T> retainStream(Stream<? extends T> stream) {
+        return unitStream(stream().retainStream(stream));
     }
 
     @Override
@@ -712,7 +707,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         if(pos==0)
             return prependAll(values);
         if(pos>=size())
-            return append(values);
+            return appendAll(values);
         return unitStream(stream().insertAt(pos,values));
     }
     @Override
@@ -720,15 +715,15 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         if(pos==0)
             return prependAll(values);
         if(pos>=size())
-            return append(values);
+            return appendAll(values);
         return unitStream(stream().insertAt(pos,values));
     }
 
     @Override
-    default ImmutableQueue<T> append(T... values) {
+    default ImmutableQueue<T> appendAll(T... values) {
         ImmutableQueue<T> res = this;
         for(T t : values){
-            res = res.append(t);
+            res = res.appendAll(t);
         }
         return res;
     }
@@ -776,10 +771,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().removeAt(pos));
     }
 
-    @Override
-    default ImmutableQueue<T> prepend(Iterable<? extends T> value) {
-        return unitStream(stream().prepend(value));
-    }
+
 
     @Override
     default ImmutableQueue<T> updateAt(int pos, T value) {

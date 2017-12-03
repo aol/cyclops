@@ -208,7 +208,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     public HashSet<T> removeAll(Iterable<? extends T> list) {
         HashSet<T> res = this;
         for(T next : list){
-            res = this.removeValue(next);
+            res = res.removeValue(next);
         }
         return res;
     }
@@ -279,7 +279,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
 
-    public HashSet<T> append(T append) {
+    public HashSet<T> appendAll(T append) {
         return add(append);
     }
 
@@ -327,18 +327,18 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public HashSet<T> removeAllS(Stream<? extends T> stream) {
-        return (HashSet<T>)ImmutableSet.super.removeAllS(stream);
+    public HashSet<T> removeStream(Stream<? extends T> stream) {
+        return (HashSet<T>)ImmutableSet.super.removeStream(stream);
     }
 
     @Override
-    public HashSet<T> retainAllI(Iterable<? extends T> it) {
-        return (HashSet<T>)ImmutableSet.super.retainAllI(it);
+    public HashSet<T> retainAll(Iterable<? extends T> it) {
+        return (HashSet<T>)ImmutableSet.super.retainAll(it);
     }
 
     @Override
-    public HashSet<T> retainAllS(Stream<? extends T> stream) {
-        return (HashSet<T>)ImmutableSet.super.retainAllS(stream);
+    public HashSet<T> retainStream(Stream<? extends T> stream) {
+        return (HashSet<T>)ImmutableSet.super.retainStream(stream);
     }
 
     @Override
@@ -621,8 +621,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public HashSet<T> append(T... values) {
-        return (HashSet<T>) ImmutableSet.super.append(values);
+    public HashSet<T> appendAll(T... values) {
+        return (HashSet<T>) ImmutableSet.super.appendAll(values);
     }
 
     @Override
@@ -650,10 +650,6 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
         return this;
     }
 
-    @Override
-    public HashSet<T> prepend(Iterable<? extends T> value) {
-        return (HashSet<T>) ImmutableSet.super.prepend(value);
-    }
 
     @Override
     public <U extends Comparable<? super U>> HashSet<T> sorted(Function<? super T, ? extends U> function) {
@@ -683,10 +679,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
         return (HashSet<T>) ImmutableSet.super.onEmptyGet(supplier);
     }
 
-    @Override
-    public HashSet<T> removeAllI(Iterable<? extends T> it) {
-        return (HashSet<T>) ImmutableSet.super.removeAllI(it);
-    }
+
 
     @Override
     public HashSet<T> removeAll(T... values) {

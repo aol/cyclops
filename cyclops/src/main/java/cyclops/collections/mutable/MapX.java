@@ -305,18 +305,18 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
-    default MapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
+    default MapX<K, V> removeStream(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAllS(stream);
+        return (MapX<K, V>) IterableFilterable.super.removeStream(stream);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.removeAllI(it);
+        return (MapX<K, V>) IterableFilterable.super.removeAll(it);
     }
 
     /* (non-Javadoc)
@@ -332,18 +332,18 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
      * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
-    default MapX<K, V> retainAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default MapX<K, V> retainAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAllI(it);
+        return (MapX<K, V>) IterableFilterable.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default MapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
+    default MapX<K, V> retainStream(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (MapX<K, V>) IterableFilterable.super.retainAllS(stream);
+        return (MapX<K, V>) IterableFilterable.super.retainStream(stream);
     }
 
     /* (non-Javadoc)

@@ -1,5 +1,6 @@
 package cyclops.collections.mutable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyQueueX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
@@ -953,18 +954,14 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default QueueX<T> removeAllS(final Stream<? extends T> stream) {
+    default QueueX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (QueueX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (QueueX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default QueueX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (QueueX<T>) LazyCollectionX.super.removeAllI(it);
+    default QueueX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)
@@ -980,18 +977,18 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default QueueX<T> retainAllI(final Iterable<? extends T> it) {
+    default QueueX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (QueueX<T>) LazyCollectionX.super.retainAllI(it);
+        return (QueueX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default QueueX<T> retainAllS(final Stream<? extends T> seq) {
+    default QueueX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (QueueX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (QueueX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1085,13 +1082,13 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<T> append(T... values) {
-        return (QueueX<T>)LazyCollectionX.super.append(values);
+    default QueueX<T> appendAll(T... values) {
+        return (QueueX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default QueueX<T> append(T value) {
-        return (QueueX<T>)LazyCollectionX.super.append(value);
+    default QueueX<T> appendAll(T value) {
+        return (QueueX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

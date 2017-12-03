@@ -14,8 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
-import cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -83,12 +82,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         return queue.stream(subscription);
     }
 
-    private FutureStream<T> genStream() {
-        final Continueable subscription = new com.oath.cyclops.react.async.subscription.Subscription();
-        return new LazyReact().of()
-                .withSubscription(subscription)
-                .fromStream(queue.stream(subscription));
-    }
+
 
     private final int maxConcurrency;
     private final QueueFactory<T> factory;
@@ -97,8 +91,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     @Getter
     volatile Subscription subscription;
 
-    private volatile FutureStream<T> stream;
-    private volatile Supplier<FutureStream<T>> futureStream = Eval.later(this::genStream);
+
     private volatile Supplier<Stream<T>> jdkStream = Eval.later(this::genJdkStream);
     private volatile Supplier<ReactiveSeq<T>> reactiveSeq = Eval.later(() -> ReactiveSeq.fromStream(jdkStream.get()));
     @Setter
@@ -148,12 +141,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
     }
 
-    /**
-     * @return FutureStream generated from this QueueBasedSubscriber
-     */
-    public FutureStream<T> futureStream() {
-        return stream = futureStream.get();
-    }
+
 
     /**
      * @return JDK Stream generated from this QueueBasedSubscriber
@@ -224,10 +212,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
     public void onError(final Throwable t) {
 
         Objects.requireNonNull(t);
-        if (stream != null)
-            ((Consumer) stream.getErrorHandler()
-                    .orElse((Consumer) h -> {
-                    })).accept(t);
+
         if (errorHandler != null)
             errorHandler.accept(t);
 

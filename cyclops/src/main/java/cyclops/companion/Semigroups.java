@@ -2,8 +2,6 @@ package cyclops.companion;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.futurestream.EagerFutureStreamFunctions;
-import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.async.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
@@ -12,7 +10,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.function.Semigroup;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
@@ -285,13 +282,6 @@ public interface Semigroups {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
 
-    /**
-     * @return Combination of two LazyFutureStreams Streams b is appended to a
-     */
-    static <T> Semigroup<FutureStream<T>> combineFutureStream() {
-        return (a, b) -> a.appendS(b);
-    }
-
 
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
@@ -360,9 +350,7 @@ public interface Semigroups {
         return (a, b) -> Future.anyOf(a,b);
     }
 
-    static <T> Semigroup<SimpleReactStream<T>> firstOfSimpleReact() {
-        return (a, b) -> EagerFutureStreamFunctions.firstOf(a,b);
-    }
+
     /**
      * @return Combine two Future's by taking the first successful
      */

@@ -93,11 +93,8 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
     @Override
     PersistentMapX<K, V> remove(K key);
 
-    /* (non-Javadoc)
-     * @see org.pcollections.PMap#removeAll(java.util.Collection)
-     */
-    @Override
-    PersistentMapX<K, V> removeAll(Iterable<? extends K> keys);
+
+    PersistentMapX<K, V> removeAllKeys(Iterable<? extends K> keys);
 
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -196,18 +193,17 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.util.stream.Stream)
      */
     @Override
-    default PersistentMapX<K, V> removeAllS(final Stream<? extends Tuple2<K, V>> stream) {
+    default PersistentMapX<K, V> removeStream(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (PersistentMapX<K, V>) IterableFilterable.super.removeAllS(stream);
+        return (PersistentMapX<K, V>) IterableFilterable.super.removeStream(stream);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#removeAll(java.lang.Iterable)
      */
-    @Override
-    default PersistentMapX<K, V> removeAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default PersistentMapX<K, V> removeAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (PersistentMapX<K, V>) IterableFilterable.super.removeAllI(it);
+        return (PersistentMapX<K, V>) IterableFilterable.super.removeAll(it);
     }
 
     /* (non-Javadoc)
@@ -223,18 +219,18 @@ public interface PersistentMapX<K, V>  extends To<PersistentMapX<K,V>>,
      * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.lang.Iterable)
      */
     @Override
-    default PersistentMapX<K, V> retainAllI(final Iterable<? extends Tuple2<K, V>> it) {
+    default PersistentMapX<K, V> retainAll(final Iterable<? extends Tuple2<K, V>> it) {
 
-        return (PersistentMapX<K, V>) IterableFilterable.super.retainAllI(it);
+        return (PersistentMapX<K, V>) IterableFilterable.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default PersistentMapX<K, V> retainAllS(final Stream<? extends Tuple2<K, V>> stream) {
+    default PersistentMapX<K, V> retainStream(final Stream<? extends Tuple2<K, V>> stream) {
 
-        return (PersistentMapX<K, V>) IterableFilterable.super.retainAllS(stream);
+        return (PersistentMapX<K, V>) IterableFilterable.super.retainStream(stream);
     }
 
     /* (non-Javadoc)

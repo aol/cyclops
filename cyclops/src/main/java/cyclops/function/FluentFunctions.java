@@ -666,7 +666,8 @@ public class FluentFunctions {
          * @param classes To catch exceptions for
          * @return A Supplier that returns it's value wrapped in a Try
          */
-        public <X extends Throwable> FluentSupplier<Try<R, X>> liftTry(final Class<X>... classes) {
+        @SafeVarargs
+        public final  <X extends Throwable> FluentSupplier<Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of(() -> Try.withCatch(() -> fn.get(), classes));
         }
 
@@ -966,7 +967,8 @@ public class FluentFunctions {
          * @param classes To catch exceptions for
          * @return A function that executes and returns a Try as the result typ
          */
-        public <X extends Throwable> FluentFunction<T, Try<R, X>> liftTry(final Class<X>... classes) {
+        @SafeVarargs
+        public final <X extends Throwable> FluentFunction<T, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1) -> Try.withCatch(() -> fn.apply(t1), classes));
         }
 
@@ -1330,7 +1332,8 @@ public class FluentFunctions {
          * @param classes Classes to catch exceptions for
          * @return BiFunction that returns it's result in a Try
          */
-        public <X extends Throwable> FluentBiFunction<T1, T2, Try<R, X>> liftTry(final Class<X>... classes) {
+        @SafeVarargs
+        public final <X extends Throwable> FluentBiFunction<T1, T2, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1, t2) -> Try.withCatch(() -> fn.apply(t1, t2), classes));
         }
 
@@ -1726,7 +1729,8 @@ public class FluentFunctions {
          * @param classes Classes to catch exceptions for
          * @return TriFunction that returns it's result in a Try
          */
-        public <X extends Throwable> FluentTriFunction<T1, T2, T3, Try<R, X>> liftTry(final Class<X>... classes) {
+        @SafeVarargs
+        public final <X extends Throwable> FluentTriFunction<T1, T2, T3, Try<R, X>> liftTry(final Class<X>... classes) {
             return FluentFunctions.of((t1, t2, t3) -> Try.withCatch(() -> fn.apply(t1, t2, t3), classes));
         }
 

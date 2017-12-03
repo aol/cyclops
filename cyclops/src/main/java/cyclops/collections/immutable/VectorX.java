@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
@@ -1052,18 +1053,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default VectorX<T> removeAllS(final Stream<? extends T> stream) {
+    default VectorX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (VectorX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (VectorX<T>) LazyCollectionX.super.removeStream(stream);
     }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
     @Override
-    default VectorX<T> removeAllI(final Iterable<? extends T> it) {
-
-        return (VectorX<T>) LazyCollectionX.super.removeAllI(it);
+    default VectorX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /* (non-Javadoc)
@@ -1079,18 +1075,18 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default VectorX<T> retainAllI(final Iterable<? extends T> it) {
+    default VectorX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (VectorX<T>) LazyCollectionX.super.retainAllI(it);
+        return (VectorX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default VectorX<T> retainAllS(final Stream<? extends T> seq) {
+    default VectorX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (VectorX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (VectorX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1165,13 +1161,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<T> append(T... values) {
-        return (VectorX<T>)LazyCollectionX.super.append(values);
+    default VectorX<T> appendAll(T... values) {
+        return (VectorX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default VectorX<T> append(T value) {
-        return (VectorX<T>)LazyCollectionX.super.append(value);
+    default VectorX<T> appendAll(T value) {
+        return (VectorX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override

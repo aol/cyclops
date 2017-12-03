@@ -217,32 +217,11 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-    public final <R> ReactiveSeq<R> flatMapOptional(final Function<? super T, Optional<? extends R>> fn) {
-        return createSeq(Streams.flatMapOptional(this, fn));
-
-    }
 
     protected abstract <R> ReactiveSeq<R> createSeq(Stream<R> rStream);
 
-    public final <R> ReactiveSeq<R> flatMapCompletableFuture(final Function<? super T, CompletableFuture<? extends R>> fn) {
-        return createSeq(Streams.flatMapCompletableFuture(this, fn));
-    }
 
-    public final ReactiveSeq<Character> flatMapCharSequence(final Function<? super T, CharSequence> fn) {
-        return createSeq(Streams.flatMapCharSequence(this, fn));
-    }
 
-    public final ReactiveSeq<String> flatMapFile(final Function<? super T, File> fn) {
-        return createSeq(Streams.flatMapFile(this, fn));
-    }
-
-    public final ReactiveSeq<String> flatMapURL(final Function<? super T, URL> fn) {
-        return createSeq(Streams.flatMapURL(this, fn));
-    }
-
-    public final ReactiveSeq<String> flatMapBufferedReader(final Function<? super T, BufferedReader> fn) {
-        return createSeq(Streams.flatMapBufferedReader(this, fn));
-    }
     @Override
     public boolean isParallel() {
         return false;

@@ -8,6 +8,7 @@ import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
@@ -112,7 +113,13 @@ public class LazyPOrderedSetX<T> extends AbstractLazyPersistentCollection<T,Pers
     public Option<T> get(int index) {
         return get().get(index);
     }
-/**
+
+  @Override
+  public Comparator<? super T> comparator() {
+    return get().comparator();
+  }
+
+  /**
     @Override
     public int indexOf(Object o) {
         return getValue().indexOf(o);

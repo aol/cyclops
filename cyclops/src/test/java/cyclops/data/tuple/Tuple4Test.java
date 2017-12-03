@@ -12,9 +12,14 @@ import static org.junit.Assert.assertThat;
  */
 public class Tuple4Test {
     Tuple4<Integer,Integer,Integer,Integer> tuple;
+  Tuple4<String,Integer,Integer,Integer>  lazy;
     @Before
     public void setUp() throws Exception {
         tuple = Tuple.tuple(2,5,10,10);
+        lazy = Tuple.lazy(()->{
+          called++;
+          return "lazy";
+        },()->10,()->5,()->0);
         called=  0;
 
     }
@@ -80,10 +85,7 @@ public class Tuple4Test {
 
     @Test
     public void memo(){
-        Tuple4<String,Integer,Integer,Integer> lazy = Tuple.lazy(()->{
-            called++;
-            return "lazy";
-        },()->10,()->5,()->0);
+
         lazy._1();
         lazy._1();
         assertThat(called,equalTo(2));
@@ -123,7 +125,10 @@ public class Tuple4Test {
     public void testToString() throws Exception {
         assertThat(tuple.toString(),equalTo("[2,5,10,10]"));
     }
-
+    @Test
+    public void transform(){
+      assertThat(lazy.transform((a,b,c,d)->a+b+c+d),equalTo("lazy1050"));
+    }
 
 
 

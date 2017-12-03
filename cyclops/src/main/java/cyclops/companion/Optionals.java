@@ -31,7 +31,6 @@ import org.reactivestreams.Publisher;
 
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.Value;
 
 import lombok.experimental.UtilityClass;
 
@@ -446,7 +445,7 @@ public class Optionals {
 
     Optional<ReactiveSeq<T>> identity = Optional.of(ReactiveSeq.empty());
 
-    BiFunction<Optional<ReactiveSeq<T>>,Optional<T>,Optional<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.append(b));
+    BiFunction<Optional<ReactiveSeq<T>>,Optional<T>,Optional<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.appendAll(b));
 
     BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendS(z2));
 

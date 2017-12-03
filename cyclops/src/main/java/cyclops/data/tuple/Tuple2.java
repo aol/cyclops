@@ -27,11 +27,11 @@ import java.util.Objects;
 import java.util.function.*;
 
 /*
-  A Tuple implementation that can be lazyEither eager / strict or lazy
+  A Tuple implementation that can be either eager / strict or lazy
 
 
  */
-@AllArgsConstructor//(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
                                         Serializable,
                                         EqualTo<Higher<tuple2,T1>,T2,Tuple2<T1,T2>>,

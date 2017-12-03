@@ -1,6 +1,10 @@
 package com.oath.cyclops.types.persistent;
 
+
+import com.oath.cyclops.types.persistent.views.QueueView;
+
 public interface PersistentQueue<T> extends PersistentIndexed<T> {
+
 
     PersistentQueue<T> minus();
     PersistentQueue<T> plus(T e);
@@ -11,6 +15,8 @@ public interface PersistentQueue<T> extends PersistentIndexed<T> {
     public PersistentQueue<T> removeAll(Iterable<? extends T> list);
 
 
-
+  default QueueView<T> queueView(){
+    return new QueueView.Impl<>(this);
+  }
 
 }

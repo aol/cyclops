@@ -11,43 +11,43 @@ import java.util.function.Consumer;
 
 public class IteratableSpliterator<T> extends Spliterators.AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
-    private final Iterable<T> source;
+  private final Iterable<T> source;
 
-    Iterator<T> active;
+  Iterator<T> active;
 
-    public IteratableSpliterator(final Iterable<T> source) {
-        super(-1,Spliterator.ORDERED);
+  public IteratableSpliterator(final Iterable<T> source) {
+    super(-1,Spliterator.ORDERED);
 
-        this.source = source;
-
-
-    }
-    @Override
-    public void forEachRemaining(Consumer<? super T> action) {
-
-        if(active==null)
-            active = source.iterator();
+    this.source = source;
 
 
-        active.forEachRemaining(action);
+  }
+  @Override
+  public void forEachRemaining(Consumer<? super T> action) {
 
-    }
+    if(active==null)
+      active = source.iterator();
 
-    @Override
-    public boolean tryAdvance(Consumer<? super T> action) {
 
-        if(active==null)
-            active=source.iterator();
-        if (active.hasNext()) {
-            action.accept(active.next());
-            return true;
-        }
+    active.forEachRemaining(action);
 
-        return false;
+  }
+
+  @Override
+  public boolean tryAdvance(Consumer<? super T> action) {
+
+    if(active==null)
+      active=source.iterator();
+    if (active.hasNext()) {
+      action.accept(active.next());
+      return true;
     }
 
-    @Override
-    public Spliterator<T> copy() {
-        return new IteratableSpliterator<>(source);
-    }
+    return false;
+  }
+
+  @Override
+  public Spliterator<T> copy() {
+    return new IteratableSpliterator<>(source);
+  }
 }

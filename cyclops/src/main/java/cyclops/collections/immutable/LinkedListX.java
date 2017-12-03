@@ -1,6 +1,7 @@
 package cyclops.collections.immutable;
 
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
@@ -1080,19 +1081,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
      */
     @Override
-    default LinkedListX<T> removeAllS(final Stream<? extends T> stream) {
+    default LinkedListX<T> removeStream(final Stream<? extends T> stream) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.removeAllS(stream);
+        return (LinkedListX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Iterable)
-     */
-    @Override
-    default LinkedListX<T> removeAllI(final Iterable<? extends T> it) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.removeAllI(it);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
@@ -1107,18 +1101,18 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
      */
     @Override
-    default LinkedListX<T> retainAllI(final Iterable<? extends T> it) {
+    default LinkedListX<T> retainAll(final Iterable<? extends T> it) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.retainAllI(it);
+        return (LinkedListX<T>) LazyCollectionX.super.retainAll(it);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
      */
     @Override
-    default LinkedListX<T> retainAllS(final Stream<? extends T> seq) {
+    default LinkedListX<T> retainStream(final Stream<? extends T> seq) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.retainAllS(seq);
+        return (LinkedListX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
     /* (non-Javadoc)
@@ -1194,13 +1188,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> append(T... values) {
-        return (LinkedListX<T>)LazyCollectionX.super.append(values);
+    default LinkedListX<T> appendAll(T... values) {
+        return (LinkedListX<T>)LazyCollectionX.super.appendAll(values);
     }
 
     @Override
-    default LinkedListX<T> append(T value) {
-        return (LinkedListX<T>)LazyCollectionX.super.append(value);
+    default LinkedListX<T> appendAll(T value) {
+        return (LinkedListX<T>)LazyCollectionX.super.appendAll(value);
     }
 
     @Override
@@ -1269,6 +1263,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     default <T2, T3, T4, R> LinkedListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (LinkedListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
+    }
+    @Override
+    default LinkedListX<T> removeAll(CollectionX<? extends T> it) {
+      return removeAll(narrowIterable());
     }
 
     /**
@@ -1579,6 +1577,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return LinkedListX.fromIterable(lt).map(fn);
         }
     }
+
 
     public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Either<T, R>>> fn) {
        return ListX.tailRec(initial,fn).to().linkedListX(Evaluation.LAZY);

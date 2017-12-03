@@ -257,7 +257,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
     LazyEither3<L1,L2, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<LazyEither3<L1,L2,ReactiveSeq<T>>,LazyEither3<L1,L2,T>,LazyEither3<L1,L2,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
+    BiFunction<LazyEither3<L1,L2,ReactiveSeq<T>>,LazyEither3<L1,L2,T>,LazyEither3<L1,L2,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
     BinaryOperator<LazyEither3<L1,L2,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
 
@@ -509,7 +509,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                           m->Ior.left(null),
                           r->Ior.right(r));
     }
-     default Either<LT1, RT> toXor() {
+     default Either<LT1, RT> toEither() {
          return this.visit(l-> Either.left(l),
                            m-> Either.left(null),
                            r-> Either.right(r));
