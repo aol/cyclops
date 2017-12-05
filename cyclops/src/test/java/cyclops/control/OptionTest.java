@@ -3,7 +3,7 @@ package cyclops.control;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.async.Future;
-import cyclops.async.LazyReact;
+
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
@@ -345,7 +345,6 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         assertThat(none.mkString(), equalTo("None[]"));
     }
 
-    LazyReact react = new LazyReact();
 
 
 

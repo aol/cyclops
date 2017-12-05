@@ -90,7 +90,9 @@ import java.util.stream.*;
  *      Interoperability
  *      Parallelism via FutureStream
  *      Lazy grouping (group by size, time, state)
- *      Sliding windows
+ *      Sliding windows n`\
+ *
+ *
  *
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
