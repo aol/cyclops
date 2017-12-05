@@ -47,6 +47,6 @@ public class SkipSpliterator<T> extends Spliterators.AbstractSpliterator<T> impl
 
     @Override
     public Spliterator<T> copy() {
-        return new SkipSpliterator<T>(copy(source),skip);
+        return new SkipSpliterator<T>(CopyableSpliterator.copy(source),skip);
     }
 }

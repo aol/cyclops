@@ -29,7 +29,7 @@ public class GroupingSpliterator<T, C extends Collection<? super T>,R> extends S
 
     }
     public <R2> GroupingSpliterator<T,C,?> compose(Function<? super R,? extends R2> fn){
-        return new GroupingSpliterator<T, C,R2>(copy(source),factory,finalizer.andThen(fn),groupSize);
+        return new GroupingSpliterator<T, C,R2>(CopyableSpliterator.copy(source),factory,finalizer.andThen(fn),groupSize);
     }
 
     C collection;
@@ -87,7 +87,7 @@ public class GroupingSpliterator<T, C extends Collection<? super T>,R> extends S
 
     @Override
     public Spliterator<R> copy() {
-        return new GroupingSpliterator<T, C,R>(copy(source),factory,finalizer,groupSize);
+        return new GroupingSpliterator<T, C,R>(CopyableSpliterator.copy(source),factory,finalizer,groupSize);
     }
 
 

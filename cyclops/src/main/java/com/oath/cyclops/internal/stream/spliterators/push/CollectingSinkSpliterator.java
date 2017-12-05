@@ -50,6 +50,6 @@ public class CollectingSinkSpliterator<T,A,R> extends AbstractSpliterator<R> imp
 
     @Override
     public Spliterator<R> copy() {
-        return new CollectingSinkSpliterator<>(this.estimateSize(),this.characteristics(), copy(s),monoid);
+        return new CollectingSinkSpliterator<>(this.estimateSize(),this.characteristics(), CopyableSpliterator.copy(s),monoid);
     }
 }

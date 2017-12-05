@@ -24,7 +24,7 @@ public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
     }
     @Override
     public <R2> MappingSpliterator<T, ?> compose(Function<? super R, ? extends R2> fn) {
-        return new MappingSpliterator<T, R2>(copy(source),mapper.andThen(fn));
+        return new MappingSpliterator<T, R2>(CopyableSpliterator.copy(source),mapper.andThen(fn));
     }
 
 
@@ -45,7 +45,7 @@ public class MappingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
     @Override
     public Spliterator<R> copy() {
-        return new MappingSpliterator<T, R>(copy(source),mapper);
+        return new MappingSpliterator<T, R>(CopyableSpliterator.copy(source),mapper);
     }
 
 

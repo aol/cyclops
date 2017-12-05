@@ -60,11 +60,11 @@ public class DistinctSpliterator<IN,T> extends BaseComposableSpliterator<IN,T,Di
 
     @Override
     public Spliterator<T> copy() {
-        return new DistinctSpliterator<IN,T>(fn, copy(source));
+        return new DistinctSpliterator<IN,T>(fn, CopyableSpliterator.copy(source));
     }
 
     @Override
     <R2> DistinctSpliterator<IN, ?> create(Function<? super IN, ? extends R2> after) {
-        return new DistinctSpliterator(after, copy(source));
+        return new DistinctSpliterator(after, CopyableSpliterator.copy(source));
     }
 }

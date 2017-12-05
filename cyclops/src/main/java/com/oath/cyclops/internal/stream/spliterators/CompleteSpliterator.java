@@ -33,6 +33,6 @@ public class CompleteSpliterator<T> extends Spliterators.AbstractSpliterator<T> 
 
     @Override
     public Spliterator<T> copy() {
-        return new CompleteSpliterator<>(copy(source), fn);
+        return new CompleteSpliterator<>(CopyableSpliterator.copy(source), fn);
     }
 }
