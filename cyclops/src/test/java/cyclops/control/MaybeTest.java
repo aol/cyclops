@@ -3,7 +3,6 @@ package cyclops.control;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
@@ -459,8 +458,6 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         assertThat(just.mkString(), equalTo("Just[10]"));
         assertThat(none.mkString(), equalTo("Nothing[]"));
     }
-
-    LazyReact react = new LazyReact();
 
 
     @Test

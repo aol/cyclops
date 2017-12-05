@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import cyclops.companion.Streams;
-import cyclops.async.LazyReact;
+
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
@@ -27,10 +27,10 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 
-//see BaseSequentialSeqTest for in order tests
+
 public  class CoreReactiveStreamXTest {
     public static Executor ex =  Executors.newFixedThreadPool(10);
-    public static final LazyReact r = new LazyReact(10,10);
+
 
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;
