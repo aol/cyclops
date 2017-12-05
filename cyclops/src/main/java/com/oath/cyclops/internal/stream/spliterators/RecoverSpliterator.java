@@ -43,7 +43,7 @@ public class RecoverSpliterator<T, X extends Throwable> implements CopyableSplit
 
     @Override
     public Spliterator<T> copy() {
-        return new RecoverSpliterator(copy(source),fn,type);
+        return new RecoverSpliterator(CopyableSpliterator.copy(source),fn,type);
     }
 
     @Override

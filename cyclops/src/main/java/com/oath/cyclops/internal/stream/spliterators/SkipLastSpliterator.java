@@ -79,6 +79,6 @@ public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements Co
 
     @Override
     public Spliterator<T> copy() {
-        return new SkipLastSpliterator<T>(copy(source), skip);
+        return new SkipLastSpliterator<T>(CopyableSpliterator.copy(source), skip);
     }
 }

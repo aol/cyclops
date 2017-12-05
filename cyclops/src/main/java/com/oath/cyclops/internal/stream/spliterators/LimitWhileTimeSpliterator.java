@@ -65,6 +65,6 @@ public class LimitWhileTimeSpliterator<T> extends Spliterators.AbstractSpliterat
 
     @Override
     public Spliterator<T> copy() {
-        return new LimitWhileTimeSpliterator<>(copy(source),time,t);
+        return new LimitWhileTimeSpliterator<>(CopyableSpliterator.copy(source),time,t);
     }
 }

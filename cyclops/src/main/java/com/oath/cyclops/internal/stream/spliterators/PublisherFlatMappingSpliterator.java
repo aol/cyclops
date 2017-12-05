@@ -24,7 +24,7 @@ public class PublisherFlatMappingSpliterator<T,R> extends Spliterators.AbstractS
     }
     public static <T2,T,R> PublisherFlatMappingSpliterator<T2,R> compose(FunctionSpliterator<T2,T> fnS,Function<? super T, ? extends Publisher<? extends R>> mapper){
         Function<? super T2,? extends T> fn = fnS.function();
-        return new PublisherFlatMappingSpliterator<T2,R>(copy(fnS.source()),mapper.<T2>compose(fn));
+        return new PublisherFlatMappingSpliterator<T2,R>(CopyableSpliterator.copy(fnS.source()),mapper.<T2>compose(fn));
 
     }
     @Override

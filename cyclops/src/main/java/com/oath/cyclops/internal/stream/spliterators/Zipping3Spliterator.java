@@ -20,13 +20,13 @@ public class Zipping3Spliterator<T1,T2,T3,R> implements CopyableSpliterator<R>,
 
 
     public Zipping3Spliterator(Spliterator<T1> left, Spliterator<T2> middle,Spliterator<T3> right, Function3<? super T1, ? super T2, ? super T3, ? extends R> fn) {
-        this.left = copy(left);
-        this.middle = copy(middle);
-        this.right = copy(right);
+        this.left = CopyableSpliterator.copy(left);
+        this.middle = CopyableSpliterator.copy(middle);
+        this.right = CopyableSpliterator.copy(right);
         this.fn = fn;
     }
     public <R2> Zipping3Spliterator<T1,T2,T3,R2> compose(Function<? super R,? extends R2> fn){
-        return new Zipping3Spliterator<>(copy(left), copy(middle), copy(right),
+        return new Zipping3Spliterator<>(CopyableSpliterator.copy(left), CopyableSpliterator.copy(middle), CopyableSpliterator.copy(right),
                 this.fn.andThen3(fn));
     }
 
@@ -48,8 +48,8 @@ public class Zipping3Spliterator<T1,T2,T3,R> implements CopyableSpliterator<R>,
 
     @Override
     public Spliterator<R> copy() {
-        return new Zipping3Spliterator(copy(left),
-                                        copy(middle), copy(right),fn);
+        return new Zipping3Spliterator(CopyableSpliterator.copy(left),
+          CopyableSpliterator.copy(middle), CopyableSpliterator.copy(right),fn);
     }
 
     @Override
