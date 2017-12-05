@@ -420,7 +420,7 @@ public class FutureTest {
         assertThat(just.mkString(),containsString("Future["));
         assertThat(none.mkString(),containsString("Future["));
     }
-  
+
 
     @Test
     public void testGet() {

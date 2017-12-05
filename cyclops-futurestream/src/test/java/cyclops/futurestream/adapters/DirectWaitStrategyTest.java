@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.futurestream.adapters;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,11 +17,11 @@ import java.util.stream.StreamSupport;
 
 public class DirectWaitStrategyTest {
 	int called = 0;
-	Takeable<String> takeable = ()->{ 
+	Takeable<String> takeable = ()->{
 		called++;
 		return null;
 	};
-	Offerable offerable = ()->{ 
+	Offerable offerable = ()->{
 		called++;
 		return false;
 	};
@@ -53,13 +53,13 @@ public class DirectWaitStrategyTest {
 		assertThat(result,equalTo(false));
 		assertThat(called,equalTo(1));
 	}
-	
+
 	@Test
 	public void testwithQueue(){
 		cyclops.async.adapters.Queue<String> q = new cyclops.async.adapters.Queue<>(new ManyToOneConcurrentArrayQueue<String>(100),
 									new DirectWaitStrategy<>(),
 									new DirectWaitStrategy<>());
-		
+
 		q.offer("hello");
 		assertThat(q.get(),equalTo("hello"));
 	}

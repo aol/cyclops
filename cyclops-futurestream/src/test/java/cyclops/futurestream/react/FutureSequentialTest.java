@@ -1,4 +1,4 @@
-package cyclops.streams.future;
+package cyclops.futurestream.react;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.async.LazyReact;

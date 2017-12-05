@@ -4,7 +4,7 @@ package cyclops.collections;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
-import cyclops.async.LazyReact;
+
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -32,7 +32,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 	public abstract <T> CollectionX<T> iterate(int times, T seed, UnaryOperator<T> fn);
 	public abstract <T> CollectionX<T> generate(int times,Supplier<T> fn);
 	public abstract <U,T> CollectionX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
-	public static final LazyReact r = new LazyReact(10,10);
+
 
 	int captured=-1;
 

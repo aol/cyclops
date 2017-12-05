@@ -9,6 +9,9 @@ import org.junit.Test;
 import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -49,5 +52,14 @@ public class MiscTest {
 
 
     assertThat(strings.toCompletableFuture().join().size(), is(equalTo(1)));
+  }
+  static Supplier<Integer> countGen(AtomicInteger i) {
+    return (()-> i.getAndIncrement());
+  }
+  @Test
+  public void test(){
+    final Supplier<Integer> count = countGen(new AtomicInteger(1));
+    final Optional<Integer> sum = new LazyReact(100,100).generate(count).limit(10).reduce((a, b) -> a + b);
+    assertThat(sum.get(),equalTo(55));
   }
 }

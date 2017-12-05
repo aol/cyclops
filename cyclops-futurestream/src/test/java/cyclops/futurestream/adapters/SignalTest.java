@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.futurestream.adapters;
 
 import static com.oath.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
