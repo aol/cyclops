@@ -6,7 +6,6 @@ import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.SimpleTimer;
-import cyclops.async.LazyReact;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
@@ -69,7 +68,7 @@ public abstract class AbstractIterableXTest {
 	public abstract <T> IterableX<T> iterate(int times, T seed, UnaryOperator<T> fn);
 	public abstract <T> IterableX<T> generate(int times,Supplier<T> fn);
 	public abstract <U,T> IterableX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
-	public static final LazyReact r = new LazyReact(10,10);
+
 
 	int captured=-1;
 

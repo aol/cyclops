@@ -2,7 +2,6 @@ package cyclops.control;
 
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.async.Future;
 import cyclops.companion.Monoids;
@@ -266,7 +265,7 @@ public class Either2Test {
 		assertThat(just.mkString(),equalTo("Either.right[10]"));
 		assertThat(none.mkString(),equalTo("Either.left[none]"));
 	}
-	LazyReact react = new LazyReact();
+
 
 
 	@Test

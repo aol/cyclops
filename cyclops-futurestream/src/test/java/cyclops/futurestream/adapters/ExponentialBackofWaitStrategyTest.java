@@ -1,4 +1,4 @@
-package cyclops.async;
+package cyclops.futurestream.adapters;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
