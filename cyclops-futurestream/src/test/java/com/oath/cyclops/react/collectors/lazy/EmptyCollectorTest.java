@@ -1,4 +1,4 @@
-package cyclops.futurestream.react.collectors.lazy;
+package com.oath.cyclops.react.collectors.lazy;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -10,8 +10,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.oath.cyclops.internal.react.async.future.FastFuture;
+import com.oath.cyclops.react.collectors.lazy.EmptyCollector;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 
 public class EmptyCollectorTest {
 
