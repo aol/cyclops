@@ -36,6 +36,8 @@ import org.junit.Test;
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
 import com.oath.cyclops.types.futurestream.BaseSimpleReactStream;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 
 public class SimpleReactTest {

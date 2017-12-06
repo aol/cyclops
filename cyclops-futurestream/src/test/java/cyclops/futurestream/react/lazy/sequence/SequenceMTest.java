@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.LazyReact;
+import org.junit.Assert;
 import org.junit.Test;
 
 import cyclops.control.Maybe;

@@ -1,4 +1,4 @@
-package cyclops.futurestream.adapters;
+package cyclops.async.adapters;
 
 import static com.oath.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.hasItem;
@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.async.SimpleReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Topic;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -75,7 +75,7 @@ public class MiscTest {
       .plus(5)
       .map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
 
-    PersistentSetX<String> setX =  seq.to().futureStream()
+    PersistentSetX<String> setX =  seq.to(s->new LazyReact().fromStream(s))
       .map(data->"fan out across threads with futureStreams" + data)
       .to().persistentSetX();
 
