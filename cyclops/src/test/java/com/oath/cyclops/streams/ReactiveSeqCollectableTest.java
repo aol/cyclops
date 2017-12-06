@@ -4,7 +4,8 @@ import com.oath.cyclops.types.foldable.Folds;
 
 
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.react.lazy.sequence.CollectableTest;
+import cyclops.streams.CollectableTest;
+
 
 public class ReactiveSeqCollectableTest extends CollectableTest {
 

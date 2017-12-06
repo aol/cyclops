@@ -98,7 +98,6 @@ public class SimpleReact implements ReactBuilder {
      * Construct a SimpleReact builder from the provided Executor, Retrier.
      *
      * @param executor Task executor to execute tasks on
-     * @param retrier Retrier to use for asyncrhonous retry
      * @param async If false, subsequent tasks are executed on the completing thread
      *              If true each subsequent task is resubmitted to a task executor,
      */
@@ -128,7 +127,6 @@ public class SimpleReact implements ReactBuilder {
     /**
      *
      * @param executor Task executor to execute tasks on
-     * @param retrier
      * @param queueCopier Task executor to transfer results during flatMap operations
      */
     public SimpleReact(final Executor executor, final Executor queueCopier) {
@@ -168,8 +166,7 @@ public class SimpleReact implements ReactBuilder {
     public <T> SimpleReactStream<T> fromPublisher(final Publisher<? extends T> publisher) {
         Objects.requireNonNull(publisher);
         Publisher<T> narrowed = (Publisher<T>)publisher;
-        return Spouts.from(narrowed).to()
-                     .simpleReact(this);
+        return from(Spouts.from(narrowed));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.oath.cyclops.internal.react;
+package cyclops.futurestream;
 
 import cyclops.async.LazyReact;
 import cyclops.async.adapters.Topic;

@@ -3,8 +3,12 @@ package cyclops.futurestream.react;
 import cyclops.async.Future;
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
+import cyclops.collections.immutable.PersistentSetX;
+import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Futures;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -61,5 +65,23 @@ public class MiscTest {
     final Supplier<Integer> count = countGen(new AtomicInteger(1));
     final Optional<Integer> sum = new LazyReact(100,100).generate(count).limit(10).reduce((a, b) -> a + b);
     assertThat(sum.get(),equalTo(55));
+  }
+  @Test
+  public void pVectorX(){
+
+
+
+    ReactiveSeq<String> seq = Spouts.from(VectorX.of(1, 2, 3, 4)
+      .plus(5)
+      .map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
+
+    PersistentSetX<String> setX =  seq.to().futureStream()
+      .map(data->"fan out across threads with futureStreams" + data)
+      .to().persistentSetX();
+
+
+
+
+
   }
 }
