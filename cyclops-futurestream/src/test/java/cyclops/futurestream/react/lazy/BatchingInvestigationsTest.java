@@ -2,10 +2,10 @@ package cyclops.futurestream.react.lazy;
 
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.react.async.subscription.Subscription;
-import com.oath.cyclops.util.stream.StreamSource;
 import cyclops.async.LazyReact;
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
+import cyclops.stream.StreamSource;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -66,8 +66,7 @@ public class BatchingInvestigationsTest {
 
                 return result;
             };
-        }).filter(l->l.size()>0).to()
-                .futureStream(new LazyReact(ThreadPools.getSequential()))
+        }).filter(l->l.size()>0).to(s->new LazyReact(ThreadPools.getSequential()).fromStream(s))
                 .async()
                 .peek(System.out::println)
                 .run();
@@ -90,8 +89,7 @@ public class BatchingInvestigationsTest {
 
 
         queue.stream()
-                .groupedBySizeAndTime(10,500,TimeUnit.MILLISECONDS).to()
-                .futureStream(new LazyReact(ThreadPools.getSequential()))
+                .groupedBySizeAndTime(10,500,TimeUnit.MILLISECONDS).to(s->new LazyReact(ThreadPools.getSequential()).fromStream(s))
                 .async()
                 .peek(System.out::println)
                 .run();

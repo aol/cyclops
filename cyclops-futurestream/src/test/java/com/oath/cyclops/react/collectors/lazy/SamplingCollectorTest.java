@@ -1,4 +1,4 @@
-package cyclops.futurestream.react.collectors.lazy;
+package com.oath.cyclops.react.collectors.lazy;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

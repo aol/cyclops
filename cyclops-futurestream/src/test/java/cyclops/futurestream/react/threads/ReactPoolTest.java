@@ -11,10 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.oath.cyclops.react.threads.ReactPool;
 import org.junit.Test;
 
 import cyclops.async.LazyReact;
 import cyclops.async.SimpleReact;
+import org.mockito.Mockito;
 
 public class ReactPoolTest {
 

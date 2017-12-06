@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
+import cyclops.stream.StreamSource;
 import cyclops.stream.pushable.PushableFutureStream;
 import cyclops.stream.pushable.PushableReactiveSeq;
 import cyclops.reactive.FutureStream;
@@ -22,7 +23,7 @@ import org.mockito.internal.util.collections.Sets;
 
 import cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.util.stream.StreamSource;
+
 import cyclops.async.adapters.Queue;
 import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Signal;

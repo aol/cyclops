@@ -16,6 +16,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.async.Pipes;
+import cyclops.async.QueueFactories;
 import cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -212,10 +216,8 @@ public class PipesTest {
 	    q.close();
 	    assertThat(pipes.reactiveSeq("hello").toOptional()
 	         .get().toList(),equalTo(Arrays.asList("world")));
-
-
-
 	}
+
 	@Test
     public void xValues() throws InterruptedException{
         Queue q = new Queue<>();

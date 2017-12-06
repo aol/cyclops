@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import org.junit.Test;
 import com.oath.cyclops.internal.react.async.future.FinalPipeline;
 import com.oath.cyclops.internal.react.async.future.PipelineBuilder;
 
-import io.netty.util.internal.chmv8.ForkJoinPool;
+
 
 public class FastFutureTest {
 	private static final int TIMES = 10_000;
