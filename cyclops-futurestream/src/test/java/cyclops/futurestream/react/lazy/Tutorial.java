@@ -4,6 +4,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
+import cyclops.async.Future;
+import cyclops.async.LazyReact;
+import cyclops.async.QueueFactories;
+import cyclops.async.SimpleReact;
 import cyclops.companion.MapXs;
 
 import java.util.ArrayList;

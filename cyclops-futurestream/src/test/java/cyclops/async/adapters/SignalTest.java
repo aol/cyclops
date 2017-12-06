@@ -1,4 +1,4 @@
-package cyclops.futurestream.adapters;
+package cyclops.async.adapters;
 
 import static com.oath.cyclops.types.futurestream.BaseSimpleReactStream.parallel;
 import static org.hamcrest.Matchers.is;
@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
-import cyclops.async.adapters.Signal;
+import cyclops.async.SimpleReact;
 import org.junit.Before;
 import org.junit.Test;
 

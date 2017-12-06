@@ -1,4 +1,4 @@
-package cyclops.futurestream.adapters;
+package cyclops.async.adapters;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
