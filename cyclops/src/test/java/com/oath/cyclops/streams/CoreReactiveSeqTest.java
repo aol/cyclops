@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Subscription;
@@ -41,7 +40,7 @@ import reactor.core.publisher.Flux;
 //see BaseSequentialSeqTest for in order tests
 public  class CoreReactiveSeqTest {
     public static Executor ex =  Executors.newFixedThreadPool(10);
-    public static final LazyReact r = new LazyReact(10,10);
+
 
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;

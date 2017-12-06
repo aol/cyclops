@@ -163,45 +163,7 @@ public class Pipes<K, V> {
         return Option.ofNullable((Adapter) registered.get(key));
     }
 
-    /**
-     * Create a FutureStream using default Parallelism from the Adapter
-     * identified by the provided key
-     *
-     * @see LazyReact#parallelBuilder()
-     *
-     * <pre>
-     * {@code
-     *  Pipes<String, Integer> bus = Pipes.of();
-        bus.register("reactor", QueueFactories.<Integer>boundedNonBlockingQueue(1000)
-                                              .build());
 
-        bus.publishTo("reactor",ReactiveSeq.of(10,20,30));
-
-        bus.close("reactor");
-
-
-        //on another thread
-       List<String> res =  bus.futureStream("reactor")
-                              .getValue()
-                              .map(i->"fan-out to handle blocking I/O:" + Thread.currentThread().getId() + ":"+i)
-                               .toList();
-       System.out.println(res);
-
-        assertThat(res.size(),equalTo(3));
-     *
-     *
-     * }
-     * </pre>
-     *
-     *
-     *
-     * @param key : Adapter identifier
-     * @return LazyFutureStream from selected Queue
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public Option<FutureStream<V>> futureStream(final K key) {
-        return get(key).map(a -> a.futureStream());
-    }
 
     /**
      * Create a FutureStream using the provided LazyReact futureStream builder
@@ -239,7 +201,7 @@ public class Pipes<K, V> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Option<FutureStream<V>> futureStream(final K key, final LazyReact builder) {
 
-        return get(key).map(a -> a.futureStream(builder));
+        return get(key).map(a -> builder.fromStream(a.stream()));
     }
 
     /**

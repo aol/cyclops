@@ -1,4 +1,4 @@
-package com.oath.cyclops;
+package cyclops.futurestream;
 
 import java.util.ArrayList;
 import java.util.List;
