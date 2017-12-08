@@ -29,8 +29,8 @@ configurations {
   provided
 }
 dependencies {
-     compile project(':cyclops')
-
+  compile project(':cyclops')
+  compile project(':cyclops-futurestream')
   provided 'org.projectlombok:lombok:1.16.12'
   testCompile project(':cyclops').sourceSets.test.output
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'

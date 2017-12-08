@@ -32,13 +32,13 @@ dependencies {
      compile project(':cyclops')
 
   provided 'org.projectlombok:lombok:1.16.12'
-  testCompile 'org.testng:testng:5.14.10'
   testCompile project(':cyclops').sourceSets.test.output
   testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
-  testCompile 'org.mockito:mockito-all:1.9.5'
+  testCompile 'org.mockito:mockito-core:1.9.5'
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
-  testCompile group: 'junit', name: 'junit', version: '4.12'
   testCompile 'org.hamcrest:hamcrest-all:1.3'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile 'org.testng:testng:5.14.10'
   testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
   testCompile 'io.vertx:vertx-core:3.0.0'
 }
@@ -50,7 +50,7 @@ sourceSets {
 
 modifyPom {
   project {
-    name 'cyclops-anym'
+    name 'cyclops-futurestream'
     description 'Asynchronous parallel streaming via futures'
     url 'https://github.com/aol/cyclops-react'
     inceptionYear '2015'
