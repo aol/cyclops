@@ -48,14 +48,14 @@ public class PBagsTest {
 
 	@Test
 	public void testToPBagX() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPBag()).stream()
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentBag()).stream()
 				.collect(Collectors.toList()),
 				hasItems("a","b","c"));
 	}
 
 	@Test
     public void testReducer(){
-	    System.out.println(Reducers.<Integer>toPBag().mapReduce(Seq.of(1,2,3).stream()));
+	    System.out.println(Reducers.<Integer>toPersistentBag().mapReduce(Seq.of(1,2,3).stream()));
     }
 
 

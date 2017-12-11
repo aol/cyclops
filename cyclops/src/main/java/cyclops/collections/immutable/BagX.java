@@ -301,22 +301,22 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      */
     public static <T> BagX<T> bagX(ReactiveSeq<T> stream) {
 
-        return new LazyPBagX<>(null,stream,Reducers.toPBag(),Evaluation.LAZY);
+        return new LazyPBagX<>(null,stream,Reducers.toPersistentBag(),Evaluation.LAZY);
     }
     public static <T> BagX<T> of(final T... values) {
         return new LazyPBagX<>(null,
-                               ReactiveSeq.of(values),Reducers.toPBag(),Evaluation.LAZY);
+                               ReactiveSeq.of(values),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     public static <T> BagX<T> empty() {
         return new LazyPBagX<>(null,
-                               ReactiveSeq.empty(),Reducers.toPBag(),Evaluation.LAZY);
+                               ReactiveSeq.empty(),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     public static <T> BagX<T> singleton(final T value) {
         //use concrete type for singleton as used in Reducers
         return new LazyPBagX<>(
-                Bag.of(value),null,Reducers.toPBag(),Evaluation.LAZY);
+                Bag.of(value),null,Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     /**
@@ -335,18 +335,18 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
             return (BagX) iterable;
         if (iterable instanceof PersistentBag)
             return new LazyPBagX<>(
-                                   (PersistentBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
+                                   (PersistentBag) iterable,null,Reducers.toPersistentBag(),Evaluation.LAZY);
 
 
         return new LazyPBagX<>(null,
                                  ReactiveSeq.fromIterable(iterable),
-                                 Reducers.toPBag(),Evaluation.LAZY);
+                                 Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
 
 
     default <T> BagX<T> fromStream(final ReactiveSeq<T> stream) {
-        return new LazyPBagX<>(null,ReactiveSeq.fromStream(stream),Reducers.toPBag(),Evaluation.LAZY);
+        return new LazyPBagX<>(null,ReactiveSeq.fromStream(stream),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
@@ -446,7 +446,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      */
  //   @Override
     default <T> Reducer<PersistentBag<T>,T> monoid() {
-        return Reducers.toPBag();
+        return Reducers.toPersistentBag();
     }
 
 

@@ -281,7 +281,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyLinkedListX<T>(null,stream,Reducers.toPList(),Evaluation.LAZY);
+        return new LazyLinkedListX<T>(null,stream,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
 
@@ -308,7 +308,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyLinkedListX<>(null,
-                                 ReactiveSeq.of(values),Reducers.toPList(), Evaluation.LAZY);
+                                 ReactiveSeq.of(values),Reducers.toPersistentList(), Evaluation.LAZY);
     }
     /**
      *
@@ -337,9 +337,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PersistentList)
             return new LazyLinkedListX<T>(
-                    (PersistentList) iterable,null,Reducers.toPList(),Evaluation.LAZY);
+                    (PersistentList) iterable,null,Reducers.toPersistentList(),Evaluation.LAZY);
 
-        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPList(),Evaluation.LAZY);
+        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPersistentList(),Evaluation.LAZY);
 
     }
 
@@ -361,7 +361,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 Seq.empty(),null,Reducers.toPList(),Evaluation.LAZY);
+                                 Seq.empty(),null,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
     /**
@@ -382,7 +382,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 Seq.of(value),null,Reducers.toPList(),Evaluation.LAZY);
+                                 Seq.of(value),null,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
     /**
@@ -585,7 +585,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     //@Override
     default <T> Reducer<PersistentList<T>,T> monoid() {
-        return Reducers.toPList();
+        return Reducers.toPersistentList();
 
     }
 

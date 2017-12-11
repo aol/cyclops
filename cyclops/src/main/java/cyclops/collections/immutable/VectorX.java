@@ -282,7 +282,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector(), LAZY);
+        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPersistentVector(), LAZY);
     }
     /**
      *
@@ -307,7 +307,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
-                                  Vector.empty(),null,Reducers.toPVector(), LAZY);
+                                  Vector.empty(),null,Reducers.toPersistentVector(), LAZY);
     }
 
     /**
@@ -328,7 +328,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  Vector.of(value),null,Reducers.toPVector(), LAZY);
+                                  Vector.of(value),null,Reducers.toPersistentVector(), LAZY);
     }
 
     /**
@@ -348,11 +348,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return (VectorX) iterable;
         if (iterable instanceof Vector)
             return new LazyPVectorX<>(
-                                      (Vector) iterable,null,Reducers.toPVector(), LAZY);
+                                      (Vector) iterable,null,Reducers.toPersistentVector(), LAZY);
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPVector(), LAZY);
+                Reducers.toPersistentVector(), LAZY);
     }
     VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
 
@@ -372,7 +372,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 
-        return new LazyPVectorX<T>(null,stream,Reducers.toPVector(), LAZY);
+        return new LazyPVectorX<T>(null,stream,Reducers.toPersistentVector(), LAZY);
     }
 
 
@@ -542,7 +542,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     //@Override
     default <T> Reducer<PersistentList<T>,T> monoid() {
-        return Reducers.toPVector();
+        return Reducers.toPersistentVector();
     }
 
     /* (non-Javadoc)

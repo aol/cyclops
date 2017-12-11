@@ -244,12 +244,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     public static <T> PersistentQueueX<T> of(final T... values) {
-        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPQueue(),Evaluation.LAZY);
+        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> empty() {
         return new LazyPQueueX<>(
-                                 BankersQueue.empty(),null,Reducers.toPQueue(),Evaluation.LAZY);
+                                 BankersQueue.empty(),null,Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> singleton(final T value) {
@@ -285,7 +285,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @return
      */
     public static <T> PersistentQueueX<T> persistentQueueX(ReactiveSeq<T> stream) {
-        return new LazyPQueueX<>(null,stream,Reducers.toPQueue(),Evaluation.LAZY);
+        return new LazyPQueueX<>(null,stream,Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> fromIterable(final Iterable<T> iterable) {
@@ -293,12 +293,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return (PersistentQueueX) iterable;
         if (iterable instanceof PersistentQueue)
             return new LazyPQueueX<>(
-                                     (PersistentQueue) iterable,null,Reducers.toPQueue(),Evaluation.LAZY);
+                                     (PersistentQueue) iterable,null,Reducers.toPersistentQueue(),Evaluation.LAZY);
 
 
         return new LazyPQueueX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPQueue(),Evaluation.LAZY);
+                Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
 
@@ -492,7 +492,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
    // @Override
     default <T> Reducer<PersistentQueue<T>,T> monoid() {
-        return Reducers.toPQueue();
+        return Reducers.toPersistentQueue();
     }
 
     /*

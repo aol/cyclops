@@ -203,17 +203,17 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet(), LAZY);
+        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPersistentSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashSet.empty(),null,Reducers.toPSet(), LAZY);
+                               HashSet.empty(),null,Reducers.toPersistentSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashSet.of(value),null,Reducers.toPSet(), LAZY);
+                               HashSet.of(value),null,Reducers.toPersistentSet(), LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PersistentSet<T>,T> reducer);
     /**
@@ -242,19 +242,19 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @return
      */
     public static <T> PersistentSetX<T> persistentSetX(ReactiveSeq<T> stream) {
-        return new LazyPSetX<>(null,stream,Reducers.toPSet(), LAZY);
+        return new LazyPSetX<>(null,stream,Reducers.toPersistentSet(), LAZY);
     }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
         if (iterable instanceof PersistentSet)
             return new LazyPSetX<>(
-                                   (PersistentSet) iterable,null,Reducers.toPSet(), LAZY);
+                                   (PersistentSet) iterable,null,Reducers.toPersistentSet(), LAZY);
 
 
         return new LazyPSetX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPSet(), LAZY);
+                Reducers.toPersistentSet(), LAZY);
     }
 
     /**
@@ -451,7 +451,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
  //   @Override
     default <T> Reducer<PersistentSet<T>,T> monoid() {
-        return Reducers.toPSet();
+        return Reducers.toPersistentSet();
     }
 
     /* (non-Javadoc)
