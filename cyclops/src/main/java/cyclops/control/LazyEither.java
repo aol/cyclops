@@ -5,7 +5,6 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
-import cyclops.async.Future;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;

@@ -1,11 +1,12 @@
 package cyclops.control;
 
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.Recoverable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.async.Future;
 import cyclops.data.tuple.*;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
@@ -33,6 +34,7 @@ public interface Option<T> extends To<Option<T>>,
                                     Recoverable<T>,
                                     Sealed2<T,Option.None<T>>,
                                     Iterable<T>,
+                                    Higher<DataWitness.option,T>,
                                     Serializable{
 
 

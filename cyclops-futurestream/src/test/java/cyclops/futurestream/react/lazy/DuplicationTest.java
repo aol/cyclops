@@ -3,7 +3,7 @@ package cyclops.futurestream.react.lazy;
 
 import static org.junit.Assert.assertTrue;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

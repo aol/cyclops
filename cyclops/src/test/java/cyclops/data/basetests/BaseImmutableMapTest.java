@@ -1,6 +1,5 @@
 package cyclops.data.basetests;
 
-import cyclops.async.adapters.Topic;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
@@ -9,12 +8,9 @@ import cyclops.companion.PersistentMapXs;
 import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;

@@ -1,6 +1,6 @@
 package cyclops.futurestream.react.async.vertx;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Vertx;

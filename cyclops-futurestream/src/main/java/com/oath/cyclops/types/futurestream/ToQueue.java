@@ -3,8 +3,8 @@ package com.oath.cyclops.types.futurestream;
 import java.util.Map;
 import java.util.function.Function;
 
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.QueueFactory;
 
 /**
  *

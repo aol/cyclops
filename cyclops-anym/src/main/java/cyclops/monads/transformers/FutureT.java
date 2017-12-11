@@ -12,7 +12,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

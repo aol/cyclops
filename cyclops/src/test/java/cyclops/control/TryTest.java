@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.util.box.Mutable;

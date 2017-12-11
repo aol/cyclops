@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;

@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.companion.Streams;
 import cyclops.futurestream.react.base.BaseSequentialSQLTest;
 import cyclops.reactive.FutureStream;

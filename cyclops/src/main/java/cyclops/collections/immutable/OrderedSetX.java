@@ -10,7 +10,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.function.Monoid;

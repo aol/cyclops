@@ -1,6 +1,5 @@
 package cyclops.monads.function;
 
-import cyclops.async.Future;
 import cyclops.function.Function1;
 import cyclops.monads.AnyMs;
 import cyclops.monads.KleisliM;

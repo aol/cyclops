@@ -1,9 +1,9 @@
 package cyclops.companion;
 
 import cyclops.control.Either;
-import cyclops.async.adapters.Adapter;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Adapter;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Topic;
 
 
 import java.util.concurrent.BlockingQueue;

@@ -6,7 +6,7 @@ import cyclops.companion.Optionals;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.list;
-import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
@@ -44,7 +44,7 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
         return of(i->i,defs);
     }
 
-    static <T> FunctionK<reactiveSeq,maybe,T> streamMaybe(){
+    static <T> FunctionK<reactiveSeq,option,T> streamMaybe(){
         return of(i -> ReactiveSeq.narrowK(i).headAndTail().headMaybe(), Maybe.Instances.definitions());
     }
     static <T> FunctionK<reactiveSeq,optional,T> streamOptionals(){
@@ -53,7 +53,7 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
     static <T> FunctionK<list,reactiveSeq,T> listStream(){
         return of(i -> ListX.narrowK(i).stream(),ReactiveSeq.Instances.definitions());
     }
-    static <T> FunctionK<list,maybe,T> listMaybe(){
+    static <T> FunctionK<list,option,T> listMaybe(){
         return of(i -> ListX.narrowK(i).headAndTail().headMaybe(), Maybe.Instances.definitions());
     }
     static <T> FunctionK<list,optional,T> listOptional(){

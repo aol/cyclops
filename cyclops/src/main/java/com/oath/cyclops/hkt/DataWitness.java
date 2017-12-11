@@ -63,7 +63,7 @@ public interface DataWitness {
   public static enum lazyEither5 {}
   public static enum either {}
   public static enum eval {}
-  public static enum maybe {}
+  public static enum option {}
   public static enum future{}
   public static enum completableFuture {}
   public static enum optional {}

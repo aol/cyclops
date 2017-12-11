@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.react.base.BaseSeqLazyTest;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 

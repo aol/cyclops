@@ -8,7 +8,7 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.option;
 import cyclops.typeclasses.functions.MonoidKs;
 import org.junit.Test;
 
@@ -125,7 +125,7 @@ public class MaybesTest {
     }
     @Test
     public void traverse(){
-       Maybe<Higher<maybe, Integer>> res = Maybe.Instances.traverse()
+       Maybe<Higher<option, Integer>> res = Maybe.Instances.traverse()
                                                           .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Maybe.just(1))
                                                           .convert(Maybe::narrowK);
 

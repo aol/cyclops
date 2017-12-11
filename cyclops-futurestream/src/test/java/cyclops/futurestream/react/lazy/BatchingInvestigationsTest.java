@@ -2,9 +2,9 @@ package cyclops.futurestream.react.lazy;
 
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.react.async.subscription.Subscription;
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
 import cyclops.stream.StreamSource;
 import org.junit.Ignore;
 import org.junit.Test;

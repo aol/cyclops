@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import com.oath.anym.AnyMSeq;
 import cyclops.collections.immutable.VectorX;
 import cyclops.companion.*;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 

@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.futurestream.react.base.BaseNumberOperationsTest;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.FutureStream;
 
 public class LazyFutureNumberOperationsTest extends BaseNumberOperationsTest {

@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.ThreadPools;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;

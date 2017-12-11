@@ -1,8 +1,8 @@
 package cyclops.futurestream;
 
 import com.oath.cyclops.internal.react.FutureStreamImpl;
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Topic;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

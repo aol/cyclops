@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import org.junit.Test;
 
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.SimpleReact;
 
 public class MergeTest {
 

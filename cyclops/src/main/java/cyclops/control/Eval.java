@@ -9,7 +9,6 @@ import cyclops.data.Vector;
 import cyclops.typeclasses.*;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
-import cyclops.async.Future;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.eval;

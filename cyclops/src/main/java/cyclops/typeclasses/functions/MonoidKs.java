@@ -1,7 +1,7 @@
 package cyclops.typeclasses.functions;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.collections.immutable.PersistentSetX;
@@ -410,15 +410,15 @@ public interface MonoidKs {
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static MonoidK<maybe> firstPresentMaybe() {
-        return new MonoidK<maybe>() {
+    static MonoidK<option> firstPresentMaybe() {
+        return new MonoidK<option>() {
           @Override
-          public <T> Higher<maybe, T> zero() {
+          public <T> Higher<option, T> zero() {
             return Maybe.nothing();
           }
 
           @Override
-          public <T> Higher<maybe, T> apply(Higher<maybe, T> t1, Higher<maybe, T> t2) {
+          public <T> Higher<option, T> apply(Higher<option, T> t1, Higher<option, T> t2) {
             return SemigroupKs.firstPresentMaybe().apply(t1,t2);
           }
         };
@@ -444,15 +444,15 @@ public interface MonoidKs {
     /**
      * @return Combine two Maybes by taking the last present
      */
-    static <T> MonoidK<maybe> lastPresentMaybe() {
-        return new MonoidK<maybe>() {
+    static <T> MonoidK<option> lastPresentMaybe() {
+        return new MonoidK<option>() {
           @Override
-          public <T> Higher<maybe, T> zero() {
+          public <T> Higher<option, T> zero() {
             return Maybe.nothing();
           }
 
           @Override
-          public <T> Higher<maybe, T> apply(Higher<maybe, T> t1, Higher<maybe, T> t2) {
+          public <T> Higher<option, T> apply(Higher<option, T> t1, Higher<option, T> t2) {
             return SemigroupKs.lastPresentMaybe().apply(t1,t2);
           }
         };

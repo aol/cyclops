@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 
 public class HotStreamTest {

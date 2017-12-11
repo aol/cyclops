@@ -21,7 +21,7 @@ import cyclops.typeclasses.functor.Functor;
 
 
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 

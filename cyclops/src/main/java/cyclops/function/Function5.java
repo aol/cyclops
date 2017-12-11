@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import cyclops.control.Option;
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
@@ -43,7 +43,7 @@ public interface Function5<T1, T2, T3, T4, T5, R> extends Function1<T1, Function
                     .apply(s3)
                     .apply(s4);
     }
-    
+
 
     default Function5<T1, T2, T3, T4, T5, Future<R>> lift5(Executor ex) {
 

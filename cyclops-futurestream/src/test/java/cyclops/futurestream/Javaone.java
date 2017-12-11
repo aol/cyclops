@@ -7,10 +7,10 @@ import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
 
 public class Javaone {
 

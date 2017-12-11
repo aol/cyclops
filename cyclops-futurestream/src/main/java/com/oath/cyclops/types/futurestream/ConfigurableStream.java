@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.internal.react.stream.ReactBuilder;
 
 

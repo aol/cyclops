@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	@Override

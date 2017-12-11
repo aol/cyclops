@@ -6,6 +6,7 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.*;
+import cyclops.control.Future;
 import cyclops.typeclasses.*;
 
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -67,7 +68,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     static class CompletableQueueX<T> implements InvocationHandler {
-        cyclops.async.Future<QueueX<T>> future = cyclops.async.Future.future();
+        Future<QueueX<T>> future = Future.future();
         public boolean complete(Queue<T> result){
             return future.complete(QueueX.fromIterable(result));
         }

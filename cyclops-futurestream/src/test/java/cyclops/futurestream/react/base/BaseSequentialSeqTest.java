@@ -39,7 +39,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.util.SimpleTimer;
 

@@ -3,7 +3,6 @@ package cyclops.control;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
-import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.function.Monoid;
 

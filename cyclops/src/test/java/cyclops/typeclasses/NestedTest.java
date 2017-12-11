@@ -1,6 +1,6 @@
 package cyclops.typeclasses;
 
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;

@@ -8,7 +8,7 @@ import java.util.function.Function;
 import cyclops.reactive.FutureStream;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 
 public class ParallelTest {

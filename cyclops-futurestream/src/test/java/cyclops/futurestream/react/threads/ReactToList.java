@@ -8,7 +8,7 @@ import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import com.oath.cyclops.util.SimpleTimer;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 public class ReactToList {
 	static List res;

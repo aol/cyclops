@@ -20,9 +20,9 @@ import org.reactivestreams.Subscription;
 
 import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Queue.ClosedQueueException;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
+import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.collections.mutable.QueueX;
 import com.oath.cyclops.types.futurestream.Continuation;
 

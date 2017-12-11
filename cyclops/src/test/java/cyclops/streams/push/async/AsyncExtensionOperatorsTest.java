@@ -3,7 +3,7 @@ package cyclops.streams.push.async;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
@@ -39,7 +39,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
     public void queueTest(){
-	    cyclops.async.adapters.Queue<Integer> q = new Queue<>();
+	    com.oath.cyclops.async.adapters.Queue<Integer> q = new Queue<>();
 	    q.add(1);
 	    q.add(2);
 	    q.add(3);

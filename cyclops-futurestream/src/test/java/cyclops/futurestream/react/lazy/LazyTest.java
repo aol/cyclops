@@ -16,7 +16,7 @@ import com.oath.cyclops.types.mixins.Printable;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 
 public class LazyTest implements Printable {

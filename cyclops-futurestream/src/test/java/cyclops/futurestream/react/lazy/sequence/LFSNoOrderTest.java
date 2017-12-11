@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 
 

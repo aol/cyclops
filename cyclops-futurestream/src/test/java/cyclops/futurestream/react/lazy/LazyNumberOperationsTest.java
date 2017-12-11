@@ -3,7 +3,7 @@ package cyclops.futurestream.react.lazy;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.react.base.BaseLazyNumberOperationsTest;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.FutureStream;
 
 public class LazyNumberOperationsTest extends BaseLazyNumberOperationsTest {
