@@ -2,10 +2,10 @@ package cyclops.stream.pushable;
 
 import java.util.stream.Stream;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.reactive.FutureStream;
 
 /**

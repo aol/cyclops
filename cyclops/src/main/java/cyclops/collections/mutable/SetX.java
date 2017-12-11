@@ -65,7 +65,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     static class CompletableSetX<T> implements InvocationHandler {
-        cyclops.async.Future<SetX<T>> future    = cyclops.async.Future.future();
+        Future<SetX<T>> future    = Future.future();
         public boolean complete(Set<T> result){
             return future.complete(SetX.fromIterable(result));
         }

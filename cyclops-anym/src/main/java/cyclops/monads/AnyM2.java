@@ -12,7 +12,7 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;

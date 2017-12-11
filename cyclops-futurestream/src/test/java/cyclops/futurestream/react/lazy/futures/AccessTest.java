@@ -5,7 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import org.junit.Test;
 
 public class AccessTest {

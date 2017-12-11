@@ -1,8 +1,8 @@
 package com.oath.cyclops;
 
 import cyclops.companion.Eithers;
-import cyclops.async.adapters.Adapter;
-import cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Adapter;
+import com.oath.cyclops.async.QueueFactories;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import org.junit.Test;
 

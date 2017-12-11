@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.QueueFactory;
 
 public interface EagerToQueue<U> extends ToQueue<U> {
 

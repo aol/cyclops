@@ -13,7 +13,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 
 /**

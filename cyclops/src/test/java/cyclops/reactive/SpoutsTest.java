@@ -4,8 +4,8 @@ import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 
 import cyclops.function.Effect;
@@ -390,7 +390,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishToAndMerge(){
-        cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+        com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                 .build();
 
         Thread t=  new Thread( ()-> {

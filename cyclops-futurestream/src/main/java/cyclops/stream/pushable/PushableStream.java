@@ -2,7 +2,7 @@ package cyclops.stream.pushable;
 
 import java.util.stream.Stream;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 
 /**
  * A more concrete Tuple2 impl

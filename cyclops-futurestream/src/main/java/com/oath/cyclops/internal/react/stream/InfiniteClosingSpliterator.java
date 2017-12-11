@@ -6,8 +6,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Queue.ClosedQueueException;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 
 public class InfiniteClosingSpliterator<T> implements Spliterator<T> {
     private long estimate;

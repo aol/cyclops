@@ -1,6 +1,5 @@
 package cyclops.control;
 
-import cyclops.async.Future;
 import cyclops.control.Eval.CompletableEval;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;

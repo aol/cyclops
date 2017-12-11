@@ -9,9 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
@@ -33,8 +31,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.SimpleReact;
 import com.oath.cyclops.types.futurestream.BaseSimpleReactStream;
 import org.mockito.Matchers;
 import org.mockito.Mockito;

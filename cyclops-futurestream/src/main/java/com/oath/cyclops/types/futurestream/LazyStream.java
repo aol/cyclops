@@ -18,7 +18,7 @@ import com.oath.cyclops.internal.react.stream.Runner;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import com.oath.cyclops.react.threads.SequentialElasticPools;
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.SimpleReact;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.react.collectors.lazy.EmptyCollector;
 import com.oath.cyclops.react.collectors.lazy.IncrementalReducer;

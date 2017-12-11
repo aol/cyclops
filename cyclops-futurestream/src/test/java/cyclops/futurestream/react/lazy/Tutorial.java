@@ -4,10 +4,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
-import cyclops.async.QueueFactories;
-import cyclops.async.SimpleReact;
+import cyclops.control.Future;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.SimpleReact;
 import cyclops.companion.MapXs;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;

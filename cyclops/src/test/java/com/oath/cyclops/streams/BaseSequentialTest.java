@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Semigroups;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Topic;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.control.Option;
@@ -241,7 +241,7 @@ public class BaseSequentialTest {
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("Publish toNested and zip iteration " + k);
-            cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {

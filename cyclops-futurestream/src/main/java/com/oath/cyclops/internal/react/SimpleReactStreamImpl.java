@@ -12,10 +12,10 @@ import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.react.async.subscription.AlwaysContinue;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
-import cyclops.async.SimpleReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.SimpleReact;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.types.futurestream.EagerToQueue;
 
 

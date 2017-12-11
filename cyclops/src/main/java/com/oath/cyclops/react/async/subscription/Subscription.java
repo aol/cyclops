@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import cyclops.reactive.ReactiveSeq;
 
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 
 import lombok.Getter;
 import lombok.Setter;

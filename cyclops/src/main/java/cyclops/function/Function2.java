@@ -15,7 +15,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 import cyclops.collections.mutable.ListX;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 
 @FunctionalInterface

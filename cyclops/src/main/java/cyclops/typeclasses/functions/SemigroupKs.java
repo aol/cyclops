@@ -1,7 +1,7 @@
 package cyclops.typeclasses.functions;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.CompletableFutures;
@@ -392,11 +392,11 @@ public interface SemigroupKs{
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static SemigroupK<maybe> firstPresentMaybe() {
-      return new SemigroupK<maybe>() {
+    static SemigroupK<option> firstPresentMaybe() {
+      return new SemigroupK<option>() {
 
         @Override
-        public <T> Higher<maybe, T> apply(Higher<maybe, T> a, Higher<maybe, T> b) {
+        public <T> Higher<option, T> apply(Higher<option, T> a, Higher<option, T> b) {
           return Maybe.narrowK(a).isPresent() ? a : b;
         }
       };
@@ -420,10 +420,10 @@ public interface SemigroupKs{
     /**
      * @return Combine two Maybes by taking the last present
      */
-    static SemigroupK<maybe> lastPresentMaybe() {
-      return new SemigroupK<maybe>() {
+    static SemigroupK<option> lastPresentMaybe() {
+      return new SemigroupK<option>() {
         @Override
-        public <T> Higher<maybe, T> apply(Higher<maybe, T> a, Higher<maybe, T> b) {
+        public <T> Higher<option, T> apply(Higher<option, T> a, Higher<option, T> b) {
           return  Maybe.narrowK(b).isPresent() ? b : a;
         }
       };

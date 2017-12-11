@@ -8,7 +8,7 @@ import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;

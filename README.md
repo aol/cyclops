@@ -287,7 +287,7 @@ Classes / Interfaces that represent the API (cyclops-react)
 | Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
 | StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
 
-## cyclops.async
+## com.oath.cyclops.async
 
 | type | description | characteristics |
 |------|-------------|-----------------|

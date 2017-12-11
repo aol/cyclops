@@ -6,7 +6,6 @@ import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
-import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;

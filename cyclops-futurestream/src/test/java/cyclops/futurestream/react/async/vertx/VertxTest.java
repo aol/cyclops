@@ -9,12 +9,12 @@ import java.util.concurrent.CompletableFuture;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.SimpleReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.wait.WaitStrategy;
+import com.oath.cyclops.async.SimpleReact;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.wait.WaitStrategy;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;

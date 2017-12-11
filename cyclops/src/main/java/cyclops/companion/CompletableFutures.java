@@ -12,7 +12,7 @@ import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

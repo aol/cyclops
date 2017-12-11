@@ -6,7 +6,7 @@ import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 import org.testng.annotations.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 @Test
 public class TckAsynchronousPublisherTest extends PublisherVerification<Long>{
 

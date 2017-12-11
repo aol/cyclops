@@ -4,7 +4,7 @@ import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.futurestream.EagerFutureStreamFunctions;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.control.Ior;

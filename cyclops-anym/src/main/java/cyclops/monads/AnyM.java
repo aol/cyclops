@@ -43,7 +43,7 @@ import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
 import cyclops.data.tuple.Tuple2;
@@ -880,6 +880,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static <T> AnyMValue<maybe,T> fromMaybe(final Maybe<T> maybe) {
         Objects.requireNonNull(maybe);
         return AnyMFactory.instance.value(maybe, Witness.maybe.INSTANCE);
+    }
+    public static <T> AnyMValue<option,T> fromMaybe(final Option<T> option) {
+      Objects.requireNonNull(option);
+      return AnyMFactory.instance.value(option, Witness.option.INSTANCE);
     }
     public static <T> AnyMValue<identity,T> fromIdentity(final Identity<T> value){
         Objects.requireNonNull(value);

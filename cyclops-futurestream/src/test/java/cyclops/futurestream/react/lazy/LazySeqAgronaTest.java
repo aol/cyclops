@@ -26,10 +26,10 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.futurestream.react.base.BaseSeqTest;
 

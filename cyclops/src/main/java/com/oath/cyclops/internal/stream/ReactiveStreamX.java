@@ -1,17 +1,17 @@
 package com.oath.cyclops.internal.stream;
 
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
-import cyclops.async.Future;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
-import cyclops.async.adapters.Signal;
-import cyclops.async.adapters.Topic;
+import cyclops.control.Future;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
@@ -655,7 +655,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
                 private Object nilsafeIn(Object o) {
                     if (o == null)
-                        return cyclops.async.adapters.Queue.NILL;
+                        return com.oath.cyclops.async.adapters.Queue.NILL;
                     return o;
                 }
 

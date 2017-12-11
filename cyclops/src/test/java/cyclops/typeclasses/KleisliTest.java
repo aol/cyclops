@@ -1,6 +1,6 @@
 package cyclops.typeclasses;
 
-import cyclops.async.Future;
+import cyclops.control.Future;
 import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.monad.Monad;
 import org.junit.Test;

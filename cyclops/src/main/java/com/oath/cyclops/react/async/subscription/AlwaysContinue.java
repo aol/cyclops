@@ -1,6 +1,6 @@
 package com.oath.cyclops.react.async.subscription;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 
 public class AlwaysContinue implements Continueable {
 

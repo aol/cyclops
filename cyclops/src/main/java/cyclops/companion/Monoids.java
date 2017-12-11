@@ -3,7 +3,7 @@ package cyclops.companion;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.Zippable;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.control.Ior;

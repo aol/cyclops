@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.FutureStream;
 
 

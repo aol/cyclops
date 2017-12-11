@@ -11,7 +11,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.SimpleReact;
 import com.oath.cyclops.types.futurestream.BlockingStreamHelper;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import com.oath.cyclops.util.ExceptionSoftener;

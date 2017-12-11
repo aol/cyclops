@@ -3,7 +3,7 @@ package com.oath.cyclops.types;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Try;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.reactive.ValueSubscriber;

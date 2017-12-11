@@ -1,23 +1,18 @@
 package com.oath.cyclops.react.collectors.lazy;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.oath.cyclops.internal.react.async.future.FastFuture;
-import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
-import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 public class BatchingCollectorTest {
 

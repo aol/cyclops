@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.SimpleReact;
 
 public class AnyOfTest {
 

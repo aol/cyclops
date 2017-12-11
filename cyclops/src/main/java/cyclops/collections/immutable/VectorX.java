@@ -8,7 +8,7 @@ import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;

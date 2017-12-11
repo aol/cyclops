@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import com.oath.anym.internal.adapters.*;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
@@ -102,6 +102,9 @@ public interface Witness {
     public static <T> Maybe<T> maybe(AnyM<maybe,? extends T> anyM){
         return anyM.unwrap();
     }
+    public static <T> Option<T> option(AnyM<option,? extends T> anyM){
+    return anyM.unwrap();
+  }
     public static <T> Future<T> future(AnyM<future,? extends T> anyM){
         return anyM.unwrap();
     }
@@ -379,6 +382,17 @@ public interface Witness {
         }
 
     }
+      public static enum option implements MonadicValueWitness<option>{
+        INSTANCE;
+
+
+        @Override
+        public MonadAdapter<option> adapter() {
+          return new MonadicValueAdapter<Witness.option>(()->Option.none(),
+            Option::some,Option::fromIterable,true,this);
+        }
+
+      }
     public static enum future implements MonadicValueWitness<future>{
         INSTANCE;
 

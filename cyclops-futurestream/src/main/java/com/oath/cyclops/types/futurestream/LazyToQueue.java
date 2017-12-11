@@ -5,9 +5,9 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Queue.ClosedQueueException;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.internal.react.async.future.CompletedException;
 import cyclops.reactive.FutureStream;
 

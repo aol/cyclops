@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import org.junit.Test;
 
 public class SchedulingTest {

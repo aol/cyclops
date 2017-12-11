@@ -9,7 +9,6 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.async.Future;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;

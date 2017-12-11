@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
 import com.oath.cyclops.types.futurestream.Continuation;
-import cyclops.async.adapters.Queue.ClosedQueueException;
+import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.oath.cyclops.react.collectors.lazy.EmptyCollector;
 

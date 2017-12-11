@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import org.hamcrest.CoreMatchers;
 import cyclops.data.tuple.Tuple;
@@ -80,7 +80,7 @@ public  class CoreReactiveSeqTest {
 
 	@Test
     public void publishToAndMerge(){
-	    cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+	    com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                                             .build();
 
         Thread t=  new Thread( ()-> {

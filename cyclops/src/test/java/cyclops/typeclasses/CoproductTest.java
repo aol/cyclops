@@ -3,7 +3,7 @@ package cyclops.typeclasses;
 import cyclops.companion.Streams;
 import cyclops.companion.Streams.StreamKind;
 import cyclops.control.Maybe;
-import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.stream;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 
 public class CoproductTest {
 
-    Coproduct<stream,maybe,Integer> just = Coproduct.just(10, Streams.Instances.definitions());
+    Coproduct<stream,option,Integer> just = Coproduct.just(10, Streams.Instances.definitions());
 
     @Test
     public void map(){

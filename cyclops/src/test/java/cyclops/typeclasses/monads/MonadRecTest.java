@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monads;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Optionals;
@@ -48,7 +48,7 @@ public class MonadRecTest {
 
     @Test
     public void maybeTest(){
-        MonadRec<maybe> mr = Maybe.Instances.monadRec();
+        MonadRec<option> mr = Maybe.Instances.monadRec();
         Maybe<Integer> l = mr.tailRec(0, i -> i < 100_000 ? Maybe.just(Either.left(i + 1)) : Maybe.just(Either.right(i + 1)))
                 .convert(Maybe::narrowK);
         assertThat(l,equalTo(Maybe.just(100_001)));

@@ -30,10 +30,10 @@ import cyclops.reactive.FutureStream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.collections.mutable.ListX;
 
 import lombok.AccessLevel;

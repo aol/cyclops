@@ -1,8 +1,8 @@
 package cyclops.futurestream.react;
 
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
-import cyclops.async.SimpleReact;
+import cyclops.control.Future;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.SimpleReact;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

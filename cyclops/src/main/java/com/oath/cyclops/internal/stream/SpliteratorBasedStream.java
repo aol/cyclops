@@ -8,9 +8,9 @@ import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
-import cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Signal;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 
@@ -489,7 +489,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     public ReactiveSeq<T> changes(){
 
-            cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            com.oath.cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
 

@@ -10,7 +10,7 @@ import com.oath.cyclops.internal.react.async.future.FuturePool;
 import com.oath.cyclops.internal.react.async.future.PipelineBuilder;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.internal.react.async.future.FinalPipeline;
 

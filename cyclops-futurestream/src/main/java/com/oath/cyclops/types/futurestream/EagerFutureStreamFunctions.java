@@ -1,8 +1,8 @@
 package com.oath.cyclops.types.futurestream;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Queue.QueueReader;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue.QueueReader;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 

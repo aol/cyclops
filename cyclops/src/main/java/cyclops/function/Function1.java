@@ -16,7 +16,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.typeclasses.functor.Functor;

@@ -9,7 +9,7 @@ import cyclops.companion.Semigroups;
 import cyclops.collections.mutable.ListX;
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

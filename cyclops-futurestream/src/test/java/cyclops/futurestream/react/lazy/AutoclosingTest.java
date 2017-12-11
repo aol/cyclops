@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Queue;
 
 public class AutoclosingTest {
 

@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;

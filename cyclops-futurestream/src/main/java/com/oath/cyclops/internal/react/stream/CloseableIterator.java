@@ -3,7 +3,7 @@ package com.oath.cyclops.internal.react.stream;
 import java.util.Iterator;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 
 import lombok.AllArgsConstructor;
 

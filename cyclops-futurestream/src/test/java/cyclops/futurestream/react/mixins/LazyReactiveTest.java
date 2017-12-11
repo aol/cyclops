@@ -4,8 +4,8 @@ import static org.junit.Assert.assertFalse;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.async.Pipes;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.Pipes;
+import com.oath.cyclops.async.adapters.Queue;
 public class LazyReactiveTest {
 
         Pipes<String,String> pipes = Pipes.of();

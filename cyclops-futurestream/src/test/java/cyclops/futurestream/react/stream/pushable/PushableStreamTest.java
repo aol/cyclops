@@ -21,12 +21,12 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Signal;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.SetX;

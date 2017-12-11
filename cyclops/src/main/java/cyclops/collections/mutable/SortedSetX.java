@@ -8,6 +8,7 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Either;
+import cyclops.control.Future;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
@@ -55,7 +56,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     static class CompletableSortedSetX<T> implements InvocationHandler {
-        cyclops.async.Future<SortedSetX<T>> future = cyclops.async.Future.future();
+        Future<SortedSetX<T>> future = Future.future();
         public boolean complete(SortedSet<T> result){
             return future.complete(SortedSetX.fromIterable(result));
         }

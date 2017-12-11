@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.SimpleReact;
 
 public class FilterTest {
 

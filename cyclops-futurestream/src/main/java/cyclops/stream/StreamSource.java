@@ -6,11 +6,11 @@ import java.util.stream.Stream;
 import cyclops.stream.pushable.PushableFutureStream;
 import cyclops.stream.pushable.MultipleStreamSource;
 import cyclops.stream.pushable.PushableReactiveSeq;
-import cyclops.async.LazyReact;
-import cyclops.async.adapters.Adapter;
-import cyclops.async.adapters.Queue;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.adapters.Adapter;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.stream.pushable.PushableStream;
 
 import cyclops.reactive.FutureStream;

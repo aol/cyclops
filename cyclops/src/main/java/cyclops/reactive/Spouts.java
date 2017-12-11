@@ -14,7 +14,7 @@ import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;

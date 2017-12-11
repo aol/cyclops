@@ -21,7 +21,7 @@ import cyclops.reactive.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 

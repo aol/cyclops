@@ -5,7 +5,7 @@ import java.util.concurrent.Executor;
 
 import cyclops.control.Option;
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
@@ -14,9 +14,9 @@ public interface Function8<T1, T2, T3, T4, T5, T6, T7, T8, R> extends Function1<
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e, T6 f, T7 g, T8 h);
     /**
      * Create a curried function with arity of 8
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>

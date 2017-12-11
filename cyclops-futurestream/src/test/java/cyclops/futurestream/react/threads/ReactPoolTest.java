@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
@@ -14,8 +13,8 @@ import java.util.function.Supplier;
 import com.oath.cyclops.react.threads.ReactPool;
 import org.junit.Test;
 
-import cyclops.async.LazyReact;
-import cyclops.async.SimpleReact;
+import com.oath.cyclops.async.LazyReact;
+import com.oath.cyclops.async.SimpleReact;
 import org.mockito.Mockito;
 
 public class ReactPoolTest {

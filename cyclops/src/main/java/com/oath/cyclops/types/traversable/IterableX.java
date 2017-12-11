@@ -11,7 +11,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;

@@ -2,7 +2,7 @@ package cyclops.monads;
 
 import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import cyclops.async.LazyReact;
+import com.oath.cyclops.async.LazyReact;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
