@@ -278,11 +278,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     public static <T> Eval<T> later(final Supplier<T> value) {
         return new Module.Later<T>(
-                                   in -> value.get());
+                                   in -> value == null ? null : value.get());
     }
     public static <T> Eval<T> defer(final Supplier<Eval<T>> value) {
         return new Module.Later<T>(
-                in -> value.get().get());
+                in -> value == null || value.get() == null ? null : value.get().get());
     }
 
     /**
@@ -301,7 +301,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     public static <T> Eval<T> always(final Supplier<T> value) {
         return new Module.Always<T>(
-                                    in -> value.get());
+                                    in -> value == null ? null : value.get());
     }
 
     /**
