@@ -47,7 +47,7 @@ public class POrderedSetsTest {
 
 	@Test
 	public void testToPOrderedSets() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPOrderedSet()).stream()
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentSortedSet()).stream()
 				.collect(Collectors.toList()),
 				hasItems("a","b","c"));
 	}

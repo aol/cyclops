@@ -164,33 +164,33 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
     public static <T extends Comparable<? super T>> OrderedSetX<T> of(final T... values) {
 
-        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPersistentSortedSet(),Evaluation.LAZY);
     }
     public static <T> OrderedSetX<T> of(final Comparator<T> comp,final T... values) {
-        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPersistentSortedSet(comp),Evaluation.LAZY);
     }
     public static <T> OrderedSetX<T> identityOrNatural(final T... values) {
-        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPOrderedSet(),Evaluation.LAZY);
+        return new LazyPOrderedSetX<>(null,ReactiveSeq.of(values),Reducers.toPersistentSortedSet(),Evaluation.LAZY);
     }
 
     public static <T extends Comparable<? super T>> OrderedSetX<T> empty() {
         TreeSet<T> t = TreeSet.empty();
-        Reducer<PersistentSortedSet<T>,T> r = Reducers.toPOrderedSet();
+        Reducer<PersistentSortedSet<T>,T> r = Reducers.toPersistentSortedSet();
         return new LazyPOrderedSetX<>(
                                       t,null,r,Evaluation.LAZY);
     }
     public static <T> OrderedSetX<T> empty(Comparator<T> comp) {
         return new LazyPOrderedSetX<>(
-                TreeSet.empty(comp),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+                TreeSet.empty(comp),null,Reducers.toPersistentSortedSet(comp),Evaluation.LAZY);
     }
     public static <T extends Comparable<? super T>>OrderedSetX<T> singleton(final T value) {
         return new LazyPOrderedSetX<>(
-                                      TreeSet.singleton(value),null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                      TreeSet.singleton(value),null,Reducers.toPersistentSortedSet(),Evaluation.LAZY);
     }
 
     public static <T>OrderedSetX<T> singleton(Comparator<T> comp,final T value) {
         return new LazyPOrderedSetX<>(
-                TreeSet.singleton(comp,value),null,Reducers.toPOrderedSet(comp),Evaluation.LAZY);
+                TreeSet.singleton(comp,value),null,Reducers.toPersistentSortedSet(comp),Evaluation.LAZY);
     }
     OrderedSetX<T> type(Reducer<? extends PersistentSortedSet<T>,T> reducer);
 
@@ -209,7 +209,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      * @return
      */
     public static <T> OrderedSetX<T> orderedSetX(ReactiveSeq<T> stream) {
-        return new LazyPOrderedSetX<T>(null,stream,Reducers.toPOrderedSet(),Evaluation.LAZY);
+        return new LazyPOrderedSetX<T>(null,stream,Reducers.toPersistentSortedSet(),Evaluation.LAZY);
     }
 
 
@@ -253,12 +253,12 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
             return (OrderedSetX) iterable;
         if (iterable instanceof PersistentSortedSet)
             return new LazyPOrderedSetX<>(
-                                          (PersistentSortedSet) iterable,null,Reducers.toPOrderedSet(),Evaluation.LAZY);
+                                          (PersistentSortedSet) iterable,null,Reducers.toPersistentSortedSet(),Evaluation.LAZY);
 
 
         return new LazyPOrderedSetX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPOrderedSet(),Evaluation.LAZY);
+                Reducers.toPersistentSortedSet(),Evaluation.LAZY);
     }
 
     public static <T> OrderedSetX<T> toPOrderedSet(final Stream<T> stream) {
@@ -458,7 +458,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
   //  @Override
     default <T> Reducer<PersistentSortedSet<T>,T> monoid() {
-        return Reducers.toPOrderedSet();
+        return Reducers.toPersistentSortedSet();
     }
 
 

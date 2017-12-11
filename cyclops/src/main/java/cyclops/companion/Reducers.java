@@ -53,8 +53,8 @@ public class Reducers {
      *
      * <pre>
      * {@code
-     * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentQueueX<Integer> q = Reducers.toPersistentQueueX()
+                                             .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -67,8 +67,8 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * OrderedSetX<Integer> q = Reducers.<Integer>toOrderedSetX()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * OrderedSetX<Integer> q = Reducers.toOrderedSetX()
+                                        .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -82,8 +82,8 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * PersistentSetX<Integer> q = Reducers.<Integer>toPersistentSetX()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentSetX<Integer> q = Reducers.toPersistentSetX()
+                                           .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -96,8 +96,8 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * LinkedListX<Integer> q = Reducers.<Integer>toLinkedListX()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * LinkedListX<Integer> q = Reducers.toLinkedListX()
+                                        .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -145,32 +145,32 @@ public class Reducers {
      *
      * <pre>
      * {@code
-     * PQueue<Integer> q = Reducers.<Integer>toPQueue()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentQueue<Integer> q = Reducers.toPersistentQueue()
+                                            .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
      * @return Reducer to PQueue types
      */
-    public static <T> Reducer<PersistentQueue<T>,T> toPQueue() {
+    public static <T> Reducer<PersistentQueue<T>,T> toPersistentQueue() {
         return Reducer.fromMonoid(Monoids.<T,PersistentQueue<T>>pcollectionConcat(BankersQueue.empty()), a -> BankersQueue.of(a));
     }
     /**
      * <pre>
      * {@code
-     * POrderedSet<Integer> q = Reducers.<Integer>toPOrderedSet()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentSortedSet<Integer> q = Reducers.toPersistentSortedSet()
+                                                .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
      * @return Reducer to POrderedSet
      */
-    public static <T> Reducer<PersistentSortedSet<T>,T> toPOrderedSet() {
+    public static <T> Reducer<PersistentSortedSet<T>,T> toPersistentSortedSet() {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(TreeSet.empty(Comparators.naturalOrderIdentityComparator())),
                 a -> TreeSet.of(Comparators.naturalOrderIdentityComparator(),a));
 
     }
-    public static <T> Reducer<PersistentSortedSet<T>,T> toPOrderedSet(Comparator<T> comp) {
+    public static <T> Reducer<PersistentSortedSet<T>,T> toPersistentSortedSet(Comparator<T> comp) {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(TreeSet.empty(comp)),
                 a -> TreeSet.of(comp,a));
 
@@ -178,80 +178,80 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * PBag<Integer> q = Reducers.<Integer>toPBag()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentBag<Integer> q = Reducers.toPersistentBag()
+                                 .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
      * @return Reducer for PBag
      */
-    public static <T> Reducer<PersistentBag<T>,T> toPBag() {
+    public static <T> Reducer<PersistentBag<T>,T> toPersistentBag() {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(Bag.empty()), a -> Bag.of(a));
     }
     /**
      * <pre>
      * {@code
-     * PSet<Integer> q = Reducers.<Integer>toPSet()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentSet<Integer> q = Reducers.toPSet()
+                                          .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
      * @return Reducer for PSet
      */
-    public static <T> Reducer<PersistentSet<T>,T> toPSet() {
+    public static <T> Reducer<PersistentSet<T>,T> toPersistentSet() {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(HashSet.empty()), a -> HashSet.of(a));
     }
     /**
      * <pre>
      * {@code
-     * PVector<Integer> q = Reducers.<Integer>toPVector()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentList<Integer> q = Reducers.toPersistentVector()
+                                           .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
-     * @return Reducer for PVector
+     * @return Reducer for Vector
      */
-    public static <T> Reducer<PersistentList<T>,T> toPVector() {
+    public static <T> Reducer<PersistentList<T>,T> toPersistentVector() {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(Vector.empty()), a -> Vector.of(a));
     }
     /**
      * <pre>
      * {@code
-     * PStack<Integer> q = Reducers.<Integer>toPList()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentList<Integer> q = Reducers.toPersistentList()
+                                           .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
-     * @return Reducer for PStack
+     * @return Reducer for PersistentList
      */
-    public static <T> Reducer<PersistentList<T>,T> toPList() {
+    public static <T> Reducer<PersistentList<T>,T> toPersistentList() {
         return Reducer.<PersistentList<T>,T> of(Seq.empty(), (final PersistentList<T> a) -> b -> b.plusAll(a), (final T x) -> Seq.of(x));
 
     }
     /**
      * <pre>
      * {@code
-     * PStack<Integer> q = Reducers.<Integer>toPListReversed()
-                                .mapReduce(Stream.of(1,2,3,4));
+     * PersistentList<Integer> q = Reducers.toPersistentListReversed()
+                                   .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
-     * @return Reducer for PStack in reveresed order
+     * @return Reducer for PersistentList in reveresed order
      */
-    public static <T> Reducer<PersistentList<T>,T> toPListReversed() {
+    public static <T> Reducer<PersistentList<T>,T> toPersistentListReversed() {
         return Reducer.fromMonoid(Monoids.pcollectionConcat(Seq.empty()), a -> Seq.of(a));
     }
     /**
      * <pre>
      * {@code
-     * PMap<Integer,String> q = Reducers.<Integer,String>toPMap()
-                                .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
+     * PersistentMap<Integer,String> q = Reducers.toPersistentMap()
+                                                 .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
      *
      * }
      * </pre>
-     * @return Reducer for PMap
+     * @return Reducer for PersistentMap
      */
-    public static <K, V> Reducer<PersistentMap<K, V>,Tuple2<K,V>> toPMap() {
+    public static <K, V> Reducer<PersistentMap<K, V>,Tuple2<K,V>> toPersistentMap() {
         return Reducer.of(HashMap.empty(), (final PersistentMap<K, V> a) -> b -> a.putAll(b), (in) -> {
             Tuple2<K, V> w = in;
             return HashMap.of((K) w._1(), (V) w._2());
@@ -262,7 +262,7 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * PersistentMapX<Integer,String> q = Reducers.<Integer,String>toPMapX()
+     * PersistentMapX<Integer,String> q = Reducers.toPMapX()
                                         .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
      *
      * }

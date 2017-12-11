@@ -47,7 +47,7 @@ public class PSetsTest {
 
 	@Test
 	public void testToPSets() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPSet()).stream()
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentSet()).stream()
 				.collect(Collectors.toList()),
 				hasItems("a","b","c"));
 	}
