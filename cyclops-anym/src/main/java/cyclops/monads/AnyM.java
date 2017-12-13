@@ -38,6 +38,7 @@ import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.monads.function.AnyMFunction2;
@@ -488,6 +489,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static <T> AnyMSeq<seq,T> fromSeq(final Seq<T> seq) {
       Objects.requireNonNull(seq);
       return AnyMFactory.instance.seq(seq, Witness.seq.INSTANCE);
+    }
+    public static <T> AnyMSeq<lazySeq,T> fromLazySeq(final LazySeq<T> seq) {
+      Objects.requireNonNull(seq);
+      return AnyMFactory.instance.seq(seq, Witness.lazySeq.INSTANCE);
     }
 
     /**
