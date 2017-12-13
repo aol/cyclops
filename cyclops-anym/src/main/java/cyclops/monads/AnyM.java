@@ -40,6 +40,7 @@ import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.function.AnyMFunction1;
@@ -485,6 +486,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(collection);
         return AnyMFactory.instance.seq(collection,witness);
 
+    }
+    public static <T> AnyMSeq<vector,T> fromVector(final Vector<T> vec) {
+      Objects.requireNonNull(vec);
+      return AnyMFactory.instance.seq(vec, Witness.vector.INSTANCE);
     }
     public static <T> AnyMSeq<seq,T> fromSeq(final Seq<T> seq) {
       Objects.requireNonNull(seq);
