@@ -1207,12 +1207,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
                 @Override
                 public <T, R> Option<MonadZero<queue>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<queue>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1222,7 +1222,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
                 @Override
                 public <T> Option<MonadPlus<queue>> monadPlus(MonoidK<queue> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1241,7 +1241,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                 }
                 @Override
                 public <T> Option<Unfoldable<queue>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }

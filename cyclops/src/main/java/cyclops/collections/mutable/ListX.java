@@ -165,12 +165,12 @@ public interface ListX<T> extends To<ListX<T>>,
 
                 @Override
                 public <T, R> Option<MonadZero<list>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<list>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -200,7 +200,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
                 @Override
                 public <T> Option<Unfoldable<list>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Option.some(Instances.unfoldable());
                 }
             };
 

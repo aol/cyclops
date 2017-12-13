@@ -1362,12 +1362,12 @@ public class Future<T> implements To<Future<T>>,
 
                 @Override
                 public <T, R> Option<MonadZero<DataWitness.future>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<DataWitness.future>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1377,7 +1377,7 @@ public class Future<T> implements To<Future<T>>,
 
                 @Override
                 public <T> Option<MonadPlus<DataWitness.future>> monadPlus(MonoidK<future> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override

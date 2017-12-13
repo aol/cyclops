@@ -577,12 +577,12 @@ public class CompletableFutures {
 
                 @Override
                 public <T, R> Option<MonadZero<completableFuture>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<completableFuture>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -592,7 +592,7 @@ public class CompletableFutures {
 
                 @Override
                 public <T> Option<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
