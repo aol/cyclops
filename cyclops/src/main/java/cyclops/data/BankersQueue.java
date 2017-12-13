@@ -44,6 +44,9 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
         return res;
     }
+    static <T> BankersQueue<T> fromIterator(Iterator<T> it){
+      return fromIterable(()->it);
+    }
 
     @Override
     default <R> BankersQueue<R> unitIterable(Iterable<R> it){

@@ -15,10 +15,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.control.Future;
-import cyclops.data.HashSet;
-import cyclops.data.LazySeq;
-import cyclops.data.Seq;
-import cyclops.data.Vector;
+import cyclops.data.*;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
@@ -336,6 +333,16 @@ public interface Witness {
       public MonadAdapter<hashSet> adapter() {
         return new IterableXAdapter<hashSet>(HashSet::empty,
           HashSet::of, HashSet::fromIterator,this);
+      }
+
+    }
+    public static enum bankersQueue implements IterableXWitness<bankersQueue> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<bankersQueue> adapter() {
+        return new IterableXAdapter<bankersQueue>(BankersQueue::empty,
+          BankersQueue::of, BankersQueue::fromIterator,this);
       }
 
     }
