@@ -626,6 +626,16 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
+    public <R> Vector<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromIterable(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> Vector<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromIterable(stream().mergeMap(fn));
+    }
+
+  @Override
     public <R> Vector<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromIterable(stream().concatMap(fn));
     }
@@ -959,6 +969,16 @@ public class Vector<T> implements ImmutableList<T>,
         }
 
         @Override
+        public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmpty(T value) {
             return Vector.of(value);
         }

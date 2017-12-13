@@ -275,6 +275,16 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
+    public <R> IntMap<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return unitStream(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> IntMap<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return unitStream(stream().mergeMap(maxConcurecy,fn));
+    }
+
+  @Override
     public IntMap<T> replaceFirst(T currentElement, T newElement) {
         return (IntMap<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
     }
@@ -854,6 +864,16 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         }
 
         @Override
+        public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmpty(T value) {
             return IntMap.of(value);
         }

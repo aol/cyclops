@@ -213,7 +213,11 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     <R> ImmutableQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
     <R> ImmutableQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
+    @Override
+    <R> ImmutableQueue<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
 
+    @Override
+    <R> ImmutableQueue<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
     @Override
     <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2);
     @Override

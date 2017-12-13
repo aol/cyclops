@@ -8,6 +8,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
@@ -637,6 +638,12 @@ public interface Seq<T> extends ImmutableList<T>,
     <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     @Override
+    <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
+    @Override
+    <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
+  @Override
     default Seq<T> prependStream(Stream<? extends T> stream) {
         return (Seq<T>) ImmutableList.super.prependStream(stream);
     }
@@ -963,6 +970,16 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
       @Override
+      public <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromStream(stream().mergeMap(fn));
+      }
+
+      @Override
+      public <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromStream(stream().mergeMap(maxConcurecy,fn));
+      }
+
+      @Override
         public Cons<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return this;
         }
@@ -1009,6 +1026,16 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
+        public <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return supplier.get();
         }

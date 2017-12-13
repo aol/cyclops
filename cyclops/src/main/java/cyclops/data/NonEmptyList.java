@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -223,7 +224,17 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return lazySeq().concatMap(fn);
     }
 
-    public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
+    @Override
+    public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return lazySeq().mergeMap(fn);
+    }
+
+    @Override
+    public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return lazySeq().mergeMap(maxConcurecy,fn);
+    }
+
+  public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
         return fn.apply(head).appendAll(tail.flatMap(fn));
 
     }
