@@ -13,6 +13,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.control.Future;
+import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -40,6 +41,13 @@ public interface Witness {
     public static <T> Identity<T> identity(AnyM<identity,? extends T> anyM){
         return anyM.unwrap();
     }
+
+    public static <T> Seq<T> seq(AnyM<seq,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> LazySeq<T> lazySeq(AnyM<lazySeq,? extends T> anyM){
+    return anyM.unwrap();
+  }
 
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
@@ -290,6 +298,16 @@ public interface Witness {
       public MonadAdapter<seq> adapter() {
         return new IterableXAdapter<seq>(Seq::empty,
           Seq::of,Seq::fromIterator,this);
+      }
+
+    }
+    public static enum lazySeq implements IterableXWitness<lazySeq> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<lazySeq> adapter() {
+        return new IterableXAdapter<lazySeq>(LazySeq::empty,
+          LazySeq::of, LazySeq::fromIterator,this);
       }
 
     }
