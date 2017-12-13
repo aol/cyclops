@@ -5,10 +5,10 @@ import static org.junit.Assert.assertThat;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 public class LazySeqAutoOptimizeTest extends LazySeqTest {
 	@Override

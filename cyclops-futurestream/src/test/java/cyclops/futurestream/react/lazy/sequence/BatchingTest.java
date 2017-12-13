@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import com.oath.cyclops.util.SimpleTimer;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import org.junit.Test;
 
 import cyclops.collections.mutable.ListX;

@@ -79,10 +79,10 @@ public class AsyncJDKStreamTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
 
-           System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+           assertThat(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .mergeMap(i -> rs(i, i * 2, i * 4)
                             .mergeMap(x -> rs(5, 6, 7)))
-                    .toListX());
+                    .toListX(),equalTo(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7)));
 
         }
     }
@@ -105,6 +105,13 @@ public class AsyncJDKStreamTest {
                         .mergeMap(x->rs(5,6,7)
                         .mergeMap(y->rs(2,3,4))))
                 .toListX());
+
+        assertThat(this.rs(1,2)
+          .mergeMap(i->rs(i,i*2,i*4)
+            .mergeMap(x->rs(5,6,7)
+              .mergeMap(y->rs(2,3,4))))
+          .toListX(),equalTo(ListX.of(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4,
+          2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4)));
     }
     @Test
     public void flatMapP2(){

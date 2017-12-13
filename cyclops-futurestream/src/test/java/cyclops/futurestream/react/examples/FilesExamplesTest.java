@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 public class FilesExamplesTest {
 

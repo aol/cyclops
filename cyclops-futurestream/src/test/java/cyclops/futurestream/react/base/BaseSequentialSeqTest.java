@@ -32,7 +32,7 @@ import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.MapX;
 import cyclops.companion.MapXs;
 import cyclops.control.Option;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package cyclops.reactive;
+package cyclops.futurestream;
 
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.exceptions.SimpleReactProcessingException;
@@ -16,9 +16,7 @@ import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Future;
-import com.oath.cyclops.async.LazyReact;
 import com.oath.cyclops.async.QueueFactories;
-import com.oath.cyclops.async.SimpleReact;
 import com.oath.cyclops.async.adapters.Adapter;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
@@ -34,6 +32,8 @@ import cyclops.function.Function4;
 import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -53,7 +53,7 @@ import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                          LazyStream<U>,
-                                            ReactiveSeq<U>,
+  ReactiveSeq<U>,
                                           LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {

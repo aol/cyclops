@@ -1,4 +1,4 @@
-package com.oath.cyclops.async;
+package cyclops.futurestream;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -21,7 +21,6 @@ import java.util.stream.StreamSupport;
 import com.oath.cyclops.async.adapters.Adapter;
 import cyclops.control.IO;
 import cyclops.data.Seq;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;

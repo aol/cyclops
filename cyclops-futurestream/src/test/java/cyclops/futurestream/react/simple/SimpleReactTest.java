@@ -31,8 +31,8 @@ import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.SimpleReact;
 import com.oath.cyclops.types.futurestream.BaseSimpleReactStream;
 import org.mockito.Matchers;
 import org.mockito.Mockito;

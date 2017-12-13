@@ -13,12 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 public class ForEachLFSTest {
 	boolean complete =false;

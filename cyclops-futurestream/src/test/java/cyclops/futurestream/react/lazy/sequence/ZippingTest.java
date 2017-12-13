@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import cyclops.futurestream.react.lazy.DuplicationTest;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

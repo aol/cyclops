@@ -12,7 +12,7 @@ import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.react.async.subscription.AlwaysContinue;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;

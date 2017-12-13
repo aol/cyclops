@@ -873,6 +873,19 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().schedule(cron, ex);
     }
 
+    default Maybe<Long> indexOf(Predicate<? super T> pred){
+      return stream().zipWithIndex()
+                     .filter(p->pred.test(p._1()))
+                     .takeOne()
+                     .map(v->v._2());
+    }
+    default Maybe<Long> lastIndexOf(Predicate<? super T> pred){
+      return stream().zipWithIndex()
+                     .filter(p->pred.test(p._1()))
+                     .takeRight(1)
+                     .takeOne()
+                     .map(v->v._2());
+    }
     /**
      * Execute this Stream on a schedule
      *

@@ -1,4 +1,4 @@
-package com.oath.cyclops.async;
+package cyclops.futurestream;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
@@ -11,7 +11,6 @@ import cyclops.data.tuple.Tuple0;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;

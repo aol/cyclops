@@ -26,11 +26,11 @@ import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.companion.Streams;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;

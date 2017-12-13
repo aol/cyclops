@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

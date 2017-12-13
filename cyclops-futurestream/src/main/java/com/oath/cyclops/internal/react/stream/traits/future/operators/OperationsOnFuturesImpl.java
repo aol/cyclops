@@ -7,7 +7,7 @@ import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.types.futurestream.BlockingStreamHelper;
 import com.oath.cyclops.types.futurestream.OperationsOnFutures;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 import lombok.AllArgsConstructor;
 

@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
 
-import com.oath.cyclops.async.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.QueueFactories;

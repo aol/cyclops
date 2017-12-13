@@ -4,7 +4,7 @@ import static org.junit.Assert.assertFalse;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import com.oath.cyclops.async.Pipes;
+import cyclops.futurestream.Pipes;
 import com.oath.cyclops.async.adapters.Queue;
 public class LazyReactiveTest {
 

@@ -17,8 +17,8 @@ import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
 import cyclops.control.Future;
-import com.oath.cyclops.async.LazyReact;
-import com.oath.cyclops.async.Pipes;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.Pipes;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Queue;
 import cyclops.control.Eval;

@@ -1,7 +1,6 @@
 package cyclops.futurestream;
 
 import com.oath.cyclops.internal.react.FutureStreamImpl;
-import com.oath.cyclops.async.LazyReact;
 import com.oath.cyclops.async.adapters.Topic;
 import org.junit.Test;
 

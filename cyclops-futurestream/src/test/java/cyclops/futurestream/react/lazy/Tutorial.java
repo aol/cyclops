@@ -5,9 +5,9 @@ import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
 import cyclops.control.Future;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.QueueFactories;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 import cyclops.companion.MapXs;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.junit.Test;
 
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
 
 import lombok.AllArgsConstructor;

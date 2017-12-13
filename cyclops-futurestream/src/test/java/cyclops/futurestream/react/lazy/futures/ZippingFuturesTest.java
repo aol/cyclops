@@ -21,7 +21,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 public class ZippingFuturesTest {
 	FutureStream<Integer> empty;

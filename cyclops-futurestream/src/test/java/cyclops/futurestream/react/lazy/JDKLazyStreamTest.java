@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.Vector;
 
 import cyclops.futurestream.react.base.BaseJDKStreamTest;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 public class JDKLazyStreamTest extends BaseJDKStreamTest {
 

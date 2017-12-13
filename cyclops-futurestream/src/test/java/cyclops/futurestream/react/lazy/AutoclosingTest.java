@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.adapters.Queue;
 
 public class AutoclosingTest {

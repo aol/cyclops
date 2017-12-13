@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import cyclops.control.Option;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

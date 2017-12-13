@@ -3,8 +3,8 @@ package cyclops.futurestream.react.lazy;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.react.base.BaseLazyNumberOperationsTest;
-import com.oath.cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.FutureStream;
 
 public class LazyNumberOperationsTest extends BaseLazyNumberOperationsTest {
 	@Override

@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Assert;
 import org.junit.Before;

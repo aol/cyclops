@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 import org.junit.Before;
 import org.junit.Test;
 

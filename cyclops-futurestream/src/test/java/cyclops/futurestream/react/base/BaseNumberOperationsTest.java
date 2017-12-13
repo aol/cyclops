@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 

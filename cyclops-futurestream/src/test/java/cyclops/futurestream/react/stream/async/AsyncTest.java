@@ -5,8 +5,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.SimpleReact;
 
 public class AsyncTest {
 

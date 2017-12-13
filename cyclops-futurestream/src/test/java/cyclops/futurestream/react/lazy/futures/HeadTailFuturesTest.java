@@ -2,8 +2,8 @@ package cyclops.futurestream.react.lazy.futures;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import com.oath.cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;

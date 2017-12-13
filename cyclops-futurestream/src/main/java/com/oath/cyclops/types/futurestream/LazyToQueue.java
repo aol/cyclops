@@ -5,11 +5,11 @@ import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.internal.react.async.future.CompletedException;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 public interface LazyToQueue<U> extends ToQueue<U> {
 

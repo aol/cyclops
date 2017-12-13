@@ -42,6 +42,7 @@ import cyclops.data.*;
 import cyclops.data.HashSet;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
+import cyclops.futurestream.FutureStream;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.transformers.FutureT;
