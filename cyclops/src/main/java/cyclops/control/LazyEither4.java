@@ -1623,12 +1623,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1638,7 +1638,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
                     return Maybe.nothing();
                 }
 
@@ -1653,12 +1653,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> comonad() {
+                public <T> Option<Comonad<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

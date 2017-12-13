@@ -271,12 +271,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<state, S>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<state, S>>> monadZero() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<state, S>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -286,7 +286,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<state, S>>> monadPlus(MonoidK<Higher<state, S>> m) {
+                public <T> Option<MonadPlus<Higher<state, S>>> monadPlus(MonoidK<Higher<state, S>> m) {
                     return Maybe.nothing();
                 }
 
@@ -301,12 +301,12 @@ public final class State<S, T> implements Higher2<state,S,T> {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<state, S>>> comonad() {
+                public <T> Option<Comonad<Higher<state, S>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<state, S>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<state, S>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

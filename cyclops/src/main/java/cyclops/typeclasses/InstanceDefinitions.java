@@ -1,6 +1,7 @@
 package cyclops.typeclasses;
 
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -25,31 +26,31 @@ public interface InstanceDefinitions<W> {
     <T> Pure<W> unit();
     <T,R> Applicative<W> applicative();
     <T,R> Monad<W> monad();
-    <T,R> Maybe<MonadZero<W>> monadZero();
-    <T> Maybe<MonadPlus<W>> monadPlus();
+    <T,R> Option<MonadZero<W>> monadZero();
+    <T> Option<MonadPlus<W>> monadPlus();
     <T> MonadRec<W> monadRec();
     <T> Foldable<W> foldable();
     <C2,T> Traverse<W> traverse();
 
 
-    default <T> Maybe<ContravariantFunctor<W>> contravariantFunctor(){
+    default <T> Option<ContravariantFunctor<W>> contravariantFunctor(){
         return Maybe.nothing();
     }
-    default <T> Maybe<ProFunctor<W>> profunctor(){
+    default <T> Option<ProFunctor<W>> profunctor(){
         return Maybe.nothing();
     }
-    default <T,E> Maybe<ApplicativeError<W,E>> applicativeError(){
+    default <T,E> Option<ApplicativeError<W, E>> applicativeError(){
         return Maybe.nothing();
     }
 
 
-    <T> Maybe<MonadPlus<W>> monadPlus(MonoidK<W> m);
+    <T> Option<MonadPlus<W>> monadPlus(MonoidK<W> m);
 
 
 
-    <T> Maybe<Comonad<W>> comonad();
+    <T> Option<Comonad<W>> comonad();
 
-    default  <T> Maybe<Unfoldable<W>> unfoldable(){
+    default  <T> Option<Unfoldable<W>> unfoldable(){
         return Maybe.nothing();
     }
 

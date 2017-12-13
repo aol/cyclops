@@ -1483,12 +1483,12 @@ public interface Maybe<T> extends Option<T> {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<option>> monadZero() {
+                public <T, R> Option<MonadZero<option>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<option>> monadPlus() {
+                public <T> Option<MonadPlus<option>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1498,7 +1498,7 @@ public interface Maybe<T> extends Option<T> {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<option>> monadPlus(MonoidK<option> m) {
+                public <T> Option<MonadPlus<option>> monadPlus(MonoidK<option> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1513,12 +1513,12 @@ public interface Maybe<T> extends Option<T> {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<option>> comonad() {
+                public <T> Option<Comonad<option>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<option>> unfoldable() {
+                public <T> Option<Unfoldable<option>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

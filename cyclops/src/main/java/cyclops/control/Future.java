@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
 
 
@@ -1360,12 +1361,12 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<future>> monadZero() {
+                public <T, R> Option<MonadZero<DataWitness.future>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<future>> monadPlus() {
+                public <T> Option<MonadPlus<DataWitness.future>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1375,7 +1376,7 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<future>> monadPlus(MonoidK<future> m) {
+                public <T> Option<MonadPlus<DataWitness.future>> monadPlus(MonoidK<future> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1390,12 +1391,12 @@ public class Future<T> implements To<Future<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<future>> comonad() {
+                public <T> Option<Comonad<DataWitness.future>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<future>> unfoldable() {
+                public <T> Option<Unfoldable<DataWitness.future>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

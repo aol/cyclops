@@ -1185,12 +1185,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<set>> monadZero() {
+                public <T, R> Option<MonadZero<set>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<set>> monadPlus() {
+                public <T> Option<MonadPlus<set>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1200,7 +1200,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<set>> monadPlus(MonoidK<set> m) {
+                public <T> Option<MonadPlus<set>> monadPlus(MonoidK<set> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1215,11 +1215,11 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T> Maybe<Comonad<set>> comonad() {
+                public <T> Option<Comonad<set>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<set>> unfoldable() {
+                public <T> Option<Unfoldable<set>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

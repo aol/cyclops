@@ -1346,12 +1346,12 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<deque>> monadZero() {
+                public <T, R> Option<MonadZero<deque>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<deque>> monadPlus() {
+                public <T> Option<MonadPlus<deque>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1361,7 +1361,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<deque>> monadPlus(MonoidK<deque> m) {
+                public <T> Option<MonadPlus<deque>> monadPlus(MonoidK<deque> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1376,11 +1376,11 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<deque>> comonad() {
+                public <T> Option<Comonad<deque>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<deque>> unfoldable() {
+                public <T> Option<Unfoldable<deque>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

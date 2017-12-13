@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.Option;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.future;
@@ -575,12 +576,12 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<completableFuture>> monadZero() {
+                public <T, R> Option<MonadZero<completableFuture>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<completableFuture>> monadPlus() {
+                public <T> Option<MonadPlus<completableFuture>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -590,7 +591,7 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
+                public <T> Option<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -605,12 +606,12 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<completableFuture>> comonad() {
+                public <T> Option<Comonad<completableFuture>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<completableFuture>> unfoldable() {
+                public <T> Option<Unfoldable<completableFuture>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

@@ -5015,12 +5015,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<reactiveSeq>> monadZero() {
+                public <T, R> Option<MonadZero<reactiveSeq>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus() {
+                public <T> Option<MonadPlus<reactiveSeq>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -5030,7 +5030,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(MonoidK<reactiveSeq> m) {
+                public <T> Option<MonadPlus<reactiveSeq>> monadPlus(MonoidK<reactiveSeq> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -5045,11 +5045,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<reactiveSeq>> comonad() {
+                public <T> Option<Comonad<reactiveSeq>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
+                public <T> Option<Unfoldable<reactiveSeq>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

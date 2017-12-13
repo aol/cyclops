@@ -1332,12 +1332,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<persistentQueueX>> monadZero() {
+                public <T, R> Option<MonadZero<persistentQueueX>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus() {
+                public <T> Option<MonadPlus<persistentQueueX>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1347,7 +1347,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(MonoidK<persistentQueueX> m) {
+                public <T> Option<MonadPlus<persistentQueueX>> monadPlus(MonoidK<persistentQueueX> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1362,11 +1362,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<persistentQueueX>> comonad() {
+                public <T> Option<Comonad<persistentQueueX>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<persistentQueueX>> unfoldable() {
+                public <T> Option<Unfoldable<persistentQueueX>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };
