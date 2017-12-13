@@ -33,10 +33,12 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.function.AnyMFunction1;
@@ -478,10 +480,14 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         final List<T> toUse = (list instanceof CollectionX)? list : ListX.fromIterable(list);
         return AnyMFactory.instance.seq(toUse,Witness.list.INSTANCE);
     }
-    public static <W extends Witness.CollectionXWitness<W>,T> AnyMSeq<W,T> fromCollectionX(final CollectionX<T> collection, W witness) {
+    public static <W extends IterableXWitness<W>,T> AnyMSeq<W,T> fromIterableX(final IterableX<T> collection, W witness) {
         Objects.requireNonNull(collection);
         return AnyMFactory.instance.seq(collection,witness);
 
+    }
+    public static <T> AnyMSeq<seq,T> fromSeq(final Seq<T> seq) {
+      Objects.requireNonNull(seq);
+      return AnyMFactory.instance.seq(seq, Witness.seq.INSTANCE);
     }
 
     /**
@@ -491,22 +497,18 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      */
     public static <T> AnyMSeq<set,T> fromSet(final Set<T> set) {
         Objects.requireNonNull(set);
-        final Set<T> toUse = (set instanceof CollectionX)? set : SetX.fromIterable(set);
         return AnyMFactory.instance.seq(SetX.fromIterable(set), Witness.set.INSTANCE);
     }
     public static <T> AnyMSeq<queue,T> fromQueue(final Queue<T> queue) {
         Objects.requireNonNull(queue);
-        final Queue<T> toUse = (queue instanceof CollectionX)? queue : QueueX.fromIterable(queue);
         return AnyMFactory.instance.seq(QueueX.fromIterable(queue), Witness.queue.INSTANCE);
     }
     public static <T> AnyMSeq<deque,T> fromDeque(final Deque<T> deque) {
         Objects.requireNonNull(deque);
-        final Deque<T> toUse = (deque instanceof CollectionX)? deque : DequeX.fromIterable(deque);
         return AnyMFactory.instance.seq(DequeX.fromIterable(deque), Witness.deque.INSTANCE);
     }
     public static <T> AnyMSeq<sortedSet,T> fromSortedSet(final SortedSet<T> set) {
         Objects.requireNonNull(set);
-        final SortedSet<T> toUse = (set instanceof CollectionX)? set : SortedSetX.fromIterable(set);
         return AnyMFactory.instance.seq(SortedSetX.fromIterable(set), Witness.set.INSTANCE);
     }
     public static <T> AnyMSeq<linkedListX,T> fromLinkedListX(final LinkedListX<T> list) {
@@ -1090,24 +1092,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                             .collect(ListX.listXCollector());
     }
 
-    /**
-     * Take an iterable containing Streamables and convert them into a List of AnyMs
-     * e.g.
-     * {@code
-     *     List<AnyM<Integer>> anyMs = AnyM.listFromStreamable(Arrays.asList(Streamable.of(1,2,3),Streamable.of(10,20,30));
-     *
-     *     //List[AnyM[Streamable[1,2,3],Streamable[10,20,30]]]
-     * }
-     *
-     * @param fromEither5 Iterable containing Streamables
-     * @return List of AnyMs
 
-    public static <T> ListX<AnyMSeq<T>> listFromIterable(final Iterable<Iterable<T>> fromEither5) {
-        return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
-                            .map(i -> AnyM.fromIterable(i))
-                            .collect(ListX.listXCollector());
-    }
-*/
     /**
      * Take an iterable containing Xors and convert them into a List of AnyMs
      * e.g.
