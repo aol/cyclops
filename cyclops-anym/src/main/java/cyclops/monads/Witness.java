@@ -9,12 +9,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.oath.anym.internal.adapters.*;
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.control.Future;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
@@ -42,9 +45,13 @@ public interface Witness {
         return anyM.unwrap();
     }
 
+    public static <T> Vector<T> vector(AnyM<vector,? extends T> anyM){
+    return anyM.unwrap();
+  }
     public static <T> Seq<T> seq(AnyM<seq,? extends T> anyM){
     return anyM.unwrap();
   }
+
     public static <T> LazySeq<T> lazySeq(AnyM<lazySeq,? extends T> anyM){
     return anyM.unwrap();
   }
@@ -308,6 +315,16 @@ public interface Witness {
       public MonadAdapter<lazySeq> adapter() {
         return new IterableXAdapter<lazySeq>(LazySeq::empty,
           LazySeq::of, LazySeq::fromIterator,this);
+      }
+
+    }
+    public static enum vector implements IterableXWitness<vector> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<vector> adapter() {
+        return new IterableXAdapter<vector>(Vector::empty,
+          Vector::of, Vector::fromIterator,this);
       }
 
     }

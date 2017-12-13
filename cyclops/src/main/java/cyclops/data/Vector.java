@@ -188,6 +188,9 @@ public class Vector<T> implements ImmutableList<T>,
     public static <T> Vector<T> fromStream(Stream<T> it){
         return fromIterable(()->it.iterator());
     }
+    public static <T> Vector<T> fromIterator(Iterator<T> it){
+     return fromIterable(()->it);
+    }
     public static <T> Vector<T> fromIterable(Iterable<T> it){
         if(it instanceof Vector){
             return (Vector<T>)it;
