@@ -142,7 +142,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     @Override
     public <B> ListT<W,B> flatMap(final Function<? super T, ? extends Iterable<? extends B>> f) {
         return new ListT<W,B>(
-                               run.map(o -> o.flatMap(f)));
+                               run.map(o -> o.concatMap(f)));
 
     }
 
@@ -162,8 +162,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      */
     public <B> ListT<W,B> flatMapT(final Function<? super T, ListT<W,B>> f) {
 
-        return of(run.map(list -> list.flatMap(a -> f.apply(a).run.stream())
-                                      .flatMap(a -> a.stream())));
+        return of(run.map(list -> list.concatMap(a -> f.apply(a).run.stream())
+                                      .concatMap(a -> a.stream())));
     }
 
 
@@ -235,7 +235,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     @Override
     public ReactiveSeq<T> stream() {
         return run.stream()
-                  .flatMapI(e -> e);
+                  .concatMap(e -> e);
     }
 
     @Override
@@ -363,18 +363,14 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
-     */
+
     @Override
     public <U> ListT<W,Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
         return (ListT) FoldableTransformerSeq.super.zipWithStream(other);
     }
 
-    /* (non-Javadoc)
-     * @see ListT#zip(java.lang.Iterable)
-     */
+
     @Override
     public <U> ListT<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
@@ -831,8 +827,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
 
     @Override
-    public ListT<W,T> prependS(Stream<? extends T> stream) {
-        return (ListT) FoldableTransformerSeq.super.prependS(stream);
+    public ListT<W,T> prependStream(Stream<? extends T> stream) {
+        return (ListT) FoldableTransformerSeq.super.prependStream(stream);
     }
 
     @Override
@@ -866,8 +862,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> insertAtS(int pos, Stream<T> stream) {
-        return (ListT) FoldableTransformerSeq.super.insertAtS(pos,stream);
+    public ListT<W,T> insertStreamAt(int pos, Stream<T> stream) {
+        return (ListT) FoldableTransformerSeq.super.insertStreamAt(pos,stream);
     }
 
 

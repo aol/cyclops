@@ -372,7 +372,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      *
      * <pre>
      * {@code
-     *   Maybe.just(1).map(i->i+2).flatMapI(i->Arrays.asList(()->i*3,20);
+     *   Maybe.just(1).map(i->i+2).concatMap(i->Arrays.asList(()->i*3,20);
      *   //Maybe[9]
      *
      * }</pre>
@@ -381,7 +381,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param mapper  transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> MonadicValue<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return this.flatMap(a -> {
             return Maybe.fromIterable(mapper.apply(a));
         });

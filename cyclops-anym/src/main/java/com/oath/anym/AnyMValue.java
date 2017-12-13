@@ -266,8 +266,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     }
 
-    default <R> AnyMValue<W,R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapI(fn);
+    default <R> AnyMValue<W,R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.concatMap(fn);
     }
     default <R> AnyMValue<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.flatMapP(fn);

@@ -91,7 +91,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void insertAtStream(){
-        IterableX<String> result = 	of(1,2,3).insertAtS(1,ReactiveSeq.of(100,200,300))
+        IterableX<String> result = 	of(1,2,3).insertStreamAt(1,ReactiveSeq.of(100,200,300))
                 .map(it ->it+"!!");
 
         assertThat(result,equalTo(of("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -2263,10 +2263,10 @@ public abstract class AbstractIterableXTest {
     @Test
     public void prependAppend(){
         assertThat(of(1)
-                    .prependS(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
+                    .prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
                     .prependAll(7,8)
                     .insertAt(4,9).deleteBetween(1,2)
-                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+                .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
     public void insertAndRemove(){

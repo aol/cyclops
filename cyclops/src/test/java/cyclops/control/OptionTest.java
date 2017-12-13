@@ -493,7 +493,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-        Option<Integer> maybe = eager.flatMapI(i -> Arrays.asList(i, 20, 30));
+        Option<Integer> maybe = eager.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

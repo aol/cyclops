@@ -120,7 +120,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     <R> ImmutableSortedSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn);
 
     @Override
-    <R> ImmutableSortedSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> ImmutableSortedSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
     ImmutableSortedSet<T> filter(Predicate<? super T> predicate);
@@ -205,7 +205,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default <U, R> ImmutableSortedSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ImmutableSortedSet<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return unitStream(stream().zipWithStream(other,zipper));
     }
 
@@ -308,7 +308,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default <U> ImmutableSortedSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    default <U> ImmutableSortedSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         return unitStream(stream().zipWithStream(other));
     }
 
@@ -483,8 +483,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> prependS(Stream<? extends T> stream) {
-        return unitStream(stream().prependS(stream),comparator());
+    default ImmutableSortedSet<T> prependStream(Stream<? extends T> stream) {
+        return unitStream(stream().prependStream(stream),comparator());
     }
 
     @Override
@@ -518,8 +518,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> insertAtS(int pos, Stream<T> stream) {
-        return unitStream(stream().insertAtS(pos,stream),comparator());
+    default ImmutableSortedSet<T> insertStreamAt(int pos, Stream<T> stream) {
+        return unitStream(stream().insertStreamAt(pos,stream),comparator());
     }
 
     @Override

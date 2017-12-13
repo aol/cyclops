@@ -305,11 +305,11 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
 
 	@Test
 	public void flatMapEmpty(){
-	    assertThat(empty().flatMap(i->of(1,2,3)).size(),equalTo(0));
+	    assertThat(empty().concatMap(i->of(1,2,3)).size(),equalTo(0));
 	}
 	@Test
     public void flatMap(){
-        assertThat(of(1).flatMap(i->of(1,2,3)),hasItems(1,2,3));
+        assertThat(of(1).concatMap(i->of(1,2,3)),hasItems(1,2,3));
     }
 	@Test
 	public void slice(){

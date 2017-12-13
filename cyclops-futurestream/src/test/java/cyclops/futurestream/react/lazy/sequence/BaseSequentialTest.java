@@ -172,7 +172,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -180,7 +180,7 @@ public class BaseSequentialTest {
 
 		@Test
 		public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -194,7 +194,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void insertAtStream(){
-		List<String> result = 	of(1,2,3).insertAtS(1,of(100,200,300))
+		List<String> result = 	of(1,2,3).insertStreamAt(1,of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));

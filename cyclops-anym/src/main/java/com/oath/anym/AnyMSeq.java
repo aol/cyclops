@@ -47,7 +47,7 @@ import cyclops.function.Function3;
 public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,TransformerTraversable<T>,IterableX<T>, Publisher<T> {
 
 
-    default <R> AnyMSeq<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn){
+    default <R> AnyMSeq<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
     default <R> AnyMSeq<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
@@ -994,8 +994,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return (AnyMSeq<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
     }
     @Override
-    default AnyMSeq<W,T> prependS(Stream<? extends T> stream) {
-        return fromIterable(IterableX.super.prependS(stream));
+    default AnyMSeq<W,T> prependStream(Stream<? extends T> stream) {
+        return fromIterable(IterableX.super.prependStream(stream));
     }
 
     @Override
@@ -1029,8 +1029,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     @Override
-    default AnyMSeq<W,T> insertAtS(int pos, Stream<T> stream) {
-        return fromIterable(IterableX.super.insertAtS(pos,stream));
+    default AnyMSeq<W,T> insertStreamAt(int pos, Stream<T> stream) {
+        return fromIterable(IterableX.super.insertStreamAt(pos,stream));
     }
 
     @Override
@@ -1195,10 +1195,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(stream().updateAt(pos,value));
     }
 
-    @Override
-    default <R> AnyMSeq<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
 
 
     @Override

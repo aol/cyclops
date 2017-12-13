@@ -611,7 +611,7 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
+		Maybe<Integer> maybe = just.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

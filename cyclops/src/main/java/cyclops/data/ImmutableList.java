@@ -101,11 +101,11 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         }
         return fold(c->LazySeq.lazy(c.head(),()->c.tail().lazySeq()), nil->LazySeq.empty());
     }
-    default Seq<T> imSeq(){
+    default Seq<T> seq(){
         if(this instanceof Seq){
             return (Seq<T>)this;
         }
-        return fold(c->Seq.cons(c.head(),c.tail().imSeq()), nil->Seq.empty());
+        return fold(c->Seq.cons(c.head(),c.tail().seq()), nil->Seq.empty());
     }
     default Option<NonEmptyList<T>> nonEmptyList(){
         return Option.ofNullable(fold(c->NonEmptyList.cons(c.head(),c.tail()), nil->null));
@@ -200,7 +200,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
 
-    <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+
 
     @Override
     <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2);
@@ -275,7 +275,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                                       Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
                                                       Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -296,7 +296,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                                       Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                       Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -317,7 +317,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                                   BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
                                                   Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -335,7 +335,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                                   Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                   Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -352,7 +352,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     default <R1, R> ImmutableList<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1,
                                               BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -365,7 +365,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
                                               BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                               BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -427,7 +427,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().zip(fn, publisher));
     }
 
-    default <U, R> ImmutableList<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ImmutableList<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return unitStream(stream().zipWithStream(other,zipper));
     }
 
@@ -532,7 +532,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
-    default <U> ImmutableList<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    default <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         return unitStream(stream().zipWithStream(other));
     }
 
@@ -697,13 +697,11 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
+    <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     @Override
-    default ImmutableList<T> prependS(Stream<? extends T> stream) {
-        return unitStream(stream().prependS(stream));
+    default ImmutableList<T> prependStream(Stream<? extends T> stream) {
+        return unitStream(stream().prependStream(stream));
     }
 
     @Override
@@ -740,8 +738,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<T> insertAtS(int pos, Stream<T> stream) {
-        return unitStream(stream().insertAtS(pos,stream));
+    default ImmutableList<T> insertStreamAt(int pos, Stream<T> stream) {
+        return unitStream(stream().insertStreamAt(pos,stream));
     }
 
     @Override

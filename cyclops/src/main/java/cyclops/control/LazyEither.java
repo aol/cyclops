@@ -415,7 +415,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     BiFunction<LazyEither<L,ReactiveSeq<T>>,LazyEither<L,T>,LazyEither<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<LazyEither<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<LazyEither<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }

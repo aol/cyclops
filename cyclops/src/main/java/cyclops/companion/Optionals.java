@@ -447,7 +447,7 @@ public class Optionals {
 
     BiFunction<Optional<ReactiveSeq<T>>,Optional<T>,Optional<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }

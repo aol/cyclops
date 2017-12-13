@@ -150,7 +150,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
-    <R> AnyM<W,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyM<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
     <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> AnyM<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
     default <R> AnyM<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
@@ -362,7 +362,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return nested.flatMapA(Function.identity());
     }
     static <W extends WitnessType<W>,T1> AnyM<W,T1> flattenI(AnyM<W,? extends Iterable<T1>> nested){
-        return nested.flatMapI(Function.identity());
+        return nested.concatMap(Function.identity());
     }
 
 

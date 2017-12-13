@@ -343,18 +343,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zipStream(java.util.stream.Stream)
-     */
+
     @Override
     public <U> StreamT<W,Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
         return (StreamT) FoldableTransformerSeq.super.zipWithStream(other);
     }
 
-    /* (non-Javadoc)
-     * @see ListT#zip(java.lang.Iterable)
-     */
     @Override
     public <U> StreamT<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
@@ -810,8 +805,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> prependS(Stream<? extends T> stream) {
-        return (StreamT) FoldableTransformerSeq.super.prependS(stream);
+    public StreamT<W,T> prependStream(Stream<? extends T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.prependStream(stream);
     }
 
     @Override
@@ -845,8 +840,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> insertAtS(int pos, Stream<T> stream) {
-        return (StreamT) FoldableTransformerSeq.super.insertAtS(pos,stream);
+    public StreamT<W,T> insertStreamAt(int pos, Stream<T> stream) {
+        return (StreamT) FoldableTransformerSeq.super.insertStreamAt(pos,stream);
     }
 
 

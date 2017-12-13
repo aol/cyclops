@@ -100,7 +100,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
     static <T> LazySeq<T> deferred(Supplier<? extends Iterable<? extends T>> lazy){
-        return fromStream(ReactiveSeq.of(1).flatMapI(i->lazy.get()));
+        return fromStream(ReactiveSeq.of(1).concatMap(i->lazy.get()));
     }
     static <T, U> Tuple2<LazySeq<T>, LazySeq<U>> unzip(final LazySeq<Tuple2<T, U>> sequence) {
        return ReactiveSeq.unzip(sequence.stream()).transform((a, b)->Tuple.tuple(fromStream(a),fromStream(b)));
@@ -491,7 +491,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
   <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
 
   @Override
-  <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+  <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
   default LazySeq<T> appendAll(Iterable<? extends T> it) {
         LazySeq<T> append = narrow(fromIterable(it));
@@ -582,8 +582,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default <U, R> LazySeq<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (LazySeq<R>)ImmutableList.super.zipS(other,zipper);
+    default <U, R> LazySeq<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (LazySeq<R>)ImmutableList.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -687,8 +687,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default <U> LazySeq<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (LazySeq) ImmutableList.super.zipS(other);
+    default <U> LazySeq<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (LazySeq) ImmutableList.super.zipWithStream(other);
     }
 
     @Override
@@ -834,16 +834,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @Override
     LazySeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
-
-
     @Override
-    default <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    default LazySeq<T> prependS(Stream<? extends T> stream) {
-        return (LazySeq<T>) ImmutableList.super.prependS(stream);
+    default LazySeq<T> prependStream(Stream<? extends T> stream) {
+        return (LazySeq<T>) ImmutableList.super.prependStream(stream);
     }
 
     @Override
@@ -862,8 +855,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<T> insertAtS(int pos, Stream<T> stream) {
-        return (LazySeq<T>) ImmutableList.super.insertAtS(pos,stream);
+    default LazySeq<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (LazySeq<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -983,7 +976,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
       @Override
       public <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
-        return flatMapI(fn);
+        return concatMap(fn);
       }
 
       @Override
@@ -992,7 +985,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
       }
 
       @Override
-      public <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+      public <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return LazySeq.fromIterator(new Iterator<R>() {
           Iterator<? extends T> it = iterator();
           Iterator<? extends R> active = new Iterator<R>() {
@@ -1231,7 +1224,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
       }
 
       @Override
-      public <R> LazySeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+      public <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return empty();
       }
 

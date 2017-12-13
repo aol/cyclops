@@ -401,20 +401,20 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn) {
 
         return createSeq(new IterableFlatMapOperator<>(source, fn));
 
     }
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> fn) {
 
-        return flatMapP(1, fn);
+        return mergeMap(1, fn);
     }
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapP(int maxConcurency, final Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> mergeMap(int maxConcurency, final Function<? super T, ? extends Publisher<? extends R>> fn) {
         FlatMapPublisher<T, R> pub = new FlatMapPublisher<>(source, fn,
                 maxConcurency);
 
@@ -705,7 +705,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return createSeq(new OnEmptyErrorOperator<T,X>(source, supplier));
     }
     @Override
-    public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> appendStream(final Stream<? extends T> other) {
         return Spouts.concat(this, (Stream<T>) other);
     }
 
@@ -725,7 +725,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> prependStream(final Stream<? extends T> other) {
         return Spouts.concat((Stream<T>) (other), this);
     }
 
@@ -1285,7 +1285,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public ReactiveSeq<T> cycle(long times) {
         return grouped(Integer.MAX_VALUE, () -> new ArrayList<>(100_000))
                 .map(ListX::fromIterable)
-                .flatMapI(s -> s.cycle(times));
+                .concatMap(s -> s.cycle(times));
 
     }
 
@@ -1316,7 +1316,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final ReactiveSeq<Tuple2<T,Integer>> occurances(){
 
-         return Spouts.deferred(() -> {
+         return Spouts.defer(() -> {
             ReactiveSeq<Map<T, Integer>> map = collectAll(Collectors.toMap(k -> k, v -> 1, (a, b) -> a + b));
             return map.flatMap(m->m.entrySet().stream());
         }).map(e->Tuple.tuple(e.getKey(),e.getValue()));

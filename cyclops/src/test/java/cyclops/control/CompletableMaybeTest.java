@@ -598,7 +598,7 @@ public class CompletableMaybeTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
+		Maybe<Integer> maybe = just.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.orElse(50), equalTo(10));
 	}
 

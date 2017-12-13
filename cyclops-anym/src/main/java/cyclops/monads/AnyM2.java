@@ -110,7 +110,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
-    <R> AnyM2<W,T2,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyM2<W,T2,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
     <R> AnyM2<W,T2,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> AnyM2<W,T2,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
     default <R> AnyM2<W,T2,R> flatMapA(Function<? super T, ? extends AnyM<W, ? extends R>> fn){
@@ -324,7 +324,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return nested.flatMapA(Function.identity());
     }
     static <W extends WitnessType<W>,T1,T2> AnyM2<W,T2,T1> flattenI(AnyM2<W, T2,? extends Iterable<T1>> nested){
-        return nested.flatMapI(Function.identity());
+        return nested.concatMap(Function.identity());
     }
 
 

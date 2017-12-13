@@ -137,12 +137,12 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
 
     @Override
     public <R> HashSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+        return fromStream(stream().concatMap(fn));
     }
 
     @Override
-    public <R> HashSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+    public <R> HashSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().concatMap(fn));
     }
   @Override
   public <R1, R2, R3, R> HashSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
@@ -367,8 +367,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public <U, R> HashSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (HashSet<R>)ImmutableSet.super.zipS(other,zipper);
+    public <U, R> HashSet<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (HashSet<R>)ImmutableSet.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -467,8 +467,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public <U> HashSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (HashSet) ImmutableSet.super.zipS(other);
+    public <U> HashSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (HashSet) ImmutableSet.super.zipWithStream(other);
     }
 
     @Override
@@ -609,15 +609,9 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
 
-
     @Override
-    public <R> HashSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    public HashSet<T> prependS(Stream<? extends T> stream) {
-        return (HashSet<T>) ImmutableSet.super.prependS(stream);
+    public HashSet<T> prependStream(Stream<? extends T> stream) {
+        return (HashSet<T>) ImmutableSet.super.prependStream(stream);
     }
 
     @Override
@@ -636,8 +630,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     }
 
     @Override
-    public HashSet<T> insertAtS(int pos, Stream<T> stream) {
-        return (HashSet<T>) ImmutableSet.super.insertAtS(pos,stream);
+    public HashSet<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (HashSet<T>) ImmutableSet.super.insertStreamAt(pos,stream);
     }
 
     @Override

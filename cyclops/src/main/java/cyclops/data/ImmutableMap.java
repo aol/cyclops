@@ -170,7 +170,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     <R1,R2> ImmutableMap<R1,R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map);
 
     <K2, V2> ImmutableMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper);
-    <K2, V2> ImmutableMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper);
+    <K2, V2> ImmutableMap<K2, V2> concatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper);
 
     ImmutableMap<K,V> filter(Predicate<? super Tuple2<K, V>> predicate);
 
@@ -255,7 +255,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                                                     Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Iterable<Tuple2<K3, R3>>> iterable3,
                                                                     Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
             ReactiveSeq<Tuple2<K1,R1>> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -276,7 +276,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                                                     Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, Boolean> filterFunction,
                                                                     Function4<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? super Tuple2<K3, R3>, ? extends Tuple2<K4, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
             ReactiveSeq<Tuple2<K1,R1>> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -296,7 +296,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                                              BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Iterable<Tuple2<K2, R2>>> iterable2,
                                                              Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
 
             Iterable<Tuple2<K1,R1>> a = iterable1.apply(in);
@@ -315,7 +315,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                                              Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, Boolean> filterFunction,
                                                              Function3<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? super Tuple2<K2, R2>, ? extends Tuple2<K3, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
             Iterable<Tuple2<K1,R1>> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -332,7 +332,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
     default <K1,K2,R1, R> ImmutableMap<K2,R> forEach2(Function<? super Tuple2<K, V>, ? extends Iterable<Tuple2<K1, R1>>> iterable1,
                                                       BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
             Iterable<Tuple2<K1,R1>> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -345,7 +345,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                                       BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, Boolean> filterFunction,
                                                       BiFunction<? super Tuple2<K, V>, ? super Tuple2<K1, R1>, ? extends Tuple2<K2, R>> yieldingFunction) {
 
-        return this.flatMapI((a1,b1) -> {
+        return this.concatMap((a1,b1) -> {
             Tuple2<K, V> in = Tuple.tuple(a1, b1);
             Iterable<? extends Tuple2<K1,R1>> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)

@@ -65,6 +65,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
 
+    public static <T> LinkedListX<T> defer(Supplier<LinkedListX<T>> s){
+      return of(s)
+        .map(Supplier::get)
+        .concatMap(l->l);
+    }
 
     @Override
     default boolean isEmpty() {
@@ -623,9 +628,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> LinkedListX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> LinkedListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (LinkedListX) LazyCollectionX.super.flatMap(mapper);
+        return (LinkedListX) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1173,18 +1178,18 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default <R> LinkedListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (LinkedListX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> LinkedListX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> LinkedListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (LinkedListX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> LinkedListX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default LinkedListX<T> prependS(Stream<? extends T> stream) {
-        return (LinkedListX<T>)LazyCollectionX.super.prependS(stream);
+    default LinkedListX<T> prependStream(Stream<? extends T> stream) {
+        return (LinkedListX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1218,8 +1223,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> insertAtS(int pos, Stream<T> stream) {
-        return (LinkedListX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default LinkedListX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (LinkedListX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1571,7 +1576,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
         private static <T,R> Higher<linkedListX,R> flatMap(Higher<linkedListX,T> lt, Function<? super T, ? extends  Higher<linkedListX,R>> fn){
-            return LinkedListX.fromIterable(LinkedListX.narrowK(lt)).flatMap(fn.andThen(LinkedListX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(LinkedListX::narrowK));
         }
         private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
             return LinkedListX.fromIterable(lt).map(fn);

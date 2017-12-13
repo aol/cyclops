@@ -46,7 +46,7 @@ public class FlatMapPublisherTest {
         //		.flatMapP(i->Maybe.of(i)).printOut();
 
         Assert.assertThat(of(1,2,3)
-                .flatMapP(i-> Maybe.of(i))
+                .mergeMap(i-> Maybe.of(i))
                 .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
@@ -54,20 +54,20 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapP(){
         assertThat(of(1,2,3)
-                .flatMapP(i->Spouts.of(i))
+                .mergeMap(i->Spouts.of(i))
                 .toList(),Matchers.hasItems(1,2,3));
     }
     @Test
     public void flatMapP2(){
         assertThat(of(1,2,3)
-                .flatMapP(i->Spouts.of(1,i))
+                .mergeMap(i->Spouts.of(1,i))
                 .toList(),Matchers.hasItems(1,1,1,2,1,3));
     }
     @Test
     public void flatMapPAsync2(){
         for(int k=0;k<100;k++) {
             List<Integer> res = of(1, 2, 3)
-                    .flatMapP(i -> nextAsync())
+                    .mergeMap(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -89,7 +89,7 @@ public class FlatMapPublisherTest {
     public void flatMapPAsync3(){
         for(int k=0;k<10;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync())
+                    .mergeMap(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -115,7 +115,7 @@ public class FlatMapPublisherTest {
         complete = new AtomicBoolean(false);
         count = new AtomicInteger(0);
         of(1, 2, 3).peek(System.out::println)
-                .flatMapP(i -> nextAsync())
+                .mergeMap(i -> nextAsync())
                 .forEach(r->System.out.println("Next res " + r + " count " + count.incrementAndGet()),
                         e->{},()->complete.set(true));//.request(Long.MAX_VALUE);
 
@@ -124,7 +124,7 @@ public class FlatMapPublisherTest {
         }
         System.out.println("Count " + count);
         System.out.println("Size " + Spouts.of(1, 2, 3).peek(System.out::println)
-                .flatMapP(i -> nextAsync())
+                .mergeMap(i -> nextAsync())
                 .toList().size());
     }
     @Test
@@ -134,7 +134,7 @@ public class FlatMapPublisherTest {
             count = new AtomicInteger(0);
             //SeqSubscriber<Integer> sub = SeqSubscriber.subscriber();
             of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())
+                    .mergeMap(i -> nextAsync())
                     .subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onSubscribe(Subscription s) {
@@ -245,7 +245,7 @@ public class FlatMapPublisherTest {
         for(int k=0;k<100;k++) {
 
             List<Integer> res = Spouts.from(of(1, 2, 3).peek(System.out::println)
-                                      .flatMapP(i -> nextAsync()))
+                                      .mergeMap(i -> nextAsync()))
                                         .collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));

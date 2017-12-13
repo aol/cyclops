@@ -404,7 +404,7 @@ public class ExtensionOperatorsTest {
 
 	@Test
 	public void flatMapMaybe(){
-		assertThat(Spouts.of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(Spouts.of(1,2,3,null).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

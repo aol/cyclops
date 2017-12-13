@@ -106,7 +106,7 @@ public class MergeLatestTest {
                     .map(i -> nextAsync())
                     .grouped(3)
                     .map(l -> Spouts.mergeLatest(l))
-                    .flatMapP(i -> i)
+                    .mergeMap(i -> i)
                     .forEach(System.out::println);
         }
     }
@@ -117,7 +117,7 @@ public class MergeLatestTest {
                                       .map(i -> nextAsync())
                                       .grouped(3)
                                       .map(l -> Spouts.mergeLatest(l))
-                                      .flatMapP(i -> i)
+                                      .mergeMap(i -> i)
                                         .toListX();
 
             System.out.println("Result is " + res);

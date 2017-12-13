@@ -419,12 +419,12 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapI(java.util.function.Function)
+     * @see cyclops2.monads.transformers.values.ValueTransformer#concatMap(java.util.function.Function)
      */
     @Override
-    public <R> EvalT<W, R> flatMapIterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> EvalT<W, R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (EvalT<W, R>)super.flatMapIterable(mapper);
+        return (EvalT<W, R>)super.concatMapterable(mapper);
     }
 
     /* (non-Javadoc)

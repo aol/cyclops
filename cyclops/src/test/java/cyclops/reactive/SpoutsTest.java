@@ -363,9 +363,9 @@ public class SpoutsTest {
         Flux.just(1,2,3).publish(f->f);
         assertThat(Spouts.of(1,2,3).flatMap(i->Spouts.of(i)).collect(Collectors.toList())
                         ,equalTo(ListX.of(1,2,3)));
-        assertThat(Spouts.deferred(()-> Flux.just(1,2,3))
+        assertThat(Spouts.defer(()-> Flux.just(1,2,3))
                 .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
-        assertThat(Spouts.deferredS(()-> ReactiveSeq.of(1,2,3))
+        assertThat(Spouts.deferFromStream(()-> ReactiveSeq.of(1,2,3))
                 .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
     }
 

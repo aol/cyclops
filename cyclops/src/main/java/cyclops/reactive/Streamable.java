@@ -18,7 +18,6 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import lombok.AllArgsConstructor;
-import lombok.val;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -388,7 +387,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return New Streamable with provided Streamable appended
      */
     default Streamable<T> appendAll(final Streamable<T> t) {
-        return Streamable.fromStream(reactiveSeq().appendS(t.reactiveSeq()));
+        return Streamable.fromStream(reactiveSeq().appendStream(t.reactiveSeq()));
     }
 
     /**
@@ -1702,8 +1701,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param fn
      * @return
      */
-    default <R> Streamable<R> flatMapIterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(reactiveSeq().flatMapI(fn));
+    default <R> Streamable<R> concatMapterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(reactiveSeq().concatMap(fn));
     }
 
     /**
@@ -1799,7 +1798,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().appendS(stream.reactiveSeq()));
+        return fromStream(reactiveSeq().appendStream(stream.reactiveSeq()));
     }
 
     /**
@@ -1821,10 +1820,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().prependS(stream.reactiveSeq()));
+        return fromStream(reactiveSeq().prependStream(stream.reactiveSeq()));
     }
-    default Streamable<T> prependS(final Stream<? extends T> stream) {
-        return fromStream(reactiveSeq().prependS(stream));
+    default Streamable<T> prependStream(final Stream<? extends T> stream) {
+        return fromStream(reactiveSeq().prependStream(stream));
     }
 
     @Override
@@ -1833,8 +1832,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     @Override
-    default Streamable<T> insertAtS(int pos, Stream<T> stream){
-        return fromStream(reactiveSeq().insertAtS(pos,stream));
+    default Streamable<T> insertStreamAt(int pos, Stream<T> stream){
+        return fromStream(reactiveSeq().insertStreamAt(pos,stream));
     }
 
     /**
@@ -1936,7 +1935,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return newly conjoined Streamable
      */
     default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
-        return fromStream(reactiveSeq().insertAtS(pos, stream.reactiveSeq()));
+        return fromStream(reactiveSeq().insertStreamAt(pos, stream.reactiveSeq()));
     }
 
 

@@ -137,7 +137,7 @@ public interface SemigroupKs{
 
         @Override
         public <T> Higher<reactiveSeq, T> apply(Higher<reactiveSeq, T> a, Higher<reactiveSeq, T> b) {
-          return  ReactiveSeq.narrowK(a).appendS(ReactiveSeq.narrowK(b));
+          return  ReactiveSeq.narrowK(a).appendStream(ReactiveSeq.narrowK(b));
         }
       };
 

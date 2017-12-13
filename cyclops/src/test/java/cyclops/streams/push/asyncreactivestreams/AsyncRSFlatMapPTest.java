@@ -35,7 +35,7 @@ public class AsyncRSFlatMapPTest {
     }
     @Test
     public void simple(){
-        of(1,2,3).flatMapP(1,i->flux(5,6,7)).peek(e->System.out.println("e " + e)).printOut();
+        of(1,2,3).mergeMap(1, i->flux(5,6,7)).peek(e->System.out.println("e " + e)).printOut();
     }
 
     @Test
@@ -60,22 +60,22 @@ public class AsyncRSFlatMapPTest {
     @Test
     public void nestedSync(){
         System.out.println(of(1, 2, 3)
-                .flatMapP(2,i -> Spouts.of(5,6).flatMapP(2,k->Spouts.of(8,9))).toListX());
+                .mergeMap(2, i -> Spouts.of(5,6).mergeMap(2, k->Spouts.of(8,9))).toListX());
     }
     @Test
     public void failing(){
         System.out.println(Spouts.of(1, 2, 3)
-                .flatMapP(2,i -> Spouts.of(5,6)).toListX());
+                .mergeMap(2, i -> Spouts.of(5,6)).toListX());
         System.out.println(of(1, 2, 3)
-                .flatMapP(2,i -> of(5,6)).toListX());
+                .mergeMap(2, i -> of(5,6)).toListX());
     }
     @Test
     public void flatMapPList(){
         for(int l=0;l<1_000;l++) {
             System.out.println("Starting!");
             ListX<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP(4, x -> of2(5, 6, 7, 7, 8, 9)))
+                    .mergeMap(4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .mergeMap(4, x -> of2(5, 6, 7, 7, 8, 9)))
                     .toListX();
             System.out.println("Size =  " + it.size());
         }
@@ -85,8 +85,8 @@ public class AsyncRSFlatMapPTest {
     public void flatMapPIt(){
         for(int l=0;l<1_000;l++) {
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP( 4,i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP( 4,x -> of2(5, 6, 7, 7, 8, 9)))
+                    .mergeMap( 4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .mergeMap( 4, x -> of2(5, 6, 7, 7, 8, 9)))
                     .iterator();
             assertThat("Iteration " + l,ListX.fromIterator(it).size(),equalTo(480));
         }
@@ -96,8 +96,8 @@ public class AsyncRSFlatMapPTest {
         for(int l=0;l<10;l++) {
             System.out.println("Iteration " + l);
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP( i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP( x -> of2(5, 6, 7, 7, 8, 9)))
+                    .mergeMap(i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .mergeMap(x -> of2(5, 6, 7, 7, 8, 9)))
                     .iterator();
             List<Integer> result = new ArrayList<>(480);
             while(it.hasNext()){
@@ -113,8 +113,8 @@ public class AsyncRSFlatMapPTest {
         {
             System.out.println("Iteration " + l);
             Iterator<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP( i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
-                            .flatMapP( x -> of2(5, 6, 7, 7, 8, 9)))
+                    .mergeMap(i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
+                            .mergeMap(x -> of2(5, 6, 7, 7, 8, 9)))
                     .iterator();
             List<Integer> result = new ArrayList<>(480);
             while(it.hasNext()){
@@ -126,8 +126,8 @@ public class AsyncRSFlatMapPTest {
     @Test
     public void flatMapPubIteration(){
         Iterator<Integer> it = of(1,2,3,4)
-                .flatMapP(i->of(5,6)
-                        .flatMapP(k->of(k)))
+                .mergeMap(i->of(5,6)
+                        .mergeMap(k->of(k)))
                 .iterator();
 
         assertThat(ListX.fromIterator(it).size(),equalTo(8));
@@ -141,8 +141,8 @@ public class AsyncRSFlatMapPTest {
 
             assertThat(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
                     equalTo(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                            .flatMapP(i -> of(i, i * 2, i * 4)
-                                    .flatMapP(x -> of(5, 6, 7)))
+                            .mergeMap(i -> of(i, i * 2, i * 4)
+                                    .mergeMap(x -> of(5, 6, 7)))
                             .toListX().size()));
 
         }
@@ -155,8 +155,8 @@ public class AsyncRSFlatMapPTest {
             System.out.println("************Iteration " + l);
 
             System.out.println(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
-                            .flatMapP(x -> of(5, 6, 7)))
+                    .mergeMap(i -> of(i, i * 2, i * 4)
+                            .mergeMap(x -> of(5, 6, 7)))
                     .toListX());
 
         }
@@ -168,8 +168,8 @@ public class AsyncRSFlatMapPTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
-                            .flatMapP(x -> of(5, 6, 7)))
+                    .mergeMap(i -> of(i, i * 2, i * 4)
+                            .mergeMap(x -> of(5, 6, 7)))
                     .toListX());
         }
     }
@@ -180,17 +180,17 @@ public class AsyncRSFlatMapPTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of2(i, i * 2, i * 4,5,6,7,8,9)
-                            .flatMapP(x -> of2(5, 6, 7,7,8,9)))
+                    .mergeMap(i -> of2(i, i * 2, i * 4,5,6,7,8,9)
+                            .mergeMap(x -> of2(5, 6, 7,7,8,9)))
                     .toListX());
         }
     }
     @Test
     public void flatMapP3(){
         System.out.println(this.of(1,2)
-                .flatMapP(i->of(i,i*2,i*4)
-                        .flatMapP(x->of(5,6,7)
-                                .flatMapP(y->of(2,3,4))))
+                .mergeMap(i->of(i,i*2,i*4)
+                        .mergeMap(x->of(5,6,7)
+                                .mergeMap(y->of(2,3,4))))
                 .toListX());
     }
     @Test
@@ -200,8 +200,8 @@ public class AsyncRSFlatMapPTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.of("1", "2")
-                    .flatMapP(i -> of(1, 2,3))
-                    .flatMapP(x -> of('a','b'))
+                    .mergeMap(i -> of(1, 2,3))
+                    .mergeMap(x -> of('a','b'))
                     .toListX());
         }
     }
@@ -212,8 +212,8 @@ public class AsyncRSFlatMapPTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.of("1", "2","3")
-                    .flatMapP(i -> of(1, 2,3,4,5))
-                    .flatMapP(x -> of('a','b'))
+                    .mergeMap(i -> of(1, 2,3,4,5))
+                    .mergeMap(x -> of('a','b'))
                     .toListX());
         }
     }

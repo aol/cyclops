@@ -5,8 +5,8 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
 import com.oath.cyclops.types.reactive.PushSubscriber;
-import cyclops.control.Either;
-import cyclops.control.Option;
+import cyclops.control.*;
+import cyclops.data.Seq;
 import cyclops.function.Function3;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
@@ -14,9 +14,7 @@ import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
-import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.typeclasses.Pure;
@@ -52,6 +50,12 @@ import java.util.stream.Stream;
 
 public interface Spouts {
 
+    public static <T> ReactiveSeq<T> async(IO<T> t){
+     return Spouts.deferFromIterable(()->Seq.of(t.run()));
+    }
+    public static <T> ReactiveSeq<T> async(IO<T> t, Executor e){
+       return async(async(t),e);
+    }
 
     /**
      * Create an Subscriber for Observable style asynchronous push based Streams.
@@ -331,7 +335,7 @@ public interface Spouts {
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
     static <T> ReactiveSeq<T> mergeLatest(int maxConcurrency,Publisher<T>... array){
-        return Spouts.of(array).flatMapP(maxConcurrency,i->i);
+        return Spouts.of(array).mergeMap(maxConcurrency, i->i);
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<T>... array){
 
@@ -517,14 +521,14 @@ public interface Spouts {
         return sub.reactiveStream();
 
     }
-    static <T> ReactiveSeq<T> deferred(final Supplier<? extends Publisher<? extends T>> s){
-        return of(s).flatMapP(i->i.get());
+    static <T> ReactiveSeq<T> defer(final Supplier<? extends Publisher<? extends T>> s){
+        return of(s).mergeMap(i->i.get());
     }
-    static <T> ReactiveSeq<T> deferredS(final Supplier<? extends Stream<? extends T>> s){
+    static <T> ReactiveSeq<T> deferFromStream(final Supplier<? extends Stream<? extends T>> s){
         return of(s).flatMap(i->i.get());
     }
-    static <T> ReactiveSeq<T> deferredI(final Supplier<? extends Iterable<? extends T>> s){
-        return of(s).flatMapI(i->i.get());
+    static <T> ReactiveSeq<T> deferFromIterable(final Supplier<? extends Iterable<? extends T>> s){
+        return of(s).concatMap(i->i.get());
     }
     /**
      * Unfold a function into a ReactiveSeq
@@ -833,7 +837,7 @@ public interface Spouts {
             return new MonadRec<reactiveSeq>(){
                 @Override
                 public <T, R> Higher<reactiveSeq, R> tailRec(T initial, Function<? super T, ? extends Higher<reactiveSeq,? extends Either<T, R>>> fn) {
-                    return  Spouts.reactive(ReactiveSeq.deferred( ()-> ReactiveSeq.tailRec(initial, fn.andThen(ReactiveSeq::narrowK))),ex);
+                    return  Spouts.reactive(ReactiveSeq.deferFromStream( ()-> ReactiveSeq.tailRec(initial, fn.andThen(ReactiveSeq::narrowK))),ex);
 
                 }
             };
@@ -848,7 +852,7 @@ public interface Spouts {
 
                 BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.appendAll(b); return a;}),acc,next);
 
-                BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.appendS(l2); return l1;}),a,b); ;
+                BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.appendStream(l2); return l1;}),a,b); ;
 
                 return list.stream()
                         .reduce(identity,

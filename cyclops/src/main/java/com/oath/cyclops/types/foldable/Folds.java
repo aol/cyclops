@@ -152,7 +152,7 @@ public interface Folds<T> extends Iterable<T>  {
     }
     default ReactiveSeq<Tuple2<T,Integer>> occurances(){
 
-        return ReactiveSeq.deferred(() -> {
+        return ReactiveSeq.deferFromStream(() -> {
             Map<T, Integer> map = stream().collect(Collectors.toMap(k -> k, v -> 1, (a, b) -> a + b));
             return map.entrySet().stream();
         }).map(e->Tuple.tuple(e.getKey(),e.getValue()));

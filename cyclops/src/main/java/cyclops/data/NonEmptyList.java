@@ -219,8 +219,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return lazySeq().flatMapI(fn);
+    public <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return lazySeq().concatMap(fn);
     }
 
     public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
@@ -419,8 +419,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> prependS(Stream<? extends T> stream) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.prependS(stream);
+    public NonEmptyList<T> prependStream(Stream<? extends T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.prependStream(stream);
     }
 
     @Override
@@ -434,8 +434,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> insertAtS(int pos, Stream<T> stream) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.insertAtS(pos,stream);
+    public NonEmptyList<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.insertStreamAt(pos,stream);
     }
 
     @Override

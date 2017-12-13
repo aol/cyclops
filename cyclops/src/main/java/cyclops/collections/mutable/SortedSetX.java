@@ -46,9 +46,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
 
     public static <T> SortedSetX<T> defer(Supplier<SortedSetX<T>> s){
-        return of(s)
-                .map(Supplier::get)
-                .flatMap(l->l);
+      return of(s)
+              .map(Supplier::get)
+              .concatMap(l->l);
     }
 
     static <T> CompletableSortedSetX<T> completable(){
@@ -461,9 +461,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> SortedSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> SortedSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (SortedSetX<R>) LazyCollectionX.super.<R> flatMap(mapper);
+        return (SortedSetX<R>) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1029,18 +1029,18 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default <R> SortedSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> SortedSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (SortedSetX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> SortedSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (SortedSetX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> SortedSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SortedSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default SortedSetX<T> prependS(Stream<? extends T> stream) {
-        return (SortedSetX<T>)LazyCollectionX.super.prependS(stream);
+    default SortedSetX<T> prependStream(Stream<? extends T> stream) {
+        return (SortedSetX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1074,8 +1074,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (SortedSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default SortedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (SortedSetX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1168,7 +1168,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {

@@ -66,8 +66,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     public static <T> DequeX<T> defer(Supplier<DequeX<T>> s){
         return of(s)
-                .map(Supplier::get)
-                .flatMap(l->l);
+                  .map(Supplier::get)
+                  .concatMap(l->l);
     }
 
 
@@ -586,9 +586,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> DequeX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> DequeX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (DequeX<R>) LazyCollectionX.super.flatMap(mapper);
+        return (DequeX<R>) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1211,18 +1211,18 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     @Override
-    default <R> DequeX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (DequeX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> DequeX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> DequeX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (DequeX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> DequeX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default DequeX<T> prependS(Stream<? extends T> stream) {
-        return (DequeX<T>)LazyCollectionX.super.prependS(stream);
+    default DequeX<T> prependStream(Stream<? extends T> stream) {
+        return (DequeX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1256,8 +1256,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     @Override
-    default DequeX<T> insertAtS(int pos, Stream<T> stream) {
-        return (DequeX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default DequeX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (DequeX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1637,7 +1637,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
             return lt.zip(list,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<deque,R> flatMap( Higher<deque,T> lt, Function<? super T, ? extends  Higher<deque,R>> fn){
-            return DequeX.narrowK(lt).flatMap(fn.andThen(DequeX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(DequeX::narrowK));
         }
         private static <T,R> DequeX<R> map(DequeX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
@@ -1650,7 +1650,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {

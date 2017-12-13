@@ -345,7 +345,7 @@ public class SequenceMTest {
 	}
 	@Test
 	public void flatMapOptional(){
-		assertThat(LazyReact.sequentialBuilder().of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(LazyReact.sequentialBuilder().of(1,2,3,null).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

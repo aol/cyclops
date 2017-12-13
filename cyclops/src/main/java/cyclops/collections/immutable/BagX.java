@@ -63,6 +63,13 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return LazyCollectionX.super.containsValue(item);
     }
 
+    public static <T> BagX<T> defer(Supplier<BagX<T>> s){
+      return of(s)
+        .map(Supplier::get)
+        .concatMap(l->l);
+    }
+
+
     static <T> CompletableBagX<T> completable(){
         return new CompletableBagX<>();
     }
@@ -495,8 +502,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> BagX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (BagX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> BagX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (BagX<R>) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1010,18 +1017,18 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default <R> BagX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> BagX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> BagX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> BagX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default BagX<T> prependS(Stream<? extends T> stream) {
-        return (BagX<T>)LazyCollectionX.super.prependS(stream);
+    default BagX<T> prependStream(Stream<? extends T> stream) {
+        return (BagX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1055,8 +1062,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<T> insertAtS(int pos, Stream<T> stream) {
-        return (BagX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default BagX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (BagX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override

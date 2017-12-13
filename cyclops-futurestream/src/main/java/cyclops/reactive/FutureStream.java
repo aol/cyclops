@@ -58,7 +58,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {
 
-  default  <R> R toType(Function<? super FutureStream<U>,? extends R> fn){
+    default  <R> R toType(Function<? super FutureStream<U>,? extends R> fn){
     return fn.apply(this);
   }
     @Override
@@ -310,8 +310,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
      */
     @Override
-    default FutureStream<U> appendS(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).appendS(other));
+    default FutureStream<U> appendStream(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.oneShotStream(stream()).appendStream(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
@@ -326,8 +326,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see org.jooq.lambda.Seq#prependAll(java.util.stream.Stream)
      */
     @Override
-    default FutureStream<U> prependS(Stream<? extends U> other) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).prependS(other));
+    default FutureStream<U> prependStream(Stream<? extends U> other) {
+        return fromStream(ReactiveSeq.oneShotStream(stream()).prependStream(other));
     }
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#prependAll(java.lang.Iterable)
@@ -2971,12 +2971,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     /*
-     * @see cyclops2.reactiveStream.ReactiveSeq#flatMapI(java.util.function.Function)
+     * @see cyclops2.reactiveStream.ReactiveSeq#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> FutureStream<R> flatMapI(final Function<? super U, ? extends Iterable<? extends R>> fn) {
+    default <R> FutureStream<R> concatMap(final Function<? super U, ? extends Iterable<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .flatMapI(fn));
+                                     .concatMap(fn));
     }
     /**
      * A potentially non-blocking analog of {@link ReactiveSeq#forEach}.
@@ -2990,14 +2990,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
             peek(action).run();
     }
     @Override
-    default <R> FutureStream<R> flatMapP(final Function<? super U, ? extends Publisher<? extends R>> fn) {
+    default <R> FutureStream<R> mergeMap(final Function<? super U, ? extends Publisher<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                .flatMapP(fn));
+                .mergeMap(fn));
     }
     @Override
-    default <R> FutureStream<R> flatMapP(int maxConcurrency,final Function<? super U, ? extends Publisher<? extends R>> fn) {
+    default <R> FutureStream<R> mergeMap(int maxConcurrency, final Function<? super U, ? extends Publisher<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                .flatMapP(maxConcurrency,fn));
+                .mergeMap(maxConcurrency,fn));
     }
 
 
@@ -3049,9 +3049,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.reactiveStream.ReactiveSeq#insertAtS(int, java.util.stream.Stream)
      */
     @Override
-    default FutureStream<U> insertAtS(final int pos, final Stream<U> stream) {
+    default FutureStream<U> insertStreamAt(final int pos, final Stream<U> stream) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .insertAtS(pos, stream));
+                                     .insertStreamAt(pos, stream));
     }
 
 
@@ -3462,8 +3462,5 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .removeAll(value));
     }
 
-    @Override
-    default <R> FutureStream<R> concatMap(Function<? super U, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
+
 }

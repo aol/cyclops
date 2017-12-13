@@ -306,7 +306,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return toListX().transform((a, b)->Tuple.tuple(a.stream(),b.stream()));
     }
     public ReactiveSeq<T> streamBoth(){
-        return stream().transform((a, b)->a.appendS(b));
+        return stream().transform((a, b)->a.appendStream(b));
     }
 
     public Product<W1,W2,T> reverse(){
