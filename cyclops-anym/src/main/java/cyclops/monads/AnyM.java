@@ -38,6 +38,7 @@ import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.HashSet;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -487,6 +488,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return AnyMFactory.instance.seq(collection,witness);
 
     }
+  public static <T> AnyMSeq<hashSet,T> fromHashSet(final HashSet<T> seq) {
+    Objects.requireNonNull(seq);
+    return AnyMFactory.instance.seq(seq, Witness.hashSet.INSTANCE);
+  }
     public static <T> AnyMSeq<vector,T> fromVector(final Vector<T> vec) {
       Objects.requireNonNull(vec);
       return AnyMFactory.instance.seq(vec, Witness.vector.INSTANCE);
