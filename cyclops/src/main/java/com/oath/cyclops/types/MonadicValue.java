@@ -34,7 +34,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     default <X extends Throwable,R> Try<R,X> mapTry(Function<? super T,? extends R> fn, Class<X>... exceptionTypes){
-        Try<? extends MonadicValue<? extends R>, X> x = Try.catchExceptions(exceptionTypes).tryThis(() -> map(fn));
+        Try<? extends MonadicValue<? extends R>, X> x = Try.withCatch(() -> map(fn),exceptionTypes);
         return x.flatMap(a->a.toTry(exceptionTypes));
     }
 

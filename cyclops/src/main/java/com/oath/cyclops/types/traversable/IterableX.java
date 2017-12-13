@@ -156,7 +156,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      */
     default <R, X extends Throwable> Try<R, X> foldTry(Function<? super IterableX<T>,? extends R> fn,
                                                        final Class<X>... classes){
-        return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
+        return Try.withCatch(()->fn.apply(this),classes);
     }
 
     default Function1<Long,T> asFunction(){

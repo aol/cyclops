@@ -72,8 +72,7 @@ public class TryTest {
 
 	@Test
 	public void catchExceptonsWithRun(){
-		assertThat(Try.catchExceptions(RuntimeException.class)
-			.run(()-> exceptional2())
+		assertThat(Try.withCatch(()-> exceptional2(),RuntimeException.class)
 			.onFail(System.out::println)
 			.map(i->i+"woo!")
 			.toOptional()
@@ -83,9 +82,9 @@ public class TryTest {
 	@Test
 	public void testTryWithResources(){
 
-		assertThat(Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->new BufferedReader(new FileReader("file.txt")))
-				   .tryWithResources(this::read).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
+		assertThat(Try.withResources(() -> new BufferedReader(new FileReader("file.txt")),
+      this::read,
+      IOException.class,NullPointerException.class, FileNotFoundException.class).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
 
 
 
@@ -94,14 +93,14 @@ public class TryTest {
 
 	public void testMultipleResources(){
 
-		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->Tuple.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
-				   .tryWithResources(this::read2);
+		Try t2 = Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
+                               ()->new FileReader("hello"),
+				                        this::read2,FileNotFoundException.class,IOException.class);
 
 	}
 
-	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
-		String line = res._1().readLine();
+	private String read2(BufferedReader br,FileReader fr) throws IOException{
+		String line = br.readLine();
 		return null;
 	}
 	private String read(BufferedReader br) throws IOException{
