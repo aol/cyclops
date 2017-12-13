@@ -36,9 +36,9 @@ public interface Witness {
     static interface StreamWitness<W extends StreamWitness<W>>  extends WitnessType<W>{
 
     }
-   static interface IterableXWitness<W extends IterableXWitness<W>>  extends WitnessType<W>{
+     static interface IterableXWitness<W extends IterableXWitness<W>>  extends WitnessType<W>{
 
-   }
+     }
     public static <T> Identity<T> identity(AnyM<identity,? extends T> anyM){
         return anyM.unwrap();
     }
@@ -51,6 +51,12 @@ public interface Witness {
   }
 
     public static <T> LazySeq<T> lazySeq(AnyM<lazySeq,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> HashSet<T> hashSet(AnyM<hashSet,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> BankersQueue<T> bankersQueue(AnyM<bankersQueue,? extends T> anyM){
     return anyM.unwrap();
   }
 
