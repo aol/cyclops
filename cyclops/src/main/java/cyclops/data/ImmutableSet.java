@@ -101,9 +101,13 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     <R> ImmutableSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn);
     <R> ImmutableSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
+    @Override
+    <R> ImmutableSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
 
+    @Override
+    <R> ImmutableSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
 
-    ImmutableSet<T> filter(Predicate<? super T> predicate);
+  ImmutableSet<T> filter(Predicate<? super T> predicate);
 
     default <R1, R2, R3, R> ImmutableSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                      BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,

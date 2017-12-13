@@ -700,6 +700,12 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     @Override
+    <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
+    @Override
+    <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
+  @Override
     default ImmutableList<T> prependStream(Stream<? extends T> stream) {
         return unitStream(stream().prependStream(stream));
     }

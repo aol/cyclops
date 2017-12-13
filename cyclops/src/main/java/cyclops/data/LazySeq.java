@@ -493,6 +493,12 @@ public interface LazySeq<T> extends  ImmutableList<T>,
   @Override
   <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
+  @Override
+  <R> LazySeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
+  @Override
+  <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
   default LazySeq<T> appendAll(Iterable<? extends T> it) {
         LazySeq<T> append = narrow(fromIterable(it));
         return this.visit(cons->{
@@ -985,6 +991,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
       }
 
       @Override
+      public <R> LazySeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromIterable(stream().mergeMap(fn));
+      }
+
+      @Override
+      public <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromIterable(stream().mergeMap(maxConcurecy,fn));
+      }
+
+      @Override
       public <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return LazySeq.fromIterator(new Iterator<R>() {
           Iterator<? extends T> it = iterator();
@@ -1225,6 +1241,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
       @Override
       public <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return empty();
+      }
+
+      @Override
+      public <R> LazySeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return empty();
+      }
+
+      @Override
+      public <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
         return empty();
       }
 

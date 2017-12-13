@@ -123,6 +123,12 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     <R> ImmutableSortedSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
+    <R> ImmutableSortedSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
+    @Override
+    <R> ImmutableSortedSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
+    @Override
     ImmutableSortedSet<T> filter(Predicate<? super T> predicate);
 
     @Override

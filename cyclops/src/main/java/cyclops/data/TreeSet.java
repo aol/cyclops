@@ -165,7 +165,18 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromStream(stream().concatMap(fn), Comparators.naturalOrderIdentityComparator());
     }
-    public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn,Comparator<? super R> comp) {
+
+    @Override
+    public <R> TreeSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(fn), Comparators.naturalOrderIdentityComparator());
+    }
+
+    @Override
+    public <R> TreeSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(maxConcurecy,fn), Comparators.naturalOrderIdentityComparator());
+    }
+
+  public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn,Comparator<? super R> comp) {
         return fromStream(stream().concatMap(fn), comp);
     }
 

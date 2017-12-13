@@ -1,5 +1,6 @@
 package com.oath.cyclops.types.traversable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
@@ -732,6 +733,9 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
         return stream().concatMap(mapper);
     }
+    <R> IterableX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> IterableX<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
     default IterableX<T> insertAt(int i, T value){
         IterableX<T> front = take(i);
         IterableX<T> back = drop(i);

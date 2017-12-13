@@ -132,6 +132,16 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
+    public <R> TrieSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> TrieSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(maxConcurecy,fn));
+    }
+
+  @Override
     public TrieSet<T> filter(Predicate<? super T> predicate) {
         return fromStream(stream().filter(predicate));
     }
