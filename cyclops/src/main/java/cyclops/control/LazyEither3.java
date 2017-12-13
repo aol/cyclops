@@ -1396,7 +1396,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
                 @Override
                 public <T, R> Option<MonadZero<Higher<Higher<lazyEither3, L1>, L2>>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override

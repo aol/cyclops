@@ -626,12 +626,12 @@ public class Optionals {
 
                 @Override
                 public <T, R> Option<MonadZero<optional>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<optional>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -641,7 +641,7 @@ public class Optionals {
 
                 @Override
                 public <T> Option<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override

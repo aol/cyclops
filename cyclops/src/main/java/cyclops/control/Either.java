@@ -1276,12 +1276,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
                 @Override
                 public <T, R> Option<MonadZero<Higher<either, L>>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<Higher<either, L>>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1292,7 +1292,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
                 @Override
                 public <T> Option<MonadPlus<Higher<either, L>>> monadPlus(MonoidK<Higher<either, L>> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override

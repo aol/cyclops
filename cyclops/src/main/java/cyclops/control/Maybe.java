@@ -1484,12 +1484,12 @@ public interface Maybe<T> extends Option<T> {
 
                 @Override
                 public <T, R> Option<MonadZero<option>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<option>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1499,7 +1499,7 @@ public interface Maybe<T> extends Option<T> {
 
                 @Override
                 public <T> Option<MonadPlus<option>> monadPlus(MonoidK<option> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override

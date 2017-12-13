@@ -1126,7 +1126,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
                 @Override
                 public <T, R> Option<MonadZero<eval>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override

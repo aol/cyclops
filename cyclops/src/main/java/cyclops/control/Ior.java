@@ -1210,12 +1210,12 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
                 @Override
                 public <T, R> Option<MonadZero<Higher<ior, L>>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1225,7 +1225,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
                 @Override
                 public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus(MonoidK<Higher<ior, L>> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override

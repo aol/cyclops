@@ -2872,12 +2872,12 @@ public class Streams {
 
                 @Override
                 public <T, R> Option<MonadZero<stream>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<stream>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -2887,7 +2887,7 @@ public class Streams {
 
                 @Override
                 public <T> Option<MonadPlus<stream>> monadPlus(MonoidK<stream> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -2906,7 +2906,7 @@ public class Streams {
                 }
                 @Override
                 public <T> Option<Unfoldable<stream>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }

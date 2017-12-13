@@ -1271,12 +1271,12 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
                 @Override
                 public <T, R> Option<MonadZero<vectorX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<vectorX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1286,7 +1286,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
                 @Override
                 public <T> Option<MonadPlus<vectorX>> monadPlus(MonoidK<vectorX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1305,7 +1305,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
                 @Override
                 public <T> Option<Unfoldable<vectorX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }

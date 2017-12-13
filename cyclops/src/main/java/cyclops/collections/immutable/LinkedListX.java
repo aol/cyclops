@@ -1301,12 +1301,12 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
                 @Override
                 public <T, R> Option<MonadZero<linkedListX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
                 public <T> Option<MonadPlus<linkedListX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1316,7 +1316,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
                 @Override
                 public <T> Option<MonadPlus<linkedListX>> monadPlus(MonoidK<linkedListX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1336,7 +1336,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
                 @Override
                 public <T> Option<Unfoldable<linkedListX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }
