@@ -97,6 +97,9 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     public static <T> HashSet<T> fromIterable(Iterable<T> it){
         return ReactiveSeq.fromIterable(it).foldLeft(empty(),(m, t2)->m.plus(t2));
     }
+    public static <T> HashSet<T> fromIterator(Iterator<T> it){
+      return fromIterable((()->it));
+    }
 
     @Override
     public <R> HashSet<R> unitIterable(Iterable<R> it) {
