@@ -38,9 +38,8 @@ import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.*;
 import cyclops.data.HashSet;
-import cyclops.data.LazySeq;
-import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.monads.function.AnyMFunction2;
@@ -488,10 +487,14 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return AnyMFactory.instance.seq(collection,witness);
 
     }
-  public static <T> AnyMSeq<hashSet,T> fromHashSet(final HashSet<T> seq) {
-    Objects.requireNonNull(seq);
-    return AnyMFactory.instance.seq(seq, Witness.hashSet.INSTANCE);
-  }
+    public static <T> AnyMSeq<bankersQueue,T> fromBankersQueue(final BankersQueue<T> seq) {
+      Objects.requireNonNull(seq);
+      return AnyMFactory.instance.seq(seq, Witness.bankersQueue.INSTANCE);
+    }
+    public static <T> AnyMSeq<hashSet,T> fromHashSet(final HashSet<T> seq) {
+      Objects.requireNonNull(seq);
+      return AnyMFactory.instance.seq(seq, Witness.hashSet.INSTANCE);
+    }
     public static <T> AnyMSeq<vector,T> fromVector(final Vector<T> vec) {
       Objects.requireNonNull(vec);
       return AnyMFactory.instance.seq(vec, Witness.vector.INSTANCE);
