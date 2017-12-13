@@ -8,6 +8,7 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.deque;
 import cyclops.monads.Witness.seq;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -59,7 +60,13 @@ public class SeqAnyMTest extends AbstractAnyMSeqOrderedDependentTest<seq> {
         assertThat(res,equalTo("2world3"));
     }
 
+    @Test @Ignore //only works for lazy data types
+    public void testRecover1(){
 
+     }
+    @Test  @Ignore //only works for lazy data types
+    public void testRecover2(){
+    }
 
 }
 

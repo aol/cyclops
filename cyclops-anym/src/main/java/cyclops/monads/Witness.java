@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.oath.anym.internal.adapters.*;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.control.Future;
@@ -91,7 +92,7 @@ public interface Witness {
     public static <T> Optional<T> optional(AnyM<optional,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T,W extends IterableXWitness<W>> CollectionX<T> collectionX(AnyM<W,? extends T> anyM){
+    public static <T,W extends IterableXWitness<W>> IterableX<T> iterableX(AnyM<W,? extends T> anyM){
         return anyM.unwrap();
     }
     public static <T,W extends MonadicValueWitness<W>> MonadicValue<T> monadicValue(AnyM<W,? extends T> anyM){
