@@ -14,7 +14,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.matching.Sealed2;
@@ -1385,12 +1384,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T, R> Maybe<MonadZero<Higher<tryType, L>>> monadZero() {
+        public <T, R> Option<MonadZero<Higher<tryType, L>>> monadZero() {
           return Maybe.nothing();
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus() {
+        public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus() {
           return Maybe.nothing();
         }
 
@@ -1400,7 +1399,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
+        public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
           return Maybe.nothing();
         }
 
@@ -1416,12 +1415,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T> Maybe<Comonad<Higher<tryType, L>>> comonad() {
+        public <T> Option<Comonad<Higher<tryType, L>>> comonad() {
           return Maybe.nothing();
         }
 
         @Override
-        public <T> Maybe<Unfoldable<Higher<tryType, L>>> unfoldable() {
+        public <T> Option<Unfoldable<Higher<tryType, L>>> unfoldable() {
           return Maybe.nothing();
         }
       };

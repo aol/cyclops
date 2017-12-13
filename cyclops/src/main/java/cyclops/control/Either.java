@@ -1275,12 +1275,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<either, L>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<either, L>>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<either, L>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<either, L>>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1291,7 +1291,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<either, L>>> monadPlus(MonoidK<Higher<either, L>> m) {
+                public <T> Option<MonadPlus<Higher<either, L>>> monadPlus(MonoidK<Higher<either, L>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1306,12 +1306,12 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<either, L>>> comonad() {
+                public <T> Option<Comonad<Higher<either, L>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<either, L>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<either, L>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

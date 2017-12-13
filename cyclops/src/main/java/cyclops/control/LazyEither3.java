@@ -1395,12 +1395,12 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<Higher<lazyEither3, L1>, L2>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<Higher<lazyEither3, L1>, L2>>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1410,7 +1410,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(MonoidK<Higher<Higher<lazyEither3, L1>, L2>> m) {
+                public <T> Option<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(MonoidK<Higher<Higher<lazyEither3, L1>, L2>> m) {
                     return Maybe.nothing();
                 }
 
@@ -1425,12 +1425,12 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<Higher<lazyEither3, L1>, L2>>> comonad() {
+                public <T> Option<Comonad<Higher<Higher<lazyEither3, L1>, L2>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<Higher<lazyEither3, L1>, L2>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<Higher<lazyEither3, L1>, L2>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

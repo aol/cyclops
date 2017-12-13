@@ -625,12 +625,12 @@ public class Optionals {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<optional>> monadZero() {
+                public <T, R> Option<MonadZero<optional>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<optional>> monadPlus() {
+                public <T> Option<MonadPlus<optional>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -640,7 +640,7 @@ public class Optionals {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
+                public <T> Option<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -655,12 +655,12 @@ public class Optionals {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<optional>> comonad() {
+                public <T> Option<Comonad<optional>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<optional>> unfoldable() {
+                public <T> Option<Unfoldable<optional>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

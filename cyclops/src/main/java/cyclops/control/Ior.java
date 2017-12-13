@@ -1209,12 +1209,12 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<ior, L>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<ior, L>>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1224,7 +1224,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<ior, L>>> monadPlus(MonoidK<Higher<ior, L>> m) {
+                public <T> Option<MonadPlus<Higher<ior, L>>> monadPlus(MonoidK<Higher<ior, L>> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1239,12 +1239,12 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<ior, L>>> comonad() {
+                public <T> Option<Comonad<Higher<ior, L>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<ior, L>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<ior, L>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

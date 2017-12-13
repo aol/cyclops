@@ -164,12 +164,12 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<list>> monadZero() {
+                public <T, R> Option<MonadZero<list>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<list>> monadPlus() {
+                public <T> Option<MonadPlus<list>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -179,7 +179,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<list>> monadPlus(MonoidK<list> m) {
+                public <T> Option<MonadPlus<list>> monadPlus(MonoidK<list> m) {
                   MonadPlus<list> x = Instances.monadPlus(m);
                   return Maybe.just(x);
                 }
@@ -195,11 +195,11 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<list>> comonad() {
+                public <T> Option<Comonad<list>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<list>> unfoldable() {
+                public <T> Option<Unfoldable<list>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

@@ -1162,12 +1162,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<persistentSetX>> monadZero() {
+                public <T, R> Option<MonadZero<persistentSetX>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus() {
+                public <T> Option<MonadPlus<persistentSetX>> monadPlus() {
                     return Maybe.just(Instances.monadPlus());
                 }
 
@@ -1177,7 +1177,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus(MonoidK<persistentSetX> m) {
+                public <T> Option<MonadPlus<persistentSetX>> monadPlus(MonoidK<persistentSetX> m) {
                     return Maybe.just(Instances.monadPlus(m));
                 }
 
@@ -1192,11 +1192,11 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T> Maybe<Comonad<persistentSetX>> comonad() {
+                public <T> Option<Comonad<persistentSetX>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<persistentSetX>> unfoldable() {
+                public <T> Option<Unfoldable<persistentSetX>> unfoldable() {
                     return Maybe.just(Instances.unfoldable());
                 }
             };

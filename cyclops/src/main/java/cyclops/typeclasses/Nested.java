@@ -581,7 +581,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;
     }
-    public Maybe<NestedComprehensions.Guarded<W1,W2,T>> comprehensionsGuarded(TransformerFactory<W1,W2> factory){
+    public Option<NestedComprehensions.Guarded<W1, W2, T>> comprehensionsGuarded(TransformerFactory<W1,W2> factory){
         InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
         return defs.monadZero().map(z->
                 NestedComprehensions.of(this,z)
@@ -593,7 +593,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return NestedComprehensions.of(this,defs.monad());
 
     }
-    public Maybe<Comprehensions.Guarded<Higher<Higher<nested, W1>, W2>>> comprehensionsGuardedHk(TransformerFactory<W1,W2> factory){
+    public Option<Comprehensions.Guarded<Higher<Higher<DataWitness.nested, W1>, W2>>> comprehensionsGuardedHk(TransformerFactory<W1,W2> factory){
         InstanceDefinitions<Higher<Higher<nested, W1>, W2>> defs = definitions(def1,def2,factory);
         return defs.monadZero().map(z->
             Comprehensions.of(z)
@@ -620,7 +620,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T> Maybe<Unfoldable<Higher<Higher<nested, W1>, W2>>> unfoldable() {
+            public <T> Option<Unfoldable<Higher<Higher<DataWitness.nested, W1>, W2>>> unfoldable() {
                 return Maybe.just(Instances.unfoldable(def1,def2));
             }
 
@@ -640,12 +640,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T, R> Maybe<MonadZero<Higher<Higher<nested, W1>, W2>>> monadZero() {
+            public <T, R> Option<MonadZero<Higher<Higher<DataWitness.nested, W1>, W2>>> monadZero() {
                 return zero.map(z->Instances.monadZero(def1,def2,factory,z));
             }
 
             @Override
-            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus() {
+            public <T> Option<MonadPlus<Higher<Higher<DataWitness.nested, W1>, W2>>> monadPlus() {
                 return Maybe.nothing();
             }
 
@@ -655,7 +655,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T> Maybe<MonadPlus<Higher<Higher<nested, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<DataWitness.nested, W1>, W2>> m) {
+            public <T> Option<MonadPlus<Higher<Higher<DataWitness.nested, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<DataWitness.nested, W1>, W2>> m) {
                 return Maybe.nothing();
             }
 
@@ -670,7 +670,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             }
 
             @Override
-            public <T> Maybe<Comonad<Higher<Higher<nested, W1>, W2>>> comonad() {
+            public <T> Option<Comonad<Higher<Higher<DataWitness.nested, W1>, W2>>> comonad() {
                 return Maybe.nothing();
             }
         };

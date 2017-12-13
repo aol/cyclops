@@ -1125,12 +1125,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<eval>> monadZero() {
+                public <T, R> Option<MonadZero<eval>> monadZero() {
                     return Maybe.just(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<eval>> monadPlus() {
+                public <T> Option<MonadPlus<eval>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1140,7 +1140,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
+                public <T> Option<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
                     return Maybe.nothing();
                 }
 
@@ -1155,12 +1155,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<eval>> comonad() {
+                public <T> Option<Comonad<eval>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<eval>> unfoldable() {
+                public <T> Option<Unfoldable<eval>> unfoldable() {
                     return Maybe.nothing();
                 }
             };
