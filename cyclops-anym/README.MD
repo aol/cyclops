@@ -47,3 +47,6 @@ ReactiveSeq<Integer> summedX = Witness.reactiveSeq(summedRs);
 * [![Maven Central : cyclops-anym](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-anym/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-anym)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-anym/badge.svg)](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-anym)
 * [Javadoc for cyclops-anym](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-anym)
 
+## More info
+
+* 
