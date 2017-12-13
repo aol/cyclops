@@ -9,7 +9,7 @@ import java.util.List;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 public class ReverseTest {
 	@Test

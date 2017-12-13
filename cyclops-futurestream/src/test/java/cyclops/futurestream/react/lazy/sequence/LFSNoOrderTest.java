@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import cyclops.collections.mutable.ListX;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 
 

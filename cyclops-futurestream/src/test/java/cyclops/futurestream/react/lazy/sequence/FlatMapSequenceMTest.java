@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

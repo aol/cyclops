@@ -6,14 +6,14 @@ import java.util.stream.Stream;
 import cyclops.stream.pushable.PushableFutureStream;
 import cyclops.stream.pushable.MultipleStreamSource;
 import cyclops.stream.pushable.PushableReactiveSeq;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.adapters.Adapter;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.stream.pushable.PushableStream;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

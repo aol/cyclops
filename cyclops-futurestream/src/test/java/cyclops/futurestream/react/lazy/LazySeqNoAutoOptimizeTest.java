@@ -2,8 +2,8 @@ package cyclops.futurestream.react.lazy;
 
 import java.util.function.Supplier;
 
-import com.oath.cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.FutureStream;
 
 public class LazySeqNoAutoOptimizeTest extends LazySeqTest {
 	@Override

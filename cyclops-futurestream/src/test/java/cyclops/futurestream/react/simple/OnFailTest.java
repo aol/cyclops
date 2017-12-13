@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 
 public class OnFailTest {

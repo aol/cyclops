@@ -2,11 +2,11 @@ package cyclops.stream.pushable;
 
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 /**
  * Build Streams that reactiveStream data from the topic instance

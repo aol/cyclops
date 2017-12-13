@@ -18,7 +18,7 @@ import cyclops.data.HashMap;
 import org.junit.Test;
 
 
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 
 
 public class AllOfTest {

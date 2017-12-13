@@ -24,6 +24,7 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -80,6 +81,22 @@ public abstract class AbstractIterableXTest {
                 .map(it ->it+"!!").collect(Collectors.toList());
 
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
+    }
+
+    @Test
+    public void indexOf(){
+      assertThat(empty().indexOf(e->true),equalTo(Maybe.nothing()));
+      assertThat(of(1).indexOf(e->true),equalTo(Maybe.just(0l)));
+      assertThat(of(1).indexOf(e->false),equalTo(Maybe.nothing()));
+      assertThat(of(1,2,3).indexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+    }
+    @Test
+    public void lastIndexOf(){
+      assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+      assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+      assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+      assertThat(of(1,2,3).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+      assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(3l)));
     }
     @Test
     public void insertAt(){

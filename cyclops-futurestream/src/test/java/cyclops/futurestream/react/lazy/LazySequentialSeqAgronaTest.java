@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.futurestream.react.base.BaseSequentialSeqTest;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 public class LazySequentialSeqAgronaTest extends BaseSequentialSeqTest {
 

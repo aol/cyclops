@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 import com.oath.cyclops.react.threads.ReactPool;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.SimpleReact;
 import org.mockito.Mockito;
 
 public class ReactPoolTest {

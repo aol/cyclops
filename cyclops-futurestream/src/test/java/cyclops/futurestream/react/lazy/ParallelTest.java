@@ -5,10 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 
 public class ParallelTest {

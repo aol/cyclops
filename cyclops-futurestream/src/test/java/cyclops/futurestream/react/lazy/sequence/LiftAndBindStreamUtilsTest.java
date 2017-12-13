@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import cyclops.companion.Streams;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import org.junit.Test;
 
 public class LiftAndBindStreamUtilsTest {

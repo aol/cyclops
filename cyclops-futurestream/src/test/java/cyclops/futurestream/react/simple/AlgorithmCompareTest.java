@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.junit.Test;
 
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.SimpleReact;
 import com.oath.cyclops.util.SimpleTimer;
 
 import lombok.AllArgsConstructor;

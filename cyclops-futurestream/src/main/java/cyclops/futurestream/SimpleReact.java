@@ -1,4 +1,4 @@
-package com.oath.cyclops.async;
+package cyclops.futurestream;
 
 import com.oath.cyclops.internal.react.SimpleReactStreamImpl;
 import com.oath.cyclops.internal.react.stream.ReactBuilder;

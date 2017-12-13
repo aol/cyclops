@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import cyclops.collections.immutable.VectorX;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 

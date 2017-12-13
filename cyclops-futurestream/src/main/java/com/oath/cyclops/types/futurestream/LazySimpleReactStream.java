@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.async.future.PipelineBuilder;
 import com.oath.cyclops.react.async.subscription.Continueable;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.collections.mutable.ListX;

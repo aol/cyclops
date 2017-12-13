@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 import java.util.function.Supplier;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
 

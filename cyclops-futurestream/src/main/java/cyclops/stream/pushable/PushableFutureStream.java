@@ -1,7 +1,7 @@
 package cyclops.stream.pushable;
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 /**
  * A more concrete Tuple2 impl

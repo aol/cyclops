@@ -21,10 +21,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -3,7 +3,7 @@ package cyclops.monads;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.control.Future;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;

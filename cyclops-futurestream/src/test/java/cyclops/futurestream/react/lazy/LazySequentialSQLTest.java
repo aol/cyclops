@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.companion.Streams;
 import cyclops.futurestream.react.base.BaseSequentialSQLTest;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
 public class LazySequentialSQLTest extends BaseSequentialSQLTest {

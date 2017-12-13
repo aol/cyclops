@@ -733,8 +733,12 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
         return stream().concatMap(mapper);
     }
-    <R> IterableX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> IterableX<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+    default <R> IterableX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
+      return stream().mergeMap(fn);
+    }
+    default <R> IterableX<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn){
+      return stream().mergeMap(maxConcurecy,fn);
+    }
 
     default IterableX<T> insertAt(int i, T value){
         IterableX<T> front = take(i);

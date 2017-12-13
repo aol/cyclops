@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.futurestream.react.base.BaseNumberOperationsTest;
-import com.oath.cyclops.async.LazyReact;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.FutureStream;
 
 public class LazyFutureNumberOperationsTest extends BaseNumberOperationsTest {
 	@Override

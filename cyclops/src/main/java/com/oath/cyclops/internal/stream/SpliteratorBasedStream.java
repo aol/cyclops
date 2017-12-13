@@ -26,6 +26,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -387,43 +388,10 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @return
      */
     public <R> ReactiveSeq<R> mergeMap(final int maxConcurrency, final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return mergeMap(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4),mapper);
+        return Spouts.fromIterable(this).mergeMap(maxConcurrency,mapper);
     }
 
-    /**
-     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously.
-     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
-     *
-     *
-     */
-    public <R> ReactiveSeq<R> mergeMap(final int maxConcurrency,
-                                       final QueueFactory<R> factory, final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
-        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
-
-        final ReactiveSeq<T> stream = stream();
-        final Supplier<Continuation> sp = () -> {
-
-            stream.map(mapper)
-                    .forEach(p -> {
-                        c.active.incrementAndGet();
-                        p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
-
-                    } , i -> {
-                    } , () -> {
-                        init.close();
-                    });
-
-            return Continuation.empty();
-        };
-        final Continuation continuation = new Continuation(
-                sp);
-        init.addContinuation(continuation);
-        return ReactiveSeq.fromStream(init.jdkStream());
-    }
 
 
 

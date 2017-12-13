@@ -16,12 +16,12 @@ import com.oath.cyclops.react.threads.SequentialElasticPools;
 import cyclops.stream.StreamSource;
 import cyclops.stream.pushable.PushableFutureStream;
 import cyclops.stream.pushable.PushableReactiveSeq;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 
 import com.oath.cyclops.async.adapters.Queue;

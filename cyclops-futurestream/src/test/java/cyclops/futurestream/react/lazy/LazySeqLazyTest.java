@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import cyclops.futurestream.react.base.BaseSeqLazyTest;
-import com.oath.cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 
 public class LazySeqLazyTest extends BaseSeqLazyTest {
 

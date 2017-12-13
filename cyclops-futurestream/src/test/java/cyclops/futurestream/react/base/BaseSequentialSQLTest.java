@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
 public abstract class BaseSequentialSQLTest {

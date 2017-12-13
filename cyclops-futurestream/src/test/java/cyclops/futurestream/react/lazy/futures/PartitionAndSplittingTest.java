@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import cyclops.control.Option;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Assert;
 import org.junit.Test;
 

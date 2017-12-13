@@ -2,8 +2,8 @@ package com.oath.cyclops.react.threads;
 
 import java.util.concurrent.ForkJoinPool;
 
-import com.oath.cyclops.async.LazyReact;
-import com.oath.cyclops.async.SimpleReact;
+import cyclops.futurestream.LazyReact;
+import cyclops.futurestream.SimpleReact;
 
 /**
  * A ReactPool of each type for parallel Streams
