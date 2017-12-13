@@ -1,7 +1,7 @@
 package com.oath.anym.internal.adapters;
 
 import static cyclops.monads.AnyM.fromIterableX;
-import static cyclops.monads.Witness.collectionX;
+import static cyclops.monads.Witness.iterableX;
 
 import java.util.Iterator;
 import java.util.function.BiFunction;
@@ -37,13 +37,13 @@ public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends Abs
     }
     @Override
     public <T> Iterable<T> toIterable(AnyM<W, T> t) {
-        return collectionX(t);
+        return iterableX(t);
     }
 
 
     @Override
     public <T> AnyM<W, T> filter(AnyM<W, T> t, Predicate<? super T> fn) {
-        return fromIterableX(collectionX(t).filter(fn),witness);
+        return fromIterableX(iterableX(t).filter(fn),witness);
 
     }
 
@@ -56,19 +56,19 @@ public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends Abs
 
   @Override
   public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromIterableX(collectionX(t).zip(t2, fn),witness);
+    return fromIterableX(iterableX(t).zip(t2, fn),witness);
   }
 
   @Override
     public <T, R> AnyM<W, R> ap(AnyM<W, ? extends Function<? super T,? extends R>> fn, AnyM<W, T> apply) {
-         return fromIterableX(collectionX(apply).zip(collectionX(fn),(a,b)->b.apply(a)),witness);
+         return fromIterableX(iterableX(apply).zip(iterableX(fn),(a, b)->b.apply(a)),witness);
 
     }
 
     @Override
     public <T, R> AnyM<W, R> flatMap(AnyM<W, T> t,
             Function<? super T, ? extends AnyM<W, ? extends R>> fn) {
-        return fromIterableX(collectionX(t).concatMap(fn.andThen(Witness::collectionX)),witness);
+        return fromIterableX(iterableX(t).concatMap(fn.andThen(Witness::iterableX)),witness);
     }
 
     @Override
