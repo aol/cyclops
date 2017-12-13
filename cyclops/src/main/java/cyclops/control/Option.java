@@ -62,11 +62,11 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> Option<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Option<R>) MonadicValue.super.flatMapI(mapper);
+    default <R> Option<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Option<R>) MonadicValue.super.concatMap(mapper);
     }
 
     default Option<T> orElseUse(Option<T> opt){
@@ -111,19 +111,19 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
+     *  Construct an Option  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
      *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
 
-    Option<Integer> maybe = Option.fromIterable(reactiveStream);
+         Option<Integer> maybe = Option.fromIterable(reactiveStream);
 
-    //Maybe[1]
+        //Option[1]
      *
      * }
      * </pre>
      * @param iterable Iterable  to extract value from
-     * @return Maybe populated with first value from Iterable (Option.zero if Publisher zero)
+     * @return Option populated with first value from Iterable (Option.zero if Publisher zero)
      */
     static <T> Option<T> fromIterable(final Iterable<T> iterable) {
         Iterator<T> it = iterable.iterator();
@@ -139,19 +139,19 @@ public interface Option<T> extends To<Option<T>>,
         return fromIterable(ReactiveSeq.fromStream(apply));
     }
     /**
-     * Construct an equivalent Maybe from the Supplied Optional
+     * Construct an equivalent Option from the Supplied Optional
      * <pre>
      * {@code
      *   Option<Integer> some = Option.fromOptional(Optional.of(10));
-     *   //Maybe[10], Some[10]
+     *   //Option[10], Some[10]
      *
      *   Option<Integer> none = Option.fromOptional(Optional.zero());
-     *   //Option.zero, None[]
+     *   //Option.empty, None[]
      * }
      * </pre>
      *
      * @param opt Optional to construct Maybe from
-     * @return Maybe created from Optional
+     * @return Option created from Optional
      */
     static <T> Option<T> fromOptional(final Optional<T> opt) {
         if (opt.isPresent())
@@ -167,28 +167,11 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
-    /**
-     * Construct an Maybe which contains the provided (non-null) value.
-     * Alias for @see {@link Maybe#of(Object)}
-     *
-     * <pre>
-     * {@code
-     *
-     *    Option<Integer> some = Option.just(10);
-     *    some.map(i->i*2);
-     * }
-     * </pre>
-     *
-     * @param value Value to wrap inside a Maybe
-     * @return Maybe containing the supplied value
-     */
-    static <T> Option<T> just(final T value) {
-        return of(value);
-    }
+
 
     /**
-     * Construct an Maybe which contains the provided (non-null) value
-     * Equivalent to @see {@link Maybe#just(Object)}
+     * Construct an Option which contains the provided (non-null) value
+     * Equivalent to @see {@link Option#some(Object)}
      * <pre>
      * {@code
      *
@@ -198,7 +181,7 @@ public interface Option<T> extends To<Option<T>>,
      * </pre>
      *
      * @param value Value to wrap inside a Maybe
-     * @return Maybe containing the supplied value
+     * @return Option containing the supplied value
      */
     static <T> Option<T> of(final T value) {
         Objects.requireNonNull(value);
@@ -221,7 +204,7 @@ public interface Option<T> extends To<Option<T>>,
      *    //None
      *
      *    Option<Integer> maybe = Option.ofNullable(10);
-     *    //Maybe[10], Some[10]
+     *    //Option[10], Some[10]
      *
      * }
      * </pre>
@@ -247,22 +230,22 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Sequence operation, take a Collection of Options and turn it into a Maybe with a Collection
+     * Sequence operation, take a Collection of Options and turn it into a Option with a Collection
      * Only successes are retained. By constrast with {@link Option#sequence(IterableX)} Option#none/ None types are
      * tolerated and ignored.
      *
      * <pre>
      * {@code
      *  Option<Integer> just = Option.of(10);
-    Option<Integer> none = Option.none();
+        Option<Integer> none = Option.none();
      *
      * Option<ListX<Integer>> maybes = Option.sequenceJust(ListX.of(just, none, Option.of(1)));
-    //Option.of(ListX.of(10, 1));
+      //Option.of(ListX.of(10, 1));
      * }
      * </pre>
      *
-     * @param maybes Maybes to Sequence
-     * @return Maybe with a List of values
+     * @param maybes Option to Sequence
+     * @return Option with a List of values
      */
     public static <T> Option<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Option<T>> maybes) {
         return sequence(maybes.stream().filter(Option::isPresent));
@@ -277,17 +260,17 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *
      *  Option<Integer> just = Option.of(10);
-    Option<Integer> none = Option.none();
+        Option<Integer> none = Option.none();
      *
      *  Option<ListX<Integer>> maybes = Option.sequence(ListX.of(just, none, Option.of(1)));
-    //Option.none();
+       //Option.none();
      *
      * }
      * </pre>
      *
      *
-     * @param maybes Maybes to Sequence
-     * @return  Maybe with a List of values
+     * @param maybes Option to Sequence
+     * @return  Option with a List of values
      */
     public static <T> Option<ReactiveSeq<T>> sequence(final IterableX<? extends Option<T>> maybes) {
         return sequence(maybes.stream());
@@ -295,8 +278,8 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(IterableX)} Maybe#zero/ None types are
+     * Sequence operation, take a Stream of Option and turn it into a Option with a Stream
+     * By constrast with {@link Maybe#sequenceJust(IterableX)} Option#zero/ None types are
      * result in the returned Maybe being Option.zero / None
      *
      *
@@ -304,17 +287,17 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *
      *  Option<Integer> just = Option.of(10);
-    Option<Integer> none = Option.none();
+        Option<Integer> none = Option.none();
 
      *  Option<ReactiveSeq<Integer>> maybes = Option.sequence(Stream.of(just, none, Option.of(1)));
-    //Option.none();
+      //Option.none();
      *
      * }
      * </pre>
      *
      *
-     * @param maybes Maybes to Sequence
-     * @return  Maybe with a Stream of values
+     * @param maybes Option to Sequence
+     * @return  Option with a Stream of values
      */
     public static <T> Option<ReactiveSeq<T>> sequence(final Stream<? extends Option<T>> maybes) {
         return sequence(ReactiveSeq.fromStream(maybes));
@@ -327,7 +310,7 @@ public interface Option<T> extends To<Option<T>>,
 
     BiFunction<Option<ReactiveSeq<T>>,Option<T>,Option<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Option<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Option<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -874,7 +857,7 @@ public interface Option<T> extends To<Option<T>>,
         }
 
         @Override
-        public <R> None<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        public <R> None<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
             return  NOTHING_EAGER;
         }
 

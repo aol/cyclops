@@ -289,7 +289,7 @@ public interface Semigroups {
      * @return Combination of two LazyFutureStreams Streams b is appended to a
      */
     static <T> Semigroup<FutureStream<T>> combineFutureStream() {
-        return (a, b) -> a.appendS(b);
+        return (a, b) -> a.appendStream(b);
     }
 
 
@@ -297,7 +297,7 @@ public interface Semigroups {
      * @return Combination of two ReactiveSeq Streams b is appended to a
      */
     static <T> Semigroup<ReactiveSeq<T>> combineReactiveSeq() {
-        return (a, b) -> a.appendS(b);
+        return (a, b) -> a.appendStream(b);
     }
 
     static <T> Semigroup<ReactiveSeq<T>> firstNonEmptyReactiveSeq() {

@@ -269,7 +269,7 @@ public class CompletableFutures {
 
     BiFunction<CompletableFuture<ReactiveSeq<T>>,CompletableFuture<T>,CompletableFuture<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.thenCombine(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> a.thenCombine(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> a.thenCombine(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }

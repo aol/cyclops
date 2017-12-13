@@ -480,10 +480,10 @@ public class BaseSequentialTest {
     }
 
     @Test
-    public void flatMapI() {
+    public void concatMap() {
         for (int k = 0; k < ITERATIONS; k++) {
             assertThat(of(1, 2, 3)
-                    .flatMapI(i -> of(10, 20, 30 * i))
+                    .concatMap(i -> of(10, 20, 30 * i))
                     .toList(), equalTo(ListX.of(10, 20, 30, 10, 20, 60, 10, 20, 90)));
         }
     }
@@ -496,15 +496,15 @@ public class BaseSequentialTest {
     }
 
     @Test
-    public void flatMapIStream() {
-        assertThat(of(1, 2, 3, null).flatMapI(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+    public void concatMapStream() {
+        assertThat(of(1, 2, 3, null).concatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
                         .collect(Collectors.toList()),
                 Matchers.equalTo(Arrays.asList(1, 2, 3)));
     }
 
     @Test
-    public void flatMapIMaybe() {
-        assertThat(of(1, 2, 3, null).flatMapI(Maybe::ofNullable)
+    public void concatMapMaybe() {
+        assertThat(of(1, 2, 3, null).concatMap(Maybe::ofNullable)
                         .collect(Collectors.toList()),
                 Matchers.equalTo(Arrays.asList(1, 2, 3)));
     }
@@ -755,7 +755,7 @@ public class BaseSequentialTest {
     @Test
     public void concatStreams() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of(1, 2, 3).appendS(of(100, 200, 300))
+            List<String> result = of(1, 2, 3).appendStream(of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));
@@ -765,7 +765,7 @@ public class BaseSequentialTest {
     @Test
     public void prependStreams() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of(1, 2, 3).prependS(of(100, 200, 300))
+            List<String> result = of(1, 2, 3).prependStream(of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
@@ -812,7 +812,7 @@ public class BaseSequentialTest {
     @Test
     public void insertAtSOutOfRangeEmpty() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of().insertAtS(1, Stream.of(100, 200, 300))
+            List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));
@@ -831,7 +831,7 @@ public class BaseSequentialTest {
     @Test
     public void insertAtStream() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of(1, 2, 3).insertAtS(1, of(100, 200, 300))
+            List<String> result = of(1, 2, 3).insertStreamAt(1, of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
@@ -841,7 +841,7 @@ public class BaseSequentialTest {
     @Test
     public void insertAtStreamEmpty() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of().insertAtS(0, Stream.of(100, 200, 300))
+            List<String> result = of().insertStreamAt(0, Stream.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!")));
@@ -850,7 +850,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStreamOutOfRangeEmpty() {
-        List<String> result = of().insertAtS(1, Stream.of(100, 200, 300))
+        List<String> result = of().insertStreamAt(1, Stream.of(100, 200, 300))
                 .map(it -> it + "!!").collect(Collectors.toList());
 
         assertThat(result, equalTo(Arrays.asList("100!!","200!!","300!!")));

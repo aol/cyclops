@@ -697,7 +697,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> appendStream(final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(stream.map(v -> FastFuture.completedFuture(v))));
+                                       .appendStream(stream.map(v -> FastFuture.completedFuture(v))));
     }
 
     /**
@@ -722,7 +722,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> appendStreamFutures(final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(stream.map(v -> FastFuture.fromCompletableFuture(v))));
+                                       .appendStream(stream.map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
     /**
@@ -747,7 +747,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> prependStream(final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .prependS(stream.map(v -> FastFuture.completedFuture(v))));
+                                       .prependStream(stream.map(v -> FastFuture.completedFuture(v))));
     }
 
     /**
@@ -767,7 +767,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> prependStreamFutures(final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .prependS(stream.map(v -> FastFuture.fromCompletableFuture(v))));
+                                       .prependStream(stream.map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
     /**
@@ -791,7 +791,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> append(final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(Stream.of(values)
+                                       .appendStream(Stream.of(values)
                                                            .map(v -> FastFuture.completedFuture(v))));
     }
 
@@ -817,7 +817,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> appendFutures(final CompletableFuture<T>... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(Stream.of(values)
+                                       .appendStream(Stream.of(values)
                                                            .map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
@@ -840,7 +840,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> prepend(final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .prependS(Stream.of(values)
+                                       .prependStream(Stream.of(values)
                                                             .map(v -> FastFuture.completedFuture(v))));
     }
 
@@ -863,7 +863,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> prependFutures(final CompletableFuture<T>... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .prependS(Stream.of(values)
+                                       .prependStream(Stream.of(values)
                                                             .map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
@@ -891,7 +891,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertAt(final int pos, final T... values) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertAtS(pos, Stream.of(values)
+                                       .insertStreamAt(pos, Stream.of(values)
                                                                   .map(v -> FastFuture.completedFuture(v))));
     }
 
@@ -945,7 +945,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertStreamAt(final int pos, final Stream<T> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertAtS(pos, stream.map(v -> FastFuture.completedFuture(v))));
+                                       .insertStreamAt(pos, stream.map(v -> FastFuture.completedFuture(v))));
     }
 
     /**
@@ -973,7 +973,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> insertStreamFuturesAt(final int pos, final Stream<CompletableFuture<T>> stream) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .insertAtS(pos, stream.map(v -> FastFuture.fromCompletableFuture(v))));
+                                       .insertStreamAt(pos, stream.map(v -> FastFuture.fromCompletableFuture(v))));
     }
 
     /**
@@ -1096,7 +1096,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(other.map(t -> FastFuture.completedFuture(t))));
+                                       .appendStream(other.map(t -> FastFuture.completedFuture(t))));
     }
 
     /*
@@ -1157,7 +1157,7 @@ public interface OperationsOnFutures<T> {
     default FutureStream<T> concatStreamFutures(final Stream<CompletableFuture<T>> other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .appendS(other.map(t -> FastFuture.fromCompletableFuture(t))));
+                                       .appendStream(other.map(t -> FastFuture.fromCompletableFuture(t))));
     }
 
     /**

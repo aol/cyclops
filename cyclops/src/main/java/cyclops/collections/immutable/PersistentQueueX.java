@@ -61,6 +61,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     PersistentQueueX<T> lazy();
     PersistentQueueX<T> eager();
 
+    public static <T> PersistentQueueX<T> defer(Supplier<PersistentQueueX<T>> s){
+      return of(s)
+                .map(Supplier::get)
+                .concatMap(l->l);
+    }
     static <T> CompletablePersistentQueueX<T> completable(){
         return new CompletablePersistentQueueX<>();
     }
@@ -573,8 +578,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * flatMap(java.util.function.Function)
      */
     @Override
-    default <R> PersistentQueueX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentQueueX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> PersistentQueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (PersistentQueueX<R>) this.concatMap(mapper);
     }
 
     /*
@@ -1612,7 +1617,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return PersistentQueueX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
         private static <T,R> Higher<persistentQueueX,R> flatMap(Higher<persistentQueueX,T> lt, Function<? super T, ? extends  Higher<persistentQueueX,R>> fn){
-            return PersistentQueueX.fromIterable(PersistentQueueX.narrowK(lt)).flatMap(fn.andThen(PersistentQueueX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(PersistentQueueX::narrowK));
         }
         private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);

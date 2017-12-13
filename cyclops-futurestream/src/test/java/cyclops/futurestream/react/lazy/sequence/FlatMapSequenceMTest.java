@@ -26,11 +26,11 @@ public class FlatMapSequenceMTest {
 	}
 	@Test
 	public void flatMapCollection(){
-	    assertThat(	LazyReact.sequentialBuilder().of(20).flatMapI(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	    assertThat(	LazyReact.sequentialBuilder().of(20).concatMap(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	@Test
 	public void flatMapCollectionAnyM(){
-	    assertThat(	LazyReact.sequentialBuilder().of(20).flatMapI(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
+	    assertThat(	LazyReact.sequentialBuilder().of(20).concatMap(i->Arrays.asList(1,2,i) ).toList(),equalTo(Arrays.asList(1,2,20)));
 	}
 	@Test
 	public void flatMapToSeq(){

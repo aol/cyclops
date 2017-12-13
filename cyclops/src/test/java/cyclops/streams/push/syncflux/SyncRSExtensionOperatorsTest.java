@@ -382,7 +382,7 @@ public class SyncRSExtensionOperatorsTest {
 
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

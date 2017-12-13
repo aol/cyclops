@@ -60,6 +60,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     PersistentSetX<T> lazy();
     PersistentSetX<T> eager();
 
+    public static <T> PersistentSetX<T> defer(Supplier<PersistentSetX<T>> s){
+      return of(s)
+              .map(Supplier::get)
+              .concatMap(l->l);
+    }
+
     static <T> CompletablePersistentSetX<T> completable(){
         return new CompletablePersistentSetX<>();
     }
@@ -506,8 +512,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> PersistentSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentSetX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> PersistentSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (PersistentSetX<R>) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1030,18 +1036,18 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default <R> PersistentSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> PersistentSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PersistentSetX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> PersistentSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> PersistentSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PersistentSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default PersistentSetX<T> prependS(Stream<? extends T> stream) {
-        return (PersistentSetX<T>)LazyCollectionX.super.prependS(stream);
+    default PersistentSetX<T> prependStream(Stream<? extends T> stream) {
+        return (PersistentSetX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1081,8 +1087,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (PersistentSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default PersistentSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PersistentSetX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1430,7 +1436,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
             return PersistentSetX.fromIterable(lt).zip(persistentSetX,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<persistentSetX,R> flatMap( Higher<persistentSetX,T> lt, Function<? super T, ? extends  Higher<persistentSetX,R>> fn){
-            return PersistentSetX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(Instances::narrowK));
         }
         private static <T,R> PersistentSetX<R> map(PersistentSetX<T> lt, Function<? super T, ? extends R> fn){
             return PersistentSetX.fromIterable(lt).map(fn);
@@ -1482,7 +1488,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

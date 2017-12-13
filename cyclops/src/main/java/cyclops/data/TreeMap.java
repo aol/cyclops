@@ -79,12 +79,12 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
 
     @Override
     public <K2, V2> TreeMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().concatMap(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
-    public <K2, V2> TreeMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+    public <K2, V2> TreeMap<K2, V2> concatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
+        return fromStream(stream().concatMap(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
     }
 
 
@@ -108,12 +108,12 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
 
 
     public <K2, V2> TreeMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper,Comparator<K2> comp) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)),comp);
+        return fromStream(stream().concatMap(t->t.transform(mapper)),comp);
     }
 
 
-    public <K2, V2> TreeMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper,Comparator<K2> comp) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)),comp);
+    public <K2, V2> TreeMap<K2, V2> concatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper,Comparator<K2> comp) {
+        return fromStream(stream().concatMap(t->t.transform(mapper)),comp);
     }
     @Override
     public TreeMap<K, V> filter(Predicate<? super Tuple2<K, V>> predicate) {

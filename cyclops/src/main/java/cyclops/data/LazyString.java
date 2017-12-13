@@ -83,8 +83,8 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     @Override
-    public <R> ImmutableList<R> flatMapI(Function<? super Character, ? extends Iterable<? extends R>> fn) {
-        return  string.flatMapI(fn);
+    public <R> ImmutableList<R> concatMap(Function<? super Character, ? extends Iterable<? extends R>> fn) {
+        return  string.concatMap(fn);
     }
 
     @Override

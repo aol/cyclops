@@ -441,7 +441,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3,null).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

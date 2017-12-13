@@ -212,7 +212,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     <R> ImmutableQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
-    <R> ImmutableQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> ImmutableQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
     <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2);
@@ -235,10 +235,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         };
     }
 
-    @Override
-    default <R> ImmutableQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
 
     @Override
     ImmutableQueue<T> onEmpty(T value);
@@ -277,7 +273,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                                                        Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
                                                        Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -298,7 +294,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                                                        Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                        Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -319,7 +315,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                                                    BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
                                                    Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -337,7 +333,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                                                    Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                    Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -354,7 +350,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     default <R1, R> ImmutableQueue<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -367,7 +363,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
                                                BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                                BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -427,7 +423,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().zip(fn, publisher));
     }
 
-    default <U, R> ImmutableQueue<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ImmutableQueue<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return unitStream(stream().zipWithStream(other,zipper));
     }
 
@@ -532,7 +528,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
-    default <U> ImmutableQueue<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    default <U> ImmutableQueue<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         return unitStream(stream().zipWithStream(other));
     }
 
@@ -698,8 +694,8 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<T> prependS(Stream<? extends T> stream) {
-        return unitStream(stream().prependS(stream));
+    default ImmutableQueue<T> prependStream(Stream<? extends T> stream) {
+        return unitStream(stream().prependStream(stream));
     }
 
     @Override
@@ -744,8 +740,8 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<T> insertAtS(int pos, Stream<T> stream) {
-        return unitStream(stream().insertAtS(pos,stream));
+    default ImmutableQueue<T> insertStreamAt(int pos, Stream<T> stream) {
+        return unitStream(stream().insertStreamAt(pos,stream));
     }
 
     @Override

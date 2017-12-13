@@ -527,7 +527,7 @@ public class Future<T> implements To<Future<T>>,
 
     BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Future<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Future<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -1300,11 +1300,11 @@ public class Future<T> implements To<Future<T>>,
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    public <R> Future<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Future<R>) MonadicValue.super.flatMapI(mapper);
+    public <R> Future<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Future<R>) MonadicValue.super.concatMap(mapper);
     }
 
 

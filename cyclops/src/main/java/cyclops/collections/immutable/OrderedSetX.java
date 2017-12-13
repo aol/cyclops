@@ -51,6 +51,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     OrderedSetX<T> lazy();
     OrderedSetX<T> eager();
 
+
     static <T> CompletableOrderedSetX<T> completable(){
         return new CompletableOrderedSetX<>();
     }
@@ -505,8 +506,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> OrderedSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (OrderedSetX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> OrderedSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (OrderedSetX<R>) this.concatMap(mapper);
     }
 
     @Override
@@ -1027,18 +1028,18 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default <R> OrderedSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (OrderedSetX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> OrderedSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> OrderedSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (OrderedSetX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> OrderedSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default OrderedSetX<T> prependS(Stream<? extends T> stream) {
-        return (OrderedSetX<T>)LazyCollectionX.super.prependS(stream);
+    default OrderedSetX<T> prependStream(Stream<? extends T> stream) {
+        return (OrderedSetX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1072,8 +1073,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (OrderedSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default OrderedSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (OrderedSetX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1128,7 +1129,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

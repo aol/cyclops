@@ -67,7 +67,7 @@ public class CollectionXAdapter<W extends Witness.CollectionXWitness<W>> extends
     @Override
     public <T, R> AnyM<W, R> flatMap(AnyM<W, T> t,
             Function<? super T, ? extends AnyM<W, ? extends R>> fn) {
-        return fromCollectionX(collectionX(t).flatMap(fn.andThen(Witness::collectionX)),witness);
+        return fromCollectionX(collectionX(t).concatMap(fn.andThen(Witness::collectionX)),witness);
     }
 
     @Override

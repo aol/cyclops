@@ -32,7 +32,7 @@ public class FlatMapPublisherListTest {
         for(int i=0;i<100_000;i++){
             System.out.println("Iteration " + i);
             List<Integer> list = flux(1)
-                    .flatMapP(1,in -> of(1, 2, 3))
+                    .mergeMap(1, in -> of(1, 2, 3))
                     .toListX();
           //  System.out.println("List is " + list);
             Assert.assertThat(list,

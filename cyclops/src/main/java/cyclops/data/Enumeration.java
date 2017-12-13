@@ -81,7 +81,7 @@ public interface Enumeration<E> {
         final Function1<E,Integer> memo = this::calcFromEnum;
         public Option<E> toEnum(int a){
 
-            return a>-1 && a< values.length ? Option.just(values[a]) :  Option.none();
+            return a>-1 && a< values.length ? Option.some(values[a]) :  Option.none();
         }
         public E toEnumOrElse(int a,E e){
 

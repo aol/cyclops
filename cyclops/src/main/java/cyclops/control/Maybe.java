@@ -336,11 +336,11 @@ public interface Maybe<T> extends Option<T> {
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Maybe<R>) Option.super.flatMapI(mapper);
+    default <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Maybe<R>) Option.super.concatMap(mapper);
     }
 
 
@@ -567,7 +567,7 @@ public interface Maybe<T> extends Option<T> {
 
     BiFunction<Maybe<ReactiveSeq<T>>,Maybe<T>,Maybe<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -1091,8 +1091,8 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            final Maybe<R> maybe = Maybe.super.flatMapI(mapper);
+        public <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> maybe = Maybe.super.concatMap(mapper);
             return maybe;
         }
 
@@ -1327,8 +1327,8 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.flatMapI(mapper));
+        public <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.concatMap(mapper));
             Eval<Maybe<R>> narrowed = (Eval)res;
             return Maybe.<R>fromLazy(narrowed);
 
@@ -1432,7 +1432,7 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Nothing<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        public <R> Nothing<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
         }
 

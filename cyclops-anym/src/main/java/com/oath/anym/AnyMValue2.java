@@ -222,8 +222,8 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     }
 
-    default <R> AnyMValue2<W,T2,R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn){
-        return (AnyMValue2<W,T2,R>)AnyMValue.super.flatMapI(fn);
+    default <R> AnyMValue2<W,T2,R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn){
+        return (AnyMValue2<W,T2,R>)AnyMValue.super.concatMap(fn);
     }
     default <R> AnyMValue2<W,T2,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
         return (AnyMValue2<W,T2,R>)AnyMValue.super.flatMapP(fn);

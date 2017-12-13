@@ -360,7 +360,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         if(this.stream instanceof FunctionSpliterator){
             FunctionSpliterator f = (FunctionSpliterator)stream;
             return createSeq(IterableFlatMappingSpliterator.compose(f,fn),reversible);
@@ -376,8 +376,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @param mapper
      * @return
      */
-    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(256,mapper);
+    public <R> ReactiveSeq<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return mergeMap(256,mapper);
     }
 
     /**
@@ -386,8 +386,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @param mapper
      * @return
      */
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4),mapper);
+    public <R> ReactiveSeq<R> mergeMap(final int maxConcurrency, final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return mergeMap(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4),mapper);
     }
 
     /**
@@ -397,8 +397,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      *
      *
      */
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,
-                                       final QueueFactory<R> factory,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> ReactiveSeq<R> mergeMap(final int maxConcurrency,
+                                       final QueueFactory<R> factory, final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
 
         final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
@@ -566,7 +566,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return stream.spliterator();
     }
     @Override
-    public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> appendStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
@@ -584,7 +584,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return ReactiveSeq.concat(get(),Stream.of(other).spliterator());
     }
     @Override
-    public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> prependStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(avoidCopy(other),get());
     }
     public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {

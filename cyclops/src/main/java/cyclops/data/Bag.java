@@ -75,8 +75,8 @@ public final class Bag<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <R> Bag<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+    public <R> Bag<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().concatMap(fn));
     }
     @Override
     public <R> Bag<R> unitIterable(Iterable<R> it) {

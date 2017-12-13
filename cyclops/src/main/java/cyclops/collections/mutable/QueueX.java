@@ -58,9 +58,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
                                     Higher<queue,T>{
 
     public static <T> QueueX<T> defer(Supplier<QueueX<T>> s){
-        return of(s)
-                .map(Supplier::get)
-                .flatMap(l->l);
+      return of(s)
+              .map(Supplier::get)
+              .concatMap(l->l);
     }
 
     static <T> CompletableQueueX<T> completable(){
@@ -518,9 +518,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> QueueX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> QueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (QueueX<R>) LazyCollectionX.super.<R> flatMap(mapper);
+        return (QueueX<R>) this.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1068,18 +1068,18 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default <R> QueueX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (QueueX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> QueueX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> QueueX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (QueueX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> QueueX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default QueueX<T> prependS(Stream<? extends T> stream) {
-        return (QueueX<T>)LazyCollectionX.super.prependS(stream);
+    default QueueX<T> prependStream(Stream<? extends T> stream) {
+        return (QueueX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1113,8 +1113,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<T> insertAtS(int pos, Stream<T> stream) {
-        return (QueueX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default QueueX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (QueueX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1484,7 +1484,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
             return lt.zip(queue,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<queue,R> flatMap( Higher<queue,T> lt, Function<? super T, ? extends  Higher<queue,R>> fn){
-            return QueueX.narrowK(lt).flatMap(fn.andThen(QueueX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(QueueX::narrowK));
         }
         private static <T,R> QueueX<R> map(QueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);
@@ -1496,7 +1496,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {

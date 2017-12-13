@@ -256,8 +256,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
 
         @Override
-        public <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-            return check(new Cons(sizeFront,front.flatMapI(fn),sizeBack,back.flatMapI(fn)));
+        public <R> BankersQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+            return check(new Cons(sizeFront,front.concatMap(fn),sizeBack,back.concatMap(fn)));
 
         }
 
@@ -427,7 +427,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
 
         @Override
-        public <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        public <R> BankersQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
             return Instance;
         }
         @Override
@@ -528,7 +528,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
         return acc;
     }
-    <R> BankersQueue<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> BankersQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
     @Override
     default <U> BankersQueue<U> ofType(Class<? extends U> type) {
         return (BankersQueue<U>)ImmutableQueue.super.ofType(type);
@@ -595,8 +595,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default <U, R> BankersQueue<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (BankersQueue<R>)ImmutableQueue.super.zipS(other,zipper);
+    default <U, R> BankersQueue<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (BankersQueue<R>)ImmutableQueue.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -695,8 +695,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default <U> BankersQueue<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (BankersQueue) ImmutableQueue.super.zipS(other);
+    default <U> BankersQueue<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (BankersQueue) ImmutableQueue.super.zipWithStream(other);
     }
 
     @Override
@@ -838,13 +838,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
 
 
     @Override
-    default <R> BankersQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    default BankersQueue<T> prependS(Stream<? extends T> stream) {
-        return (BankersQueue<T>) ImmutableQueue.super.prependS(stream);
+    default BankersQueue<T> prependStream(Stream<? extends T> stream) {
+        return (BankersQueue<T>) ImmutableQueue.super.prependStream(stream);
     }
 
     @Override
@@ -863,8 +858,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> insertAtS(int pos, Stream<T> stream) {
-        return (BankersQueue<T>) ImmutableQueue.super.insertAtS(pos,stream);
+    default BankersQueue<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (BankersQueue<T>) ImmutableQueue.super.insertStreamAt(pos,stream);
     }
 
     @Override

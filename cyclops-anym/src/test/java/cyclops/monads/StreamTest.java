@@ -55,7 +55,7 @@ public class StreamTest {
   }
   @Test
   public void flatMapCompletableFuture(){
-    assertThat(Spouts.of(1,2,3).flatMapI(i-> AnyM.fromArray(i+2))
+    assertThat(Spouts.of(1,2,3).concatMap(i-> AnyM.fromArray(i+2))
         .collect(Collectors.toList()),
       equalTo(Arrays.asList(3,4,5)));
   }
@@ -167,10 +167,10 @@ public class StreamTest {
   public void testFutureFlatMapIterable() {
     Future<Integer> just = Future.of(CompletableFuture.completedFuture(10));
 
-    Future<Integer> f = just.flatMapI(i -> Arrays.asList(i, 20, 30));
+    Future<Integer> f = just.concatMap(i -> Arrays.asList(i, 20, 30));
     assertThat(f.orElse(-10), equalTo(10));
 
-    f = just.flatMapI(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
+    f = just.concatMap(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
     assertThat(f.orElse(-50), equalTo(20));
   }
   @Test

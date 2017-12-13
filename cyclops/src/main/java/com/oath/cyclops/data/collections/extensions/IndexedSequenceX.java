@@ -61,15 +61,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      */
     public IndexedSequenceX<T> removeAt(int i);
 
-    /**
-     * Create a sub sequence between the two supplied index
-     *
-     * @param start Index of our sub sequence (inclusive)
-     * @param end   Index of our sub sequence (exclusive)
-     * @return
 
-    public IndexedSequenceX<T> subList(int start, int end);
-     */
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#filter(java.util.function.Predicate)
@@ -87,7 +79,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    <R> IndexedSequenceX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
+    <R> IndexedSequenceX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     /**
      * Intercalate
@@ -97,11 +89,11 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      */
     default ListX<T> intercalate(List<? extends List<? extends T>> listOfLists) {
         ListX thisListX = this.toListX();
-        if (listOfLists == null || listOfLists.isEmpty()) {
+        if (listOfLists.isEmpty()) {
             return thisListX;
         } else {
             ListX listOfListsX = ListX.fromIterable(listOfLists);
-            return listOfListsX.intersperse(thisListX).flatMap(x -> x);
+            return listOfListsX.intersperse(thisListX).concatMap(x -> x);
         }
     }
 }

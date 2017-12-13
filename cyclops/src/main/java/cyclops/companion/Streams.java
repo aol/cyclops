@@ -2184,7 +2184,7 @@ public class Streams {
      * </pre>
      *
      */
-    public final static <T, R> Stream<R> flatMapIterable(final Stream<T> stream, final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final static <T, R> Stream<R> concatMapterable(final Stream<T> stream, final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return stream.flatMap(fn.andThen(c -> stream(c)));
 
     }

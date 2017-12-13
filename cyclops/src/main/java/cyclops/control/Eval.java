@@ -345,7 +345,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -464,11 +464,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> Eval<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue.super.flatMapI(mapper);
+    default <R> Eval<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Eval<R>)MonadicValue.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

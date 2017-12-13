@@ -206,7 +206,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
 
     @Test
     public void testFlatMapA(){
-        assertThat(of(1,2,3).flatMap(i-> of(i*2)),equalTo(of(2,4,6)));
+        assertThat(of(1,2,3).concatMap(i-> of(i*2)),equalTo(of(2,4,6)));
         assertThat(this.<Integer>empty().concatMap(i-> of(i*2)),equalTo(empty()));
     }
 

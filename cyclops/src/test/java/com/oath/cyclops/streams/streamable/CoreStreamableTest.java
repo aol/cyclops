@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -396,15 +395,11 @@ public  class CoreStreamableTest {
 
 
 
-	    @Test
-		public void flattenOptional() throws Exception {
 
-				assertTrue(ReactiveSeq.of(Optional.of(1)).to(ReactiveSeq::flattenO).toList().get(0).equals(new Integer(1)));
-		}
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenIterable).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 

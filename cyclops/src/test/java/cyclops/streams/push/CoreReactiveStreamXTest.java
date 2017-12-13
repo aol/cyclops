@@ -61,7 +61,7 @@ public  class CoreReactiveStreamXTest {
 		//		.flatMapP(i->Maybe.of(i)).printOut();
 
         assertThat(of(1,2,3)
-                        .flatMapP(i->Maybe.of(i))
+                        .mergeMap(i->Maybe.of(i))
                         .toListX(),equalTo(Arrays.asList(1,2,3)));
 
 
@@ -386,7 +386,7 @@ public  class CoreReactiveStreamXTest {
 	}
 	@Test
 	public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -405,7 +405,7 @@ public  class CoreReactiveStreamXTest {
 
 	@Test
 	public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -544,7 +544,7 @@ public  class CoreReactiveStreamXTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(Spouts.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
+			assertThat(Spouts.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenIterable).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 
