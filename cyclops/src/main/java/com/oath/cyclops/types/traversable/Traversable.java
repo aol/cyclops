@@ -976,7 +976,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
-     *                                   .prependS(of(100, 200, 300))
+     *                                   .prependStream(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *

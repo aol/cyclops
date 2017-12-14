@@ -27,6 +27,8 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -399,15 +401,20 @@ public  class CoreReactiveSeqTest {
 	}
 
 
-    @Test
-    public void flatMapPublisher() throws InterruptedException{
-
-        assertThat(of(1,2,3)
-                        .mergeMap(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+  @Test
+  public void flatMapPublisher() throws InterruptedException{
 
 
-    }
+    Assert.assertThat(of(1,2,3)
+      .mergeMap(i-> Maybe.of(i))
+      .toListX().size(), Matchers.equalTo(3));
+
+    Assert.assertThat(of(1,2,3)
+      .mergeMap(i-> Maybe.of(i))
+      .toListX(), Matchers.containsInAnyOrder(3,2,1));
+
+
+  }
 
 
     private void sleep2(int time){

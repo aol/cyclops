@@ -42,12 +42,15 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPublisher() throws InterruptedException{
-        //of(1,2,3)
-        //		.flatMapP(i->Maybe.of(i)).printOut();
+
 
         Assert.assertThat(of(1,2,3)
                 .mergeMap(i-> Maybe.of(i))
-                .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
+                .toListX().size(), Matchers.equalTo(3));
+
+      Assert.assertThat(of(1,2,3)
+        .mergeMap(i-> Maybe.of(i))
+        .toListX(), Matchers.containsInAnyOrder(3,2,1));
 
 
     }
