@@ -52,10 +52,12 @@ public class TakeSkipSliceTest {
 	}
 	@Test
 	public void takeUntil(){
-		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.takeUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).noneMatch(it-> it==200));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).takeUntil(react(()->value())).anyMatch(it-> it==1));
+	  for(int i=0;i<20;i++) {
+      System.out.println(react(() -> 1, () -> 2, () -> 3, () -> 4, () -> value2())
+        .takeUntil(react(() -> value())).collect(Collectors.toList()));
+      assertTrue(react(() -> 1, () -> 2, () -> 3, () -> 4, () -> value2()).takeUntil(react(() -> value())).noneMatch(it -> it == 200));
+      assertTrue(react(() -> 1, () -> 2, () -> 3, () -> 4, () -> value2()).takeUntil(react(() -> value())).anyMatch(it -> it == 1));
+    }
 	}
 	@Test
 	public void testLimitFutures(){
