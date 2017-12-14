@@ -115,34 +115,34 @@ import java.util.stream.Stream;
  *
  * @author johnmcclean
  *
- * @param <ST> Left type
- * @param <PT> Right type
+ * @param <LT> Left type
+ * @param <RT> Right type
  */
-public interface Either<ST, PT> extends To<Either<ST,PT>>,
-                                     BiTransformable<ST,PT>,
-                                     Sealed2<ST,PT>,Value<PT>,
-                                     OrElseValue<PT,Either<ST,PT>>,
-                                     Unit<PT>, Transformable<PT>, Filters<PT>,
+public interface Either<LT, RT> extends To<Either<LT, RT>>,
+                                     BiTransformable<LT, RT>,
+                                     Sealed2<LT, RT>,Value<RT>,
+                                     OrElseValue<RT,Either<LT, RT>>,
+                                     Unit<RT>, Transformable<RT>, Filters<RT>,
                                      Serializable,
-                                     Higher2<either,ST,PT> {
+                                     Higher2<either, LT, RT> {
 
 
-    default Either<ST,PT> accumulate(Either<ST,PT> next, Semigroup<PT> sg){
+    default Either<LT, RT> accumulate(Either<LT, RT> next, Semigroup<RT> sg){
         return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
     }
-    default Either<ST,PT> accumulateRight(Semigroup<PT> sg, Either<ST,PT>... values){
-        Either<ST,PT> acc= this;
-        for(Either<ST,PT> next : values){
+    default Either<LT, RT> accumulateRight(Semigroup<RT> sg, Either<LT, RT>... values){
+        Either<LT, RT> acc= this;
+        for(Either<LT, RT> next : values){
             acc = acc.accumulateRight(sg,next);
         }
         return acc;
     }
-    default Either<ST,PT> accumulate(Semigroup<ST> sg, Either<ST,PT> next){
+    default Either<LT, RT> accumulate(Semigroup<LT> sg, Either<LT, RT> next){
         return flatMapLeft(s1->next.mapLeft(s2->sg.apply(s1,s2)));
     }
-    default Either<ST,PT> accumulate(Semigroup<ST> sg, Either<ST,PT>... values){
-        Either<ST,PT> acc= this;
-        for(Either<ST,PT> next : values){
+    default Either<LT, RT> accumulate(Semigroup<LT> sg, Either<LT, RT>... values){
+        Either<LT, RT> acc= this;
+        for(Either<LT, RT> next : values){
             acc = acc.accumulate(sg,next);
         }
         return acc;
@@ -174,21 +174,21 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         return Nested.of(nested, Instances.definitions(),def2);
     }
 
-     default <W1> Product<Higher<either,ST>,W1,PT> product(Active<W1,PT> active){
+     default <W1> Product<Higher<either, LT>,W1, RT> product(Active<W1, RT> active){
         return Product.of(allTypeclasses(),active);
     }
-    default <W1> Coproduct<W1,Higher<either,ST>,PT> coproduct(InstanceDefinitions<W1> def2){
+    default <W1> Coproduct<W1,Higher<either, LT>, RT> coproduct(InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2, Instances.definitions());
     }
-    default Active<Higher<either,ST>,PT> allTypeclasses(){
+    default Active<Higher<either, LT>, RT> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
-    default <W2,R> Nested<Higher<either,ST>,W2,R> mapM(Function<? super PT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    default <W2,R> Nested<Higher<either, LT>,W2,R> mapM(Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
 
-    default Eval<Either<ST, PT>> nestedEval(){
+    default Eval<Either<LT, RT>> nestedEval(){
         return Eval.later(()->this);
     }
     /**
@@ -324,17 +324,17 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
 
-    default <T2, R1, R2, R3, R> Either<ST,R> forEach4(Function<? super PT, ? extends Either<ST,R1>> value1,
-                                                      BiFunction<? super PT, ? super R1, ? extends Either<ST,R2>> value2,
-                                                      Function3<? super PT, ? super R1, ? super R2, ? extends Either<ST,R3>> value3,
-                                                      Function4<? super PT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R3, R> Either<LT,R> forEach4(Function<? super RT, ? extends Either<LT,R1>> value1,
+                                                      BiFunction<? super RT, ? super R1, ? extends Either<LT,R2>> value2,
+                                                      Function3<? super RT, ? super R1, ? super R2, ? extends Either<LT,R3>> value3,
+                                                      Function4<? super RT, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return this.flatMap(in-> {
 
-            Either<ST,R1> a = value1.apply(in);
+            Either<LT,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Either<ST,R2> b = value2.apply(in,ina);
+                Either<LT,R2> b = value2.apply(in,ina);
                 return b.flatMap(inb-> {
-                    Either<ST,R3> c= value3.apply(in,ina,inb);
+                    Either<LT,R3> c= value3.apply(in,ina,inb);
                     return c.map(in2->yieldingFunction.apply(in,ina,inb,in2));
                 });
 
@@ -346,15 +346,15 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
 
-    default <T2, R1, R2, R> Either<ST,R> forEach3(Function<? super PT, ? extends Either<ST,R1>> value1,
-                                                  BiFunction<? super PT, ? super R1, ? extends Either<ST,R2>> value2,
-                                                  Function3<? super PT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+    default <T2, R1, R2, R> Either<LT,R> forEach3(Function<? super RT, ? extends Either<LT,R1>> value1,
+                                                  BiFunction<? super RT, ? super R1, ? extends Either<LT,R2>> value2,
+                                                  Function3<? super RT, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
 
-            Either<ST,R1> a = value1.apply(in);
+            Either<LT,R1> a = value1.apply(in);
             return a.flatMap(ina-> {
-                Either<ST,R2> b = value2.apply(in,ina);
+                Either<LT,R2> b = value2.apply(in,ina);
                 return b.map(in2->yieldingFunction.apply(in,ina, in2));
             });
 
@@ -365,11 +365,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
 
 
 
-    default <R1, R> Either<ST,R> forEach2(Function<? super PT, ? extends Either<ST,R1>> value1,
-                                          BiFunction<? super PT, ? super R1, ? extends R> yieldingFunction) {
+    default <R1, R> Either<LT,R> forEach2(Function<? super RT, ? extends Either<LT,R1>> value1,
+                                          BiFunction<? super RT, ? super R1, ? extends R> yieldingFunction) {
 
         return this.flatMap(in-> {
-            Either<ST,R1> b = value1.apply(in);
+            Either<LT,R1> b = value1.apply(in);
             return b.map(in2->yieldingFunction.apply(in, in2));
         });
     }
@@ -379,7 +379,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#nest()
      */
-    default Either<ST, Either<ST,PT>> nest() {
+    default Either<LT, Either<LT, RT>> nest() {
         return this.map(t -> unit(t));
     }
 
@@ -389,7 +389,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
      */
     @Override
-    default <T> Either<ST, T> unit(final T unit) {
+    default <T> Either<LT, T> unit(final T unit) {
         return Either.right(unit);
     }
 
@@ -398,8 +398,9 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
-    Option<PT> filter(Predicate<? super PT> test);
+    Option<RT> filter(Predicate<? super RT> test);
 
+    Either<LT, RT> filter(Predicate<? super RT> test, Function<? super RT,? extends LT> rightToLeft);
     /**
      * If this Either contains the Left type, transform it's value so that it contains the Right type
      *
@@ -407,7 +408,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param fn Function to transform left type to right
      * @return Either with left type mapped to right
      */
-    Either<ST, PT> mapLeftToRight(Function<? super ST, ? extends PT> fn);
+    Either<LT, RT> mapLeftToRight(Function<? super LT, ? extends RT> fn);
 
     /**
      * Always transform the Left type of this Either if it is present using the provided transformation function
@@ -415,13 +416,13 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param fn Transformation function for Left types
      * @return Either with Left type transformed
      */
-    <R> Either<R, PT> mapLeft(Function<? super ST, ? extends R> fn);
+    <R> Either<R, RT> mapLeft(Function<? super LT, ? extends R> fn);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
      */
     @Override
-    <R> Either<ST, R> map(Function<? super PT, ? extends R> fn);
+    <R> Either<LT, R> map(Function<? super RT, ? extends R> fn);
 
     /**
      * Peek at the Left type value if present
@@ -429,13 +430,13 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param action Consumer to peek at the Left type value
      * @return Either with the same values as before
      */
-    Either<ST, PT> peekLeft(Consumer<? super ST> action);
+    Either<LT, RT> peekLeft(Consumer<? super LT> action);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.Functor#peek(java.util.function.Consumer)
      */
     @Override
-    Either<ST, PT> peek(Consumer<? super PT> action);
+    Either<LT, RT> peek(Consumer<? super RT> action);
 
     /**
      * Swap types so operations directly affect the current (pre-swap) Left type
@@ -457,7 +458,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      *
      * @return Swap the right and left types, allowing operations directly on what was the Left type
      */
-    Either<PT, ST> swap();
+    Either<RT, LT> swap();
 
 
 
@@ -474,7 +475,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.types.Value#toLazyEither(java.lang.Object)
      */
     @Override
-    default <ST2> Either<ST2, PT> toEither(final ST2 left) {
+    default <ST2> Either<ST2, RT> toEither(final ST2 left) {
         return visit(s -> left(left), p -> right(p));
     }
     /**
@@ -716,11 +717,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param right Function to execute if this is a Right Ior
      * @return Result of executing the appropriate function
      */
-    <R> R visit(Function<? super ST, ? extends R> left, Function<? super PT, ? extends R> right);
+    <R> R visit(Function<? super LT, ? extends R> left, Function<? super RT, ? extends R> right);
 
 
     @Override
-    default <R1, R2> Either<R1, R2> bimap(Function<? super ST, ? extends R1> left, Function<? super PT, ? extends R2> right) {
+    default <R1, R2> Either<R1, R2> bimap(Function<? super LT, ? extends R1> left, Function<? super RT, ? extends R2> right) {
         if (isLeft())
             return (Either<R1, R2>) swap().map(left)
                                        .swap();
@@ -731,9 +732,9 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.types.functor.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
-    default Either<ST, PT> bipeek(Consumer<? super ST> c1, Consumer<? super PT> c2) {
+    default Either<LT, RT> bipeek(Consumer<? super LT> c1, Consumer<? super RT> c2) {
 
-        return (Either<ST, PT>)BiTransformable.super.bipeek(c1, c2);
+        return (Either<LT, RT>)BiTransformable.super.bipeek(c1, c2);
     }
 
 
@@ -741,8 +742,8 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
      */
     @Override
-    default <R1, R2> Either<R1, R2> bitrampoline(Function<? super ST, ? extends Trampoline<? extends R1>> mapper1,
-                                                 Function<? super PT, ? extends Trampoline<? extends R2>> mapper2) {
+    default <R1, R2> Either<R1, R2> bitrampoline(Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
+                                                 Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
         return  (Either<R1, R2>)BiTransformable.super.bitrampoline(mapper1, mapper2);
     }
@@ -752,42 +753,42 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     /* (non-Javadoc)
      * @see java.util.function.Supplier#getValue()
      */
-    Option<PT> get();
+    Option<RT> get();
 
     /**
      * @return The Left Value if present, otherwise null
      */
-    Option<ST> getLeft();
-    ST leftOrElse(ST alt);
+    Option<LT> getLeft();
+    LT leftOrElse(LT alt);
 
-    Either<ST,PT> recover(Supplier<? extends PT> value);
-    Either<ST,PT> recover(PT value);
-    Either<ST,PT> recoverWith(Supplier<? extends Either<ST,PT>> fn);
+    Either<LT, RT> recover(Supplier<? extends RT> value);
+    Either<LT, RT> recover(RT value);
+    Either<LT, RT> recoverWith(Supplier<? extends Either<LT, RT>> fn);
 
     /**
      * @return A Stream containing the Either Left value if present, otherwise an zero Stream
      */
-    ReactiveSeq<ST> leftToStream();
+    ReactiveSeq<LT> leftToStream();
 
 
-    <RT1> Either<ST, RT1> flatMap(Function<? super PT, ? extends Either<? extends ST,? extends RT1>> mapper);
+    <RT1> Either<LT, RT1> flatMap(Function<? super RT, ? extends Either<? extends LT,? extends RT1>> mapper);
     /**
      * Perform a flatMap operation on the Left type
      *
      * @param mapper Flattening transformation function
      * @return Either containing the value inside the result of the transformation function as the Left value, if the Left type was present
      */
-    <LT1> Either<LT1, PT> flatMapLeft(Function<? super ST, ? extends Either<LT1, PT>> mapper);
+    <LT1> Either<LT1, RT> flatMapLeft(Function<? super LT, ? extends Either<LT1, RT>> mapper);
     /**
      * A flatMap operation that keeps the Left and Right types the same
      *
      * @param fn Transformation function
      * @return Either
      */
-    Either<ST, PT> flatMapLeftToRight(Function<? super ST, ? extends Either<ST, PT>> fn);
+    Either<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn);
 
     @Deprecated //use bipeek
-    void peek(Consumer<? super ST> stAction, Consumer<? super PT> ptAction);
+    void peek(Consumer<? super LT> stAction, Consumer<? super RT> ptAction);
     /**
      * @return True if this is a right Either
      */
@@ -798,15 +799,15 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
     public boolean isLeft();
 
 
-    default <T2, R> Either<ST, R> zip(final Ior<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+    default <T2, R> Either<LT, R> zip(final Ior<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)).toEither());
     }
-    default <T2, R> Either<ST, R> zip(final Either<ST,? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn){
+    default <T2, R> Either<LT, R> zip(final Either<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
     }
 
 
-    default Either<LinkedListX<ST>, PT> list() {
+    default Either<LinkedListX<LT>, RT> list() {
         return mapLeft(LinkedListX::of);
     }
 
@@ -818,7 +819,7 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @param fn Combiner function for right values
      * @return Combined Either
      */
-    default <T2, R> Either<LinkedListX<ST>, R> combineToList(final Either<ST, ? extends T2> app, final BiFunction<? super PT, ? super T2, ? extends R> fn) {
+    default <T2, R> Either<LinkedListX<LT>, R> combineToList(final Either<LT, ? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return list().combine(app.list(), Semigroups.collectionXConcat(), fn);
     }
 
@@ -841,8 +842,8 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @return Combined Either
      */
 
-    default <T2, R> Either<ST, R> combine(final Either<? extends ST, ? extends T2> app, final BinaryOperator<ST> semigroup,
-                                          final BiFunction<? super PT, ? super T2, ? extends R> fn) {
+    default <T2, R> Either<LT, R> combine(final Either<? extends LT, ? extends T2> app, final BinaryOperator<LT> semigroup,
+                                          final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return this.visit(left -> app.visit(s2 -> Either.left(semigroup.apply(s2, left)), p2 -> Either.left(left)),
                           right -> app.visit(s2 -> Either.left(s2), p2 -> Either.right(fn.apply(right, p2))));
     }
@@ -866,18 +867,18 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.Predicate)
      */
     @Override
-    default Option<PT> filterNot(final Predicate<? super PT> fn) {
+    default Option<RT> filterNot(final Predicate<? super RT> fn) {
 
-        return (Option<PT>) Filters.super.filterNot(fn);
+        return (Option<RT>) Filters.super.filterNot(fn);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#notNull()
      */
     @Override
-    default Option<PT> notNull() {
+    default Option<RT> notNull() {
 
-        return (Option<PT>) Filters.super.notNull();
+        return (Option<RT>) Filters.super.notNull();
     }
 
 
@@ -886,14 +887,14 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
      * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
      */
     @Override
-    default <R> Either<ST, R> trampoline(final Function<? super PT, ? extends Trampoline<? extends R>> mapper) {
+    default <R> Either<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Either<ST, R>) Transformable.super.trampoline(mapper);
+        return (Either<LT, R>) Transformable.super.trampoline(mapper);
     }
 
-    Ior<ST, PT> toIor();
+    Ior<LT, RT> toIor();
 
-    default Trampoline<Either<ST,PT>> toTrampoline() {
+    default Trampoline<Either<LT, RT>> toTrampoline() {
         return Trampoline.more(()->Trampoline.done(this));
     }
 
@@ -947,6 +948,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         @Override
         public Option<RT> filter(final Predicate<? super RT> test) {
             return test.test(value) ? Option.some(value) : Option.none();
+        }
+
+        @Override
+        public Either<L, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends L> rightToLeft) {
+          return test.test(value) ? this : Either.left(rightToLeft.apply(value));
         }
 
         @Override
@@ -1130,6 +1136,11 @@ public interface Either<ST, PT> extends To<Either<ST,PT>>,
         }
 
         @Override
+        public Either<L, R> filter(Predicate<? super R> test, Function<? super R, ? extends L> rightToLeft) {
+          return this;
+        }
+
+      @Override
         public Either<R, L> swap() {
             return new Right<R, L>(
                                        value);

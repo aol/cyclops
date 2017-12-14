@@ -238,7 +238,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
 
-
         @Override
         public <R> LazyEither<Throwable, R> map(Function<? super RT, ? extends R> fn) {
             return either.map(fn);
@@ -686,7 +685,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
-    Option<RT> filter(Predicate<? super RT> test);
+    Maybe<RT> filter(Predicate<? super RT> test);
+    default LazyEither<LT, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither.right(e) : LazyEither.left(rightToLeft.apply(e)));
+    }
 
     /**
      * If this Either contains the Left type, transform it's value so that it contains the Right type
@@ -1159,13 +1161,18 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         }
 
+        @Override
+        public LazyEither<ST, PT> filter(Predicate<? super PT> test, Function<? super PT, ? extends ST> rightToLeft) {
+          return lazy(Eval.later(()->resolve().filter(test,rightToLeft)));
+        }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#mapLeftToRight(java.util.
-         * function.Function)
-         */
+
+      /*
+       * (non-Javadoc)
+       *
+       * @see com.oath.cyclops.sum.types.Either#mapLeftToRight(java.util.
+       * function.Function)
+       */
         @Override
         public LazyEither<ST, PT> mapLeftToRight(Function<? super ST, ? extends PT> fn) {
             return lazy(Eval.later(() ->  resolve()
@@ -1459,6 +1466,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         public Option<PT> filter(final Predicate<? super PT> test) {
             return value.filter(test);
         }
+
 
         @Override
         public LazyEither<PT, ST> swap() {

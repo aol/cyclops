@@ -33,7 +33,12 @@ public class Either2Test {
 		none = Either.left("none");
 	}
 
-
+  @Test
+  public void filterAlt(){
+    assertThat(Either.right(10).filter(i->i>100,r->"hello"),equalTo(Either.left("hello")));
+    assertThat(Either.right(101).filter(i->i>100,r->"hello"),equalTo(Either.right(101)));
+    assertThat(Either.<Integer,Integer>left(101).filter(i->i>100,r->-1),equalTo(Either.left(-1)));
+  }
 
 	@Test
     public void testSequenceSecondary() {

@@ -50,12 +50,12 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
-  Filters<RT>,
-                                                    Higher4<lazyEither4,LT1,LT2,LT3,RT>,
-                                                    BiTransformable<LT3, RT>,
-                                                    To<LazyEither4<LT1, LT2,LT3, RT>>,
-  OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
-                                                    Unit<RT>{
+                                                      Filters<RT>,
+                                                      Higher4<lazyEither4,LT1,LT2,LT3,RT>,
+                                                      BiTransformable<LT3, RT>,
+                                                      To<LazyEither4<LT1, LT2,LT3, RT>>,
+                                                      OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
+                                                      Unit<RT>{
 
     Option<RT> get();
     public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,LazyEither4<LT1,LT2,LT3,T>,T> kindKleisli(){
@@ -113,6 +113,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
         return new LazyEither4.CompletableEither4<RT,LT2,LT3, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
+
+    default LazyEither4<LT1,LT2,LT3, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither4.right(e) : LazyEither4.left1(rightToLeft.apply(e)));
+    }
+
     @AllArgsConstructor
     static class CompletableEither4<ORG,LT1,LT2,RT> implements LazyEither4<Throwable,LT1,LT2,RT>, Completable<ORG> {
 
