@@ -233,7 +233,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Option<RT> filter(Predicate<? super RT> test) {
+        public Maybe<RT> filter(Predicate<? super RT> test) {
             return either.filter(test);
         }
 
@@ -678,12 +678,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
-     */
+
     @Override
     Maybe<RT> filter(Predicate<? super RT> test);
     default LazyEither<LT, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT> rightToLeft){
@@ -1463,7 +1458,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Option<PT> filter(final Predicate<? super PT> test) {
+        public Maybe<PT> filter(final Predicate<? super PT> test) {
             return value.filter(test);
         }
 
@@ -1673,8 +1668,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public Option<PT> filter(final Predicate<? super PT> test) {
-            return Option.none();
+        public Maybe<PT> filter(final Predicate<? super PT> test) {
+            return Maybe.nothing();
         }
 
         @Override
