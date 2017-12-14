@@ -946,7 +946,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default <R> ListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (ListX<R>) this.concatMap(mapper);
+        return (ListX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

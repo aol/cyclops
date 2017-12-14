@@ -25,6 +25,7 @@ public class NQueens {
 
     }
 
+
     public Boolean isSafe(int column, LinkedListX<Integer> queens, int delta){
        return  queens.visit((c, rest)-> c != column &&
                                            Math.abs(c - column) != delta &&

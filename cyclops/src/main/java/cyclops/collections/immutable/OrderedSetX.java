@@ -507,7 +507,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      */
     @Override
     default <R> OrderedSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (OrderedSetX<R>) this.concatMap(mapper);
+        return (OrderedSetX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     @Override

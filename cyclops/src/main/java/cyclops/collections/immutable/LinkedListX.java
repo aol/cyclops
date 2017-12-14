@@ -58,10 +58,10 @@ import java.util.stream.Stream;
  */
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                       PersistentList<T>,
-                                    LazyCollectionX<T>,
-                                    IndexedSequenceX<T>,
-                                    OnEmptySwitch<T, PersistentList<T>>,
-                                    Higher<linkedListX,T> {
+                                      LazyCollectionX<T>,
+                                      IndexedSequenceX<T>,
+                                      OnEmptySwitch<T, PersistentList<T>>,
+                                      Higher<linkedListX,T> {
 
 
 
@@ -629,8 +629,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     @Override
     default <R> LinkedListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-
-        return (LinkedListX) this.concatMap(mapper);
+       return (LinkedListX) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

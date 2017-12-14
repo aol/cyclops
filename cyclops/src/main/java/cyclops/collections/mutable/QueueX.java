@@ -520,7 +520,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     @Override
     default <R> QueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (QueueX<R>) this.concatMap(mapper);
+        return (QueueX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

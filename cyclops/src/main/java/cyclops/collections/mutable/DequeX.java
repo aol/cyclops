@@ -588,7 +588,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @Override
     default <R> DequeX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (DequeX<R>) this.concatMap(mapper);
+        return (DequeX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

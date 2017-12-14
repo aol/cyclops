@@ -463,8 +463,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     @Override
     default <R> SortedSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (SortedSetX<R>) this.concatMap(mapper);
-    }
+        return (SortedSetX<R>) LazyCollectionX.super.concatMap(mapper);
+}
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
