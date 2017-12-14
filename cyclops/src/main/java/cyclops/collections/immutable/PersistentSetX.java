@@ -513,7 +513,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     @Override
     default <R> PersistentSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentSetX<R>) this.concatMap(mapper);
+        return (PersistentSetX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

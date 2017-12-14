@@ -54,8 +54,8 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
     System.out.println(Either.left(null).toString());
     System.out.println(Either.right(null).toString());
 
-    System.out.println(Eval.defer(null).toString());
-    System.out.println(Eval.later(null).toString());
+    System.out.println(Eval.defer(()-> Eval.now(null)).toString());
+    System.out.println(Eval.later(()->null).toString());
     System.out.println(LazyEither5.left1(null).toString());
     System.out.println(LazyEither5.left2(null).toString());
     System.out.println(LazyEither5.left3(null).toString());
