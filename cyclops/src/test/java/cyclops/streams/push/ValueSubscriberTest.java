@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

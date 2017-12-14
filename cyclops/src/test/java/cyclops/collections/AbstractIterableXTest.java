@@ -6,7 +6,6 @@ import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.SimpleTimer;
-import cyclops.async.LazyReact;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
@@ -25,6 +24,7 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -69,7 +69,7 @@ public abstract class AbstractIterableXTest {
 	public abstract <T> IterableX<T> iterate(int times, T seed, UnaryOperator<T> fn);
 	public abstract <T> IterableX<T> generate(int times,Supplier<T> fn);
 	public abstract <U,T> IterableX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder);
-	public static final LazyReact r = new LazyReact(10,10);
+
 
 	int captured=-1;
 
@@ -82,6 +82,22 @@ public abstract class AbstractIterableXTest {
 
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
     }
+
+    @Test
+    public void indexOf(){
+      assertThat(empty().indexOf(e->true),equalTo(Maybe.nothing()));
+      assertThat(of(1).indexOf(e->true),equalTo(Maybe.just(0l)));
+      assertThat(of(1).indexOf(e->false),equalTo(Maybe.nothing()));
+      assertThat(of(1,2,3).indexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+    }
+    @Test
+    public void lastIndexOf(){
+      assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+      assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+      assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+      assertThat(of(1,2,3).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+      assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(3l)));
+    }
     @Test
     public void insertAt(){
         IterableX<String> result = 	of(1,2,3)
@@ -92,7 +108,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void insertAtStream(){
-        IterableX<String> result = 	of(1,2,3).insertAtS(1,ReactiveSeq.of(100,200,300))
+        IterableX<String> result = 	of(1,2,3).insertStreamAt(1,ReactiveSeq.of(100,200,300))
                 .map(it ->it+"!!");
 
         assertThat(result,equalTo(of("1!!","100!!","200!!","300!!","2!!","3!!")));
@@ -2264,10 +2280,10 @@ public abstract class AbstractIterableXTest {
     @Test
     public void prependAppend(){
         assertThat(of(1)
-                    .prependS(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
+                    .prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
                     .prependAll(7,8)
                     .insertAt(4,9).deleteBetween(1,2)
-                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+                .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
     public void insertAndRemove(){

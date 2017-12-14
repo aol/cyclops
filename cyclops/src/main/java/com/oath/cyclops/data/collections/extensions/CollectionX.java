@@ -53,13 +53,18 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     boolean isEmpty();
 
-    default <R> CollectionX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
-        return this.flatMap(fn.andThen(ReactiveSeq::fromStream));
+    /*
+     * flatMap operation that maps to and flattens a Stream
+     * to map to and flatten and Iterable see {@link concatMap}
+     * to map to and merge a reactive-streams publisher see {@link mergeMap}
+     */
+    default <R> CollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn){
+        return this.concatMap(fn.andThen(ReactiveSeq::fromStream));
     }
 
 
-    <R> CollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> CollectionX<R> flatMapP(int maxConcurecy,Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> CollectionX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> CollectionX<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * Create a CollectionX from the supplied Collection
      *
@@ -363,7 +368,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @param mapper Transformation function to be applied (and flattened)
      * @return A toX containing the flattened results of the transformation function
      */
-    <R> CollectionX<R> flatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
+    <R> CollectionX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#limit(long)
@@ -612,7 +617,7 @@ public interface CollectionX<T> extends IterableX<T>,
                         final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
                             final Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
                             final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return this.flatMap(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -667,7 +672,7 @@ public interface CollectionX<T> extends IterableX<T>,
             final Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
             final Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
             final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
-        return this.flatMap(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -713,7 +718,7 @@ public interface CollectionX<T> extends IterableX<T>,
     default <R1, R2, R> CollectionX<R> forEach3(final Function<? super T, ? extends Iterable<R1>> iterable1,
                                                 final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
                                                 final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        return this.flatMap(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -761,7 +766,7 @@ public interface CollectionX<T> extends IterableX<T>,
             final BiFunction<? super T,? super R1, ? extends Iterable<R2>> iterable2,
                     final Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                     final Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
-        return this.flatMap(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -801,7 +806,7 @@ public interface CollectionX<T> extends IterableX<T>,
     default <R1, R> CollectionX<R> forEach2(final Function<? super T,? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMap(in-> {
+        return this.concatMap(in-> {
 
                     Iterable<? extends R1> b = iterable1.apply(in);
                     return ReactiveSeq.fromIterable(b)
@@ -840,7 +845,7 @@ public interface CollectionX<T> extends IterableX<T>,
     default <R1, R> CollectionX<R> forEach2(final Function<? super T, ? extends Iterable<R1>> iterable1,
             final BiFunction<? super T,? super R1,  Boolean> filterFunction,
                     final BiFunction<? super T,? super R1, ? extends R> yieldingFunction) {
-        return this.flatMap(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)

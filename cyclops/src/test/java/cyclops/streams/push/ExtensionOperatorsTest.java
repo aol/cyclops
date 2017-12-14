@@ -3,7 +3,7 @@ package cyclops.streams.push;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 
@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -405,7 +404,7 @@ public class ExtensionOperatorsTest {
 
 	@Test
 	public void flatMapMaybe(){
-		assertThat(Spouts.of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(Spouts.of(1,2,3,null).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

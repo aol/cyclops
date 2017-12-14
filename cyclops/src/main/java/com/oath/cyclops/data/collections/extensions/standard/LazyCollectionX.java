@@ -32,8 +32,8 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
     //Add to each collection type : also check AnyMSeq
     @Override
-    default <R> LazyCollectionX<R> flatMapP(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn){
-        return fromStream(stream().flatMapP(maxConcurency,fn));
+    default <R> LazyCollectionX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn){
+        return fromStream(stream().mergeMap(maxConcurency,fn));
     }
 
     @Override
@@ -131,8 +131,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see com.oath.cyclops.data.collections.extensions.CollectionX#flatMap(java.util.function.Function)
      */
-    @Override
-    default <R> CollectionX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> CollectionX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return fromStream(stream().flatMap(mapper.andThen(Streams::stream)));
     }
 
@@ -719,18 +718,18 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default <R> LazyCollectionX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
+    default <R> LazyCollectionX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
         return fromStream(stream().flatMap(fn));
     }
 
     @Override
-    default <R> LazyCollectionX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return fromStream(stream().flatMapP(fn));
+    default <R> LazyCollectionX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromStream(stream().mergeMap(fn));
     }
 
     @Override
-    default LazyCollectionX<T> prependS(Stream<? extends T> stream){
-        return fromStream(stream().prependS(stream));
+    default LazyCollectionX<T> prependStream(Stream<? extends T> stream){
+        return fromStream(stream().prependStream(stream));
     }
 
     @Override
@@ -768,8 +767,8 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default LazyCollectionX<T> insertAtS(int pos, Stream<T> stream){
-        return fromStream(stream().insertAtS(pos,stream));
+    default LazyCollectionX<T> insertStreamAt(int pos, Stream<T> stream){
+        return fromStream(stream().insertStreamAt(pos,stream));
     }
 
     @Override
@@ -808,10 +807,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().updateAt(pos,value));
     }
 
-    @Override
-    default <R> LazyCollectionX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return fromStream(stream().flatMapI(mapper));
-    }
+
 
     @Override
     default LazyCollectionX<T> insertAt(int pos, Iterable<? extends T> values) {

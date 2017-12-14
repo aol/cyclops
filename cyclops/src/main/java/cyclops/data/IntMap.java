@@ -266,15 +266,25 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
     @Override
     public <R> IntMap<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
-        return unitStream(stream().flatMapI(fn));
+        return unitStream(stream().concatMap(fn));
     }
 
     @Override
-    public <R> IntMap<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return unitStream(stream().flatMapI(fn));
+    public <R> IntMap<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return unitStream(stream().concatMap(fn));
     }
 
     @Override
+    public <R> IntMap<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return unitStream(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> IntMap<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return unitStream(stream().mergeMap(maxConcurecy,fn));
+    }
+
+  @Override
     public IntMap<T> replaceFirst(T currentElement, T newElement) {
         return (IntMap<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
     }
@@ -350,8 +360,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public <U, R> IntMap<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (IntMap<R>)ImmutableList.super.zipS(other,zipper);
+    public <U, R> IntMap<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (IntMap<R>)ImmutableList.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -455,8 +465,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public <U> IntMap<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (IntMap) ImmutableList.super.zipS(other);
+    public <U> IntMap<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (IntMap) ImmutableList.super.zipWithStream(other);
     }
 
     @Override
@@ -606,13 +616,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
 
     @Override
-    public <R> IntMap<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    public IntMap<T> prependS(Stream<? extends T> stream) {
-        return (IntMap<T>) ImmutableList.super.prependS(stream);
+    public IntMap<T> prependStream(Stream<? extends T> stream) {
+        return (IntMap<T>) ImmutableList.super.prependStream(stream);
     }
 
     @Override
@@ -631,8 +636,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<T> insertAtS(int pos, Stream<T> stream) {
-        return (IntMap<T>) ImmutableList.super.insertAtS(pos,stream);
+    public IntMap<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (IntMap<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -854,11 +859,21 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         }
 
         @Override
-        public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        public <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
             return empty();
         }
 
         @Override
+        public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmpty(T value) {
             return IntMap.of(value);
         }

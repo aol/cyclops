@@ -4,6 +4,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Semigroups;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableSetTest;
 import cyclops.data.tuple.Tuple2;
@@ -12,6 +13,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -19,6 +21,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -169,5 +172,13 @@ public class BagTest extends BaseImmutableSetTest {
         assertEquals(6,of(1, 2).cycle(3).toListX().size());
         assertEquals(6, of(1, 2, 3).cycle(2).toListX().size());
     }
+    @Test
+    public void lastIndexOf(){
 
+      assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+      assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+      assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+      assertThat(of(1,2,3).lastIndexOf(e-> Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+      assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(2l)));
+    }
 }

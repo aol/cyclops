@@ -188,6 +188,9 @@ public class Vector<T> implements ImmutableList<T>,
     public static <T> Vector<T> fromStream(Stream<T> it){
         return fromIterable(()->it.iterator());
     }
+    public static <T> Vector<T> fromIterator(Iterator<T> it){
+     return fromIterable(()->it);
+    }
     public static <T> Vector<T> fromIterable(Iterable<T> it){
         if(it instanceof Vector){
             return (Vector<T>)it;
@@ -319,8 +322,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public <U, R> Vector<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Vector<R>)ImmutableList.super.zipS(other,zipper);
+    public <U, R> Vector<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (Vector<R>)ImmutableList.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -424,8 +427,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public <U> Vector<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (Vector) ImmutableList.super.zipS(other);
+    public <U> Vector<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (Vector) ImmutableList.super.zipWithStream(other);
     }
 
     @Override
@@ -566,13 +569,8 @@ public class Vector<T> implements ImmutableList<T>,
 
 
     @Override
-    public <R> Vector<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    public Vector<T> prependS(Stream<? extends T> stream) {
-        return (Vector<T>) ImmutableList.super.prependS(stream);
+    public Vector<T> prependStream(Stream<? extends T> stream) {
+        return (Vector<T>) ImmutableList.super.prependStream(stream);
     }
 
     @Override
@@ -591,8 +589,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<T> insertAtS(int pos, Stream<T> stream) {
-        return (Vector<T>) ImmutableList.super.insertAtS(pos,stream);
+    public Vector<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (Vector<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -624,12 +622,22 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     public <R> Vector<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn){
-        return fromIterable(stream().flatMapI(fn));
+        return fromIterable(stream().concatMap(fn));
     }
 
     @Override
-    public <R> Vector<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromIterable(stream().flatMapI(fn));
+    public <R> Vector<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromIterable(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> Vector<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromIterable(stream().mergeMap(fn));
+    }
+
+  @Override
+    public <R> Vector<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromIterable(stream().concatMap(fn));
     }
 
     public Vector<T> set(int pos, T value){
@@ -956,11 +964,21 @@ public class Vector<T> implements ImmutableList<T>,
         }
 
         @Override
-        public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        public <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
             return empty();
         }
 
         @Override
+        public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmpty(T value) {
             return Vector.of(value);
         }

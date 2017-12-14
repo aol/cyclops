@@ -55,9 +55,9 @@ import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
 public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<set,T>,OnEmptySwitch<T, Set<T>> {
 
     public static <T> SetX<T> defer(Supplier<SetX<T>> s){
-        return of(s)
-                .map(Supplier::get)
-                .flatMap(l->l);
+      return of(s)
+             .map(Supplier::get)
+             .concatMap(l->l);
     }
 
     static <T> CompletableSetX<T> completable(){
@@ -65,7 +65,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     static class CompletableSetX<T> implements InvocationHandler {
-        cyclops.async.Future<SetX<T>> future    = cyclops.async.Future.future();
+        Future<SetX<T>> future    = Future.future();
         public boolean complete(Set<T> result){
             return future.complete(SetX.fromIterable(result));
         }
@@ -483,9 +483,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> SetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> SetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (SetX<R>) LazyCollectionX.super.<R> flatMap(mapper);
+        return (SetX<R>)LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1048,18 +1048,18 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default <R> SetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (SetX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> SetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> SetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (SetX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> SetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default SetX<T> prependS(Stream<? extends T> stream) {
-        return (SetX<T>)LazyCollectionX.super.prependS(stream);
+    default SetX<T> prependStream(Stream<? extends T> stream) {
+        return (SetX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1093,8 +1093,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (SetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default SetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (SetX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1185,13 +1185,13 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<set>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<set>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<set>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<set>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1200,8 +1200,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<set>> monadPlus(MonoidK<set> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<set>> monadPlus(MonoidK<set> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1215,12 +1215,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
                 }
 
                 @Override
-                public <T> Maybe<Comonad<set>> comonad() {
+                public <T> Option<Comonad<set>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<set>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<set>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
 
@@ -1464,7 +1464,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
             return SetX.fromIterable(lt).zip(set,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<set,R> flatMap( Higher<set,T> lt, Function<? super T, ? extends  Higher<set,R>> fn){
-            return SetX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(Instances::narrowK));
         }
         private static <T,R> SetX<R> map(SetX<T> lt, Function<? super T, ? extends R> fn){
             return SetX.fromIterable(lt).map(fn);
@@ -1515,7 +1515,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

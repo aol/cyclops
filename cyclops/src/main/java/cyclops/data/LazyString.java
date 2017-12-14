@@ -7,6 +7,7 @@ import com.oath.cyclops.hkt.DataWitness.lazyString;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.function.Function;
@@ -83,11 +84,21 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     @Override
-    public <R> ImmutableList<R> flatMapI(Function<? super Character, ? extends Iterable<? extends R>> fn) {
-        return  string.flatMapI(fn);
+    public <R> ImmutableList<R> concatMap(Function<? super Character, ? extends Iterable<? extends R>> fn) {
+        return  string.concatMap(fn);
     }
 
     @Override
+    public <R> ImmutableList<R> mergeMap(Function<? super Character, ? extends Publisher<? extends R>> fn) {
+      return string.mergeMap(fn);
+    }
+
+    @Override
+    public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super Character, ? extends Publisher<? extends R>> fn) {
+      return string.mergeMap(maxConcurecy,fn);
+    }
+
+  @Override
     public <R> R fold(Function<? super Some<Character>, ? extends R> fn1, Function<? super None<Character>, ? extends R> fn2) {
         return string.fold(fn1,fn2);
     }

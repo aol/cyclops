@@ -97,7 +97,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         Function<String, ReactiveSeq<Long>> nBlanks =
                 word -> {
                     return histoOfLetters.apply(word)
-                            .flatMapI(map -> map.entrySet())
+                            .concatMap(map -> map.entrySet())
                             .map(blank)
                             .scanLeft(0L, (a, b) -> a + b)
                             .takeRight(1);
@@ -113,7 +113,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         Function<String, ReactiveSeq<Integer>> score2 =
                 word ->
                         histoOfLetters.apply(word)
-                                .flatMapI(map -> map.entrySet())
+                                .concatMap(map -> map.entrySet())
                                 .map(letterScore)
                                 .scanLeft(0, (a, b) -> a + b)
                                 .takeRight(1);
@@ -129,7 +129,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
 
         // Stream to be maxed
         Function<String, ReactiveSeq<Integer>> toBeMaxed =
-                word -> first3.apply(word).appendS(last3.apply(word))
+                word -> first3.apply(word).appendStream(last3.apply(word))
                 ;
 
         // Bonus for double letter
@@ -144,7 +144,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         Function<String, ReactiveSeq<Integer>> score3 =
                 word ->
                         score2.apply(word).map(v -> v * 2)
-                                .appendS(bonusForDoubleLetter.apply(word).map(v -> v * 2))
+                                .appendStream(bonusForDoubleLetter.apply(word).map(v -> v * 2))
                                 .appendAll(word.length() == 7 ? 50 : 0)
                                 .scanLeft(0, (a, b) -> a + b)
                                 .takeRight(1);
@@ -171,7 +171,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
         // best key / value pairs
         List<Entry<Integer, List<String>>> finalList2 =
                 buildHistoOnScore.apply(score3)
-                        .flatMapI(map -> map.entrySet())
+                        .concatMap(map -> map.entrySet())
                         .take(3)
                         .scanLeft(new ArrayList<Entry<Integer, List<String>>>(), (list, entry) -> {
                             list.add(entry);

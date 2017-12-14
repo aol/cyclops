@@ -7,10 +7,7 @@ import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.Identity;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
-import cyclops.control.Either;
+import cyclops.control.*;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
@@ -214,12 +211,12 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<tuple1>> monadZero() {
+                public <T, R> Option<MonadZero<tuple1>> monadZero() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<tuple1>> monadPlus() {
+                public <T> Option<MonadPlus<tuple1>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -229,7 +226,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<tuple1>> monadPlus(MonoidK<tuple1> m) {
+                public <T> Option<MonadPlus<tuple1>> monadPlus(MonoidK<tuple1> m) {
                     return Maybe.nothing();
                 }
 
@@ -244,12 +241,12 @@ public class Tuple1<T> implements To<Tuple1<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<tuple1>> comonad() {
+                public <T> Option<Comonad<tuple1>> comonad() {
                     return Maybe.just(Tuple1.Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<tuple1>> unfoldable() {
+                public <T> Option<Unfoldable<tuple1>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

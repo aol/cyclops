@@ -447,7 +447,7 @@ public class Optionals {
 
     BiFunction<Optional<ReactiveSeq<T>>,Optional<T>,Optional<ReactiveSeq<T>>> combineToStream = (acc,next) ->zip(acc,next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Optional<ReactiveSeq<T>>> combineStreams = (a,b)-> zip(a,b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -625,13 +625,13 @@ public class Optionals {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<optional>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<optional>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<optional>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<optional>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -640,8 +640,8 @@ public class Optionals {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -655,12 +655,12 @@ public class Optionals {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<optional>> comonad() {
+                public <T> Option<Comonad<optional>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<optional>> unfoldable() {
+                public <T> Option<Unfoldable<optional>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

@@ -1,5 +1,6 @@
 package com.oath.cyclops.trycatch;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -72,36 +73,67 @@ public class TryTest {
 
 	@Test
 	public void catchExceptonsWithRun(){
-		assertThat(Try.catchExceptions(RuntimeException.class)
-			.run(()-> exceptional2())
+		assertThat(Try.withCatch(()-> exceptional2(),RuntimeException.class)
 			.onFail(System.out::println)
 			.map(i->i+"woo!")
 			.toOptional()
-			.orElse("hello world"),is("nullwoo!"));
+			.orElse("hello world"),is("hello worldwoo!"));
 	}
 
 	@Test
 	public void testTryWithResources(){
 
-		assertThat(Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->new BufferedReader(new FileReader("file.txt")))
-				   .tryWithResources(this::read).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
+		assertThat(Try.withResources(() -> new BufferedReader(new FileReader("file.txt")),
+      this::read,
+      IOException.class,NullPointerException.class, FileNotFoundException.class).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
 
 
 
 
 	}
 
+	@Test
+  public void mapOrCatch(){
+	  IOException local = new IOException();
+	  assertThat(Try.success(10)
+                   .mapOrCatch(i->i+1,IOException.class),equalTo(Try.success(11)));
+    assertThat(Try.success(10)
+              .mapOrCatch(i->{throw local;},IOException.class),equalTo(Try.failure(local)));
+
+  }
+  @Test(expected = RuntimeException.class)
+  public void mapOrCatchEx(){
+    Try.success(10)
+      .mapOrCatch(i->{throw new RuntimeException();});
+    fail("exception expected");
+
+  }
+  @Test
+  public void flatMapOrCatch(){
+    IOException local = new IOException();
+    assertThat(Try.success(10)
+      .flatMapOrCatch(i->Try.success(i+1),IOException.class),equalTo(Try.success(11)));
+    assertThat(Try.success(10)
+      .flatMapOrCatch(i->{throw local;},IOException.class),equalTo(Try.failure(local)));
+
+  }
+  @Test(expected = RuntimeException.class)
+  public void flatMapOrCatchEx(){
+    Try.success(10)
+      .flatMapOrCatch(i->{throw new RuntimeException();});
+    fail("exception expected");
+
+  }
 	public void testMultipleResources(){
 
-		Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->Tuple.tuple(new BufferedReader(new FileReader("file.txt")),new FileReader("hello")))
-				   .tryWithResources(this::read2);
+		Try t2 = Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
+                               ()->new FileReader("hello"),
+				                        this::read2,FileNotFoundException.class,IOException.class);
 
 	}
 
-	private String read2(Tuple2<BufferedReader,FileReader> res) throws IOException{
-		String line = res._1().readLine();
+	private String read2(BufferedReader br,FileReader fr) throws IOException{
+		String line = br.readLine();
 		return null;
 	}
 	private String read(BufferedReader br) throws IOException{

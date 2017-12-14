@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.*;
 
@@ -17,7 +16,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.typeclasses.functor.Functor;

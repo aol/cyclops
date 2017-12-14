@@ -7,7 +7,6 @@ import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
-import cyclops.collections.immutable.*;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
@@ -78,8 +77,8 @@ public class ListXTest extends CollectionXTestsWithNulls {
         ListX<ListX<Integer>> list = ListX.of(1, 2, 3)
                 .coflatMap(s -> s);
 
-        ListX<Integer> stream2 = list.flatMap(s -> s).map(i -> i * 10);
-        ListX<Integer> stream3 = list.flatMap(s -> s).map(i -> i * 100);
+        ListX<Integer> stream2 = list.concatMap(s -> s).map(i -> i * 10);
+        ListX<Integer> stream3 = list.concatMap(s -> s).map(i -> i * 100);
 
         assertThat(stream2,equalTo(ListX.of(10,20,30)));
         assertThat(stream3,equalTo(ListX.of(100,200,300)));

@@ -3,11 +3,15 @@ package cyclops.control;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
+import cyclops.data.Seq;
 import cyclops.data.tuple.*;
 import cyclops.function.Function0;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -45,6 +49,14 @@ public class IO<T> implements To<IO<T>>, Higher<io,T> {
   }
   public T run(){
     return fn.get();
+  }
+
+  public ReactiveSeq<T> async(){
+    return Spouts.async(this);
+  }
+
+  public ReactiveSeq<T> async(Executor e){
+    return Spouts.async(this,e);
   }
 
   public static class Comprehensions {
@@ -264,5 +276,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T> {
 
 
   }
+
+
 
 }

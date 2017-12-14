@@ -1,5 +1,6 @@
 package com.oath.cyclops.types.traversable;
 
+import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
@@ -11,7 +12,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -155,7 +156,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      */
     default <R, X extends Throwable> Try<R, X> foldTry(Function<? super IterableX<T>,? extends R> fn,
                                                        final Class<X>... classes){
-        return Try.catchExceptions(classes).tryThis(()->fn.apply(this));
+        return Try.withCatch(()->fn.apply(this),classes);
     }
 
     default Function1<Long,T> asFunction(){
@@ -612,8 +613,8 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
 
 
     @Override
-    default IterableX<T> prependS(Stream<? extends T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.prependS(stream);
+    default IterableX<T> prependStream(Stream<? extends T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.prependStream(stream);
     }
 
     default IterableX<T> plusAll(Iterable<? extends T> list){
@@ -683,10 +684,10 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.deleteBetween(start,end);
     }
 
-    //@TODO remove / consolidate
+
     @Override
-    default IterableX<T> insertAtS(int pos, Stream<T> stream) {
-        return (IterableX<T>)ExtendedTraversable.super.insertAtS(pos,stream);
+    default IterableX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (IterableX<T>)ExtendedTraversable.super.insertStreamAt(pos,stream);
     }
 
     //@TODO
@@ -730,8 +731,15 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      * @return A toX containing the flattened results of the transformation function
      */
     default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper){
-        return stream().flatMapI(mapper);
+        return stream().concatMap(mapper);
     }
+    default <R> IterableX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
+      return stream().mergeMap(fn);
+    }
+    default <R> IterableX<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn){
+      return stream().mergeMap(maxConcurecy,fn);
+    }
+
     default IterableX<T> insertAt(int i, T value){
         IterableX<T> front = take(i);
         IterableX<T> back = drop(i);

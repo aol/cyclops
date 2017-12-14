@@ -1,8 +1,6 @@
 package cyclops.streams.push;
 
 
-import cyclops.async.LazyReact;
-import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.reactive.ReactiveSeq;
@@ -22,7 +20,7 @@ public class ReactiveStreamsTest {
     public void subscribeToEmpty(){
 
         Spouts.from(ReactiveSeq.<Integer>empty()).forEach(System.out::println);
-        
+
     }
     @Test
     public void subscribeToFlux(){
@@ -90,16 +88,7 @@ public class ReactiveStreamsTest {
         assertThat( Streamable.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
-    @Test
-    public void fromFluxLazyFutureStream(){
-        assertThat( new LazyReact().fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
-                Arrays.asList(1,2,3)));
-    }
-    @Test
-    public void fromFluxSimpleReactStream(){
-        assertThat( new SimpleReact().fromPublisher(Flux.just(1,2,3)).block(),equalTo(
-                Arrays.asList(1,2,3)));
-    }
+
 	@Test
 	public void publishAndSubscribe(){
 

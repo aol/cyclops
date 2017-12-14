@@ -4,7 +4,6 @@ import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.Zippable;
 
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
@@ -13,7 +12,7 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
@@ -23,13 +22,10 @@ import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.function.AnyMFunction2;
 import cyclops.monads.transformers.ListT;
 import cyclops.monads.transformers.FutureT;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -114,7 +110,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
-    <R> AnyM2<W,T2,R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> AnyM2<W,T2,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
     <R> AnyM2<W,T2,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
     <R> AnyM2<W,T2,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
     default <R> AnyM2<W,T2,R> flatMapA(Function<? super T, ? extends AnyM<W, ? extends R>> fn){
@@ -328,7 +324,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return nested.flatMapA(Function.identity());
     }
     static <W extends WitnessType<W>,T1,T2> AnyM2<W,T2,T1> flattenI(AnyM2<W, T2,? extends Iterable<T1>> nested){
-        return nested.flatMapI(Function.identity());
+        return nested.concatMap(Function.identity());
     }
 
 

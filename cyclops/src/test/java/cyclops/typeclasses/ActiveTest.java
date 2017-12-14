@@ -7,7 +7,7 @@ import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.list;
-import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
@@ -135,8 +135,8 @@ public class ActiveTest {
     @Test
     public void traverse(){
 
-        Higher<maybe, Higher<list, Integer>> res = active
-                .<maybe,Integer>flatTraverse(applicative(), t->Maybe.just(ListX.of(t*2)));
+        Higher<option, Higher<list, Integer>> res = active
+                .<option,Integer>flatTraverse(applicative(), t->Maybe.just(ListX.of(t*2)));
 
         Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)
                                        .map(ListX::narrowK);

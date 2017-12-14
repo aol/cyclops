@@ -46,8 +46,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
     @Override
-    default Traversable<T> prependS(Stream<? extends T> stream){
-        return unitAnyM(transformerStream().map(s -> s.prependS(stream)));
+    default Traversable<T> prependStream(Stream<? extends T> stream){
+        return unitAnyM(transformerStream().map(s -> s.prependStream(stream)));
     }
 
     @Override
@@ -81,8 +81,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default Traversable<T> insertAtS(int pos, Stream<T> stream){
-        return unitAnyM(transformerStream().map(s -> s.insertAtS(pos,stream)));
+    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
+        return unitAnyM(transformerStream().map(s -> s.insertStreamAt(pos,stream)));
     }
 
     /* (non-Javadoc)

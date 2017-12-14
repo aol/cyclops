@@ -2,7 +2,6 @@
 package cyclops.control;
 
 
-import java.io.Closeable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +13,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.matching.Sealed2;
@@ -123,11 +121,11 @@ throw new IOException();
  * <pre>
  * {@code
  *
- *   Try.catchExceptions(FileNotFoundException.class,IOException.class)
-.init(()->new BufferedReader(new FileReader("file.txt")))
-.tryWithResources(this::read)
-.map(this::processData)
-.recover(e->"public);
+ *   Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
+                        this::read,
+                        FileNotFoundException.class,IOException.class)
+          .map(this::processData)
+          .recover(e->"public);
  *
  * }
  * </pre>
@@ -775,8 +773,24 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
   @Override
   public <R> Try<R, X> map(Function<? super T, ? extends R> fn){
-    return new Try<>(xor.flatMap(i->safeApply(i, fn)),classes);
+    return new Try<>(xor.flatMap(i->safeApply(i, fn,classes)),classes);
   }
+
+
+  /**
+   * Perform a mapping operation that may catch the supplied Exception types
+   * The supplied Exception types are only applied during this map operation
+   *
+   * @param fn mapping function
+   * @param classes exception types to catch
+   * @param <R> return type of mapping function
+   * @return Try with result or caught exception
+   */
+  public <R> Try<R,X> mapOrCatch(CheckedFunction<? super T, ? extends R,X> fn, Class<? extends X>... classes){
+    return new Try<R,X>(xor.flatMap(i ->safeApply(i, fn.asFunction(),classes)),this.classes);
+  }
+
+
   public <XR extends Throwable> Try<T, XR> mapFailure(Function<? super X, ? extends XR> fn){
     return new Try<>(xor.mapLeft(i->fn.apply(i)),new Class[0]);
   }
@@ -786,8 +800,22 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    * @return Try returned from FlatMap fn
    */
   public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<? extends R,X>> fn){
-    return new Try<>(xor.flatMap(i->safeApplyM(i, fn).toEither()),classes);
+    return new Try<>(xor.flatMap(i->safeApplyM(i, fn,classes).toEither()),classes);
   }
+
+  /**
+   * Perform a flatMapping operation that may catch the supplied Exception types
+   * The supplied Exception types are only applied during this map operation
+   *
+   * @param fn flatMapping function
+   * @param classes exception types to catch
+   * @param <R> return type of mapping function
+   * @return Try with result or caught exception
+   */
+  public <R> Try<R, X> flatMapOrCatch(CheckedFunction<? super T, ? extends Try<? extends R,X>,X> fn,Class<? extends X>... classes){
+    return new Try<>(xor.flatMap(i->safeApplyM(i, fn.asFunction(),classes).toEither()),classes);
+  }
+
 
   /**
    * @param p Convert a Success to a Failure (with a null value for Exception) if predicate does not hold.
@@ -798,7 +826,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
   public Maybe<T> filter(Predicate<? super T> p){
     return xor.filter(p).toMaybe();
   }
-
+  public Try<T, X> filter(Predicate<? super T> test, Function<? super T, ? extends X> errorGenerator){
+    return flatMap(e->test.test(e) ? Try.success(e) : Try.failure(errorGenerator.apply(e)));
+  }
   /**
    * @param consumer Accept Exception if present (Failure)
    * @return this
@@ -844,6 +874,88 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }),classes);
   }
 
+  public static <T extends AutoCloseable,R,X extends Throwable> Try<R, X> withResources(CheckedSupplier<T,X> rs,
+                                                                                       CheckedFunction<? super T,? extends R,X> fn,Class<? extends X>... classes)
+  {
+   try{
+      T in = ExceptionSoftener.softenSupplier(() -> rs.get()).get();
+      try {
+        return Try.success(fn.apply(in));
+      } catch (Throwable t) {
+        return handleError(t, classes);
+      } finally {
+        ExceptionSoftener.softenRunnable(() -> in.close()).run();
+
+      }
+    } catch (Throwable e) {
+     return handleError(e, classes);
+    }
+  }
+
+  private static <R, X extends Throwable> Try<R, X> handleError(Throwable t, Class<? extends X>[] classes) {
+    Either<Throwable, ? extends R> x = Either.left(orThrow(Stream.of(classes)
+        .filter(c -> c.isAssignableFrom(t.getClass()))
+        .map(c -> t)
+        .findFirst(),
+      t));
+    return (Try<R, X>) Try.fromEither(x);
+  }
+
+  public static <T1 extends AutoCloseable,T2 extends AutoCloseable,R,X extends Throwable> Try<R, X> withResources(CheckedSupplier<T1,X> rs1,
+                                                                            CheckedSupplier<T2,X> rs2,
+                                                                                                                  CheckedBiFunction<? super T1,? super T2,? extends R,X> fn,
+                                                                                                                  Class<? extends X>... classes){
+    T1 t1 = ExceptionSoftener.softenSupplier(()->rs1.get()).get();
+    T2 t2 = ExceptionSoftener.softenSupplier(()->rs2.get()).get();
+    try {
+      try {
+        return Try.success(fn.apply(t1, t2));
+      } catch (Throwable t) {
+        return handleError(t, (Class<? extends X>[]) classes);
+      } finally {
+        ExceptionSoftener.softenRunnable(() -> t1.close()).run();
+        ExceptionSoftener.softenRunnable(() -> t2.close()).run();
+      }
+    }catch(Throwable e){
+      return handleError(e, (Class<? extends X>[]) classes);
+    }
+  }
+  public static <T extends AutoCloseable,R> Try<R, Throwable> withResources(cyclops.function.checked.CheckedSupplier<T> rs,
+                                                                            cyclops.function.checked.CheckedFunction<? super T,? extends R> fn){
+    try {
+      T in = ExceptionSoftener.softenSupplier(rs).get();
+      try {
+        return Try.success(fn.apply(in));
+      } catch (Throwable t) {
+        return Try.failure(t);
+      } finally {
+        ExceptionSoftener.softenRunnable(() -> in.close()).run();
+
+      }
+    }catch(Throwable e){
+      return Try.failure(e);
+    }
+  }
+  public static <T1 extends AutoCloseable,T2 extends AutoCloseable,R> Try<R, Throwable> withResources(cyclops.function.checked.CheckedSupplier<T1> rs1,
+                                                                                                      cyclops.function.checked.CheckedSupplier<T2> rs2,
+                                                                                                      cyclops.function.checked.CheckedBiFunction<? super T1,? super T2,? extends R> fn){
+    try {
+
+
+      T1 t1 = ExceptionSoftener.softenSupplier(rs1).get();
+      T2 t2 = ExceptionSoftener.softenSupplier(rs2).get();
+      try {
+        return Try.success(fn.apply(t1, t2));
+      } catch (Throwable t) {
+        return Try.failure(t);
+      } finally {
+        ExceptionSoftener.softenRunnable(() -> t1.close()).run();
+        ExceptionSoftener.softenRunnable(() -> t2.close()).run();
+      }
+    }catch(Throwable e){
+      return Try.failure(e);
+    }
+  }
   /**
    * Recover if exception is of specified type
    * @param t Type of exception to fold against
@@ -1019,18 +1131,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
   }
 
-  /**
-   * Fluent step builder for Try / Catch / Finally and Try with resources equivalents.
-   * Start with Exception types to catch.
-   *
-   * @param classes Exception types to catch
-   * @return Next step in the fluent Step Builder
-   */
-  @SafeVarargs
-  public static <X extends Throwable> Init<X> catchExceptions(final Class<? extends X>... classes) {
-    return new MyInit<X>(
-      (Class[]) classes);
-  }
 
   @Override
   public <R> R fold(Function<? super T, ? extends R> fn1, Function<? super X, ? extends R> fn2) {
@@ -1042,221 +1142,23 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     return xor.visit(present,absent);
   }
 
-  @AllArgsConstructor
-  static class MyInit<X extends Throwable> implements Init<X> {
-    private final Class<X>[] classes;
 
-    /*
-     *	@param input
-     *	@return
-     * @see com.oath.cyclops.trycatch.Try.Init#init(com.oath.cyclops.trycatch.Try.CheckedSupplier)
-     */
-    @Override
-    public <V> TryCatch<V, X> init(final CheckedSupplier<V, X> input) {
-      return new MyTryCatch(
-        classes, input);
-    }
 
-    @Override
-    public Try<Void, X> run(final CheckedRunnable<X> input) {
-      return runWithCatch(input, classes);
-    }
-
-    @Override
-    public <V> Try<V, X> tryThis(final CheckedSupplier<V, X> input) {
-      return withCatch(input, classes);
-    }
-
-  }
-
-  @AllArgsConstructor
-  static class MyTryCatch<V, X extends Throwable> implements TryCatch<V, X> {
-    private final Class<X>[] classes;
-    private final CheckedSupplier<V, X> inputSupplier;
-
-    @Override
-    public <T> AndFinally<T, V, X> tryThis(final CheckedFunction<V, T, X> catchBlock) {
-      return new MyFinallyBlock<>(
-        classes, inputSupplier, catchBlock);
-    }
-
-    @Override
-    public <T> Try<T, X> tryWithResources(final CheckedFunction<V, T, X> catchBlock) {
-      return new MyFinallyBlock<>(
-        classes, inputSupplier, catchBlock).close();
-    }
-
-  }
-
-  @AllArgsConstructor
-  public static class MyFinallyBlock<T, V, X extends Throwable> implements AndFinally<T, V, X> {
-    private final Class<X>[] classes;
-    private final CheckedSupplier<V, X> inputSupplier;
-    private final CheckedFunction<V, T, X> catchBlock;
-
-    private void invokeClose(final Object in) {
-      if (in instanceof Closeable)
-        invokeCloseableClose((Closeable) in);
-      else if (in instanceof AutoCloseable)
-        invokeAutocloseableClose((AutoCloseable) in);
-      else if (in instanceof Iterable)
-        invokeClose((Iterable) in);
-      else
-        _invokeClose(in);
-    }
-
-    private void invokeClose(final Iterable in) {
-      for (final Object next : in)
-        invokeClose(next);
-
-    }
-
-    private void invokeCloseableClose(final Closeable in) {
-
-      Try.runWithCatch(() -> in.close());
-
-    }
-
-    private void invokeAutocloseableClose(final AutoCloseable in) {
-
-      Try.runWithCatch(() -> in.close());
-
-    }
-
-    private void _invokeClose(final Object in) {
-
-      Try.withCatch(() -> in.getClass()
-        .getMethod("close"))
-        .filter(m -> m != null)
-        .flatMap(m -> Try.withCatch(() -> m.invoke(in))
-          .filter(o -> o != null));
-
-    }
-
-    @Override
-    public Try<T, X> close() {
-
-      return andFinally(in -> {
-        invokeClose(in);
-      });
-    }
-
-    @Override
-    public Try<T, X> andFinally(final CheckedConsumer<V, X> finallyBlock) {
-
-      final Try<V, X> input = Try.withCatch(() -> inputSupplier.get(), classes);
-      Try<T, X> result = null;
-      try {
-        result = input.flatMap(in -> withCatch(() -> catchBlock.apply(in), classes));
-
-      } finally {
-        final Try finalResult = result.flatMap(i -> Try.runWithCatch(() -> finallyBlock.accept(inputSupplier.get()), classes));
-        if (finalResult.isFailure())
-          return finalResult;
-
-      }
-      return result;
-    }
-
-  }
-
-  public static interface Init<X extends Throwable> {
-    /**
-     * Initialise a try / catch / finally block
-     * Define the variables to be used within the block.
-     * A Tuple or Iterable can be returned to defined multiple values.
-     * Closeables (lazy individually or within an iterable) will be closed
-     * via tryWithResources.
-     *
-     * <pre>
-     *
-     * Try.catchExceptions(FileNotFoundException.class,IOException.class)
-     *		   .init(()-&gt;new BufferedReader(new FileReader(&quot;file.txt&quot;)))
-     *		   .tryWithResources(this::read);
-     *
-     * </pre>
-     *
-     * or
-     *
-     * <pre>
-     *
-     * Try t2 = Try.catchExceptions(FileNotFoundException.class,IOException.class)
-     *		   .init(()-&gt;Tuple.tuple(new BufferedReader(new FileReader(&quot;file.txt&quot;)),new FileReader(&quot;hello&quot;)))
-     *		   .tryWithResources(this::read2);
-     *
-     * private String read2(Tuple2&lt;BufferedReader,FileReader&gt; res) throws IOException{
-     * String line = res._1.readLine();
-     *
-     * </pre>
-     *
-     * @param input Supplier that provides input values to be used in the Try / Catch
-     * @return
-     */
-    <V> TryCatch<V, X> init(CheckedSupplier<V, X> input);
-
-    /**
-     * Run the supplied CheckedRunnable and trap any Exceptions
-     * Return type is Void
-     *
-     * @param input CheckedRunnable
-     * @return Try that traps any errors (no return type)
-     */
-    Try<Void, X> run(CheckedRunnable<X> input);
-
-    /**
-     * Run the supplied CheckedSupplier and trap the return value or an Exception
-     * inside a Try
-     *
-     * @param input CheckedSupplier to run
-     * @return new Try
-     */
-    <V> Try<V, X> tryThis(CheckedSupplier<V, X> input);
-  }
-
-  public static interface TryCatch<V, X extends Throwable> {
-
-    /**
-     * Will execute and run the CheckedFunction supplied and will automatically
-     * safely close any Closeables supplied during init (lazy individually or inside an iterable)
-     *
-     * @param catchBlock CheckedFunction to Try
-     * @return New Try capturing return data or Exception
-     */
-    <T> Try<T, X> tryWithResources(CheckedFunction<V, T, X> catchBlock);
-
-    /**
-     * Build another stage in try / catch / finally block
-     * This defines the CheckedFunction that will be run in the main body of the catch block
-     * Next step can define the finally block
-     *
-     * @param catchBlock To Try
-     * @return Next stage in the fluent step builder (finally block)
-     */
-    <T> AndFinally<T, V, X> tryThis(CheckedFunction<V, T, X> catchBlock);
-
-  }
-
-  public static interface AndFinally<T, V, X extends Throwable> {
-
-    /**
-     * Define the finally block and execute the Try
-     *
-     * @param finallyBlock to execute
-     * @return New Try capturing return data or Exception
-     */
-    Try<T, X> andFinally(CheckedConsumer<V, X> finallyBlock);
-
-    /**
-     * Create a finally block that auto-closes any Closeables specified during init
-     *  including those inside an Iterable
-     *
-     * @return New Try capturing return data or Exception
-     */
-    Try<T, X> close();
-  }
 
   public static interface CheckedFunction<T, R, X extends Throwable> {
     public R apply(T t) throws X;
+    default Function<T,R> asFunction(){
+      return i->{
+        try{
+          return apply(i);
+        }catch(Throwable t){
+          throw ExceptionSoftener.throwSoftenedException(t);
+        }
+      };
+    }
+  }
+  public static interface CheckedBiFunction<T1, T2, R, X extends Throwable> {
+    public R apply(T1 t,T2 t2) throws X;
   }
 
   public static interface CheckedSupplier<T, X extends Throwable> {
@@ -1283,20 +1185,15 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-  private <R> Try<? extends R,X> safeApplyM(T in,final Function<? super T,? extends Try<? extends R,X>> s) {
+  private <R> Try<? extends R,X> safeApplyM(T in,final Function<? super T,? extends Try<? extends R,X>> s,Class<? extends Throwable>[] classes) {
     try {
       return s.apply(in);
     } catch (final Throwable t) {
-      Either<Throwable, ? extends R> x = Either.left(orThrow(Stream.of(classes)
-          .filter(c -> c.isAssignableFrom(t.getClass()))
-          .map(c -> t)
-          .findFirst(),
-        t));
-      return (Try<R,X>)Try.fromEither(x);
+      return handleError(t, (Class<? extends X>[]) classes);
 
     }
   }
-  private <R> Either<X,R> safeApply(T in, final Function<? super T,? extends R> s) {
+  private <R> Either<X,R> safeApply(T in, final Function<? super T,? extends R> s,Class<? extends Throwable>[] classes) {
     try {
       return Either.right(s.apply(in));
     } catch (final Throwable t) {
@@ -1310,7 +1207,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
   }
 
 
-  private Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
+  private static Throwable orThrow(final Optional<Throwable> findFirst, final Throwable t) {
     if (findFirst.isPresent())
       return findFirst.get();
     throw ExceptionSoftener.throwSoftenedException(t);
@@ -1385,12 +1282,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T, R> Maybe<MonadZero<Higher<tryType, L>>> monadZero() {
+        public <T, R> Option<MonadZero<Higher<tryType, L>>> monadZero() {
           return Maybe.nothing();
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus() {
+        public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus() {
           return Maybe.nothing();
         }
 
@@ -1400,7 +1297,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
+        public <T> Option<MonadPlus<Higher<tryType, L>>> monadPlus(MonoidK<Higher<tryType, L>> m) {
           return Maybe.nothing();
         }
 
@@ -1416,12 +1313,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         }
 
         @Override
-        public <T> Maybe<Comonad<Higher<tryType, L>>> comonad() {
+        public <T> Option<Comonad<Higher<tryType, L>>> comonad() {
           return Maybe.nothing();
         }
 
         @Override
-        public <T> Maybe<Unfoldable<Higher<tryType, L>>> unfoldable() {
+        public <T> Option<Unfoldable<Higher<tryType, L>>> unfoldable() {
           return Maybe.nothing();
         }
       };

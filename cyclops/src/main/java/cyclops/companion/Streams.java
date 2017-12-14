@@ -2184,7 +2184,7 @@ public class Streams {
      * </pre>
      *
      */
-    public final static <T, R> Stream<R> flatMapIterable(final Stream<T> stream, final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final static <T, R> Stream<R> concatMapterable(final Stream<T> stream, final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return stream.flatMap(fn.andThen(c -> stream(c)));
 
     }
@@ -2871,13 +2871,13 @@ public class Streams {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<stream>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<stream>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<stream>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<stream>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -2886,8 +2886,8 @@ public class Streams {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<stream>> monadPlus(MonoidK<stream> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<stream>> monadPlus(MonoidK<stream> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -2901,12 +2901,12 @@ public class Streams {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<stream>> comonad() {
+                public <T> Option<Comonad<stream>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<DataWitness.stream>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<stream>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }

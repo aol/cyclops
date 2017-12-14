@@ -2,11 +2,13 @@ package cyclops.data;
 
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 import org.junit.Test;
 
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -86,4 +88,14 @@ public class TrieSetTest extends BaseImmutableSetTest{
 
 
     }
+  @Test
+  public void lastIndexOf(){
+
+    assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+    assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+    assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+    assertThat(of(1,2,3).lastIndexOf(e-> Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+    assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),
+      equalTo(of(1,2,3,2).indexOf(e->Objects.equals(2,e))));
+  }
 }

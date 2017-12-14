@@ -5,8 +5,6 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Eval.CompletableEval;
@@ -273,9 +271,6 @@ public class CompletableEvalTest {
 		assertThat(just.mkString(),equalTo("CompletableEval[10]"));
 		assertThat(none.mkString(),equalTo("CompletableEval[]"));
 	}
-	LazyReact react = new LazyReact();
-
-
 
 
 	@Test

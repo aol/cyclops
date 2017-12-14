@@ -8,6 +8,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
@@ -374,8 +375,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default <U, R> Seq<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Seq<R>)ImmutableList.super.zipS(other,zipper);
+    default <U, R> Seq<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (Seq<R>)ImmutableList.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -479,8 +480,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default <U> Seq<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (Seq) ImmutableList.super.zipS(other);
+    default <U> Seq<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (Seq) ImmutableList.super.zipWithStream(other);
     }
 
     @Override
@@ -633,16 +634,18 @@ public interface Seq<T> extends ImmutableList<T>,
 
     @Override
     Seq<T> onEmptyGet(Supplier<? extends T> supplier);
-
+    @Override
+    <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
     @Override
-    default <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
+    <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
 
     @Override
-    default Seq<T> prependS(Stream<? extends T> stream) {
-        return (Seq<T>) ImmutableList.super.prependS(stream);
+    <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
+  @Override
+    default Seq<T> prependStream(Stream<? extends T> stream) {
+        return (Seq<T>) ImmutableList.super.prependStream(stream);
     }
 
     @Override
@@ -661,8 +664,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<T> insertAtS(int pos, Stream<T> stream) {
-        return (Seq<T>) ImmutableList.super.insertAtS(pos,stream);
+    default Seq<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (Seq<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -703,21 +706,12 @@ public interface Seq<T> extends ImmutableList<T>,
             return l;
         });
     }
-    default <R> Seq<R> map(Function<? super T, ? extends R> fn) {
-        return foldRight(empty(), (a, l) -> l.prepend(fn.apply(a)));
-    }
+    <R> Seq<R> map(Function<? super T, ? extends R> fn);
+
     default <R> Seq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
-         return foldRight(empty(), (a, l) -> {
-             Seq<R> b = narrow(fn.apply(a).imSeq());
-             return l.prependAll(b);
-         });
+         return concatMap(fn);
     }
-    default <R> Seq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return foldRight(empty(), (a, l) -> {
-            Seq<R> b = narrow(fromIterable(fn.apply(a)));
-            return b.prependAll(l);
-        });
-    }
+
 
     static <T> Seq<T> narrow(Seq<? extends T> list){
         return (Seq<T>)list;
@@ -828,7 +822,14 @@ public interface Seq<T> extends ImmutableList<T>,
             }
             return new Step().loop(this,i-> Trampoline.done(i)).result();
         }
-
+        @Override
+        public <R> Seq<R> map(Function<? super T, ? extends R> fn) {
+          Seq<R> res = empty();
+          for (T t : this) {
+            res = res.prepend(fn.apply(t));
+          }
+          return res.reverse();
+        }
         @Override
         public ImmutableList<T> tail() {
             return tail;
@@ -958,6 +959,27 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
+        public <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+          Seq<R> res = empty();
+          for (T t : this) {
+            for(R r : mapper.apply(t)) {
+              res = res.prepend(r);
+            }
+          }
+          return res.reverse();
+        }
+
+      @Override
+      public <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromStream(stream().mergeMap(fn));
+      }
+
+      @Override
+      public <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return fromStream(stream().mergeMap(maxConcurecy,fn));
+      }
+
+      @Override
         public Cons<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return this;
         }
@@ -988,6 +1010,10 @@ public interface Seq<T> extends ImmutableList<T>,
             return Seq.of(value);
         }
 
+        @Override
+        public <R> Seq<R> map(Function<? super T, ? extends R> fn) {
+          return empty();
+        }
 
         @Override
         public Seq<T> onEmptyGet(Supplier<? extends T> supplier) {
@@ -995,6 +1021,21 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
+        public <R> Seq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+          return empty();
+        }
+
+        @Override
+        public <R> Seq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+        @Override
+        public <R> Seq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+          return empty();
+        }
+
+      @Override
         public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
             return supplier.get();
         }

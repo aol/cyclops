@@ -6,7 +6,7 @@ import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 import cyclops.data.BankersQueue;
 import cyclops.typeclasses.*;
@@ -61,6 +61,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     PersistentQueueX<T> lazy();
     PersistentQueueX<T> eager();
 
+    public static <T> PersistentQueueX<T> defer(Supplier<PersistentQueueX<T>> s){
+      return of(s)
+                .map(Supplier::get)
+                .concatMap(l->l);
+    }
     static <T> CompletablePersistentQueueX<T> completable(){
         return new CompletablePersistentQueueX<>();
     }
@@ -244,12 +249,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     public static <T> PersistentQueueX<T> of(final T... values) {
-        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPQueue(),Evaluation.LAZY);
+        return new LazyPQueueX<>(null,ReactiveSeq.of(values),Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> empty() {
         return new LazyPQueueX<>(
-                                 BankersQueue.empty(),null,Reducers.toPQueue(),Evaluation.LAZY);
+                                 BankersQueue.empty(),null,Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> singleton(final T value) {
@@ -285,7 +290,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * @return
      */
     public static <T> PersistentQueueX<T> persistentQueueX(ReactiveSeq<T> stream) {
-        return new LazyPQueueX<>(null,stream,Reducers.toPQueue(),Evaluation.LAZY);
+        return new LazyPQueueX<>(null,stream,Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
     public static <T> PersistentQueueX<T> fromIterable(final Iterable<T> iterable) {
@@ -293,12 +298,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return (PersistentQueueX) iterable;
         if (iterable instanceof PersistentQueue)
             return new LazyPQueueX<>(
-                                     (PersistentQueue) iterable,null,Reducers.toPQueue(),Evaluation.LAZY);
+                                     (PersistentQueue) iterable,null,Reducers.toPersistentQueue(),Evaluation.LAZY);
 
 
         return new LazyPQueueX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPQueue(),Evaluation.LAZY);
+                Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
 
@@ -492,7 +497,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
    // @Override
     default <T> Reducer<PersistentQueue<T>,T> monoid() {
-        return Reducers.toPQueue();
+        return Reducers.toPersistentQueue();
     }
 
     /*
@@ -573,8 +578,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * flatMap(java.util.function.Function)
      */
     @Override
-    default <R> PersistentQueueX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentQueueX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> PersistentQueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /*
@@ -1332,13 +1337,13 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<persistentQueueX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<persistentQueueX>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<persistentQueueX>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1347,8 +1352,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentQueueX>> monadPlus(MonoidK<persistentQueueX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<persistentQueueX>> monadPlus(MonoidK<persistentQueueX> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1362,12 +1367,12 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<persistentQueueX>> comonad() {
+                public <T> Option<Comonad<persistentQueueX>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<persistentQueueX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<persistentQueueX>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }
@@ -1612,7 +1617,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
             return PersistentQueueX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
         private static <T,R> Higher<persistentQueueX,R> flatMap(Higher<persistentQueueX,T> lt, Function<? super T, ? extends  Higher<persistentQueueX,R>> fn){
-            return PersistentQueueX.fromIterable(PersistentQueueX.narrowK(lt)).flatMap(fn.andThen(PersistentQueueX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(PersistentQueueX::narrowK));
         }
         private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);

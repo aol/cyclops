@@ -3,18 +3,12 @@ package com.oath.cyclops.types;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Try;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import cyclops.function.Monoid;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import cyclops.function.Curry;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.data.tuple.Tuple;
 import org.reactivestreams.Publisher;
 
 import java.util.NoSuchElementException;
@@ -40,7 +34,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     }
 
     default <X extends Throwable,R> Try<R,X> mapTry(Function<? super T,? extends R> fn, Class<X>... exceptionTypes){
-        Try<? extends MonadicValue<? extends R>, X> x = Try.catchExceptions(exceptionTypes).tryThis(() -> map(fn));
+        Try<? extends MonadicValue<? extends R>, X> x = Try.withCatch(() -> map(fn),exceptionTypes);
         return x.flatMap(a->a.toTry(exceptionTypes));
     }
 
@@ -378,7 +372,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      *
      * <pre>
      * {@code
-     *   Maybe.just(1).map(i->i+2).flatMapI(i->Arrays.asList(()->i*3,20);
+     *   Maybe.just(1).map(i->i+2).concatMap(i->Arrays.asList(()->i*3,20);
      *   //Maybe[9]
      *
      * }</pre>
@@ -387,7 +381,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param mapper  transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> MonadicValue<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return this.flatMap(a -> {
             return Maybe.fromIterable(mapper.apply(a));
         });

@@ -158,7 +158,7 @@ public class Zipper<T> implements Iterable<T>,
     }
 
     public ReactiveSeq<T> stream(){
-        return left.stream().appendAll(point).appendS(right.stream());
+        return left.stream().appendAll(point).appendStream(right.stream());
     }
 
     @Override

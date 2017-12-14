@@ -976,7 +976,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
-     *                                   .prependS(of(100, 200, 300))
+     *                                   .prependStream(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *
@@ -988,9 +988,8 @@ public interface Traversable<T> extends Publisher<T>,
      *            to Prepend
      * @return ReactiveSeq with Stream prepended
      */
-    //@TODO - make sure equivalent append operators
-    default Traversable<T> prependS(Stream<? extends T> stream){
-        return traversable().prependS(stream);
+    default Traversable<T> prependStream(Stream<? extends T> stream){
+        return traversable().prependStream(stream);
     }
 
     /**
@@ -1120,8 +1119,8 @@ public interface Traversable<T> extends Publisher<T>,
      *            to insert
      * @return newly conjoined Traversable
      */
-    default Traversable<T> insertAtS(int pos, Stream<T> stream){
-        return traversable().insertAtS(pos,stream);
+    default Traversable<T> insertStreamAt(int pos, Stream<T> stream){
+        return traversable().insertStreamAt(pos,stream);
     }
 
     /**

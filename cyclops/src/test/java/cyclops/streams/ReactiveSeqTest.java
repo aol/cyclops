@@ -9,7 +9,7 @@ import cyclops.companion.Semigroups;
 import cyclops.collections.mutable.ListX;
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -53,10 +53,10 @@ public class ReactiveSeqTest {
     public void prependAppend(){
 
         assertThat(of(1)
-                .prependS(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
+                .prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
                 .prependAll(7,8)
                 .insertAt(4,9).deleteBetween(1,2)
-                .insertAtS(5,Stream.of(11,12)).stream().count(),equalTo(10L));
+                .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
     public void testRemoveAt(){

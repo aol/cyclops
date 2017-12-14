@@ -99,21 +99,22 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
 
     <R> ImmutableSet<R> map(Function<? super T, ? extends R> fn);
     <R> ImmutableSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn);
-    <R> ImmutableSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> ImmutableSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
     @Override
-    default <R> ImmutableSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
+    <R> ImmutableSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
 
-    ImmutableSet<T> filter(Predicate<? super T> predicate);
+    @Override
+    <R> ImmutableSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
+  ImmutableSet<T> filter(Predicate<? super T> predicate);
 
     default <R1, R2, R3, R> ImmutableSet<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1,
                                                      BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
                                                      Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3,
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -134,7 +135,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
                                                      Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             ReactiveSeq<R1> a = ReactiveSeq.fromIterable(iterable1.apply(in));
             return a.flatMap(ina -> {
@@ -153,7 +154,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
                                                  BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2,
                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -171,7 +172,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
                                                  Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
                                                  Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in -> {
+        return this.concatMap(in -> {
 
             Iterable<R1> a = iterable1.apply(in);
             return ReactiveSeq.fromIterable(a)
@@ -188,7 +189,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     default <R1, R> ImmutableSet<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1,
                                              BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -201,7 +202,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
                                              BiFunction<? super T, ? super R1, Boolean> filterFunction,
                                              BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
-        return this.flatMapI(in-> {
+        return this.concatMap(in-> {
 
             Iterable<? extends R1> b = iterable1.apply(in);
             return ReactiveSeq.fromIterable(b)
@@ -271,7 +272,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().zip(fn, publisher));
     }
 
-    default <U, R> ImmutableSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    default <U, R> ImmutableSet<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         return unitStream(stream().zipWithStream(other,zipper));
     }
 
@@ -373,7 +374,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
-    default <U> ImmutableSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    default <U> ImmutableSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         return unitStream(stream().zipWithStream(other));
     }
 
@@ -549,8 +550,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> prependS(Stream<? extends T> stream) {
-        return unitStream(stream().prependS(stream));
+    default ImmutableSet<T> prependStream(Stream<? extends T> stream) {
+        return unitStream(stream().prependStream(stream));
     }
 
     @Override
@@ -579,8 +580,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> insertAtS(int pos, Stream<T> stream) {
-        return unitStream(stream().insertAtS(pos,stream));
+    default ImmutableSet<T> insertStreamAt(int pos, Stream<T> stream) {
+        return unitStream(stream().insertStreamAt(pos,stream));
     }
 
     @Override

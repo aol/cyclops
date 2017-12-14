@@ -51,7 +51,7 @@ public class FlatMapPublisherTest {
 
         System.out.println("Print out");
         flux(1)
-                .flatMapP(in -> flux(1, 2, 3))
+                .mergeMap(in -> flux(1, 2, 3))
                 .forEach(System.out::println);
         System.out.println("Print out finished");
 
@@ -60,7 +60,7 @@ public class FlatMapPublisherTest {
             System.out.println("************Iteration " + i);
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
-                            .flatMapP(in -> flux(1, 2, 3))
+                            .mergeMap(in -> flux(1, 2, 3))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(1, 2, 3)));
         }
@@ -77,7 +77,7 @@ public class FlatMapPublisherTest {
 
 
             Assert.assertThat(flux(1)
-                            .flatMapP(2,in -> flux(10, 20, 30))
+                            .mergeMap(2, in -> flux(10, 20, 30))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(10, 20, 30)));
         }
@@ -90,7 +90,7 @@ public class FlatMapPublisherTest {
         for(int i=0;i<100_000;i++){
             System.out.println("Iteration " + i);
             List<Integer> list = flux(1)
-                    .flatMapP(in -> of(1, 2, 3))
+                    .mergeMap(in -> of(1, 2, 3))
                     .toList();
             System.out.println("List is " + list);
             Assert.assertThat(list,
@@ -106,7 +106,7 @@ public class FlatMapPublisherTest {
         //		.flatMapP(i->Maybe.of(i)).printOut();
 
         Assert.assertThat(of(1,2,3)
-                .flatMapP(i-> Maybe.of(i))
+                .mergeMap(i-> Maybe.of(i))
                 .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
@@ -114,13 +114,13 @@ public class FlatMapPublisherTest {
     @Test
     public void flatMapP(){
         assertThat(Spouts.of(1,2,3)
-                .flatMapP(i->Spouts.of(i))
+                .mergeMap(i->Spouts.of(i))
                 .toList(),equalTo(ListX.of(1,2,3)));
     }
     @Test
     public void flatMapP2(){
         MatcherAssert.assertThat(Spouts.of(1,2,3)
-                .flatMapP(i->Spouts.of(1,i))
+                .mergeMap(i->Spouts.of(1,i))
                 .toList(),Matchers.hasItems(1,1,1,2,1,3));
     }
     @Test
@@ -128,7 +128,7 @@ public class FlatMapPublisherTest {
         ListX<Integer> res = Spouts.of(1,2,3)
                                     .map(i->nextAsync())
                                     .grouped(3)
-                                    .flatMapP(l->Spouts.mergeLatest(l))
+                                    .mergeMap(l->Spouts.mergeLatest(l))
                                     .toListX();
 
 
@@ -150,7 +150,7 @@ public class FlatMapPublisherTest {
 
     @Test
     public void flatMapPSanity(){
-       Spouts.of(1,2,3).flatMapP(i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
+       Spouts.of(1,2,3).mergeMap(i->Spouts.of(10,20,30,40,50,60,70,80,90)).printOut();
     }
 
 
@@ -165,7 +165,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  Spouts.of(1,2,3)
-                    .flatMapP(2,i -> nextAsync())
+                    .mergeMap(2, i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -195,7 +195,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
              System.out.println(Spouts.of(1, 2, 3)
-                    .flatMapP(3,i -> nextAsync()).toListX());
+                    .mergeMap(3, i -> nextAsync()).toListX());
 
         }
     }
@@ -210,7 +210,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  Spouts.of(1, 2, 3)
-                    .flatMapP(3,i -> nextAsync())
+                    .mergeMap(3, i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -242,7 +242,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  new ArrayList<>();
             Iterator<Integer> it = Spouts.of(1, 2, 3)
-                    .flatMapP(3, i -> nextAsync())
+                    .mergeMap(3, i -> nextAsync())
                     .iterator();
             while(it.hasNext()){
                 res.add(it.next());
@@ -271,7 +271,7 @@ public class FlatMapPublisherTest {
 
 
             List<Integer> res =  Spouts.range(1,500)
-                                       .flatMapP(i -> nextAsync())
+                                       .mergeMap(i -> nextAsync())
                                         .toList();
             System.out.println("Result is " + res);
 
@@ -289,7 +289,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res =  Spouts.of(1, 2, 3)
-                                       .flatMapP(i -> nextAsync())
+                                       .mergeMap(i -> nextAsync())
                                         .toList();
             System.out.println("Result is " + res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
@@ -350,7 +350,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             List<Integer> res = new ArrayList<>();
             Iterator<Integer> it = Spouts.of(1, 2, 3)
-                                         .flatMapP(i -> nextAsync()).iterator();
+                                         .mergeMap(i -> nextAsync()).iterator();
             while(it.hasNext()){
                 res.add(it.next());
             }
@@ -415,7 +415,7 @@ public class FlatMapPublisherTest {
     public void flatMapPAsync3(){
         for(int k=0;k<10;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapP(i -> nextAsync())
+                    .mergeMap(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -451,7 +451,7 @@ public class FlatMapPublisherTest {
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())
+                    .mergeMap(i -> nextAsync())
                     .subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onSubscribe(Subscription s) {
@@ -501,7 +501,7 @@ public class FlatMapPublisherTest {
 
 
             List<Integer> res = Spouts.from(Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync())).collect(Collectors.toList());
+                    .mergeMap(i -> nextAsync())).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
 
@@ -623,7 +623,7 @@ public class FlatMapPublisherTest {
         for(int k=0;k<100;k++) {
 
             Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapP(i -> nextAsync()));
+                    .mergeMap(i -> nextAsync()));
             /**Iterator<Integer> it = sub.iterator();
 
             while(it.hasNext()){

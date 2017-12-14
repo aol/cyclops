@@ -60,6 +60,6 @@ public class RecoverSpliterator<T, X extends Throwable> implements CopyableSplit
 
     @Override
     public int characteristics() {
-        return source.characteristics() & ~(Spliterator.SORTED | Spliterator.DISTINCT);
+        return source.characteristics() & ~(SORTED | DISTINCT);
     }
 }

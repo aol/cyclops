@@ -97,24 +97,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 		return LinkedListX.empty();
 	}
 
-	@Test
-	public void pVectorX(){
 
-
-
-		ReactiveSeq<String> seq = Spouts.from(VectorX.of(1, 2, 3, 4)
-				.plus(5)
-				.map(i -> "connect toNested Akka, RxJava and more with reactiveBuffer-streams" + i));
-
-	   PersistentSetX<String> setX =  seq.to().futureStream()
-	                                   .map(data->"fan out across threads with futureStreams" + data)
-	                                   .to().persistentSetX();
-
-
-
-
-
-	}
 
 	@Test
 	public void remove(){

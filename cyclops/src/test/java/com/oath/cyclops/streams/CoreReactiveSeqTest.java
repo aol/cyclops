@@ -19,19 +19,20 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import cyclops.companion.Streams;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import org.hamcrest.CoreMatchers;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.async.LazyReact;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Subscription;
@@ -41,7 +42,7 @@ import reactor.core.publisher.Flux;
 //see BaseSequentialSeqTest for in order tests
 public  class CoreReactiveSeqTest {
     public static Executor ex =  Executors.newFixedThreadPool(10);
-    public static final LazyReact r = new LazyReact(10,10);
+
 
 	ReactiveSeq<Integer> empty;
 	ReactiveSeq<Integer> nonEmpty;
@@ -81,7 +82,7 @@ public  class CoreReactiveSeqTest {
 
 	@Test
     public void publishToAndMerge(){
-	    cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+	    com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                                             .build();
 
         Thread t=  new Thread( ()-> {
@@ -181,7 +182,7 @@ public  class CoreReactiveSeqTest {
                 System.out.println (" Length : " + i + " - copies " + k);
                 ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ListX.range(0, i), k);
                 ListX<Integer> result = list.map(it -> ReactiveSeq.fromIterable(it))
-                        .flatMapS(s -> s);
+                        .flatMap(s -> s);
 
                 for (int x = 0; x < i; x++) {
                     assertThat("Failed on " + i + " and " + k,result, hasItem(x));
@@ -400,15 +401,20 @@ public  class CoreReactiveSeqTest {
 	}
 
 
-    @Test
-    public void flatMapPublisher() throws InterruptedException{
-
-        assertThat(of(1,2,3)
-                        .flatMapP(i->Maybe.of(i))
-                        .toListX(),equalTo(Arrays.asList(1,2,3)));
+  @Test
+  public void flatMapPublisher() throws InterruptedException{
 
 
-    }
+    Assert.assertThat(of(1,2,3)
+      .mergeMap(i-> Maybe.of(i))
+      .toListX().size(), Matchers.equalTo(3));
+
+    Assert.assertThat(of(1,2,3)
+      .mergeMap(i-> Maybe.of(i))
+      .toListX(), Matchers.containsInAnyOrder(3,2,1));
+
+
+  }
 
 
     private void sleep2(int time){
@@ -717,7 +723,7 @@ public  class CoreReactiveSeqTest {
 	}
 	@Test
 	public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -736,7 +742,7 @@ public  class CoreReactiveSeqTest {
 
 	@Test
 	public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -874,7 +880,7 @@ public  class CoreReactiveSeqTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
+			assertThat(ReactiveSeq.of(Arrays.asList(1,2)).to(ReactiveSeq::flattenIterable).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 

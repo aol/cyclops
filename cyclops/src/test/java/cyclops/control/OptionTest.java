@@ -1,10 +1,8 @@
 package cyclops.control;
 
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
+
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.collections.mutable.ListX;
@@ -21,7 +19,6 @@ import reactor.core.publisher.Flux;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -347,7 +344,6 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         assertThat(none.mkString(), equalTo("None[]"));
     }
 
-    LazyReact react = new LazyReact();
 
 
 
@@ -497,7 +493,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-        Option<Integer> maybe = eager.flatMapI(i -> Arrays.asList(i, 20, 30));
+        Option<Integer> maybe = eager.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

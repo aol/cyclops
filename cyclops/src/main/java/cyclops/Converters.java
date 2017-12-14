@@ -46,31 +46,31 @@ public interface Converters {
     }
     public static <T> PersistentBag<T> PBag(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentBag.class,
-                ()->Reducers.<T>toPBag().mapReduce(vec.stream()));
+                ()->Reducers.<T>toPersistentBag().mapReduce(vec.stream()));
     }
     public static <K,V> PersistentMap<K,V> PMap(PersistentMapX<K,V> vec){
         return vec.unwrapIfInstance(PersistentMapX.class,
-                ()-> Reducers.<K,V>toPMap().mapReduce(vec.stream()));
+                ()-> Reducers.<K,V>toPersistentMap().mapReduce(vec.stream()));
     }
     public static <T> PersistentSortedSet<T> POrderedSet(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-                ()->Reducers.<T>toPOrderedSet().mapReduce(vec.stream()));
+                ()->Reducers.<T>toPersistentSortedSet().mapReduce(vec.stream()));
     }
     public static <T> PersistentQueue<T> PQueue(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-                ()->Reducers.<T>toPQueue().mapReduce(vec.stream()));
+                ()->Reducers.<T>toPersistentQueue().mapReduce(vec.stream()));
     }
     public static <T> PersistentSet<T> PSet(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-                ()->Reducers.<T>toPSet().mapReduce(vec.stream()));
+                ()->Reducers.<T>toPersistentSet().mapReduce(vec.stream()));
     }
     public static <T> PersistentList<T> PStack(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-                ()->Reducers.<T>toPList().mapReduce(vec.stream()));
+                ()->Reducers.<T>toPersistentList().mapReduce(vec.stream()));
     }
     public static <T> PersistentList<T> PVector(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-                ()-> Reducers.<T>toPList().mapReduce(vec.stream()));
+                ()-> Reducers.<T>toPersistentList().mapReduce(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 

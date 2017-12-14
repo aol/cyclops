@@ -3,9 +3,7 @@ package cyclops.companion;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.futurestream.SimpleReactStream;
-import cyclops.async.Future;
-import cyclops.async.SimpleReact;
+import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
@@ -14,7 +12,6 @@ import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.data.Comparators;
 import cyclops.function.Monoid;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.typeclasses.NaturalTransformation;
@@ -245,12 +242,7 @@ public interface Monoids {
 
         return Monoid.of(zeroFn.apply(monoid.zero()),Semigroups.combineZippables(monoid));
     }
-    /**
-     * @return Combination of two LazyFutureStreams Streams b is appended to a
-     */
-    static <T> Monoid<FutureStream<T>> combineFutureStream() {
-        return Monoid.of(FutureStream.builder().of(),Semigroups.combineFutureStream());
-    }
+
     /**
      * @return Combination of two ReactiveSeq Streams b is appended to a
      */
@@ -314,9 +306,7 @@ public interface Monoids {
        return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
     }
 
-    static <T> Monoid<SimpleReactStream<T>> firstOfSimpleReact() {
-        return Monoid.of(new SimpleReact().of(),Semigroups.firstOfSimpleReact());
-    }
+
     /**
      * @return Combine two Future's by taking the first successful
      */

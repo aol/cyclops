@@ -123,15 +123,25 @@ public final class TrieSet<T> implements ImmutableSet<T>,
 
     @Override
     public <R> TrieSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+        return fromStream(stream().concatMap(fn));
     }
 
     @Override
-    public <R> TrieSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+    public <R> TrieSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().concatMap(fn));
     }
 
     @Override
+    public <R> TrieSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> TrieSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(maxConcurecy,fn));
+    }
+
+  @Override
     public TrieSet<T> filter(Predicate<? super T> predicate) {
         return fromStream(stream().filter(predicate));
     }
@@ -311,8 +321,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <U, R> TrieSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (TrieSet<R>)ImmutableSet.super.zipS(other,zipper);
+    public <U, R> TrieSet<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (TrieSet<R>)ImmutableSet.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -411,8 +421,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <U> TrieSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (TrieSet) ImmutableSet.super.zipS(other);
+    public <U> TrieSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (TrieSet) ImmutableSet.super.zipWithStream(other);
     }
 
     @Override
@@ -553,15 +563,9 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
 
-
     @Override
-    public <R> TrieSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    public TrieSet<T> prependS(Stream<? extends T> stream) {
-        return (TrieSet<T>) ImmutableSet.super.prependS(stream);
+    public TrieSet<T> prependStream(Stream<? extends T> stream) {
+        return (TrieSet<T>) ImmutableSet.super.prependStream(stream);
     }
 
     @Override
@@ -580,8 +584,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<T> insertAtS(int pos, Stream<T> stream) {
-        return (TrieSet<T>) ImmutableSet.super.insertAtS(pos,stream);
+    public TrieSet<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (TrieSet<T>) ImmutableSet.super.insertStreamAt(pos,stream);
     }
 
     @Override

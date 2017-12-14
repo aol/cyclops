@@ -306,7 +306,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return toListX().transform((a, b)->Tuple.tuple(a.stream(),b.stream()));
     }
     public ReactiveSeq<T> streamBoth(){
-        return stream().transform((a, b)->a.appendS(b));
+        return stream().transform((a, b)->a.appendStream(b));
     }
 
     public Product<W1,W2,T> reverse(){
@@ -499,7 +499,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         }
 
         @Override
-        public <T, R> Maybe<MonadZero<Higher<Higher<product, W1>, W2>>> monadZero() {
+        public <T, R> Option<MonadZero<Higher<Higher<product, W1>, W2>>> monadZero() {
             return def1.monadZero().flatMap(x->{
                 return def2.monadZero().map(y->{
                 return new MonadZero<Higher<Higher<product, W1>, W2>>() {
@@ -574,7 +574,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
         }
         @Override
-        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus() {
+        public <T> Option<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus() {
             return def1.monadPlus().flatMap(x -> {
                 return def2.monadPlus().map(y -> {
                     return new MonadPlus<Higher<Higher<product, W1>, W2>>() {
@@ -625,7 +625,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         }
 
         @Override
-        public <T> Maybe<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<product, W1>, W2>> m) {
+        public <T> Option<MonadPlus<Higher<Higher<product, W1>, W2>>> monadPlus(MonoidK<Higher<Higher<product, W1>, W2>> m) {
             return def1.monadPlus().flatMap(x -> {
                 return def2.monadPlus().map(y -> {
                     return new MonadPlus<Higher<Higher<product, W1>, W2>>() {
@@ -715,14 +715,14 @@ public class Product<W1,W2,T> implements  Filters<T>,
         }
 
         @Override
-        public <T> Maybe<Comonad<Higher<Higher<product, W1>, W2>>> comonad() {
+        public <T> Option<Comonad<Higher<Higher<product, W1>, W2>>> comonad() {
             return Maybe.nothing();
         }
 
 
 
         @Override
-        public <T> Maybe<Unfoldable<Higher<Higher<product, W1>, W2>>> unfoldable() {
+        public <T> Option<Unfoldable<Higher<Higher<product, W1>, W2>>> unfoldable() {
             if(!def1.unfoldable().isPresent() && !def2.unfoldable().isPresent())
                 return Maybe.nothing();
             return Maybe.just(new  Unfoldable<Higher<Higher<product, W1>, W2>>(){

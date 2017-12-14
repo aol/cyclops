@@ -22,21 +22,18 @@ public class StreamTest {
 	@Test
 	public void lines() throws URISyntaxException{
 		Path myPath = Paths.get(ClassLoader.getSystemResource("input.file").toURI());
-		assertThat(Try
-		  .catchExceptions(IOException.class)
-		  .init(() -> Files.lines(myPath))
-		  .tryWithResources(lines -> {
-			  lines.forEach(System.out::println);
-			  return "hello";
-		  }).orElse(null),equalTo("hello"));
-	}
+  assertThat(Try
+               .withResources(() -> Files.lines(myPath),lines -> {
+    lines.forEach(System.out::println);
+    return "hello";
+  },IOException.class).orElse(null),equalTo("hello"));
+}
 	@Test
 	public void testTryWithResources(){
 
 
-		assertThat(Try.catchExceptions(FileNotFoundException.class,IOException.class)
-				   .init(()->new BufferedReader(new FileReader("file.txt")))
-				   .tryWithResources(this::read).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
+		assertThat(Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
+      this::read,FileNotFoundException.class,IOException.class).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
 
 
 

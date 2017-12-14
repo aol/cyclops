@@ -1,9 +1,9 @@
 package cyclops.companion;
 
 import cyclops.control.Either;
-import cyclops.async.adapters.Adapter;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Adapter;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Topic;
 
 
 import java.util.concurrent.BlockingQueue;
@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue;
  * @author johnmcclean
  *
  */
-public class Eithers {
+public interface Eithers {
 
 
 
@@ -42,33 +42,6 @@ public class Eithers {
         return adapter.matches();
     }
 
-    /**
-     * Create a Pattern Matcher on CompletableFutures, specify success and failure event paths
-     *
-     * <pre>
-     * {@code
-     *  Eval<Integer> result = Xors.future(CompletableFuture.completedFuture(10))
-                                         .matches(c->
-                                                     c.is( when(some(10)), transform(20)),  //success
-
-                                                     c->c.is(when(instanceOf(RuntimeException.class)), transform(2)), //failure
-
-                                                     otherwise(3) //no fold
-                                                 );
-
-        //Eval[20]
-     *
-     * }</pre>
-     *
-     *
-     * @param future Future to fold on
-     * @return Pattern Matcher for CompletableFutures
-      USE EITHER HERE
-    public static <T1> Xor<T1, Throwable> future(final CompletableFuture<T1> future) {
-        return () -> Future.of(future)
-                            .toLazyEither()
-                            .swap();
-    }*/
 
 
 
@@ -77,12 +50,12 @@ public class Eithers {
      *
      * <pre>
      * {@code
-     *  Xors.blocking(new ManyToManyConcurrentArrayQueue(10))
+     *  Eithers.blocking(new ManyToManyConcurrentArrayQueue(10))
                   .visit(c->"blocking", c->"not")
          //"not"
 
 
-       Xors.blocking(new LinkedBlockingQueue(10))
+       Eithers.blocking(new LinkedBlockingQueue(10))
                  .visit(c->"blocking", c->"not")
         //"blocking
      *

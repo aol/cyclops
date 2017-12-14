@@ -12,13 +12,12 @@ import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
 import com.oath.cyclops.types.reactive.Completable;
 import cyclops.companion.Optionals.OptionalKind;
-import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import com.oath.cyclops.hkt.DataWitness.maybe;
+import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.optional;
 
 import cyclops.reactive.ReactiveSeq;
@@ -103,35 +102,35 @@ return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
  *
  * @param <T> Data type of element stored in Maybe
  */
-public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
+public interface Maybe<T> extends Option<T> {
 
 
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
     }
-    public static  <T> Kleisli<maybe,Maybe<T>,T> kindKleisli(){
+    public static  <T> Kleisli<option,Maybe<T>,T> kindKleisli(){
         return Kleisli.of(Instances.monad(), Maybe::widen);
     }
-    public static <T> Higher<maybe, T> widen(Maybe<T> narrow) {
+    public static <T> Higher<option, T> widen(Maybe<T> narrow) {
         return narrow;
     }
-    public static  <T> Cokleisli<maybe,T,Maybe<T>> kindCokleisli(){
+    public static  <T> Cokleisli<option,T,Maybe<T>> kindCokleisli(){
         return Cokleisli.of(Maybe::narrowK);
     }
-    public static <W1,T> Nested<maybe,W1,T> nested(Maybe<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+    public static <W1,T> Nested<option,W1,T> nested(Maybe<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
 
         return Nested.of(nested,Instances.definitions(),def2);
     }
-    default <W1> Product<maybe,W1,T> product(Active<W1,T> active){
+    default <W1> Product<option,W1,T> product(Active<W1,T> active){
         return Product.of(allTypeclasses(),active);
     }
-    default <W1> Coproduct<W1,maybe,T> coproduct(InstanceDefinitions<W1> def2){
+    default <W1> Coproduct<W1,option,T> coproduct(InstanceDefinitions<W1> def2){
         return Coproduct.right(this,def2,Instances.definitions());
     }
-    default Active<maybe,T> allTypeclasses(){
+    default Active<option,T> allTypeclasses(){
         return Active.of(this, Instances.definitions());
     }
-    default <W2,R> Nested<maybe,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    default <W2,R> Nested<option,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
         return Nested.of(map(fn), Instances.definitions(), defs);
     }
 
@@ -296,7 +295,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     }
 
-    public static <C2,T> Higher<C2, Higher<maybe,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
+    public static <C2,T> Higher<C2, Higher<option,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
         //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
         //cast seems safer as Higher<MaybeType.maybe,T> must be a StreamType
         return (Higher)nestedMaybe;
@@ -307,7 +306,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param future HKT encoded list into a MaybeType
      * @return MaybeType
      */
-    public static <T> Maybe<T> narrowK(final Higher<maybe, T> future) {
+    public static <T> Maybe<T> narrowK(final Higher<option, T> future) {
         return (Maybe<T>)future;
     }
 
@@ -317,7 +316,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
      * @param maybe Constructor to convert back into narrowed type
      * @return Optional from Higher Kinded Type
      */
-    public static <T> Optional<T> narrowOptional(final Higher<maybe, T> maybe) {
+    public static <T> Optional<T> narrowOptional(final Higher<option, T> maybe) {
 
         return narrowK(maybe).toOptional();
 
@@ -337,11 +336,11 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Maybe<R>) Option.super.flatMapI(mapper);
+    default <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Maybe<R>) Option.super.concatMap(mapper);
     }
 
 
@@ -567,7 +566,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
 
     BiFunction<Maybe<ReactiveSeq<T>>,Maybe<T>,Maybe<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Maybe<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -1091,8 +1090,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            final Maybe<R> maybe = Maybe.super.flatMapI(mapper);
+        public <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            final Maybe<R> maybe = Maybe.super.concatMap(mapper);
             return maybe;
         }
 
@@ -1327,8 +1326,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-            Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.flatMapI(mapper));
+        public <R> Maybe<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+            Eval<? extends Maybe<? extends R>> res = lazy.map(m -> m.concatMap(mapper));
             Eval<Maybe<R>> narrowed = (Eval)res;
             return Maybe.<R>fromLazy(narrowed);
 
@@ -1432,7 +1431,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
         @Override
-        public <R> Nothing<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        public <R> Nothing<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
         }
 
@@ -1460,65 +1459,65 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
     @UtilityClass
     public static class Instances {
 
-        public static InstanceDefinitions<maybe> definitions(){
-            return new InstanceDefinitions<maybe>() {
+        public static InstanceDefinitions<option> definitions(){
+            return new InstanceDefinitions<option>() {
                 @Override
-                public <T, R> Functor<maybe> functor() {
+                public <T, R> Functor<option> functor() {
                     return Instances.functor();
                 }
 
                 @Override
-                public <T> Pure<maybe> unit() {
+                public <T> Pure<option> unit() {
                     return Instances.unit();
                 }
 
                 @Override
-                public <T, R> Applicative<maybe> applicative() {
+                public <T, R> Applicative<option> applicative() {
                     return Instances.applicative();
                 }
 
                 @Override
-                public <T, R> Monad<maybe> monad() {
+                public <T, R> Monad<option> monad() {
                     return Instances.monad();
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<maybe>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<option>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<maybe>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<option>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
-                public <T> MonadRec<maybe> monadRec() {
+                public <T> MonadRec<option> monadRec() {
                     return Instances.monadRec();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<maybe>> monadPlus(MonoidK<maybe> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<option>> monadPlus(MonoidK<option> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
-                public <C2,T> Traverse<maybe> traverse() {
+                public <C2,T> Traverse<option> traverse() {
                     return Instances.traverse();
                 }
 
                 @Override
-                public <T> Foldable<maybe> foldable() {
+                public <T> Foldable<option> foldable() {
                     return Instances.foldable();
                 }
 
                 @Override
-                public <T> Maybe<Comonad<maybe>> comonad() {
+                public <T> Option<Comonad<option>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<maybe>> unfoldable() {
+                public <T> Option<Unfoldable<option>> unfoldable() {
                     return Maybe.nothing();
                 }
             };
@@ -1552,7 +1551,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return A functor for Maybes
          */
-        public static <T,R>Functor<maybe> functor(){
+        public static <T,R>Functor<option> functor(){
             BiFunction<Maybe<T>,Function<? super T, ? extends R>,Maybe<R>> map = Instances::map;
             return General.functor(map);
         }
@@ -1571,8 +1570,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return A factory for Maybes
          */
-        public static <T> Pure<maybe> unit(){
-            return General.<maybe,T>unit(Instances::of);
+        public static <T> Pure<option> unit(){
+            return General.<option,T>unit(Instances::of);
         }
         /**
          *
@@ -1611,7 +1610,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return A zipper for Maybes
          */
-        public static <T,R> Applicative<maybe> applicative(){
+        public static <T,R> Applicative<option> applicative(){
             BiFunction<Maybe< Function<T, R>>,Maybe<T>,Maybe<R>> ap = Instances::ap;
             return General.applicative(functor(), unit(), ap);
         }
@@ -1641,17 +1640,17 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return Type class with monad functions for Maybes
          */
-        public static <T,R> Monad<maybe> monad(){
+        public static <T,R> Monad<option> monad(){
 
-            BiFunction<Higher<maybe,T>,Function<? super T, ? extends Higher<maybe,R>>,Higher<maybe,R>> flatMap = Instances::flatMap;
+            BiFunction<Higher<option,T>,Function<? super T, ? extends Higher<option,R>>,Higher<option,R>> flatMap = Instances::flatMap;
             return General.monad(applicative(), flatMap);
         }
-        public static <T,R> MonadRec<maybe> monadRec(){
+        public static <T,R> MonadRec<option> monadRec(){
 
-            return new MonadRec<maybe>(){
+            return new MonadRec<option>(){
 
                 @Override
-                public <T, R> Higher<maybe, R> tailRec(T initial, Function<? super T, ? extends Higher<maybe, ? extends Either<T, R>>> fn) {
+                public <T, R> Higher<option, R> tailRec(T initial, Function<? super T, ? extends Higher<option, ? extends Either<T, R>>> fn) {
                     return Maybe.tailRec(initial,fn.andThen(Maybe::narrowK));
                 }
             };
@@ -1673,7 +1672,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return A filterable monad (with default value)
          */
-        public static <T,R> MonadZero<maybe> monadZero(){
+        public static <T,R> MonadZero<option> monadZero(){
 
             return General.monadZero(monad(), Maybe.nothing());
         }
@@ -1689,7 +1688,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * </pre>
          * @return Type class for combining Maybes by concatenation
          */
-        public static <T> MonadPlus<maybe> monadPlus(){
+        public static <T> MonadPlus<option> monadPlus(){
 
             return General.monadPlus(monadZero(), MonoidKs.firstPresentMaybe());
         }
@@ -1709,7 +1708,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          * @param m Monoid to use for combining Maybes
          * @return Type class for combining Maybes
          */
-        public static <T> MonadPlus<maybe> monadPlus(MonoidK<maybe> m){
+        public static <T> MonadPlus<option> monadPlus(MonoidK<option> m){
 
             return General.monadPlus(monadZero(),m);
         }
@@ -1717,7 +1716,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         /**
          * @return Type class for traversables with traverse / sequence operations
          */
-        public static <C2,T> Traverse<maybe> traverse(){
+        public static <C2,T> Traverse<option> traverse(){
 
             return General.traverseByTraverse(applicative(), Instances::traverseA);
         }
@@ -1737,10 +1736,10 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
          *
          * @return Type class for folding / reduction operations
          */
-        public static <T,R> Foldable<maybe> foldable(){
-            BiFunction<Monoid<T>,Higher<maybe,T>,T> foldRightFn =  (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            BiFunction<Monoid<T>,Higher<maybe,T>,T> foldLeftFn = (m,l)-> Maybe.narrowK(l).orElse(m.zero());
-            Function3<Monoid<R>, Function<T, R>, Higher<maybe, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).fold(m);
+        public static <T,R> Foldable<option> foldable(){
+            BiFunction<Monoid<T>,Higher<option,T>,T> foldRightFn =  (m, l)-> Maybe.narrowK(l).orElse(m.zero());
+            BiFunction<Monoid<T>,Higher<option,T>,T> foldLeftFn = (m, l)-> Maybe.narrowK(l).orElse(m.zero());
+            Function3<Monoid<R>, Function<T, R>, Higher<option, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).fold(m);
             return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
         }
 
@@ -1753,7 +1752,7 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
             return lt.zip(maybe, (a,b)->a.apply(b)).toMaybe();
 
         }
-        private static <T,R> Higher<maybe,R> flatMap( Higher<maybe,T> lt, Function<? super T, ? extends  Higher<maybe,R>> fn){
+        private static <T,R> Higher<option,R> flatMap(Higher<option,T> lt, Function<? super T, ? extends  Higher<option,R>> fn){
             return Maybe.narrowK(lt).flatMap(fn.andThen(Maybe::narrowK));
         }
         private static <T,R> Maybe<R> map(Maybe<T> lt, Function<? super T, ? extends R> fn){
@@ -1762,8 +1761,8 @@ public interface Maybe<T> extends Option<T>, Higher<maybe,T> {
         }
 
 
-        private static <C2,T,R> Higher<C2, Higher<maybe, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                       Higher<maybe, T> ds){
+        private static <C2,T,R> Higher<C2, Higher<option, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                        Higher<option, T> ds){
 
             Maybe<T> maybe = Maybe.narrowK(ds);
             Higher<C2, Maybe<R>> res = maybe.visit(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),

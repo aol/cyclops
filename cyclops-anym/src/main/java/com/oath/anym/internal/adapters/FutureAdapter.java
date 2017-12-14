@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import com.oath.anym.AnyMValue;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.monads.Witness;
 import com.oath.anym.extensability.AbstractFunctionalAdapter;
 import com.oath.anym.extensability.ValueAdapter;

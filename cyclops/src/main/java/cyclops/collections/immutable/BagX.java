@@ -8,7 +8,7 @@ import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.companion.Reducers;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
@@ -62,6 +62,13 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     default boolean containsValue(T item) {
         return LazyCollectionX.super.containsValue(item);
     }
+
+    public static <T> BagX<T> defer(Supplier<BagX<T>> s){
+      return of(s)
+        .map(Supplier::get)
+        .concatMap(l->l);
+    }
+
 
     static <T> CompletableBagX<T> completable(){
         return new CompletableBagX<>();
@@ -301,22 +308,22 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      */
     public static <T> BagX<T> bagX(ReactiveSeq<T> stream) {
 
-        return new LazyPBagX<>(null,stream,Reducers.toPBag(),Evaluation.LAZY);
+        return new LazyPBagX<>(null,stream,Reducers.toPersistentBag(),Evaluation.LAZY);
     }
     public static <T> BagX<T> of(final T... values) {
         return new LazyPBagX<>(null,
-                               ReactiveSeq.of(values),Reducers.toPBag(),Evaluation.LAZY);
+                               ReactiveSeq.of(values),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     public static <T> BagX<T> empty() {
         return new LazyPBagX<>(null,
-                               ReactiveSeq.empty(),Reducers.toPBag(),Evaluation.LAZY);
+                               ReactiveSeq.empty(),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     public static <T> BagX<T> singleton(final T value) {
         //use concrete type for singleton as used in Reducers
         return new LazyPBagX<>(
-                Bag.of(value),null,Reducers.toPBag(),Evaluation.LAZY);
+                Bag.of(value),null,Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
     /**
@@ -335,18 +342,18 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
             return (BagX) iterable;
         if (iterable instanceof PersistentBag)
             return new LazyPBagX<>(
-                                   (PersistentBag) iterable,null,Reducers.toPBag(),Evaluation.LAZY);
+                                   (PersistentBag) iterable,null,Reducers.toPersistentBag(),Evaluation.LAZY);
 
 
         return new LazyPBagX<>(null,
                                  ReactiveSeq.fromIterable(iterable),
-                                 Reducers.toPBag(),Evaluation.LAZY);
+                                 Reducers.toPersistentBag(),Evaluation.LAZY);
     }
 
 
 
     default <T> BagX<T> fromStream(final ReactiveSeq<T> stream) {
-        return new LazyPBagX<>(null,ReactiveSeq.fromStream(stream),Reducers.toPBag(),Evaluation.LAZY);
+        return new LazyPBagX<>(null,ReactiveSeq.fromStream(stream),Reducers.toPersistentBag(),Evaluation.LAZY);
     }
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
@@ -446,7 +453,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      */
  //   @Override
     default <T> Reducer<PersistentBag<T>,T> monoid() {
-        return Reducers.toPBag();
+        return Reducers.toPersistentBag();
     }
 
 
@@ -495,8 +502,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> BagX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (BagX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> BagX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (BagX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1010,18 +1017,18 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default <R> BagX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> BagX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> BagX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (BagX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> BagX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default BagX<T> prependS(Stream<? extends T> stream) {
-        return (BagX<T>)LazyCollectionX.super.prependS(stream);
+    default BagX<T> prependStream(Stream<? extends T> stream) {
+        return (BagX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1055,8 +1062,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<T> insertAtS(int pos, Stream<T> stream) {
-        return (BagX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default BagX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (BagX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override

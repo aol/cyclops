@@ -29,9 +29,9 @@ import com.oath.cyclops.types.reactive.QueueBasedSubscriber.Counter;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.companion.Streams;
-import cyclops.async.*;
-import cyclops.async.adapters.*;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.*;
+import com.oath.cyclops.async.adapters.*;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.MapX;
 import cyclops.collections.immutable.VectorX;
@@ -90,7 +90,9 @@ import java.util.stream.*;
  *      Interoperability
  *      Parallelism via FutureStream
  *      Lazy grouping (group by size, time, state)
- *      Sliding windows
+ *      Sliding windows n`\
+ *
+ *
  *
  *      Efficient reversal
  *      foldRight / scanLeft / scanRight
@@ -146,10 +148,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-    @Override
-    default <R> IterableX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
 
     default ReactiveSeq<T> updateAt(int i, T e){
         return zipWithIndex().map(t2->{
@@ -453,17 +451,17 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * e.g.
      * <pre>
      *  {@code
-     *    import static cyclops.ReactiveSeq.flatMapInts;
+     *    import static cyclops.ReactiveSeq.concatMapnts;
      *
      *    ReactiveSeq.ofInts(1,2,3)
-     *               .to(flatMapInts(i->IntStream.of(i*2)));
+     *               .to(concatMapnts(i->IntStream.of(i*2)));
      *
      *   //[2,4,6]
      *  }
      *  </pre>
      *
      */
-    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> flatMapInts(IntFunction<? extends IntStream> b){
+    public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatMapnts(IntFunction<? extends IntStream> b){
 
         return a->a.ints(i->i,s->s.flatMap(b));
     }
@@ -1053,12 +1051,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     static <T1> ReactiveSeq<T1> flatten(ReactiveSeq<? extends ReactiveSeq<T1>> nested){
         return nested.flatMap(Function.identity());
     }
-    static <T1> ReactiveSeq<T1> flattenI(ReactiveSeq<? extends Iterable<T1>> nested){
-        return nested.flatMapI(Function.identity());
+    static <T1> ReactiveSeq<T1> flattenIterable(ReactiveSeq<? extends Iterable<T1>> nested){
+        return nested.concatMap(Function.identity());
     }
-    static <T1> ReactiveSeq<T1> flattenO(ReactiveSeq<? extends Optional<T1>> nested){
-        return nested.flatMap(Streams::optionalToStream);
-    }
+
 
 
 
@@ -1367,10 +1363,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return sorted(Comparator.comparing(function, comparator));
 
     }
-
-
-
-
 
 
     /**
@@ -2651,10 +2643,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param fn
      * @return
      */
-    <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn);
+    <R> ReactiveSeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
 
-    <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> ReactiveSeq<R> flatMapP(int maxConcurrency,Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> ReactiveSeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+    <R> ReactiveSeq<R> mergeMap(int maxConcurrency, Function<? super T, ? extends Publisher<? extends R>> fn);
     /**
      * flatMap operation
      *
@@ -2771,7 +2763,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *  List<String> result = ReactiveSeq.of(1, 2, 3)
-     *                                   .prependS(of(100, 200, 300))
+     *                                   .prependStream(of(100, 200, 300))
      *                                   .map(it -> it + "!!")
      *                                   .collect(CyclopsCollectors.toList());
      *
@@ -2783,7 +2775,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to Prepend
      * @return ReactiveSeq with Stream prepended
      */
-    ReactiveSeq<T> prependS(Stream<? extends T> stream);
+    ReactiveSeq<T> prependStream(Stream<? extends T> stream);
 
     /**
      * Append values to the take of this ReactiveSeq
@@ -2870,7 +2862,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default ReactiveSeq<T> insertAt(int pos, Iterable<? extends T> values){
         if(pos==0){
-            return prependS(ReactiveSeq.fromIterable(values));
+            return prependStream(ReactiveSeq.fromIterable(values));
         }
         long check =  new Long(pos);
         boolean added[] = {false};
@@ -2889,7 +2881,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
     default ReactiveSeq<T> insertAt(int pos, ReactiveSeq<? extends T> values){
         if(pos==0){
-            return prependS(values);
+            return prependStream(values);
         }
         long check =  new Long(pos);
         boolean added[] = {false};
@@ -2961,9 +2953,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to insert
      * @return newly conjoined ReactiveSeq
      */
-    default ReactiveSeq<T> insertAtS(int pos, Stream<T> stream){
+    default ReactiveSeq<T> insertStreamAt(int pos, Stream<T> stream){
         if(pos==0){
-            return prependS(stream);
+            return prependStream(stream);
         }
         long check =  new Long(pos);
         boolean added[] = {false};
@@ -3638,13 +3630,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-    static <T> ReactiveSeq<T> deferredI(Supplier<? extends Iterable<? extends T>> lazy){
-        return ReactiveSeq.of(1).flatMapI(i->lazy.get());
+    static <T> ReactiveSeq<T> defer(Supplier<? extends Iterable<? extends T>> lazy){
+        return ReactiveSeq.of(1).concatMap(i->lazy.get());
     }
-    static <T> ReactiveSeq<T> deferredP(Supplier<? extends Publisher<? extends T>> lazy){
-        return ReactiveSeq.of(1).flatMapP(i->lazy.get());
+    static <T> ReactiveSeq<T> deferFromPublisher(Supplier<? extends Publisher<? extends T>> lazy){
+        return ReactiveSeq.of(1).mergeMap(i->lazy.get());
     }
-    static <T> ReactiveSeq<T> deferred(Supplier<? extends Stream<? extends T>> lazy){
+    static <T> ReactiveSeq<T> deferFromStream(Supplier<? extends Stream<? extends T>> lazy){
         return ReactiveSeq.of(1).flatMap(i->lazy.get());
     }
     /**
@@ -4573,7 +4565,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            to append
      * @return ReactiveSeq with Stream appended
      */
-     ReactiveSeq<T> appendS(Stream<? extends T> other);
+     ReactiveSeq<T> appendStream(Stream<? extends T> other);
     /* (non-Javadoc)
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
      */
@@ -4582,7 +4574,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> appendAll(Iterable<? extends T> value){
-        return  appendS(ReactiveSeq.fromIterable(value));
+        return  appendStream(ReactiveSeq.fromIterable(value));
     }
 
     ReactiveSeq<T> prependAll(Iterable<? extends T> other);
@@ -5013,13 +5005,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<reactiveSeq>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<reactiveSeq>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<reactiveSeq>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -5028,8 +5020,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<reactiveSeq>> monadPlus(MonoidK<reactiveSeq> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<reactiveSeq>> monadPlus(MonoidK<reactiveSeq> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -5043,12 +5035,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<reactiveSeq>> comonad() {
+                public <T> Option<Comonad<reactiveSeq>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<reactiveSeq>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<reactiveSeq>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }
@@ -5233,7 +5225,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
                 BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.appendAll(b); return a;}),acc,next);
 
-                BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> { l1.appendS(l2); return l1;}),a,b); ;
+                BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a,b)-> ap.apBiFn(ap.unit((l1,l2)-> { l1.appendStream(l2); return l1;}),a,b); ;
 
                 return list.stream()
                         .reduce(identity,

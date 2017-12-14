@@ -2,7 +2,7 @@ package cyclops.streams.push.async;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.companion.Semigroups;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Maybe;

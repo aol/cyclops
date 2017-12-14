@@ -24,7 +24,7 @@ import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.monads.AnyM;
 import org.junit.Before;
 import org.junit.Test;

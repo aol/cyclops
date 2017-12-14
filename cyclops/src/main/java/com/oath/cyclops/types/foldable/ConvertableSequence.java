@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.stream.ToStream;
-import cyclops.async.LazyReact;
-import cyclops.async.SimpleReact;
 import cyclops.collections.immutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.Option;
@@ -31,8 +29,7 @@ import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
 import cyclops.collections.mutable.SortedSetX;
 import com.oath.cyclops.types.Value;
-import cyclops.reactive.FutureStream;
-import com.oath.cyclops.types.futurestream.SimpleReactStream;
+
 
 /**
  * Represents a non-scalar Data Structure that can be converted to other types
@@ -60,22 +57,6 @@ public class  ConvertableSequence<T> implements ToStream<T> {
 
 
 
-    public FutureStream<T> futureStream(final LazyReact reactor) {
-        return reactor.fromIterable(iterable);
-    }
-
-    public FutureStream<T> futureStream() {
-        return futureStream(new LazyReact());
-    }
-
-    public SimpleReactStream<T> simpleReact(final SimpleReact reactor) {
-
-        return reactor.fromIterable(iterable);
-    }
-
-    public SimpleReactStream<T> simpleReact() {
-        return simpleReact(new SimpleReact());
-    }
 
     public Streamable<T> streamable() {
 
