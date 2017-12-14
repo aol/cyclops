@@ -1,5 +1,6 @@
 package com.oath.cyclops.trycatch;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -76,7 +77,7 @@ public class TryTest {
 			.onFail(System.out::println)
 			.map(i->i+"woo!")
 			.toOptional()
-			.orElse("hello world"),is("nullwoo!"));
+			.orElse("hello world"),is("hello worldwoo!"));
 	}
 
 	@Test
@@ -91,6 +92,38 @@ public class TryTest {
 
 	}
 
+	@Test
+  public void mapOrCatch(){
+	  IOException local = new IOException();
+	  assertThat(Try.success(10)
+                   .mapOrCatch(i->i+1,IOException.class),equalTo(Try.success(11)));
+    assertThat(Try.success(10)
+              .mapOrCatch(i->{throw local;},IOException.class),equalTo(Try.failure(local)));
+
+  }
+  @Test(expected = RuntimeException.class)
+  public void mapOrCatchEx(){
+    Try.success(10)
+      .mapOrCatch(i->{throw new RuntimeException();});
+    fail("exception expected");
+
+  }
+  @Test
+  public void flatMapOrCatch(){
+    IOException local = new IOException();
+    assertThat(Try.success(10)
+      .flatMapOrCatch(i->Try.success(i+1),IOException.class),equalTo(Try.success(11)));
+    assertThat(Try.success(10)
+      .flatMapOrCatch(i->{throw local;},IOException.class),equalTo(Try.failure(local)));
+
+  }
+  @Test(expected = RuntimeException.class)
+  public void flatMapOrCatchEx(){
+    Try.success(10)
+      .flatMapOrCatch(i->{throw new RuntimeException();});
+    fail("exception expected");
+
+  }
 	public void testMultipleResources(){
 
 		Try t2 = Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
