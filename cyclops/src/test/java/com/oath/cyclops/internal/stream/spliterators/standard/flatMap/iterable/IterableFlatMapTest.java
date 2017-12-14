@@ -43,7 +43,7 @@ public class IterableFlatMapTest {
         for(int i=0;i<10000;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
-                            .flatMapI(in -> flux(1, 2, 3))
+                            .concatMap(in -> flux(1, 2, 3))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(1, 2, 3)));
         }
@@ -55,7 +55,7 @@ public class IterableFlatMapTest {
         for(int i=0;i<1000;i++){
             System.out.println("************Iteration " + i);
             Assert.assertThat(flux(1)
-                            .flatMapI(in -> of(1, 2, 3))
+                            .concatMap(in -> of(1, 2, 3))
                             .toList(),
                     Matchers.equalTo(Arrays.asList(1, 2, 3)));
         }
@@ -67,7 +67,7 @@ public class IterableFlatMapTest {
         //		.flatMapP(i->Maybe.of(i)).printOut();
 
         Assert.assertThat(of(1,2,3)
-                .flatMapI(i-> Maybe.of(i))
+                .concatMap(i-> Maybe.of(i))
                 .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
@@ -75,20 +75,20 @@ public class IterableFlatMapTest {
     @Test
     public void flatMap(){
         assertThat(Spouts.of(1,2,3)
-                .flatMapI(i->Spouts.of(i))
+                .concatMap(i->Spouts.of(i))
                 .toList(),equalTo(ListX.of(1,2,3)));
     }
     @Test
     public void flatMap2(){
         assertThat(Spouts.of(1,2,3)
-                .flatMapI(i->Spouts.of(1,i))
+                .concatMap(i->Spouts.of(1,i))
                 .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
     }
     @Test
     public void flatMapAsync2(){
         for(int k=0;k<100;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapI(i -> nextAsync())
+                    .concatMap(i -> nextAsync())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -110,7 +110,7 @@ public class IterableFlatMapTest {
     public void flatMapPAsync3(){
         for(int k=0;k<10;k++) {
             List<Integer> res = Spouts.of(1, 2, 3)
-                    .flatMapI(i -> nextAsyncRS())
+                    .concatMap(i -> nextAsyncRS())
                     .toList();
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
@@ -138,7 +138,7 @@ public class IterableFlatMapTest {
             count = new AtomicInteger(0);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapI(i -> nextAsyncRS())
+                    .concatMap(i -> nextAsyncRS())
                     .subscribe(new Subscriber<Integer>() {
                         @Override
                         public void onSubscribe(Subscription s) {
@@ -178,7 +178,7 @@ public class IterableFlatMapTest {
             System.out.println("********0---------------------K " + k);
             ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
             Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapI(i -> nextAsyncRS())
+                    .concatMap(i -> nextAsyncRS())
                     //  .flatMapP(i->Spouts.of(1,2))
                     .subscribe(sub);
 
@@ -210,7 +210,7 @@ public class IterableFlatMapTest {
 
 
             List<Integer> res =  Spouts.from(Spouts.of(1, 2, 3).peek(System.out::println)
-                    .flatMapI(i -> nextAsyncRS())).collect(Collectors.toList());
+                    .concatMap(i -> nextAsyncRS())).collect(Collectors.toList());
             System.out.println(res);
             assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));

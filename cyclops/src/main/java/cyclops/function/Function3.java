@@ -4,8 +4,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
-import com.oath.cyclops.types.foldable.To;
-import cyclops.async.Future;
+import cyclops.control.Future;
 
 import cyclops.control.Option;
 import cyclops.control.Eval;

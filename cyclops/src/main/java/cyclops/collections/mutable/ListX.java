@@ -6,7 +6,7 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.data.collections.extensions.standard.MutableSequenceX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 
 import cyclops.typeclasses.*;
@@ -83,9 +83,9 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     public static <T> ListX<T> defer(Supplier<ListX<T>> s){
-        return ListX.of(s)
-                    .map(Supplier::get)
-                    .flatMap(l->l);
+      return of(s)
+            .map(Supplier::get)
+            .concatMap(l->l);
     }
 
     static <T> CompletableListX<T> completable(){
@@ -164,13 +164,13 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<list>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<list>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<list>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<list>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -179,7 +179,7 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<list>> monadPlus(MonoidK<list> m) {
+                public <T> Option<MonadPlus<list>> monadPlus(MonoidK<list> m) {
                   MonadPlus<list> x = Instances.monadPlus(m);
                   return Maybe.just(x);
                 }
@@ -195,12 +195,12 @@ public interface ListX<T> extends To<ListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<list>> comonad() {
+                public <T> Option<Comonad<list>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<list>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<list>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
 
@@ -459,7 +459,7 @@ public interface ListX<T> extends To<ListX<T>>,
             return ListX.fromIterable(lt).zip(list,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<list,R> flatMap( Higher<list,T> lt, Function<? super T, ? extends  Higher<list,R>> fn){
-            return ListX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(Instances::narrowK));
         }
         private static <T,R> ListX<R> map(ListX<T> lt, Function<? super T, ? extends R> fn){
             return ListX.fromIterable(lt).map(fn);
@@ -944,9 +944,9 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> ListX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> ListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (ListX<R>) LazyCollectionX.super.<R> flatMap(mapper);
+        return (ListX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1626,18 +1626,18 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default <R> ListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (ListX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> ListX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> ListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (ListX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> ListX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default ListX<T> prependS(Stream<? extends T> stream) {
-        return (ListX<T>)LazyCollectionX.super.prependS(stream);
+    default ListX<T> prependStream(Stream<? extends T> stream) {
+        return (ListX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1671,8 +1671,8 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> insertAtS(int pos, Stream<T> stream) {
-        return (ListX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default ListX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (ListX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1741,7 +1741,7 @@ public interface ListX<T> extends To<ListX<T>>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {

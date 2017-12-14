@@ -1,7 +1,7 @@
 package cyclops.function;
 
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;

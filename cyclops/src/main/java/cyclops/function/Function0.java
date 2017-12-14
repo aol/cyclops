@@ -9,7 +9,6 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.foldable.To;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.immutable.VectorX;
@@ -22,7 +21,7 @@ import cyclops.typeclasses.functor.Functor;
 
 
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 

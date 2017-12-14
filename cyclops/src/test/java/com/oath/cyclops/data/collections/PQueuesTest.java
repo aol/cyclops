@@ -46,7 +46,7 @@ public class PQueuesTest {
 
 	@Test
 	public void testToPStack() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPQueue()).stream()
+		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentQueue()).stream()
 				.collect(Collectors.toList()),
 				equalTo(Arrays.asList("a","b","c")));
 	}

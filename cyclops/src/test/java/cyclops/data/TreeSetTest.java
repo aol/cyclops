@@ -3,13 +3,16 @@ package cyclops.data;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Monoids;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
+import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -97,5 +100,14 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
 
 
     }
+  @Test
+  public void lastIndexOf(){
 
+    MatcherAssert.assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+    MatcherAssert.assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+    MatcherAssert.assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+    MatcherAssert.assertThat(of(1,2,3).lastIndexOf(e-> Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+    MatcherAssert.assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),
+      equalTo(of(1,2,3,2).indexOf(e->Objects.equals(2,e))));
+  }
 }

@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import lombok.AllArgsConstructor;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple;

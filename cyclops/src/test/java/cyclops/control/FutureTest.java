@@ -2,9 +2,7 @@ package cyclops.control;
 
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
-import cyclops.async.Future;
 import cyclops.companion.*;
 import cyclops.function.Monoid;
 
@@ -101,22 +99,7 @@ public class FutureTest {
                       .visit(i->i*2, e->-1);
         assertThat(-1,equalTo(r));
     }
-    @Test
-    public void testBreakout(){
 
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 1, Future.of(()->1), Future.of(()->1), Future.of(()->1));
-
-
-        assertThat(strings.toCompletableFuture().join().size(), is(greaterThan(1)));
-    }
-    @Test
-    public void testBreakoutAll(){
-
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() > 2, Future.of(()->1), Future.of(()->1), Future.of(()->1));
-
-
-        assertThat(strings.toCompletableFuture().join().size(), is(equalTo(3)));
-    }
     @Test
     public void testFirstSuccess(){
 
@@ -126,14 +109,7 @@ public class FutureTest {
         ft.complete(10);
         assertThat(result.get(), is(equalTo(Try.success(1))));
     }
-    @Test
-    public void testBreakoutOne(){
 
-        Future<ListX<Integer>> strings = Future.quorum(status -> status.getCompleted() >0, Future.of(()->1), Future.future(), Future.future());
-
-
-        assertThat(strings.toCompletableFuture().join().size(), is(equalTo(1)));
-    }
 
     @Test
     public void testZip(){
@@ -443,7 +419,7 @@ public class FutureTest {
         assertThat(just.mkString(),containsString("Future["));
         assertThat(none.mkString(),containsString("Future["));
     }
-    LazyReact react = new LazyReact();
+
 
     @Test
     public void testGet() {

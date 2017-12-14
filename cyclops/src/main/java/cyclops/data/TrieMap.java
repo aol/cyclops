@@ -139,12 +139,12 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
 
     @Override
     public <K2, V2> TrieMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)));
+        return fromStream(stream().concatMap(t->t.transform(mapper)));
     }
 
     @Override
-    public <K2, V2> TrieMap<K2, V2> flatMapI(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().flatMapI(t->t.transform(mapper)));
+    public <K2, V2> TrieMap<K2, V2> concatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
+        return fromStream(stream().concatMap(t->t.transform(mapper)));
     }
 
     @Override

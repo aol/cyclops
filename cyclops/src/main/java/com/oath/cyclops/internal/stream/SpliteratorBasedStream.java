@@ -8,9 +8,9 @@ import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.QueueFactory;
-import cyclops.async.adapters.Signal;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.QueueFactory;
+import com.oath.cyclops.async.adapters.Signal;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 
@@ -26,6 +26,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -360,7 +361,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final <R> ReactiveSeq<R> flatMapI(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public final <R> ReactiveSeq<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         if(this.stream instanceof FunctionSpliterator){
             FunctionSpliterator f = (FunctionSpliterator)stream;
             return createSeq(IterableFlatMappingSpliterator.compose(f,fn),reversible);
@@ -376,8 +377,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @param mapper
      * @return
      */
-    public <R> ReactiveSeq<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(256,mapper);
+    public <R> ReactiveSeq<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return mergeMap(256,mapper);
     }
 
     /**
@@ -386,44 +387,11 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
      * @param mapper
      * @return
      */
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return flatMapP(maxConcurrency, QueueFactories.boundedNonBlockingQueue(maxConcurrency*4),mapper);
+    public <R> ReactiveSeq<R> mergeMap(final int maxConcurrency, final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return Spouts.fromIterable(this).mergeMap(maxConcurrency,mapper);
     }
 
-    /**
-     * A potentially asynchronous flatMap operation where data from each publisher may arrive out of order (if publishers
-     * are configured to publish asynchronously.
-     * Active publishers are limited by the maxConcurrency parameter. The QueueFactory parameter can be used to control the maximum queued elements @see {@link QueueFactories}
-     *
-     *
-     */
-    public <R> ReactiveSeq<R> flatMapP(final int maxConcurrency,
-                                       final QueueFactory<R> factory,final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-
-        final QueueBasedSubscriber.Counter c = new QueueBasedSubscriber.Counter();
-        final QueueBasedSubscriber<R> init = QueueBasedSubscriber.subscriber(factory, c, maxConcurrency);
-
-        final ReactiveSeq<T> stream = stream();
-        final Supplier<Continuation> sp = () -> {
-
-            stream.map(mapper)
-                    .forEach(p -> {
-                        c.active.incrementAndGet();
-                        p.subscribe(QueueBasedSubscriber.subscriber(init.getQueue(), c, maxConcurrency));
-
-                    } , i -> {
-                    } , () -> {
-                        init.close();
-                    });
-
-            return Continuation.empty();
-        };
-        final Continuation continuation = new Continuation(
-                sp);
-        init.addContinuation(continuation);
-        return ReactiveSeq.fromStream(init.jdkStream());
-    }
 
 
 
@@ -489,7 +457,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     public ReactiveSeq<T> changes(){
 
-            cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
+            com.oath.cyclops.async.adapters.Queue<T> queue = QueueFactories.<T>unboundedNonBlockingQueue()
                     .build();
 
 
@@ -566,7 +534,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return stream.spliterator();
     }
     @Override
-    public ReactiveSeq<T> appendS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> appendStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
     public ReactiveSeq<T> append(final Iterable<? extends T> other) {
@@ -584,7 +552,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return ReactiveSeq.concat(get(),Stream.of(other).spliterator());
     }
     @Override
-    public ReactiveSeq<T> prependS(final Stream<? extends T> other) {
+    public ReactiveSeq<T> prependStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(avoidCopy(other),get());
     }
     public ReactiveSeq<T> prependAll(final Iterable<? extends T> other) {

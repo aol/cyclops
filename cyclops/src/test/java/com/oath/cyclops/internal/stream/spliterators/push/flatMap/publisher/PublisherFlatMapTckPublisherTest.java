@@ -17,7 +17,7 @@ public class PublisherFlatMapTckPublisherTest extends PublisherVerification<Long
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.iterate(0l, i->i+1l).limit(elements).flatMapP(i->Spouts.of(i));
+		return Spouts.iterate(0l, i->i+1l).limit(elements).mergeMap(i->Spouts.of(i));
 
 	}
 

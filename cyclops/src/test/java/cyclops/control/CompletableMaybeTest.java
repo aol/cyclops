@@ -7,8 +7,6 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe.CompletableMaybe;
@@ -432,8 +430,6 @@ public class CompletableMaybeTest implements Printable {
         assertThat(none.mkString(), equalTo("CompletableMaybe[]"));
     }
 
-    LazyReact react = new LazyReact();
-
 
     @Test
     public void testGet() {
@@ -602,7 +598,7 @@ public class CompletableMaybeTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
+		Maybe<Integer> maybe = just.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.orElse(50), equalTo(10));
 	}
 

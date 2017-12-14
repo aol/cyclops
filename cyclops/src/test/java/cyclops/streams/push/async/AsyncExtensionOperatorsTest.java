@@ -3,7 +3,7 @@ package cyclops.streams.push.async;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Queue;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -40,7 +39,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
     public void queueTest(){
-	    cyclops.async.adapters.Queue<Integer> q = new Queue<>();
+	    com.oath.cyclops.async.adapters.Queue<Integer> q = new Queue<>();
 	    q.add(1);
 	    q.add(2);
 	    q.add(3);
@@ -442,7 +441,7 @@ public class AsyncExtensionOperatorsTest {
 
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3,null).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3,null).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

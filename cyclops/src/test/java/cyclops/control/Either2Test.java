@@ -2,9 +2,7 @@ package cyclops.control;
 
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
-import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -35,7 +33,12 @@ public class Either2Test {
 		none = Either.left("none");
 	}
 
-
+  @Test
+  public void filterAlt(){
+    assertThat(Either.right(10).filter(i->i>100,r->"hello"),equalTo(Either.left("hello")));
+    assertThat(Either.right(101).filter(i->i>100,r->"hello"),equalTo(Either.right(101)));
+    assertThat(Either.<Integer,Integer>left(101).filter(i->i>100,r->-1),equalTo(Either.left(101)));
+  }
 
 	@Test
     public void testSequenceSecondary() {
@@ -266,7 +269,7 @@ public class Either2Test {
 		assertThat(just.mkString(),equalTo("Either.right[10]"));
 		assertThat(none.mkString(),equalTo("Either.left[none]"));
 	}
-	LazyReact react = new LazyReact();
+
 
 
 	@Test

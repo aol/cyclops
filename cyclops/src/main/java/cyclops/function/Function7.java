@@ -6,16 +6,16 @@ import java.util.function.Function;
 
 import cyclops.control.Option;
 import cyclops.control.Eval;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
 public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, Function1<T2, Function1<T3,Function1<T4,Function1<T5,Function1<T6, Function1<T7,R>>>>>>> {
     /**
      * Create a curried function with arity of 7
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -28,7 +28,7 @@ public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, 
     public static <T1, T2, T3, T4, T5, T6,T7,R> Function7<? super T1,? super T2,? super T3, ? super T4, ? super T5,? super T6,? super T7,? extends R> v(final Function7<? super T1,? super T2,? super T3,? super T4,? super T5,? super T6,? super T7, ? extends R> func7) {
         return func7;
     }
-    
+
 
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e, T6 f, T7 g);
 
@@ -101,5 +101,5 @@ public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, 
     default Function1<? super T1, Function1<? super T2, Function1<? super T3, Function1<? super T4, Function1<? super T5,Function1<? super T6,Function1<? super T7, ? extends R>>>>>>> curry() {
         return CurryVariance.curry7(this);
     }
-   
+
 }

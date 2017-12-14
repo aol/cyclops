@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 

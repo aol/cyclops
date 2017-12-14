@@ -1,7 +1,5 @@
 package cyclops.control;
 
-import cyclops.async.Future;
-import cyclops.async.LazyReact;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.util.box.Mutable;
@@ -232,7 +230,6 @@ public class TryTest {
 		assertThat(just.mkString(),equalTo("Success[10]"));
 		assertThat(none.mkString(),equalTo("Failure["+exception+"]"));
 	}
-	LazyReact react = new LazyReact();
 
 
 	@Test

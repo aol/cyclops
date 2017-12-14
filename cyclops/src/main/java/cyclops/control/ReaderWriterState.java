@@ -206,12 +206,12 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
                 }
 
                 @Override
-                public <T, R2> Maybe<MonadZero<Higher<Higher<Higher<rws, R>, W>, S>>> monadZero() {
+                public <T, R2> Option<MonadZero<Higher<Higher<Higher<rws, R>, W>, S>>> monadZero() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -221,7 +221,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(MonoidK<Higher<Higher<Higher<rws, R>, W>, S>> m) {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<rws, R>, W>, S>>> monadPlus(MonoidK<Higher<Higher<Higher<rws, R>, W>, S>> m) {
                     return Maybe.nothing();
                 }
 
@@ -236,12 +236,12 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<Higher<Higher<rws, R>, W>, S>>> comonad() {
+                public <T> Option<Comonad<Higher<Higher<Higher<rws, R>, W>, S>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<Higher<Higher<rws, R>, W>, S>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<Higher<Higher<rws, R>, W>, S>>> unfoldable() {
                     return Maybe.nothing();
                 }
             }  ;

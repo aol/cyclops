@@ -7,12 +7,13 @@ import java.util.stream.Stream;
 import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.Option;
 import cyclops.typeclasses.*;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.Active;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -268,7 +269,7 @@ public class CompletableFutures {
 
     BiFunction<CompletableFuture<ReactiveSeq<T>>,CompletableFuture<T>,CompletableFuture<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.thenCombine(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> a.thenCombine(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<CompletableFuture<ReactiveSeq<T>>> combineStreams = (a,b)-> a.thenCombine(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -575,13 +576,13 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<completableFuture>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<completableFuture>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<completableFuture>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<completableFuture>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -590,8 +591,8 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<completableFuture>> monadPlus(MonoidK<completableFuture> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -605,12 +606,12 @@ public class CompletableFutures {
                 }
 
                 @Override
-                public <T> Maybe<Comonad<completableFuture>> comonad() {
+                public <T> Option<Comonad<completableFuture>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<completableFuture>> unfoldable() {
+                public <T> Option<Unfoldable<completableFuture>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

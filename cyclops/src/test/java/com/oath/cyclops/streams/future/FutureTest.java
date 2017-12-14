@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import cyclops.async.Future;
+import cyclops.control.Future;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -10,7 +10,6 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.async.Future;
 import cyclops.function.*;
 
 import com.oath.cyclops.hkt.DataWitness.lazyEither4;
@@ -51,12 +50,12 @@ import java.util.function.*;
  * @param <RT> Right type (operations are performed on this type if present)
  */
 public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
-  Filters<RT>,
-                                                    Higher4<lazyEither4,LT1,LT2,LT3,RT>,
-                                                    BiTransformable<LT3, RT>,
-                                                    To<LazyEither4<LT1, LT2,LT3, RT>>,
-  OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
-                                                    Unit<RT>{
+                                                      Filters<RT>,
+                                                      Higher4<lazyEither4,LT1,LT2,LT3,RT>,
+                                                      BiTransformable<LT3, RT>,
+                                                      To<LazyEither4<LT1, LT2,LT3, RT>>,
+                                                      OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
+                                                      Unit<RT>{
 
     Option<RT> get();
     public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,LazyEither4<LT1,LT2,LT3,T>,T> kindKleisli(){
@@ -114,6 +113,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
         return new LazyEither4.CompletableEither4<RT,LT2,LT3, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
+
+    default LazyEither4<LT1,LT2,LT3, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither4.right(e) : LazyEither4.left1(rightToLeft.apply(e)));
+    }
+
     @AllArgsConstructor
     static class CompletableEither4<ORG,LT1,LT2,RT> implements LazyEither4<Throwable,LT1,LT2,RT>, Completable<ORG> {
 
@@ -300,7 +304,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
     BiFunction<LazyEither4<L1, L2, L3, ReactiveSeq<T>>,LazyEither4<L1, L2, L3, T>,LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<LazyEither4<L1, L2, L3,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -1624,12 +1628,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1639,7 +1643,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
+                public <T> Option<MonadPlus<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> monadPlus(MonoidK<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>> m) {
                     return Maybe.nothing();
                 }
 
@@ -1654,12 +1658,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> comonad() {
+                public <T> Option<Comonad<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<Higher<Higher<lazyEither4, L1>, L2>, L3>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

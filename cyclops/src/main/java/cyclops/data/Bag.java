@@ -6,6 +6,7 @@ import com.oath.cyclops.hkt.DataWitness.bag;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -75,10 +76,21 @@ public final class Bag<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <R> Bag<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn));
+    public <R> Bag<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().concatMap(fn));
     }
+
     @Override
+    public <R> Bag<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(fn));
+    }
+
+    @Override
+    public <R> Bag<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(maxConcurecy,fn));
+    }
+
+  @Override
     public <R> Bag<R> unitIterable(Iterable<R> it) {
         return fromIterable(it);
     }

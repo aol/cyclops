@@ -264,12 +264,12 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<writer, W>>> monadZero() {
+                public <T, R> Option<MonadZero<Higher<writer, W>>> monadZero() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<writer, W>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -279,7 +279,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<writer, W>>> monadPlus(MonoidK<Higher<writer, W>> m) {
+                public <T> Option<MonadPlus<Higher<writer, W>>> monadPlus(MonoidK<Higher<writer, W>> m) {
                     return Maybe.nothing();
                 }
 
@@ -294,12 +294,12 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<writer, W>>> comonad() {
+                public <T> Option<Comonad<Higher<writer, W>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<writer, W>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<writer, W>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

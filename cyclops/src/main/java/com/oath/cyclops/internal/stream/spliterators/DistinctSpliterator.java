@@ -13,14 +13,14 @@ public class DistinctSpliterator<IN,T> extends BaseComposableSpliterator<IN,T,Di
     Spliterator<IN> source;
     Set<IN> values;
     public DistinctSpliterator(final Spliterator<IN> source) {
-        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED,null);
+        super(source.estimateSize(),source.characteristics() & ORDERED,null);
 
         this.source = source;
         this.values = new HashSet<>();
 
     }
     DistinctSpliterator(Function<? super IN, ? extends T> fn,final Spliterator<IN> source) {
-        super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED,fn);
+        super(source.estimateSize(),source.characteristics() & ORDERED,fn);
 
         this.source = source;
         this.values = new HashSet<>();
@@ -60,11 +60,11 @@ public class DistinctSpliterator<IN,T> extends BaseComposableSpliterator<IN,T,Di
 
     @Override
     public Spliterator<T> copy() {
-        return new DistinctSpliterator<IN,T>(fn,CopyableSpliterator.copy(source));
+        return new DistinctSpliterator<IN,T>(fn, CopyableSpliterator.copy(source));
     }
 
     @Override
     <R2> DistinctSpliterator<IN, ?> create(Function<? super IN, ? extends R2> after) {
-        return new DistinctSpliterator(after,CopyableSpliterator.copy(source));
+        return new DistinctSpliterator(after, CopyableSpliterator.copy(source));
     }
 }

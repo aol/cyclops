@@ -1,11 +1,14 @@
 package cyclops.data.basetests;
 
 import cyclops.collections.AbstractIterableXTest;
+import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -117,4 +120,35 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
       assertThat(list.remove((Object)1),equalTo(false));
       assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
     }
+  @Test
+  public void mergeMap(){
+    for(int l=0;l<100_000;l++) {
+      System.out.println("************Iteration " + l);
+      System.out.println("************Iteration " + l);
+      System.out.println("************Iteration " + l);
+
+      Assert.assertThat(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        .mergeMap(i -> of(i, i * 2, i * 4)
+          .mergeMap(x -> of(5, 6, 7))).toListX().size(),
+        equalTo(ListX.of(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+          5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
+          , 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
+          , 7, 7, 7, 7, 7).size()));
+
+    }
+  }
+  @Test
+  public void mergeMap3(){
+    for(int l=0;l<100_000;l++) {
+      System.out.println("************Iteration " + l);
+      System.out.println("************Iteration " + l);
+      System.out.println("************Iteration " + l);
+
+      Assert.assertThat(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        .mergeMap(3,i -> Spouts.of(i, i * 2, i * 4)
+          .mergeMap(3,x -> of(5, 6, 7))).toListX().size(),
+        equalTo(ListX.of(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7).size()));
+
+    }
+  }
 }

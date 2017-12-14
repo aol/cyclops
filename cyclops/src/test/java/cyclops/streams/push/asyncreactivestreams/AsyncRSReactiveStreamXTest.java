@@ -53,7 +53,7 @@ public  class AsyncRSReactiveStreamXTest {
 		//		.flatMapP(i->Maybe.of(i)).printOut();
 
         assertThat(of(1,2,3)
-                        .flatMapP(i->Maybe.of(i))
+                        .mergeMap(i->Maybe.of(i))
                         .toListX(),Matchers.hasItems(1,2,3));
 
 
@@ -235,7 +235,7 @@ public  class AsyncRSReactiveStreamXTest {
         for(int i=0;i<ITERATIONS;i++){
             System.out.println("Iteration " + i);
             assertThat(ReactiveSeq.fromPublisher(of(1)
-                            .flatMapP(in -> of(1, 2, 3)))
+                            .mergeMap(in -> of(1, 2, 3)))
                             .toList(),
                     equalTo(Arrays.asList(1, 2, 3)));
         }
@@ -449,7 +449,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 	@Test
 	public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -468,7 +468,7 @@ public  class AsyncRSReactiveStreamXTest {
 
 	@Test
 	public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -607,7 +607,7 @@ public  class AsyncRSReactiveStreamXTest {
 
 		@Test
 		public void flatten() throws Exception {
-			assertThat(of(Arrays.asList(1,2)).to(ReactiveSeq::flattenI).toList().size(),equalTo(asList(1,  2).size()));
+			assertThat(of(Arrays.asList(1,2)).to(ReactiveSeq::flattenIterable).toList().size(),equalTo(asList(1,  2).size()));
 		}
 
 

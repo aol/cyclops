@@ -9,7 +9,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -59,6 +59,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
     PersistentSetX<T> lazy();
     PersistentSetX<T> eager();
+
+    public static <T> PersistentSetX<T> defer(Supplier<PersistentSetX<T>> s){
+      return of(s)
+              .map(Supplier::get)
+              .concatMap(l->l);
+    }
 
     static <T> CompletablePersistentSetX<T> completable(){
         return new CompletablePersistentSetX<>();
@@ -203,17 +209,17 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
     public static <T> PersistentSetX<T> of(final T... values) {
 
-        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPSet(), LAZY);
+        return new LazyPSetX<>(null,ReactiveSeq.of(values),Reducers.toPersistentSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> empty() {
         return new LazyPSetX<>(
-                               HashSet.empty(),null,Reducers.toPSet(), LAZY);
+                               HashSet.empty(),null,Reducers.toPersistentSet(), LAZY);
     }
 
     public static <T> PersistentSetX<T> singleton(final T value) {
         return new LazyPSetX<>(
-                               HashSet.of(value),null,Reducers.toPSet(), LAZY);
+                               HashSet.of(value),null,Reducers.toPersistentSet(), LAZY);
     }
     PersistentSetX<T> type(Reducer<? extends PersistentSet<T>,T> reducer);
     /**
@@ -242,19 +248,19 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @return
      */
     public static <T> PersistentSetX<T> persistentSetX(ReactiveSeq<T> stream) {
-        return new LazyPSetX<>(null,stream,Reducers.toPSet(), LAZY);
+        return new LazyPSetX<>(null,stream,Reducers.toPersistentSet(), LAZY);
     }
     public static <T> PersistentSetX<T> fromIterable(final Iterable<T> iterable) {
         if (iterable instanceof PersistentSetX)
             return (PersistentSetX) iterable;
         if (iterable instanceof PersistentSet)
             return new LazyPSetX<>(
-                                   (PersistentSet) iterable,null,Reducers.toPSet(), LAZY);
+                                   (PersistentSet) iterable,null,Reducers.toPersistentSet(), LAZY);
 
 
         return new LazyPSetX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPSet(), LAZY);
+                Reducers.toPersistentSet(), LAZY);
     }
 
     /**
@@ -451,7 +457,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
  //   @Override
     default <T> Reducer<PersistentSet<T>,T> monoid() {
-        return Reducers.toPSet();
+        return Reducers.toPersistentSet();
     }
 
     /* (non-Javadoc)
@@ -506,8 +512,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> PersistentSetX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentSetX<R>) LazyCollectionX.super.flatMap(mapper);
+    default <R> PersistentSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (PersistentSetX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1030,18 +1036,18 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default <R> PersistentSetX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> PersistentSetX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PersistentSetX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> PersistentSetX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (PersistentSetX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> PersistentSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PersistentSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default PersistentSetX<T> prependS(Stream<? extends T> stream) {
-        return (PersistentSetX<T>)LazyCollectionX.super.prependS(stream);
+    default PersistentSetX<T> prependStream(Stream<? extends T> stream) {
+        return (PersistentSetX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1081,8 +1087,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<T> insertAtS(int pos, Stream<T> stream) {
-        return (PersistentSetX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default PersistentSetX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PersistentSetX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1162,13 +1168,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<persistentSetX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<persistentSetX>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<persistentSetX>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1177,8 +1183,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<persistentSetX>> monadPlus(MonoidK<persistentSetX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<persistentSetX>> monadPlus(MonoidK<persistentSetX> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1192,12 +1198,12 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 }
 
                 @Override
-                public <T> Maybe<Comonad<persistentSetX>> comonad() {
+                public <T> Option<Comonad<persistentSetX>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<persistentSetX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<persistentSetX>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
 
@@ -1430,7 +1436,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
             return PersistentSetX.fromIterable(lt).zip(persistentSetX,(a,b)->a.apply(b));
         }
         private static <T,R> Higher<persistentSetX,R> flatMap( Higher<persistentSetX,T> lt, Function<? super T, ? extends  Higher<persistentSetX,R>> fn){
-            return PersistentSetX.fromIterable(Instances.narrowK(lt)).flatMap(fn.andThen(Instances::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(Instances::narrowK));
         }
         private static <T,R> PersistentSetX<R> map(PersistentSetX<T> lt, Function<? super T, ? extends R> fn){
             return PersistentSetX.fromIterable(lt).map(fn);
@@ -1482,7 +1488,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.visit(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

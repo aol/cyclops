@@ -2,7 +2,7 @@ package com.oath.cyclops.internal.stream.spliterators.push.zip;
 
 import com.oath.cyclops.internal.stream.spliterators.push.Fixtures;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

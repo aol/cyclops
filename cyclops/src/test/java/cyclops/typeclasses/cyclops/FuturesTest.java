@@ -2,7 +2,7 @@ package cyclops.typeclasses.cyclops;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;

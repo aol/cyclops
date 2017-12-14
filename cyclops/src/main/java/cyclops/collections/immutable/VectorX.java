@@ -8,7 +8,7 @@ import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 import cyclops.data.Vector;
 import cyclops.typeclasses.*;
@@ -64,6 +64,12 @@ public interface VectorX<T> extends To<VectorX<T>>,
                                      OnEmptySwitch<T, PersistentList<T>>,
                                      Comparable<T>,
                                      Higher<vectorX,T>{
+
+    public static <T> VectorX<T> defer(Supplier<VectorX<T>> s){
+      return of(s)
+                .map(Supplier::get)
+                .concatMap(l->l);
+    }
 
     @Override
     VectorX<T> updateAt(int i, T e);
@@ -282,7 +288,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @return new PVector
      */
     public static <T> VectorX<T> of(final T... values) {
-        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPVector(), LAZY);
+        return new LazyPVectorX<>(null,ReactiveSeq.of(values),Reducers.toPersistentVector(), LAZY);
     }
     /**
      *
@@ -307,7 +313,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> empty() {
         return new LazyPVectorX<T>(
-                                  Vector.empty(),null,Reducers.toPVector(), LAZY);
+                                  Vector.empty(),null,Reducers.toPersistentVector(), LAZY);
     }
 
     /**
@@ -328,7 +334,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> singleton(final T value) {
         return new LazyPVectorX<>(
-                                  Vector.of(value),null,Reducers.toPVector(), LAZY);
+                                  Vector.of(value),null,Reducers.toPersistentVector(), LAZY);
     }
 
     /**
@@ -348,11 +354,11 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return (VectorX) iterable;
         if (iterable instanceof Vector)
             return new LazyPVectorX<>(
-                                      (Vector) iterable,null,Reducers.toPVector(), LAZY);
+                                      (Vector) iterable,null,Reducers.toPersistentVector(), LAZY);
 
         return new LazyPVectorX<>(null,
                 ReactiveSeq.fromIterable(iterable),
-                Reducers.toPVector(), LAZY);
+                Reducers.toPersistentVector(), LAZY);
     }
     VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
 
@@ -372,7 +378,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     public static <T> VectorX<T> vectorX(ReactiveSeq<T> stream) {
 
-        return new LazyPVectorX<T>(null,stream,Reducers.toPVector(), LAZY);
+        return new LazyPVectorX<T>(null,stream,Reducers.toPersistentVector(), LAZY);
     }
 
 
@@ -542,7 +548,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
 
     //@Override
     default <T> Reducer<PersistentList<T>,T> monoid() {
-        return Reducers.toPVector();
+        return Reducers.toPersistentVector();
     }
 
     /* (non-Javadoc)
@@ -602,9 +608,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> VectorX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    default <R> VectorX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (VectorX<R>) LazyCollectionX.super.flatMap(mapper);
+        return (VectorX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1146,18 +1152,18 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default <R> VectorX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (VectorX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> VectorX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> VectorX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (VectorX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> VectorX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default VectorX<T> prependS(Stream<? extends T> stream) {
-        return (VectorX<T>)LazyCollectionX.super.prependS(stream);
+    default VectorX<T> prependStream(Stream<? extends T> stream) {
+        return (VectorX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1191,8 +1197,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<T> insertAtS(int pos, Stream<T> stream) {
-        return (VectorX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default VectorX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (VectorX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1270,13 +1276,13 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<vectorX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<vectorX>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<vectorX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<vectorX>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1285,8 +1291,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<vectorX>> monadPlus(MonoidK<vectorX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<vectorX>> monadPlus(MonoidK<vectorX> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1300,12 +1306,12 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<vectorX>> comonad() {
+                public <T> Option<Comonad<vectorX>> comonad() {
                     return Maybe.nothing();
                 }
                 @Override
-                public <T> Maybe<Unfoldable<vectorX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<vectorX>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }
@@ -1468,7 +1474,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
                     VectorX<Either<T, R>> next = VectorX.of(Either.left(initial));
                     boolean newValue[] = {false};
                     for(;;){
-                        next = next.flatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
+                        next = next.concatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
                         if(!newValue[0])
                             break;
                     }
@@ -1561,7 +1567,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
             return VectorX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
         private static <T,R> Higher<vectorX,R> flatMap(Higher<vectorX,T> lt, Function<? super T, ? extends  Higher<vectorX,R>> fn){
-            return VectorX.narrowK(lt).flatMap(fn.andThen(VectorX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(VectorX::narrowK));
         }
         private static <T,R> VectorX<R> map(VectorX<T> lt, Function<? super T, ? extends R> fn){
             return lt.map(fn);

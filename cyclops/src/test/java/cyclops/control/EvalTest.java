@@ -1,14 +1,11 @@
 package cyclops.control;
 
-import cyclops.async.Future;
 import cyclops.control.Eval.CompletableEval;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
-
-import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

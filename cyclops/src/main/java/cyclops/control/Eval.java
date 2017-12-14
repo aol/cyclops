@@ -9,7 +9,6 @@ import cyclops.data.Vector;
 import cyclops.typeclasses.*;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
-import cyclops.async.Future;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.eval;
@@ -346,7 +345,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -465,11 +464,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapI(java.util.function.Function)
+     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
      */
     @Override
-    default <R> Eval<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue.super.flatMapI(mapper);
+    default <R> Eval<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+        return (Eval<R>)MonadicValue.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1126,12 +1125,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<eval>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<eval>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<eval>> monadPlus() {
+                public <T> Option<MonadPlus<eval>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1141,7 +1140,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
+                public <T> Option<MonadPlus<eval>> monadPlus(MonoidK<eval> m) {
                     return Maybe.nothing();
                 }
 
@@ -1156,12 +1155,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<eval>> comonad() {
+                public <T> Option<Comonad<eval>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<eval>> unfoldable() {
+                public <T> Option<Unfoldable<eval>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

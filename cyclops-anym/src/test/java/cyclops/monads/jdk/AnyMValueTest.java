@@ -16,14 +16,14 @@ public class AnyMValueTest {
 
 	@Test
 	public void testFlatMapFirst() {
-		List actualList = AnyM.fromMaybe(Maybe.just(10)).flatMapI(i->AnyM.fromList(ListX.of(i,20,30))).stream().toList();
+		List actualList = AnyM.fromMaybe(Maybe.just(10)).concatMap(i->AnyM.fromList(ListX.of(i,20,30))).stream().toList();
 		assertEquals(actualList.size(), 1);
 		assertEquals(actualList.get(0), 10);
 	}
 
 	@Test
 	public void testFlatMapFirst2() {
-		List actualList = AnyM.fromMaybe(Maybe.just(-100)).flatMapI(i->AnyM.fromStream(ReactiveSeq.of(i,20,30))).stream().toList();
+		List actualList = AnyM.fromMaybe(Maybe.just(-100)).concatMap(i->AnyM.fromStream(ReactiveSeq.of(i,20,30))).stream().toList();
 		assertEquals(actualList.size(), 1);
 		assertEquals(actualList.get(0), -100);
 	}

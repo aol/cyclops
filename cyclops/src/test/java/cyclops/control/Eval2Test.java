@@ -7,9 +7,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Eval.Module.Later;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
-import cyclops.async.Future;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
@@ -287,7 +285,7 @@ public class Eval2Test {
 		assertThat(just.mkString(),equalTo("Always[10]"));
 		assertThat(none.mkString(),equalTo("Always[]"));
 	}
-	LazyReact react = new LazyReact();
+
 
 
 

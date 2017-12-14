@@ -3,11 +3,9 @@ package cyclops.control;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.immutable.PersistentSetX;
-import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
-import cyclops.async.Future;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -49,7 +47,24 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
     int cap =0;
 
+  @Test
+  public void testMaybeWithNull() {
+    System.out.println(Maybe.of(null).toString());
+    System.out.println(Maybe.just(null).toString());
+    System.out.println(Either.left(null).toString());
+    System.out.println(Either.right(null).toString());
 
+    System.out.println(Eval.defer(()-> Eval.now(null)).toString());
+    System.out.println(Eval.later(()->null).toString());
+    System.out.println(LazyEither5.left1(null).toString());
+    System.out.println(LazyEither5.left2(null).toString());
+    System.out.println(LazyEither5.left3(null).toString());
+    System.out.println(LazyEither5.left4(null).toString());
+    System.out.println(LazyEither5.right(null).toString());
+
+    System.out.println(Option.some(null).toString());
+    System.out.println(Option.of(null).toString());
+  }
     @Test
     public void lazy(){
 
@@ -460,8 +475,6 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         assertThat(none.mkString(), equalTo("Nothing[]"));
     }
 
-    LazyReact react = new LazyReact();
-
 
     @Test
     public void testFilter() {
@@ -615,7 +628,7 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapIterable() {
-		Maybe<Integer> maybe = just.flatMapI(i -> Arrays.asList(i, 20, 30));
+		Maybe<Integer> maybe = just.concatMap(i -> Arrays.asList(i, 20, 30));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

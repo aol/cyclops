@@ -12,7 +12,6 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.async.Future;
 import cyclops.function.*;
 
 import com.oath.cyclops.hkt.DataWitness.lazyEither3;
@@ -65,7 +64,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     public static  <LT1,LT2,T> Cokleisli<Higher<Higher<lazyEither3, LT1>,LT2>,T,LazyEither3<LT1,LT2,T>> kindCokleisli(){
         return Cokleisli.of(LazyEither3::narrowK);
     }
-
+    default LazyEither3<LT1,LT2, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither3.right(e) : LazyEither3.left1(rightToLeft.apply(e)));
+    }
 
     default <T2, R> LazyEither3<LT1, LT2,R> zip(final LazyEither3<LT1, LT2,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
@@ -164,6 +165,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
             return either.filter(test);
         }
 
+
         @Override
         public <R2> LazyEither3<Throwable, LT1, R2> flatMap(Function<? super RT, ? extends LazyEither3<Throwable,LT1,? extends R2>> mapper) {
             return either.flatMap(mapper);
@@ -259,7 +261,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
     BiFunction<LazyEither3<L1,L2,ReactiveSeq<T>>,LazyEither3<L1,L2,T>,LazyEither3<L1,L2,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
 
-    BinaryOperator<LazyEither3<L1,L2,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendS(z2));
+    BinaryOperator<LazyEither3<L1,L2,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -1396,12 +1398,12 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<Higher<Higher<lazyEither3, L1>, L2>>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<Higher<Higher<lazyEither3, L1>, L2>>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus() {
+                public <T> Option<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -1411,7 +1413,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(MonoidK<Higher<Higher<lazyEither3, L1>, L2>> m) {
+                public <T> Option<MonadPlus<Higher<Higher<lazyEither3, L1>, L2>>> monadPlus(MonoidK<Higher<Higher<lazyEither3, L1>, L2>> m) {
                     return Maybe.nothing();
                 }
 
@@ -1426,12 +1428,12 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<Higher<Higher<lazyEither3, L1>, L2>>> comonad() {
+                public <T> Option<Comonad<Higher<Higher<lazyEither3, L1>, L2>>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<Higher<Higher<lazyEither3, L1>, L2>>> unfoldable() {
+                public <T> Option<Unfoldable<Higher<Higher<lazyEither3, L1>, L2>>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

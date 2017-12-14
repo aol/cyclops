@@ -6,7 +6,7 @@ import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyLinkedLis
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import cyclops.control.*;
 
 import cyclops.data.Seq;
@@ -58,13 +58,18 @@ import java.util.stream.Stream;
  */
 public interface LinkedListX<T> extends To<LinkedListX<T>>,
                                       PersistentList<T>,
-                                    LazyCollectionX<T>,
-                                    IndexedSequenceX<T>,
-                                    OnEmptySwitch<T, PersistentList<T>>,
-                                    Higher<linkedListX,T> {
+                                      LazyCollectionX<T>,
+                                      IndexedSequenceX<T>,
+                                      OnEmptySwitch<T, PersistentList<T>>,
+                                      Higher<linkedListX,T> {
 
 
 
+    public static <T> LinkedListX<T> defer(Supplier<LinkedListX<T>> s){
+      return of(s)
+        .map(Supplier::get)
+        .concatMap(l->l);
+    }
 
     @Override
     default boolean isEmpty() {
@@ -281,7 +286,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return
      */
     public static <T> LinkedListX<T> linkedListX(ReactiveSeq<T> stream) {
-        return new LazyLinkedListX<T>(null,stream,Reducers.toPList(),Evaluation.LAZY);
+        return new LazyLinkedListX<T>(null,stream,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
 
@@ -308,7 +313,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @SafeVarargs
     public static <T> LinkedListX<T> of(final T... values) {
         return new LazyLinkedListX<>(null,
-                                 ReactiveSeq.of(values),Reducers.toPList(), Evaluation.LAZY);
+                                 ReactiveSeq.of(values),Reducers.toPersistentList(), Evaluation.LAZY);
     }
     /**
      *
@@ -337,9 +342,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return (LinkedListX) iterable;
         if (iterable instanceof PersistentList)
             return new LazyLinkedListX<T>(
-                    (PersistentList) iterable,null,Reducers.toPList(),Evaluation.LAZY);
+                    (PersistentList) iterable,null,Reducers.toPersistentList(),Evaluation.LAZY);
 
-        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPList(),Evaluation.LAZY);
+        return new LazyLinkedListX<>(null,ReactiveSeq.fromIterable(iterable),Reducers.toPersistentList(),Evaluation.LAZY);
 
     }
 
@@ -361,7 +366,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> empty() {
         return new LazyLinkedListX<>(
-                                 Seq.empty(),null,Reducers.toPList(),Evaluation.LAZY);
+                                 Seq.empty(),null,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
     /**
@@ -382,7 +387,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     public static <T> LinkedListX<T> singleton(final T value){
         return new LazyLinkedListX<>(
-                                 Seq.of(value),null,Reducers.toPList(),Evaluation.LAZY);
+                                 Seq.of(value),null,Reducers.toPersistentList(),Evaluation.LAZY);
     }
 
     /**
@@ -585,7 +590,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
     //@Override
     default <T> Reducer<PersistentList<T>,T> monoid() {
-        return Reducers.toPList();
+        return Reducers.toPersistentList();
 
     }
 
@@ -623,9 +628,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
      */
     @Override
-    default <R> LinkedListX<R> flatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-
-        return (LinkedListX) LazyCollectionX.super.flatMap(mapper);
+    default <R> LinkedListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
+       return (LinkedListX) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
@@ -1173,18 +1177,18 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default <R> LinkedListX<R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn) {
-        return (LinkedListX<R>)LazyCollectionX.super.flatMapS(fn);
+    default <R> LinkedListX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.flatMap(fn);
     }
 
     @Override
-    default <R> LinkedListX<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
-        return (LinkedListX<R>)LazyCollectionX.super.flatMapP(fn);
+    default <R> LinkedListX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.mergeMap(fn);
     }
 
     @Override
-    default LinkedListX<T> prependS(Stream<? extends T> stream) {
-        return (LinkedListX<T>)LazyCollectionX.super.prependS(stream);
+    default LinkedListX<T> prependStream(Stream<? extends T> stream) {
+        return (LinkedListX<T>)LazyCollectionX.super.prependStream(stream);
     }
 
     @Override
@@ -1218,8 +1222,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> insertAtS(int pos, Stream<T> stream) {
-        return (LinkedListX<T>)LazyCollectionX.super.insertAtS(pos,stream);
+    default LinkedListX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (LinkedListX<T>)LazyCollectionX.super.insertStreamAt(pos,stream);
     }
 
     @Override
@@ -1300,13 +1304,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<linkedListX>> monadZero() {
-                    return Maybe.just(Instances.monadZero());
+                public <T, R> Option<MonadZero<linkedListX>> monadZero() {
+                    return Option.some(Instances.monadZero());
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<linkedListX>> monadPlus() {
-                    return Maybe.just(Instances.monadPlus());
+                public <T> Option<MonadPlus<linkedListX>> monadPlus() {
+                    return Option.some(Instances.monadPlus());
                 }
 
                 @Override
@@ -1315,8 +1319,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<linkedListX>> monadPlus(MonoidK<linkedListX> m) {
-                    return Maybe.just(Instances.monadPlus(m));
+                public <T> Option<MonadPlus<linkedListX>> monadPlus(MonoidK<linkedListX> m) {
+                    return Option.some(Instances.monadPlus(m));
                 }
 
                 @Override
@@ -1330,13 +1334,13 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
                 }
 
                 @Override
-                public <T> Maybe<Comonad<linkedListX>> comonad() {
+                public <T> Option<Comonad<linkedListX>> comonad() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<linkedListX>> unfoldable() {
-                    return Maybe.just(Instances.unfoldable());
+                public <T> Option<Unfoldable<linkedListX>> unfoldable() {
+                    return Option.some(Instances.unfoldable());
                 }
             };
         }
@@ -1571,7 +1575,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
         }
         private static <T,R> Higher<linkedListX,R> flatMap(Higher<linkedListX,T> lt, Function<? super T, ? extends  Higher<linkedListX,R>> fn){
-            return LinkedListX.fromIterable(LinkedListX.narrowK(lt)).flatMap(fn.andThen(LinkedListX::narrowK));
+            return narrowK(lt).concatMap(fn.andThen(LinkedListX::narrowK));
         }
         private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
             return LinkedListX.fromIterable(lt).map(fn);

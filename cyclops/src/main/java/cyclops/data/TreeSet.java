@@ -155,18 +155,29 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
 
     @Override
     public <R> TreeSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn), Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().concatMap(fn), Comparators.naturalOrderIdentityComparator());
     }
     public <R> TreeSet<R> flatMap(Function<? super T, ? extends ImmutableSet<? extends R>> fn,Comparator<? super R> comp) {
-        return fromStream(stream().flatMapI(fn), comp);
+        return fromStream(stream().concatMap(fn), comp);
     }
 
     @Override
-    public <R> TreeSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(stream().flatMapI(fn), Comparators.naturalOrderIdentityComparator());
+    public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return fromStream(stream().concatMap(fn), Comparators.naturalOrderIdentityComparator());
     }
-    public <R> TreeSet<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn,Comparator<? super R> comp) {
-        return fromStream(stream().flatMapI(fn), comp);
+
+    @Override
+    public <R> TreeSet<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(fn), Comparators.naturalOrderIdentityComparator());
+    }
+
+    @Override
+    public <R> TreeSet<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return fromStream(stream().mergeMap(maxConcurecy,fn), Comparators.naturalOrderIdentityComparator());
+    }
+
+  public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn,Comparator<? super R> comp) {
+        return fromStream(stream().concatMap(fn), comp);
     }
 
     @Override
@@ -410,8 +421,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public <U, R> TreeSet<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (TreeSet<R>)ImmutableSortedSet.super.zipS(other,zipper);
+    public <U, R> TreeSet<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+        return (TreeSet<R>)ImmutableSortedSet.super.zipWithStream(other,zipper);
     }
 
     @Override
@@ -510,8 +521,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public <U> TreeSet<Tuple2<T, U>> zipS(Stream<? extends U> other) {
-        return (TreeSet) ImmutableSortedSet.super.zipS(other);
+    public <U> TreeSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
+        return (TreeSet) ImmutableSortedSet.super.zipWithStream(other);
     }
 
     @Override
@@ -652,15 +663,9 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
 
-
     @Override
-    public <R> TreeSet<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return flatMapI(mapper);
-    }
-
-    @Override
-    public TreeSet<T> prependS(Stream<? extends T> stream) {
-        return (TreeSet<T>) ImmutableSortedSet.super.prependS(stream);
+    public TreeSet<T> prependStream(Stream<? extends T> stream) {
+        return (TreeSet<T>) ImmutableSortedSet.super.prependStream(stream);
     }
 
     @Override
@@ -679,8 +684,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<T> insertAtS(int pos, Stream<T> stream) {
-        return (TreeSet<T>) ImmutableSortedSet.super.insertAtS(pos,stream);
+    public TreeSet<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (TreeSet<T>) ImmutableSortedSet.super.insertStreamAt(pos,stream);
     }
 
     @Override

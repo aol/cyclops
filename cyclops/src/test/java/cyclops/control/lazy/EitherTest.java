@@ -5,7 +5,7 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.async.Future;
+import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
@@ -34,6 +34,12 @@ import static org.junit.Assert.*;
 public class EitherTest {
 
 
+    @Test
+    public void filterAlt(){
+      assertThat(LazyEither.right(10).filter(i->i>100,r->"hello"),equalTo(LazyEither.left("hello")));
+      assertThat(LazyEither.right(101).filter(i->i>100,r->"hello"),equalTo(LazyEither.right(101)));
+      assertThat(LazyEither.<Integer,Integer>left(101).filter(i->i>100,r->-1),equalTo(LazyEither.left(101)));
+    }
     @Test
     public void completableTest(){
         CompletableEither<Integer,Integer> completable = LazyEither.either();

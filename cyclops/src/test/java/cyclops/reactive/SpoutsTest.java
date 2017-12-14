@@ -4,8 +4,8 @@ import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 
 import cyclops.function.Effect;
@@ -363,9 +363,9 @@ public class SpoutsTest {
         Flux.just(1,2,3).publish(f->f);
         assertThat(Spouts.of(1,2,3).flatMap(i->Spouts.of(i)).collect(Collectors.toList())
                         ,equalTo(ListX.of(1,2,3)));
-        assertThat(Spouts.deferred(()-> Flux.just(1,2,3))
+        assertThat(Spouts.defer(()-> Flux.just(1,2,3))
                 .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
-        assertThat(Spouts.deferredS(()-> ReactiveSeq.of(1,2,3))
+        assertThat(Spouts.deferFromStream(()-> ReactiveSeq.of(1,2,3))
                 .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
     }
 
@@ -390,7 +390,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishToAndMerge(){
-        cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+        com.oath.cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                 .build();
 
         Thread t=  new Thread( ()-> {

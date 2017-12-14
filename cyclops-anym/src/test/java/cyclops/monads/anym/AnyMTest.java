@@ -109,7 +109,7 @@ public class AnyMTest {
     public void flatMapFirstList(){
 
        List l= AnyM.fromList(ListX.of(1,2,3))
-			       .flatMapI(i->ListX.of(10,i))
+			       .concatMap(i->ListX.of(10,i))
                    .unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
@@ -125,7 +125,7 @@ public class AnyMTest {
     public void flatMapValueFirstList(){
 
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapI(i->ListX.of(10,i))
+            .concatMap(i->ListX.of(10,i))
             .toMaybe();
        assertThat(l,equalTo(Maybe.of(10)));
     }
@@ -133,7 +133,7 @@ public class AnyMTest {
     public void flatMapValueFirstSet(){
 
        Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            		.flatMapI(i->SetX.of(10,i)).toMaybe();
+            		.concatMap(i->SetX.of(10,i)).toMaybe();
 
        assertThat(l.toOptional().get(),instanceOf(Integer.class));
     }
@@ -141,7 +141,7 @@ public class AnyMTest {
     public void flatMapValueFirstQueue(){
 
         Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapI(i->QueueX.of(10,i)).toMaybe();
+            .concatMap(i->QueueX.of(10,i)).toMaybe();
 
         assertThat(l,equalTo(Maybe.of(10)));
     }

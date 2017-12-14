@@ -139,12 +139,12 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
                 }
 
                 @Override
-                public <T, R> Maybe<MonadZero<identity>> monadZero() {
+                public <T, R> Option<MonadZero<identity>> monadZero() {
                     return Maybe.nothing();
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<identity>> monadPlus() {
+                public <T> Option<MonadPlus<identity>> monadPlus() {
                     return Maybe.nothing();
                 }
 
@@ -154,7 +154,7 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
                 }
 
                 @Override
-                public <T> Maybe<MonadPlus<identity>> monadPlus(MonoidK<identity> m) {
+                public <T> Option<MonadPlus<identity>> monadPlus(MonoidK<identity> m) {
                     return Maybe.nothing();
                 }
 
@@ -169,12 +169,12 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
                 }
 
                 @Override
-                public <T> Maybe<Comonad<identity>> comonad() {
+                public <T> Option<Comonad<identity>> comonad() {
                     return Maybe.just(Instances.comonad());
                 }
 
                 @Override
-                public <T> Maybe<Unfoldable<identity>> unfoldable() {
+                public <T> Option<Unfoldable<identity>> unfoldable() {
                     return Maybe.nothing();
                 }
             };

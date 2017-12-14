@@ -1,11 +1,13 @@
 package cyclops.data;
 
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -65,5 +67,14 @@ public class HashSetTest extends BaseImmutableSetTest{
   public void removeAllTest(){
     assertThat(HashSet.of(1,2,3).removeAll(of(1,5,6,7,2)),equalTo(HashSet.of(3)));
   }
+  @Test
+  public void lastIndexOf(){
 
+    assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
+    assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
+    assertThat(of(1).lastIndexOf(e->false),equalTo(Maybe.nothing()));
+    assertThat(of(1,2,3).lastIndexOf(e-> Objects.equals(2,e)),equalTo(Maybe.just(1l)));
+    assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),
+        equalTo(of(1,2,3,2).indexOf(e->Objects.equals(2,e))));
+  }
 }

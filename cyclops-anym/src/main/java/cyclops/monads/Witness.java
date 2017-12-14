@@ -9,13 +9,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import com.oath.anym.internal.adapters.*;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.immutable.*;
 import cyclops.control.*;
-import cyclops.async.Future;
-import cyclops.reactive.FutureStream;
+import cyclops.control.Future;
+import cyclops.data.*;
+import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.QueueX;
@@ -32,12 +33,29 @@ public interface Witness {
     static interface StreamWitness<W extends StreamWitness<W>>  extends WitnessType<W>{
 
     }
-   static interface CollectionXWitness<W extends CollectionXWitness<W>>  extends WitnessType<W>{
+     static interface IterableXWitness<W extends IterableXWitness<W>>  extends WitnessType<W>{
 
-   }
+     }
     public static <T> Identity<T> identity(AnyM<identity,? extends T> anyM){
         return anyM.unwrap();
     }
+
+    public static <T> Vector<T> vector(AnyM<vector,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> Seq<T> seq(AnyM<seq,? extends T> anyM){
+    return anyM.unwrap();
+  }
+
+    public static <T> LazySeq<T> lazySeq(AnyM<lazySeq,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> HashSet<T> hashSet(AnyM<hashSet,? extends T> anyM){
+    return anyM.unwrap();
+  }
+    public static <T> BankersQueue<T> bankersQueue(AnyM<bankersQueue,? extends T> anyM){
+    return anyM.unwrap();
+  }
 
     public static <T> Stream<T> stream(AnyM<stream,? extends T> anyM){
         return anyM.unwrap();
@@ -90,7 +108,7 @@ public interface Witness {
     public static <T> Optional<T> optional(AnyM<optional,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T,W extends CollectionXWitness<W>> CollectionX<T> collectionX(AnyM<W,? extends T> anyM){
+    public static <T,W extends IterableXWitness<W>> IterableX<T> iterableX(AnyM<W,? extends T> anyM){
         return anyM.unwrap();
     }
     public static <T,W extends MonadicValueWitness<W>> MonadicValue<T> monadicValue(AnyM<W,? extends T> anyM){
@@ -102,6 +120,9 @@ public interface Witness {
     public static <T> Maybe<T> maybe(AnyM<maybe,? extends T> anyM){
         return anyM.unwrap();
     }
+    public static <T> Option<T> option(AnyM<option,? extends T> anyM){
+    return anyM.unwrap();
+  }
     public static <T> Future<T> future(AnyM<future,? extends T> anyM){
         return anyM.unwrap();
     }
@@ -167,116 +188,168 @@ public interface Witness {
 
     }
 
-    public static enum sortedSet implements CollectionXWitness<sortedSet>{
+    public static enum sortedSet implements IterableXWitness<sortedSet> {
         INSTANCE;
 
         @Override
         public MonadAdapter<sortedSet> adapter() {
-            return new CollectionXAdapter<sortedSet>(SortedSetX::empty,
+            return new IterableXAdapter<sortedSet>(SortedSetX::empty,
                     SortedSetX::of,SortedSetX::fromIterator,this);
         }
 
     }
-    public static enum set implements CollectionXWitness<set>{
+    public static enum set implements IterableXWitness<set> {
         INSTANCE;
 
         @Override
         public MonadAdapter<set> adapter() {
-            return new CollectionXAdapter<Witness.set>(SetX::empty,
+            return new IterableXAdapter<set>(SetX::empty,
                     SetX::of,SetX::fromIterator,this);
         }
 
     }
-    public static enum list implements CollectionXWitness<list>{
+    public static enum list implements IterableXWitness<list> {
         INSTANCE;
 
         @Override
         public MonadAdapter<list> adapter() {
-            return new CollectionXAdapter<Witness.list>(ListX::empty,
+            return new IterableXAdapter<list>(ListX::empty,
                     ListX::of,ListX::fromIterator,this);
         }
 
     }
-    public static enum linkedListX implements CollectionXWitness<linkedListX>{
+    public static enum linkedListX implements IterableXWitness<linkedListX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<linkedListX> adapter() {
-            return new CollectionXAdapter<linkedListX>(LinkedListX::empty,
+            return new IterableXAdapter<linkedListX>(LinkedListX::empty,
                     LinkedListX::of, LinkedListX::fromIterator,this);
         }
 
     }
-    public static enum vectorX implements CollectionXWitness<vectorX>{
+    public static enum vectorX implements IterableXWitness<vectorX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<vectorX> adapter() {
-            return new CollectionXAdapter<vectorX>(VectorX::empty,
+            return new IterableXAdapter<vectorX>(VectorX::empty,
                     VectorX::of, VectorX::fromIterator,this);
         }
 
     }
-    public static enum persistentQueueX implements CollectionXWitness<persistentQueueX>{
+    public static enum persistentQueueX implements IterableXWitness<persistentQueueX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<persistentQueueX> adapter() {
-            return new CollectionXAdapter<persistentQueueX>(PersistentQueueX::empty,
+            return new IterableXAdapter<persistentQueueX>(PersistentQueueX::empty,
                     PersistentQueueX::of, PersistentQueueX::fromIterator,this);
         }
 
     }
-    public static enum persistentSetX implements CollectionXWitness<persistentSetX>{
+    public static enum persistentSetX implements IterableXWitness<persistentSetX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<persistentSetX> adapter() {
-            return new CollectionXAdapter<persistentSetX>(PersistentSetX::empty,
+            return new IterableXAdapter<persistentSetX>(PersistentSetX::empty,
                     PersistentSetX::of, PersistentSetX::fromIterator,this);
         }
 
     }
-    public static enum orderedSetX implements CollectionXWitness<orderedSetX>{
+    public static enum orderedSetX implements IterableXWitness<orderedSetX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<orderedSetX> adapter() {
-            return new CollectionXAdapter<orderedSetX>(OrderedSetX::empty,
+            return new IterableXAdapter<orderedSetX>(OrderedSetX::empty,
                     OrderedSetX::identityOrNatural, OrderedSetX::fromIterator,this);
         }
 
     }
-    public static enum bagX implements CollectionXWitness<bagX>{
+    public static enum bagX implements IterableXWitness<bagX> {
         INSTANCE;
 
         @Override
         public MonadAdapter<bagX> adapter() {
-            return new CollectionXAdapter<bagX>(BagX::empty,
+            return new IterableXAdapter<bagX>(BagX::empty,
                     BagX::of, BagX::fromIterator,this);
         }
 
     }
-    public static enum deque implements CollectionXWitness<deque>{
+    public static enum deque implements IterableXWitness<deque> {
         INSTANCE;
 
         @Override
         public MonadAdapter<deque> adapter() {
-            return new CollectionXAdapter<Witness.deque>(DequeX::empty,
+            return new IterableXAdapter<deque>(DequeX::empty,
                     DequeX::of,DequeX::fromIterator,this);
         }
 
     }
-    public static enum queue implements CollectionXWitness<queue>{
+    public static enum queue implements IterableXWitness<queue> {
         INSTANCE;
 
         @Override
         public MonadAdapter<queue> adapter() {
-            return new CollectionXAdapter<Witness.queue>(QueueX::empty,
+            return new IterableXAdapter<queue>(QueueX::empty,
                     QueueX::of,QueueX::fromIterator,this);
         }
 
     }
+    /** persistent types **/
+    public static enum seq implements IterableXWitness<seq> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<seq> adapter() {
+        return new IterableXAdapter<seq>(Seq::empty,
+          Seq::of,Seq::fromIterator,this);
+      }
+
+    }
+    public static enum lazySeq implements IterableXWitness<lazySeq> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<lazySeq> adapter() {
+        return new IterableXAdapter<lazySeq>(LazySeq::empty,
+          LazySeq::of, LazySeq::fromIterator,this);
+      }
+
+    }
+    public static enum vector implements IterableXWitness<vector> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<vector> adapter() {
+        return new IterableXAdapter<vector>(Vector::empty,
+          Vector::of, Vector::fromIterator,this);
+      }
+
+    }
+    public static enum hashSet implements IterableXWitness<hashSet> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<hashSet> adapter() {
+        return new IterableXAdapter<hashSet>(HashSet::empty,
+          HashSet::of, HashSet::fromIterator,this);
+      }
+
+    }
+    public static enum bankersQueue implements IterableXWitness<bankersQueue> {
+      INSTANCE;
+
+      @Override
+      public MonadAdapter<bankersQueue> adapter() {
+        return new IterableXAdapter<bankersQueue>(BankersQueue::empty,
+          BankersQueue::of, BankersQueue::fromIterator,this);
+      }
+
+    }
+
     public static enum streamable implements WitnessType<streamable>{
         INSTANCE;
 
@@ -379,6 +452,17 @@ public interface Witness {
         }
 
     }
+      public static enum option implements MonadicValueWitness<option>{
+        INSTANCE;
+
+
+        @Override
+        public MonadAdapter<option> adapter() {
+          return new MonadicValueAdapter<Witness.option>(()->Option.none(),
+            Option::some,Option::fromIterable,true,this);
+        }
+
+      }
     public static enum future implements MonadicValueWitness<future>{
         INSTANCE;
 

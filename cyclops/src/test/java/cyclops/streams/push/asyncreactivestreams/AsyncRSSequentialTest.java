@@ -1,7 +1,7 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
-import cyclops.async.adapters.Topic;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
@@ -61,14 +61,14 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
         }
     }
     @Test
-    public void flatMapIMaybe() {
-        assertThat(of(1, 2, 3).flatMapI(Maybe::ofNullable)
+    public void concatMapMaybe() {
+        assertThat(of(1, 2, 3).concatMap(Maybe::ofNullable)
                         .collect(Collectors.toList()),
                 Matchers.equalTo(Arrays.asList(1, 2, 3)));
     }
     @Test
-    public void flatMapIStream() {
-        assertThat(of(1, 2, 3).flatMapI(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
+    public void concatMapStream() {
+        assertThat(of(1, 2, 3).concatMap(i -> ReactiveSeq.of(i).filter(Objects::nonNull))
                         .collect(Collectors.toList()),
                 Matchers.equalTo(Arrays.asList(1, 2, 3)));
     }
@@ -131,7 +131,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Test
     public void testCycleAsync() {
       //  of(1, 2).collectStream(CyclopsCollectors.listX())
-        //        .flatMapI(i->i.cycle(3)).printOut();
+        //        .concatMap(i->i.cycle(3)).printOut();
 
        // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
 

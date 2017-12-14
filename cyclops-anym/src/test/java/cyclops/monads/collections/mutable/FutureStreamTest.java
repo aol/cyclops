@@ -1,7 +1,6 @@
 package cyclops.monads.collections.mutable;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
@@ -10,11 +9,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.ThreadPools;
-import cyclops.async.LazyReact;
+import cyclops.futurestream.LazyReact;
 
 
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
-import cyclops.reactive.FutureStream;
+import cyclops.futurestream.FutureStream;
 import org.junit.Test;
 
 import java.util.stream.Stream;

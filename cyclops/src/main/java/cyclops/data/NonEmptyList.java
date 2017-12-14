@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -219,11 +220,21 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public <R> ImmutableList<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return lazySeq().flatMapI(fn);
+    public <R> ImmutableList<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+        return lazySeq().concatMap(fn);
     }
 
-    public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
+    @Override
+    public <R> ImmutableList<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return lazySeq().mergeMap(fn);
+    }
+
+    @Override
+    public <R> ImmutableList<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+      return lazySeq().mergeMap(maxConcurecy,fn);
+    }
+
+  public <R> NonEmptyList<R> flatMapNel(Function<? super T, ? extends NonEmptyList<R>> fn) {
         return fn.apply(head).appendAll(tail.flatMap(fn));
 
     }
@@ -419,8 +430,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> prependS(Stream<? extends T> stream) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.prependS(stream);
+    public NonEmptyList<T> prependStream(Stream<? extends T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.prependStream(stream);
     }
 
     @Override
@@ -434,8 +445,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> insertAtS(int pos, Stream<T> stream) {
-        return (NonEmptyList<T>) ImmutableList.Some.super.insertAtS(pos,stream);
+    public NonEmptyList<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (NonEmptyList<T>) ImmutableList.Some.super.insertStreamAt(pos,stream);
     }
 
     @Override
