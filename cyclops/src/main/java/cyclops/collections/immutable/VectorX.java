@@ -610,7 +610,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     @Override
     default <R> VectorX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (VectorX<R>) this.concatMap(mapper);
+        return (VectorX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

@@ -503,7 +503,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      */
     @Override
     default <R> BagX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (BagX<R>) this.concatMap(mapper);
+        return (BagX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

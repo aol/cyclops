@@ -485,7 +485,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default <R> SetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (SetX<R>) this.concatMap(mapper);
+        return (SetX<R>)LazyCollectionX.super.concatMap(mapper);
     }
 
     /* (non-Javadoc)

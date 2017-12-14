@@ -579,7 +579,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     @Override
     default <R> PersistentQueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
-        return (PersistentQueueX<R>) this.concatMap(mapper);
+        return (PersistentQueueX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     /*
