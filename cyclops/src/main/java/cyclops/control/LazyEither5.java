@@ -97,6 +97,9 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
         return new CompletableEither5<RT,LT2,LT3,LT4, RT>(c,fromFuture(Future.fromPublisher(c)));
     }
+    default LazyEither5<LT1,LT2,LT3, LT4, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither5.right(e) : LazyEither5.left1(rightToLeft.apply(e)));
+    }
     @AllArgsConstructor
     static class CompletableEither5<ORG,LT1,LT2,LT3,RT> implements LazyEither5<Throwable,LT1,LT2,LT3,RT>, Completable<ORG> {
 

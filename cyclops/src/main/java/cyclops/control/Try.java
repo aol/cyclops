@@ -826,7 +826,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
   public Maybe<T> filter(Predicate<? super T> p){
     return xor.filter(p).toMaybe();
   }
-
+  public Try<T, X> filter(Predicate<? super T> test, Function<? super T, ? extends X> errorGenerator){
+    return flatMap(e->test.test(e) ? Try.success(e) : Try.failure(errorGenerator.apply(e)));
+  }
   /**
    * @param consumer Accept Exception if present (Failure)
    * @return this

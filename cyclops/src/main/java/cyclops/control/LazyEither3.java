@@ -64,7 +64,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     public static  <LT1,LT2,T> Cokleisli<Higher<Higher<lazyEither3, LT1>,LT2>,T,LazyEither3<LT1,LT2,T>> kindCokleisli(){
         return Cokleisli.of(LazyEither3::narrowK);
     }
-
+    default LazyEither3<LT1,LT2, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
+      return flatMap(e->test.test(e) ? LazyEither3.right(e) : LazyEither3.left1(rightToLeft.apply(e)));
+    }
 
     default <T2, R> LazyEither3<LT1, LT2,R> zip(final LazyEither3<LT1, LT2,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));
@@ -162,6 +164,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         public Maybe<RT> filter(Predicate<? super RT> test) {
             return either.filter(test);
         }
+
 
         @Override
         public <R2> LazyEither3<Throwable, LT1, R2> flatMap(Function<? super RT, ? extends LazyEither3<Throwable,LT1,? extends R2>> mapper) {
