@@ -495,7 +495,6 @@ public interface Maybe<T> extends Option<T> {
      * @return Maybe containing the supplied value
      */
     static <T> Maybe<T> of(final T value) {
-        Objects.requireNonNull(value);
         return new Just<T>(
                 Eval.later(() -> value));
     }

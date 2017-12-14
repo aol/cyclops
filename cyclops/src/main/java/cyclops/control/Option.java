@@ -184,7 +184,6 @@ public interface Option<T> extends To<Option<T>>,
      * @return Option containing the supplied value
      */
     static <T> Option<T> of(final T value) {
-        Objects.requireNonNull(value);
         return new Option.Some(value);
 
     }

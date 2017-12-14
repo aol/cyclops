@@ -38,7 +38,7 @@ public class EitherTest {
     public void filterAlt(){
       assertThat(LazyEither.right(10).filter(i->i>100,r->"hello"),equalTo(LazyEither.left("hello")));
       assertThat(LazyEither.right(101).filter(i->i>100,r->"hello"),equalTo(LazyEither.right(101)));
-      assertThat(LazyEither.<Integer,Integer>left(101).filter(i->i>100,r->-1),equalTo(LazyEither.left(-1)));
+      assertThat(LazyEither.<Integer,Integer>left(101).filter(i->i>100,r->-1),equalTo(LazyEither.left(101)));
     }
     @Test
     public void completableTest(){
