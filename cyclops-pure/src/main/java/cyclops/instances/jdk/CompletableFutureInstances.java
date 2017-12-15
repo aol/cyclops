@@ -2,56 +2,30 @@ package cyclops.instances.jdk;
 
 import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.Optionals;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.kinds.CompletableFutureKind;
-import cyclops.kinds.OptionalKind;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import lombok.experimental.UtilityClass;
 
-import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.tuple1;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.data.tuple.Tuple1;
-import cyclops.function.Monoid;
-import cyclops.typeclasses.Cokleisli;
+
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.CompletableFutures;
-import cyclops.control.Either;
 import cyclops.control.Future;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.function.Function3;
-import cyclops.function.Monoid;
-import cyclops.typeclasses.functor.Functor;
-import lombok.experimental.UtilityClass;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Companion class for creating Type Class instances for working with CompletableFutures
@@ -337,7 +311,7 @@ public class CompletableFutureInstances {
 
       @Override
       public <T, R> Higher<DataWitness.completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<DataWitness.completableFuture, ? extends Either<T, R>>> fn) {
-        Higher<DataWitness.future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
+        Higher<DataWitness.future, R> x = Future.FutureInstances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
         return CompletableFutureKind.narrowFuture(x);
       }
     };

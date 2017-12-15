@@ -20,12 +20,6 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupKs;
-import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -164,18 +158,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         return narrow;
     }
 
-    default <W1> Product<Higher<either, LT>,W1, RT> product(Active<W1, RT> active){
-        return Product.of(allTypeclasses(),active);
-    }
-    default <W1> Coproduct<W1,Higher<either, LT>, RT> coproduct(InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2, EitherInstances.definitions());
-    }
-    default Active<Higher<either, LT>, RT> allTypeclasses(){
-        return Active.of(this, EitherInstances.definitions());
-    }
-    default <W2,R> Nested<Higher<either, LT>,W2,R> mapM(Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), EitherInstances.definitions(), defs);
-    }
 
 
     default Eval<Either<LT, RT>> nestedEval(){
@@ -777,8 +759,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      */
     Either<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn);
 
-    @Deprecated //use bipeek
-    void peek(Consumer<? super LT> stAction, Consumer<? super RT> ptAction);
     /**
      * @return True if this is a right Either
      */
@@ -987,10 +967,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
             return this;
         }
 
-        @Override
-        public void peek(final Consumer<? super L> stAction, final Consumer<? super RT> ptAction) {
-            ptAction.accept(value);
-        }
+
 
         @Override
         public boolean isRight() {
@@ -1173,11 +1150,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
             return fn.apply(value);
         }
 
-        @Override
-        public void peek(final Consumer<? super L> stAction, final Consumer<? super R> ptAction) {
-            stAction.accept(value);
 
-        }
 
         @Override
         public <R2> R2 visit(final Function<? super L, ? extends R2> left, final Function<? super R, ? extends R2> right) {

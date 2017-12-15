@@ -1,6 +1,6 @@
 package cyclops.instances.jdk;
 
-import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.stream;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Streams;
 import cyclops.control.Either;
@@ -12,50 +12,19 @@ import cyclops.function.Monoid;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.comonad.Comonad;
+import cyclops.typeclasses.foldable.Foldable;
+import cyclops.typeclasses.foldable.Unfoldable;
+import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
+import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.*;
 import java.util.stream.Stream;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.tuple1;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.data.tuple.Tuple1;
-import cyclops.function.Monoid;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.Pure;
-import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.*;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.CompletableFutures;
-import cyclops.control.Either;
-import cyclops.control.Future;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.function.Function3;
-import cyclops.function.Monoid;
-import cyclops.typeclasses.functor.Functor;
-import lombok.experimental.UtilityClass;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 /**
  * Companion class for creating Type Class instances for working with Streams
  * @author johnmcclean
@@ -64,72 +33,72 @@ import java.util.function.Function;
 @UtilityClass
 public  class StreamInstances {
 
-  public static InstanceDefinitions<DataWitness.stream> definitions(){
-    return new InstanceDefinitions<DataWitness.stream>() {
+  public static InstanceDefinitions<stream> definitions(){
+    return new InstanceDefinitions<stream>() {
       @Override
-      public <T, R> Functor<DataWitness.stream> functor() {
+      public <T, R> Functor<stream> functor() {
         return StreamInstances.functor();
       }
 
       @Override
-      public <T> Pure<DataWitness.stream> unit() {
+      public <T> Pure<stream> unit() {
         return StreamInstances.unit();
       }
 
       @Override
-      public <T, R> Applicative<DataWitness.stream> applicative() {
+      public <T, R> Applicative<stream> applicative() {
         return StreamInstances.zippingApplicative();
       }
 
       @Override
-      public <T, R> Monad<DataWitness.stream> monad() {
+      public <T, R> Monad<stream> monad() {
         return StreamInstances.monad();
       }
 
       @Override
-      public <T, R> Option<MonadZero<DataWitness.stream>> monadZero() {
+      public <T, R> Option<MonadZero<stream>> monadZero() {
         return Option.some(StreamInstances.monadZero());
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.stream>> monadPlus() {
+      public <T> Option<MonadPlus<stream>> monadPlus() {
         return Option.some(StreamInstances.monadPlus());
       }
 
       @Override
-      public <T> MonadRec<DataWitness.stream> monadRec() {
+      public <T> MonadRec<stream> monadRec() {
         return StreamInstances.monadRec();
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.stream>> monadPlus(MonoidK<DataWitness.stream> m) {
+      public <T> Option<MonadPlus<stream>> monadPlus(MonoidK<stream> m) {
         return Option.some(StreamInstances.monadPlus(m));
       }
 
       @Override
-      public <C2, T> Traverse<DataWitness.stream> traverse() {
+      public <C2, T> Traverse<stream> traverse() {
         return StreamInstances.traverse();
       }
 
       @Override
-      public <T> Foldable<DataWitness.stream> foldable() {
+      public <T> Foldable<stream> foldable() {
         return StreamInstances.foldable();
       }
 
       @Override
-      public <T> Option<Comonad<DataWitness.stream>> comonad() {
+      public <T> Option<Comonad<stream>> comonad() {
         return Maybe.nothing();
       }
       @Override
-      public <T> Option<Unfoldable<DataWitness.stream>> unfoldable() {
+      public <T> Option<Unfoldable<stream>> unfoldable() {
         return Option.some(StreamInstances.unfoldable());
       }
     };
   }
-  public static Unfoldable<DataWitness.stream> unfoldable(){
-    return new Unfoldable<DataWitness.stream>() {
+  public static Unfoldable<stream> unfoldable(){
+    return new Unfoldable<stream>() {
       @Override
-      public <R, T> Higher<DataWitness.stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+      public <R, T> Higher<stream, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
         return StreamKind.widen(ReactiveSeq.unfold(b,fn));
       }
     };
@@ -162,7 +131,7 @@ public  class StreamInstances {
    *
    * @return A functor for Streams
    */
-  public static <T,R>Functor<DataWitness.stream> functor(){
+  public static <T,R>Functor<stream> functor(){
     BiFunction<StreamKind<T>,Function<? super T, ? extends R>,StreamKind<R>> map = StreamInstances::map;
     return General.functor(map);
   }
@@ -181,8 +150,8 @@ public  class StreamInstances {
    *
    * @return A factory for Streams
    */
-  public static <T> Pure<DataWitness.stream> unit(){
-    return General.<DataWitness.stream,T>unit(StreamInstances::of);
+  public static <T> Pure<stream> unit(){
+    return General.<stream,T>unit(StreamInstances::of);
   }
   /**
    *
@@ -220,7 +189,7 @@ public  class StreamInstances {
    *
    * @return A zipper for Streams
    */
-  public static <T,R> Applicative<DataWitness.stream> zippingApplicative(){
+  public static <T,R> Applicative<stream> zippingApplicative(){
     BiFunction<StreamKind< Function<T, R>>,StreamKind<T>,StreamKind<R>> ap = StreamInstances::ap;
     return General.applicative(functor(), unit(), ap);
   }
@@ -250,9 +219,9 @@ public  class StreamInstances {
    *
    * @return Type class with monad functions for Streams
    */
-  public static <T,R> Monad<DataWitness.stream> monad(){
+  public static <T,R> Monad<stream> monad(){
 
-    BiFunction<Higher<DataWitness.stream,T>,Function<? super T, ? extends Higher<DataWitness.stream,R>>,Higher<DataWitness.stream,R>> flatMap = StreamInstances::flatMap;
+    BiFunction<Higher<stream,T>,Function<? super T, ? extends Higher<stream,R>>,Higher<stream,R>> flatMap = StreamInstances::flatMap;
     return General.monad(zippingApplicative(), flatMap);
   }
   /**
@@ -272,26 +241,26 @@ public  class StreamInstances {
    *
    * @return A filterable monad (with default value)
    */
-  public static <T,R> MonadZero<DataWitness.stream> monadZero(){
-    BiFunction<Higher<DataWitness.stream,T>,Predicate<? super T>,Higher<DataWitness.stream,T>> filter = StreamInstances::filter;
-    Supplier<Higher<DataWitness.stream, T>> zero = ()->StreamKind.widen(Stream.of());
-    return General.<DataWitness.stream,T,R>monadZero(monad(), zero,filter);
+  public static <T,R> MonadZero<stream> monadZero(){
+    BiFunction<Higher<stream,T>,Predicate<? super T>,Higher<stream,T>> filter = StreamInstances::filter;
+    Supplier<Higher<stream, T>> zero = ()->StreamKind.widen(Stream.of());
+    return General.<stream,T,R>monadZero(monad(), zero,filter);
   }
-  public static <T,R> MonadRec<DataWitness.stream> monadRec() {
+  public static <T,R> MonadRec<stream> monadRec() {
 
-    return new MonadRec<DataWitness.stream>() {
+    return new MonadRec<stream>() {
       @Override
-      public <T, R> Higher<DataWitness.stream, R> tailRec(T initial, Function<? super T, ? extends Higher<DataWitness.stream, ? extends Either<T, R>>> fn) {
+      public <T, R> Higher<stream, R> tailRec(T initial, Function<? super T, ? extends Higher<stream, ? extends Either<T, R>>> fn) {
         return StreamKind.widen(ReactiveSeq.tailRec(initial, fn.andThen(s -> ReactiveSeq.fromStream(StreamKind.narrowK(s)))));
       }
     };
   }
-  public static <T> MonadPlus<DataWitness.stream> monadPlus(){
+  public static <T> MonadPlus<stream> monadPlus(){
 
     return General.monadPlus(monadZero(), MonoidKs.combineStream());
   }
 
-  public static <T> MonadPlus<DataWitness.stream> monadPlus(MonoidK<DataWitness.stream> m){
+  public static <T> MonadPlus<stream> monadPlus(MonoidK<stream> m){
 
     return General.monadPlus(monadZero(),m);
   }
@@ -299,7 +268,7 @@ public  class StreamInstances {
   /**
    * @return Type class for traversables with traverse / sequence operations
    */
-  public static <C2,T> Traverse<DataWitness.stream> traverse(){
+  public static <C2,T> Traverse<stream> traverse(){
     BiFunction<Applicative<C2>,StreamKind<Higher<C2, T>>,Higher<C2, StreamKind<T>>> sequenceFn = (ap,list) -> {
 
       Higher<C2,StreamKind<T>> identity = ap.unit(StreamKind.widen(Stream.of()));
@@ -314,7 +283,7 @@ public  class StreamInstances {
 
 
     };
-    BiFunction<Applicative<C2>,Higher<DataWitness.stream,Higher<C2, T>>,Higher<C2, Higher<DataWitness.stream,T>>> sequenceNarrow  =
+    BiFunction<Applicative<C2>,Higher<stream,Higher<C2, T>>,Higher<C2, Higher<stream,T>>> sequenceNarrow  =
       (a,b) -> StreamKind.widen2(sequenceFn.apply(a, StreamKind.narrowK(b)));
     return General.traverse(zippingApplicative(), sequenceNarrow);
   }
@@ -334,10 +303,10 @@ public  class StreamInstances {
    *
    * @return Type class for folding / reduction operations
    */
-  public static <T,R> Foldable<DataWitness.stream> foldable(){
-    BiFunction<Monoid<T>,Higher<DataWitness.stream,T>,T> foldRightFn =  (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
-    BiFunction<Monoid<T>,Higher<DataWitness.stream,T>,T> foldLeftFn = (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
-    Function3<Monoid<R>, Function<T, R>, Higher<DataWitness.stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
+  public static <T,R> Foldable<stream> foldable(){
+    BiFunction<Monoid<T>,Higher<stream,T>,T> foldRightFn =  (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).foldRight(m);
+    BiFunction<Monoid<T>,Higher<stream,T>,T> foldLeftFn = (m, l)-> ReactiveSeq.fromStream(StreamKind.narrowK(l)).reduce(m);
+    Function3<Monoid<R>, Function<T, R>, Higher<stream, T>, R> foldMapFn = (m, f, l)->StreamKind.narrowK(l).map(f).reduce(m.zero(),m);
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
   }
 
@@ -350,13 +319,13 @@ public  class StreamInstances {
   private static <T,R> StreamKind<R> ap(StreamKind<Function< T, R>> lt, StreamKind<T> list){
     return StreamKind.widen(Streams.zipStream(lt,list,(a, b)->a.apply(b)));
   }
-  private static <T,R> Higher<DataWitness.stream,R> flatMap(Higher<DataWitness.stream,T> lt, Function<? super T, ? extends  Higher<DataWitness.stream,R>> fn){
+  private static <T,R> Higher<stream,R> flatMap(Higher<stream,T> lt, Function<? super T, ? extends  Higher<stream,R>> fn){
     return StreamKind.widen(StreamKind.narrow(lt).flatMap(fn.andThen(StreamKind::narrow)));
   }
   private static <T,R> StreamKind<R> map(StreamKind<T> lt, Function<? super T, ? extends R> fn){
     return StreamKind.widen(lt.map(fn));
   }
-  private static <T> StreamKind<T> filter(Higher<DataWitness.stream,T> lt, Predicate<? super T> fn){
+  private static <T> StreamKind<T> filter(Higher<stream,T> lt, Predicate<? super T> fn){
     return StreamKind.widen(StreamKind.narrowK(lt).filter(fn));
   }
 }

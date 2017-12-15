@@ -361,10 +361,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(StreamKind.of(values)),def1, Streams.StreamInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(ReactiveSeq<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(stream),def1,ReactiveSeq.Instances.definitions());
+        return new Coproduct<>(Either.right(stream),def1, ReactiveSeq.ReactiveSeqInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1,ReactiveSeq.Instances.definitions());
+        return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1, ReactiveSeq.ReactiveSeqInstances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> success(T value,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(Try.success(value)),def1, Try.Instances.definitions());
@@ -373,13 +373,13 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1,Try.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,future,T> futureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Future.of(value, ex)),def1,Future.Instances.definitions());
+        return new Coproduct<>(Either.right(Future.of(value, ex)),def1, Future.FutureInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,completableFuture,T> completableFutureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.CompletableFutureInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,eval,T> later(Supplier<T> value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(LazyEither.right(Eval.later(value)),def1,Eval.Instances.definitions());
+        return new Coproduct<>(LazyEither.right(Eval.later(value)),def1, Eval.EvalInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,optional,T> ofNullable(T value,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());

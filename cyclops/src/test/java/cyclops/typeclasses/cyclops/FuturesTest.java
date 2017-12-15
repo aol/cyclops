@@ -20,7 +20,7 @@ public class FuturesTest {
     @Test
     public void unit(){
 
-        Future<String> opt = Future.Instances.unit()
+        Future<String> opt = Future.FutureInstances.unit()
                                             .unit("hello")
                                             .convert(Future::narrowK);
 
@@ -29,16 +29,16 @@ public class FuturesTest {
     @Test
     public void functor(){
 
-        Future<Integer> opt = Future.Instances.unit()
+        Future<Integer> opt = Future.FutureInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h->Future.Instances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> Future.FutureInstances.functor().map((String v) ->v.length(), h))
                                      .convert(Future::narrowK);
 
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()).toCompletableFuture().join()));
     }
     @Test
     public void apSimple(){
-        Future.Instances.applicative()
+        Future.FutureInstances.applicative()
             .ap(Future.ofResult(l1(this::multiplyByTwo)),Future.ofResult(1));
     }
     private int multiplyByTwo(int x){
@@ -47,30 +47,30 @@ public class FuturesTest {
     @Test
     public void applicative(){
 
-        Future<Function1<Integer,Integer>> optFn =Future.Instances.unit()
+        Future<Function1<Integer,Integer>> optFn = Future.FutureInstances.unit()
                                                         .unit(Lambda.l1((Integer i) ->i*2))
                                                         .convert(Future::narrowK);
 
-        Future<Integer> opt = Future.Instances.unit()
+        Future<Integer> opt = Future.FutureInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h->Future.Instances.functor().map((String v) ->v.length(), h))
-                                     .applyHKT(h->Future.Instances.applicative().ap(optFn, h))
+                                     .applyHKT(h-> Future.FutureInstances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> Future.FutureInstances.applicative().ap(optFn, h))
                                      .convert(Future::narrowK);
 
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()*2).toCompletableFuture().join()));
     }
     @Test
     public void monadSimple(){
-       Future<Integer> opt  = Future.Instances.monad()
+       Future<Integer> opt  = Future.FutureInstances.monad()
                                             .<Integer,Integer>flatMap(i->Future.ofResult(i*2), Future.ofResult(3))
                                             .convert(Future::narrowK);
     }
     @Test
     public void monad(){
 
-        Future<Integer> opt = Future.Instances.unit()
+        Future<Integer> opt = Future.FutureInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h->Future.Instances.monad().flatMap((String v) ->Future.Instances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> Future.FutureInstances.monad().flatMap((String v) -> Future.FutureInstances.unit().unit(v.length()), h))
                                      .convert(Future::narrowK);
 
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello".length()).toCompletableFuture().join()));
@@ -78,9 +78,9 @@ public class FuturesTest {
     @Test
     public void monadZeroFilter(){
 
-        Future<String> opt = Future.Instances.unit()
+        Future<String> opt = Future.FutureInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h->Future.Instances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> Future.FutureInstances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(Future::narrowK);
 
         assertThat(opt.toCompletableFuture().join(),equalTo(Future.ofResult("hello").toCompletableFuture().join()));
@@ -88,9 +88,9 @@ public class FuturesTest {
     @Test
     public void monadZeroFilterOut(){
 
-        Future<String> opt = Future.Instances.unit()
+        Future<String> opt = Future.FutureInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h->Future.Instances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> Future.FutureInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(Future::narrowK);
 
         assertFalse(opt.toCompletableFuture().isDone());
@@ -98,7 +98,7 @@ public class FuturesTest {
 
     @Test
     public void monadPlus(){
-        Future<Integer> opt = Future.Instances.<Integer>monadPlus()
+        Future<Integer> opt = Future.FutureInstances.<Integer>monadPlus()
                                       .plus(Future.future(), Future.ofResult(10))
                                       .convert(Future::narrowK);
         assertThat(opt.get(),equalTo(Future.ofResult(10).get()));
@@ -106,7 +106,7 @@ public class FuturesTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        Future<Integer> opt = Future.Instances.<Integer>monadPlus(MonoidKs.firstCompleteFuture())
+        Future<Integer> opt = Future.FutureInstances.<Integer>monadPlus(MonoidKs.firstCompleteFuture())
                                       .plus(Future.ofResult(5), Future.ofResult(10))
                                       .convert(Future::narrowK);
         System.out.println(opt.getFuture().join().getClass());
@@ -114,14 +114,14 @@ public class FuturesTest {
     }
     @Test
     public void  foldLeft(){
-        int sum  = Future.Instances.foldable()
+        int sum  = Future.FutureInstances.foldable()
                         .foldLeft(0, (a,b)->a+b, Future.ofResult(4));
 
         assertThat(sum,equalTo(4));
     }
     @Test
     public void  foldRight(){
-        int sum  = Future.Instances.foldable()
+        int sum  = Future.FutureInstances.foldable()
                         .foldRight(0, (a,b)->a+b, Future.ofResult(1));
 
         assertThat(sum,equalTo(1));
@@ -129,7 +129,7 @@ public class FuturesTest {
 
     @Test
     public void traverse(){
-       Maybe<Higher<future, Integer>> res = Future.Instances.traverse()
+       Maybe<Higher<future, Integer>> res = Future.FutureInstances.traverse()
                                                                .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Future.ofResult(1))
                                                               .convert(Maybe::narrowK);
 

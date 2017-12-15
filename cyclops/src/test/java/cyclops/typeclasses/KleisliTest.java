@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 11/08/2017.
  */
 public class KleisliTest {
-    Monad<future> monad = Future.Instances.monad();
+    Monad<future> monad = Future.FutureInstances.monad();
     interface DAO {
         default Future<String> load(long id){
             return null;

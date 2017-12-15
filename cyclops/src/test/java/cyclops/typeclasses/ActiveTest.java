@@ -100,7 +100,7 @@ public class ActiveTest {
     }
     @Test
     public void tailRecStream(){
-        MonadRec<reactiveSeq> mr = ReactiveSeq.Instances.monadRec();
+        MonadRec<reactiveSeq> mr = ReactiveSeq.ReactiveSeqInstances.monadRec();
         mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Either.left(i+1)) : ReactiveSeq.of(Either.right(i+1)) )
                 .convert(ReactiveSeq::narrowK).printOut();
         /**

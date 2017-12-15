@@ -824,14 +824,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     <R> R visit(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
 
-    @Deprecated // use bimap instead
-    default <R1, R2> LazyEither<R1, R2> mapBoth(final Function<? super LT, ? extends R1> secondary,
-                                                final Function<? super RT, ? extends R2> primary) {
-        if (isLeft())
-            return (LazyEither<R1, R2>) swap().map(secondary)
-                                          .swap();
-        return (LazyEither<R1, R2>) map(primary);
-    }
+
 
     /*
      * (non-Javadoc)

@@ -7,23 +7,16 @@ import java.util.stream.Stream;
 import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.control.Option;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.future;
 
 import cyclops.control.Future;
-import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.hkt.DataWitness.completableFuture;
 
 
-import cyclops.typeclasses.functor.Functor;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import cyclops.reactive.ReactiveSeq;
@@ -45,7 +38,7 @@ public class CompletableFutures {
         return cf;
     }
     public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Either<T, R>>> fn){
-        Higher<future, R> x = Future.Instances.monadRec().tailRec(initial, fn.andThen(Future::of));
+        Higher<future, R> x = Future.FutureInstances.monadRec().tailRec(initial, fn.andThen(Future::of));
         return Future.narrowK(x).getFuture();
     }
 

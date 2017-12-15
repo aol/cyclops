@@ -557,7 +557,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
         Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, Future.Instances.definitions(), Try.Instances.definitions());
+        return of(hkt, Future.FutureInstances.definitions(), Try.Instances.definitions());
     }
     public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
         Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
@@ -569,14 +569,14 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
         Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
-        return of(hkt, Future.Instances.definitions(), Either.EitherInstances.definitions());
+        return of(hkt, Future.FutureInstances.definitions(), Either.EitherInstances.definitions());
     }
     public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
-        return of(futureList.map(ListX::fromIterable),Future.Instances.definitions(), ListX.Instances.definitions());
+        return of(futureList.map(ListX::fromIterable), Future.FutureInstances.definitions(), ListX.Instances.definitions());
     }
     public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
         Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
-        return of(hkt,Future.Instances.definitions(), VectorX.Instances.definitions());
+        return of(hkt, Future.FutureInstances.definitions(), VectorX.Instances.definitions());
     }
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;

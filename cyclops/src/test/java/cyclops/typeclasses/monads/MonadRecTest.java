@@ -40,7 +40,7 @@ public class MonadRecTest {
     }
     @Test
     public void ReactiveSeqTest(){
-        MonadRec<reactiveSeq> mr = ReactiveSeq.Instances.monadRec();
+        MonadRec<reactiveSeq> mr = ReactiveSeq.ReactiveSeqInstances.monadRec();
         ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
                 .convert(ReactiveSeq::narrowK);
         assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
@@ -57,7 +57,7 @@ public class MonadRecTest {
 
     @Test
     public void futureTest(){
-        MonadRec<future> mr = Future.Instances.monadRec();
+        MonadRec<future> mr = Future.FutureInstances.monadRec();
         Future<Integer> l = mr.tailRec(0, i -> i < 100_000 ? Future.ofResult(Either.left(i + 1)) : Future.ofResult(Either.right(i + 1)))
                 .convert(Future::narrowK);
         assertThat(l.get(),equalTo(Future.ofResult(100_001).get()));
