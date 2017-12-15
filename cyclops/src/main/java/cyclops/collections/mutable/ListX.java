@@ -27,7 +27,6 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

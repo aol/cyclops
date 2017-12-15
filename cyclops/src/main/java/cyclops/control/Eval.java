@@ -21,7 +21,6 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.*;

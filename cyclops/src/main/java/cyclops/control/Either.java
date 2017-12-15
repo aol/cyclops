@@ -28,7 +28,6 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;

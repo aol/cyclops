@@ -13,15 +13,15 @@ import static org.junit.Assert.*;
 
 public class CoproductTest {
 
-    Coproduct<stream,option,Integer> just = Coproduct.just(10, Streams.Instances.definitions());
+    Coproduct<stream,option,Integer> just = Coproduct.just(10, Streams.StreamInstances.definitions());
 
     @Test
     public void map(){
-        assertThat(just.map(i->i*2),equalTo(Coproduct.just(20,Streams.Instances.definitions())));
+        assertThat(just.map(i->i*2),equalTo(Coproduct.just(20, Streams.StreamInstances.definitions())));
     }
     @Test
     public void filter(){
-        assertThat(just.filter(i->i<10),equalTo(Coproduct.none(Streams.Instances.definitions())));
+        assertThat(just.filter(i->i<10),equalTo(Coproduct.none(Streams.StreamInstances.definitions())));
     }
     @Test
     public void filterTrue(){

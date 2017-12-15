@@ -182,7 +182,7 @@ public class Active<W,T> implements Filters<T>,
     }
 
     public Active<W,T> reverse(){
-        return Active.of(def1.traverse().reverse(single),def1);
+        return of(def1.traverse().reverse(single),def1);
     }
     public  ListX<T> toListX(){
         return def1.foldable().listX(single);
@@ -198,10 +198,10 @@ public class Active<W,T> implements Filters<T>,
     }
 
     public <W2,T2,R> Active<W,R> zipWith(Active<W2,T2> a,  BiFunction<? super T,? super Maybe<T2>,? extends R> f) {
-        return Active.of(def1.traverse().zipWith(a.def1.foldable(),f,single,a.single),def1);
+        return of(def1.traverse().zipWith(a.def1.foldable(),f,single,a.single),def1);
     }
     public <W2,T2,R> Active<W,R> zipWith(Foldable<W2> foldable,Higher<W2,T2> a,  BiFunction<? super T,? super Maybe<T2>,? extends R> f) {
-        return Active.of(def1.traverse().zipWith(foldable,f,single,a),def1);
+        return of(def1.traverse().zipWith(foldable,f,single,a),def1);
     }
 
 
@@ -256,7 +256,7 @@ public class Active<W,T> implements Filters<T>,
         private final Kleisli<W,C,Either<T,R>>  narrow;
 
         public  Active<W, R> tailRec(T initial,Function<? super T,? extends C> fn){
-            return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
+            return of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(r->narrow.apply(r))),def1);
         }
     }
 
@@ -285,15 +285,15 @@ public class Active<W,T> implements Filters<T>,
         }
         public Active<W,T> sum(C seed, BinaryOperator<C> op,ListX<C> list){
             C res =list.plus(narrow.apply(single)).foldLeft(seed,(a,b)->op.apply(a,b));
-            return Active.of(widen.apply(res),def1);
+            return of(widen.apply(res),def1);
         }
         public Active<W,T> sum(Monoid<C> s,ListX<C> list){
             C res =list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b));
-            return Active.of(widen.apply(res),def1);
+            return of(widen.apply(res),def1);
         }
         public Active<W,T> sumInverted(Group<C> s, ListX<C> list){
             C res = s.invert(list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b)));
-            return Active.of(widen.apply(res),def1);
+            return of(widen.apply(res),def1);
         }
         public Maybe<Active<W,T>> sum(ListX<C> list){
             return Active.this.plus().flatMap(s ->
@@ -417,17 +417,17 @@ public class Active<W,T> implements Filters<T>,
 
 
     public <R> Active<W, R> tailRec(T initial,Function<? super T,? extends Higher<W, ? extends Either<T, R>>> fn){
-        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
+        return of(def1.monadRec().<T,R>tailRec(initial,fn),def1);
     }
     public <R> Active<W, R> tailRecA(T initial,Function<? super T,? extends Active<W, ? extends Either<T, R>>> fn){
-        return Active.of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
+        return of(def1.monadRec().<T,R>tailRec(initial,fn.andThen(Active::getActive)),def1);
     }
     @AllArgsConstructor
     public class Unfolds{
         private final Unfoldable<W> unfoldable;
 
         public <R, T> Active<W, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn){
-            return Active.of(unfoldable.unfold(b,fn),def1);
+            return of(unfoldable.unfold(b,fn),def1);
         }
 
         public <T> Active<W, T> replicate(long n, T value) {

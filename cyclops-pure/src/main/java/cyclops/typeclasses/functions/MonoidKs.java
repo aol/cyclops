@@ -261,7 +261,7 @@ public interface MonoidKs {
         return new MonoidK<completableFuture>() {
           @Override
           public <T> Higher<completableFuture, T> zero() {
-            return CompletableFutures.CompletableFutureKind.widen(new CompletableFuture<>());
+            return CompletableFutureKind.widen(new CompletableFuture<>());
           }
 
           @Override

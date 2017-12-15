@@ -28,7 +28,6 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;

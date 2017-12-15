@@ -53,7 +53,7 @@ import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                          LazyStream<U>,
-  ReactiveSeq<U>,
+                                          ReactiveSeq<U>,
                                           LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {

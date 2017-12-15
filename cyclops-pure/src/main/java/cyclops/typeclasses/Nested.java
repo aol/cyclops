@@ -9,7 +9,7 @@ import cyclops.control.Future;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.CompletableFutures.CompletableFutureKind;
+import cyclops.companion.CompletableFutureKind;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
@@ -542,12 +542,12 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public static <T> Nested<completableFuture,stream,T> completableFutureStream(CompletableFuture<? extends Stream<T>> optionalList){
         CompletableFutureKind<StreamKind<T>> opt = CompletableFutureKind.widen(optionalList.thenApply(StreamKind::widen));
         Higher<completableFuture,Higher<stream,T>> hkt = (Higher)opt;
-        return of(hkt, CompletableFutures.Instances.definitions(), Streams.Instances.definitions());
+        return of(hkt, CompletableFutures.CompletableFutureInstances.definitions(), Streams.StreamInstances.definitions());
     }
     public static <T> Nested<optional,stream,T> optionalStream(Optional<? extends Stream<T>> optionalList){
         OptionalKind<StreamKind<T>> opt = OptionalKind.widen(optionalList).map(StreamKind::widen);
         Higher<optional,Higher<stream,T>> hkt = (Higher)opt;
-        return of(hkt, Optionals.Instances.definitions(), Streams.Instances.definitions());
+        return of(hkt, Optionals.Instances.definitions(), Streams.StreamInstances.definitions());
     }
 
     public static <T> Nested<optional,list,T> optionalList(Optional<? extends List<T>> optionalList){

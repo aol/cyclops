@@ -15,7 +15,6 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 

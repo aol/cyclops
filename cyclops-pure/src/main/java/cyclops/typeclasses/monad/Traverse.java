@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static cyclops.control.Constant.Instances.applicative;
+import static cyclops.control.Constant.ConstantInstances.applicative;
 import static cyclops.control.State.state;
 import static cyclops.data.tuple.Tuple.tuple;
 
