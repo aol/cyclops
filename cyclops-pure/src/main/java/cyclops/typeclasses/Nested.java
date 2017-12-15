@@ -565,11 +565,11 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
         Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
-        return of(hkt, ListX.Instances.definitions(), Either.Instances.definitions());
+        return of(hkt, ListX.Instances.definitions(), Either.EitherInstances.definitions());
     }
     public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
         Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
-        return of(hkt, Future.Instances.definitions(), Either.Instances.definitions());
+        return of(hkt, Future.Instances.definitions(), Either.EitherInstances.definitions());
     }
     public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
         return of(futureList.map(ListX::fromIterable),Future.Instances.definitions(), ListX.Instances.definitions());

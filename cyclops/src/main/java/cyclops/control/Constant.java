@@ -10,9 +10,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 
 import com.oath.cyclops.hkt.DataWitness.constant;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
-import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
