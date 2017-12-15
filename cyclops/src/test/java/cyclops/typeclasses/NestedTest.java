@@ -23,9 +23,9 @@ public class NestedTest {
     Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)),ListX.Instances.definitions(),Optionals.Instances.definitions());
 
 
-    Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)),Future.Instances.definitions(),Optionals.Instances.definitions());
+    Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)), Future.FutureInstances.definitions(),Optionals.Instances.definitions());
 
-    Nested<future,reactiveSeq,Integer> futureReactiveSeq = Nested.of(Future.ofResult(ReactiveSeq.of(4)),Future.Instances.definitions(),ReactiveSeq.Instances.definitions());
+    Nested<future,reactiveSeq,Integer> futureReactiveSeq = Nested.of(Future.ofResult(ReactiveSeq.of(4)), Future.FutureInstances.definitions(), ReactiveSeq.ReactiveSeqInstances.definitions());
 
 
     @Test

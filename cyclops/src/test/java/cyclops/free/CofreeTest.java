@@ -5,7 +5,7 @@ import cyclops.control.Identity;
 import com.oath.cyclops.hkt.DataWitness.identity;
 import org.junit.Test;
 
-import static cyclops.control.Identity.Instances.functor;
+import static cyclops.control.Identity.IdentityInstances.functor;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 

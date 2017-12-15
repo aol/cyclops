@@ -51,7 +51,7 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
         return of(i -> Optionals.OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional()),Optionals.Instances.definitions());
     }
     static <T> FunctionK<list,reactiveSeq,T> listStream(){
-        return of(i -> ListX.narrowK(i).stream(),ReactiveSeq.Instances.definitions());
+        return of(i -> ListX.narrowK(i).stream(), ReactiveSeq.ReactiveSeqInstances.definitions());
     }
     static <T> FunctionK<list,option,T> listMaybe(){
         return of(i -> ListX.narrowK(i).headAndTail().headMaybe(), Maybe.Instances.definitions());
