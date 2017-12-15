@@ -341,10 +341,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(VectorX.of(values)),def1, VectorX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(LinkedListX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(list),def1, LinkedListX.Instances.definitions());
+        return new Coproduct<>(Either.right(list),def1, LinkedListX.LinkedListXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListX.Instances.definitions());
+        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListX.LinkedListXInstances.definitions());
     }
 
 
