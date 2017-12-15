@@ -25,7 +25,6 @@ import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;

@@ -7,6 +7,8 @@ import cyclops.companion.Functions;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.free;
 import com.oath.cyclops.hkt.DataWitness.freeAp;
+import cyclops.instances.free.FreeApInstances;
+import cyclops.instances.free.FreeInstances;
 import cyclops.typeclasses.NaturalTransformation;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
@@ -50,7 +52,7 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
                 Free<F, T> res = Free.liftF(a, applicative);
                 return res;
             }
-        }, Free.Instances.applicative(applicative, applicative)));
+        }, FreeInstances.applicative(applicative, applicative)));
 
     }
     default <P,G> FreeAp<G, T> compile(NaturalTransformation<F, G> f, Applicative<G> applicative){
@@ -60,7 +62,7 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
             public <T> Higher<Higher<freeAp, G>, T> apply(Higher<F, T> a) {
                 return FreeAp.lift(f.apply(a),applicative);
             }
-        }, FreeAp.Instances.applicative(applicative, applicative)));
+        }, FreeApInstances.applicative(applicative, applicative)));
     }
     static <F,A> FreeAp<F,A> lift(Higher<F,A> fa, Applicative<F> applicative) {
         return ap(fa,pure(Lambda.l1(a -> a)));
@@ -93,30 +95,5 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
         return (FreeAp<F,T>)ds;
     }
 
-    static  class Instances {
-        public static <F> Applicative<Higher<freeAp, F>> applicative(cyclops.typeclasses.Pure<F> pure,Functor<F> functor) {
-            return new Applicative<Higher<freeAp, F>>() {
 
-                @Override
-                public <T, R> Higher<Higher<freeAp, F>, R> ap(Higher<Higher<freeAp, F>, ? extends Function<T, R>> fn, Higher<Higher<freeAp, F>, T> apply) {
-                    FreeAp<F, ? extends Function<T, R>> f = narrowK(fn);
-                    FreeAp<F, T> a = narrowK(apply);
-                    return a.ap(f);
-
-                }
-
-                @Override
-                public <T, R> Higher<Higher<freeAp, F>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<freeAp, F>, T> ds) {
-                    return narrowK(ds).map(fn);
-                }
-
-                @Override
-                public <T> Higher<Higher<freeAp, F>, T> unit(T value) {
-                    return FreeAp.pure(value);
-                }
-            };
-
-
-        }
-    }
 }

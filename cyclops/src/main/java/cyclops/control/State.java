@@ -13,7 +13,6 @@ import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;

@@ -2,9 +2,7 @@ package cyclops.typeclasses.monad;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.mutable.ListX;
 import cyclops.data.ImmutableList;
-import cyclops.function.Monoid;
 import cyclops.typeclasses.functions.MonoidK;
 
 public interface MonadPlus<CRE> extends MonadZero<CRE>{

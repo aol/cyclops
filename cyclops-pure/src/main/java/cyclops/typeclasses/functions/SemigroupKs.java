@@ -200,8 +200,8 @@ public interface SemigroupKs{
 
         @Override
         public <T> Higher<completableFuture, T> apply(Higher<completableFuture, T> a, Higher<completableFuture, T> b) {
-          CompletableFuture x = CompletableFuture.anyOf(CompletableFutures.CompletableFutureKind.<T>narrowK(a), CompletableFutures.CompletableFutureKind.<T>narrowK(b));
-          return CompletableFutures.CompletableFutureKind.widen(x);
+          CompletableFuture x = CompletableFuture.anyOf(CompletableFutureKind.<T>narrowK(a), CompletableFutureKind.<T>narrowK(b));
+          return CompletableFutureKind.widen(x);
         }
       };
 

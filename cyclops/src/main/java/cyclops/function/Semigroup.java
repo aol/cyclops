@@ -1,9 +1,5 @@
 package cyclops.function;
 
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.functions.SemigroupK;
-
 import java.util.function.BinaryOperator;
 
 /**

@@ -11,7 +11,7 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.CompletableFutures.CompletableFutureKind;
+import cyclops.companion.CompletableFutureKind;
 import cyclops.companion.Optionals;
 import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
@@ -355,10 +355,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(ListX.of(values)),def1, ListX.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(Stream<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, Streams.Instances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, Streams.StreamInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(StreamKind.of(values)),def1, Streams.Instances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.of(values)),def1, Streams.StreamInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(ReactiveSeq<T> stream,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(stream),def1,ReactiveSeq.Instances.definitions());
@@ -376,7 +376,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(Future.of(value, ex)),def1,Future.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,completableFuture,T> completableFutureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.Instances.definitions());
+        return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.CompletableFutureInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,eval,T> later(Supplier<T> value,InstanceDefinitions<W1> def1){
         return new Coproduct<>(LazyEither.right(Eval.later(value)),def1,Eval.Instances.definitions());

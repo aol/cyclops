@@ -11,7 +11,6 @@ import cyclops.function.Function4;
 import cyclops.function.Function5;
 import com.oath.cyclops.hkt.DataWitness.free;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -629,30 +628,6 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         return (Free<F,T>)ds;
     }
 
-    static  class Instances {
-        public static <F> Applicative<Higher<free, F>> applicative(cyclops.typeclasses.Pure<F> pure,Functor<F> functor) {
-            return new Applicative<Higher<free, F>>() {
 
-                @Override
-                public <T, R> Higher<Higher<free, F>, R> ap(Higher<Higher<free, F>, ? extends Function<T, R>> fn, Higher<Higher<free, F>, T> apply) {
-                    Free<F, ? extends Function<T, R>> f = narrowK(fn);
-                    Free<F, T> a = narrowK(apply);
-                    return f.flatMap(x->a.map(t->x.apply(t)));
-                }
-
-                @Override
-                public <T, R> Higher<Higher<free, F>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<free, F>, T> ds) {
-                    return narrowK(ds).map(fn);
-                }
-
-                @Override
-                public <T> Higher<Higher<free, F>, T> unit(T value) {
-                    return liftF(pure.unit(value),functor);
-                }
-            };
-
-
-        }
-    }
 
 }
