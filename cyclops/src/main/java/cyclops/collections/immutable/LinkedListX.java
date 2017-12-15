@@ -10,7 +10,6 @@ import cyclops.control.Future;
 import cyclops.control.*;
 
 import cyclops.data.Seq;
-import cyclops.typeclasses.*;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -109,7 +108,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         }
     }
     public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
-        return Kleisli.of(Instances.monad(), LinkedListX::widen);
+        return Kleisli.of(LinkedListXInstances.monad(), LinkedListX::widen);
     }
     public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
         return narrow;
@@ -118,19 +117,19 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return Cokleisli.of(LinkedListX::narrowK);
     }
     public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
-        return Nested.of(nested, Instances.definitions(),def2);
+        return Nested.of(nested, LinkedListXInstances.definitions(),def2);
     }
     default <W1> Product<linkedListX,W1,T> product(Active<W1,T> active){
         return Product.of(allTypeclasses(),active);
     }
     default <W1> Coproduct<W1,linkedListX,T> coproduct(InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2, Instances.definitions());
+        return Coproduct.right(this,def2, LinkedListXInstances.definitions());
     }
     default Active<linkedListX,T> allTypeclasses(){
-        return Active.of(this, Instances.definitions());
+        return Active.of(this, LinkedListXInstances.definitions());
     }
     default <W2,R> Nested<linkedListX,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), Instances.definitions(), defs);
+        return Nested.of(map(fn), LinkedListXInstances.definitions(), defs);
     }
 
     @Override
@@ -1272,314 +1271,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
       return removeAll(narrowIterable());
     }
 
-    /**
-     * Companion class for creating Type Class instances for working with PStacks
-     * @author johnmcclean
-     *
-     */
-    @UtilityClass
-    public static class Instances {
 
-        public static InstanceDefinitions<linkedListX> definitions(){
-            return new InstanceDefinitions<linkedListX>() {
-                @Override
-                public <T, R> Functor<linkedListX> functor() {
-                    return Instances.functor();
-                }
-
-                @Override
-                public <T> Pure<linkedListX> unit() {
-                    return Instances.unit();
-                }
-
-                @Override
-                public <T, R> Applicative<linkedListX> applicative() {
-                    return Instances.zippingApplicative();
-                }
-
-                @Override
-                public <T, R> Monad<linkedListX> monad() {
-                    return Instances.monad();
-                }
-
-                @Override
-                public <T, R> Option<MonadZero<linkedListX>> monadZero() {
-                    return Option.some(Instances.monadZero());
-                }
-
-                @Override
-                public <T> Option<MonadPlus<linkedListX>> monadPlus() {
-                    return Option.some(Instances.monadPlus());
-                }
-
-                @Override
-                public <T> MonadRec<linkedListX> monadRec() {
-                    return Instances.monadRec();
-                }
-
-                @Override
-                public <T> Option<MonadPlus<linkedListX>> monadPlus(MonoidK<linkedListX> m) {
-                    return Option.some(Instances.monadPlus(m));
-                }
-
-                @Override
-                public <C2, T> Traverse<linkedListX> traverse() {
-                    return Instances.traverse();
-                }
-
-                @Override
-                public <T> Foldable<linkedListX> foldable() {
-                    return Instances.foldable();
-                }
-
-                @Override
-                public <T> Option<Comonad<linkedListX>> comonad() {
-                    return Maybe.nothing();
-                }
-
-                @Override
-                public <T> Option<Unfoldable<linkedListX>> unfoldable() {
-                    return Option.some(Instances.unfoldable());
-                }
-            };
-        }
-        public static Unfoldable<linkedListX> unfoldable(){
-            return new Unfoldable<linkedListX>() {
-                @Override
-                public <R, T> Higher<linkedListX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-                    return LinkedListX.unfold(b,fn);
-                }
-            };
-        }
-        /**
-         *
-         * Transform a list, mulitplying every element by 2
-         *
-         * <pre>
-         * {@code
-         *  LinkedListX<Integer> list = PStacks.functor().map(i->i*2, LinkedListX.widen(Arrays.asPStack(1,2,3));
-         *
-         *  //[2,4,6]
-         *
-         *
-         * }
-         * </pre>
-         *
-         * An example fluent api working with PStacks
-         * <pre>
-         * {@code
-         *   LinkedListX<Integer> list = PStacks.unit()
-        .unit("hello")
-        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
-        .convert(LinkedListX::narrowK3);
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return A functor for PStacks
-         */
-        public static <T,R>Functor<linkedListX> functor(){
-            BiFunction<LinkedListX<T>,Function<? super T, ? extends R>,LinkedListX<R>> map = Instances::map;
-            return General.functor(map);
-        }
-        /**
-         * <pre>
-         * {@code
-         * LinkedListX<String> list = PStacks.unit()
-        .unit("hello")
-        .convert(LinkedListX::narrowK3);
-
-        //Arrays.asPStack("hello"))
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return A factory for PStacks
-         */
-        public static <T> Pure<linkedListX> unit(){
-            return General.<linkedListX,T>unit(Instances::of);
-        }
-        /**
-         *
-         * <pre>
-         * {@code
-         * import static com.aol.cyclops.hkt.jdk.LinkedListX.widen;
-         * import static com.aol.cyclops.util.function.Lambda.l1;
-         * import static java.util.Arrays.asPStack;
-         *
-        PStacks.zippingApplicative()
-        .ap(widen(asPStack(l1(this::multiplyByTwo))),widen(asPStack(1,2,3)));
-         *
-         * //[2,4,6]
-         * }
-         * </pre>
-         *
-         *
-         * Example fluent API
-         * <pre>
-         * {@code
-         * LinkedListX<Function<Integer,Integer>> listFn =PStacks.unit()
-         *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-         *                                                  .convert(LinkedListX::narrowK3);
-
-        LinkedListX<Integer> list = PStacks.unit()
-        .unit("hello")
-        .applyHKT(h->PStacks.functor().map((String v) ->v.length(), h))
-        .applyHKT(h->PStacks.zippingApplicative().ap(listFn, h))
-        .convert(LinkedListX::narrowK3);
-
-        //Arrays.asPStack("hello".length()*2))
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return A zipper for PStacks
-         */
-        public static <T,R> Applicative<linkedListX> zippingApplicative(){
-            BiFunction<LinkedListX< Function<T, R>>,LinkedListX<T>,LinkedListX<R>> ap = Instances::ap;
-            return General.applicative(functor(), unit(), ap);
-        }
-        /**
-         *
-         * <pre>
-         * {@code
-         * import static com.aol.cyclops.hkt.jdk.LinkedListX.widen;
-         * LinkedListX<Integer> list  = PStacks.monad()
-        .flatMap(i->widen(LinkedListX.range(0,i)), widen(Arrays.asPStack(1,2,3)))
-        .convert(LinkedListX::narrowK3);
-         * }
-         * </pre>
-         *
-         * Example fluent API
-         * <pre>
-         * {@code
-         *    LinkedListX<Integer> list = PStacks.unit()
-        .unit("hello")
-        .applyHKT(h->PStacks.monad().flatMap((String v) ->PStacks.unit().unit(v.length()), h))
-        .convert(LinkedListX::narrowK3);
-
-        //Arrays.asPStack("hello".length())
-         *
-         * }
-         * </pre>
-         *
-         * @return Type class with monad functions for PStacks
-         */
-        public static <T,R> Monad<linkedListX> monad(){
-
-            BiFunction<Higher<linkedListX,T>,Function<? super T, ? extends Higher<linkedListX,R>>,Higher<linkedListX,R>> flatMap = Instances::flatMap;
-            return General.monad(zippingApplicative(), flatMap);
-        }
-        /**
-         *
-         * <pre>
-         * {@code
-         *  LinkedListX<String> list = PStacks.unit()
-        .unit("hello")
-        .applyHKT(h->PStacks.monadZero().filter((String t)->t.startsWith("he"), h))
-        .convert(LinkedListX::narrowK3);
-
-        //Arrays.asPStack("hello"));
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return A filterable monad (with default value)
-         */
-        public static <T,R> MonadZero<linkedListX> monadZero(){
-
-            return General.monadZero(monad(), LinkedListX.empty());
-        }
-
-        public static <T> MonadPlus<linkedListX> monadPlus(){
-
-            return General.monadPlus(monadZero(), MonoidKs.linkedListXConcat());
-        }
-        public static <T,R> MonadRec<linkedListX> monadRec(){
-
-            return new MonadRec<linkedListX>(){
-                @Override
-                public <T, R> Higher<linkedListX, R> tailRec(T initial, Function<? super T, ? extends Higher<linkedListX,? extends Either<T, R>>> fn) {
-                    return LinkedListX.tailRec(initial,fn.andThen(LinkedListX::narrowK));
-                }
-            };
-        }
-
-        public static MonadPlus<linkedListX> monadPlus(MonoidK<linkedListX> m){
-
-            return General.monadPlus(monadZero(),m);
-        }
-
-        /**
-         * @return Type class for traversables with traverse / sequence operations
-         */
-        public static <C2,T> Traverse<linkedListX> traverse(){
-            BiFunction<Applicative<C2>,LinkedListX<Higher<C2, T>>,Higher<C2, LinkedListX<T>>> sequenceFn = (ap, list) -> {
-
-                Higher<C2,LinkedListX<T>> identity = ap.unit(LinkedListX.empty());
-
-                BiFunction<Higher<C2,LinkedListX<T>>,Higher<C2,T>,Higher<C2,LinkedListX<T>>> combineToPStack =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),acc,next);
-
-                BinaryOperator<Higher<C2,LinkedListX<T>>> combinePStacks = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
-
-
-                return list.stream()
-                           .reverse()
-                           .reduce(identity,
-                                combineToPStack,
-                                combinePStacks);
-
-
-            };
-            BiFunction<Applicative<C2>,Higher<linkedListX,Higher<C2, T>>,Higher<C2, Higher<linkedListX,T>>> sequenceNarrow  =
-                    (a,b) -> LinkedListX.widen2(sequenceFn.apply(a, LinkedListX.narrowK(b)));
-            return General.traverse(zippingApplicative(), sequenceNarrow);
-        }
-
-        /**
-         *
-         * <pre>
-         * {@code
-         * int sum  = PStacks.foldable()
-        .foldLeft(0, (a,b)->a+b, LinkedListX.widen(Arrays.asPStack(1,2,3,4)));
-
-        //10
-         *
-         * }
-         * </pre>
-         *
-         *
-         * @return Type class for folding / reduction operations
-         */
-        public static <T,R> Foldable<linkedListX> foldable(){
-            BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldRightFn =  (m, l)-> LinkedListX.narrowK(l).foldRight(m);
-            BiFunction<Monoid<T>,Higher<linkedListX,T>,T> foldLeftFn = (m, l)-> LinkedListX.narrowK(l).reduce(m);
-            Function3<Monoid<R>, Function<T, R>, Higher<linkedListX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
-
-            return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-        }
-
-        private static  <T> LinkedListX<T> concat(PersistentList<T> l1, PersistentList<T> l2){
-
-            return LinkedListX.fromIterable(l1.plusAll(l2));
-        }
-        private <T> LinkedListX<T> of(T value){
-            return LinkedListX.singleton(value);
-        }
-        private static <T,R> LinkedListX<R> ap(LinkedListX<Function< T, R>> lt, LinkedListX<T> list){
-            return LinkedListX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
-        }
-        private static <T,R> Higher<linkedListX,R> flatMap(Higher<linkedListX,T> lt, Function<? super T, ? extends  Higher<linkedListX,R>> fn){
-            return narrowK(lt).concatMap(fn.andThen(LinkedListX::narrowK));
-        }
-        private static <T,R> LinkedListX<R> map(LinkedListX<T> lt, Function<? super T, ? extends R> fn){
-            return LinkedListX.fromIterable(lt).map(fn);
-        }
-    }
 
 
     public static  <T,R> LinkedListX<R> tailRec(T initial, Function<? super T, ? extends LinkedListX<? extends Either<T, R>>> fn) {

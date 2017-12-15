@@ -14,6 +14,7 @@ import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
+import cyclops.data.LazySeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -94,6 +95,16 @@ public interface SemigroupKs{
       };
 
     }
+  static SemigroupK<lazySeq> lazySeqConcat() {
+    return new SemigroupK<lazySeq>() {
+
+      @Override
+      public <T> Higher<lazySeq, T> apply(Higher<lazySeq, T> a, Higher<lazySeq, T> b) {
+        return LazySeq.narrowK(a).plusAll(LazySeq.narrowK(b));
+      }
+    };
+
+  }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)

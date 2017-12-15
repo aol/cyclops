@@ -18,6 +18,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
+import cyclops.data.LazySeq;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;
@@ -123,6 +124,19 @@ public interface MonoidKs {
             return SemigroupKs.linkedListXConcat().apply(t1,t2);
           }
         };
+    }
+    static MonoidK<lazySeq> lazySeqConcat() {
+      return new MonoidK<lazySeq>() {
+        @Override
+        public <T> Higher<lazySeq, T> zero() {
+          return LazySeq.empty();
+        }
+
+        @Override
+        public <T> Higher<lazySeq, T> apply(Higher<lazySeq, T> t1, Higher<lazySeq, T> t2) {
+          return SemigroupKs.lazySeqConcat().apply(t1,t2);
+        }
+      };
     }
 
     /**
