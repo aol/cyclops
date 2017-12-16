@@ -385,13 +385,13 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> just(T value, InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.just(value)),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.just(value)),def1, Maybe.MaybeInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> none(InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.nothing()),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.nothing()),def1, Maybe.MaybeInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> maybeNullabe(T value, InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.ofNullable(value)),def1,Maybe.Instances.definitions());
+        return new Coproduct<>(Either.right(Maybe.ofNullable(value)),def1, Maybe.MaybeInstances.definitions());
     }
     public static <W1,W2,T> Coproduct<W1,W2,T> narrowK(Higher<Higher<Higher<coproduct, W1>, W2>, T> ds){
         return (Coproduct<W1,W2,T>)ds;

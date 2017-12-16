@@ -130,7 +130,7 @@ public class FuturesTest {
     @Test
     public void traverse(){
        Maybe<Higher<future, Integer>> res = Future.FutureInstances.traverse()
-                                                               .traverseA(Maybe.Instances.applicative(), (Integer a)->Maybe.just(a*2), Future.ofResult(1))
+                                                               .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), Future.ofResult(1))
                                                               .convert(Maybe::narrowK);
 
 

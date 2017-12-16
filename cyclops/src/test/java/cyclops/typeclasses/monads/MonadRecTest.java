@@ -48,7 +48,7 @@ public class MonadRecTest {
 
     @Test
     public void maybeTest(){
-        MonadRec<option> mr = Maybe.Instances.monadRec();
+        MonadRec<option> mr = Maybe.MaybeInstances.monadRec();
         Maybe<Integer> l = mr.tailRec(0, i -> i < 100_000 ? Maybe.just(Either.left(i + 1)) : Maybe.just(Either.right(i + 1)))
                 .convert(Maybe::narrowK);
         assertThat(l,equalTo(Maybe.just(100_001)));
@@ -72,7 +72,7 @@ public class MonadRecTest {
 
     @Test
     public void readerTest(){
-        MonadRec<Higher<reader, Integer>> mr = Reader.Instances.monadRec();
+        MonadRec<Higher<reader, Integer>> mr = Reader.ReaderInstances.monadRec();
 
         Reader<Integer, Integer> l = mr.tailRec(0, i -> i < 100_000 ? Reader.of(in -> Either.left(in+i + 1)) : Reader.of(in -> Either.right(in+i + 1)))
                                         .convert(Reader::narrowK);

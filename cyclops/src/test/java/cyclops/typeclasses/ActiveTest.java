@@ -15,7 +15,7 @@ import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import static cyclops.collections.mutable.ListX.kindKleisli;
-import static cyclops.control.Maybe.Instances.applicative;
+import static cyclops.control.Maybe.MaybeInstances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
