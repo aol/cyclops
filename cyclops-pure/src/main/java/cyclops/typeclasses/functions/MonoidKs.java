@@ -11,7 +11,6 @@ import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
@@ -21,6 +20,7 @@ import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.kinds.OptionalKind;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;

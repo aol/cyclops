@@ -576,7 +576,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
         Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
-        return of(hkt, Future.FutureInstances.definitions(), VectorX.Instances.definitions());
+        return of(hkt, Future.FutureInstances.definitions(), VectorX.VectorXInstances.definitions());
     }
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;
