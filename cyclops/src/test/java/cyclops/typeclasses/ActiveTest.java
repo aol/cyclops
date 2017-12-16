@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 29/06/2017.
  */
 public class ActiveTest {
-    Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.Instances.definitions());
+    Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.ListXInstances.definitions());
 
 
     @Test
@@ -89,7 +89,7 @@ public class ActiveTest {
 
     @Test
     public void tailRec(){
-        MonadRec<list> mr = ListX.Instances.monadRec();
+        MonadRec<list> mr = ListX.ListXInstances.monadRec();
         mr.tailRec(0,i-> i<100_000 ? ListX.of(Either.left(i+1)) : ListX.of(Either.right(i+1)) )
                 .convert(ListX::narrowK).printOut();
        /**

@@ -1319,5 +1319,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return this;
       }
     }
+    public static <T> Higher<lazySeq, T> widen(LazySeq<T> narrow) {
+      return narrow;
+    }
 
 }

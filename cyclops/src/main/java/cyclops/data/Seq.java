@@ -1,22 +1,21 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.types.persistent.PersistentIndexed;
-import com.oath.cyclops.types.persistent.PersistentList;
+import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
+import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
+import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.control.Either;
-import com.oath.cyclops.hkt.DataWitness.seq;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
@@ -27,11 +26,9 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -1106,6 +1103,8 @@ public interface Seq<T> extends ImmutableList<T>,
       }
     }
 
-
+  public static <T> Higher<seq, T> widen(Seq<T> narrow) {
+    return narrow;
+  }
 
 }

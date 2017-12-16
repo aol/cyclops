@@ -49,23 +49,27 @@ public class IterableInstances {
   public static <W1,T> Nested<reactiveSeq,W1,T> nested(ReactiveSeq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, IterableInstances.definitions(),def2);
   }
-  default <W1> Product<reactiveSeq,W1,T> product(Active<W1,T> active){
-    return Product.of(allTypeclasses(),active);
+  public static  <W1,T> Product<reactiveSeq,W1,T> product(Iterable<T> it,Active<W1,T> active){
+    return Product.of(allTypeclasses(it),active);
   }
-  default <W1> Product<reactiveSeq,W1,T> product(Active<W1,T> active, Executor ex){
-    return Product.of(allTypeclasses(ex),active);
+  public static  <W1,T> Product<reactiveSeq,W1,T> product(Iterable<T> it,Active<W1,T> active, Executor ex){
+    return Product.of(allTypeclasses(it,ex),active);
   }
-  default <W1> Coproduct<W1,reactiveSeq,T> coproduct(InstanceDefinitions<W1> def2){
-    return Coproduct.right(this,def2, IterableInstances.definitions());
+  public static  <W1,T> Coproduct<W1,reactiveSeq,T> coproduct(Iterable<T> it,InstanceDefinitions<W1> def2){
+    ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
+    return Coproduct.right(r,def2, IterableInstances.definitions());
   }
-  default Active<reactiveSeq,T> allTypeclasses(Executor ex){
-    return Active.of(this, this.visit(sync-> IterableInstances.definitions(), rs-> Spouts.SpoutsInstances.definitions(ex), ac-> Spouts.SpoutsInstances.definitions(ex)));
+  public static  <T> Active<reactiveSeq,T> allTypeclasses(Iterable<T> it,Executor ex){
+    ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
+    return Active.of(r, r.visit(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ex), ac-> PublisherInstances.definitions(ex)));
   }
-  default Active<reactiveSeq,T> allTypeclasses(){
-    return Active.of(this, this.visit(sync-> IterableInstances.definitions(), rs-> Spouts.SpoutsInstances.definitions(ThreadPools.getCurrentThreadExecutor()), ac-> Spouts.SpoutsInstances.definitions(ThreadPools.getCurrentThreadExecutor())));
+  public static  <T> Active<reactiveSeq,T> allTypeclasses(Iterable<T> it){
+    ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
+    return Active.of(r, r.visit(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor()), ac-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor())));
   }
-  default <W2,R> Nested<reactiveSeq,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-    return Nested.of(map(fn), IterableInstances.definitions(), defs);
+  public static  <W2,R,T> Nested<reactiveSeq,W2,R> mapM(Iterable<T> it,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
+    return Nested.of(r.map(fn), IterableInstances.definitions(), defs);
   }
 
   public static InstanceDefinitions<reactiveSeq> definitions(){

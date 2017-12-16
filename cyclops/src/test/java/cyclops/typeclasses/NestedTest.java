@@ -19,8 +19,8 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 28/06/2017.
  */
 public class NestedTest {
-    Nested<list,optional,Integer> just = Nested.of(ListX.of(OptionalKind.of(2)),ListX.Instances.definitions(),Optionals.Instances.definitions());
-    Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)),ListX.Instances.definitions(),Optionals.Instances.definitions());
+    Nested<list,optional,Integer> just = Nested.of(ListX.of(OptionalKind.of(2)), ListX.ListXInstances.definitions(),Optionals.Instances.definitions());
+    Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)), ListX.ListXInstances.definitions(),Optionals.Instances.definitions());
 
 
     Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)), Future.FutureInstances.definitions(),Optionals.Instances.definitions());
@@ -54,12 +54,12 @@ public class NestedTest {
 
     @Test
     public void sequence()  {
-        assertThat(just.sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
+        assertThat(just.sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(), ListX.ListXInstances.definitions()).toString()));
     }
 
     @Test
     public void traverse() {
-        assertThat(just.traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),Optionals.Instances.definitions(),ListX.Instances.definitions()).toString()));
+        assertThat(just.traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),Optionals.Instances.definitions(), ListX.ListXInstances.definitions()).toString()));
     }
 
 

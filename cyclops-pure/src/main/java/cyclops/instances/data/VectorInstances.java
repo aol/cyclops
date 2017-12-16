@@ -1,5 +1,6 @@
 package cyclops.instances.data;
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
@@ -7,11 +8,11 @@ import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.Vector;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -36,6 +37,29 @@ import static cyclops.data.Vector.narrowK;
  */
 @UtilityClass
 public class VectorInstances {
+
+  public static  <T> Kleisli<vector,Vector<T>,T> kindKleisli(){
+    return Kleisli.of(VectorInstances.monad(), Vector::widen);
+  }
+
+  public static  <T> Cokleisli<vector,T,Vector<T>> kindCokleisli(){
+    return Cokleisli.of(Vector::narrowK);
+  }
+  public static <W1,T> Nested<vector,W1,T> nested(Vector<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+    return Nested.of(nested, VectorInstances.definitions(),def2);
+  }
+  public static <W1,T> Product<vector,W1,T> product(Vector<T> l, Active<W1,T> active){
+    return Product.of(allTypeclasses(l),active);
+  }
+  public static <W1,T> Coproduct<W1,vector,T> coproduct(Vector<T> l, InstanceDefinitions<W1> def2){
+    return Coproduct.right(l,def2, VectorInstances.definitions());
+  }
+  public static <T> Active<vector,T> allTypeclasses(Vector<T> l){
+    return Active.of(l, VectorInstances.definitions());
+  }
+  public static <W2,R,T> Nested<vector,W2,R> mapM(Vector<T> l, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    return Nested.of(l.map(fn), VectorInstances.definitions(), defs);
+  }
 
   public static InstanceDefinitions<vector> definitions(){
     return new InstanceDefinitions<vector>() {

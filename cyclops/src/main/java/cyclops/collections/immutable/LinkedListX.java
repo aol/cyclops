@@ -24,13 +24,7 @@ import com.oath.cyclops.types.foldable.To;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
 import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -107,30 +101,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
             return method.invoke(target,args);
         }
     }
-    public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
-        return Kleisli.of(LinkedListXInstances.monad(), LinkedListX::widen);
-    }
-    public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
-        return narrow;
-    }
-    public static  <T> Cokleisli<linkedListX,T,LinkedListX<T>> kindCokleisli(){
-        return Cokleisli.of(LinkedListX::narrowK);
-    }
-    public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
-        return Nested.of(nested, LinkedListXInstances.definitions(),def2);
-    }
-    default <W1> Product<linkedListX,W1,T> product(Active<W1,T> active){
-        return Product.of(allTypeclasses(),active);
-    }
-    default <W1> Coproduct<W1,linkedListX,T> coproduct(InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2, LinkedListXInstances.definitions());
-    }
-    default Active<linkedListX,T> allTypeclasses(){
-        return Active.of(this, LinkedListXInstances.definitions());
-    }
-    default <W2,R> Nested<linkedListX,W2,R> mapM(Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), LinkedListXInstances.definitions(), defs);
-    }
+
 
     @Override
     LinkedListX<T> lazy();
@@ -144,9 +115,11 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      * @return HKT encoded type with a widened PStack
      */
     public static <C2,T> Higher<C2, Higher<linkedListX,T>> widen2(Higher<C2, LinkedListX<T>> list){
-        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<PStackType.linkedListX,T> must be a PStackType
+
         return (Higher)list;
+    }
+    public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
+      return narrow;
     }
     /**
      * Convert the raw Higher Kinded Type for PStack types into the PStackType type definition class

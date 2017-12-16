@@ -1048,4 +1048,7 @@ public class Vector<T> implements ImmutableList<T>,
 
       return Vector.fromStream(Either.sequenceRight(next).orElse(ReactiveSeq.empty()));
     }
+    public static <T> Higher<vector, T> widen(Vector<T> narrow) {
+      return narrow;
+    }
 }
