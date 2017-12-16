@@ -33,7 +33,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * eXclusive Or (Either)
+ *  Either left or right.
  *
  * 'Right' (or right type) biased disjunct union. Often called Either, but in a generics heavy Java world Either is half the length of Either.
  *
