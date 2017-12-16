@@ -557,11 +557,11 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
         Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, Future.FutureInstances.definitions(), Try.Instances.definitions());
+        return of(hkt, Future.FutureInstances.definitions(), Try.TryInstances.definitions());
     }
     public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
         Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, ListX.Instances.definitions(), Try.Instances.definitions());
+        return of(hkt, ListX.Instances.definitions(), Try.TryInstances.definitions());
     }
     public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
         Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
