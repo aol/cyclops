@@ -15,6 +15,8 @@ import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -95,16 +97,36 @@ public interface SemigroupKs{
       };
 
     }
-  static SemigroupK<lazySeq> lazySeqConcat() {
-    return new SemigroupK<lazySeq>() {
+    static SemigroupK<lazySeq> lazySeqConcat() {
+      return new SemigroupK<lazySeq>() {
 
-      @Override
-      public <T> Higher<lazySeq, T> apply(Higher<lazySeq, T> a, Higher<lazySeq, T> b) {
-        return LazySeq.narrowK(a).plusAll(LazySeq.narrowK(b));
-      }
-    };
+        @Override
+        public <T> Higher<lazySeq, T> apply(Higher<lazySeq, T> a, Higher<lazySeq, T> b) {
+          return LazySeq.narrowK(a).plusAll(LazySeq.narrowK(b));
+        }
+      };
 
-  }
+    }
+    static SemigroupK<vector> vectorConcat() {
+      return new SemigroupK<vector>() {
+
+        @Override
+        public <T> Higher<vector, T> apply(Higher<vector, T> a, Higher<vector, T> b) {
+          return Vector.narrowK(a).plusAll(Vector.narrowK(b));
+        }
+      };
+
+    }
+    static SemigroupK<seq> seqConcat() {
+      return new SemigroupK<seq>() {
+
+        @Override
+        public <T> Higher<seq, T> apply(Higher<seq, T> a, Higher<seq, T> b) {
+          return Seq.narrowK(a).plusAll(Seq.narrowK(b));
+        }
+      };
+
+    }
 
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)

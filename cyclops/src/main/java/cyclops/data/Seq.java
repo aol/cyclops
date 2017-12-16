@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
@@ -112,14 +113,14 @@ public interface Seq<T> extends ImmutableList<T>,
         return fromIterator(it.iterator());
     }
       static  <T,R> Seq<R> tailRec(T initial, Function<? super T, ? extends Seq<? extends Either<T, R>>> fn) {
-          Seq<Either<T, R>> next = Seq.of(Either.left(initial));
+        Seq<Either<T, R>> next = Seq.of(Either.left(initial));
 
         boolean newValue[] = {true};
         for(;;){
 
             next = next.flatMap(e -> e.visit(s -> {
                         newValue[0]=true;
-                        return fromStream(fn.apply(s).stream());
+                        return fn.apply(s);
                         },
                     p -> {
                         newValue[0]=false;
@@ -129,8 +130,7 @@ public interface Seq<T> extends ImmutableList<T>,
                 break;
 
         }
-        ReactiveSeq<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ReactiveSeq.empty());
-        return Seq.fromIterator(x.iterator());
+        return Seq.fromStream(Either.sequenceRight(next).orElse(ReactiveSeq.empty()));
     }
     static <T> Seq<T> fill(T t, int max){
         return Seq.fromStream(ReactiveSeq.fill(t).take(max));
@@ -333,7 +333,12 @@ public interface Seq<T> extends ImmutableList<T>,
     default <R> Seq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
         return (Seq<R>)ImmutableList.super.trampoline(mapper);
     }
-
+    public static <T> Seq<T> narrowK(final Higher<seq, T> list) {
+      return (Seq<T>)list;
+    }
+    public static <C2,T> Higher<C2, Higher<seq,T>> widen2(Higher<C2, Seq<T>> list){
+      return (Higher)list;
+    }
     @Override
     default Seq<T> removeStream(Stream<? extends T> stream) {
         return (Seq<T>)ImmutableList.super.removeStream(stream);
