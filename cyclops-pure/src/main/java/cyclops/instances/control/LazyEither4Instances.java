@@ -21,6 +21,7 @@ import java.util.function.Function;
 import static cyclops.control.LazyEither4.narrowK;
 
 public class LazyEither4Instances {
+
   public static <LT1, LT2, LT3, RT> Active<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,RT> allTypeclasses(LazyEither4<LT1,LT2,LT3,RT> l4){
     return Active.of(l4, LazyEither4Instances.definitions());
   }

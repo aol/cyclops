@@ -59,13 +59,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     public static <LT1,LT2,LT3,T> Higher<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,T> widen(LazyEither4<LT1,LT2,LT3,T> narrow) {
       return narrow;
     }
-    public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,LazyEither4<LT1,LT2,LT3,T>,T> kindKleisli(){
-        return Kleisli.of(LazyEither4Instances.monad(), LazyEither4::widen);
-    }
 
-    public static  <LT1,LT2,LT3,T> Cokleisli<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,T,LazyEither4<LT1,LT2,LT3,T>> kindCokleisli(){
-        return Cokleisli.of(LazyEither4::narrowK);
-    }
     /**
      * Create a reactiveBuffer CompletableEither
      *
