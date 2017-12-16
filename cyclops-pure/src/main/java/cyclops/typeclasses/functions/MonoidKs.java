@@ -19,6 +19,8 @@ import cyclops.control.Try;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;
@@ -138,7 +140,32 @@ public interface MonoidKs {
         }
       };
     }
+    static MonoidK<seq> seqConcat() {
+      return new MonoidK<seq>() {
+        @Override
+        public <T> Higher<seq, T> zero() {
+          return Seq.empty();
+        }
 
+        @Override
+        public <T> Higher<seq, T> apply(Higher<seq, T> t1, Higher<seq, T> t2) {
+          return SemigroupKs.seqConcat().apply(t1,t2);
+        }
+      };
+    }
+    static MonoidK<vector> vectorConcat() {
+      return new MonoidK<vector>() {
+        @Override
+        public <T> Higher<vector, T> zero() {
+          return Vector.empty();
+        }
+
+        @Override
+        public <T> Higher<vector, T> apply(Higher<vector, T> t1, Higher<vector, T> t2) {
+          return SemigroupKs.vectorConcat().apply(t1,t2);
+        }
+      };
+    }
     /**
      * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
      */
