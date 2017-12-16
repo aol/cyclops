@@ -367,10 +367,10 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1, ReactiveSeq.ReactiveSeqInstances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> success(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Try.success(value)),def1, Try.Instances.definitions());
+        return new Coproduct<>(Either.right(Try.success(value)),def1, Try.TryInstances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> failure(X value,InstanceDefinitions<W1> def1){
-        return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1,Try.Instances.definitions());
+        return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1, Try.TryInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,future,T> futureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(Future.of(value, ex)),def1, Future.FutureInstances.definitions());

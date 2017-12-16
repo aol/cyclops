@@ -5,13 +5,8 @@ import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Maybe.Nothing;
 import com.oath.cyclops.hkt.DataWitness.state;
 import com.oath.cyclops.hkt.DataWitness.supplier;
-import cyclops.typeclasses.*;
-import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.foldable.Foldable;
-import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.free.Free;
 import cyclops.function.*;
-import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -204,7 +199,8 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     }
     public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Either<T, R>>> fn) {
-        return narrowK( State.Instances.<S> monadRec().tailRec(initial, fn));
+      return fn.apply(initial).flatMap( eval -> eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
+
 
     }
 
@@ -221,231 +217,18 @@ public final class State<S, T> implements Higher2<state,S,T> {
         return of(s);
     }
 
-    public static <W1,T,S> Nested<Higher<state,S>,W1,T> nested(State<S,Higher<W1,T>> nested, S value,InstanceDefinitions<W1> def2){
-        return Nested.of(nested, Instances.definitions(value),def2);
-    }
-    public <W1> Product<Higher<state,S>,W1,T> product(S value,Active<W1,T> active){
-       return Product.of(allTypeclasses(value), active);
-    }
-    public <W1> Coproduct<W1,Higher<state,S>,T> coproduct(S value,InstanceDefinitions<W1> def2){
-        return Coproduct.right(this,def2,Instances.definitions(value));
-    }
 
-    public Active<Higher<state,S>,T> allTypeclasses(S value){
-        return Active.of(this, Instances.definitions(value));
-    }
-
-    public <W2,R> Nested<Higher<state,S>,W2,R> mapM(S value, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
-        return Nested.of(map(fn), Instances.definitions(value), defs);
-    }
     public static <S,T> State<S,T> narrowK2(final Higher2<state, S,T> t) {
         return (State<S,T>)t;
     }
     public static <S,T> State<S,T> narrowK(final Higher<Higher<state, S>,T> t) {
         return (State)t;
     }
-    public static class Instances {
-
-        public static <S> InstanceDefinitions<Higher<state, S>> definitions(S val){
-            return new InstanceDefinitions<Higher<state, S>>() {
-
-                @Override
-                public <T, R> Functor<Higher<state, S>> functor() {
-                    return Instances.functor();
-                }
-
-                @Override
-                public <T> Pure<Higher<state, S>> unit() {
-                    return Instances.unit();
-                }
-
-                @Override
-                public <T, R> Applicative<Higher<state, S>> applicative() {
-                    return Instances.applicative();
-                }
-
-                @Override
-                public <T, R> Monad<Higher<state, S>> monad() {
-                    return Instances.monad();
-                }
-
-                @Override
-                public <T, R> Option<MonadZero<Higher<state, S>>> monadZero() {
-                    return Maybe.nothing();
-                }
-
-                @Override
-                public <T> Option<MonadPlus<Higher<state, S>>> monadPlus() {
-                    return Maybe.nothing();
-                }
-
-                @Override
-                public <T> MonadRec<Higher<state, S>> monadRec() {
-                    return Instances.monadRec();
-                }
-
-                @Override
-                public <T> Option<MonadPlus<Higher<state, S>>> monadPlus(MonoidK<Higher<state, S>> m) {
-                    return Maybe.nothing();
-                }
-
-                @Override
-                public <C2, T> Traverse<Higher<state, S>> traverse() {
-                    return Instances.traverse(val);
-                }
-
-                @Override
-                public <T> Foldable<Higher<state, S>> foldable() {
-                    return Instances.foldable(val);
-                }
-
-                @Override
-                public <T> Option<Comonad<Higher<state, S>>> comonad() {
-                    return Maybe.nothing();
-                }
-
-                @Override
-                public <T> Option<Unfoldable<Higher<state, S>>> unfoldable() {
-                    return Maybe.nothing();
-                }
-            };
-        }
-        public static <S> Functor<Higher<state, S>> functor() {
-            return new Functor<Higher<state, S>>() {
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
-                    return narrowK(ds).map(fn);
-                }
-            };
-        }
-        public static <S> Pure<Higher<state, S>> unit() {
-            return new Pure<Higher<state, S>>() {
-
-                @Override
-                public <T> Higher<Higher<state, S>, T> unit(T value) {
-                    return State.constant(value);
-                }
-            };
-        }
-        public static <S> Applicative<Higher<state, S>> applicative() {
-            return new Applicative<Higher<state, S>>() {
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
-                    State<S, ? extends Function<T, R>> f = narrowK(fn);
-                    State<S, T> ap = narrowK(apply);
-                    return f.flatMap(fn1->ap.map(a->fn1.apply(a)));
-                }
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
-                    return Instances.<S>functor().map(fn,ds);
-                }
-
-                @Override
-                public <T> Higher<Higher<state, S>, T> unit(T value) {
-                    return Instances.<S>unit().unit(value);
-                }
-            };
-        }
-        public static <S> Monad<Higher<state, S>> monad() {
-            return new Monad<Higher<state, S>>() {
 
 
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
-                    return Instances.<S>applicative().ap(fn,apply);
-                }
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
-                    return Instances.<S>functor().map(fn,ds);
-                }
-
-                @Override
-                public <T> Higher<Higher<state, S>, T> unit(T value) {
-                    return Instances.<S>unit().unit(value);
-                }
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> flatMap(Function<? super T, ? extends Higher<Higher<state, S>, R>> fn, Higher<Higher<state, S>, T> ds) {
-                    return narrowK(ds).flatMap(fn.andThen(h->narrowK(h)));
-                }
-            };
-        }
-        public static <S> Traverse<Higher<state, S>> traverse(S defaultValue) {
-            return new Traverse<Higher<state, S>>() {
-                @Override
-                public <C2, T, R> Higher<C2, Higher<Higher<state, S>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<state, S>, T> ds) {
-                    State<S, T> s = narrowK(ds);
-                    Higher<C2, R> x = fn.apply(s.eval(defaultValue));
-                    return applicative.map(r->State.constant(r),x);
-                }
-
-                @Override
-                public <C2, T> Higher<C2, Higher<Higher<state, S>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<state, S>, Higher<C2, T>> ds) {
-                    return traverseA(applicative,Function.identity(),ds);
-                }
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> ap(Higher<Higher<state, S>, ? extends Function<T, R>> fn, Higher<Higher<state, S>, T> apply) {
-                        return Instances.<S>applicative().ap(fn,apply);
-                }
-
-                @Override
-                public <T> Higher<Higher<state, S>, T> unit(T value) {
-                    return Instances.<S>unit().unit(value);
-                }
-
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> ds) {
-                    return Instances.<S>functor().map(fn,ds);
-                }
-            };
-        }
-
-        public static <S> Foldable<Higher<state,S>> foldable(S val) {
-            return new Foldable<Higher<state, S>>() {
-
-
-                @Override
-                public <T> T foldRight(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.fold(narrowK(ds).eval(val));
-
-                }
-
-                @Override
-                public <T> T foldLeft(Monoid<T> monoid, Higher<Higher<state, S>, T> ds) {
-                    return monoid.fold(narrowK(ds).eval(val));
-                }
-
-                @Override
-                public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<state, S>, T> nestedA) {
-                    return foldLeft(mb,narrowK(nestedA).<R>map(fn));
-                }
-            };
-        }
-        public static <S> MonadRec<Higher<state,S>> monadRec() {
-            return new MonadRec<Higher<state,S>>() {
-                @Override
-                public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Either<T, R>>> fn) {
-                    return narrowK(fn.apply(initial)).flatMap( eval ->
-                            eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
-                }
-            };
-        }
-
-
-    }
-    public static  <S,T> Kleisli<Higher<state, S>,State<S,T>,T> kindKleisli(){
-        return Kleisli.of(Instances.monad(), State::widen);
-    }
     public static <S,T> Higher<Higher<state, S>, T> widen(State<S,T> narrow) {
-        return narrow;
-    }
-    public static  <S,T> Cokleisli<Higher<state, S>,T,State<S,T>> kindCokleisli(){
-        return Cokleisli.of(State::narrowK);
-    }
+    return narrow;
+  }
 }
 
 

@@ -1,6 +1,5 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.rws;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Either;
@@ -8,26 +7,12 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.ReaderWriterState;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.functor.Functor;
-import lombok.experimental.UtilityClass;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.reader;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.control.Reader;
-import cyclops.function.Function1;
-import cyclops.function.Monoid;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functions.MonoidK;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.functor.ProFunctor;
-import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
 
