@@ -11,8 +11,7 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -37,6 +36,28 @@ import static cyclops.collections.immutable.LinkedListX.narrowK;
 @UtilityClass
 public class LinkedListXInstances {
 
+  public static  <T> Kleisli<linkedListX,LinkedListX<T>,T> kindKleisli(){
+    return Kleisli.of(LinkedListXInstances.monad(), LinkedListX::widen);
+  }
+
+  public static  <T> Cokleisli<linkedListX,T,LinkedListX<T>> kindCokleisli(){
+    return Cokleisli.of(LinkedListX::narrowK);
+  }
+  public static <W1,T> Nested<linkedListX,W1,T> nested(LinkedListX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+    return Nested.of(nested, LinkedListXInstances.definitions(),def2);
+  }
+  public static <W1,T> Product<linkedListX,W1,T> product(LinkedListX<T> l,Active<W1,T> active){
+    return Product.of(allTypeclasses(l),active);
+  }
+  public static <W1,T> Coproduct<W1,linkedListX,T> coproduct(LinkedListX<T> l,InstanceDefinitions<W1> def2){
+    return Coproduct.right(l,def2, LinkedListXInstances.definitions());
+  }
+  public static <T> Active<linkedListX,T> allTypeclasses(LinkedListX<T> l){
+    return Active.of(l, LinkedListXInstances.definitions());
+  }
+  public static <W2,R,T> Nested<linkedListX,W2,R> mapM(LinkedListX<T> l, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    return Nested.of(l.map(fn), LinkedListXInstances.definitions(), defs);
+  }
   public static InstanceDefinitions<linkedListX> definitions(){
     return new InstanceDefinitions<linkedListX>() {
       @Override

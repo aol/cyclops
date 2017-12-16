@@ -553,7 +553,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public static <T> Nested<optional,list,T> optionalList(Optional<? extends List<T>> optionalList){
         OptionalKind<ListX<T>> opt = OptionalKind.widen(optionalList).map(ListX::fromIterable);
         Higher<optional,Higher<list,T>> hkt = (Higher)opt;
-        return of(hkt, Optionals.Instances.definitions(), ListX.Instances.definitions());
+        return of(hkt, Optionals.Instances.definitions(), ListX.ListXInstances.definitions());
     }
     public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
         Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
@@ -561,18 +561,18 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     }
     public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
         Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, ListX.Instances.definitions(), Try.TryInstances.definitions());
+        return of(hkt, ListX.ListXInstances.definitions(), Try.TryInstances.definitions());
     }
     public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
         Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
-        return of(hkt, ListX.Instances.definitions(), Either.EitherInstances.definitions());
+        return of(hkt, ListX.ListXInstances.definitions(), Either.EitherInstances.definitions());
     }
     public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
         Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
         return of(hkt, Future.FutureInstances.definitions(), Either.EitherInstances.definitions());
     }
     public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
-        return of(futureList.map(ListX::fromIterable), Future.FutureInstances.definitions(), ListX.Instances.definitions());
+        return of(futureList.map(ListX::fromIterable), Future.FutureInstances.definitions(), ListX.ListXInstances.definitions());
     }
     public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
         Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;

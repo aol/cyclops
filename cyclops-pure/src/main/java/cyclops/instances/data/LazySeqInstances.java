@@ -1,10 +1,8 @@
 package cyclops.instances.data;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
-
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -12,8 +10,7 @@ import cyclops.data.LazySeq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -38,6 +35,28 @@ import static cyclops.data.LazySeq.narrowK;
  */
 @UtilityClass
 public class LazySeqInstances {
+  public static  <T> Kleisli<lazySeq,LazySeq<T>,T> kindKleisli(){
+    return Kleisli.of(LazySeqInstances.monad(), LazySeq::widen);
+  }
+
+  public static  <T> Cokleisli<lazySeq,T,LazySeq<T>> kindCokleisli(){
+    return Cokleisli.of(LazySeq::narrowK);
+  }
+  public static <W1,T> Nested<lazySeq,W1,T> nested(LazySeq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+    return Nested.of(nested, LazySeqInstances.definitions(),def2);
+  }
+  public static <W1,T> Product<lazySeq,W1,T> product(LazySeq<T> l, Active<W1,T> active){
+    return Product.of(allTypeclasses(l),active);
+  }
+  public static <W1,T> Coproduct<W1,lazySeq,T> coproduct(LazySeq<T> l, InstanceDefinitions<W1> def2){
+    return Coproduct.right(l,def2, LazySeqInstances.definitions());
+  }
+  public static <T> Active<lazySeq,T> allTypeclasses(LazySeq<T> l){
+    return Active.of(l, LazySeqInstances.definitions());
+  }
+  public static <W2,R,T> Nested<lazySeq,W2,R> mapM(LazySeq<T> l, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    return Nested.of(l.map(fn), LazySeqInstances.definitions(), defs);
+  }
 
   public static InstanceDefinitions<lazySeq> definitions(){
     return new InstanceDefinitions<lazySeq>() {

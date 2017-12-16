@@ -25,7 +25,7 @@ public class MonadRecTest {
     @Test
     public void listTest(){
 
-        MonadRec<list> mr = ListX.Instances.monadRec();
+        MonadRec<list> mr = ListX.ListXInstances.monadRec();
         ListX<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ListX.of(Either.left(i + 1)) : ListX.of(Either.right(i + 1)))
                 .convert(ListX::narrowK);
         assertThat(l,equalTo(ListX.of(100_001)));

@@ -8,11 +8,11 @@ import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.Seq;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Pure;
+import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -37,6 +37,28 @@ import static cyclops.data.Seq.narrowK;
  */
 @UtilityClass
 public class SeqInstances {
+  public static  <T> Kleisli<DataWitness.seq,Seq<T>,T> kindKleisli(){
+    return Kleisli.of(SeqInstances.monad(), Seq::widen);
+  }
+
+  public static  <T> Cokleisli<DataWitness.seq,T,Seq<T>> kindCokleisli(){
+    return Cokleisli.of(Seq::narrowK);
+  }
+  public static <W1,T> Nested<DataWitness.seq,W1,T> nested(Seq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
+    return Nested.of(nested, SeqInstances.definitions(),def2);
+  }
+  public static <W1,T> Product<DataWitness.seq,W1,T> product(Seq<T> l, Active<W1,T> active){
+    return Product.of(allTypeclasses(l),active);
+  }
+  public static <W1,T> Coproduct<W1,DataWitness.seq,T> coproduct(Seq<T> l, InstanceDefinitions<W1> def2){
+    return Coproduct.right(l,def2, SeqInstances.definitions());
+  }
+  public static <T> Active<DataWitness.seq,T> allTypeclasses(Seq<T> l){
+    return Active.of(l, SeqInstances.definitions());
+  }
+  public static <W2,R,T> Nested<DataWitness.seq,W2,R> mapM(Seq<T> l, Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+    return Nested.of(l.map(fn), SeqInstances.definitions(), defs);
+  }
 
   public static InstanceDefinitions<seq> definitions(){
     return new InstanceDefinitions<seq>() {
