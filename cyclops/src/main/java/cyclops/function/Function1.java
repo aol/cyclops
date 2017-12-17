@@ -52,9 +52,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     default Eval<R> now(T t){
         return Eval.now(apply(t));
     }
-    default Reader<T,R> reader(){
-        return in->apply(in);
-    }
+
     public R apply(T a);
 
     /**

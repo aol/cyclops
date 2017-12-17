@@ -7,7 +7,7 @@ import cyclops.control.Eval;
 
 import com.oath.cyclops.hkt.DataWitness.cofree;
 import com.oath.cyclops.hkt.DataWitness.eval;
-import cyclops.typeclasses.NaturalTransformation;
+import cyclops.data.NaturalTransformation;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Monad;

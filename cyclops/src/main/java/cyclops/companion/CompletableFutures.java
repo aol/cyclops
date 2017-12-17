@@ -38,7 +38,7 @@ public class CompletableFutures {
         return cf;
     }
     public static  <T,R> CompletableFuture<R> tailRec(T initial, Function<? super T, ? extends CompletableFuture<? extends Either<T, R>>> fn){
-        Higher<future, R> x = Future.FutureInstances.monadRec().tailRec(initial, fn.andThen(Future::of));
+        Higher<future, R> x = Future.tailRec(initial, fn.andThen(Future::of));
         return Future.narrowK(x).getFuture();
     }
 

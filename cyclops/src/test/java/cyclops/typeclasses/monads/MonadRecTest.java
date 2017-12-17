@@ -33,7 +33,7 @@ public class MonadRecTest {
 
     @Test
     public void setTest(){
-        MonadRec<set> mr = SetX.Instances.monadRec();
+        MonadRec<set> mr = SetX.SetXInstances.monadRec();
         SetX<Integer> l = mr.tailRec(0, i -> i < 100_000 ? SetX.of(Either.left(i + 1)) : SetX.of(Either.right(i + 1)))
                 .convert(SetX::narrowK);
         assertThat(l,equalTo(SetX.of(100_001)));

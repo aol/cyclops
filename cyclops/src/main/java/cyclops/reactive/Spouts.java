@@ -43,12 +43,7 @@ import java.util.stream.Stream;
 
 public interface Spouts {
 
-    public static <T> ReactiveSeq<T> async(IO<T> t){
-     return Spouts.deferFromIterable(()->Seq.of(t.run()));
-    }
-    public static <T> ReactiveSeq<T> async(IO<T> t, Executor e){
-       return async(async(t),e);
-    }
+
 
     /**
      * Create an Subscriber for Observable style asynchronous push based Streams.

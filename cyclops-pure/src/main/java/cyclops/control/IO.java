@@ -52,12 +52,15 @@ public class IO<T> implements To<IO<T>>, Higher<io,T> {
   }
 
   public ReactiveSeq<T> async(){
-    return Spouts.async(this);
+
+    return Spouts.deferFromIterable(()->Seq.of(this.run()));
+
   }
 
   public ReactiveSeq<T> async(Executor e){
-    return Spouts.async(this,e);
+    return Spouts.async(Spouts.deferFromIterable(()->Seq.of(this.run())),e);
   }
+
 
   public static class Comprehensions {
 

@@ -4,6 +4,7 @@ import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.tuple1;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Either;
+import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple1;
@@ -25,6 +26,9 @@ import java.util.function.Function;
 import static cyclops.data.tuple.Tuple1.narrowK;
 
 public class Tuple1Instances {
+  public static <T> Identity<T> toIdentity(Tuple1<T> t1){
+    return Identity.of(t1._1());
+  }
   public static InstanceDefinitions<tuple1> definitions(){
     return new InstanceDefinitions<tuple1>() {
       @Override

@@ -1,9 +1,5 @@
 package cyclops.function;
 
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.functions.GroupK;
-
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
