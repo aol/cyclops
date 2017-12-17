@@ -11,10 +11,11 @@ import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.data.Comparators;
+import cyclops.data.NaturalTransformation;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.NaturalTransformation;
+
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

@@ -1,24 +1,20 @@
 package cyclops.function;
 
-import cyclops.control.Option;
-import cyclops.control.Reader;
-import cyclops.function.checked.*;
-
-import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Try;
-import com.oath.cyclops.util.box.MutableInt;
-import cyclops.function.checked.CheckedTriFunction;
-
+import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.util.ExceptionSoftener;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.Wither;
+import com.oath.cyclops.util.box.MutableInt;
+import cyclops.control.Option;
+import cyclops.control.Try;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
+import cyclops.function.checked.*;
+import cyclops.reactive.ReactiveSeq;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Wither;
 
 import java.util.Objects;
-
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
@@ -693,7 +689,7 @@ public class FluentFunctions {
 
     @Wither(AccessLevel.PRIVATE)
     @AllArgsConstructor
-    public static class FluentFunction<T, R> implements Function1<T, R>, Reader<T, R> {
+    public static class FluentFunction<T, R> implements Function1<T, R>, Transformable<R> {
         private final Function<T, R> fn;
         private final String name;
 
@@ -718,11 +714,8 @@ public class FluentFunctions {
             return FluentFunctions.of(fn.andThen(f2));
         }
 
-        /* (non-Javadoc)
-         * @see cyclops2.function.Reader#flatMap(java.util.function.Function)
-         */
-        @Override
-        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Reader<T, R1>> f) {
+
+        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Function<T, R1>> f) {
             return FluentFunctions.of(a -> f.apply(fn.apply(a))
                                             .apply(a));
         }
@@ -998,7 +991,7 @@ public class FluentFunctions {
         @Override
         public <V> FluentFunction<V, R> compose(final Function<? super V, ? extends T> before) {
 
-            return FluentFunctions.of(Reader.super.compose(before));
+            return FluentFunctions.of(Function1.super.compose(before));
         }
 
         /* (non-Javadoc)
@@ -1007,7 +1000,7 @@ public class FluentFunctions {
         @Override
         public <V> FluentFunction<T, V> andThen(final Function<? super R, ? extends V> after) {
 
-            return FluentFunctions.of(Reader.super.andThen(after));
+            return FluentFunctions.of(Function1.super.andThen(after));
         }
 
     }

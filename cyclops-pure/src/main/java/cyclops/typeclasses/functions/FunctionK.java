@@ -11,7 +11,7 @@ import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.NaturalTransformation;
+import cyclops.data.NaturalTransformation;
 import lombok.AllArgsConstructor;
 
 

@@ -1,14 +1,14 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.hkt.DataWitness.multiMapHK;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import cyclops.control.Option;
-import com.oath.cyclops.hkt.DataWitness.multiMapHK;
+import cyclops.data.tuple.Tuple2;
 import cyclops.typeclasses.Pure;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
 

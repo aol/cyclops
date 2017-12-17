@@ -1,11 +1,11 @@
-package cyclops.typeclasses;
+package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import lombok.AllArgsConstructor;
 
 import java.util.Comparator;
 
-import static cyclops.typeclasses.Ord.Ordering.*;
+import static cyclops.data.Ord.Ordering.*;
 
 
 public interface Ord<W,T> {

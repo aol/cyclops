@@ -7,7 +7,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.reader;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
@@ -37,7 +36,12 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
     return narrow;
   }
 
-    default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
+  @Override
+  default <V> Reader<T, V> andThen(Function<? super R, ? extends V> after) {
+    return t -> after.apply(apply(t));
+  }
+
+  default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
         return zip(o, Tuple::tuple);
     }
     default  <R2,B> Reader<T, B> zip(Reader<T, R2> o,BiFunction<? super R,? super R2,? extends B> fn){
@@ -48,7 +52,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
      */
     @Override
     default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {
-        return FluentFunctions.of(this.andThen(f2));
+        return this.andThen(f2);
     }
 
     /**
@@ -58,8 +62,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
      * @return Transformed Reader
      */
     default <R1> Reader<T, R1> flatMap(final Function<? super R, ? extends Reader<T, R1>> f) {
-        return FluentFunctions.of(a -> f.apply(apply(a))
-                                        .apply(a));
+        return a -> f.apply(apply(a)).apply(a);
     }
 
 
@@ -71,12 +74,12 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
         Reader<? super T, ? extends R4> res =  this.flatMap(in -> {
 
-            Reader<T,R1> a = narrow(FluentFunctions.of(value2.apply(in)));
+            Reader<T,R1> a = functionToReader(value2.apply(in));
             return a.flatMap(ina -> {
-                Reader<T,R2> b = narrow(FluentFunctions.of(value3.apply(in,ina)));
+                Reader<T,R2> b = functionToReader(value3.apply(in,ina));
                 return b.flatMap(inb -> {
 
-                    Reader<T,R3> c = narrow(FluentFunctions.of(value4.apply(in,ina,inb)));
+                    Reader<T,R3> c = functionToReader(value4.apply(in,ina,inb));
 
                     return c.map(in2 -> {
 
@@ -99,6 +102,9 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
     static <T,R>  Reader<T,R> narrow(Reader<? super T,? extends R> broad){
         return  (Reader<T,R>)broad;
     }
+    static <T,R>  Reader<T,R> functionToReader(Function<? super T,? extends R> broad){
+      return  a->broad.apply(a);
+    }
 
 
     default <R1, R2, R4> Reader<T,R4> forEach3(Function<? super R, Function<? super T,? extends R1>> value2,
@@ -107,9 +113,9 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
         return this.flatMap(in -> {
 
-            Reader<T,R1> a = narrow(FluentFunctions.of(value2.apply(in)));
+            Reader<T,R1> a = functionToReader(value2.apply(in));
             return a.flatMap(ina -> {
-                Reader<T,R2> b = narrow(FluentFunctions.of(value3.apply(in,ina)));
+                Reader<T,R2> b = functionToReader(value3.apply(in,ina));
                 return b.map(in2 -> {
                         return yieldingFunction.apply(in, ina, in2);
 
@@ -130,7 +136,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
         return this.flatMap(in -> {
 
-            Reader<T,R1> a = narrow(FluentFunctions.of(value2.apply(in)));
+            Reader<T,R1> a = functionToReader(value2.apply(in));
             return a.map(in2 -> {
                     return yieldingFunction.apply(in, in2);
 

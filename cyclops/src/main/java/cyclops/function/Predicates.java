@@ -7,7 +7,6 @@ import com.oath.cyclops.hkt.DataWitness.predicate;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.types.Value;
-import cyclops.typeclasses.functor.ContravariantFunctor;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -524,22 +523,6 @@ public static <T1> Predicate<? super T1> instanceOf(final Class<?> clazz) {
     static <T1> Predicate<T1> inSet(Set<T1> set) {
         return set::contains;
     }
-    static interface PredicateKind<T> extends Higher<predicate,T>,Predicate<T>{
 
-        public static <T> PredicateKind<T> narrow(Higher<predicate,T> ds){
-            return (PredicateKind<T>)ds;
-        }
-    }
-    public static class Instances{
 
-        public ContravariantFunctor<predicate> contravariantFunctor(){
-            return new ContravariantFunctor<predicate>() {
-                @Override
-                public <T, R> Higher<predicate, R> contramap(Function<? super R, ? extends T> fn, Higher<predicate, T> ds) {
-                    PredicateKind<R> r = in->PredicateKind.narrow(ds).test(fn.apply(in));
-                    return r;
-                }
-            };
-        }
-    }
 }

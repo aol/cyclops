@@ -69,9 +69,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return _1;
     }
 
-    public Identity<T> toIdentity(){
-        return Identity.of(_1());
-    }
+
 
 
     public <R> Tuple1<R> map(Function<? super T, ? extends R> fn){
