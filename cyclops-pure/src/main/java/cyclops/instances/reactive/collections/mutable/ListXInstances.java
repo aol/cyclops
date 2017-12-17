@@ -1,6 +1,5 @@
 package cyclops.instances.reactive.collections.mutable;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.mutable.ListX;
