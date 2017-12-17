@@ -28,6 +28,9 @@ import cyclops.data.tuple.Tuple4;
 @FunctionalInterface
 public interface Function1<T,  R> extends Function<T,R>{
 
+    public static <T1,  T3,R> Function1<T1, R> of(final Function<T1, R> triFunc){
+    return a->triFunc.apply(a);
+  }
     public static <T1,  T3,R> Function1<T1, R> λ(final Function1<T1, R> triFunc){
         return triFunc;
     }
@@ -184,24 +187,24 @@ public interface Function1<T,  R> extends Function<T,R>{
     default FunctionalOperations<T,R> functionOps(){
         return in->apply(in);
     }
+    default <V> Function1<T, V> apply(final Function<? super T,? extends Function<? super R,? extends V>> applicative) {
+      return a -> applicative.apply(a).apply(this.apply(a));
+    }
 
+    default <R1> Function1<T, R1> map(final Function<? super R, ? extends R1> f2) {
+      return andThen(f2);
+    }
+
+    default <R1> Function1<T, R1> flatMap(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
+      return a -> f.apply(apply(a)).apply(a);
+    }
+    default <R1> Function1<T,R1> coflatMap(final Function<? super Function1<? super T,? extends R>, ? extends  R1> f) {
+      return in-> f.apply(this);
+    }
     interface FunctionalOperations<T1,R> extends Function1<T1,R> {
 
 
-        default <V> Function1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
-            return a -> applicative.apply(a).apply(this.apply(a));
-        }
 
-        default <R1> Function1<T1, R1> map(final Function<? super R, ? extends R1> f2) {
-            return andThen(f2);
-        }
-
-        default <R1> Function1<T1, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
-            return a -> f.apply(apply(a)).apply(a);
-        }
-        default <R1> Function1<T1,R1> coflatMap(final Function<? super Function1<? super T1,? extends R>, ? extends  R1> f) {
-            return in-> f.apply(this);
-        }
 
 
 

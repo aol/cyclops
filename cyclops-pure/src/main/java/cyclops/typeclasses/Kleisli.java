@@ -44,6 +44,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
     public static <W,T,R> Kleisli<W,T,R> of(Monad<W> monad, Function<? super T, ? extends Higher<W,? extends R>> fn){
         return new Kleisli<W,T,R>(monad,fn);
     }
+
     public static <W,T,R> Kleisli<W,T,R> arrow(Monad<W> monad, Function<? super T, ? extends R> fn){
        return of(monad,a -> monad.unit(fn.apply(a)));
     }

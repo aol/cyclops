@@ -28,6 +28,9 @@ import cyclops.control.Try;
 @FunctionalInterface
 public interface Function0<R> extends Supplier<R> {
 
+    public static <  T3,R> Function0< R> λ(final Supplier<R> triFunc){
+    return ()->triFunc.get();
+  }
 
     public static <  T3,R> Function0< R> λ(final Function0<R> triFunc){
         return triFunc;
@@ -36,7 +39,7 @@ public interface Function0<R> extends Supplier<R> {
         return triFunc;
     }
 
-  default <R2> R2 toType(Function<? super Function0<R>, ? extends R2> reduce){
+    default <R2> R2 toType(Function<? super Function0<R>, ? extends R2> reduce){
     return reduce.apply(this);
   }
 
@@ -107,22 +110,24 @@ public interface Function0<R> extends Supplier<R> {
     default <R1> R1 fnTo(Function<? super Function0<R>,? extends R1> reduce){
         return reduce.apply(this);
     }
+    default <V> Function0<V> apply(final Supplier<? extends Function<? super R,? extends V>> applicative) {
+      return () -> applicative.get().apply(this.apply());
+    }
+    default <R1> Function0<R1> map(final Function<? super R,? extends R1 > f){
+      return () -> f.apply(this.apply());
+    }
+    default <R1> Function0<R1> flatMap(final Function<? super R, ? extends Supplier<? extends R1>> f) {
+      return () -> f.apply(apply()).get();
+    }
+    default <R1> Function0<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
+      return () -> f.apply(this);
+    }
     default Function0.FunctionalOperations<R> functionOps(){
         return ()->get();
     }
+
     interface FunctionalOperations<R> extends Function0<R> {
-        default <V> Function0<V> apply(final Supplier<? extends Function<? super R,? extends V>> applicative) {
-            return () -> applicative.get().apply(this.apply());
-        }
-        default <R1> Function0<R1> map(final Function<? super R,? extends R1 > f){
-            return () -> f.apply(this.apply());
-        }
-        default <R1> Function0<R1> flatMap(final Function<? super R, ? extends Supplier<? extends R1>> f) {
-            return () -> f.apply(apply()).get();
-        }
-        default <R1> Function0<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
-            return () -> f.apply(this);
-        }
+
         default Free<supplier, R> free(){
             return suspend(() -> Free.done(get()));
         }
