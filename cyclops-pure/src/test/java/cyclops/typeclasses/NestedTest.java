@@ -4,11 +4,15 @@ import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Optionals;
-import cyclops.companion.Optionals.OptionalKind;
 import com.oath.cyclops.hkt.DataWitness.future;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
+import cyclops.instances.control.FutureInstances;
+import cyclops.instances.jdk.OptionalInstances;
+import cyclops.instances.reactive.PublisherInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
+import cyclops.kinds.OptionalKind;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
@@ -19,13 +23,13 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 28/06/2017.
  */
 public class NestedTest {
-    Nested<list,optional,Integer> just = Nested.of(ListX.of(OptionalKind.of(2)), ListX.ListXInstances.definitions(),Optionals.Instances.definitions());
-    Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)), ListX.ListXInstances.definitions(),Optionals.Instances.definitions());
+    Nested<list,optional,Integer> just = Nested.of(ListX.of(OptionalKind.of(2)), ListXInstances.definitions(), OptionalInstances.definitions());
+    Nested<list,optional,Integer> doubled = Nested.of(ListX.of(OptionalKind.of(4)), ListXInstances.definitions(),OptionalInstances.definitions());
 
 
-    Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)), Future.FutureInstances.definitions(),Optionals.Instances.definitions());
+    Nested<future,optional,Integer> futureOptional = Nested.of(Future.ofResult(OptionalKind.of(4)), FutureInstances.definitions(),OptionalInstances.definitions());
 
-    Nested<future,reactiveSeq,Integer> futureReactiveSeq = Nested.of(Future.ofResult(ReactiveSeq.of(4)), Future.FutureInstances.definitions(), ReactiveSeq.ReactiveSeqInstances.definitions());
+    Nested<future,reactiveSeq,Integer> futureReactiveSeq = Nested.of(Future.ofResult(ReactiveSeq.of(4)), FutureInstances.definitions(), PublisherInstances.definitions());
 
 
     @Test
@@ -54,12 +58,12 @@ public class NestedTest {
 
     @Test
     public void sequence()  {
-        assertThat(just.sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),Optionals.Instances.definitions(), ListX.ListXInstances.definitions()).toString()));
+        assertThat(just.sequence().toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(2)),OptionalInstances.definitions(), ListXInstances.definitions()).toString()));
     }
 
     @Test
     public void traverse() {
-        assertThat(just.traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),Optionals.Instances.definitions(), ListX.ListXInstances.definitions()).toString()));
+        assertThat(just.traverse(i->i*2).toString(), equalTo(Nested.of(OptionalKind.of(ListX.of(4)),OptionalInstances.definitions(), ListXInstances.definitions()).toString()));
     }
 
 

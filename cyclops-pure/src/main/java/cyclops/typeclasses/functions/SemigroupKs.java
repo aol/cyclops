@@ -5,7 +5,6 @@ import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
@@ -17,6 +16,9 @@ import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.kinds.CompletableFutureKind;
+import cyclops.kinds.OptionalKind;
+import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -218,7 +220,7 @@ public interface SemigroupKs{
 
         @Override
         public <T> Higher<stream, T> apply(Higher<stream, T> a, Higher<stream, T> b) {
-          return Streams.StreamKind.widen(Stream.concat(Streams.StreamKind.narrow(a), Streams.StreamKind.narrow(b)));
+          return StreamKind.widen(Stream.concat(StreamKind.narrow(a), StreamKind.narrow(b)));
         }
       };
 

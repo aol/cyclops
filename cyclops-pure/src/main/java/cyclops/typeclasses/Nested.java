@@ -1,30 +1,34 @@
 package cyclops.typeclasses;
 
 
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.Future;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.CompletableFutures;
-import cyclops.companion.CompletableFutureKind;
 import cyclops.companion.Monoids;
-import cyclops.companion.Optionals;
-import cyclops.companion.Optionals.OptionalKind;
-import cyclops.companion.Streams;
-import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
-import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Group;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.*;
+import cyclops.instances.control.EitherInstances;
+import cyclops.instances.control.FutureInstances;
+import cyclops.instances.control.TryInstances;
+import cyclops.instances.jdk.CompletableFutureInstances;
+import cyclops.instances.jdk.OptionalInstances;
+import cyclops.instances.jdk.StreamInstances;
+import cyclops.instances.reactive.collections.immutable.VectorXInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
+import cyclops.kinds.CompletableFutureKind;
+import cyclops.kinds.OptionalKind;
+import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -40,8 +44,6 @@ import cyclops.typeclasses.transformers.TransformerFactory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
 
 import java.util.List;
 import java.util.Optional;
@@ -52,8 +54,6 @@ import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * Class for working with Nested Data Structures.
@@ -542,41 +542,41 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public static <T> Nested<completableFuture,stream,T> completableFutureStream(CompletableFuture<? extends Stream<T>> optionalList){
         CompletableFutureKind<StreamKind<T>> opt = CompletableFutureKind.widen(optionalList.thenApply(StreamKind::widen));
         Higher<completableFuture,Higher<stream,T>> hkt = (Higher)opt;
-        return of(hkt, CompletableFutures.CompletableFutureInstances.definitions(), Streams.StreamInstances.definitions());
+        return of(hkt, CompletableFutureInstances.definitions(), StreamInstances.definitions());
     }
     public static <T> Nested<optional,stream,T> optionalStream(Optional<? extends Stream<T>> optionalList){
         OptionalKind<StreamKind<T>> opt = OptionalKind.widen(optionalList).map(StreamKind::widen);
         Higher<optional,Higher<stream,T>> hkt = (Higher)opt;
-        return of(hkt, Optionals.Instances.definitions(), Streams.StreamInstances.definitions());
+        return of(hkt, OptionalInstances.definitions(), StreamInstances.definitions());
     }
 
     public static <T> Nested<optional,list,T> optionalList(Optional<? extends List<T>> optionalList){
         OptionalKind<ListX<T>> opt = OptionalKind.widen(optionalList).map(ListX::fromIterable);
         Higher<optional,Higher<list,T>> hkt = (Higher)opt;
-        return of(hkt, Optionals.Instances.definitions(), ListX.ListXInstances.definitions());
+        return of(hkt, OptionalInstances.definitions(), ListXInstances.definitions());
     }
     public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
         Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, Future.FutureInstances.definitions(), Try.TryInstances.definitions());
+        return of(hkt, FutureInstances.definitions(), TryInstances.definitions());
     }
     public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
         Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, ListX.ListXInstances.definitions(), Try.TryInstances.definitions());
+        return of(hkt, ListXInstances.definitions(), TryInstances.definitions());
     }
     public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
         Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
-        return of(hkt, ListX.ListXInstances.definitions(), Either.EitherInstances.definitions());
+        return of(hkt, ListXInstances.definitions(), EitherInstances.definitions());
     }
     public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
         Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
-        return of(hkt, Future.FutureInstances.definitions(), Either.EitherInstances.definitions());
+        return of(hkt, FutureInstances.definitions(), EitherInstances.definitions());
     }
     public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
-        return of(futureList.map(ListX::fromIterable), Future.FutureInstances.definitions(), ListX.ListXInstances.definitions());
+        return of(futureList.map(ListX::fromIterable), FutureInstances.definitions(), ListXInstances.definitions());
     }
     public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
         Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
-        return of(hkt, Future.FutureInstances.definitions(), VectorX.VectorXInstances.definitions());
+        return of(hkt, FutureInstances.definitions(), VectorXInstances.definitions());
     }
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;

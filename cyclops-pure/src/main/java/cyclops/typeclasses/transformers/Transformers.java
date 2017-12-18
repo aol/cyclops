@@ -2,10 +2,10 @@ package cyclops.typeclasses.transformers;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.Optionals.OptionalKind;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import com.oath.cyclops.hkt.DataWitness.*;
+import cyclops.kinds.OptionalKind;
 import cyclops.typeclasses.Nested;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;

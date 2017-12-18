@@ -20,7 +20,7 @@ public class PVectorsTest {
     @Test
     public void unit(){
 
-        VectorX<String> list = VectorX.VectorXInstances.unit()
+        VectorX<String> list = VectorXInstances.unit()
                                      .unit("hello")
                                      .convert(VectorX::narrowK);
 
@@ -29,16 +29,16 @@ public class PVectorsTest {
     @Test
     public void functor(){
 
-        VectorX<Integer> list = VectorX.VectorXInstances.unit()
+        VectorX<Integer> list = VectorXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> VectorX.VectorXInstances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> VectorXInstances.functor().map((String v) ->v.length(), h))
                                      .convert(VectorX::narrowK);
 
         assertThat(list,equalTo(VectorX.of("hello".length())));
     }
     @Test
     public void apSimple(){
-        VectorX.VectorXInstances.zippingApplicative()
+        VectorXInstances.zippingApplicative()
             .ap(VectorX.of(l1(this::multiplyByTwo)), VectorX.of(1,2,3));
     }
     private int multiplyByTwo(int x){
@@ -47,28 +47,28 @@ public class PVectorsTest {
     @Test
     public void applicative(){
 
-        VectorX<Function1<Integer,Integer>> listFn = VectorX.VectorXInstances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(VectorX::narrowK);
+        VectorX<Function1<Integer,Integer>> listFn = VectorXInstances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(VectorX::narrowK);
 
-        VectorX<Integer> list = VectorX.VectorXInstances.unit()
+        VectorX<Integer> list = VectorXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> VectorX.VectorXInstances.functor().map((String v) ->v.length(), h))
-                                     .applyHKT(h-> VectorX.VectorXInstances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> VectorXInstances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> VectorXInstances.zippingApplicative().ap(listFn, h))
                                      .convert(VectorX::narrowK);
 
         assertThat(list,equalTo(VectorX.of("hello".length()*2)));
     }
     @Test
     public void monadSimple(){
-       VectorX<Integer> list  = VectorX.VectorXInstances.monad()
+       VectorX<Integer> list  = VectorXInstances.monad()
                                       .flatMap(i-> VectorX.range(0,i), VectorX.of(1,2,3))
                                       .convert(VectorX::narrowK);
     }
     @Test
     public void monad(){
 
-        VectorX<Integer> list = VectorX.VectorXInstances.unit()
+        VectorX<Integer> list = VectorXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> VectorX.VectorXInstances.monad().flatMap((String v) -> VectorX.VectorXInstances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> VectorXInstances.monad().flatMap((String v) -> VectorXInstances.unit().unit(v.length()), h))
                                      .convert(VectorX::narrowK);
 
         assertThat(list,equalTo(VectorX.of("hello".length())));
@@ -76,9 +76,9 @@ public class PVectorsTest {
     @Test
     public void monadZeroFilter(){
 
-        VectorX<String> list = VectorX.VectorXInstances.unit()
+        VectorX<String> list = VectorXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> VectorX.VectorXInstances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> VectorXInstances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(VectorX::narrowK);
 
         assertThat(list,equalTo(VectorX.of("hello")));
@@ -86,9 +86,9 @@ public class PVectorsTest {
     @Test
     public void monadZeroFilterOut(){
 
-        VectorX<String> list = VectorX.VectorXInstances.unit()
+        VectorX<String> list = VectorXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> VectorX.VectorXInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> VectorXInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(VectorX::narrowK);
 
         assertThat(list,equalTo(VectorX.empty()));
@@ -96,7 +96,7 @@ public class PVectorsTest {
 
     @Test
     public void monadPlus(){
-        VectorX<Integer> list = VectorX.VectorXInstances.<Integer>monadPlus()
+        VectorX<Integer> list = VectorXInstances.<Integer>monadPlus()
                                       .plus(VectorX.empty(), VectorX.of(10))
                                       .convert(VectorX::narrowK);
         assertThat(list,equalTo(VectorX.of(10)));
@@ -104,21 +104,21 @@ public class PVectorsTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        VectorX<Integer> list = VectorX.VectorXInstances.<Integer>monadPlus(MonoidKs.vectorXConcat())
+        VectorX<Integer> list = VectorXInstances.<Integer>monadPlus(MonoidKs.vectorXConcat())
                                       .plus(VectorX.of(5), VectorX.of(10))
                                       .convert(VectorX::narrowK);
         assertThat(list,equalTo(VectorX.of(5,10)));
     }
     @Test
     public void  foldLeft(){
-        int sum  = VectorX.VectorXInstances.foldable()
+        int sum  = VectorXInstances.foldable()
                         .foldLeft(0, (a,b)->a+b, VectorX.of(1,2,3,4));
 
         assertThat(sum,equalTo(10));
     }
     @Test
     public void  foldRight(){
-        int sum  = VectorX.VectorXInstances.foldable()
+        int sum  = VectorXInstances.foldable()
                         .foldRight(0, (a,b)->a+b, VectorX.of(1,2,3,4));
 
         assertThat(sum,equalTo(10));
@@ -126,7 +126,7 @@ public class PVectorsTest {
 
     @Test
     public void traverse(){
-       Maybe<Higher<vectorX, Integer>> res = VectorX.VectorXInstances.traverse()
+       Maybe<Higher<vectorX, Integer>> res = VectorXInstances.traverse()
                                                          .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), VectorX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
 

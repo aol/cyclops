@@ -14,7 +14,7 @@ import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
-import cyclops.typeclasses.EnumerationTest.Days;
+import cyclops.data.EnumerationTest.Days;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;

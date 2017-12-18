@@ -2,6 +2,7 @@ package cyclops.instances.reactive;
 
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -23,6 +24,7 @@ import cyclops.typeclasses.monad.*;
 import org.reactivestreams.Publisher;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -98,6 +100,9 @@ public class PublisherInstances {
         return Maybe.just(PublisherInstances.unfoldable(ex));
       }
     };
+  }
+  public static InstanceDefinitions<reactiveSeq> definitions(){
+    return definitions(ThreadPools.getCurrentThreadExecutor());
   }
   public static Unfoldable<reactiveSeq> unfoldable(Executor ex){
     return new Unfoldable<reactiveSeq>() {

@@ -1,4 +1,4 @@
-package com.oath.cyclops.functions.fluent.reader;
+package cyclops.control.reader;
 
 public interface UserRepository {
 

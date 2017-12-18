@@ -7,6 +7,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
+import cyclops.instances.control.FutureInstances;
 import cyclops.kinds.CompletableFutureKind;
 import cyclops.typeclasses.functions.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
@@ -311,7 +312,7 @@ public class CompletableFutureInstances {
 
       @Override
       public <T, R> Higher<DataWitness.completableFuture, R> tailRec(T initial, Function<? super T, ? extends Higher<DataWitness.completableFuture, ? extends Either<T, R>>> fn) {
-        Higher<DataWitness.future, R> x = Future.FutureInstances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
+        Higher<DataWitness.future, R> x = FutureInstances.monadRec().tailRec(initial, fn.andThen(CompletableFutureKind::narrowK).andThen(Future::of));
         return CompletableFutureKind.narrowFuture(x);
       }
     };

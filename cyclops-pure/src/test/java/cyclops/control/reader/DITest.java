@@ -1,4 +1,4 @@
-package com.oath.cyclops.functions.fluent.reader;
+package cyclops.control.reader;
 
 import cyclops.function.FluentFunctions;
 import cyclops.control.Reader;

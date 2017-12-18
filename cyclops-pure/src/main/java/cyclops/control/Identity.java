@@ -37,7 +37,9 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
     public static <T> Identity<T> of(T value){
          return new Identity<>(value);
      }
-
+    public static <T> Identity<T> fromTuple(Tuple1<T> t1){
+      return of(t1._1());
+    }
 
      public T get(){
          return value;

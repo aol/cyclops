@@ -1,10 +1,9 @@
-package cyclops.typeclasses;
+package cyclops.data;
 
-import cyclops.data.Enumeration;
 import org.junit.Test;
 
-import static cyclops.typeclasses.EnumerationTest.Days.Monday;
-import static cyclops.typeclasses.EnumerationTest.Days.Thursday;
+import static cyclops.data.EnumerationTest.Days.Monday;
+import static cyclops.data.EnumerationTest.Days.Thursday;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
