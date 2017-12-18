@@ -1,10 +1,11 @@
 package cyclops.typeclasses;
 
 import cyclops.companion.Streams;
-import cyclops.companion.Streams.StreamKind;
 import cyclops.control.Maybe;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.stream;
+import cyclops.instances.jdk.StreamInstances;
+import cyclops.kinds.StreamKind;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -13,15 +14,15 @@ import static org.junit.Assert.*;
 
 public class CoproductTest {
 
-    Coproduct<stream,option,Integer> just = Coproduct.just(10, Streams.StreamInstances.definitions());
+    Coproduct<stream,option,Integer> just = Coproduct.just(10, StreamInstances.definitions());
 
     @Test
     public void map(){
-        assertThat(just.map(i->i*2),equalTo(Coproduct.just(20, Streams.StreamInstances.definitions())));
+        assertThat(just.map(i->i*2),equalTo(Coproduct.just(20, StreamInstances.definitions())));
     }
     @Test
     public void filter(){
-        assertThat(just.filter(i->i<10),equalTo(Coproduct.none(Streams.StreamInstances.definitions())));
+        assertThat(just.filter(i->i<10),equalTo(Coproduct.none(StreamInstances.definitions())));
     }
     @Test
     public void filterTrue(){

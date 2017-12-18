@@ -22,7 +22,7 @@ public class ListsTest {
     @Test
     public void unit(){
 
-        ListX<String> list = ListX.ListXInstances.unit()
+        ListX<String> list = ListXInstances.unit()
                                      .unit("hello")
                                      .convert(ListX::narrowK);
 
@@ -31,16 +31,16 @@ public class ListsTest {
     @Test
     public void functor(){
 
-        ListX<Integer> list = ListX.ListXInstances.unit()
+        ListX<Integer> list = ListXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> ListX.ListXInstances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> ListXInstances.functor().map((String v) ->v.length(), h))
                                      .convert(ListX::narrowK);
 
         assertThat(list,equalTo(Arrays.asList("hello".length())));
     }
     @Test
     public void apSimple(){
-        ListX.ListXInstances.zippingApplicative()
+        ListXInstances.zippingApplicative()
             .ap(ListX.of(Lambda.l1(this::multiplyByTwo)),ListX.of(1,2,3));
     }
     private int multiplyByTwo(int x){
@@ -49,12 +49,12 @@ public class ListsTest {
     @Test
     public void applicative(){
 
-        ListX<Function1<Integer,Integer>> listFn = ListX.ListXInstances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(ListX::narrowK);
+        ListX<Function1<Integer,Integer>> listFn = ListXInstances.unit().unit(Lambda.l1((Integer i) ->i*2)).convert(ListX::narrowK);
 
-        ListX<Integer> list = ListX.ListXInstances.unit()
+        ListX<Integer> list = ListXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> ListX.ListXInstances.functor().map((String v) ->v.length(), h))
-                                     .applyHKT(h-> ListX.ListXInstances.zippingApplicative().ap(listFn, h))
+                                     .applyHKT(h-> ListXInstances.functor().map((String v) ->v.length(), h))
+                                     .applyHKT(h-> ListXInstances.zippingApplicative().ap(listFn, h))
                                      .convert(ListX::narrowK);
 
         assertThat(list,equalTo(Arrays.asList("hello".length()*2)));
@@ -62,14 +62,14 @@ public class ListsTest {
     @Test
     public void monadSimple(){
 
-       ListX<Integer> list  = ListX.ListXInstances.monad()
+       ListX<Integer> list  = ListXInstances.monad()
                                       .flatMap(i->ListX.range(0,i),ListX.of(1,2,3))
                                       .convert(ListX::narrowK);
     }
     @Test
     public void functorSimple(){
 
-        Functor<list> functor = ListX.ListXInstances.functor();
+        Functor<list> functor = ListXInstances.functor();
         Higher<list, Integer> hkt = functor.map(i -> i * 2, ListX.of(1, 2, 3));
         ListX<Integer> list =  hkt.convert(ListX::narrowK);
 
@@ -77,9 +77,9 @@ public class ListsTest {
     @Test
     public void monad(){
 
-        ListX<Integer> list = ListX.ListXInstances.unit()
+        ListX<Integer> list = ListXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> ListX.ListXInstances.monad().flatMap((String v) -> ListX.ListXInstances.unit().unit(v.length()), h))
+                                     .applyHKT(h-> ListXInstances.monad().flatMap((String v) -> ListXInstances.unit().unit(v.length()), h))
                                      .convert(ListX::narrowK);
 
         assertThat(list,equalTo(Arrays.asList("hello".length())));
@@ -87,9 +87,9 @@ public class ListsTest {
     @Test
     public void monadZeroFilter(){
 
-        ListX<String> list = ListX.ListXInstances.unit()
+        ListX<String> list = ListXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> ListX.ListXInstances.monadZero().filter((String t)->t.startsWith("he"), h))
+                                     .applyHKT(h-> ListXInstances.monadZero().filter((String t)->t.startsWith("he"), h))
                                      .convert(ListX::narrowK);
 
         assertThat(list,equalTo(Arrays.asList("hello")));
@@ -97,9 +97,9 @@ public class ListsTest {
     @Test
     public void monadZeroFilterOut(){
 
-        ListX<String> list = ListX.ListXInstances.unit()
+        ListX<String> list = ListXInstances.unit()
                                      .unit("hello")
-                                     .applyHKT(h-> ListX.ListXInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
+                                     .applyHKT(h-> ListXInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
                                      .convert(ListX::narrowK);
 
         assertThat(list,equalTo(Arrays.asList()));
@@ -107,7 +107,7 @@ public class ListsTest {
 
     @Test
     public void monadPlus(){
-        ListX<Integer> list = ListX.ListXInstances.<Integer>monadPlus()
+        ListX<Integer> list = ListXInstances.<Integer>monadPlus()
                                       .plus(ListX.of(), ListX.of(10))
                                       .convert(ListX::narrowK);
         assertThat(list,equalTo(Arrays.asList(10)));
@@ -115,21 +115,21 @@ public class ListsTest {
     @Test
     public void monadPlusNonEmpty(){
 
-        ListX<Integer> list = ListX.ListXInstances.<Integer>monadPlus(MonoidKs.listXConcat())
+        ListX<Integer> list = ListXInstances.<Integer>monadPlus(MonoidKs.listXConcat())
                                       .plus(ListX.of(5), ListX.of(10))
                                       .convert(ListX::narrowK);
         assertThat(list,equalTo(Arrays.asList(5,10)));
     }
     @Test
     public void  foldLeft(){
-        int sum  = ListX.ListXInstances.foldable()
+        int sum  = ListXInstances.foldable()
                         .foldLeft(0, (a,b)->a+b, ListX.of(1,2,3,4));
 
         assertThat(sum,equalTo(10));
     }
     @Test
     public void  foldRight(){
-        int sum  = ListX.ListXInstances.foldable()
+        int sum  = ListXInstances.foldable()
                         .foldRight(0, (a,b)->a+b, ListX.of(1,2,3,4));
 
         assertThat(sum,equalTo(10));
@@ -137,7 +137,7 @@ public class ListsTest {
 
     @Test
     public void traverse(){
-       Maybe<Higher<list, Integer>> res = ListX.ListXInstances.traverse()
+       Maybe<Higher<list, Integer>> res = ListXInstances.traverse()
                                                          .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), ListX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
 

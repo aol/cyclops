@@ -6,6 +6,8 @@ import cyclops.control.Constant;
 import cyclops.control.Maybe;
 import cyclops.control.State;
 import cyclops.function.Monoid;
+import cyclops.instances.control.ConstantInstances;
+import cyclops.instances.control.StateInstances;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -14,7 +16,6 @@ import java.util.Iterator;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static cyclops.control.Constant.ConstantInstances.applicative;
 import static cyclops.control.State.state;
 import static cyclops.data.tuple.Tuple.tuple;
 
@@ -39,7 +40,7 @@ public interface Traverse<CRE> extends Applicative<CRE>{
 
     //traverse with a State, State has an inbuilt trampoline in cyclops-react
     default <S,T,R> State<S,Higher<CRE,R>> traverseS(Function<? super T, ? extends State<S,R>> fn,Higher<CRE, T> ds){
-        return  State.narrowK(traverseA(State.StateInstances.applicative(), fn, ds));
+        return  State.narrowK(traverseA(StateInstances.applicative(), fn, ds));
 
     }
     default <S,T,R> Tuple2<S, Higher<CRE, R>> runTraverseS(Function<? super T, ? extends State<S,R>> fn,Higher<CRE, T> ds, S val) {
@@ -68,11 +69,11 @@ public interface Traverse<CRE> extends Applicative<CRE>{
 
     }
     default <T, R> R foldMap(Monoid<R> mb, final Function<? super T,? extends R> fn, Higher<CRE, T> ds) {
-        return Constant.narrowK(traverseA(applicative(mb), a -> Constant.of(fn.apply(a)), ds)).get();
+        return Constant.narrowK(traverseA(ConstantInstances.applicative(mb), a -> Constant.of(fn.apply(a)), ds)).get();
     }
     default <T,R> Higher<CRE,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE, T> ds) {
 
-        State<Long,  Higher<CRE, R>> st = State.narrowK(traverseA(State.StateInstances.applicative(),
+        State<Long,  Higher<CRE, R>> st = State.narrowK(traverseA(StateInstances.applicative(),
                 a -> state((Long s) -> tuple(s + 1, f.apply(a, s))), ds));
         return st.run(0l)._2();
 
@@ -81,7 +82,7 @@ public interface Traverse<CRE> extends Applicative<CRE>{
     default <T,C2,T2,R> Higher<CRE,R> zipWith(Foldable<C2> foldable, BiFunction<? super T,? super Maybe<T2>,? extends R> f, Higher<CRE, T> ds, Higher<C2, T2> ds2) {
         Iterator<T2> list =foldable.listX(ds2)
                                    .iterator();
-        State<Maybe<T2>,  Higher<CRE, R>> st = State.narrowK(traverseA(State.StateInstances.applicative(),
+        State<Maybe<T2>,  Higher<CRE, R>> st = State.narrowK(traverseA(StateInstances.applicative(),
                 a -> {
 
                     State<Maybe<T2>,R> xz = state((Maybe<T2> s) -> tuple(list.hasNext() ? Maybe.just(list.next()) : Maybe.nothing(), f.apply(a, s)));

@@ -20,7 +20,9 @@ import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
+import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;
@@ -284,7 +286,7 @@ public interface MonoidKs {
         return new MonoidK<stream>() {
           @Override
           public <T> Higher<stream, T> zero() {
-            return Streams.StreamKind.widen(Stream.empty());
+            return StreamKind.widen(Stream.empty());
           }
 
           @Override

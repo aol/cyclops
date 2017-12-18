@@ -9,13 +9,15 @@ import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
+import cyclops.instances.reactive.IterableInstances;
+import cyclops.instances.reactive.PublisherInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
-import static cyclops.collections.mutable.ListX.kindKleisli;
-import static cyclops.control.Maybe.MaybeInstances.applicative;
+import static cyclops.instances.control.MaybeInstances.applicative;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
@@ -23,7 +25,7 @@ import static org.junit.Assert.*;
  * Created by johnmcclean on 29/06/2017.
  */
 public class ActiveTest {
-    Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListX.ListXInstances.definitions());
+    Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListXInstances.definitions());
 
 
     @Test
@@ -89,7 +91,7 @@ public class ActiveTest {
 
     @Test
     public void tailRec(){
-        MonadRec<list> mr = ListX.ListXInstances.monadRec();
+        MonadRec<list> mr = ListXInstances.monadRec();
         mr.tailRec(0,i-> i<100_000 ? ListX.of(Either.left(i+1)) : ListX.of(Either.right(i+1)) )
                 .convert(ListX::narrowK).printOut();
        /**
@@ -100,7 +102,7 @@ public class ActiveTest {
     }
     @Test
     public void tailRecStream(){
-        MonadRec<reactiveSeq> mr = ReactiveSeq.ReactiveSeqInstances.monadRec();
+        MonadRec<reactiveSeq> mr = IterableInstances.monadRec();
         mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Either.left(i+1)) : ReactiveSeq.of(Either.right(i+1)) )
                 .convert(ReactiveSeq::narrowK).printOut();
         /**

@@ -140,8 +140,8 @@ public class CompletableEitherTest {
     }
     @Test
     public void visitEither(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
     }
     @Test
     public void testToMaybe() {

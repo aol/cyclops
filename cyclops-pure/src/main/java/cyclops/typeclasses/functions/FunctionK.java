@@ -11,6 +11,7 @@ import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.jdk.OptionalInstances;
+import cyclops.instances.reactive.PublisherInstances;
 import cyclops.kinds.OptionalKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
@@ -57,7 +58,7 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
         return of(i -> OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional()), OptionalInstances.definitions());
     }
     static <T> FunctionK<list,reactiveSeq,T> listStream(){
-        return of(i -> ListX.narrowK(i).stream(), ReactiveSeqInstances.definitions());
+        return of(i -> ListX.narrowK(i).stream(), PublisherInstances.definitions());
     }
     static <T> FunctionK<list,option,T> listMaybe(){
         return of(i -> ListX.narrowK(i).headAndTail().headMaybe(), MaybeInstances.definitions());

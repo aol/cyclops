@@ -715,7 +715,7 @@ public class FluentFunctions {
         }
 
 
-        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Function<T, R1>> f) {
+        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
             return FluentFunctions.of(a -> f.apply(fn.apply(a))
                                             .apply(a));
         }

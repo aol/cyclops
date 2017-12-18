@@ -11,11 +11,8 @@ import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.CompletableFutures;
-import cyclops.companion.CompletableFutureKind;
 import cyclops.companion.Optionals;
-import cyclops.companion.Optionals.OptionalKind;
 import cyclops.companion.Streams;
-import cyclops.companion.Streams.StreamKind;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.Eval;
@@ -24,6 +21,20 @@ import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.*;
+import cyclops.instances.control.EvalInstances;
+import cyclops.instances.control.FutureInstances;
+import cyclops.instances.control.MaybeInstances;
+import cyclops.instances.control.TryInstances;
+import cyclops.instances.jdk.CompletableFutureInstances;
+import cyclops.instances.jdk.OptionalInstances;
+import cyclops.instances.jdk.StreamInstances;
+import cyclops.instances.reactive.PublisherInstances;
+import cyclops.instances.reactive.collections.immutable.LinkedListXInstances;
+import cyclops.instances.reactive.collections.immutable.VectorXInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
+import cyclops.kinds.CompletableFutureKind;
+import cyclops.kinds.OptionalKind;
+import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
@@ -335,63 +346,63 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
 
     public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(VectorX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(list),def1, VectorX.VectorXInstances.definitions());
+        return new Coproduct<>(Either.right(list),def1, VectorXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(VectorX.of(values)),def1, VectorX.VectorXInstances.definitions());
+        return new Coproduct<>(Either.right(VectorX.of(values)),def1, VectorXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(LinkedListX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(list),def1, LinkedListX.LinkedListXInstances.definitions());
+        return new Coproduct<>(Either.right(list),def1, LinkedListXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListX.LinkedListXInstances.definitions());
+        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListXInstances.definitions());
     }
 
 
     public static  <W1,T> Coproduct<W1,list,T> listX(List<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(ListX.fromIterable(list)),def1, ListX.ListXInstances.definitions());
+        return new Coproduct<>(Either.right(ListX.fromIterable(list)),def1, ListXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,list,T> listX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(ListX.of(values)),def1, ListX.ListXInstances.definitions());
+        return new Coproduct<>(Either.right(ListX.of(values)),def1, ListXInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(Stream<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, Streams.StreamInstances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, StreamInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(StreamKind.of(values)),def1, Streams.StreamInstances.definitions());
+        return new Coproduct<>(Either.right(StreamKind.of(values)),def1, StreamInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(ReactiveSeq<T> stream,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(stream),def1, ReactiveSeq.ReactiveSeqInstances.definitions());
+        return new Coproduct<>(Either.right(stream),def1, PublisherInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,reactiveSeq,T> reactiveSeq(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1, ReactiveSeq.ReactiveSeqInstances.definitions());
+        return new Coproduct<>(Either.right(ReactiveSeq.of(values)),def1, PublisherInstances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> success(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Try.success(value)),def1, Try.TryInstances.definitions());
+        return new Coproduct<>(Either.right(Try.success(value)),def1, TryInstances.definitions());
     }
     public static  <W1,X extends Throwable,T> Coproduct<W1,Higher<tryType,X>,T> failure(X value,InstanceDefinitions<W1> def1){
-        return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1, Try.TryInstances.definitions());
+        return new Coproduct<W1,Higher<tryType,X>,T>(Either.right(Try.failure(value)),def1, TryInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,future,T> futureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Future.of(value, ex)),def1, Future.FutureInstances.definitions());
+        return new Coproduct<>(Either.right(Future.of(value, ex)),def1, FutureInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,completableFuture,T> completableFutureOf(Supplier<T> value, Executor ex,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutures.CompletableFutureInstances.definitions());
+        return new Coproduct<>(Either.right(CompletableFutureKind.supplyAsync(value, ex)),def1, CompletableFutureInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,eval,T> later(Supplier<T> value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(LazyEither.right(Eval.later(value)),def1, Eval.EvalInstances.definitions());
+        return new Coproduct<>(LazyEither.right(Eval.later(value)),def1, EvalInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,optional,T> ofNullable(T value,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(OptionalKind.ofNullable(value)),def1,Optionals.Instances.definitions());
+        return new Coproduct<>(Either.right(OptionalKind.ofNullable(value)),def1, OptionalInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> just(T value, InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.just(value)),def1, Maybe.MaybeInstances.definitions());
+        return new Coproduct<>(Either.right(Maybe.just(value)),def1, MaybeInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> none(InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.nothing()),def1, Maybe.MaybeInstances.definitions());
+        return new Coproduct<>(Either.right(Maybe.nothing()),def1, MaybeInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,option,T> maybeNullabe(T value, InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(Maybe.ofNullable(value)),def1, Maybe.MaybeInstances.definitions());
+        return new Coproduct<>(Either.right(Maybe.ofNullable(value)),def1, MaybeInstances.definitions());
     }
     public static <W1,W2,T> Coproduct<W1,W2,T> narrowK(Higher<Higher<Higher<coproduct, W1>, W2>, T> ds){
         return (Coproduct<W1,W2,T>)ds;
