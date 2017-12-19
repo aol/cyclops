@@ -48,6 +48,14 @@ sourceSets {
   test.runtimeClasspath += [configurations.provided]
 }
 
+test {
+  reports.html.destination = file("$buildDir/reports/test")
+//  forkEvery = 1
+  testLogging {
+    events "started", "passed", "skipped", "failed"//, "standardOut", "standardError"
+  }
+}
+
 modifyPom {
   project {
     name 'cyclops-pure'
