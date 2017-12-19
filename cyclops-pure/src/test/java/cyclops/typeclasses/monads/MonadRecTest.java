@@ -3,6 +3,7 @@ package cyclops.typeclasses.monads;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Future;
+import cyclops.instances.reactive.IterableInstances;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
 
@@ -23,6 +24,8 @@ import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -47,13 +50,20 @@ public class MonadRecTest {
         assertThat(l,equalTo(SetX.of(100_001)));
     }
     @Test
-    public void ReactiveSeqTest(){
-        MonadRec<reactiveSeq> mr = PublisherInstances.monadRec(ThreadPools.getCurrentThreadExecutor());
+    public void ReactiveSeqPublisherTest(){
+        MonadRec<reactiveSeq> mr = PublisherInstances.monadRec(Executors.newFixedThreadPool(1));
         ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
                 .convert(ReactiveSeq::narrowK);
         assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
     }
 
+    @Test
+    public void ReactiveSeqIterableTest(){
+      MonadRec<reactiveSeq> mr = IterableInstances.monadRec();
+      ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
+        .convert(ReactiveSeq::narrowK);
+      assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
+    }
     @Test
     public void maybeTest(){
         MonadRec<option> mr = MaybeInstances.monadRec();
