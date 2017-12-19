@@ -63,7 +63,7 @@ public class DITest {
 	    return repo->depth1(name).apply(repo)+1;
 	}
 	private Reader<UserRepository,Integer> depth1(String name){
-	    return FluentFunctions.of(repo-> 1);
+	    return Reader.of(repo-> 1);
 	}
 }
 

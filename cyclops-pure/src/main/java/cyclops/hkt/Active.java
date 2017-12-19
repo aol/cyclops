@@ -238,7 +238,7 @@ public class Active<W,T> implements Filters<T>,
         return new NarrowedTailRec<>(widen);
     }
     @AllArgsConstructor
-    class NarrowedFlatMap<C,R>{
+    public class NarrowedFlatMap<C,R>{
         private final Kleisli<W,C,R> narrow;
 
         public Active<W, R> flatMap(Function<? super T, ? extends C> fn) {
@@ -252,7 +252,7 @@ public class Active<W,T> implements Filters<T>,
         }
     }
     @AllArgsConstructor
-    class NarrowedTailRec<C,R>{
+    public class NarrowedTailRec<C,R>{
         private final Kleisli<W,C,Either<T,R>>  narrow;
 
         public  Active<W, R> tailRec(T initial,Function<? super T,? extends C> fn){
@@ -261,7 +261,7 @@ public class Active<W,T> implements Filters<T>,
     }
 
     @AllArgsConstructor
-    class NarrowedApplicative<C,R>{
+    public class NarrowedApplicative<C,R>{
         private final Kleisli<W,C,Function<T,R>>  narrow;
 
         public  Active<W, R> ap(C fn) {
@@ -271,7 +271,7 @@ public class Active<W,T> implements Filters<T>,
 
 
     @AllArgsConstructor
-    class Narrowed<C>{
+    public class Narrowed<C>{
         //plus, sum
 
         private final Kleisli<W,C,T> widen;

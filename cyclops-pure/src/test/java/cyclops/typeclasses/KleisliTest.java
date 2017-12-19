@@ -3,6 +3,7 @@ package cyclops.typeclasses;
 import cyclops.arrow.Kleisli;
 import cyclops.control.Future;
 import com.oath.cyclops.hkt.DataWitness.future;
+import cyclops.instances.control.FutureInstances;
 import cyclops.typeclasses.monad.Monad;
 import org.junit.Test;
 

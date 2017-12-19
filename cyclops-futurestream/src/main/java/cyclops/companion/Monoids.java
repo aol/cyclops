@@ -17,7 +17,7 @@ import cyclops.function.Monoid;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.NaturalTransformation;
+import cyclops.data.NaturalTransformation;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

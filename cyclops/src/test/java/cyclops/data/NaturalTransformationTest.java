@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.immutable.VectorX;
@@ -6,6 +6,7 @@ import cyclops.collections.mutable.ListX;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import com.oath.cyclops.hkt.DataWitness.vectorX;
+import cyclops.data.NaturalTransformation;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
