@@ -31,6 +31,9 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   public static <T> IO<T> of(Supplier<? extends T> s){
     return new IO<T>(Eval.later(s));
   }
+  public static <T> IO<T> of(Supplier<? extends T> s,Executor ex){
+    return new IO<T>(Future.of(s,ex));
+  }
 
   public static <T> IO<T> fromPublisher(Publisher<T> p){
     return new IO<T>(p);
