@@ -1,8 +1,8 @@
 package cyclops.typeclasses;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Either;

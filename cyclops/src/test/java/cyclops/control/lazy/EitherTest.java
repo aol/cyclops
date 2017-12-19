@@ -1,13 +1,13 @@
 package cyclops.control.lazy;
 
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.LazyEither.CompletableEither;

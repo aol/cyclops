@@ -7,8 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.mutable.ListX;
-import cyclops.monads.Witness;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;

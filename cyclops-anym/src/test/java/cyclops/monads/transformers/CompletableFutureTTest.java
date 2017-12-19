@@ -6,13 +6,13 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 
 import com.oath.cyclops.types.mixins.Printable;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.companion.CompletableFutures;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;

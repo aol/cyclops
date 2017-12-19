@@ -6,18 +6,13 @@ import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
 import com.oath.cyclops.types.reactive.PushSubscriber;
 import cyclops.control.*;
-import cyclops.data.Seq;
-import cyclops.function.Function3;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.collections.mutable.ListX;
-import cyclops.function.Monoid;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
-
-import cyclops.typeclasses.functor.Functor;
 
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple2;

@@ -3,7 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.collections.immutable.PersistentMapX;
+import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import lombok.EqualsAndHashCode;
 
 import java.util.Iterator;
 import java.util.Objects;

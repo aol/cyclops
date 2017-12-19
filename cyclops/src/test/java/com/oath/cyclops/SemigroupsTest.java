@@ -17,21 +17,20 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.immutable.*;
 import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
 
+import cyclops.reactive.collections.immutable.*;
 import org.junit.Test;
 
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.immutable.BagX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 public class SemigroupsTest {
 
 

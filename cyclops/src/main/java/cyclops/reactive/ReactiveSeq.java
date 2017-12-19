@@ -4,7 +4,6 @@ package cyclops.reactive;
 import com.oath.cyclops.data.collections.extensions.LazyFluentCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
-import com.oath.cyclops.react.ThreadPools;
 
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
@@ -31,9 +30,9 @@ import cyclops.companion.Streams;
 import com.oath.cyclops.async.*;
 import com.oath.cyclops.async.adapters.*;
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.MapX;
+import cyclops.reactive.collections.immutable.VectorX;
 
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -41,7 +40,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
-import cyclops.typeclasses.functor.Functor;
 import lombok.val;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

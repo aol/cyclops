@@ -9,7 +9,7 @@ import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.util.ThrowsSoftened;
 import cyclops.companion.CyclopsCollectors;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 public interface BlockingStream<U> {
 

@@ -1,4 +1,4 @@
-package cyclops.collections.immutable;
+package cyclops.reactive.collections.immutable;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPBagX;
@@ -10,7 +10,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.companion.Reducers;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;

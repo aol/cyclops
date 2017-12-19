@@ -30,7 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 
 import lombok.val;

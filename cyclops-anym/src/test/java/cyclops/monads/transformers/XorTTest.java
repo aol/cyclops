@@ -1,12 +1,11 @@
 package cyclops.monads.transformers;
 import cyclops.monads.AnyMs;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;

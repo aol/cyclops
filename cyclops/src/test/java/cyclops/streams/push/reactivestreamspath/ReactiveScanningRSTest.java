@@ -1,7 +1,7 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Reducers;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.Streamable;
 import org.junit.Test;
 

@@ -9,13 +9,13 @@ import java.util.Map;
 import cyclops.data.tuple.Tuple;
 import org.junit.Test;
 
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.MapX;
 import cyclops.companion.MapXs;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 public class MapXsTest {
 
     @Test
@@ -64,7 +64,7 @@ public class MapXsTest {
 
     @Test
     public void onEmptySwitch(){
-       
+
         assertThat(MapX.<String,Integer>empty().onEmptySwitch(()->MapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(10));
     }
     @Test

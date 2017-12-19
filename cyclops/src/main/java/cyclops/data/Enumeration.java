@@ -3,8 +3,8 @@ package cyclops.data;
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.function.Function1;
 import cyclops.reactive.ReactiveSeq;

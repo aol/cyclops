@@ -19,7 +19,7 @@ import java.util.stream.StreamSupport;
 
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 
 public class FutureTTest implements Printable {

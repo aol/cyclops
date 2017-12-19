@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.completableFuture;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.Witness.stream;
@@ -20,7 +19,7 @@ import cyclops.monads.function.AnyMFunction2;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 
 public class MonadTest {

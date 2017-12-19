@@ -1,4 +1,4 @@
-package cyclops.collections.mutable;
+package cyclops.reactive.collections.mutable;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazySetX;
@@ -9,7 +9,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;

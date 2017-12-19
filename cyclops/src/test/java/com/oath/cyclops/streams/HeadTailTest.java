@@ -1,14 +1,11 @@
 package com.oath.cyclops.streams;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
-import com.oath.cyclops.types.stream.HeadAndTail;
+import cyclops.reactive.collections.mutable.ListX;
 
 public class HeadTailTest {
 

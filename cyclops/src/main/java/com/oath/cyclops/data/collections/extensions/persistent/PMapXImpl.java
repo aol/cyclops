@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
-import cyclops.collections.immutable.PersistentMapX;
+import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 

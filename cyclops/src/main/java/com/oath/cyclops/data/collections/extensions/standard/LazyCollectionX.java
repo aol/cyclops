@@ -14,9 +14,9 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;

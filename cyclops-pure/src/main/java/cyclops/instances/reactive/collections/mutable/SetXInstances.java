@@ -4,7 +4,7 @@ import com.oath.cyclops.hkt.DataWitness.set;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;

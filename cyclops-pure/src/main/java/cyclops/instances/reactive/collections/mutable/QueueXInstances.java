@@ -4,7 +4,7 @@ import com.oath.cyclops.hkt.DataWitness.queue;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
@@ -32,8 +32,8 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static cyclops.collections.mutable.QueueX.fromIterable;
-import static cyclops.collections.mutable.QueueX.narrowK;
+import static cyclops.reactive.collections.mutable.QueueX.fromIterable;
+import static cyclops.reactive.collections.mutable.QueueX.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with Queues

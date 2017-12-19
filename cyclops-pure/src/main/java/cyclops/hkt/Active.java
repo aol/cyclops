@@ -6,7 +6,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.arrow.*;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

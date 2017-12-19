@@ -1,4 +1,4 @@
-package cyclops.collections.immutable;
+package cyclops.reactive.collections.immutable;
 
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
@@ -18,7 +18,7 @@ import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.function.Function3;

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;

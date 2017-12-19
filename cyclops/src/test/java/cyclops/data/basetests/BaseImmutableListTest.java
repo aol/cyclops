@@ -1,7 +1,7 @@
 package cyclops.data.basetests;
 
 import cyclops.collections.AbstractIterableXTest;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;

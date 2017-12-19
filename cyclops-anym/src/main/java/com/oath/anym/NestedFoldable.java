@@ -17,8 +17,8 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.Streamable;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.MapX;
 import com.oath.cyclops.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 

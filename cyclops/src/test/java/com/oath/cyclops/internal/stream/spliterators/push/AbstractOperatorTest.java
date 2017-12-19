@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;

@@ -1,13 +1,10 @@
 package com.oath.cyclops.comprehensions;
 
-import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
 
 public class ForPublishersTest {
 

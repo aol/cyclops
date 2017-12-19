@@ -1,7 +1,7 @@
 package cyclops.typeclasses;
 
 import cyclops.control.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import com.oath.cyclops.hkt.DataWitness.future;
 import com.oath.cyclops.hkt.DataWitness.list;

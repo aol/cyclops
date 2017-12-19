@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.persistentQueueX;

@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monad;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.control.Constant;
 import cyclops.control.Maybe;
 import cyclops.control.State;

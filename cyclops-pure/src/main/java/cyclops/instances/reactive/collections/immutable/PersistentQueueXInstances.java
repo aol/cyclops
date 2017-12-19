@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -31,7 +31,7 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
-import static cyclops.collections.immutable.PersistentQueueX.narrowK;
+import static cyclops.reactive.collections.immutable.PersistentQueueX.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with PersistentQueues

@@ -9,9 +9,9 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.free.Free;

@@ -2,8 +2,6 @@ package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.*;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
@@ -15,6 +13,14 @@ import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;

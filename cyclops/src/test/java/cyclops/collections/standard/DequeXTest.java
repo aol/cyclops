@@ -21,8 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.collections.AbstractCollectionXTest;
 
 public class DequeXTest extends AbstractCollectionXTest{
