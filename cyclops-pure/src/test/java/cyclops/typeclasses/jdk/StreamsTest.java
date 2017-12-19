@@ -9,13 +9,15 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.stream;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Streams;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import com.oath.cyclops.hkt.DataWitness.stream;.
+import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.jdk.StreamInstances;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;

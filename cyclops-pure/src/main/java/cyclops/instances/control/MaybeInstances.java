@@ -317,7 +317,7 @@ public class MaybeInstances {
    */
   public static <T> MonadPlus<option> monadPlus(){
 
-    return General.monadPlus(monadZero(), MonoidKs.firstPresentMaybe());
+    return General.monadPlus(monadZero(), MonoidKs.firstPresentOption());
   }
   /**
    *

@@ -251,19 +251,19 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
         return  kleisliK(monad,fn.andThen(r->monad.unit(r)));
     }
 
-    static <T, W, R> Function1<T,Higher<W,R>> narrow(Function<? super T, ? extends Higher<W, ? extends R>> fn) {
+    public static <T, W, R> Function1<T,Higher<W,R>> narrow(Function<? super T, ? extends Higher<W, ? extends R>> fn) {
         if(fn instanceof Function1){
             return (Function1)fn;
         }
         return in -> (Higher<W,R>)fn.apply(in);
     }
 
-    static <T, W, R> Kleisli<W,T,R> narrowK(Higher<Higher<Higher<kleisli, W>, T>, R> k) {
+    public static <T, W, R> Kleisli<W,T,R> narrowK(Higher<Higher<Higher<kleisli, W>, T>, R> k) {
 
         return (Kleisli)k;
     }
 
-    static <T, W, R> Kleisli<W,T,R> narrowK3(Higher3<kleisli,W,T,R> kleisliHigher3) {
+    public static <T, W, R> Kleisli<W,T,R> narrowK3(Higher3<kleisli,W,T,R> kleisliHigher3) {
 
         return (Kleisli<W,T,R>)kleisliHigher3;
     }

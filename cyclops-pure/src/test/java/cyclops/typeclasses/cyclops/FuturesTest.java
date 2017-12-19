@@ -8,6 +8,8 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.arrow.MonoidKs;
+import cyclops.instances.control.FutureInstances;
+import cyclops.instances.control.MaybeInstances;
 import org.junit.Test;
 
 import static cyclops.function.Lambda.l1;

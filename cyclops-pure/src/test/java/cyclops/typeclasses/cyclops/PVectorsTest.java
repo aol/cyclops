@@ -11,6 +11,8 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.vectorX;
 import cyclops.arrow.MonoidKs;
+import cyclops.instances.control.MaybeInstances;
+import cyclops.instances.reactive.collections.immutable.VectorXInstances;
 import org.junit.Test;
 
 

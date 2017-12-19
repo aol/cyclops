@@ -10,6 +10,7 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.option;
 import cyclops.arrow.MonoidKs;
+import cyclops.instances.control.MaybeInstances;
 import org.junit.Test;
 
 
@@ -104,7 +105,7 @@ public class MaybesTest {
     public void monadPlusNonEmpty(){
 
 
-        Maybe<Integer> opt = MaybeInstances.<Integer>monadPlus(MonoidKs.firstPresentMaybe())
+        Maybe<Integer> opt = MaybeInstances.<Integer>monadPlus(MonoidKs.firstPresentOption())
                                       .plus(Maybe.of(5), Maybe.of(10))
                                       .convert(Maybe::narrowK);
         assertThat(opt,equalTo(Maybe.of(5)));
