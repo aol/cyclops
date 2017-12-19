@@ -96,10 +96,14 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
         return zip(b,(x,y)->Tuple.tuple(x,y));
 
     }
+    @Override
     default <R>  Trampoline<R> mapFn(Function<? super T, ? extends R> fn){
+      return map(fn);
+    }
+    default <R>  Trampoline<R> map(Function<? super T, ? extends R> fn){
       Either<Trampoline<T>,T> e = resume();
       return e.visit(left->{
-        return Trampoline.more(()->left.mapFn(fn));
+        return Trampoline.more(()->left.map(fn));
       },right->{
         return Trampoline.done(fn.apply(right));
       });
@@ -232,6 +236,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     public static <T> Trampoline<T> done(final T result) {
         return () -> result;
     }
+
 
     /**
      * Create a Trampoline that has more work to do

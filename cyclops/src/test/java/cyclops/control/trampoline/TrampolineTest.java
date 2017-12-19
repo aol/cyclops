@@ -21,18 +21,30 @@ public class TrampolineTest {
 
 	@Test
 	public void trampolineTest(){
-		
+
 		assertThat(loop(500000,10).result(),equalTo(446198426));
-		
+
 	}
 
+	@Test
+  public void testMap(){
+	  assertThat(Trampoline.done(10).map(i->i*2).get(),equalTo(20));
+    assertThat(Trampoline.more(()->Trampoline.done(10)).map(i->i*2).get(),equalTo(20));
+    assertThat(loop(500000,10).map(i->i*2).get(),equalTo(892396852));
+  }
+  @Test
+  public void testFlatMap(){
+    assertThat(Trampoline.done(10).flatMap(i->Trampoline.done(i*2)).get(),equalTo(20));
+    assertThat(Trampoline.more(()->Trampoline.done(10)).flatMap(i->Trampoline.done(i*2)).get(),equalTo(20));
+    assertThat(loop(500000,10).flatMap(i->Trampoline.done(i*2)).get(),equalTo(892396852));
+  }
 
 
 	@Test @Ignore
 	public void trampolineTest1(){
-		
+
 		assertThat(loop1(500000,10),equalTo(446198426));
-		
+
 	}
 	Integer loop1(int times,int sum){
 
@@ -42,9 +54,6 @@ public class TrampolineTest {
 			return loop1(times-1,sum+times);
 	}
     @Test
-
-
-
     public void interleave(){
 
 	    Trampoline<Integer> algorithm1 = loop(500000,5);
@@ -83,7 +92,7 @@ public class TrampolineTest {
         Trampoline<Integer> looping3 = loop2(50000,5);
         System.out.println(looping.zip(looping2,looping3).get());
     }
-	
+
 	List results;
 	@Test
 	public void coroutine(){
@@ -92,23 +101,23 @@ public class TrampolineTest {
 		val coroutine = new Trampoline[1];
 		coroutine[0] = Trampoline.more( ()-> it.hasNext() ? print(it.next(),coroutine[0]) : Trampoline.done(0));
 		withCoroutine(coroutine[0]);
-		
+
 		assertThat(results,equalTo(Arrays.asList(0,"hello",1,"world",2,"take",3,4)));
 	}
-	
+
 	private Trampoline<Integer> print(Object next, Trampoline trampoline) {
 		System.out.println(next);
 		results.add(next);
 		return trampoline;
 	}
 	public void withCoroutine(Trampoline coroutine){
-		
+
 		for(int i=0;i<5;i++){
 				print(i,coroutine);
 				if(!coroutine.complete())
 					coroutine= coroutine.bounce();
-				
+
 		}
-		
+
 	}
 }
