@@ -451,7 +451,7 @@ public interface MonoidKs {
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static MonoidK<option> firstPresentMaybe() {
+    static MonoidK<option> firstPresentOption() {
         return new MonoidK<option>() {
           @Override
           public <T> Higher<option, T> zero() {
@@ -460,7 +460,7 @@ public interface MonoidKs {
 
           @Override
           public <T> Higher<option, T> apply(Higher<option, T> t1, Higher<option, T> t2) {
-            return SemigroupKs.firstPresentMaybe().apply(t1,t2);
+            return SemigroupKs.firstPresentOption().apply(t1,t2);
           }
         };
     }

@@ -1,13 +1,9 @@
 package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Future;
+import cyclops.control.*;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
-import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
@@ -425,12 +421,12 @@ public interface SemigroupKs{
     /**
      * @return Combine two Maybe's by taking the first present
      */
-    static SemigroupK<option> firstPresentMaybe() {
+    static SemigroupK<option> firstPresentOption() {
       return new SemigroupK<option>() {
 
         @Override
         public <T> Higher<option, T> apply(Higher<option, T> a, Higher<option, T> b) {
-          return Maybe.narrowK(a).isPresent() ? a : b;
+          return Option.narrowK(a).isPresent() ? a : b;
         }
       };
 

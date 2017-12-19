@@ -243,8 +243,7 @@ public interface Maybe<T> extends Option<T> {
 
 
     public static <C2,T> Higher<C2, Higher<option,T>> widen2(Higher<C2, Maybe<T>> nestedMaybe){
-        //a functor could be used (if C2 is a functor / one exists for C2 type) instead of casting
-        //cast seems safer as Higher<MaybeType.maybe,T> must be a StreamType
+
         return (Higher)nestedMaybe;
     }
     /**
@@ -254,7 +253,14 @@ public interface Maybe<T> extends Option<T> {
      * @return MaybeType
      */
     public static <T> Maybe<T> narrowK(final Higher<option, T> future) {
-        return (Maybe<T>)future;
+        return Maybe.fromOption(Option.narrowK(future));
+    }
+
+
+    public static <T> Maybe<T> fromOption(Option<T> opt){
+      if(opt instanceof Maybe)
+        return (Maybe<T>)opt;
+      return fromIterable(opt);
     }
 
     /**

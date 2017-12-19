@@ -12,6 +12,8 @@ import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.list;
 import cyclops.arrow.MonoidKs;
+import cyclops.instances.control.MaybeInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
