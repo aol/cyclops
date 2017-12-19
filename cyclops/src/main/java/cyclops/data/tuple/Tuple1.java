@@ -13,7 +13,6 @@ import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.tuple1;
 import cyclops.typeclasses.*;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
