@@ -20,9 +20,7 @@ import java.util.function.Function;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public final class State<S, T> implements Higher2<state,S,T> {
 
-
     private final Function1<S, Free<supplier,Tuple2<S, T>>> runState;
-
 
     public Tuple2<S, T> run(S s) {
         return SupplierKind.run(runState.apply(s));
