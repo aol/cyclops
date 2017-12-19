@@ -1,30 +1,23 @@
 package cyclops.companion;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.Stream;
-
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.control.Option;
-import cyclops.typeclasses.*;
-
 import cyclops.control.Either;
-
+import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-import com.oath.cyclops.hkt.DataWitness.optional;
-
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import cyclops.reactive.ReactiveSeq;
+import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 
-import cyclops.control.Maybe;
-import cyclops.reactive.ReactiveSeq;
-
-import lombok.experimental.UtilityClass;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 
 /**
