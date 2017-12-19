@@ -1,18 +1,18 @@
 package cyclops.data.tuple;
 
 
+import com.oath.cyclops.hkt.DataWitness.tuple1;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.*;
+import cyclops.control.Either;
+import cyclops.control.Maybe;
+import cyclops.control.Trampoline;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
-import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.tuple1;
-import cyclops.typeclasses.*;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
