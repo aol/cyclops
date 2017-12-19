@@ -24,6 +24,10 @@ import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import cyclops.transformers.Transformer;
+import cyclops.transformers.TransformerFactory;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.BiFunction;
@@ -64,6 +68,7 @@ public class MaybeInstances {
   public static <W2,R,T> Nested<option,W2,R> mapM(Maybe<T> m,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
     return Nested.of(m.map(fn), MaybeInstances.definitions(), defs);
   }
+
 
   /**
    * Construct an equivalent Maybe from the Supplied Optional

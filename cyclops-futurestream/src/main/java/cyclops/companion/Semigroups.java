@@ -15,7 +15,7 @@ import cyclops.function.Semigroup;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.NaturalTransformation;
+import cyclops.data.NaturalTransformation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 

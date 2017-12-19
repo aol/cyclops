@@ -36,7 +36,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
         return zip(o,Tuple::tuple);
     }
     default  <R2,B> KleisliM<W, T, B> zip(KleisliM<W, T, R2> o, BiFunction<? super R,? super R2,? extends B> fn){
-        return flatMap(a -> o.mapFn(b -> fn.apply(a,b)));
+        return flatMap(a -> o.map(b -> fn.apply(a,b)));
     }
     /**
      *
@@ -131,7 +131,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
                 return b.flatMap(inb -> {
 
                     KleisliM<W,T,R3> c = kleisli(value4.apply(in,ina,inb));
-                    return c.mapFn(inc->yieldingFunction.apply(in, ina, inb, inc));
+                    return c.map(inc->yieldingFunction.apply(in, ina, inb, inc));
 
                 });
 
@@ -155,7 +155,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
             KleisliM<W,T,R1> a = kleisli(value2.apply(in));
             return a.flatMap(ina -> {
                 KleisliM<W,T,R2> b = kleisli(value3.apply(in,ina));
-                return b.mapFn(in2 -> {
+                return b.map(in2 -> {
                     return yieldingFunction.apply(in, ina, in2);
 
                 });
@@ -174,7 +174,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
         return this.flatMap(in -> {
 
             KleisliM<W,T,R1> a = kleisli(value2.apply(in));
-            return a.mapFn(in2 -> {
+            return a.map(in2 -> {
                 return yieldingFunction.apply(in, in2);
 
             });

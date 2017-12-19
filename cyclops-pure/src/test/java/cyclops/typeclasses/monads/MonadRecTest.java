@@ -1,20 +1,30 @@
 package cyclops.typeclasses.monads;
 
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Future;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.SetX;
 import cyclops.companion.Optionals;
-import cyclops.companion.Optionals.OptionalKind;
+
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
+import cyclops.instances.control.FutureInstances;
+import cyclops.instances.control.MaybeInstances;
+import cyclops.instances.control.ReaderInstances;
+import cyclops.instances.jdk.OptionalInstances;
+import cyclops.instances.reactive.PublisherInstances;
+import cyclops.instances.reactive.collections.mutable.ListXInstances;
+import cyclops.instances.reactive.collections.mutable.SetXInstances;
+import cyclops.kinds.OptionalKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import java.util.Optional;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -33,14 +43,14 @@ public class MonadRecTest {
 
     @Test
     public void setTest(){
-        MonadRec<set> mr = SetX.SetXInstances.monadRec();
+        MonadRec<set> mr = SetXInstances.monadRec();
         SetX<Integer> l = mr.tailRec(0, i -> i < 100_000 ? SetX.of(Either.left(i + 1)) : SetX.of(Either.right(i + 1)))
                 .convert(SetX::narrowK);
         assertThat(l,equalTo(SetX.of(100_001)));
     }
     @Test
     public void ReactiveSeqTest(){
-        MonadRec<reactiveSeq> mr = PublisherInstances.monadRec();
+        MonadRec<reactiveSeq> mr = PublisherInstances.monadRec(ThreadPools.getCurrentThreadExecutor());
         ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
                 .convert(ReactiveSeq::narrowK);
         assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
@@ -72,7 +82,7 @@ public class MonadRecTest {
 
     @Test
     public void readerTest(){
-        MonadRec<Higher<reader, Integer>> mr = Reader.ReaderInstances.monadRec();
+        MonadRec<Higher<reader, Integer>> mr = ReaderInstances.monadRec();
 
         Reader<Integer, Integer> l = mr.tailRec(0, i -> i < 100_000 ? Reader.of(in -> Either.left(in+i + 1)) : Reader.of(in -> Either.right(in+i + 1)))
                                         .convert(Reader::narrowK);

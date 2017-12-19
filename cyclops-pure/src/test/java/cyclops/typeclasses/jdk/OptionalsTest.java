@@ -1,21 +1,25 @@
 package cyclops.typeclasses.jdk;
 
-import static cyclops.companion.Optionals.OptionalKind.widen;
+
 import static cyclops.function.Lambda.l1;
 
+import static cyclops.kinds.OptionalKind.widen;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.util.Optional;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.Optionals.OptionalKind;
+
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 
 import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.arrow.MonoidKs;
+import cyclops.instances.control.MaybeInstances;
+import cyclops.instances.jdk.OptionalInstances;
+import cyclops.kinds.OptionalKind;
 import cyclops.typeclasses.functor.Functor;
 import org.junit.Test;
 
@@ -45,7 +49,7 @@ public class OptionalsTest {
     @Test
     public void apSimple(){
         OptionalInstances.applicative()
-            .ap(widen(Optional.of(l1(this::multiplyByTwo))),widen(Optional.of(1)));
+            .ap(widen(Optional.of(l1(this::multiplyByTwo))), widen(Optional.of(1)));
     }
     private int multiplyByTwo(int x){
         return x*2;
@@ -74,7 +78,7 @@ public class OptionalsTest {
     public void functorSimple(){
 
         Functor<optional> functor = OptionalInstances.functor();
-        Higher<optional, Integer> hkt = functor.map(i -> i * 2, OptionalKind.widen(Optional.of(3)));
+        Higher<optional, Integer> hkt = functor.map(i -> i * 2, widen(Optional.of(3)));
         Optional<Integer> opt = OptionalKind.narrowK(hkt);
     }
 

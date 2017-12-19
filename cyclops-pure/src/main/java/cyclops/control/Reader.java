@@ -31,7 +31,9 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>, Higher<
     public static <T,R> Reader<T,R> of(Reader<T,R> i){
         return i;
     }
-
+    public static <T,R> Reader<T,R> of(Function<T,R> i){
+      return in->i.apply(in);
+    }
     public static <T,R> Higher<Higher<reader,T>, R> widen(Reader<T,R> narrow) {
     return narrow;
   }

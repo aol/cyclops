@@ -1,4 +1,4 @@
-package cyclops.typeclasses.transformers;
+package cyclops.transformers;
 
 
 import cyclops.hkt.Nested;

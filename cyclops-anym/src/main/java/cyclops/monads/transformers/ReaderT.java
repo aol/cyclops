@@ -20,8 +20,7 @@ import java.util.function.*;
  *
  * @param <T> Type of data stored inside the nested Future(s)
  */
-public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>,
-        Transformable<R>, Function1<T,R> {
+public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<W,T,R>>, Transformable<R>, Function1<T,R> {
 
     private final AnyM<W,Reader<T,R>> run;
 
@@ -71,7 +70,12 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
         })));
     }
 
-    /**
+    @Override
+    public <R1> ReaderT<W,T,R1> map(Function<? super R, ? extends R1> fn) {
+      return mapFn(fn);
+    }
+
+  /**
      * Map the wrapped Future
      *
      * <pre>
@@ -172,14 +176,14 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
         return this.flatMap(in -> {
 
-            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
+            Reader<T,R1> a = Reader.of(value2.apply(in));
             return a.flatMap(ina -> {
-                Reader<T,R2> b = FluentFunctions.of(value3.apply(in,ina));
+                Reader<T,R2> b = Reader.of(value3.apply(in,ina));
                 return b.flatMap(inb -> {
 
-                    Reader<T,R3> c = FluentFunctions.of(value4.apply(in,ina,inb));
+                    Reader<T,R3> c = Reader.of(value4.apply(in,ina,inb));
 
-                    return c.mapFn(in2 -> {
+                    return c.map(in2 -> {
 
                         return yieldingFunction.apply(in, ina, inb, in2);
 
@@ -204,10 +208,10 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
         return this.flatMap(in -> {
 
-            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
+            Reader<T,R1> a = Reader.of(value2.apply(in));
             return a.flatMap(ina -> {
-                Reader<T,R2> b = FluentFunctions.of(value3.apply(in,ina));
-                return b.mapFn(in2 -> {
+                Reader<T,R2> b = Reader.of(value3.apply(in,ina));
+                return b.map(in2 -> {
                     return yieldingFunction.apply(in, ina, in2);
 
                 });
@@ -227,8 +231,8 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
         return this.flatMap(in -> {
 
-            Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
-            return a.mapFn(in2 -> {
+            Reader<T,R1> a = Reader.of(value2.apply(in));
+            return a.map(in2 -> {
                 return yieldingFunction.apply(in, in2);
 
             });
