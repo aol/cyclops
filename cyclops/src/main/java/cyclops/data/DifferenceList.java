@@ -1,15 +1,12 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.hkt.DataWitness.differenceList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.hkt.DataWitness.differenceList;
 import cyclops.control.Trampoline;
-import cyclops.function.Function0;
-import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.free.Free;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
@@ -24,11 +21,11 @@ public class DifferenceList<T> implements Folds<T>,
                                           Higher<differenceList,T> {
 
     //@TODO try generalizing using ImmutableList and make DifferenceList implement ImmutableList
-    private final Function<LazySeq<T>,Free<supplier, LazySeq<T>>> appending;
+    private final Function<LazySeq<T>,Trampoline<LazySeq<T>>> appending;
 
 
     public <R> DifferenceList<R> map(Function<? super T, ? extends R> fn){
-        return new DifferenceList<>(l-> Free.done(run().map(fn)));
+        return new DifferenceList<>(l-> Trampoline.done(run().map(fn)));
     }
 
     @Override
@@ -52,31 +49,26 @@ public class DifferenceList<T> implements Folds<T>,
     }
 
     public <R> DifferenceList<R> flatMap(Function<? super T, ? extends DifferenceList<? extends R>> fn){
-        return new DifferenceList<>(l-> Free.done(run().flatMap(fn.andThen(DifferenceList::run))));
+        return new DifferenceList<>(l-> Trampoline.done(run().flatMap(fn.andThen(DifferenceList::run))));
     }
     public LazySeq<T> run(){
-        return Function0.run(appending.apply(LazySeq.empty()));
+        return  appending.apply(LazySeq.empty()).result();
     }
     public static <T> DifferenceList<T> of(LazySeq<T> list){
-        return new DifferenceList<>(l-> Free.done(list.appendAll(l)));
+        return new DifferenceList<>(l-> Trampoline.done(list.appendAll(l)));
     }
     public static <T> DifferenceList<T> of(T... values){
         return  of(LazySeq.of(values));
     }
     public static <T> DifferenceList<T> empty(){
-        return new DifferenceList<>(l-> Free.done(l));
+        return new DifferenceList<>(l-> Trampoline.done(l));
     }
     public DifferenceList<T> prepend(DifferenceList<T> prepend) {
         return prepend.append(this);
     }
     public DifferenceList<T> append(DifferenceList<T> append) {
-        Function<LazySeq<T>, Free<supplier, LazySeq<T>>> appending2 = append.appending;
-
-        return new DifferenceList<T>(l-> appending2.apply(l).flatMap(l2->{
-                                    Function0.SupplierKind<Free<supplier, LazySeq<T>>> s = ()->appending.apply(l2);
-                                    Free<supplier, LazySeq<T>> x = Function0.suspend(s);
-                                    return x;
-                                     }));
+        Function<LazySeq<T>, Trampoline<LazySeq<T>>> appending2 = append.appending;
+      return new DifferenceList<T>(l-> appending2.apply(l).flatMap(l2->Trampoline.more(()->appending.apply(l2))));
     }
 
     @Override
