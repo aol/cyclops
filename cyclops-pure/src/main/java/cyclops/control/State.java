@@ -7,6 +7,7 @@ import com.oath.cyclops.hkt.DataWitness.state;
 import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.free.Free;
 import cyclops.function.*;
+import cyclops.kinds.SupplierKind;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,10 +25,10 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
 
     public Tuple2<S, T> run(S s) {
-        return Function0.run(runState.apply(s));
+        return SupplierKind.run(runState.apply(s));
     }
     public T eval(S s) {
-        return Function0.run(runState.apply(s))._2();
+        return SupplierKind.run(runState.apply(s))._2();
     }
     public static <S> State<S, S> get() {
         return state(s -> Tuple.tuple(s, s));
@@ -51,7 +52,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
         return suspended(s -> runState.apply(s).map(t -> fn.apply(t)));
     }
     private static <S, T> State<S, T> suspended(Function1<? super S, Free<supplier,Tuple2<S, T>>> runF) {
-        return new State<>(s -> Function0.suspend(Lambda.λK(()->runF.apply(s))));
+        return new State<>(s -> SupplierKind.suspend(SupplierKind.λK(()->runF.apply(s))));
     }
 
     public <R> State<S, R> flatMap(Function<? super T,? extends  State<S, R>> f) {

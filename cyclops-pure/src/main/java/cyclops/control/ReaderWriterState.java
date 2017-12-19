@@ -7,6 +7,7 @@ import com.oath.cyclops.hkt.DataWitness.supplier;
 
 import cyclops.free.Free;
 import cyclops.function.*;
+import cyclops.kinds.SupplierKind;
 import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import cyclops.data.tuple.Tuple3;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static cyclops.data.tuple.Tuple.tuple;
 
@@ -26,7 +28,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
     private final BiFunction<R,S, Free<supplier,Tuple3<W, S, T>>> runState;
 
     public Tuple3<W,S,T> run(R r,S s) {
-        return Function0.run(runState.apply(r,s));
+        return SupplierKind.run(runState.apply(r,s));
     }
 
     public static <T,R1, W, S, R> ReaderWriterState<R1, W, S, R> tailRec(Monoid<W> monoid,T initial, Function<? super T, ? extends  ReaderWriterState<R1, W, S,  ? extends Either<T, R>>> fn) {
@@ -69,7 +71,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
     private static <R,W,S,T> ReaderWriterState<R,W,S,T> suspended(BiFunction<? super R, ? super S, Free<supplier,Tuple3<W,S, T>>> runF,
                                                                   Monoid<W> monoid) {
 
-        return new ReaderWriterState<R, W, S, T>(monoid,(R r ,S s) -> Function0.suspend(Lambda.λK(()->runF.apply(r,s))));
+        return new ReaderWriterState<R, W, S, T>(monoid,(R r ,S s) -> SupplierKind.suspend(SupplierKind.λK(()->runF.apply(r,s))));
 
     }
 
