@@ -17,8 +17,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import com.oath.cyclops.hkt.DataWitness.optional;
 
-import cyclops.typeclasses.functor.Functor;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;

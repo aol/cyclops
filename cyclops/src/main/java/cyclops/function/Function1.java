@@ -19,7 +19,6 @@ import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -78,9 +77,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     }
 
 
-    default <W1,W2> Function1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
-        return (T1)-> functor.map(this,hktTransform.apply(T1));
-    }
+
 
 
     default Function1<T,Maybe<R>> lift(){

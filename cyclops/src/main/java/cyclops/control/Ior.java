@@ -15,7 +15,6 @@ import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.ior;
 import cyclops.reactive.ReactiveSeq;
 
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

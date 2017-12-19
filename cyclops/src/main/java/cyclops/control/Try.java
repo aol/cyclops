@@ -30,7 +30,6 @@ import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.tryType;
 import cyclops.reactive.ReactiveSeq;
 
-import cyclops.typeclasses.functor.Functor;
 import lombok.*;
 import lombok.experimental.Wither;
 import org.reactivestreams.Publisher;
