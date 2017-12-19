@@ -9,6 +9,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 
 
+import cyclops.function.Monoid;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -96,6 +97,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
         return first.fanIn(second);
 
     }
+
 
     public <T2> Kleisli<W,Either<T, T2>, R> fanIn(Kleisli<W,T2,R> fanIn) {
         return of(monad,e -> e.visit(this, fanIn));
