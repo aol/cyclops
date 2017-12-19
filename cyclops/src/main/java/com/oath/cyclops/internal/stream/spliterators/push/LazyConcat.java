@@ -2,7 +2,7 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;

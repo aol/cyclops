@@ -7,14 +7,14 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.oath.cyclops.types.foldable.To;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 

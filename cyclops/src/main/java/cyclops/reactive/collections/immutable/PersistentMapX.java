@@ -1,4 +1,4 @@
-package cyclops.collections.immutable;
+package cyclops.reactive.collections.immutable;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.reactivestreams.Subscriber;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.functor.Transformable;
 
 

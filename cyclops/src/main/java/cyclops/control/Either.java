@@ -11,8 +11,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.companion.Monoids;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 
@@ -20,7 +19,6 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.hkt.DataWitness.either;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;

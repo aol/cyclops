@@ -1,11 +1,9 @@
 package cyclops.function;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.control.Maybe;
-import com.oath.cyclops.hkt.DataWitness.predicate;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.Value;
 
 import java.util.*;
@@ -13,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 

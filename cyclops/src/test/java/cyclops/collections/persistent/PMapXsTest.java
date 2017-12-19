@@ -6,14 +6,13 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import cyclops.collections.immutable.*;
 import cyclops.companion.PersistentMapXs;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
+import cyclops.reactive.collections.immutable.*;
 import org.junit.Test;
 
-import cyclops.collections.immutable.OrderedSetX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.MapXs;
 public class PMapXsTest {
     @Test
@@ -56,7 +55,7 @@ public class PMapXsTest {
         VectorX<String> strs = maps.toVectorX(t->""+t._1()+t._2());
         assertThat(strs,equalTo(ListX.of("a1","b2")));
     }
-    
+
     @Test
     public void onEmpty(){
         assertThat(PersistentMapX.empty().onEmpty(Tuple.tuple("hello",10)).get("hello"),equalTo(Option.some(10)));
@@ -68,7 +67,7 @@ public class PMapXsTest {
 
     @Test
     public void onEmptySwitch(){
-       
+
         assertThat(PersistentMapX.<String,Integer>empty().onEmptySwitch(()-> PersistentMapX.fromMap(MapXs.of("hello",10))).get("hello"),equalTo(Option.some(10)));
     }
     @Test

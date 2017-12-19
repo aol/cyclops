@@ -24,7 +24,7 @@ import com.oath.cyclops.util.SimpleTimer;
 import cyclops.futurestream.LazyReact;
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import lombok.Value;
 public class BatchingTest {
 	@Test

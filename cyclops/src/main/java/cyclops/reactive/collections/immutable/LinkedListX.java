@@ -1,4 +1,4 @@
-package cyclops.collections.immutable;
+package cyclops.reactive.collections.immutable;
 
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
@@ -17,15 +17,13 @@ import cyclops.companion.Reducers;
 import com.oath.cyclops.hkt.DataWitness.linkedListX;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.functor.Functor;
-import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

@@ -3,7 +3,7 @@ package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 
 import cyclops.reactive.ReactiveSeq;
@@ -18,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 

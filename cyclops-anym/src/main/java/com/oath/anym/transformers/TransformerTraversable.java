@@ -7,7 +7,7 @@ import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.Witness;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 /**
  * Represents a Traversable Monad Transformer, the monad transformer instance manipulates a nested non-scalar data type

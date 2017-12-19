@@ -1,13 +1,12 @@
 package com.oath.cyclops.types.traversable;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
 import com.oath.cyclops.types.stream.HeadAndTail;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

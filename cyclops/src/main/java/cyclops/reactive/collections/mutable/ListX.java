@@ -1,4 +1,4 @@
-package cyclops.collections.mutable;
+package cyclops.reactive.collections.mutable;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
@@ -13,14 +13,13 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

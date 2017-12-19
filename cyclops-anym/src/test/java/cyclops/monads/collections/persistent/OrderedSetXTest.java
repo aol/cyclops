@@ -2,7 +2,7 @@ package cyclops.monads.collections.persistent;
 
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.OrderedSetX;
+import cyclops.reactive.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.data.Comparators;
 import cyclops.monads.Witness.orderedSetX;

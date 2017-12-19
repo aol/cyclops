@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;

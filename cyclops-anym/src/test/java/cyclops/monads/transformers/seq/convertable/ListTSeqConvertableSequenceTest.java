@@ -2,7 +2,7 @@ package cyclops.monads.transformers.seq.convertable;
 
 import com.oath.cyclops.types.AbstractConvertableSequenceTest;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 

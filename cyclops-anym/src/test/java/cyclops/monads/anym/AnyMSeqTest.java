@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 
 

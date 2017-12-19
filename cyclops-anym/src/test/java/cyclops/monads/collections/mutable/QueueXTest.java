@@ -2,9 +2,8 @@ package cyclops.monads.collections.mutable;
 
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.queue;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;

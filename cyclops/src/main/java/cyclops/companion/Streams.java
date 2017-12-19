@@ -1,35 +1,28 @@
 package cyclops.companion;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.*;
 import com.oath.cyclops.internal.stream.operators.DebounceOperator;
 import com.oath.cyclops.internal.stream.operators.MultiReduceOperator;
 import com.oath.cyclops.internal.stream.operators.OnePerOperator;
 import com.oath.cyclops.internal.stream.operators.RecoverOperator;
 import com.oath.cyclops.internal.stream.spliterators.*;
-import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.control.Either;
 
 
-import cyclops.collections.immutable.VectorX;
-import cyclops.control.Maybe;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import com.oath.cyclops.util.box.Mutable;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.stream;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.NonPausableHotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
 import com.oath.cyclops.util.ExceptionSoftener;
-
-import cyclops.typeclasses.functor.Functor;
 
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;

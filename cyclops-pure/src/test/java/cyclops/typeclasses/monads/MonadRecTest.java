@@ -3,9 +3,8 @@ package cyclops.typeclasses.monads;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Future;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
-import cyclops.companion.Optionals;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 
 import cyclops.control.Maybe;
 import cyclops.control.Reader;
@@ -24,7 +23,6 @@ import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import java.util.Optional;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

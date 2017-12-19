@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;

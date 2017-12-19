@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;

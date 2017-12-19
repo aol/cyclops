@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.DataWitness.deque;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
@@ -33,7 +33,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import static cyclops.collections.mutable.DequeX.narrowK;
+import static cyclops.reactive.collections.mutable.DequeX.narrowK;
 
 @UtilityClass
 public class DequeXInstances {

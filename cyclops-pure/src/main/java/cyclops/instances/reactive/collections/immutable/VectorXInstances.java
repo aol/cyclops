@@ -5,7 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -31,7 +31,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
-import static cyclops.collections.immutable.VectorX.narrowK;
+import static cyclops.reactive.collections.immutable.VectorX.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with PVectors

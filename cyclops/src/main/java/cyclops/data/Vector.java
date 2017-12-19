@@ -1,12 +1,11 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;

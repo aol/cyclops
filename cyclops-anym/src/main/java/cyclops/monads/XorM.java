@@ -1,30 +1,24 @@
 package cyclops.monads;
 
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.LazyEither;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
 import cyclops.monads.Witness.*;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 

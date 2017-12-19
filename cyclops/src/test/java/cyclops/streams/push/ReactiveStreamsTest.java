@@ -1,11 +1,11 @@
 package cyclops.streams.push;
 
 
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.*;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 

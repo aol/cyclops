@@ -10,7 +10,7 @@ import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 public class CompletableFuturesTest {
 

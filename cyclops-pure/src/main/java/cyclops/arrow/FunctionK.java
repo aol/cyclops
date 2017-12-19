@@ -1,7 +1,7 @@
 package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;

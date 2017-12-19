@@ -1,7 +1,7 @@
 package cyclops.data;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.basetests.BaseImmutableQueueTest;
 import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;

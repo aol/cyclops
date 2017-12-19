@@ -1,6 +1,6 @@
 package cyclops.data.basetests;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.data.HashSet;

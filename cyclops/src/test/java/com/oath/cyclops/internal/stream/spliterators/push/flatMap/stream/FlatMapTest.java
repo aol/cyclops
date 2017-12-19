@@ -2,7 +2,7 @@ package com.oath.cyclops.internal.stream.spliterators.push.flatMap.stream;
 
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

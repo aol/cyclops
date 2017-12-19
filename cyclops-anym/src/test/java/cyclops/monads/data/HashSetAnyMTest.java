@@ -1,7 +1,6 @@
 package cyclops.monads.data;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.PersistentSetX;
 import cyclops.companion.Reducers;
 import cyclops.data.HashSet;
 import cyclops.monads.AnyM;

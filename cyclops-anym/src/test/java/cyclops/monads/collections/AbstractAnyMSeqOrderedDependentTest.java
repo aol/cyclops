@@ -1,11 +1,11 @@
 package cyclops.monads.collections;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Semigroups;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.reactive.Spouts;

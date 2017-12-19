@@ -6,7 +6,7 @@ import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;

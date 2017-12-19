@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import lombok.AllArgsConstructor;
 

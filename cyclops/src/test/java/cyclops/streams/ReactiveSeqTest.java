@@ -3,10 +3,10 @@ package cyclops.streams;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.util.SimpleTimer;
 import com.google.common.collect.Lists;
-import cyclops.collections.immutable.BagX;
+import cyclops.reactive.collections.immutable.BagX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Future;

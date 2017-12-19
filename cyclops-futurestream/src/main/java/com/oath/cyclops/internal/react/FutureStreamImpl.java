@@ -34,7 +34,7 @@ import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
