@@ -3,38 +3,49 @@ package cyclops.control;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
+import com.oath.cyclops.util.box.Mutable;
 import cyclops.data.Seq;
 import cyclops.data.tuple.*;
 import cyclops.function.Function0;
+import cyclops.function.Function3;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IO<T> implements To<IO<T>>, Higher<io,T> {
-  private final Supplier<? extends T> fn;
+public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
+  private final Publisher<? extends T> fn;
 
   public static <T> IO<T> of(Supplier<? extends T> s){
-    return new IO<T>(s);
+    return new IO<T>(Eval.later(s));
   }
+
+  public static <T> IO<T> fromPublisher(Publisher<T> p){
+    return new IO<T>(p);
+  }
+
   public static <T,X extends Throwable> IO<Try<T,X>> withCatch(final Try.CheckedSupplier<T, X> cf, final Class<? extends X>... classes){
-    return new IO<>(()-> Try.withCatch(cf));
+    return of(()-> Try.withCatch(cf));
   }
 
   public <R> IO<R> map(Function<? super T, ? extends R> s){
-      return new IO<>(()->s.apply(fn.get()));
+    return fromPublisher(Spouts.from(fn).map(t->s.apply(t)));
   }
 
   public <R> IO<R> flatMap(Function<? super T, ? extends IO<? extends R>> s){
-    return new IO<>(()->{
-      IO<? extends R> x = s.apply(fn.get());
-      return x.fn.get();
-    });
+     return fromPublisher(Spouts.from(fn).mergeMap(t->Spouts.from(s.apply(t).stream())));
   }
 
   public static <T,X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s){
@@ -42,26 +53,44 @@ public class IO<T> implements To<IO<T>>, Higher<io,T> {
   }
 
   public <R> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s){
-    return new IO<>(()-> Try.withCatch(()->s.apply(fn.get())));
+    return map(t->Try.withCatch(()->s.apply(t)));
   }
   public <R,X extends Throwable> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s,final Class<? extends X>... classes){
-    return new IO<>(()-> Try.withCatch(()->s.apply(fn.get()),classes));
+    return map(t->Try.withCatch(()->s.apply(t),classes));
   }
-  public T run(){
-    return fn.get();
+  public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
+    Spouts.from(fn).forEach(consumerElement,consumerError,onComplete);
   }
-
-  public ReactiveSeq<T> async(){
-
-    return Spouts.deferFromIterable(()->Seq.of(this.run()));
-
+  public Try<T,Throwable> run(){
+    Try<? extends T, Throwable> t = Future.fromPublisher(fn).get();
+    return (Try<T,Throwable>)t;
   }
 
-  public ReactiveSeq<T> async(Executor e){
-    return Spouts.async(Spouts.deferFromIterable(()->Seq.of(this.run())),e);
+  public Publisher<T> publisher(){
+    return (Publisher<T>)fn;
+  }
+  @Override
+  public final void subscribe(final Subscriber<? super T> sub) {
+    fn.subscribe(sub);
   }
 
+  public ReactiveSeq<T> stream(){
+    return Spouts.from(fn);
+  }
 
+  public Try<T,Throwable> runAsync(Executor e){
+    return Try.fromPublisher(Future.of(() -> run(), e))
+              .flatMap(Function.identity());
+  }
+
+  public static <T1,T2,R> IO<R> merge(Publisher<T1> p1, Publisher<T2> p2,BiFunction<? super T1, ? super T2,? extends R> fn2){
+    ReactiveSeq<T1> s1 = Spouts.from(p1);
+    ReactiveSeq<T2> s2 = Spouts.from(p2);
+    return fromPublisher(s1.zip(fn2,s2));
+  }
+  public static <T1,T2,T3,R> IO<R> merge(Publisher<T1> p1, Publisher<T2> p2,Publisher<T3> p3,Function3<? super T1, ? super T2,? super T3,? extends R> fn3){
+     return merge(merge(p1,p2,Tuple::tuple),p3,(t2,c)->fn3.apply(t2._1(),t2._2(),c));
+  }
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> IO<R7> forEach(IO<T> io,
