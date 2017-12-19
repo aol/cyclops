@@ -16,15 +16,14 @@ import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
 import org.reactivestreams.Publisher;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -227,7 +226,7 @@ public class PublisherInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Lists
+   * @return Type class with monad arrow for Lists
    */
   public static <T,R> Monad<reactiveSeq> monad(){
 

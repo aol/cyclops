@@ -2,16 +2,20 @@ package cyclops.instances.control;
 
 import com.oath.cyclops.hkt.DataWitness.rws;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.ReaderWriterState;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Nested;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
@@ -24,10 +28,10 @@ import static cyclops.data.tuple.Tuple.tuple;
 
 @UtilityClass
 public  class RWSInstances {
-  public <R,W,S,T> Active<Higher<Higher<Higher<rws,R>,W>,S>,T> allTypeclasses(ReaderWriterState<R,W,S,T> rws,R val1, S val2,Monoid<W> monoid){
+  public <R,W,S,T> Active<Higher<Higher<Higher<rws,R>,W>,S>,T> allTypeclasses(ReaderWriterState<R,W,S,T> rws, R val1, S val2, Monoid<W> monoid){
     return Active.of(rws, RWSInstances.definitions(val1,val2,monoid));
   }
-  public <R,W,S,T,W2,R2> Nested<Higher<Higher<Higher<rws, R>, W>, S>, W2, R2>mapM(ReaderWriterState<R,W,S,T> rws, R val1, S val2,Monoid<W> monoid, Function<? super T,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
+  public <R,W,S,T,W2,R2> Nested<Higher<Higher<Higher<rws, R>, W>, S>, W2, R2> mapM(ReaderWriterState<R,W,S,T> rws, R val1, S val2, Monoid<W> monoid, Function<? super T,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
     InstanceDefinitions<Higher<Higher<Higher<rws,R>, W>, S>> def1 = RWSInstances.definitions(val1,val2,monoid);
     ReaderWriterState<R, W, S, Higher<W2, R2>> r = rws.map(fn);
     Higher<Higher<Higher<Higher<rws,R>,W>,S>,Higher<W2,R2>> hkt = r;

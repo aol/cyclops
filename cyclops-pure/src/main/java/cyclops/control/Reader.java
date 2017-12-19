@@ -26,7 +26,7 @@ import cyclops.data.tuple.Tuple2;
  * @param <R> Current return type of Function
  */
 @FunctionalInterface
-public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<Higher<reader,T>,R> {
+public interface Reader<T, R> extends Function1<T, R>, Transformable<R>, Higher<Higher<reader,T>,R> {
 
     public static <T,R> Reader<T,R> of(Reader<T,R> i){
         return i;
@@ -36,26 +36,31 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
     return narrow;
   }
 
-  @Override
-  default <V> Reader<T, V> andThen(Function<? super R, ? extends V> after) {
-    return t -> after.apply(apply(t));
-  }
-
-  default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
-        return zip(o, Tuple::tuple);
+    @Override
+    default <V> Reader<T, V> andThen(Function<? super R, ? extends V> after) {
+      return t -> after.apply(apply(t));
     }
+
+    default  <R2> Reader<T, Tuple2<R,R2>> zip(Reader<T, R2> o){
+          return zip(o, Tuple::tuple);
+      }
     default  <R2,B> Reader<T, B> zip(Reader<T, R2> o,BiFunction<? super R,? super R2,? extends B> fn){
-        return flatMap(a -> o.map(b -> fn.apply(a,b)));
+        return flatMap(a -> o.mapFn(b -> fn.apply(a,b)));
     }
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
      */
     @Override
-    default <R1> Reader<T, R1> map(final Function<? super R, ? extends R1> f2) {
+    default <R1> Reader<T, R1> mapFn(final Function<? super R, ? extends R1> f2) {
         return this.andThen(f2);
     }
 
-    /**
+    @Override
+    default <R1> Reader<T, R1> map(Function<? super R, ? extends R1> fn){
+      return mapFn(fn);
+    }
+
+  /**
      * FlatMap this Reader by applying the prodived function and unnesting to a single Reader
      *
      * @param f Transformation function to be flattened
@@ -81,7 +86,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
 
                     Reader<T,R3> c = functionToReader(value4.apply(in,ina,inb));
 
-                    return c.map(in2 -> {
+                    return c.mapFn(in2 -> {
 
                          return yieldingFunction.apply(in, ina, inb, in2);
 
@@ -116,7 +121,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
             Reader<T,R1> a = functionToReader(value2.apply(in));
             return a.flatMap(ina -> {
                 Reader<T,R2> b = functionToReader(value3.apply(in,ina));
-                return b.map(in2 -> {
+                return b.mapFn(in2 -> {
                         return yieldingFunction.apply(in, ina, in2);
 
                     });
@@ -137,7 +142,7 @@ public interface Reader<T, R> extends Function1<T, R>, Transformable<R>,Higher<H
         return this.flatMap(in -> {
 
             Reader<T,R1> a = functionToReader(value2.apply(in));
-            return a.map(in2 -> {
+            return a.mapFn(in2 -> {
                     return yieldingFunction.apply(in, in2);
 
                 });

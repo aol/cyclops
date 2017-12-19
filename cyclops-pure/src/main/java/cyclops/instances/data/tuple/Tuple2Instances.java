@@ -2,27 +2,21 @@ package cyclops.instances.data.tuple;
 
 import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.functor.Functor;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.tuple2;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.data.tuple.Tuple1;
-import cyclops.function.Monoid;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functor.Functor;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.monad.*;
 
 import java.util.function.Function;
@@ -31,7 +25,7 @@ import static cyclops.data.tuple.Tuple2.narrowK;
 import static cyclops.data.tuple.Tuple2.of;
 
 public class Tuple2Instances {
-  public static <T1,T2> Active<Higher<DataWitness.tuple2,T1>,T2> allTypeclasses(Tuple2<T1,T2> t2,Monoid<T1> m){
+  public static <T1,T2> Active<Higher<DataWitness.tuple2,T1>,T2> allTypeclasses(Tuple2<T1,T2> t2, Monoid<T1> m){
     return Active.of(t2, Tuple2Instances.definitions(m));
   }
 

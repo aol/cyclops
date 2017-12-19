@@ -1,4 +1,4 @@
-package cyclops.typeclasses.functions;
+package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Future;
@@ -10,8 +10,6 @@ import cyclops.collections.mutable.DequeX;
 import cyclops.collections.mutable.ListX;
 import cyclops.collections.mutable.QueueX;
 import cyclops.collections.mutable.SetX;
-import cyclops.companion.CompletableFutures;
-import cyclops.companion.Streams;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;

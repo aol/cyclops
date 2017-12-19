@@ -9,7 +9,7 @@ import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.instances.control.FutureInstances;
 import cyclops.kinds.CompletableFutureKind;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import lombok.experimental.UtilityClass;
@@ -22,7 +22,7 @@ import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.monad.*;
 import cyclops.control.Future;
 
@@ -213,7 +213,7 @@ public class CompletableFutureInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for CompletableFutures
+   * @return Type class with monad arrow for CompletableFutures
    */
   public static <T,R> Monad<DataWitness.completableFuture> monad(){
 

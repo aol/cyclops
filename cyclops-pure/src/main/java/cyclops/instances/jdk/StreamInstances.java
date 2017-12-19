@@ -16,8 +16,8 @@ import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -217,7 +217,7 @@ public  class StreamInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Streams
+   * @return Type class with monad arrow for Streams
    */
   public static <T,R> Monad<stream> monad(){
 

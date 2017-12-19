@@ -14,13 +14,10 @@ import cyclops.function.Reducer;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import com.oath.cyclops.hkt.DataWitness.option;
-import com.oath.cyclops.hkt.DataWitness.optional;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;

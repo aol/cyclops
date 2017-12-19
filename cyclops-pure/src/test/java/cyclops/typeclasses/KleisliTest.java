@@ -1,5 +1,6 @@
 package cyclops.typeclasses;
 
+import cyclops.arrow.Kleisli;
 import cyclops.control.Future;
 import com.oath.cyclops.hkt.DataWitness.future;
 import cyclops.typeclasses.monad.Monad;

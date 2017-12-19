@@ -48,7 +48,7 @@ public class MonadRecTest {
 
     @Test
     public void maybeTest(){
-        MonadRec<option> mr = Maybe.MaybeInstances.monadRec();
+        MonadRec<option> mr = MaybeInstances.monadRec();
         Maybe<Integer> l = mr.tailRec(0, i -> i < 100_000 ? Maybe.just(Either.left(i + 1)) : Maybe.just(Either.right(i + 1)))
                 .convert(Maybe::narrowK);
         assertThat(l,equalTo(Maybe.just(100_001)));

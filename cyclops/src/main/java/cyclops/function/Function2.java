@@ -89,11 +89,11 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
       return (a,b) -> applicative.apply(a,b).apply(this.apply(a,b));
     }
 
-    default <R1> Function2<T1,T2, R1> map(final Function<? super R, ? extends R1> f2) {
+    default <R1> Function2<T1,T2, R1> mapFn(final Function<? super R, ? extends R1> f2) {
       return andThen(f2);
     }
 
-    default <R1> Function2<T1, T2, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
+    default <R1> Function2<T1, T2, R1> flatMapFn(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
       return (a,b)-> f.apply(apply(a,b)).apply(a);
     }
     default FunctionalOperations<T1,T2,R> functionOps(){

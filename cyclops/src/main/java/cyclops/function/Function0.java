@@ -117,17 +117,17 @@ public interface Function0<R> extends Supplier<R> {
     default Function0.FunctionalOperations<R> functionOps(){
         return ()->get();
     }
-
+    default <R1> Function0<R1> mapFn(final Function<? super R,? extends R1 > f){
+      return () -> f.apply(this.apply());
+    }
+    default <R1> Function0<R1> flatMapFn(final Function<? super R, ? extends Supplier<? extends R1>> f) {
+      return () -> f.apply(apply()).get();
+    }
+    default <R1> Function0<R1> coflatMapFn(final Function<? super Supplier<? super R>, ? extends  R1> f) {
+      return () -> f.apply(this);
+    }
     interface FunctionalOperations<R> extends Function0<R> {
-        default <R1> Function0<R1> map(final Function<? super R,? extends R1 > f){
-          return () -> f.apply(this.apply());
-        }
-        default <R1> Function0<R1> flatMap(final Function<? super R, ? extends Supplier<? extends R1>> f) {
-          return () -> f.apply(apply()).get();
-        }
-        default <R1> Function0<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
-          return () -> f.apply(this);
-        }
+
         default Free<supplier, R> free(){
             return suspend(() -> Free.done(get()));
         }
@@ -168,13 +168,13 @@ public interface Function0<R> extends Supplier<R> {
             default <V> SupplierKind<V> apply(final Supplier<? extends Function<? super R,? extends V>> applicative) {
                 return () -> applicative.get().apply(this.apply());
             }
-            default <R1> SupplierKind<R1> map(final Function<? super R,? extends R1 > f){
+            default <R1> SupplierKind<R1> mapFn(final Function<? super R,? extends R1 > f){
                 return () -> f.apply(this.apply());
             }
-            default <R1> SupplierKind<R1> flatMap(final Function<? super R, ? extends Supplier<? extends R1>> f) {
+            default <R1> SupplierKind<R1> flatMapFn(final Function<? super R, ? extends Supplier<? extends R1>> f) {
                 return () -> f.apply(apply()).get();
             }
-            default <R1> SupplierKind<R1> coflatMap(final Function<? super Supplier<? super R>, ? extends  R1> f) {
+            default <R1> SupplierKind<R1> coflatMapFn(final Function<? super Supplier<? super R>, ? extends  R1> f) {
                 return () -> f.apply(this);
             }
             default Free<supplier, R> free(){
@@ -208,7 +208,7 @@ public interface Function0<R> extends Supplier<R> {
                 new Functor<supplier>() {
                     @Override
                     public <T, R> SupplierKind<R> map(Function<? super T, ? extends R> f, Higher<supplier, T> fa) {
-                        return ((SupplierKind<T>) fa).map(f);
+                        return ((SupplierKind<T>) fa).mapFn(f);
                     }
                 };
     }

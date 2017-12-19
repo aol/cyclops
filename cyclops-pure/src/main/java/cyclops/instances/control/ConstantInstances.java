@@ -1,15 +1,12 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.constant;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.mutable.ListX;
 import cyclops.control.Constant;
-import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
 
 import java.util.function.Function;

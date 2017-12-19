@@ -108,7 +108,7 @@ public class Streams {
         return ReactiveSeq.fromIterator(iter);
     }
     /**
-     * Perform a For Comprehension over a Stream, accepting 3 generating functions.
+     * Perform a For Comprehension over a Stream, accepting 3 generating arrow.
      * This results in a four level nested internal iteration over the provided Publishers.
      *
      *  <pre>

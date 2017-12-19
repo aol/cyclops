@@ -2,17 +2,23 @@ package cyclops.instances.control;
 
 import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 
@@ -26,10 +32,10 @@ public class IdentityInstances {
   public static <W1,T> Nested<DataWitness.identity,W1,T> nested(Identity<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, IdentityInstances.definitions(),def2);
   }
-  public <W1,T> Product<DataWitness.identity,W1,T> product(Identity<T> id,Active<W1,T> active){
+  public <W1,T> Product<DataWitness.identity,W1,T> product(Identity<T> id, Active<W1,T> active){
     return Product.of(allTypeclasses(id),active);
   }
-  public <W1,T> Coproduct<W1,DataWitness.identity,T> coproduct(Identity<T> id,InstanceDefinitions<W1> def2){
+  public <W1,T> Coproduct<W1,DataWitness.identity,T> coproduct(Identity<T> id, InstanceDefinitions<W1> def2){
     return Coproduct.right(id,def2, IdentityInstances.definitions());
   }
   public <T> Active<DataWitness.identity,T> allTypeclasses(Identity<T> id){

@@ -9,8 +9,9 @@ import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
+import cyclops.hkt.Active;
 import cyclops.instances.reactive.IterableInstances;
-import cyclops.instances.reactive.PublisherInstances;
+import cyclops.instances.reactive.collections.immutable.VectorXInstances;
 import cyclops.instances.reactive.collections.mutable.ListXInstances;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.monad.MonadRec;
@@ -30,25 +31,25 @@ public class ActiveTest {
 
     @Test
     public void toList(){
-        assertThat(ListX.of(1,2,3).allTypeclasses().toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toListX(),equalTo(ListX.of(1,2,3)));
     }
     @Test
     public void foldMap(){
-        System.out.println(ListX.of(1,2,3).allTypeclasses().foldMap(Monoids.intMax,a->a=a+1));
+        System.out.println(ListXInstances.allTypeclasses(ListX.of(1,2,3)).foldMap(Monoids.intMax,a->a=a+1));
     }
     @Test
     public void foldMapTraverse(){
-        System.out.println(ListX.of(1,2,3).allTypeclasses().foldMap(Monoids.intSum,a->a+1));
+        System.out.println(ListXInstances.allTypeclasses(ListX.of(1,2,3)).foldMap(Monoids.intSum,a->a+1));
     }
     @Test
     public void reverse(){
-        assertThat(ListX.of(1,2,3).allTypeclasses().reverse().getSingle().convert(ListX::narrowK),equalTo(ListX.of(3,2,1)));
+        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).reverse().getSingle().convert(ListX::narrowK),equalTo(ListX.of(3,2,1)));
 
     }
     @Test
     public void zipWith(){
-        ListX<Integer> res =ListX.of(1,2,3).allTypeclasses()
-                .zipWith(VectorX.of(10,20).allTypeclasses(), (a,b)->{
+        ListX<Integer> res =ListXInstances.allTypeclasses(ListX.of(1,2,3))
+                .zipWith(VectorXInstances.allTypeclasses(VectorX.of(10,20)), (a, b)->{
                     return b.visit(p->a+p,()->-1);
                 })
                 .getSingle()
@@ -59,8 +60,7 @@ public class ActiveTest {
     }
     @Test
     public void zipWithIndex(){
-        ListX<Tuple2<Integer, Long>> l = ListX.of(1, 2, 3)
-                                              .allTypeclasses()
+        ListX<Tuple2<Integer, Long>> l = ListXInstances.allTypeclasses(ListX.of(1, 2, 3))
                                               .zipWithIndex()
                                               .getSingle()
                                               .convert(ListX::narrowK);
@@ -68,15 +68,15 @@ public class ActiveTest {
     }
     public static void main(String[] args){
 
-        Active<list,Integer> list = ListX.of(1,2,3).allTypeclasses();
+        Active<list,Integer> list = ListXInstances.allTypeclasses(ListX.of(1,2,3));
 
-        list.concreteMonoid(kindKleisli(),ListX.kindCokleisli())
+        list.concreteMonoid(ListXInstances.kindKleisli(),ListXInstances.kindCokleisli())
                 .sum(ListX.of(ListX.of(1,2,3)));
 
-        list.concreteFlatMap(ListX.kindKleisli())
+        list.concreteFlatMap(ListXInstances.kindKleisli())
                 .flatMap(i->ListX.of(1,2,3));
 
-        list.concreteTailRec(kindKleisli())
+        list.concreteTailRec(ListXInstances.kindKleisli())
                 .tailRec(1,i-> 1<100_000 ? ListX.of(Either.left(i+1)) : ListX.of(Either.right(i)));
 
 
@@ -97,7 +97,7 @@ public class ActiveTest {
        /**
         active.concreteTailRec(ListX.kindKleisli())
                 .tailRec(0,i-> i<100_000 ? ListX.of(Xor.lazyLeft(i+1)) : ListX.of(Xor.lazyRight(i)) )
-                .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
+                .concreteConversion(ListXInstances.kindCokleisli()).to(i->i).printOut();
         **/
     }
     @Test
@@ -108,15 +108,16 @@ public class ActiveTest {
         /**
          active.concreteTailRec(ListX.kindKleisli())
          .tailRec(0,i-> i<100_000 ? ListX.of(Xor.lazyLeft(i+1)) : ListX.of(Xor.lazyRight(i)) )
-         .concreteConversion(ListX.kindCokleisli()).to(i->i).printOut();
+         .concreteConversion(ListXInstances.kindCokleisli()).to(i->i).printOut();
          **/
     }
     @Test
     public void concreteConversion() {
 
-        ListX<Integer> r = active.concreteFlatMap(ListX.<Integer>kindKleisli())
+        ListX<Integer> r = active.concreteFlatMap(ListXInstances.<Integer>kindKleisli())
+
                                  .flatMap(i -> ListX.of(i * 2, i * 3))
-                                 .concreteConversion(ListX.<Integer>kindCokleisli())
+                                 .concreteConversion(ListXInstances.<Integer>kindCokleisli())
                                  .to(l -> l);
 
         assertThat(r,equalTo(ListX.of(2,3,4,6,6,9)));

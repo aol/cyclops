@@ -1,10 +1,11 @@
-package cyclops.typeclasses;
+package cyclops.hkt;
 
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
+import cyclops.arrow.*;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
@@ -13,11 +14,10 @@ import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.typeclasses.Comprehensions;
+import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.FunctionK;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.MonadPlus;
 import cyclops.typeclasses.monad.MonadZero;
@@ -205,7 +205,7 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
-    public <C> Narrowed<C> concreteMonoid(Kleisli<W,C,T> widen,Cokleisli<W,T,C> narrow){
+    public <C> Narrowed<C> concreteMonoid(Kleisli<W,C,T> widen, Cokleisli<W,T,C> narrow){
         return new Narrowed<C>(widen,narrow);
     }
 

@@ -1,6 +1,5 @@
 package cyclops.instances.data.tuple;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.tuple1;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Either;
@@ -9,15 +8,15 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple1;
 import cyclops.function.Monoid;
-import cyclops.typeclasses.Cokleisli;
+import cyclops.arrow.Cokleisli;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 

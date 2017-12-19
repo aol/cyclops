@@ -1,4 +1,4 @@
-package cyclops.typeclasses.functions;
+package cyclops.arrow;
 
 
 import com.oath.cyclops.hkt.Higher;

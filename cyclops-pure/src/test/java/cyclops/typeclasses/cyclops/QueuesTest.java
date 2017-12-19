@@ -10,7 +10,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
 import com.oath.cyclops.hkt.DataWitness.queue;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidKs;
 import org.junit.Test;
 
 
@@ -126,7 +126,7 @@ public class QueuesTest {
     @Test
     public void traverse(){
        Maybe<Higher<queue, Integer>> res = QueueX.QueueXInstances.traverse()
-                                                           .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), QueueX.of(1,2,3))
+                                                           .traverseA(MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), QueueX.of(1,2,3))
                                                             .convert(Maybe::narrowK);
 
 

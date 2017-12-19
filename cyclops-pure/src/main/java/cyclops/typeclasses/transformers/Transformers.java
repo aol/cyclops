@@ -6,7 +6,7 @@ import cyclops.control.*;
 import cyclops.control.Maybe;
 import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.kinds.OptionalKind;
-import cyclops.typeclasses.Nested;
+import cyclops.hkt.Nested;
 import cyclops.typeclasses.monad.Monad;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

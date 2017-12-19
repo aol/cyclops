@@ -1,20 +1,25 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.either;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.companion.Monoids;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -25,16 +30,16 @@ import static cyclops.control.Either.narrowK;
 
 public class EitherInstances {
 
-  public static  <W1,LT,RT> Product<Higher<either, LT>,W1, RT> product(Either<LT,RT> e,Active<W1, RT> active){
+  public static  <W1,LT,RT> Product<Higher<either, LT>,W1, RT> product(Either<LT,RT> e, Active<W1, RT> active){
     return Product.of(allTypeclasses(e),active);
   }
-  public static  <W1,LT,RT> Coproduct<W1,Higher<either, LT>, RT> coproduct(Either<LT,RT> e,InstanceDefinitions<W1> def2){
+  public static  <W1,LT,RT> Coproduct<W1,Higher<either, LT>, RT> coproduct(Either<LT,RT> e, InstanceDefinitions<W1> def2){
     return Coproduct.right(e,def2, EitherInstances.definitions());
   }
   public static  <LT,RT> Active<Higher<either, LT>, RT> allTypeclasses(Either<LT,RT> e){
     return Active.of(e, EitherInstances.definitions());
   }
-  public static  <W2,R,LT,RT> Nested<Higher<either, LT>,W2,R> mapM(Either<LT,RT> e,Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+  public static  <W2,R,LT,RT> Nested<Higher<either, LT>,W2,R> mapM(Either<LT,RT> e, Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
     return Nested.of(e.map(fn), EitherInstances.definitions(), defs);
   }
 

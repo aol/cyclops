@@ -1,20 +1,25 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.ior;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupKs;
 import cyclops.typeclasses.functor.BiFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
@@ -34,10 +39,10 @@ public class IorInstances {
   public static <W1,ST,PT> Nested<Higher<ior,ST>,W1,PT> nested(Ior<ST,Higher<W1,PT>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, IorInstances.definitions(),def2);
   }
-  public static <W1,LT,RT> Product<Higher<ior, LT>,W1, RT> product(Ior<LT,RT> ior,Active<W1, RT> active){
+  public static <W1,LT,RT> Product<Higher<ior, LT>,W1, RT> product(Ior<LT,RT> ior, Active<W1, RT> active){
     return Product.of(allTypeclasses(ior),active);
   }
-  public static <W1,LT,RT> Coproduct<W1,Higher<ior, LT>, RT> coproduct(Ior<LT,RT> ior,InstanceDefinitions<W1> def2){
+  public static <W1,LT,RT> Coproduct<W1,Higher<ior, LT>, RT> coproduct(Ior<LT,RT> ior, InstanceDefinitions<W1> def2){
     return Coproduct.right(ior,def2, IorInstances.definitions());
   }
   public static <LT,RT> Active<Higher<ior, LT>, RT> allTypeclasses(Ior<LT,RT> ior){

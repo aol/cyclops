@@ -3,6 +3,8 @@ package cyclops.instances.reactive.collections.mutable;
 
 import com.oath.cyclops.hkt.DataWitness.deque;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.collections.mutable.DequeX;
 import cyclops.companion.CyclopsCollectors;
 import cyclops.control.Either;
@@ -10,12 +12,16 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -41,10 +47,10 @@ public class DequeXInstances {
   public static <W1,T> Nested<deque,W1,T> nested(DequeX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, DequeXInstances.definitions(),def2);
   }
-  public static  <W1,T> Product<deque,W1,T> product(DequeX<T> d,Active<W1,T> active){
+  public static  <W1,T> Product<deque,W1,T> product(DequeX<T> d, Active<W1,T> active){
     return Product.of(allTypeclasses(d),active);
   }
-  public static  <W1,T> Coproduct<W1,deque,T> coproduct(DequeX<T> d,InstanceDefinitions<W1> def2){
+  public static  <W1,T> Coproduct<W1,deque,T> coproduct(DequeX<T> d, InstanceDefinitions<W1> def2){
     return Coproduct.right(d,def2, DequeXInstances.definitions());
   }
   public static  <T> Active<deque,T> allTypeclasses(DequeX<T> d){
@@ -239,7 +245,7 @@ public class DequeXInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Deques
+   * @return Type class with monad arrow for Deques
    */
   public static <T,R> Monad<deque> monad(){
 

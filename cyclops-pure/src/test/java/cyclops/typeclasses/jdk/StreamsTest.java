@@ -1,6 +1,6 @@
 package cyclops.typeclasses.jdk;
 
-import static cyclops.companion.StreamKind.widen;
+import static cyclops.kinds.StreamKind.widen;
 import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -11,12 +11,13 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Streams;
-import cyclops.companion.StreamKind;
 import cyclops.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import com.oath.cyclops.hkt.DataWitness.stream;
+import com.oath.cyclops.hkt.DataWitness.stream;.
+import cyclops.instances.jdk.StreamInstances;
+import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
@@ -46,7 +47,7 @@ public class StreamsTest {
     @Test
     public void apSimple(){
         StreamInstances.zippingApplicative()
-            .ap(widen(Stream.of(l1(this::multiplyByTwo))),widen(Stream.of(1,2,3)));
+            .ap(widen(Stream.of(l1(this::multiplyByTwo))),StreamKind.widen(Stream.of(1,2,3)));
     }
     private int multiplyByTwo(int x){
         return x*2;
@@ -67,7 +68,7 @@ public class StreamsTest {
     @Test
     public void monadSimple(){
        StreamKind<Integer> list  = StreamInstances.monad()
-                                      .flatMap(i->widen(ReactiveSeq.range(0,i)), widen(Stream.of(1,2,3)))
+                                      .flatMap(i->StreamKind.widen(ReactiveSeq.range(0,i)), StreamKind.widen(Stream.of(1,2,3)))
                                       .convert(StreamKind::narrowK);
     }
     @Test
@@ -126,7 +127,7 @@ public class StreamsTest {
     @Test
     public void traverse(){
        Maybe<Higher<stream, Integer>> res = StreamInstances.traverse()
-                                                         .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), StreamKind.of(1,2,3))
+                                                         .traverseA(MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), StreamKind.of(1,2,3))
                                                          .convert(Maybe::narrowK);
 
 

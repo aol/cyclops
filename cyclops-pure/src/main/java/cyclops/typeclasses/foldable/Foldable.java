@@ -5,7 +5,7 @@ import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Function;

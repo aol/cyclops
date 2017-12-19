@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher3;
@@ -24,7 +24,7 @@ import com.oath.cyclops.hkt.DataWitness.kleisli;
 
 
 /**
- * Compose functions that return monads
+ * Compose arrow that return monads
  *
  * @param <W> Monad kind
  * @param <T> Function input type

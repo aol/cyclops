@@ -1,9 +1,7 @@
-package cyclops.typeclasses.functions;
+package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.Optionals;
-import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;

@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.hkt;
 
 
 import com.oath.cyclops.hkt.DataWitness;
@@ -7,6 +7,8 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
 import cyclops.companion.Monoids;
@@ -30,11 +32,14 @@ import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.typeclasses.Comprehensions;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
