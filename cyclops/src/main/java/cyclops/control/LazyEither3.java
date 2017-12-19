@@ -16,7 +16,6 @@ import cyclops.function.*;
 
 import com.oath.cyclops.hkt.DataWitness.lazyEither3;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;

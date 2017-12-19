@@ -1,20 +1,20 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.lazyEither3;
 import com.oath.cyclops.hkt.DataWitness.lazyEither4;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.*;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Nested;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
-
-import java.util.function.Function;
 
 import java.util.function.Function;
 
@@ -25,7 +25,7 @@ public class LazyEither4Instances {
   public static <LT1, LT2, LT3, RT> Active<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,RT> allTypeclasses(LazyEither4<LT1,LT2,LT3,RT> l4){
     return Active.of(l4, LazyEither4Instances.definitions());
   }
-  public static <W2,LT1, LT2, LT3, RT,R> Nested<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,W2,R> mapM(LazyEither4<LT1,LT2,LT3,RT> l4,Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
+  public static <W2,LT1, LT2, LT3, RT,R> Nested<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,W2,R> mapM(LazyEither4<LT1,LT2,LT3,RT> l4, Function<? super RT,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
     return Nested.of(l4.map(fn), LazyEither4Instances.definitions(), defs);
   }
   public static  <LT1,LT2,LT3,T> Kleisli<Higher<Higher<Higher<lazyEither4, LT1>, LT2>,LT3>,LazyEither4<LT1,LT2,LT3,T>,T> kindKleisli(){

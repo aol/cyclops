@@ -1,21 +1,26 @@
 package cyclops.instances.reactive.collections.immutable;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.vectorX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -46,10 +51,10 @@ public class VectorXInstances {
   public static <W1,T> Nested<vectorX,W1,T> nested(VectorX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, VectorXInstances.definitions(),def2);
   }
-  public static <W1,T> Product<vectorX,W1,T> product(VectorX<T> vec,Active<W1,T> active){
+  public static <W1,T> Product<vectorX,W1,T> product(VectorX<T> vec, Active<W1,T> active){
     return Product.of(allTypeclasses(vec),active);
   }
-  public static <W1,T> Coproduct<W1,vectorX,T> coproduct(VectorX<T> vec,InstanceDefinitions<W1> def2){
+  public static <W1,T> Coproduct<W1,vectorX,T> coproduct(VectorX<T> vec, InstanceDefinitions<W1> def2){
     return Coproduct.right(vec,def2, VectorXInstances.definitions());
   }
   public static <T> Active<vectorX,T> allTypeclasses(VectorX<T> vec){
@@ -243,7 +248,7 @@ public class VectorXInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for PVectors
+   * @return Type class with monad arrow for PVectors
    */
   public static <T,R> Monad<vectorX> monad(){
 

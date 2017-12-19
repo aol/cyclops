@@ -1,33 +1,30 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.writer;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Writer;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.functor.Functor;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.Function;
-import com.oath.cyclops.hkt.DataWitness.tryType;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.control.Try;
-import cyclops.function.Monoid;
+
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functor.Functor;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.monad.*;
-import lombok.experimental.UtilityClass;
 
 import static cyclops.control.Writer.narrowK;
 import static cyclops.control.Writer.widen;
@@ -35,13 +32,13 @@ import static cyclops.control.Writer.widen;
 
 @UtilityClass
 public class WriterInstances {
-  public static <W,W1,T> Nested<Higher<writer,W>,W1,T> nested(Writer<W,Higher<W1,T>> nested,Monoid<W> monoid, InstanceDefinitions<W1> def2){
+  public static <W,W1,T> Nested<Higher<writer,W>,W1,T> nested(Writer<W,Higher<W1,T>> nested, Monoid<W> monoid, InstanceDefinitions<W1> def2){
     return Nested.of(nested, WriterInstances.definitions(monoid),def2);
   }
-  public static <W1,W, T> Product<Higher<writer,W>,W1,T> product(Writer<W,T> w,Monoid<W> monoid,Active<W1,T> active){
+  public static <W1,W, T> Product<Higher<writer,W>,W1,T> product(Writer<W,T> w, Monoid<W> monoid, Active<W1,T> active){
     return Product.of(allTypeclasses(w,monoid),active);
   }
-  public static <W1,W, T> Coproduct<W1,Higher<writer,W>,T> coproduct(Writer<W,T> w,Monoid<W> monoid,InstanceDefinitions<W1> def2){
+  public static <W1,W, T> Coproduct<W1,Higher<writer,W>,T> coproduct(Writer<W,T> w, Monoid<W> monoid, InstanceDefinitions<W1> def2){
     return Coproduct.right(w,def2, WriterInstances.definitions(monoid));
   }
   public static  <W,T> Kleisli<Higher<writer, W>,Writer<W,T>,T> kindKleisli(Monoid<W> m){

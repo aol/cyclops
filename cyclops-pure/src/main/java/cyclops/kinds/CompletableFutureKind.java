@@ -2,8 +2,13 @@ package cyclops.kinds;
 
 import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.companion.CompletableFutures;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Future;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.instances.jdk.CompletableFutureInstances;
 import cyclops.typeclasses.*;
 import lombok.AccessLevel;

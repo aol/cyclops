@@ -2,17 +2,23 @@ package cyclops.instances.control;
 
 import com.oath.cyclops.hkt.DataWitness.future;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -37,10 +43,10 @@ public  class FutureInstances {
   public static <W1,T> Nested<future,W1,T> nested(Future<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, FutureInstances.definitions(),def2);
   }
-  public static <W1,T> Product<future,W1,T> product(Future<T> f,Active<W1,T> active){
+  public static <W1,T> Product<future,W1,T> product(Future<T> f, Active<W1,T> active){
     return Product.of(allTypeclasses(f),active);
   }
-  public static <W1,T> Coproduct<W1,future,T> coproduct(Future<T> f,InstanceDefinitions<W1> def2){
+  public static <W1,T> Coproduct<W1,future,T> coproduct(Future<T> f, InstanceDefinitions<W1> def2){
     return Coproduct.right(f,def2, FutureInstances.definitions());
   }
   public static <T>Active<future,T> allTypeclasses(Future<T> f){
@@ -229,7 +235,7 @@ public  class FutureInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Futures
+   * @return Type class with monad arrow for Futures
    */
   public static <T,R> Monad<future> monad(){
 

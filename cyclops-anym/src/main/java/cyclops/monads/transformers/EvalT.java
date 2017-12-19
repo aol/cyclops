@@ -20,7 +20,6 @@ import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 /**
 * Monad Transformer for Eval's

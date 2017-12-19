@@ -38,9 +38,9 @@ public interface Function1<T,  R> extends Function<T,R>{
         return triFunc;
     }
 
-  default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
-    return reduce.apply(this);
-  }
+    default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
+      return reduce.apply(this);
+    }
 
     default Function0<R> applyLazy(T t){
         return ()->apply(t);
@@ -191,26 +191,17 @@ public interface Function1<T,  R> extends Function<T,R>{
       return a -> applicative.apply(a).apply(this.apply(a));
     }
 
-    default <R1> Function1<T, R1> map(final Function<? super R, ? extends R1> f2) {
+    default <R1> Function1<T, R1> mapFn(final Function<? super R, ? extends R1> f2) {
       return andThen(f2);
     }
 
-    default <R1> Function1<T, R1> flatMap(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
+    default <R1> Function1<T, R1> flatMapFn(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
       return a -> f.apply(apply(a)).apply(a);
     }
-    default <R1> Function1<T,R1> coflatMap(final Function<? super Function1<? super T,? extends R>, ? extends  R1> f) {
+    default <R1> Function1<T,R1> coflatMapFn(final Function<? super Function1<? super T,? extends R>, ? extends  R1> f) {
       return in-> f.apply(this);
     }
     interface FunctionalOperations<T1,R> extends Function1<T1,R> {
-
-
-
-
-
-
-
-
-
 
         default ListX<R> mapF(ListX<T1> list) {
             return list.map(this);

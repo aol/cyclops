@@ -1,27 +1,30 @@
 package cyclops.instances.reactive;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.react.ThreadPools;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import org.reactivestreams.Publisher;
 
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
@@ -49,13 +52,13 @@ public class IterableInstances {
   public static <W1,T> Nested<reactiveSeq,W1,T> nested(ReactiveSeq<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, IterableInstances.definitions(),def2);
   }
-  public static  <W1,T> Product<reactiveSeq,W1,T> product(Iterable<T> it,Active<W1,T> active){
+  public static  <W1,T> Product<reactiveSeq,W1,T> product(Iterable<T> it, Active<W1,T> active){
     return Product.of(allTypeclasses(it),active);
   }
   public static  <W1,T> Product<reactiveSeq,W1,T> product(Iterable<T> it,Active<W1,T> active, Executor ex){
     return Product.of(allTypeclasses(it,ex),active);
   }
-  public static  <W1,T> Coproduct<W1,reactiveSeq,T> coproduct(Iterable<T> it,InstanceDefinitions<W1> def2){
+  public static  <W1,T> Coproduct<W1,reactiveSeq,T> coproduct(Iterable<T> it, InstanceDefinitions<W1> def2){
     ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
     return Coproduct.right(r,def2, IterableInstances.definitions());
   }
@@ -257,7 +260,7 @@ public class IterableInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Lists
+   * @return Type class with monad arrow for Lists
    */
   public static <T,R> Monad<reactiveSeq> monad(){
 

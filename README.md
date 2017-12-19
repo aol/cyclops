@@ -378,7 +378,7 @@ completableMaybe.complete(value)
 | MutableByte     | A mutable primitive box type for bytes        | Eager execution                 |
 | MutableBoolean     | A mutable primitive box type for booleans        | Eager execution                 |
 
-## cyclops.functions
+## cyclops.arrow
 
 | type | description | characteristics |
 |------|-------------|-----------------|

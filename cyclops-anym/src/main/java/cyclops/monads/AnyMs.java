@@ -26,7 +26,7 @@ public interface AnyMs {
    * KleisliM arrow : A function that takes an input value t and embeds it inside a monadic context.
    * arrowM makes use of Witness Types to simulate higher-kinded types, and wraps the new monadic type
    * inside an AnyM. AnyM makes use of sub-type polymorphism (Object Orientd inheritance) to define monadic
-   * functions (transform / flatMap etc) on the returned Object (for parametric polymorphism use {@link Functions#arrow}
+   * arrow (transform / flatMap etc) on the returned Object (for parametric polymorphism use {@link Functions#arrow}
    *
    * @param w WitnessType Object: defines the returned monad type (e.g. see {@link Witness.stream} for HKT encoding for Streams)
    * @param <T> Value type to be embedded inside a monad

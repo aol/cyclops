@@ -3,6 +3,8 @@ package cyclops.instances.reactive.collections.immutable;
 import com.oath.cyclops.hkt.DataWitness.persistentSetX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentSet;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.collections.immutable.PersistentSetX;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
@@ -10,13 +12,17 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
@@ -39,10 +45,10 @@ public class PersistentSetXInstances {
   public static <W1,T> Nested<persistentSetX,W1,T> nested(PersistentSetX<Higher<W1,T>> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, PersistentSetXInstances.definitions(),def2);
   }
-  public static  <W1,T> Product<persistentSetX,W1,T> product(PersistentSetX<T> s,Active<W1,T> active){
+  public static  <W1,T> Product<persistentSetX,W1,T> product(PersistentSetX<T> s, Active<W1,T> active){
     return Product.of(allTypeclasses(s),active);
   }
-  public static  <W1,T> Coproduct<W1,persistentSetX,T> coproduct(PersistentSetX<T> s,InstanceDefinitions<W1> def2){
+  public static  <W1,T> Coproduct<W1,persistentSetX,T> coproduct(PersistentSetX<T> s, InstanceDefinitions<W1> def2){
     return Coproduct.right(s,def2, PersistentSetXInstances.definitions());
   }
   public static  <T> Active<persistentSetX,T> allTypeclasses(PersistentSetX<T> s){
@@ -239,7 +245,7 @@ public class PersistentSetXInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Sets
+   * @return Type class with monad arrow for Sets
    */
   public static <T,R> Monad<persistentSetX> monad(){
 

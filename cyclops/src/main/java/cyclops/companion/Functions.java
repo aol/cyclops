@@ -1,6 +1,5 @@
 package cyclops.companion;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.factory.Unit;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
@@ -14,7 +13,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Collection of useful functions
+ * Collection of useful arrow
  * Also see {@link Semigroups}
  *          {@link Monoids}
  *          {@link cyclops.function.Predicates}
@@ -101,16 +100,16 @@ public class Functions {
                                                         Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
       Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
-      return fn1.flatMap(in -> {
+      return fn1.flatMapFn(in -> {
 
         Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
-        return a.flatMap(ina -> {
+        return a.flatMapFn(ina -> {
           Function1<T,R2> b = Function1.narrow(Function1.of(value3.apply(in,ina)));
-          return b.flatMap(inb -> {
+          return b.flatMapFn(inb -> {
 
             Function1<T,R3> c = Function1.narrow(Function1.of(value4.apply(in,ina,inb)));
 
-            return c.map(in2 -> {
+            return c.mapFn(in2 -> {
 
               return yieldingFunction.apply(in, ina, inb, in2);
 
@@ -136,12 +135,12 @@ public class Functions {
                                                   Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
       Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
-      return fn1.flatMap(in -> {
+      return fn1.flatMapFn(in -> {
 
         Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
-        return a.flatMap(ina -> {
+        return a.flatMapFn(ina -> {
           Function1<T,R2> b = Function1.narrow(Function1.of(value3.apply(in,ina)));
-          return b.map(in2 -> {
+          return b.mapFn(in2 -> {
             return yieldingFunction.apply(in, ina, in2);
 
           });
@@ -160,10 +159,10 @@ public class Functions {
                                                  BiFunction<? super R, ? super R1, ? extends R4> yieldingFunction) {
 
       Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
-      return fn1.flatMap(in -> {
+      return fn1.flatMapFn(in -> {
 
         Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
-        return a.map(in2 -> {
+        return a.mapFn(in2 -> {
           return yieldingFunction.apply(in, in2);
 
         });

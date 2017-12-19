@@ -9,7 +9,7 @@ import cyclops.collections.immutable.PersistentQueueX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.persistentQueueX;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidKs;
 import org.junit.Test;
 
 
@@ -127,7 +127,7 @@ public class PQueuesTest {
     @Test
     public void traverse(){
        Maybe<Higher<persistentQueueX, Integer>> res = PersistentQueueX.PersistentQueueXInstances.traverse()
-                                                         .traverseA(Maybe.MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
+                                                         .traverseA(MaybeInstances.applicative(), (Integer a)->Maybe.just(a*2), PersistentQueueX.of(1,2,3))
                                                          .convert(Maybe::narrowK);
 
 

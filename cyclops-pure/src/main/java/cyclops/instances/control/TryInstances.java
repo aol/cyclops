@@ -2,16 +2,22 @@ package cyclops.instances.control;
 
 import com.oath.cyclops.hkt.DataWitness.tryType;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Try;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.experimental.UtilityClass;
@@ -26,10 +32,10 @@ public class TryInstances {
   public static <W1,X extends Throwable,T> Nested<Higher<tryType,X>,W1,T> nested(Try<Higher<W1,T>,X> nested, InstanceDefinitions<W1> def2){
     return Nested.of(nested, TryInstances.definitions(),def2);
   }
-  public static <W1,T, X extends Throwable> Product<Higher<tryType,X>,W1,T> product(Try<T,X> t,Active<W1,T> active){
+  public static <W1,T, X extends Throwable> Product<Higher<tryType,X>,W1,T> product(Try<T,X> t, Active<W1,T> active){
     return Product.of(allTypeclasses(t),active);
   }
-  public static <W1,T, X extends Throwable> Coproduct<W1,Higher<tryType,X>,T> coproduct(Try<T,X> t,InstanceDefinitions<W1> def2){
+  public static <W1,T, X extends Throwable> Coproduct<W1,Higher<tryType,X>,T> coproduct(Try<T,X> t, InstanceDefinitions<W1> def2){
     return Coproduct.right(t,def2, TryInstances.definitions());
   }
   public static  <X extends Throwable,T> Kleisli<Higher<tryType,X>,Try<T,X>,T> kindKleisli(){

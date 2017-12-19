@@ -1,6 +1,6 @@
 package cyclops.instances.jdk;
 
-import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Optionals;
 import cyclops.control.Either;
@@ -8,8 +8,9 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
+import cyclops.instances.control.MaybeInstances;
 import cyclops.kinds.OptionalKind;
-import cyclops.typeclasses.functions.MonoidKs;
+import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import lombok.experimental.UtilityClass;
@@ -17,24 +18,13 @@ import lombok.experimental.UtilityClass;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.tuple1;
-import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Either;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.data.tuple.Tuple1;
-import cyclops.function.Monoid;
-import cyclops.typeclasses.Cokleisli;
+
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.typeclasses.Kleisli;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
-import cyclops.typeclasses.comonad.ComonadByPure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functor.Functor;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.monad.*;
 /**
  * Companion class for creating Type Class instances for working with Optionals
@@ -43,65 +33,65 @@ import cyclops.typeclasses.monad.*;
  */
 @UtilityClass
 public  class OptionalInstances {
-  public static InstanceDefinitions<DataWitness.optional> definitions(){
-    return new InstanceDefinitions<DataWitness.optional>() {
+  public static InstanceDefinitions<optional> definitions(){
+    return new InstanceDefinitions<optional>() {
       @Override
-      public <T, R> Functor<DataWitness.optional> functor() {
+      public <T, R> Functor<optional> functor() {
         return OptionalInstances.functor();
       }
 
       @Override
-      public <T> Pure<DataWitness.optional> unit() {
+      public <T> Pure<optional> unit() {
         return OptionalInstances.unit();
       }
 
       @Override
-      public <T, R> Applicative<DataWitness.optional> applicative() {
+      public <T, R> Applicative<optional> applicative() {
         return OptionalInstances.applicative();
       }
 
       @Override
-      public <T, R> Monad<DataWitness.optional> monad() {
+      public <T, R> Monad<optional> monad() {
         return OptionalInstances.monad();
       }
 
       @Override
-      public <T, R> Option<MonadZero<DataWitness.optional>> monadZero() {
+      public <T, R> Option<MonadZero<optional>> monadZero() {
         return Option.some(OptionalInstances.monadZero());
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.optional>> monadPlus() {
+      public <T> Option<MonadPlus<optional>> monadPlus() {
         return Option.some(OptionalInstances.monadPlus());
       }
 
       @Override
-      public <T> MonadRec<DataWitness.optional> monadRec() {
+      public <T> MonadRec<optional> monadRec() {
         return OptionalInstances.monadRec();
       }
 
       @Override
-      public <T> Option<MonadPlus<DataWitness.optional>> monadPlus(MonoidK<DataWitness.optional> m) {
+      public <T> Option<MonadPlus<optional>> monadPlus(MonoidK<optional> m) {
         return Option.some(OptionalInstances.monadPlus(m));
       }
 
       @Override
-      public <C2, T> Traverse<DataWitness.optional> traverse() {
+      public <C2, T> Traverse<optional> traverse() {
         return OptionalInstances.traverse();
       }
 
       @Override
-      public <T> Foldable<DataWitness.optional> foldable() {
+      public <T> Foldable<optional> foldable() {
         return OptionalInstances.foldable();
       }
 
       @Override
-      public <T> Option<Comonad<DataWitness.optional>> comonad() {
+      public <T> Option<Comonad<optional>> comonad() {
         return Maybe.just(OptionalInstances.comonad());
       }
 
       @Override
-      public <T> Option<Unfoldable<DataWitness.optional>> unfoldable() {
+      public <T> Option<Unfoldable<optional>> unfoldable() {
         return Maybe.nothing();
       }
     };
@@ -135,7 +125,7 @@ public  class OptionalInstances {
    *
    * @return A functor for Optionals
    */
-  public static <T,R>Functor<DataWitness.optional> functor(){
+  public static <T,R>Functor<optional> functor(){
     BiFunction<OptionalKind<T>,Function<? super T, ? extends R>,OptionalKind<R>> map = OptionalInstances::map;
     return General.functor(map);
   }
@@ -154,8 +144,8 @@ public  class OptionalInstances {
    *
    * @return A factory for Optionals
    */
-  public static <T> Pure<DataWitness.optional> unit(){
-    return General.<DataWitness.optional,T>unit(OptionalInstances::of);
+  public static <T> Pure<optional> unit(){
+    return General.<optional,T>unit(OptionalInstances::of);
   }
   /**
    *
@@ -194,7 +184,7 @@ public  class OptionalInstances {
    *
    * @return A zipper for Optionals
    */
-  public static <T,R> Applicative<DataWitness.optional> applicative(){
+  public static <T,R> Applicative<optional> applicative(){
     BiFunction<OptionalKind< Function<T, R>>,OptionalKind<T>,OptionalKind<R>> ap = OptionalInstances::ap;
     return General.applicative(functor(), unit(), ap);
   }
@@ -222,11 +212,11 @@ public  class OptionalInstances {
    * }
    * </pre>
    *
-   * @return Type class with monad functions for Optionals
+   * @return Type class with monad arrow for Optionals
    */
-  public static <T,R> Monad<DataWitness.optional> monad(){
+  public static <T,R> Monad<optional> monad(){
 
-    BiFunction<Higher<DataWitness.optional,T>,Function<? super T, ? extends Higher<DataWitness.optional,R>>,Higher<DataWitness.optional,R>> flatMap = OptionalInstances::flatMap;
+    BiFunction<Higher<optional,T>,Function<? super T, ? extends Higher<optional,R>>,Higher<optional,R>> flatMap = OptionalInstances::flatMap;
     return General.monad(applicative(), flatMap);
   }
   /**
@@ -246,17 +236,17 @@ public  class OptionalInstances {
    *
    * @return A filterable monad (with default value)
    */
-  public static <T,R> MonadZero<DataWitness.optional> monadZero(){
+  public static <T,R> MonadZero<optional> monadZero(){
 
     return General.monadZero(monad(), OptionalKind.empty());
   }
-  public static  MonadRec<DataWitness.optional> monadRec() {
+  public static  MonadRec<optional> monadRec() {
 
-    return new MonadRec<DataWitness.optional>(){
+    return new MonadRec<optional>(){
 
 
       @Override
-      public <T, R> Higher<DataWitness.optional, R> tailRec(T initial, Function<? super T, ? extends Higher<DataWitness.optional, ? extends Either<T, R>>> fn) {
+      public <T, R> Higher<optional, R> tailRec(T initial, Function<? super T, ? extends Higher<optional, ? extends Either<T, R>>> fn) {
         Optional<R> x = Optionals.tailRec(initial, fn.andThen(a -> OptionalKind.narrowK(a)));
         return OptionalKind.widen(x);
 
@@ -278,7 +268,7 @@ public  class OptionalInstances {
    * </pre>
    * @return Type class for combining Optionals by concatenation
    */
-  public static <T> MonadPlus<DataWitness.optional> monadPlus(){
+  public static <T> MonadPlus<optional> monadPlus(){
 
     return General.monadPlus(monadZero(), MonoidKs.firstPresentOptional());
   }
@@ -298,14 +288,14 @@ public  class OptionalInstances {
    * @param m2 Monoid to use for combining Optionals
    * @return Type class for combining Optionals
    */
-  public static <T> MonadPlus<DataWitness.optional> monadPlus(MonoidK<DataWitness.optional> m2){
+  public static <T> MonadPlus<optional> monadPlus(MonoidK<optional> m2){
     return General.monadPlus(monadZero(),m2);
   }
 
   /**
    * @return Type class for traversables with traverse / sequence operations
    */
-  public static <C2,T> Traverse<DataWitness.optional> traverse(){
+  public static <C2,T> Traverse<optional> traverse(){
 
     return General.traverseByTraverse(applicative(), OptionalInstances::traverseA);
   }
@@ -325,14 +315,14 @@ public  class OptionalInstances {
    *
    * @return Type class for folding / reduction operations
    */
-  public static <T,R> Foldable<DataWitness.optional> foldable(){
-    BiFunction<Monoid<T>,Higher<DataWitness.optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-    BiFunction<Monoid<T>,Higher<DataWitness.optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
-    Function3<Monoid<R>, Function<T, R>, Higher<DataWitness.optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
+  public static <T,R> Foldable<optional> foldable(){
+    BiFunction<Monoid<T>,Higher<optional,T>,T> foldRightFn =  (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+    BiFunction<Monoid<T>,Higher<optional,T>,T> foldLeftFn = (m, l)-> OptionalKind.narrow(l).orElse(m.zero());
+    Function3<Monoid<R>, Function<T, R>, Higher<optional, T>, R> foldMapFn = (m, f, l)->OptionalKind.narrowK(l).map(f).orElseGet(()->m.zero());
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
   }
-  public static <T> Comonad<DataWitness.optional> comonad(){
-    Function<? super Higher<DataWitness.optional, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();
+  public static <T> Comonad<optional> comonad(){
+    Function<? super Higher<optional, T>, ? extends T> extractFn = maybe -> maybe.convert(OptionalKind::narrow).get();
     return General.comonad(functor(), unit(), extractFn);
   }
 
@@ -340,10 +330,10 @@ public  class OptionalInstances {
     return OptionalKind.widen(Optional.of(value));
   }
   private static <T,R> OptionalKind<R> ap(OptionalKind<Function< T, R>> lt, OptionalKind<T> list){
-    return OptionalKind.widen(Maybe.fromOptionalKind(lt).zip(Maybe.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
+    return OptionalKind.widen(MaybeInstances.fromOptionalKind(lt).zip(MaybeInstances.fromOptionalKind(list), (a, b)->a.apply(b)).toOptional());
 
   }
-  private static <T,R> Higher<DataWitness.optional,R> flatMap(Higher<DataWitness.optional,T> lt, Function<? super T, ? extends  Higher<DataWitness.optional,R>> fn){
+  private static <T,R> Higher<optional,R> flatMap(Higher<optional,T> lt, Function<? super T, ? extends  Higher<optional,R>> fn){
     return OptionalKind.widen(OptionalKind.narrow(lt).flatMap(fn.andThen(OptionalKind::narrowK)));
   }
   private static <T,R> OptionalKind<R> map(OptionalKind<T> lt, Function<? super T, ? extends R> fn){
@@ -351,8 +341,8 @@ public  class OptionalInstances {
   }
 
 
-  private static <C2,T,R> Higher<C2, Higher<DataWitness.optional, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                                Higher<DataWitness.optional, T> ds){
+  private static <C2,T,R> Higher<C2, Higher<optional, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
+                                                                                Higher<optional, T> ds){
     Optional<T> opt = OptionalKind.narrowK(ds);
     return opt.isPresent() ?   applicative.map(OptionalKind::of, fn.apply(opt.get())) :
       applicative.unit(OptionalKind.empty());

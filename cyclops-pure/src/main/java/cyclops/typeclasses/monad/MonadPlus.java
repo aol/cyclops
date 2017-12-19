@@ -3,7 +3,7 @@ package cyclops.typeclasses.monad;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.ImmutableList;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 
 public interface MonadPlus<CRE> extends MonadZero<CRE>{
 

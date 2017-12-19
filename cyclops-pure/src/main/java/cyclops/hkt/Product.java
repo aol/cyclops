@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.hkt;
 
 
 import com.oath.cyclops.hkt.Higher;
@@ -16,11 +16,13 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -442,7 +444,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
                 }
             };
         }
-        public  Pure<Higher<Higher<product, W1>, W2>> unit(){
+        public Pure<Higher<Higher<product, W1>, W2>> unit(){
             return new Pure<Higher<Higher<product, W1>, W2>>(){
 
                 @Override

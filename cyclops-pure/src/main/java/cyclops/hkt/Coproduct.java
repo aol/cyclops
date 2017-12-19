@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.hkt;
 
 
 import com.oath.cyclops.hkt.Higher;
@@ -10,9 +10,6 @@ import cyclops.control.Future;
 import cyclops.collections.immutable.LinkedListX;
 import cyclops.collections.immutable.VectorX;
 import cyclops.collections.mutable.ListX;
-import cyclops.companion.CompletableFutures;
-import cyclops.companion.Optionals;
-import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.Eval;
@@ -36,10 +33,12 @@ import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
-import cyclops.typeclasses.functions.SemigroupK;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
@@ -423,7 +422,7 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         }
 
 
-        public <T> Pure<Higher<Higher<coproduct, W1>, W2>> unit(InstanceDefinitions<W1> def1,InstanceDefinitions def2) {
+        public <T> Pure<Higher<Higher<coproduct, W1>, W2>> unit(InstanceDefinitions<W1> def1, InstanceDefinitions def2) {
             return new Pure<Higher<Higher<coproduct, W1>, W2>>(){
 
                 @Override

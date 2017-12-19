@@ -1,11 +1,9 @@
-package cyclops.typeclasses.functions;
+package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Future;
 import cyclops.collections.immutable.*;
 import cyclops.collections.mutable.*;
-import cyclops.companion.CompletableFutures;
-import cyclops.companion.Streams;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;

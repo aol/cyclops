@@ -1,4 +1,4 @@
-package cyclops.typeclasses;
+package cyclops.arrow;
 
 
 import com.oath.cyclops.hkt.Higher;
@@ -22,8 +22,11 @@ public class Cokleisli<W,T,R> implements Function1<Higher<W,T>,R>,
     public R apply(Higher<W, T> a) {
         return fn.apply(a);
     }
-    public <R1> Cokleisli<W,T,R1> map(Function<? super R, ? extends R1> mapper){
+    public <R1> Cokleisli<W,T,R1> mapFn(Function<? super R, ? extends R1> mapper){
         return cokleisli(fn.andThen(mapper));
+    }
+    public <R1> Cokleisli<W,T,R1> map(Function<? super R, ? extends R1> mapper){
+      return mapFn(mapper);
     }
 
     public <R2> Cokleisli<W,T, Tuple2<R, R2>> fanout(Cokleisli<W,T, R2> f2) {

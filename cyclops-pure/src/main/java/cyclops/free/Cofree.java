@@ -8,6 +8,7 @@ import cyclops.control.Eval;
 import com.oath.cyclops.hkt.DataWitness.cofree;
 import com.oath.cyclops.hkt.DataWitness.eval;
 import cyclops.data.NaturalTransformation;
+import cyclops.instances.control.EvalInstances;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Monad;
@@ -54,7 +55,7 @@ public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
         return of(functor, head, tail.map(h->nat.apply(h)));
     }
     public <R> Cofree<R, T> mapBranchingS(Functor<R> functor,NaturalTransformation<W, R> nat) {
-        return of(functor, head, tail.map( ce -> nat.apply(this.functor.map_(ce, cofree -> cofree.mapBranchingS( functor,nat)))));
+        return of(functor, head, tail.map(ce -> nat.apply(this.functor.map_(ce, cofree -> cofree.mapBranchingS( functor,nat)))));
     }
     public <R> Cofree<R, T>  mapBranchingT(Functor<R> functor,NaturalTransformation<W, R> nat) {
         return of(functor, head, tail.map(ce -> functor.map_(nat.apply(ce), cofree -> cofree.mapBranchingT(functor,nat))));
@@ -75,7 +76,7 @@ public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
     }
 
     public  <R> Eval<R> visit(Traverse<W> traverse,BiFunction<T, Higher<W, R>,Eval<R>> fn) {
-        Eval<Higher<W, R>> eval = traverse.traverseA(Eval.EvalInstances.applicative(), it -> it.visit( traverse,fn), tailForced())
+        Eval<Higher<W, R>> eval = traverse.traverseA(EvalInstances.applicative(), it -> it.visit( traverse,fn), tailForced())
                 .convert(Eval::narrowK);
         return eval.flatMap(i->fn.apply(extract(), i));
     }

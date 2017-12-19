@@ -710,12 +710,16 @@ public class FluentFunctions {
          * @see cyclops2.function.Reader#transform(java.util.function.Function)
          */
         @Override
-        public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
+        public <R1> FluentFunction<T, R1> mapFn(final Function<? super R, ? extends R1> f2) {
             return FluentFunctions.of(fn.andThen(f2));
+        }
+        @Override
+        public <R1> FluentFunction<T, R1> map(final Function<? super R, ? extends R1> f2) {
+          return mapFn(f2);
         }
 
 
-        public <R1> FluentFunction<T, R1> flatMap(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
+        public <R1> FluentFunction<T, R1> flatMapFn(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
             return FluentFunctions.of(a -> f.apply(fn.apply(a))
                                             .apply(a));
         }

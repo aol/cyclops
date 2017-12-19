@@ -2,7 +2,7 @@ package cyclops.typeclasses.transformers;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.typeclasses.Nested;
+import cyclops.hkt.Nested;
 
 import java.util.function.Function;
 

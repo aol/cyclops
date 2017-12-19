@@ -14,9 +14,7 @@ import com.oath.cyclops.hkt.DataWitness.eval;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AllArgsConstructor;
-import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.*;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -395,21 +393,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return Maybe.fromEvalNullable(this);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
-     */
+
     @Override
     public <T> Eval<T> unit(T unit);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
-     */
+
     @Override
     public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
-     */
+
     @Override
     public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 

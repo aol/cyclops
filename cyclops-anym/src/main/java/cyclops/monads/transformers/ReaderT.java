@@ -65,7 +65,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      */
     @Override
     public ReaderT<W,T,R> peek(final Consumer<? super R> peek) {
-        return of(run.peek(reader -> reader.map(a -> {
+        return of(run.peek(reader -> reader.mapFn(a -> {
             peek.accept(a);
             return a;
         })));
@@ -88,9 +88,9 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
      * @return FutureT that applies the transform function to the wrapped Future
      */
 
-    public <B> ReaderT<W,T,B> map(final Function<? super R, ? extends B> f) {
+    public <B> ReaderT<W,T,B> mapFn(final Function<? super R, ? extends B> f) {
         return new ReaderT<W,T,B>(
-                                  run.map(o -> o.map(f)));
+                                  run.map(o -> o.mapFn(f)));
     }
 
     public <B> ReaderT<W, T, B> flatMap(final Function<? super R, ? extends Reader<T, B>> f) {
@@ -140,7 +140,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
         return this.flatMapT(in->value1.apply(in)
                 .flatMapT(in2-> value2.apply(in,in2)
                         .flatMapT(in3->value3.apply(in,in2,in3)
-                                .map(in4->yieldingFunction.apply(in,in2,in3,in4)))));
+                                .mapFn(in4->yieldingFunction.apply(in,in2,in3,in4)))));
 
     }
 
@@ -150,7 +150,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
                                                   Function3<? super R, ? super R1, ? super R2, ? extends B> yieldingFunction) {
 
         return this.flatMapT(in->value1.apply(in).flatMapT(in2-> value2.apply(in,in2)
-                .map(in3->yieldingFunction.apply(in,in2,in3))));
+                .mapFn(in3->yieldingFunction.apply(in,in2,in3))));
 
     }
 
@@ -160,7 +160,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
 
         return this.flatMapT(in->value1.apply(in)
-                .map(in2->yieldingFunction.apply(in,in2)));
+                .mapFn(in2->yieldingFunction.apply(in,in2)));
     }
 
 
@@ -179,7 +179,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
 
                     Reader<T,R3> c = FluentFunctions.of(value4.apply(in,ina,inb));
 
-                    return c.map(in2 -> {
+                    return c.mapFn(in2 -> {
 
                         return yieldingFunction.apply(in, ina, inb, in2);
 
@@ -207,7 +207,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
             Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
             return a.flatMap(ina -> {
                 Reader<T,R2> b = FluentFunctions.of(value3.apply(in,ina));
-                return b.map(in2 -> {
+                return b.mapFn(in2 -> {
                     return yieldingFunction.apply(in, ina, in2);
 
                 });
@@ -228,7 +228,7 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
         return this.flatMap(in -> {
 
             Reader<T,R1> a = FluentFunctions.of(value2.apply(in));
-            return a.map(in2 -> {
+            return a.mapFn(in2 -> {
                 return yieldingFunction.apply(in, in2);
 
             });

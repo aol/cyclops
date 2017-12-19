@@ -1,19 +1,23 @@
 package cyclops.instances.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.reader;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.arrow.Cokleisli;
+import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Reader;
-import cyclops.function.Function1;
 import cyclops.function.Monoid;
+import cyclops.hkt.Active;
+import cyclops.hkt.Coproduct;
+import cyclops.hkt.Nested;
+import cyclops.hkt.Product;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.typeclasses.functions.MonoidK;
+import cyclops.arrow.MonoidK;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.functor.ProFunctor;
 import cyclops.typeclasses.instances.General;
@@ -40,17 +44,17 @@ public  class ReaderInstances {
   public static <W1,T,R> Nested<Higher<reader,T>,W1,R> nested(Reader<T,Higher<W1,R>> nested, T defaultValue, InstanceDefinitions<W1> def2){
     return Nested.of(nested, ReaderInstances.definitions(defaultValue),def2);
   }
-  public static <W1,T,R> Product<Higher<reader,T>,W1,R> product(Reader<T,R> r,T defaultValue,Active<W1,R> active){
+  public static <W1,T,R> Product<Higher<reader,T>,W1,R> product(Reader<T,R> r, T defaultValue, Active<W1,R> active){
     return Product.of(allTypeclasses(r,defaultValue),active);
   }
-  public static <W1,T,R> Coproduct<W1,Higher<reader,T>,R> coproduct(Reader<T,R> r,T defaultValue, InstanceDefinitions<W1> def2){
+  public static <W1,T,R> Coproduct<W1,Higher<reader,T>,R> coproduct(Reader<T,R> r, T defaultValue, InstanceDefinitions<W1> def2){
     return Coproduct.right(r,def2, ReaderInstances.definitions(defaultValue));
   }
   public static <T,R> Active<Higher<reader,T>,R> allTypeclasses(Reader<T,R> r,T defaultValue){
     return Active.of(r, ReaderInstances.definitions(defaultValue));
   }
   public static <W2,R2,T,R> Nested<Higher<reader,T>,W2,R2> mapM(Reader<T,R> r,T defaultValue,Function<? super R,? extends Higher<W2,R2>> fn, InstanceDefinitions<W2> defs){
-    return Nested.of(r.map(fn), ReaderInstances.definitions(defaultValue), defs);
+    return Nested.of(r.mapFn(fn), ReaderInstances.definitions(defaultValue), defs);
   }
 
   public static <IN> InstanceDefinitions<Higher<reader, IN>> definitions(IN in) {
@@ -124,7 +128,7 @@ public  class ReaderInstances {
       @Override
       public <T, R> Higher<Higher<reader, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> ds) {
         Reader<IN, T> fn1 = narrowK(ds);
-        Reader<IN, R> res = fn1.map(fn);
+        Reader<IN, R> res = fn1.mapFn(fn);
         return res;
       }
     };
@@ -179,7 +183,7 @@ public  class ReaderInstances {
 
       @Override
       public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<Higher<reader, IN>, T> nestedA) {
-        return foldLeft(mb,narrowK(nestedA).<R>map(fn));
+        return foldLeft(mb,narrowK(nestedA).<R>mapFn(fn));
       }
     };
   }
@@ -218,8 +222,8 @@ public  class ReaderInstances {
       @Override
       public <T, R> Higher<Higher<reader, IN>, R> flatMap(Function<? super T, ? extends Higher<Higher<reader, IN>, R>> fn, Higher<Higher<reader, IN>, T> ds) {
         Reader<IN, T> mapper = narrowK(ds);
-        Function1<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
-        return res.reader();
+        Reader<IN, R> res = mapper.flatMap(fn.andThen(Reader::narrowK));
+        return res;
       }
     };
 
@@ -256,7 +260,7 @@ public  class ReaderInstances {
               return true;
             }, pr -> false);
           } while (cont);
-          return next[0].map(x->x.orElse(null));
+          return next[0].mapFn(x->x.orElse(null));
         };
         return reader.flatMap(Function.identity());
 
