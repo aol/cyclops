@@ -1294,7 +1294,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
-
-
-
+  public static <T> Future<T> narrow(Future<? extends T> of) {
+      return (Future<T>)of;
+  }
 }
