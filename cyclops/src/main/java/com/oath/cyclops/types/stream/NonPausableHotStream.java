@@ -21,7 +21,7 @@ public class NonPausableHotStream<T> extends BaseHotStreamImpl<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.internal.reactiveStream.BaseHotStreamImpl#init(java.util.concurrent.Executor)
+     * @see com.oath.cyclops.internal.stream.BaseHotStreamImpl#init(java.util.concurrent.Executor)
      */
     @Override
     public HotStream<T> init(final Executor exec) {

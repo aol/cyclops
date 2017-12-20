@@ -85,7 +85,7 @@ public class Javaone {
             .map(i->i*2)
             .forEachAsync(sub);
 
-        ReactiveSeq<Integer> connected = sub.reactiveStream();
+        ReactiveSeq<Integer> connected = sub.stream();
 
         ReactiveSeq.of(1,2,3)
                    .map(this::load)
@@ -114,7 +114,7 @@ public class Javaone {
                       .run();
 
     }
-    public void reactiveStream(){
+    public void stream(){
 
         Stream<Integer> input;
         Stream<Integer> times2 = input.map(i->i*2);

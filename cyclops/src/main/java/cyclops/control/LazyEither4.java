@@ -68,7 +68,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         return Cokleisli.of(LazyEither4::narrowK);
     }
     /**
-     * Create a reactiveBuffer CompletableEither
+     * Create a reactive CompletableEither
      *
      * <pre>
      *  {@code
@@ -355,9 +355,9 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Either4<Throwable,String,String,Integer> lazy = Either4.fromPublisher(reactiveStream);
+         Either4<Throwable,String,String,Integer> lazy = Either4.fromPublisher(stream);
 
          //Either[1]
      *

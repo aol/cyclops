@@ -76,7 +76,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
   }
 
     /**
-     * Create a reactiveBuffer CompletableEither
+     * Create a reactive CompletableEither
      *
      * <pre>
      *  {@code
@@ -311,9 +311,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Either3<Throwable,String,Integer> future = Either3.fromPublisher(reactiveStream);
+         Either3<Throwable,String,Integer> future = Either3.fromPublisher(stream);
 
          //Either[1]
      *

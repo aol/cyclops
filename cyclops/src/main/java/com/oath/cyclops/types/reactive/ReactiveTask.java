@@ -10,7 +10,7 @@ import lombok.Value;
 import lombok.experimental.Wither;
 
 /**
- * Class that represents an active reactiveBuffer-streams task
+ * Class that represents an active reactive-streams task
  *
  * @author johnmcclean
  *
@@ -74,7 +74,7 @@ public class ReactiveTask implements Subscription {
     }
 
     /**
-     * Request all elements to be processed asynchronously in the processing reactiveStream
+     * Request all elements to be processed asynchronously in the processing stream
      *
      * @return New ReactiveTask that references the execution of the new async task
      */
@@ -83,7 +83,7 @@ public class ReactiveTask implements Subscription {
     }
 
     /**
-     * Block until the currently active reactiveBuffer task completes
+     * Block until the currently active reactive task completes
      */
     public void block() {
         subscriptionAndTask._2().join();

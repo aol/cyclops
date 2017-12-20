@@ -278,7 +278,7 @@ public class FlatMapTest {
 
             sub.awaitInitialization();
             try {
-                //not a reactiveBuffer-stream so we don't know with certainty when demand signalled
+                //not a reactive-stream so we don't know with certainty when demand signalled
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();

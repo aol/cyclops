@@ -50,14 +50,14 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
 
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#collect(java.util.reactiveStream.Collector)
+     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     default <R, A> AnyM<W,R> collect(final Collector<? super T, A, R> collector) {
         return nestedCollectables().map(s -> s.collect(collector));
     }
 
     /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#collect(java.util.reactiveStream.Collector)
+     * @see org.jooq.lambda.Collectable#collect(java.util.stream.Collector)
      */
     default <R, A, C extends Collection<R>> C collect(final Supplier<C> supplier, final Collector<? super T, A, R> collector) {
         return nestedCollectables().map(s -> s.collect(collector))

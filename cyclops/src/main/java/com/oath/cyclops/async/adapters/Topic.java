@@ -109,7 +109,7 @@ public class Topic<T> implements Adapter<T> {
     }
 
     /**
-     * Generating a reactiveStream will register the Stream as a reactiveSubscriber to this topic.
+     * Generating a stream will register the Stream as a reactiveSubscriber to this topic.
      * It will be provided with an internal Queue as a mailbox. @see Topic.disconnect to disconnect from the topic
      * @return Stream of data
      */

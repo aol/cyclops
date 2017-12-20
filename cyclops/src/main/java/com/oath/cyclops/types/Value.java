@@ -80,7 +80,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
 
 
     /**
-     * @return A factory class generating Values from reactiveBuffer-streams Subscribers
+     * @return A factory class generating Values from reactive-streams Subscribers
      */
     default ValueSubscriber<T> newSubscriber() {
         return ValueSubscriber.subscriber();

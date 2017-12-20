@@ -225,7 +225,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#collectors()
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#collectors()
 
     @Override
     public Collectable<T> collectors() {

@@ -673,7 +673,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         }
 
-        //should we force all Stream types on reactiveBuffer-streams path?
+        //should we force all Stream types on reactive-streams path?
         sub.onSubscribe(source.subscribe(sub::onNext, sub::onError, sub::onComplete));
     }
 

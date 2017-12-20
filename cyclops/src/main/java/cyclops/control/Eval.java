@@ -126,7 +126,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<T>)future;
     }
     /**
-     * Create an Eval instance from a reactiveBuffer-streams publisher
+     * Create an Eval instance from a reactive-streams publisher
      *
      * <pre>
      * {@code
@@ -144,7 +144,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     /**
-     * Create a reactiveBuffer CompletableEval
+     * Create a reactive CompletableEval
      *
      * <pre>
      *     {@code
@@ -160,7 +160,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * </pre>
      *
      * @param <T> Data input type to the Eval
-     * @return A reactiveBuffer CompletableEval
+     * @return A reactive CompletableEval
      */
     static <T> CompletableEval<T,T> eval(){
         Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();

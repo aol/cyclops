@@ -87,12 +87,12 @@ public interface Option<T> extends To<Option<T>>,
     }
 
     /**
-     * Construct a Maybe  that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Maybe  that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-    Option<Integer> maybe = Option.fromPublisher(reactiveStream);
+    Option<Integer> maybe = Option.fromPublisher(stream);
 
     //Maybe[1]
      *
@@ -114,9 +114,9 @@ public interface Option<T> extends To<Option<T>>,
      *  Construct an Option  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Option<Integer> maybe = Option.fromIterable(reactiveStream);
+         Option<Integer> maybe = Option.fromIterable(stream);
 
         //Option[1]
      *

@@ -53,7 +53,7 @@ public class BlockingTest {
             System.out.println("Setting up Stream!");
             //sub.onComplete();
             assertThat(sub.stream().peek(System.out::println).collect(Collectors.toList()).size(), equalTo(100));
-            //   sub.reactiveStream().forEach(System.out::println);
+            //   sub.stream().forEach(System.out::println);
             sub.onNext(1);
             System.out.println("End!");
         }

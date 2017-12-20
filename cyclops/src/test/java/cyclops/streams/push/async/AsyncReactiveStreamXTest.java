@@ -52,7 +52,7 @@ public  class AsyncReactiveStreamXTest {
                             if (index[0]++ > 100)
                                 break;
                         } catch (NullPointerException e) {
-                          //reactiveBuffer-streams subscription may not initialized
+                          //reactive-streams subscription may not initialized
                         }
                     }
 				}
