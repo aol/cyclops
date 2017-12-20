@@ -5,7 +5,7 @@ import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.companion.Reducers;
-import cyclops.companion.Semigroups;
+import cyclops.companion.FutureStreamSemigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.reactive.collections.mutable.ListX;
@@ -239,12 +239,12 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
+		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", FutureStreamSemigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
 	}
 
 	@Test
@@ -278,7 +278,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
 	}
 
 	@Test

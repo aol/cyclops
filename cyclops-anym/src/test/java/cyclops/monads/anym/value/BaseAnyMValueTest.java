@@ -12,7 +12,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
-import cyclops.companion.Semigroups;
+import cyclops.companion.FutureStreamSemigroups;
 import cyclops.reactive.collections.mutable.ListX;
 
 import cyclops.companion.Streams;
@@ -59,7 +59,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
     @Test
     public void combine(){
 
-        Monoid<Integer> add = Monoid.of(0,Semigroups.intSum);
+        Monoid<Integer> add = Monoid.of(0, FutureStreamSemigroups.intSum);
 /**
         assertThat(none.combineEager(add,just).toTry(),equalTo(Try.success(0)));
         assertThat(none.combineEager(add,none).toTry(),equalTo(Try.success(0)));
@@ -322,12 +322,12 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("",Semigroups.stringJoin(","))),equalTo(",10"));
+		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", FutureStreamSemigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
 	}
 
 	@Test
@@ -361,7 +361,7 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1,Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
 	}
 
 	@Test
