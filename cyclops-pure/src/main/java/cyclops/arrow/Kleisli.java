@@ -38,9 +38,9 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
                                         Transformable<R>,
                                         Higher3<kleisli,W,T,R> {
 
-    Monad<W> monad;
+    private final Monad<W> monad;
 
-    Function<? super T, ? extends Higher<W,? extends R>> fn;
+    private final Function<? super T, ? extends Higher<W,? extends R>> fn;
 
     public static <W,T,R> Kleisli<W,T,R> of(Monad<W> monad, Function<? super T, ? extends Higher<W,? extends R>> fn){
         return new Kleisli<W,T,R>(monad,fn);
@@ -275,21 +275,5 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
         return (Higher<W,R>)fn.apply(a);
     }
 
-    public static class Instances{
 
-        public static <W,IN> Functor<Higher<Higher<kleisli,W>,IN>> functor(){
-            return new Functor<Higher<Higher<kleisli,W>,IN>> (){
-                @Override
-                public <T, R> Higher<Higher<Higher<kleisli, W>, IN>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<kleisli, W>, IN>, T> ds) {
-                    Kleisli<W, IN, T> fn1 = narrowK(ds);
-                    Kleisli<W, IN, R> res = fn1.map(fn);
-                    Higher3<kleisli,W,IN,R> hk = res;
-                    return res;
-                }
-
-            };
-        }
-
-
-    }
 }
