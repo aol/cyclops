@@ -12,6 +12,7 @@ Cyclops pure provides support for advanced functional data structures and higher
 * transformers : monad transformer interface definitions
 * hkt : Manager classes to make working with Higher Kinded typeclasses cleaner in Java
 
+Since cyclops 10.0.0-M5
 
 ## Get cyclops-pure
 
