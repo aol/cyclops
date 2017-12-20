@@ -34,8 +34,6 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
 import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.data.*;
@@ -52,6 +50,8 @@ import cyclops.control.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;

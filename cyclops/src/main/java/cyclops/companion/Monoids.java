@@ -4,17 +4,18 @@ import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.Zippable;
 import cyclops.control.Future;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.*;
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
 import cyclops.data.Comparators;
+import cyclops.data.NaturalTransformation;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.NaturalTransformation;
+
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

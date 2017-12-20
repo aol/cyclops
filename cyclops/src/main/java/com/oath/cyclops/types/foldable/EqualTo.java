@@ -2,7 +2,7 @@ package com.oath.cyclops.types.foldable;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.typeclasses.Eq;
+import cyclops.data.Eq;
 
 public interface EqualTo<W, T1,T extends EqualTo<W,T1,?>> extends Higher<W,T1>{
 

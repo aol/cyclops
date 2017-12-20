@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.AbstractCollectionXTest;
-import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;

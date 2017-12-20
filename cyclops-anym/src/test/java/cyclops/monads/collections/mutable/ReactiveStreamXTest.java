@@ -2,7 +2,7 @@ package cyclops.monads.collections.mutable;
 
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;

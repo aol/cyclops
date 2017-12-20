@@ -45,10 +45,7 @@ public class Tuple1Test {
         assertThat(t1._1(),equalTo(10));
     }
 
-    @Test
-    public void toIdentity() throws Exception {
-        assertThat(t1.toIdentity().get(),equalTo(10));
-    }
+
 
     @Test
     public void map() throws Exception {

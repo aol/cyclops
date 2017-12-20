@@ -13,7 +13,7 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;

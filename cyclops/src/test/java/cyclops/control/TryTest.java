@@ -3,7 +3,7 @@ package cyclops.control;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import org.junit.Before;
 import org.junit.Test;

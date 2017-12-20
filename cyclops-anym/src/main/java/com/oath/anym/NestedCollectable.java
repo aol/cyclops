@@ -16,8 +16,8 @@ import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 
 
 /**

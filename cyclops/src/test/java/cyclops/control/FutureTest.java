@@ -1,8 +1,8 @@
 package cyclops.control;
 
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.*;
 import cyclops.function.Monoid;
 

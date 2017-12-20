@@ -1,12 +1,12 @@
 package com.oath.cyclops;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import org.junit.Test;
 
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 
-import static cyclops.collections.immutable.LinkedListX.range;
+import static cyclops.reactive.collections.immutable.LinkedListX.range;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import lombok.val;

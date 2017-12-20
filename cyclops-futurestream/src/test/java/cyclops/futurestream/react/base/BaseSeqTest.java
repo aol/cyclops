@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.collections.mutable.MapX;
+import cyclops.reactive.collections.mutable.MapX;
 import cyclops.companion.MapXs;
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
@@ -44,7 +44,7 @@ import org.junit.Test;
 
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.util.SimpleTimer;
 //see BaseSequentialSeqTest for in order tests
 public abstract class BaseSeqTest {

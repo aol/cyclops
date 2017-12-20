@@ -1,9 +1,7 @@
 package cyclops.collections;
 
-import cyclops.collections.immutable.*;
+import cyclops.reactive.collections.immutable.*;
 import org.junit.Test;
-
-import cyclops.collections.immutable.BagX;
 
 public class PersistentExample {
 
@@ -14,7 +12,7 @@ public class PersistentExample {
 			.plus(5)
 			.map(i->"hello" + i)
 			.forEach(System.out::println);
-			
+
 	}
 	@Test
 	public void stack(){
@@ -23,9 +21,9 @@ public class PersistentExample {
 			.plus(5)
 			.map(i->"hello" + i)
 			.forEach(System.out::println);
-			
+
 	}
-	
+
 	@Test
 	public void set(){
 		PersistentSetX.of(1,2,3)

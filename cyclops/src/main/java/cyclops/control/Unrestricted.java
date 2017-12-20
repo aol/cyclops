@@ -313,7 +313,6 @@ public abstract class Unrestricted<T> {
      * This results in a two level nested internal iteration over the provided Computationss.
      *
      *
-     * @param value1 top level Unrestricted
      * @param value2 Nested Unrestricted
      * @return Resulting Unrestricted
      */

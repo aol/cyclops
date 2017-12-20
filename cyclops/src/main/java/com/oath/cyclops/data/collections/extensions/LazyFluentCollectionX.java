@@ -2,7 +2,7 @@ package com.oath.cyclops.data.collections.extensions;
 
 import java.util.Collection;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 
 

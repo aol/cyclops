@@ -4,7 +4,7 @@ package cyclops.streams.push.async;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

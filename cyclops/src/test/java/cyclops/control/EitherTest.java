@@ -1,9 +1,9 @@
 package cyclops.control;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -18,7 +18,7 @@ public class EitherTest {
     static class Two extends Base{}
     @Test
     public void visitAny(){
-       
+
         Either<One,Two> test = Either.right(new Two());
         test.to(Either::applyAny).apply(b->b.toString());
         Either.right(10).to(Either::consumeAny).accept(System.out::println);
@@ -26,24 +26,24 @@ public class EitherTest {
         Object value = Either.right(10).to(e-> Either.visitAny(e, x->x));
         assertThat(value,equalTo(10));
     }
-	
 
-	
+
+
 	@Test
 	public void test2() {
-	    
-	
-	    
-	    
-	    
-	   
-	    
-	    
+
+
+
+
+
+
+
+
 		assertThat(Either.accumulateLeft(Monoids.stringConcat,ListX.of(Either.left("failed1"),
 													Either.left("failed2"),
 													Either.right("success"))
 													).orElse(":"),equalTo("failed1failed2"));
-		
+
 	}
 
 
@@ -69,6 +69,6 @@ public class EitherTest {
         Either<LinkedListX<String>,String> result = fail1.combineToList(Either.<String,String>left("failed2"),(a, b)->a+b);
         assertThat(result.leftOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
     }
-	
+
 
 }

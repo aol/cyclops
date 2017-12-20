@@ -2,4 +2,5 @@ rootProject.name = 'com.oath.cyclops'
 include ':cyclops'
 include ':cyclops-anym'
 include 'cyclops-futurestream'
+include 'cyclops-pure'
 

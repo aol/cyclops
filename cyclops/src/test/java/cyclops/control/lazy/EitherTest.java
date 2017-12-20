@@ -1,13 +1,13 @@
 package cyclops.control.lazy;
 
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.LazyEither.CompletableEither;
@@ -205,8 +205,8 @@ public class EitherTest {
     }
     @Test
     public void visitEither(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
     }
     @Test
     public void testToMaybe() {

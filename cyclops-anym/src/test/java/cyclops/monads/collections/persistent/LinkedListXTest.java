@@ -1,10 +1,9 @@
 package cyclops.monads.collections.persistent;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.linkedListX;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;

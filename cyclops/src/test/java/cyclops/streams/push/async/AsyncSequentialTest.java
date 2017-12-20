@@ -3,7 +3,7 @@ package cyclops.streams.push.async;
 import com.oath.cyclops.streams.BaseSequentialTest;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;

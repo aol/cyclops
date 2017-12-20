@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 
 /**
- * Compose functions that return monads
+ * Compose arrow that return monads
  *
  * @param <W> Monad kind
  * @param <T> Function input type
@@ -40,7 +40,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
     }
     /**
      *
-     * Compose functions that return monads.
+     * Compose arrow that return monads.
      *
      * Example :-
      *

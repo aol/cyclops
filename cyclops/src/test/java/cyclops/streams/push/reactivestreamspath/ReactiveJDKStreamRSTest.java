@@ -1,6 +1,6 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -34,8 +34,8 @@ public class ReactiveJDKStreamRSTest {
 	public void testNoneMatch(){
 		assertThat(of(1,2,3,4,5).noneMatch(it-> it==5000),equalTo(true));
 	}
-	
-	
+
+
 	@Test
 	public void testAnyMatchFalse(){
 		assertThat(of(1,2,3,4,5).anyMatch(it-> it.equals(8)),equalTo(false));
@@ -49,7 +49,7 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4")).flatMapStream( list -> list.stream() ).to(Streamable::fromStream).collect(Collectors.toList()
 						),hasItem("10"));
 	}
-	
+
 	@Test
 	public void testMapReduce(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),equalTo(1500));
@@ -58,8 +58,8 @@ public class ReactiveJDKStreamRSTest {
 	public void testMapReduceSeed(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),equalTo(1550));
 	}
-	
-	
+
+
 	@Test
 	public void testMapReduceCombiner(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,
@@ -121,11 +121,11 @@ public class ReactiveJDKStreamRSTest {
 	public void testMin(){
 		assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),equalTo(1));
 	}
-	
+
 	@Test
 	public void testMapToInt(){
 		assertThat(of("1","2","3","4").mapToInt(it -> Integer.valueOf(it)).max().getAsInt(),equalTo(4));
-		
+
 	}
 
 	@Test
@@ -138,7 +138,7 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(of("1","2","3","4").mapToDouble(it -> Double.valueOf(it)).max().getAsDouble(),equalTo(4d));
 	}
 
-	
+
 	@Test
 	public void flatMapToInt() {
 		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4"))
@@ -146,7 +146,7 @@ public class ReactiveJDKStreamRSTest {
 						.mapToInt(Integer::valueOf)).max().getAsInt(),equalTo(10));
 	}
 
-	
+
 	@Test
 	public void flatMapToLong() {
 		assertThat(of( asList("1","10"), asList("2"),asList("3"),asList("4"))
@@ -154,11 +154,11 @@ public class ReactiveJDKStreamRSTest {
 
 	}
 
-	
+
 	@Test
 	public void flatMapToDouble(){
-			
-		assertThat(of( asList("1","10"), 
+
+		assertThat(of( asList("1","10"),
 				asList("2"),asList("3"),asList("4"))
 				.flatMapToDouble(list ->list.stream()
 						.mapToDouble(Double::valueOf))
@@ -182,7 +182,7 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(list,hasItem(3));
 		assertThat(list,hasItem(4));
 		assertThat(list,hasItem(5));
-		
+
 	}
 	@Test
 	public void forEachOrderedx() {
@@ -193,9 +193,9 @@ public class ReactiveJDKStreamRSTest {
 		assertThat(list,hasItem(3));
 		assertThat(list,hasItem(4));
 		assertThat(list,hasItem(5));
-		
+
 	}
-	
+
 	@Test
 	public void testToArray() {
 		assertThat( Arrays.asList(1,2,3,4,5),hasItem(of(1,5,3,4,2).toArray()[0]));
@@ -212,7 +212,7 @@ public class ReactiveJDKStreamRSTest {
 
 	@Test
 	public void collectSBB(){
-		
+
 		List<Integer> list = of(1,2,3,4,5).to(Streamable::fromStream).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
 		assertThat(list.size(),equalTo(5));
 	}

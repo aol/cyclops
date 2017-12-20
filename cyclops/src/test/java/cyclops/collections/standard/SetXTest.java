@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SetX;
 
 public class SetXTest extends AbstractSetTest {
 

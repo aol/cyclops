@@ -4,14 +4,12 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.collections.AbstractSetTest;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.data.HashSet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
-import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
