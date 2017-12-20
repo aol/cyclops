@@ -32,7 +32,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
- * reactiveBuffer : is used to denote creational methods for reactiveBuffer-streams that support non-blocking backpressure
+ * reactive : is used to denote creational methods for reactive-streams that support non-blocking backpressure
  * async : is used to denote creational methods for asynchronous streams that do not support backpressure
  */
 
@@ -55,7 +55,7 @@ public interface Spouts {
 
     /**
      * Create a Stream that accepts data via the Subsriber passed into the supplied Consumer.
-     * reactiveBuffer-streams susbscription is ignored (i.e. this Stream is backpressure free)
+     * reactive-streams susbscription is ignored (i.e. this Stream is backpressure free)
      *
      * <pre>
      *     {@code
@@ -110,7 +110,7 @@ public interface Spouts {
      * E.g. In the example below 2 elements are requested, we ignore this and send 30 elements instead
      * <pre>
      *     {@code
-     *     Subscription sub = Spouts.reactiveBuffer(10, s -> {
+     *     Subscription sub = Spouts.reactive(10, s -> {
                                                         s.onSubscribe(new Subscription() {
                                                                 @Override
                                                                 public void request(long n) {
@@ -222,13 +222,13 @@ public interface Spouts {
     /**
      *   The recommended way to connect a Spout to a Publisher is via Spouts#from
      *   Create an Subscriber for Observable style asynchronous push based Streams,
-     *   that implements backpressure internally via the reactiveBuffer-streams spec.
+     *   that implements backpressure internally via the reactive-streams spec.
      *
      *   Subscribers signal demand via their subscription and publishers push data to subscribers
      *   synchronously or asynchronously, never exceeding signalled demand
      *
      * @param <T> Stream data type
-     * @return An async Stream Subscriber that supports efficient backpressure via reactiveBuffer-streams
+     * @return An async Stream Subscriber that supports efficient backpressure via reactive-streams
      */
     static <T> ReactiveSubscriber<T> reactiveSubscriber(){
         return new ReactiveSubscriber<T>();

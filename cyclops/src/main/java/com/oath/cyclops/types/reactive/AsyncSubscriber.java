@@ -28,7 +28,7 @@ import java.util.concurrent.locks.LockSupport;
  *
  *          //on the main thread
  *
- *          sub.reactiveStream()
+ *          sub.stream()
  *             .peek(System.out::println)
  *             .collect(CyclopsCollectors.toList());
  *
@@ -82,7 +82,7 @@ public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
      *
      *          //on the main thread
      *
-     *          sub.reactiveStream()
+     *          sub.stream()
      *             .peek(System.out::println)
      *             .collect(CyclopsCollectors.toList());
      *

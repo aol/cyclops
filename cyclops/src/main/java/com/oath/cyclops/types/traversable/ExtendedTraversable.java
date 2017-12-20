@@ -28,8 +28,8 @@ public interface ExtendedTraversable<T> extends Traversable<T> {
      *
      * <pre>
      * {@code
-     *   ExtendedTraversable<Integer> reactiveStream = ReactiveSeq.of(1,2,3);
-     *   reactiveStream.combinations(2)
+     *   ExtendedTraversable<Integer> stream = ReactiveSeq.of(1,2,3);
+     *   stream.combinations(2)
      *
      *   //ReactiveSeq[ReactiveSeq[1,2],ReactiveSeq[1,3],ReactiveSeq[2,3]]
      * }
@@ -65,7 +65,7 @@ public interface ExtendedTraversable<T> extends Traversable<T> {
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#reactiveStream()
+     * @see com.oath.cyclops.types.traversable.Traversable#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {

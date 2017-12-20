@@ -257,7 +257,7 @@ public class LazyReact implements ReactBuilder {
      *	@param s Stream to copy
      *	@param org ignored for LazyFutureStreams
      *	@return
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#construct(java.util.stream.Stream, java.util.List)
      */
     public <U> FutureStream<U> construct(final Stream<U> s) {
 
@@ -438,7 +438,7 @@ public class LazyReact implements ReactBuilder {
      *	@param startInclusive Start of range
      *	@param endExclusive End of range
      *	@return FutureStream that is a range of Integers
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#range(int, int)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#range(int, int)
      */
     public FutureStream<Integer> range(final int startInclusive, final int endExclusive) {
         return fromStream(ReactiveSeq.range(startInclusive, endExclusive));
@@ -453,7 +453,7 @@ public class LazyReact implements ReactBuilder {
      * CompletableFuture<List<String>> query(String string);
      *
      * List<String> titles = new LazyReact().fromStreamFutures(Stream.of(query("Hello, world!")))
-                                            .flatMap(Collection::reactiveStream)
+                                            .flatMap(Collection::stream)
                                             .peek(System.out::println)
                                             .<String>transform(url -> getTitle(url))
                                             .filter(Objects::nonNull)
@@ -467,9 +467,9 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      *
      *
-     *	@param reactiveStream Stream that serves as input to FutureStream
+     *	@param stream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#fromStream(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#fromStream(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamFutures(final Stream<CompletableFuture<U>> stream) {
 
@@ -496,7 +496,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Supplier Actions
      *	@return
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.function.Supplier[])
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#react(java.util.function.Supplier[])
      */
     @SafeVarargs
     public final <U> FutureStream<U> ofAsync(final Supplier<U>... actions) {
@@ -520,9 +520,9 @@ public class LazyReact implements ReactBuilder {
      * </pre>
      *
      *
-     *	@param reactiveStream Stream that serves as input to FutureStream
+     *	@param stream Stream that serves as input to FutureStream
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#fromStreamWithoutFutures(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStream(final Stream<U> stream) {
 
@@ -548,7 +548,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Suppliers to execute
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.List)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#react(java.util.List)
      */
     public <U> FutureStream<U> react(final Collection<Supplier<U>> actions) {
 
@@ -613,7 +613,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param iter Iterable
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#ofIterable(java.lang.Iterable)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#ofIterable(java.lang.Iterable)
      */
     public <U> FutureStream<U> fromIterable(final Iterable<U> iter) {
         if(iter instanceof FutureStream){
@@ -629,9 +629,9 @@ public class LazyReact implements ReactBuilder {
      *
      * <pre>
      * {@code
-     * Stream<Supplier<Data>> reactiveStream = Stream.of(this::load1,this::looad2,this::load3);
+     * Stream<Supplier<Data>> stream = Stream.of(this::load1,this::looad2,this::load3);
      *
-     * LazyReact().fromStreamAsync(reactiveStream)
+     * LazyReact().fromStreamAsync(stream)
      *            .map(this::process)
      *            .forEach(this::save)
      * }
@@ -639,7 +639,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Stream to react to
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.stream.Stream)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#react(java.util.stream.Stream)
      */
     public <U> FutureStream<U> fromStreamAsync(final Stream<? extends Supplier<U>> actions) {
 
@@ -666,7 +666,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions Iterator to react to
      *	@return FutureStream
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#react(java.util.Iterator)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#react(java.util.Iterator)
      */
     public <U> FutureStream<U> fromIteratorAsync(final Iterator<? extends Supplier<U>> actions) {
 
@@ -694,7 +694,7 @@ public class LazyReact implements ReactBuilder {
      *
      *	@param actions
      *	@return
-     * @see com.oath.cyclops.react.reactiveStream.BaseSimpleReact#reactIterable(java.lang.Iterable)
+     * @see com.oath.cyclops.react.stream.BaseSimpleReact#reactIterable(java.lang.Iterable)
      */
     public <U> FutureStream<U> fromIterableAsync(final Iterable<? extends Supplier<U>> actions) {
         final ReactiveSeq<? extends Supplier<U>> seq = actions instanceof List ? ReactiveSeq.fromList((List) actions)
@@ -869,7 +869,7 @@ public class LazyReact implements ReactBuilder {
      *
      * }</pre>
      *
-     * @param generate Supplier that generates reactiveStream input
+     * @param generate Supplier that generates stream input
      * @return Infinite FutureStream
      */
     public <U> FutureStream<U> generate(final Supplier<U> generate) {
@@ -901,7 +901,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer flow from a JDK Iterator
+     * Start a reactive flow from a JDK Iterator
      * <pre>
      * {@code
      *  Iterator<Integer> iterator;
@@ -910,7 +910,7 @@ public class LazyReact implements ReactBuilder {
      *
      * }
      * </pre>
-     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
      * @return  FutureStream
      */
     @SuppressWarnings("unchecked")
@@ -920,7 +920,7 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer flow from a Collection using an Iterator
+     * Start a reactive flow from a Collection using an Iterator
      *
      *
      * <pre>
@@ -943,9 +943,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactive dataflow
      * @return  FutureStream
      */
     public FutureStream<Integer> from(final IntStream stream) {
@@ -955,9 +955,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactive dataflow
      * @return  FutureStream
      */
     public FutureStream<Double> from(final DoubleStream stream) {
@@ -965,9 +965,9 @@ public class LazyReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
+     * @param stream that will be used to drive the reactive dataflow
      * @return FutureStream
      */
     public FutureStream<Long> from(final LongStream stream) {

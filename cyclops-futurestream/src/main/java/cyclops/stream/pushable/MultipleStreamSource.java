@@ -9,7 +9,7 @@ import com.oath.cyclops.async.adapters.Topic;
 import cyclops.futurestream.FutureStream;
 
 /**
- * Build Streams that reactiveStream data from the topic instance
+ * Build Streams that stream data from the topic instance
  *
  * @author johnmcclean
  *

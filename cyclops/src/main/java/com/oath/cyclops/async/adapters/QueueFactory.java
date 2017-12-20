@@ -17,7 +17,7 @@ package com.oath.cyclops.async.adapters;
                                                       .run();
 
 
-        transferQueue.reactiveStream()
+        transferQueue.stream()
                   .map(e->"Consumed on " + Thread.currentThread().getId())
                   .futureOperations(Executors.newFixedThreadPool(1))
                   .forEach(System.out::println);

@@ -74,7 +74,7 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Returns a reactiveStream limited to all elements for which a predicate evaluates
+     * Returns a stream limited to all elements for which a predicate evaluates
      * to <code>true</code>.
      * <p>
      * <code>
@@ -87,7 +87,7 @@ public class LazyFutureStreamFunctions {
     }
 
     /**
-     * Returns a reactiveStream ed to all elements for which a predicate evaluates to
+     * Returns a stream ed to all elements for which a predicate evaluates to
      * <code>true</code>.
      * <p>
      * <code>

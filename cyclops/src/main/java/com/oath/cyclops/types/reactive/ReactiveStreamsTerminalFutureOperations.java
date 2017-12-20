@@ -3,7 +3,7 @@ package com.oath.cyclops.types.reactive;
 import java.util.function.Consumer;
 
 /**
- * Interface for reactiveBuffer-streams based terminal operations, requires simple-react to be on the classpath.
+ * Interface for reactive-streams based terminal operations, requires simple-react to be on the classpath.
  *
  * @author johnmcclean
  *

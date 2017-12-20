@@ -15,7 +15,7 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.val;
 
 /**
- * A Subscriber for Observable type event driven Streams that implement backpressure via the reactiveBuffer-streams API
+ * A Subscriber for Observable type event driven Streams that implement backpressure via the reactive-streams API
 
  *
  * @author johnmcclean
@@ -52,14 +52,14 @@ public class ReactiveSubscriber<T> implements Subscriber<T> {
      *           ReactiveSubscriber<Integer> sub = Spouts.reactiveSubscriber();
 
                 Flux.just(1,2,3).forEachAsync(sub);
-                sub.reactiveStream().forEach(System.out::println);
+                sub.stream().forEach(System.out::println);
 
      *          //note JDK Stream based terminal operations may block the current thread
      *          //see ReactiveSeq#collectStream ReactiveSeq#foldAll for non-blocking alternatives
      *    }
      * </pre>
      *
-     * @return A push-based asychronous event driven Observable-style Stream that implements Backpressure via the reactiveBuffer-streams API
+     * @return A push-based asychronous event driven Observable-style Stream that implements Backpressure via the reactive-streams API
      */
     public ReactiveSeq<T> reactiveStream(){
         streamCreated = true;

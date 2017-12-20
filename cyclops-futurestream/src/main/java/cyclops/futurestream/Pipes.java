@@ -213,8 +213,8 @@ public class Pipes<K, V> {
         pipes.push("data-queue", "world");
 
         //on a separate thread
-        ReactiveSeq<String> reactiveStream = pipes.reactiveSeq("data-queue");
-        reactiveStream.forEach(System.out::println);
+        ReactiveSeq<String> stream = pipes.reactiveSeq("data-queue");
+        stream.forEach(System.out::println);
         //"world"
 
 
@@ -512,8 +512,8 @@ public class Pipes<K, V> {
      * Pipes.register("test", QueueFactories.
     										<String>boundedNonBlockingQueue(100)
     											.build());
-    	LazyFutureStream<String> reactiveStream =  PipesToLazyStreams.cpuBoundStream("test");
-    	reactiveStream.filter(it->it!=null).peek(System.out::println).run();
+    	LazyFutureStream<String> stream =  PipesToLazyStreams.cpuBoundStream("test");
+    	stream.filter(it->it!=null).peek(System.out::println).run();
      *
      * }</pre>
      *
@@ -559,7 +559,7 @@ public class Pipes<K, V> {
         queue.offer("world");
         queue.close();
 
-        assertThat(reactiveSubscriber.reactiveStream().findAny().getValue(),equalTo("world"));
+        assertThat(reactiveSubscriber.stream().findAny().getValue(),equalTo("world"));
      *
      *
      *  }
@@ -600,7 +600,7 @@ public class Pipes<K, V> {
         queue.offer(4);
         queue.close();
 
-        assertThat(queue.reactiveStream().toList(),equalTo(Arrays.asList(1,2,3,4)));
+        assertThat(queue.stream().toList(),equalTo(Arrays.asList(1,2,3,4)));
      *
      * }
      * </pre>

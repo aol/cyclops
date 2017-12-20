@@ -39,10 +39,10 @@ public class AnyMTest {
 	/** no longer compiles!
 	@Test
 	public void multiReturn(){
-		AnyMValue<Integer> reactiveStream = AnyM.fromOptional(Optional.of(1))
+		AnyMValue<Integer> stream = AnyM.fromOptional(Optional.of(1))
 									.flatMap(i->ReactiveSeq.of(1,2,i).anyM());
 
-		reactiveStream.map(i->i+2);
+		stream.map(i->i+2);
 	}
 	**/
     @Test
@@ -80,8 +80,8 @@ public class AnyMTest {
 	@Test
 	public void testForEachCfFlatMapToStream() {
 		   AnyM.fromCompletableFuture(CompletableFuture.completedFuture(asList(1,3)))
-		   						.flatMap(c->AnyM.fromStream(c.reactiveStream()))
-		   						.reactiveStream()
+		   						.flatMap(c->AnyM.fromStream(c.stream()))
+		   						.stream()
 				  				.forEach(System.out::println);
 
 	}

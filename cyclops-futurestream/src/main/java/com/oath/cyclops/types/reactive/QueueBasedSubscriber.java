@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A reactiveBuffer-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
+ * A reactive-streams reactiveSubscriber, backed by a cyclops2-react async.Queue, for merging data from multiple publishers into a single Stream
  *
  * @author johnmcclean
  *

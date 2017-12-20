@@ -25,7 +25,7 @@ public interface FoldableTransformerSeq<W extends WitnessType<W>,T> extends Tran
         FilterableTransformable<T> {
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.TransformerSeq#reactiveStream()
+     * @see cyclops2.monads.transformers.values.TransformerSeq#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {

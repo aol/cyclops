@@ -52,7 +52,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     Option<RT> get();
     /**
-     * Create a reactiveBuffer CompletableEither
+     * Create a reactive CompletableEither
      *
      * <pre>
      *  {@code
@@ -349,9 +349,9 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Either5<Throwable,String,String,String,Integer> lazy = Either5.fromPublisher(reactiveStream);
+         Either5<Throwable,String,String,String,Integer> lazy = Either5.fromPublisher(stream);
 
          //Either[1]
      *
