@@ -13,9 +13,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import com.oath.cyclops.types.mixins.Printable;
+import cyclops.companion.Semigroups;
 import org.junit.Test;
 
-import cyclops.companion.Semigroups;
+import cyclops.companion.FutureStreamSemigroups;
 import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.mutable.ListX;
 
@@ -36,7 +37,7 @@ public class LazyTest implements Printable {
     @Test
     public void combineNoOrder(){
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .combine((a, b)->a.equals(b), Semigroups.intSum)
                    .toListX(),equalTo(ListX.of(1,2,3)));
 
     }
@@ -44,7 +45,7 @@ public class LazyTest implements Printable {
     public void combine(){
 
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->true,Semigroups.intSum).toListX(),
+                   .combine((a, b)->true, Semigroups.intSum).toListX(),
                    equalTo(Arrays.asList(6)));
 
     }
