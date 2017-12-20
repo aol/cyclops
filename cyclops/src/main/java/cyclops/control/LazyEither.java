@@ -134,7 +134,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return fromFuture(Future.of(s,ex));
     }
     /**
-     * Create a reactiveBuffer CompletableEither
+     * Create a reactive CompletableEither
      *
      * <pre>
      *  {@code
@@ -553,9 +553,9 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * Lazily construct a Right Either from the supplied publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Either<Throwable,Integer> future = Either.fromPublisher(reactiveStream);
+         Either<Throwable,Integer> future = Either.fromPublisher(stream);
 
          //Either[1]
      *

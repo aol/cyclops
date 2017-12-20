@@ -43,10 +43,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer flow from a JDK Iterator
+     * Start a reactive flow from a JDK Iterator
      *
-     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param iterator SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> from(final Iterator<U> iterator) {
@@ -55,11 +55,11 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer flow from a Collection using an Iterator
+     * Start a reactive flow from a Collection using an Iterator
      *
      * @param collection - Collection SimpleReact will iterate over at the skip of the flow
      *
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <R> BaseSimpleReactStream<R> from(final Collection<R> collection) {
@@ -67,10 +67,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer flow from a JDK Iterator
+     * Start a reactive flow from a JDK Iterator
      *
-     * @param iter SimpleReact will iterate over this iterator concurrently to skip the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param iter SimpleReact will iterate over this iterator concurrently to skip the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> fromIterable(final Iterable<U> iter) {
@@ -79,10 +79,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream of CompletableFutures.
+     * Start a reactive dataflow from a stream of CompletableFutures.
      *
-     * @param stream of CompletableFutures that will be used to drive the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param stream of CompletableFutures that will be used to drive the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> fromStream(final Stream<CompletableFuture<U>> stream) {
 
@@ -91,10 +91,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param stream that will be used to drive the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> from(final Stream<U> stream) {
 
@@ -103,10 +103,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param stream that will be used to drive the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> from(final IntStream stream) {
 
@@ -115,10 +115,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param stream that will be used to drive the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> from(final DoubleStream stream) {
 
@@ -127,10 +127,10 @@ public abstract class BaseSimpleReact implements ReactBuilder {
     }
 
     /**
-     * Start a reactiveBuffer dataflow from a reactiveStream.
+     * Start a reactive dataflow from a stream.
      *
-     * @param stream that will be used to drive the reactiveBuffer dataflow
-     * @return Next stage in the reactiveBuffer flow
+     * @param stream that will be used to drive the reactive dataflow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> from(final LongStream stream) {
 
@@ -152,12 +152,12 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     /**
      *
-     * Start a reactiveBuffer dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of one-off-suppliers
      *
      * @param actions
      *            List of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> react(final Collection<Supplier<U>> actions) {
@@ -167,12 +167,12 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     /**
      *
-     * Start a reactiveBuffer dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of one-off-suppliers
      *
      * @param actions
      *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> react(final Stream<Supplier<U>> actions) {
@@ -183,12 +183,12 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     /**
      *
-     * Start a reactiveBuffer dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of one-off-suppliers
      *
      * @param actions
      *           Iterator over Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> react(final Iterator<Supplier<U>> actions) {
@@ -200,12 +200,12 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     /**
      *
-     * Start a reactiveBuffer dataflow with a list of one-off-suppliers
+     * Start a reactive dataflow with a list of one-off-suppliers
      *
      * @param actions
      *           Stream of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     @SuppressWarnings("unchecked")
     public <U> BaseSimpleReactStream<U> reactIterable(final Iterable<Supplier<U>> actions) {
@@ -217,11 +217,11 @@ public abstract class BaseSimpleReact implements ReactBuilder {
 
     /**
      *
-     * Start a reactiveBuffer dataflow with an array of one-off-suppliers
+     * Start a reactive dataflow with an array of one-off-suppliers
      *
      * @param actions Array of Suppliers to provide data (and thus events) that
      *            downstream jobs will react too
-     * @return Next stage in the reactiveBuffer flow
+     * @return Next stage in the reactive flow
      */
     public <U> BaseSimpleReactStream<U> react(final Supplier<U>... actions) {
 

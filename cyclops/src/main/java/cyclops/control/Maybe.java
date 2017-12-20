@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Totally lazy, reactiveBuffer  more powerful general Option type. Maybe is maybe like a Java
+ * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
  * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
  * Optional. transform / peek/ filter and flatMap build the execution chaing, but are
  * not executed until the value inside the Maybe is required.
@@ -93,7 +93,7 @@ return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
  *
  * Maybe is a functor (transform) monad (flatMap) and an applicative (ap)
  *
- * Maybe is reactiveBuffer via fromPublisher and maybe() methods
+ * Maybe is reactive via fromPublisher and maybe() methods
  *
  * Maybe is convertable to all cyclops2-react data types.
  *
@@ -171,7 +171,7 @@ public interface Maybe<T> extends Option<T> {
      * </pre>
      *
      * @param <T> Data input type to the Maybe
-     * @return A reactiveBuffer CompletableMaybe
+     * @return A reactive CompletableMaybe
      */
     static <T> CompletableMaybe<T,T> maybe(){
         Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
@@ -356,12 +356,12 @@ public interface Maybe<T> extends Option<T> {
     }
 
     /**
-     * Construct a Maybe  that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Maybe  that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-    Maybe<Integer> maybe = Maybe.fromPublisher(reactiveStream);
+    Maybe<Integer> maybe = Maybe.fromPublisher(stream);
 
     //Maybe[1]
      *
@@ -379,9 +379,9 @@ public interface Maybe<T> extends Option<T> {
      *  Construct a Maybe  that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-    Maybe<Integer> maybe = Maybe.fromIterable(reactiveStream);
+    Maybe<Integer> maybe = Maybe.fromIterable(stream);
 
     //Maybe[1]
      *

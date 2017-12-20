@@ -69,7 +69,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     public <K, V> Collector<Tuple2<? extends K, ? extends V>, ?, Map<K, V>> getCollector();
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Folds#reactiveStream()
+     * @see com.oath.cyclops.types.foldable.Folds#stream()
      */
     @Override
     default ReactiveSeq<Tuple2<K, V>> stream() {
@@ -176,7 +176,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     boolean isEmpty();
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#allMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#allMatch(java.util.function.Predicate)
      */
     @Override
     default boolean allMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -184,7 +184,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#anyMatch(java.util.function.Predicate)
      */
     @Override
     default boolean anyMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -192,7 +192,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#noneMatch(java.util.function.Predicate)
      */
     @Override
     default boolean noneMatch(final Predicate<? super Tuple2<K, V>> c) {
@@ -200,7 +200,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#max(java.util.Comparator)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#max(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
@@ -208,7 +208,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#min(java.util.Comparator)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#min(java.util.Comparator)
      */
     @Override
     default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {

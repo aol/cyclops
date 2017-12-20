@@ -441,7 +441,7 @@ public class Streams {
      *
      * <pre>
      * {@code
-     *     Stream<Integer> reactiveStream = Streams.optionalToStream(Optional.of(1));
+     *     Stream<Integer> stream = Streams.optionalToStream(Optional.of(1));
      *     //Stream[1]
      *
      *     Stream<Integer> zero = Streams.optionalToStream(Optional.zero());
@@ -691,7 +691,7 @@ public class Streams {
      * </pre>
      *
      *
-     * @param stream the reactiveStream to schedule element processing on
+     * @param stream the stream to schedule element processing on
      * @param cron Expression that determines when each job will run
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -727,7 +727,7 @@ public class Streams {
      * </pre>
      *
      *
-     * @param stream the reactiveStream to schedule element processing on
+     * @param stream the stream to schedule element processing on
      * @param delay Between last element completes passing through the Stream until the next one starts
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -761,7 +761,7 @@ public class Streams {
      * data.connect().forEach(this::logToDB);
      * }
      * </pre>
-     * @param stream the reactiveStream to schedule element processing on
+     * @param stream the stream to schedule element processing on
      * @param rate Time in millis between job runs
      * @param ex ScheduledExecutorService
      * @return Connectable HotStream of emitted from scheduled Stream
@@ -789,7 +789,7 @@ public class Streams {
     }
 
     /**
-     * Split reactiveStream at point where predicate no longer holds
+     * Split stream at point where predicate no longer holds
      * <pre>
      * {@code
      *   ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
@@ -823,7 +823,7 @@ public class Streams {
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      * <pre>
      * {@code
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -833,7 +833,7 @@ public class Streams {
      * }
      * </pre>
      *
-     * @return duplicated reactiveStream
+     * @return duplicated stream
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream) {
 
@@ -843,7 +843,7 @@ public class Streams {
     }
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      * <pre>
      * {@code
      *  Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -853,7 +853,7 @@ public class Streams {
      * }
      * </pre>
      *
-     * @return duplicated reactiveStream
+     * @return duplicated stream
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream,Supplier<Deque<T>> bufferFactory) {
 
@@ -872,7 +872,7 @@ public class Streams {
     /**
      * Triplicates a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      * <pre>
      * {@code
      * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
@@ -894,7 +894,7 @@ public class Streams {
     /**
      * Triplicates a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      * <pre>
      * {@code
      * 	Tuple3<ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>,ReactiveSeq<Tuple3<T1,T2,T3>>> Tuple3 = sequence.triplicate();
@@ -917,7 +917,7 @@ public class Streams {
     /**
      * Makes four copies of a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      *
      * <pre>
      * {@code
@@ -940,7 +940,7 @@ public class Streams {
     /**
      * Makes four copies of a Stream
      * Buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      *
      * <pre>
      * {@code
@@ -1039,7 +1039,7 @@ public class Streams {
     }
 
     /**
-     * Insert data into a reactiveStream at given position
+     * Insert data into a stream at given position
      * <pre>
      * {@code
      * List<String> result = 	of(1,2,3).insertAt(1,100,200,300)
@@ -1079,7 +1079,7 @@ public class Streams {
     }
 
     /**
-     * Insert a Stream into the middle of this reactiveStream at the specified position
+     * Insert a Stream into the middle of this stream at the specified position
      * <pre>
      * {@code
      * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
@@ -1282,7 +1282,7 @@ public class Streams {
     }
 
     /**
-     * Take elements from a reactiveStream while the predicates hold
+     * Take elements from a stream while the predicates hold
      * <pre>
      * {@code Streams.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList());
      * //[4,3]
@@ -1323,7 +1323,7 @@ public class Streams {
      * </pre>
      *
      * @param stream Stream to reverse
-     * @return Reversed reactiveStream
+     * @return Reversed stream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
         return ReactiveSeq.of(1).flatMap(i->reversedStream(stream.collect(java.util.stream.Collectors.toList())));
@@ -1365,7 +1365,7 @@ public class Streams {
     	}
      * </pre>
      * @param s Stream to cycle
-     * @return New cycling reactiveStream
+     * @return New cycling stream
      */
     public static <U> Stream<U> cycle(final Stream<U> s) {
         return cycle(Streamable.fromStream(s));
@@ -1374,7 +1374,7 @@ public class Streams {
     /**
      * Create a Stream that infiniteable cycles the provided Streamable
      * @param s Streamable to cycle
-     * @return New cycling reactiveStream
+     * @return New cycling stream
      */
     public static <U> Stream<U> cycle(final Streamable<U> s) {
         return Stream.iterate(s.stream(), s1 -> s.stream())
@@ -1392,7 +1392,7 @@ public class Streams {
      * }
      * </pre>
      * @param s Streamable to cycle
-     * @return New cycling reactiveStream
+     * @return New cycling stream
      */
     public static <U> Stream<U> cycle(final long times, final Streamable<U> s) {
         return Stream.iterate(s.stream(), s1 -> s.stream())
@@ -1401,10 +1401,10 @@ public class Streams {
     }
 
     /**
-     * Create a reactiveStream from an iterable
+     * Create a stream from an iterable
      * <pre>
      * {@code
-     * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3))
+     * 	assertThat(Streams.stream(Arrays.asList(1,2,3))
      * 								.collect(CyclopsCollectors.toList()),
      * 									equalTo(Arrays.asList(1,2,3)));
 
@@ -1423,10 +1423,10 @@ public class Streams {
     }
 
     /**
-     * Create a reactiveStream from an iterator
+     * Create a stream from an iterator
      * <pre>
      * {@code
-     * 	assertThat(Streams.reactiveStream(Arrays.asList(1,2,3).iterator())
+     * 	assertThat(Streams.stream(Arrays.asList(1,2,3).iterator())
      * 							.collect(CyclopsCollectors.toList()),
      * 								equalTo(Arrays.asList(1,2,3)));
 
@@ -1464,12 +1464,12 @@ public class Streams {
     }
 
     /**
-     * Create a reactiveStream from a transform
+     * Create a stream from a transform
      * <pre>
      * {@code
      * 	Map<String,String> transform = new HashMap<>();
     	transform.put("hello","world");
-    	assertThat(Streams.reactiveStream(transform).collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
+    	assertThat(Streams.stream(transform).collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(new AbstractMap.SimpleEntry("hello","world"))));
 
      * }</pre>
      *
@@ -1490,7 +1490,7 @@ public class Streams {
     }
 
     /**
-     * Simultaneously reduce a reactiveStream with multiple reducers
+     * Simultaneously reduce a stream with multiple reducers
      *
      * <pre>{@code
      *
@@ -1514,7 +1514,7 @@ public class Streams {
     }
 
     /**
-     * Simultanously reduce a reactiveStream with multiple reducers
+     * Simultanously reduce a stream with multiple reducers
      *
      * <pre>
      * {@code
@@ -2122,8 +2122,8 @@ public class Streams {
     }
 
     /**
-     * Returns a reactiveStream with a given value interspersed between any two values
-     * of this reactiveStream.
+     * Returns a stream with a given value interspersed between any two values
+     * of this stream.
      *
      * <pre>
      * {@code
@@ -2138,7 +2138,7 @@ public class Streams {
     }
 
     /**
-     * Keep only those elements in a reactiveStream that are of a given type.
+     * Keep only those elements in a stream that are of a given type.
      *
      *
      * assertThat(Arrays.asList(1, 2, 3),
@@ -2152,7 +2152,7 @@ public class Streams {
     }
 
     /**
-     * Cast all elements in a reactiveStream to a given type, possibly throwing a
+     * Cast all elements in a stream to a given type, possibly throwing a
      * {@link ClassCastException}.
      *
      * <pre>
@@ -2251,7 +2251,7 @@ public class Streams {
     }
 
     /**
-     * Perform a flatMap operation where the result will be a flattened reactiveStream of Characters
+     * Perform a flatMap operation where the result will be a flattened stream of Characters
      * from the CharSequence returned by the supplied function.
      *
      * <pre>
@@ -2273,7 +2273,7 @@ public class Streams {
     }
 
     /**
-     *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
+     *  Perform a flatMap operation where the result will be a flattened stream of Strings
      * from the text loaded from the supplied files.
      *
      * <pre>
@@ -2300,7 +2300,7 @@ public class Streams {
     }
 
     /**
-     *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
+     *  Perform a flatMap operation where the result will be a flattened stream of Strings
      * from the text loaded from the supplied URLs
      *
      * <pre>
@@ -2330,7 +2330,7 @@ public class Streams {
     }
 
     /**
-      *  Perform a flatMap operation where the result will be a flattened reactiveStream of Strings
+      *  Perform a flatMap operation where the result will be a flattened stream of Strings
      * from the text loaded from the supplied BufferedReaders
      *
      * <pre>
@@ -2514,10 +2514,10 @@ public class Streams {
     }
 
     /**
-      * Projects an immutable toX of this reactiveStream. Initial iteration over the toX is not thread safe
+      * Projects an immutable toX of this stream. Initial iteration over the toX is not thread safe
       * (can't be performed by multiple threads concurrently) subsequent iterations are.
       *
-      * @return An immutable toX of this reactiveStream.
+      * @return An immutable toX of this stream.
       */
     public static final <A> CollectionX<A> toLazyCollection(final Stream<A> stream) {
         return SeqUtils.toLazyCollection(stream.iterator());

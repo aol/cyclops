@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Perform incremental (optionally parallel) reduction on a reactiveStream
+ * Perform incremental (optionally parallel) reduction on a stream
  *
  * @author johnmcclean
  *

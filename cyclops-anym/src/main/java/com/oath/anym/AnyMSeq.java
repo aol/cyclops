@@ -297,7 +297,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     /* (non-Javadoc)
-     * @see AnyM#collect(java.util.reactiveStream.Collector)
+     * @see AnyM#collect(java.util.stream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
@@ -900,7 +900,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
+     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
@@ -909,7 +909,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -919,7 +919,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
@@ -929,7 +929,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
+     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
@@ -939,7 +939,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.reactiveBuffer.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
+     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
      */
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,

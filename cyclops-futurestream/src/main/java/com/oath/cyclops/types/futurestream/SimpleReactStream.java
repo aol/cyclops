@@ -86,7 +86,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Split a reactiveStream at a given position. (Operates on futures)
+     * Split a stream at a given position. (Operates on futures)
      * <pre>
      * {@code
      * // tuple((1, 2, 3), (4, 5, 6))
@@ -137,7 +137,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Zip two Streams, zipping against the underlying futures of this reactiveStream
+     * Zip two Streams, zipping against the underlying futures of this stream
      *
      * @param other
      * @return
@@ -308,10 +308,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Return a Stream with the same values as this Stream, but with all values omitted until the provided reactiveStream starts emitting values.
-     * Provided Stream ends the reactiveStream of values from this reactiveStream.
+     * Return a Stream with the same values as this Stream, but with all values omitted until the provided stream starts emitting values.
+     * Provided Stream ends the stream of values from this stream.
      *
-     * @param s Stream that will skip the emission of values from this reactiveStream
+     * @param s Stream that will skip the emission of values from this stream
      * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
      */
     default <T> ReactiveSeq<U> skipUntil(final SimpleReactStream<T> s) {
@@ -320,10 +320,10 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
 
     /**
      * Return a Stream with the same values, but will stop emitting values once the provided Stream starts to emit values.
-     * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this reactiveStream can proceed until
+     * e.g. if the provided Stream is asynchronously refreshing state from some remote store, this stream can proceed until
      * the provided Stream succeeds in retrieving data.
      *
-     * @param s Stream that will stop the emission of values from this reactiveStream
+     * @param s Stream that will stop the emission of values from this stream
      * @return Next stage in the Stream but will only emit values until provided Stream starts emitting values
      */
     default <T> ReactiveSeq<U> takeUntil(final SimpleReactStream<T> s) {
@@ -331,7 +331,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Cancel the CompletableFutures in this stage of the reactiveStream
+     * Cancel the CompletableFutures in this stage of the stream
      */
     default void cancel() {
         this.streamCompletableFutures()
@@ -418,7 +418,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * potentially shortcircuit the completion of the stage).
      *
      * @param fn Function to applyHKT when any of the previous events complete
-     * @return Next stage in the reactiveStream
+     * @return Next stage in the stream
      */
     default <R> SimpleReactStream<R> anyOf(final Function<? super U, ? extends R> fn) {
         final CompletableFuture[] array = lastActiveArray(getLastActive());
@@ -618,7 +618,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     /**
      * Allows aggregate values in a Stream to be flatten into a single Stream.
      * flatMap function turn each aggregate value into it's own Stream, and SimpleReact aggregates those Streams
-     * into a single flattened reactiveStream
+     * into a single flattened stream
      *
      * @param flatFn Function that coverts a value (e.g. a Collection) into a Stream
      * @return SimpleReactStream
@@ -754,11 +754,11 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      *
      * @param s Stream to zip
      *
-     * @return Next stage in reactiveStream
+     * @return Next stage in stream
      *
      * @see
-     * com.aol.simple.react.reactiveStream.traits.FutureStream#zip(com.aol.simple.
-     * react.reactiveStream.traits.SimpleReactStream)
+     * com.aol.simple.react.stream.traits.FutureStream#zip(com.aol.simple.
+     * react.stream.traits.SimpleReactStream)
      */
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -828,7 +828,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Merge this reactiveBuffer dataflow with another - recommended for merging
+     * Merge this reactive dataflow with another - recommended for merging
      * different types. To merge flows of the same type the instance method
      * merge is more appropriate.
      *
@@ -1012,7 +1012,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * React and <b>allOf</b>
      *
      * allOf is a non-blocking equivalent of block. The current thread is not
-     * impacted by the calculations, but the reactiveBuffer chain does not continue
+     * impacted by the calculations, but the reactive chain does not continue
      * until all currently alloted tasks complete. The allOf task is transform
      * provided with a list of the results from the previous tasks in the chain.
      *
@@ -1054,7 +1054,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
     }
 
     /**
-     * Convert between an Lazy and Eager future reactiveStream,
+     * Convert between an Lazy and Eager future stream,
      * can be used to take advantages of each approach during a single Stream
      *
      * @return An EagerFutureStream from this LazyFutureStream, will use the same executors

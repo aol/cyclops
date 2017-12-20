@@ -547,7 +547,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     /* (non-Javadoc)
-     * @see java.util.Collection#reactiveStream()
+     * @see java.util.Collection#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {

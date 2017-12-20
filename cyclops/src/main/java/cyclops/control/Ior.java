@@ -116,13 +116,13 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
     /**
-     * Construct an Ior that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct an Ior that contains a single value extracted from the supplied reactive-streams Publisher
 
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-        Ior<Throwable,Integer> future = Ior.fromPublisher(reactiveStream);
+        Ior<Throwable,Integer> future = Ior.fromPublisher(stream);
 
         //Ior[1]
      *

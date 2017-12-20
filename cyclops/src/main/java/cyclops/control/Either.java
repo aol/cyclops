@@ -236,9 +236,9 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * Construct a Right Either from the supplied publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-         Either<Throwable,Integer> future = Either.fromPublisher(reactiveStream);
+         Either<Throwable,Integer> future = Either.fromPublisher(stream);
 
          //Either[1]
      *
@@ -259,7 +259,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * {@code
      *   List<Integer> list =  Arrays.asList(1,2,3);
 
-         Either<Throwable,Integer> future = Either.fromPublisher(reactiveStream);
+         Either<Throwable,Integer> future = Either.fromPublisher(stream);
 
          //Either[1]
      *

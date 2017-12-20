@@ -611,7 +611,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#collect(java.util.reactiveStream.Collector)
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#collect(java.util.stream.Collector)
      */
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
@@ -688,7 +688,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *
      *
      * @param size of combinations
-     * @return All combinations of the elements in this reactiveStream of the specified size
+     * @return All combinations of the elements in this stream of the specified size
      */
     default Streamable<ReactiveSeq<T>> combinations(final int size) {
 
@@ -712,7 +712,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      *
      *
-     * @return All combinations of the elements in this reactiveStream
+     * @return All combinations of the elements in this stream
      */
     default Streamable<ReactiveSeq<T>> combinations() {
         return range(0, size() + 1).map(this::combinations)
@@ -727,7 +727,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code
      *  Streamable.of(Arrays.asList(1,2)).flatten();
      *
-     *  //reactiveStream of (1,  2);
+     *  //stream of (1,  2);
      *
      * }
      *
@@ -743,10 +743,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Type safe unwrap
      * <pre>
      * {@code
-     * Optional<List<String>> reactiveStream = Streamable.of("hello","world")
+     * Optional<List<String>> stream = Streamable.of("hello","world")
     											.optional();
 
-    	assertThat(reactiveStream.getValue(),equalTo(Arrays.asList("hello","world")));
+    	assertThat(stream.getValue(),equalTo(Arrays.asList("hello","world")));
      * }
      *
      * </pre>
@@ -797,7 +797,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     /**
      * Duplicate a Stream, buffers intermediate values, leaders may change positions so a limit
-     * can be safely applied to the leading reactiveStream. Not thread-safe.
+     * can be safely applied to the leading stream. Not thread-safe.
      * <pre>
      * {@code
      *  Tuple2<Streamable<Integer>, Streamable<Integer>> copies =of(1,2,3,4,5,6).duplicate();
@@ -807,7 +807,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      *
-     * @return duplicated reactiveStream
+     * @return duplicated stream
      */
     default Tuple2<Streamable<T>, Streamable<T>> duplicate() {
         return Tuple.tuple(this, this);
@@ -863,7 +863,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }*/
 
     /**
-     * Split reactiveStream at point where predicate no longer holds
+     * Split stream at point where predicate no longer holds
      * <pre>
      * {@code
      *   Streamable.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)
@@ -1557,7 +1557,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
        Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
        List<Integer> result = Streamable.of(1,2,3,4)
-    					.reduce(Arrays.asList(sum,mult).reactiveStream() );
+    					.reduce(Arrays.asList(sum,mult).stream() );
 
 
     	assertThat(result,equalTo(Arrays.asList(10,24)));
@@ -1725,8 +1725,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Returns a reactiveStream with a given value interspersed between any two values
-     * of this reactiveStream.
+     * Returns a stream with a given value interspersed between any two values
+     * of this stream.
      *
      *
      * // (1, 0, 2, 0, 3, 0, 4) Streamable.of(1, 2, 3, 4).intersperse(0)
@@ -1738,7 +1738,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Keep only those elements in a reactiveStream that are of a given type.
+     * Keep only those elements in a stream that are of a given type.
      *
      *
      * // (1, 2, 3) Streamable.of(1, "a", 2, "b",3).ofType(Integer.class)
@@ -1878,7 +1878,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
   }
 
     /**
-     * Insert data into a reactiveStream at given position
+     * Insert data into a stream at given position
      * <pre>
      * {@code
      * List<String> result = 	Streamable.of(1,2,3)
@@ -1919,7 +1919,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Insert a Stream into the middle of this reactiveStream at the specified position
+     * Insert a Stream into the middle of this stream at the specified position
      * <pre>
      * {@code
      * List<String> result = 	Streamable.of(1,2,3)
@@ -2424,7 +2424,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     			.batchBySize(10)
     			.onePer(1, TimeUnit.MICROSECONDS)
     			.peek(batch -> System.out.println("batched : " + batch))
-    			.flatMap(Collection::reactiveStream)
+    			.flatMap(Collection::stream)
     			.peek(individual -> System.out.println("Flattened : "
     					+ individual))
     			.forEach(a->{});

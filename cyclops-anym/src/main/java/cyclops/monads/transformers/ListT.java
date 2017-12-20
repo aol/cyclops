@@ -244,7 +244,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactiveStream.CyclopsCollectable#collectors()
+     * @see com.oath.cyclops.types.stream.CyclopsCollectable#collectors()
 
     @Override
     public Collectable<T> collectors() {

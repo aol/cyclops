@@ -718,8 +718,8 @@ public class ReactiveSeqTest {
     @Test @Ignore
     public void limitPushTest(){
         ReactiveSubscriber<String> pushable = ReactiveSeq.pushable();
-        ReactiveSeq<String> reactiveStream = pushable.reactiveStream();
-        ReactiveSeq<List<String>> res = reactiveStream.map(i->i+"-hello").limit(2)
+        ReactiveSeq<String> stream = pushable.stream();
+        ReactiveSeq<List<String>> res = stream.map(i->i+"-hello").limit(2)
                                                .collectSeq(CyclopsCollectors.toList());
         pushable.onNext("hello1");
         pushable.onNext("hello2");
@@ -771,7 +771,7 @@ public class ReactiveSeqTest {
         pushable.onNext("hello2");
         pushable.onNext("hello3");
         pushable.onComplete();
-       // reactiveStream.printOut();
+       // stream.printOut();
         stream.limitLast(2).zipWithStream(Stream.of(1,2)).printOut();
     }
 
