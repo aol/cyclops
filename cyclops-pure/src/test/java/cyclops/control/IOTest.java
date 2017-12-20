@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.sun.xml.internal.ws.api.model.CheckedException;
+
 import org.junit.Test;
 
 import java.io.IOException;
