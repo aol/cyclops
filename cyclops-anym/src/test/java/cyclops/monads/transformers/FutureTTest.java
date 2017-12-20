@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
 
+import cyclops.companion.Semigroups;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
@@ -249,12 +250,12 @@ public class FutureTTest implements Printable {
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", FutureStreamSemigroups.stringJoin(","))),equalTo(",10"));
+		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", Semigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
+		assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test
@@ -288,7 +289,7 @@ public class FutureTTest implements Printable {
 
 	@Test
 	public void testFoldRightMonoidOfT() {
-		assertThat(just.foldRight(Monoid.of(1, FutureStreamSemigroups.intMult)),equalTo(10));
+		assertThat(just.foldRight(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test

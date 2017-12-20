@@ -1211,14 +1211,14 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             @Test
             public void combineNoOrder(){
                 assertThat(of(1,2,3)
-                           .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
+                           .combine((a, b)->a.equals(b), Semigroups.intSum)
                            .toListX(),equalTo(ListX.of(1,2,3)));
 
             }
     @Test
     public void combineNoOrderMonoid(){
         assertThat(of(1,2,3)
-                .combine(FutureStreamMonoids.intSum,(a, b)->a.equals(b))
+                .combine(Monoids.intSum,(a, b)->a.equals(b))
                 .toListX(),equalTo(ListX.of(1,2,3)));
 
     }

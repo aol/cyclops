@@ -2,6 +2,7 @@ package cyclops.monads;
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.stream.HeadAndTail;
+import cyclops.companion.Semigroups;
 import cyclops.control.Future;
 import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.immutable.VectorX;
@@ -62,7 +63,7 @@ public class StreamTest {
   @Test
   public void anyMIteration(){
     Iterator<Integer> it = AnyM.fromStream(ReactiveSeq.of(1,2,3))
-      .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
+      .combine((a, b)->a.equals(b), Semigroups.intSum)
       .iterator();
     List<Integer> list = new ArrayList<>();
     while(it.hasNext()){
@@ -74,7 +75,7 @@ public class StreamTest {
   @Test
   public void combineNoOrderAnyM(){
     assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3))
-      .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
+      .combine((a, b)->a.equals(b), Semigroups.intSum)
       .toListX(),equalTo(ListX.of(1,2,3)));
 
   }

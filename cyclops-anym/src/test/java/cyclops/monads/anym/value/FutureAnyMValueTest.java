@@ -1,5 +1,6 @@
 package cyclops.monads.anym.value;
 
+import cyclops.companion.Semigroups;
 import cyclops.control.Future;
 import cyclops.function.Monoid;
 import cyclops.companion.FutureStreamSemigroups;
@@ -23,7 +24,7 @@ public class FutureAnyMValueTest extends BaseAnyMValueTest<future> {
     public void combineEager(){
 
 
-        Monoid<Integer> add = Monoid.of(0, FutureStreamSemigroups.intSum);
+        Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
 
         just.flatMap(t1 -> none.map(t2 -> add.apply(t1, t2))).printOut();
         just.flatMapA(t1 -> none.map(t2 -> add.apply(t1, t2))).printOut();

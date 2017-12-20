@@ -1,6 +1,7 @@
 package cyclops.monads.collections;
 
 import com.oath.anym.AnyMSeq;
+import cyclops.companion.Semigroups;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.FutureStreamSemigroups;
 import cyclops.monads.WitnessType;
@@ -147,7 +148,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
     @Test
     public void combine(){
         assertThat(of(1,1,2,3)
-                   .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
+                   .combine((a, b)->a.equals(b), Semigroups.intSum)
                    .toListX(),equalTo(ListX.of(4,3)));
 
     }
