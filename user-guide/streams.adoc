@@ -1,6 +1,6 @@
 
 [index]
-  
+
 
 == Working With Streams
 
@@ -31,7 +31,7 @@ In this example we will delete between element 2 and element 4
 List<String> result = StreamUtils.deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
                                 .map(it ->it+"!!")
                                 .collect(Collectors.toList());
-                                
+
 //"1!!","2!!","5!!","6!!"
 ----
 
@@ -126,7 +126,7 @@ ReactiveSeq.of(1,2,3)
      .hotStream(exec);
 ```
 
-In this example the Stream will start processing immediately on exec, and we will see 
+In this example the Stream will start processing immediately on exec, and we will see
 
 2
 
@@ -159,7 +159,7 @@ Multiple Streams can connect to a single HotStream.
 [source,java]
 ----
 In the example below 5,000 entries will be written out on the HotStreams executing thread, and 100 of those will also be written out on the current thread.
-  
+
 ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .skip(5000)
                     .peek(System.out::println)
@@ -188,7 +188,7 @@ The default transfer queue used by the connect method on a HotStream is an Agron
 ====
 ----
 In the example below 5,000 entries will be written out on the HotStreams executing thread, the consuming thread will only emit one per second. This will cause the transfer queue to fill up, and the ReactiveSeq generating the HotStream will crash.
-  
+
 ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .skip(5000)
                     .peek(System.out::println)
@@ -196,8 +196,8 @@ ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .connect()
                     .onePer(1,TimeUnit.SECONDS)
                     .forEach(next->System.out.println("Current thread : " + next);
-                    
-                    
+
+
 Instead we connect and use a BlockingStream as a transfer queue, the producing Stream will ultimately be slowed to the same rate as the consuming Stream.
 
 ReactiveSeq.range(0,Integer.MAX_VALUE)
@@ -300,7 +300,7 @@ public String load(int i){
 }
 ReactiveSeq.of(1,2,3,4)
          .map(this::load)
-         .forEachEvent(  i->list.add(i), 
+         .forEachEvent(  i->list.add(i),
                          logger::error,
                          ()->resource.close());
 
@@ -367,7 +367,7 @@ s.request(1);
 ----
 ====
 
-==== forEachXEvents 
+==== forEachXEvents
 
 
 
@@ -537,7 +537,7 @@ Batch / Window by time group elements into either a List (Batch) or Streamable (
 ReactiveSeq.of(1,2,3,4,5, 6)
          .map(n-> n==6? sleep(1) : n)
          .windowByTime(10,TimeUnit.MICROSECONDS)
-         
+
 //Streamable[[1,2,3,4,5],[6]]
 ----
 ====
@@ -565,8 +565,8 @@ Much like batchBySize groups elements into Lists based on the specified list siz
 ReactiveSeq.generate(this::loadData)
          .map(this::process)
          .windowByTSizeAndTime(3,1,TimeUnit.SECONDS)
- 
-//4th item takes >1 second        
+
+//4th item takes >1 second
 //Streamable[[res1,res2,res3],[res4]]
 ----
 ====
@@ -653,7 +653,7 @@ System.out.println(
        .window(naturalOrder())
        //produce a table from the window
        .map(w -> tuple(
-              w.value(),   // v0 
+              w.value(),   // v0
               w.count(),   // v1
               w.median(),  // v2
               w.lead(),    // v3
@@ -704,7 +704,7 @@ List<String> result =   ReactiveSeq.of(1,2,3)
                                  .map(it ->it+"!!")
                                  .toList();
 
-//["100!!","200!!","300!!","1!!","2!!","3!!"] 
+//["100!!","200!!","300!!","1!!","2!!","3!!"]
 ----
 ====
 ==== Appending to a Stream
@@ -722,7 +722,7 @@ List<String> result =   appendStream(Stream.of(1,2,3),ReactiveSeq.of(100,200,300
                                         .map(it ->it+"!!")
                                         .collect(Collectors.toList());
 
-//["1!!","2!!","3!!","100!!","200!!","300!!"] 
+//["1!!","2!!","3!!","100!!","200!!","300!!"]
 ----
 
 ====
@@ -740,7 +740,7 @@ import static com.aol.cyclops2-react.streams.StreamUtils.insertStreamAt;
 List<String> result =   insertStreamAt(Strean.of(1,2,3),1,Stream.of(100,200,300))
                                      .map(it ->it+"!!")
                                      .collect(Collectors.toList());
-                                     
+
 //["1!!","100!!","200!!","300!!","2!!","3!!"]
 ----
 ====
@@ -762,7 +762,7 @@ import static com.aol.cyclops2-react.streams.StreamUtils.deleteBetween;
 
 List<String> result =   deleteBetween(Stream.of(1,2,3,4,5,6),2,4)
                                  .map(it ->it+"!!")
-                                 .collect(Collectors.toList());                                 
+                                 .collect(Collectors.toList());
 
 //["1!!","2!!","5!!","6!!"]
 ----
@@ -777,8 +777,8 @@ The subStream operator allows users to extract a smaller subset stream from a la
 [source,java]
 ----
 ReactiveSeq.of(1,2,3,4,5,6).subStream(1,3);
-       
-  
+
+
 //ReactiveSeq[2,3]
 ----
 ====
@@ -790,9 +790,9 @@ The intersperse operator allows a new value to be inserted between every element
 [source,java]
 ----
 
-//ReactiveSeq.of(1, 2, 3, 4).intersperse(0);     
-  
-// (1, 0, 2, 0, 3, 0, 4) 
+//ReactiveSeq.of(1, 2, 3, 4).intersperse(0);
+
+// (1, 0, 2, 0, 3, 0, 4)
 ----
 ====
 
@@ -807,7 +807,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i -> i % 2 != 0)
 //tuple[ReactiveSeq[1,3,5],ReactiveSeq[2,4,6]]
 ----
 ====
-==== Split At 
+==== Split At
 .splitAt
 ====
 [source,java]
@@ -842,7 +842,7 @@ ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitAt(2)
 cyclops-react provides many extraction operators, including many that return a Tuple containing a value and an operational Stream (such as splitAt, splitBy, headAndTail returns an object with 2 fields), and others that access a value directly (get, single) - and throw an exception if the element doesn't exist and some that return optional (elementAt, singleOptional).
 
 ==== get, elementAt
-.splitAtHead, splitAt, get, elementAt 
+.splitAtHead, splitAt, get, elementAt
 ====
 [source,java]
 ----
@@ -899,7 +899,7 @@ ReactiveSeq.of().elementAt(0).isPresent()
 ====
 
 ==== Head And Tail Extraction
-  
+
 .Head and Tail on a Streamable
 ====
 [source,java]
@@ -972,7 +972,7 @@ Stream sieve(Stream s){
 
 ==== Recover
 
-It is possible to recover from an exception thrown earlier in the Stream using the recover operator. It is available on ReactiveSeq, Streamable and StreamUtils. Users can choose to recover differently by Exception type, or globally. 
+It is possible to recover from an exception thrown earlier in the Stream using the recover operator. It is available on ReactiveSeq, Streamable and StreamUtils. Users can choose to recover differently by Exception type, or globally.
 
 [NOTE]
 ====
@@ -1045,7 +1045,7 @@ Scheduling is available for ReactiveSeq streams and via StreamUtils.
 
 
 
-==== Cron Based Scheduling 
+==== Cron Based Scheduling
 
 .ReactiveSeq example
 ====
@@ -1067,7 +1067,7 @@ We can connect to the output of this stream
 HotStream connectable = ReactiveSeq.of(1,2,3,4)
                 .peek(System.out::println)
                 .schedule("* * * * * ?", ex);
-                
+
 
 ----
 
@@ -1160,8 +1160,8 @@ ReactiveSeq.of(1,2,3,4)
      .debounce(1,TimeUnit.DAYS)
      .peek(this::writeToDB)
      .toList()
-     
-     
+
+
 ----
 ====
 .java.util.stream.Stream example
@@ -1268,8 +1268,8 @@ Debounce accepts only one value per time period specified, dropping all other el
 ----
 ReactiveSeq.of(1,2,3,4,5,6)
         .debounce(1000,TimeUnit.SECONDS).toList();
-               
-// 1 
+
+// 1
 ====
 .debounce in simple-react
 ====
@@ -1291,20 +1291,16 @@ ReactiveSeq.of(1,2,3,4,5)
 ----
 ====
 
-==== Elapsed 
+==== Elapsed
 The elasped operator maps the elements in the Stream into a http://www.jooq.org/products/jOO%CE%BB/javadoc/0.9.9/org/jooq/lambda/tuple/Tuple2.html[Tuple2] containing the element and the elapsed time between each emission
 
 .elapsed operator
 ====
 [source,java]
 ----
-<<<<<<< HEAD
 ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(value->value._2()<0)
 =======
-ReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(t->t.v2<0)
->>>>>>> master
-----
-====
+
 
 === Zipping
 
@@ -1351,11 +1347,11 @@ A number of the cyclops-react zip operators allow a custom zipper to be supplied
 [source,java]
 ----
 Stream<List<Integer>> zipped = StreamUtils.zipSequence(Stream.of(1,2,3)
-                        ,ReactiveSeq.of(2,3,4), 
+                        ,ReactiveSeq.of(2,3,4),
                             (a,b) -> Arrays.asList(a,b));
-        
-        
-//Stream[List[1,2],List[2,3],List[3,4]]     
+
+
+//Stream[List[1,2],List[2,3],List[3,4]]
 ----
 ====
 ==== Zip three Streams
@@ -1452,7 +1448,7 @@ ReactiveSeq.range(0,10).skip(8).reverse()
 ----
 ReactiveSeq.reversedOf(1,2)
             .toList()
-            
+
 //List[2,1]
 ----
 ====
@@ -1474,7 +1470,7 @@ ReactiveSeq.reversedListOf(list)
 
 The JDK Streams api has operators skip and skip as of Java 8. The naming of these operators is relatively unusual compared with other languages where take / drop is more common. JDK 9 looks set to introduce new operators such as takeWhile & dropWile (maintaining the old skip and skip operators also). cyclops-react offers many of these operators already, although we currently extend (like jOOλ) the JDK 8 naming convention and use limitWhile and skipWhile.
 
-==== LimitTime 
+==== LimitTime
 
 The limitTime operator takes values from the Stream while time elapsed is less than the time specified in the method parameter.
 
@@ -1603,7 +1599,7 @@ Repeat the Stream infinitely
 ----
 ReactiveSeq.of(1).cycle().skip(6).toList());
 //List[1, 1, 1, 1, 1,1]
-----     
+----
 ====
 ==== Cycle Times
 
@@ -1616,7 +1612,7 @@ The cycle operator repeats the Stream the specified number of times.
 ReactiveSeq.of(1,2,2)
          .cycle(3)
          .collect(Collectors.toList());
-                                
+
 //List[1,2,2,1,2,2,1,2,2]
 ----
 ====
@@ -1636,7 +1632,7 @@ ReactiveSeq.of(1,2,2)
 
 //List[1,2,2,1,2,2,1]
 ----
-==== 
+====
 ==== Cycle While
 
 Cycle while repeats the Stream wgile the predicate holds
@@ -1649,8 +1645,8 @@ MutableInt count =MutableInt.of(0);
 ReactiveSeq.of(1,2,2)
          .cycleWhile(next -> count++<6)
          .collect(Collectors.toList());
-                 
-//List(1,2,2,1,2,2) 
+
+//List(1,2,2,1,2,2)
 ----
 ====
 
@@ -1679,7 +1675,7 @@ List<Integer> list = ReactiveSeq.of(1,2,2))
 
 In addition to inhertiting flatMap from Stream, crossJoin, leftOuterJoin and innerJoin from jOOλ, cyclops-react offers a number of additional flatMap methods that accept a Function that returns a value that can be converted (implicitly)  to Stream.
 
-==== FlatMapFile 
+==== FlatMapFile
 
 The flatMapFile operator Streams the content of the returned File as a String. It is syntax sugar for loading the File to a Stream of Strings inside the function provided to the standard Stream flatMap method.
 
@@ -1700,7 +1696,7 @@ ReactiveSeq.of("input.file")
 //List["hello","world"]
 ====
 
-==== FlatMapURL 
+==== FlatMapURL
 
 The flatMapURL operator Streams the content of the returned URL as a String. It is syntax sugar for loading the URL to a Stream of Strings inside the function provided to the standard Stream flatMap method.
 
@@ -1799,7 +1795,7 @@ ReactiveSeq.of(1,2,3,null)
 //List[1,2,1,1,2,2,1,2,3]
 ----
 ====
-==== 
+====
 
 ==== FlatMapAnyM
 
@@ -1824,7 +1820,7 @@ The flatten operator flattens a nested Stream one level, importantly it will fla
 
 [CAUTION]
 ====
-flatten is not type safe, the same method is available whether the Stream is nested or not, and the client code determines the generic return parameter - which may or may not be accurate.  
+flatten is not type safe, the same method is available whether the Stream is nested or not, and the client code determines the generic return parameter - which may or may not be accurate.
 ====
 .flatten
 ====
@@ -1832,7 +1828,7 @@ This example flatMaps a Javaslang Array into a ReactiveSeq
 [source,java]
 ----
 ReactiveSeq.of(Arrays.asList(1,2)).flatten();
-//ReactiveSeq(1,  2); 
+//ReactiveSeq(1,  2);
 
 ReactiveSeq.of(Optional.of(1)).flatten();
 //ReactiveSeq(1)
@@ -1849,7 +1845,7 @@ crossJoin (inherited from jOOλ) joins two Streams by pairing every possible com
 ----
 
 ReactiveSeq.of("hello", "goodbye").crossJoin(SeqquenceM.of("world", "day"))
- 
+
 //ReactiveSeq[Tuple["hello", "world"], Tuple["hello", "day"],Tuple["goodbye", "world"], Tuple["goodbye", "day"]]
 
 ----
@@ -1864,7 +1860,7 @@ The innerJoin operator (inherited from jOOλ) joins two Streams in a similar man
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
 ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
- 
+
  //ReactiveSeq[Tuple["hello", "hello"]]
 
 ----
@@ -1880,7 +1876,7 @@ The leftOuterJoin retains all elements from the host ReactiveSeq and joins them 
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
 ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
- 
+
  //ReactiveSeq[Tuple["hello", "hello"],Tuple["goodbye",null]]
 ----
 ====
@@ -1895,7 +1891,7 @@ The rightOuterJoin retains all elements from the supplied ReactiveSeq and joins 
 ----
 ReactiveSeq<String> stream = SeqquenceM.of("world", "hello");
 ReactiveSeq.of("hello", "goodbye").crossJoin(stream,(t, u) -> Objects.equals(t, u))
- 
+
  //ReactiveSeq[Tuple["hello", "hello"],Tuple[null,"world"]]
 ----
 ====
@@ -1914,8 +1910,8 @@ In addition to the map method in the JDK cyclops-react also provides a cast meth
 StreamUtils.cast(Stream.of(1, "a", 2, "b", 3),Integer.class)
 // throws ClassCastException
 ----
-====     
-     
+====
+
 === for-comprehensions
 
 http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-sequence-api/7.1.0/com/aol/cyclops-react/sequence/ReactiveSeq.html[ReactiveSeq]
@@ -1935,7 +1931,7 @@ ReactiveSeq.of(1,2,3)
                          a->b-> a+b)
                  .toList()
 
-//List[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8, 
+//List[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 2, 3, 4, 5, 6, 7, 8,
                          9, 10, 11, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)]
 ----
 ====
@@ -2372,7 +2368,7 @@ List<Integer> result = ReactiveSeq.of(1,2,3,4)).reduce(Arrays.asList(sum,mult) )
 
 The are are a number of convenience methods for creating collections.
 
-.toList / toSet / toMap 
+.toList / toSet / toMap
 ====
 [source,java]
 ----
@@ -2400,30 +2396,30 @@ cyclops-react provides operators to lazily create a collection from the Stream. 
 Collection<Integer> col = ReactiveSeq.of(1,2,3,4,5)
                                             .peek(System.out::println)
                                             .toLazyCollection();
-        
+
 col.forEach(System.out::println);
 Collection<Integer> col = ReactiveSeq.of(1,2,3,4,5)
                                    .peek(System.out::println)
                                    .toConcurrentLazyCollection();
-        
-col.forEach(System.out::println);   
+
+col.forEach(System.out::println);
 ----
 ====
 ===  toCompletableFuture / toOptional
 
-.toCompletableFuture / toOptional 
+.toCompletableFuture / toOptional
 ====
 [source,java]
 ----
 Optional<List<String>> stream = ReactiveSeq.of("hello","world")
                                                 .toOptional();
-                                                
+
 //Optional[List["hello","world"]]
-        
+
  CompletableFuture<List<String>> cf = ReactiveSeq.of("hello","world")
                                             .toCompletableFuture();
 
-//CompletableFuture[List["hello","world"]]      
+//CompletableFuture[List["hello","world"]]
 ----
 ====
 ===  anyM / toStreamable
@@ -2445,12 +2441,12 @@ The toStreamable operator converts the ReactiveSeq to a caching Streamable.
 ----
 Streamable<String> caching = ReactiveSeq.of("hello","world")
                                                 .toStreamable();
-                                                
+
 caching.forEach(System.out::println);
 caching.forEach(System.out::println);
 
 //can print the contents of the Stream twice.
-        
+
 AnyM<String> anyM = ReactiveSeq.of("hello","world")
                                             .anyM();
 
@@ -2475,7 +2471,7 @@ These opertors make use of the caching streamable so is not suitable for infinte
 [source,java]
 ----
 Streamable.of(1,2,3).combinations(2)
-      
+
 //Streamable[Streamable[1,2],Streamable[1,3],Streamable[2,3]]
 ----
 ====
@@ -2491,7 +2487,7 @@ Streamable.of(1, 2, 3).permutations()
 ====
 
 
-=== Async terminal operations 
+=== Async terminal operations
 
 The futureOperations operator takes an Executor, and returns the set of available asynchronous terminal operations, each of which returns a CompletableFuture. The Stream will be executed on a single thread from the supplied executor.
 
@@ -2551,7 +2547,7 @@ in this stream using the provided function
 [source,java]
 ----
 CompletableFuture<Optional> min =  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-                                                                  .futureOperations(exec)    
+                                                                  .futureOperations(exec)
                                                                   .minBy(t -> Math.abs(t - 5));
 //min CompletableFuture[Optional[5]]  //5-5 =0
 
@@ -2560,7 +2556,7 @@ maxBy(Function<T, U> function) Asynchronously capture the maximum value
 in this stream using the provided function
 
 CompletableFuture<Optional> max =  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-                                                                  .futureOperations(exec)            
+                                                                  .futureOperations(exec)
                                                                   .maxBy(t -> Math.abs(t - 5));
 //min CompletableFuture[Optional[1]]  //Math.abs(1-5) =4
 
@@ -2569,7 +2565,7 @@ collector) Asynchronously perform a Stream collection ```java
 CompletableFuture> list = ReactiveSeq.of(1,2,3,4,5)
 .futureOperations(exec) .collect(Collectors.toList());
 
-//CompletableFuture[1,2,3,4,5] 
+//CompletableFuture[1,2,3,4,5]
 ----
 
 
