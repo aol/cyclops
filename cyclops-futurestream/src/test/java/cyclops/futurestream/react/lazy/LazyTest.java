@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import com.oath.cyclops.types.mixins.Printable;
 import org.junit.Test;
 
-import cyclops.companion.Semigroups;
+import cyclops.companion.FutureStreamSemigroups;
 import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.mutable.ListX;
 
@@ -36,7 +36,7 @@ public class LazyTest implements Printable {
     @Test
     public void combineNoOrder(){
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->a.equals(b),Semigroups.intSum)
+                   .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
                    .toListX(),equalTo(ListX.of(1,2,3)));
 
     }
@@ -44,7 +44,7 @@ public class LazyTest implements Printable {
     public void combine(){
 
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->true,Semigroups.intSum).toListX(),
+                   .combine((a, b)->true, FutureStreamSemigroups.intSum).toListX(),
                    equalTo(Arrays.asList(6)));
 
     }
@@ -216,7 +216,7 @@ public class LazyTest implements Printable {
             assertThat( react
                             .iterate(1, i->i+1)
                             .limit(5)
-                            .reduce(Semigroups.intSum).get(),equalTo(15));
+                            .reduce(FutureStreamSemigroups.intSum).get(),equalTo(15));
         }
     }
 
@@ -224,14 +224,14 @@ public class LazyTest implements Printable {
 	public void generateTest(){
 	   assertThat( new LazyReact().generate(()->"hello")
 	                   .limit(5)
-	                   .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+	                   .reduce(FutureStreamSemigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
 
 	}
 	@Test
     public void generateAsyncTest(){
        assertThat( new LazyReact().generateAsync(()->"hello")
                        .limit(5)
-                       .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+                       .reduce(FutureStreamSemigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
 
     }
 

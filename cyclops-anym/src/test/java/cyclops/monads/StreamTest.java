@@ -7,7 +7,7 @@ import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
-import cyclops.companion.Semigroups;
+import cyclops.companion.FutureStreamSemigroups;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.reactive.ReactiveSeq;
@@ -62,7 +62,7 @@ public class StreamTest {
   @Test
   public void anyMIteration(){
     Iterator<Integer> it = AnyM.fromStream(ReactiveSeq.of(1,2,3))
-      .combine((a, b)->a.equals(b), Semigroups.intSum)
+      .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
       .iterator();
     List<Integer> list = new ArrayList<>();
     while(it.hasNext()){
@@ -74,7 +74,7 @@ public class StreamTest {
   @Test
   public void combineNoOrderAnyM(){
     assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3))
-      .combine((a, b)->a.equals(b), Semigroups.intSum)
+      .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
       .toListX(),equalTo(ListX.of(1,2,3)));
 
   }
