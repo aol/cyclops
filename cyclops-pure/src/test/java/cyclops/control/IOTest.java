@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.testng.Assert.*;
+
 
 public class IOTest {
   Executor ex = Executors.newFixedThreadPool(1);
