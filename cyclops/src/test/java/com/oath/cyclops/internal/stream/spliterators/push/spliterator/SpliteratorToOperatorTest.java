@@ -3,7 +3,7 @@ package com.oath.cyclops.internal.stream.spliterators.push.spliterator;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.spliterators.push.FilterOperator;
 import com.oath.cyclops.internal.stream.spliterators.push.SpliteratorToOperator;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Before;

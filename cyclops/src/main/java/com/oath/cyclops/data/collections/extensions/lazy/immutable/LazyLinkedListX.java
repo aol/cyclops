@@ -3,7 +3,7 @@ package com.oath.cyclops.data.collections.extensions.lazy.immutable;
 
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.function.Reducer;

@@ -5,7 +5,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.collections.CollectionXTestsWithNulls;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Semigroups;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;

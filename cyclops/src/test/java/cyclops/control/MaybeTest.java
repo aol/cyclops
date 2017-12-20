@@ -2,8 +2,8 @@ package cyclops.control;
 
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
 import cyclops.companion.Monoids;

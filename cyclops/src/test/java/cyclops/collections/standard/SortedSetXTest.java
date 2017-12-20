@@ -21,9 +21,9 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.collections.AbstractSetTest;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Option;
 import cyclops.function.FluentFunctions;
 import cyclops.reactive.ReactiveSeq;
@@ -34,7 +34,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 
 public class SortedSetXTest extends AbstractSetTest {
 

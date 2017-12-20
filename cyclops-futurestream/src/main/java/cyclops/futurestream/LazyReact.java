@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.oath.cyclops.async.adapters.Adapter;
-import cyclops.control.IO;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -122,9 +121,7 @@ public class LazyReact implements ReactBuilder {
         return withAutoMemoize(true).withMemoizeCache(memoizeCache);
     }
 
-    public <T> FutureStream<T> async(IO<T> t){
-        return fromIterableAsync(Seq.of(()->t.run()));
-    }
+
 
     /*
      * The async flag determines whether, on completion, a Future executes the next task

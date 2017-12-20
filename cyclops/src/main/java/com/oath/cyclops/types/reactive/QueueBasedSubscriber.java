@@ -23,7 +23,7 @@ import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.QueueX;
 import com.oath.cyclops.types.futurestream.Continuation;
 
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package cyclops.monads;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Either;
 import cyclops.monads.Witness.stream;

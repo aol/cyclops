@@ -1,6 +1,6 @@
 package cyclops.collections.standard;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 /**

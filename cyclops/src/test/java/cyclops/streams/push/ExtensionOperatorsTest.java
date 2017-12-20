@@ -4,7 +4,7 @@ package cyclops.streams.push;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 
 import cyclops.reactive.ReactiveSeq;

@@ -13,7 +13,7 @@ import cyclops.futurestream.SimpleReact;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import cyclops.data.tuple.Tuple;

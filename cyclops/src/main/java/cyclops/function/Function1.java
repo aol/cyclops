@@ -7,19 +7,18 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.*;
 
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Future;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -28,6 +27,9 @@ import cyclops.data.tuple.Tuple4;
 @FunctionalInterface
 public interface Function1<T,  R> extends Function<T,R>{
 
+    public static <T1,  T3,R> Function1<T1, R> of(final Function<T1, R> triFunc){
+    return a->triFunc.apply(a);
+  }
     public static <T1,  T3,R> Function1<T1, R> λ(final Function1<T1, R> triFunc){
         return triFunc;
     }
@@ -35,9 +37,9 @@ public interface Function1<T,  R> extends Function<T,R>{
         return triFunc;
     }
 
-  default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
-    return reduce.apply(this);
-  }
+    default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
+      return reduce.apply(this);
+    }
 
     default Function0<R> applyLazy(T t){
         return ()->apply(t);
@@ -52,9 +54,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     default Eval<R> now(T t){
         return Eval.now(apply(t));
     }
-    default Reader<T,R> reader(){
-        return in->apply(in);
-    }
+
     public R apply(T a);
 
     /**
@@ -77,9 +77,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     }
 
 
-    default <W1,W2> Function1<Higher<W1,T>,Higher<W2,R>> liftNT(Function<Higher<W1,T>,Higher<W2,T>> hktTransform, Functor<W2> functor){
-        return (T1)-> functor.map(this,hktTransform.apply(T1));
-    }
+
 
 
     default Function1<T,Maybe<R>> lift(){
@@ -186,30 +184,21 @@ public interface Function1<T,  R> extends Function<T,R>{
     default FunctionalOperations<T,R> functionOps(){
         return in->apply(in);
     }
+    default <V> Function1<T, V> apply(final Function<? super T,? extends Function<? super R,? extends V>> applicative) {
+      return a -> applicative.apply(a).apply(this.apply(a));
+    }
 
+    default <R1> Function1<T, R1> mapFn(final Function<? super R, ? extends R1> f2) {
+      return andThen(f2);
+    }
+
+    default <R1> Function1<T, R1> flatMapFn(final Function<? super R, ? extends Function<? super T, ? extends R1>> f) {
+      return a -> f.apply(apply(a)).apply(a);
+    }
+    default <R1> Function1<T,R1> coflatMapFn(final Function<? super Function1<? super T,? extends R>, ? extends  R1> f) {
+      return in-> f.apply(this);
+    }
     interface FunctionalOperations<T1,R> extends Function1<T1,R> {
-
-
-        default <V> Function1<T1, V> apply(final Function<? super T1,? extends Function<? super R,? extends V>> applicative) {
-            return a -> applicative.apply(a).apply(this.apply(a));
-        }
-
-        default <R1> Function1<T1, R1> map(final Function<? super R, ? extends R1> f2) {
-            return andThen(f2);
-        }
-
-        default <R1> Function1<T1, R1> flatMap(final Function<? super R, ? extends Function<? super T1, ? extends R1>> f) {
-            return a -> f.apply(apply(a)).apply(a);
-        }
-        default <R1> Function1<T1,R1> coflatMap(final Function<? super Function1<? super T1,? extends R>, ? extends  R1> f) {
-            return in-> f.apply(this);
-        }
-
-
-
-
-
-
 
         default ListX<R> mapF(ListX<T1> list) {
             return list.map(this);

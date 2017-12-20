@@ -1,7 +1,5 @@
 package cyclops.monads.transformers;
 
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
@@ -28,7 +26,6 @@ import java.util.stream.Stream;
 import com.oath.anym.transformers.FoldableTransformerSeq;
 
 import cyclops.monads.WitnessType;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemErrRule;
@@ -37,7 +34,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 import cyclops.companion.Reducers;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Rule

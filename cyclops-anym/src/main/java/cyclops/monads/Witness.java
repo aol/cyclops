@@ -10,18 +10,18 @@ import java.util.stream.Stream;
 
 import com.oath.anym.internal.adapters.*;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.*;
 import cyclops.control.*;
 import cyclops.control.Future;
 import cyclops.data.*;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.anym.extensability.MonadAdapter;
 

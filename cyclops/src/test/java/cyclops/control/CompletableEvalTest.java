@@ -1,12 +1,12 @@
 package cyclops.control;
 
-import cyclops.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Eval.CompletableEval;
 import cyclops.control.Eval.Module.Later;
 import cyclops.function.Monoid;

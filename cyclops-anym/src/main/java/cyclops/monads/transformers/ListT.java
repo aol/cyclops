@@ -11,7 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.Function3;
@@ -26,7 +26,7 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.transformers.FoldableTransformerSeq;

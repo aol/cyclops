@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import cyclops.companion.Semigroups;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
