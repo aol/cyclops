@@ -1,6 +1,6 @@
 package com.oath.cyclops.data.collections.extensions.lazy;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -119,7 +119,7 @@ public class LazyListXTest {
         assertThat(intercalated.get(14), equalTo(9l));
     }
 
-    
+
 
     @Test
     public void testIntercalate5() {

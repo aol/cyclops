@@ -3,7 +3,7 @@ package cyclops.collections.standard;
 import com.oath.cyclops.types.foldable.Folds;
 
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.streams.CollectableTest;
 
 

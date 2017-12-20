@@ -5,10 +5,8 @@ import static org.junit.Assert.assertThat;
 
 
 import com.oath.anym.AnyMSeq;
-import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.Vector;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;

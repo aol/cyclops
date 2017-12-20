@@ -22,8 +22,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
 
 public class QueueXTest extends CollectionXTestsWithNulls {
 

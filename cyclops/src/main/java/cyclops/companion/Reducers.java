@@ -2,14 +2,13 @@ package cyclops.companion;
 
 
 import com.oath.cyclops.types.persistent.*;
-import cyclops.collections.immutable.*;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
 
-import cyclops.collections.immutable.BagX;
+import cyclops.reactive.collections.immutable.*;
 
 
 import lombok.experimental.UtilityClass;

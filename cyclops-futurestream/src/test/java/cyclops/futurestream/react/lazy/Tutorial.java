@@ -30,7 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import cyclops.futurestream.FutureStream;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;

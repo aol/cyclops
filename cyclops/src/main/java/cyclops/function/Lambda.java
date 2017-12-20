@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 /**
  * Lambda type inferencing helper / curried function creation helper
- * 
+ *
  * @author johnmcclean
  *
  */
@@ -15,17 +15,17 @@ public class Lambda {
     }
     /**
      * E.g. to use a supplier to embed additional code inisde a ternary operator
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
     			action.accept(values[pos++]);
     			return tuple(true, this);
     		}).getValue();
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param supplier Lambda / method to assign type of Supplier to
      * @return Supplier
      */
@@ -34,26 +34,24 @@ public class Lambda {
     }
     /**
      * E.g. to use a supplier to embed additional code inisde a ternary operator
-     * 
+     *
      * <pre>
-     * {@code 
+     * {@code
      * return pos >= values.length ? tuple(true, split) : Lambda.s(() -> {
                 action.accept(values[pos++]);
                 return tuple(true, this);
             }).getValue();
-     * 
+     *
      * }
      * </pre>
-     * 
+     *
      * @param supplier Lambda / method to assign type of Supplier to
      * @return Supplier
      */
     public static <T> Function0<T> λ(final Function0<T> supplier) {
         return supplier;
     }
-    public static <T> Function0.SupplierKind<T> λK(final Function0.SupplierKind<T> supplier) {
-        return supplier;
-    }
+
     public static <T> Predicate<T> λ(final Predicate<T> pred) {
         return  pred;
     }
@@ -62,8 +60,8 @@ public class Lambda {
     }
     /**
      * Alias for l1
-     * e.g. with Lombok val 
-     * 
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer i)->"hello")
      * }</pre>
@@ -74,8 +72,8 @@ public class Lambda {
         return func;
     }
     /**
-     * e.g. with Lombok val 
-     * 
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l1((Integer i)->"hello")
      * }</pre>
@@ -87,9 +85,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 2
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -101,9 +99,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 3
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -115,9 +113,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 4
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -129,9 +127,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 5
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -143,9 +141,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 6
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -157,9 +155,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 7
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -171,9 +169,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 8
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -185,9 +183,9 @@ public class Lambda {
     }
     /**
      * Create a curried function with arity of 2
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l3((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
@@ -203,9 +201,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 3
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l3((Integer a)-> (Integer b)->(Integer c) -> a+b+c)
      * }</pre>
@@ -218,9 +216,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 4
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> a+b+c+d)
      * }</pre>
@@ -234,9 +232,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 5
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> a+b+c+d+e)
      * }</pre>
@@ -250,9 +248,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 6
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)-> a+b+c+d+e+f)
      * }</pre>
@@ -266,9 +264,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 7
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> a+b+c+d+e+f+g)
      * }</pre>
@@ -282,9 +280,9 @@ public class Lambda {
 
     /**
      * Create a curried function with arity of 8
-     * 
-     * e.g. with Lombok val 
-     * 
+     *
+     * e.g. with Lombok val
+     *
      * <pre>{@code
      * 		val fn  = l4((Integer a)-> (Integer b)->(Integer c) -> (Integer d) -> (Integer e) -> (Integer f)->(Integer g) -> (Integer h) ->a+b+c+d+e+f+g+h)
      * }</pre>

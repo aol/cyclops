@@ -4,8 +4,9 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.vector;
@@ -55,6 +56,13 @@ public class Vector<T> implements ImmutableList<T>,
         }
         return fromIterable(it);
     }
+
+  public static <T> Vector<T> narrowK(final Higher<vector, T> list) {
+    return (Vector<T>)list;
+  }
+  public static <C2,T> Higher<C2, Higher<vector,T>> widen2(Higher<C2, Vector<T>> list){
+    return (Higher)list;
+  }
 
   @Override
   public <R1, R2, R3, R> Vector<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
@@ -1017,5 +1025,29 @@ public class Vector<T> implements ImmutableList<T>,
     @Override
     public int hashCode() {
        return hash.get();
+    }
+    public static  <T,R> Vector<R> tailRec(T initial, Function<? super T, ? extends Vector<? extends Either<T, R>>> fn) {
+      Vector<Either<T, R>> next = Vector.of(Either.left(initial));
+
+      boolean newValue[] = {true};
+      for(;;){
+
+        next = next.flatMap(e -> e.visit(s -> {
+            newValue[0]=true;
+            return fn.apply(s);
+          },
+          p -> {
+            newValue[0]=false;
+            return Vector.of(e);
+          }));
+        if(!newValue[0])
+          break;
+
+      }
+
+      return Vector.fromStream(Either.sequenceRight(next).orElse(ReactiveSeq.empty()));
+    }
+    public static <T> Higher<vector, T> widen(Vector<T> narrow) {
+      return narrow;
     }
 }

@@ -2,7 +2,7 @@ package com.oath.cyclops.data.collections.extensions.lazy.immutable;
 
 
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.PersistentQueueX;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
 import cyclops.control.Option;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;

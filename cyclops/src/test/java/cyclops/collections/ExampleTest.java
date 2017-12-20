@@ -5,11 +5,11 @@ import java.util.Arrays;
 import cyclops.companion.CyclopsCollectors;
 import org.junit.Test;
 
-import cyclops.collections.mutable.DequeX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 
 public class ExampleTest {
 

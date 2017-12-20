@@ -4,15 +4,13 @@ package com.oath.cyclops.internal.stream;
 import com.oath.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
-import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.async.QueueFactories;
-import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.async.adapters.Signal;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import cyclops.companion.*;
 import cyclops.control.Eval;

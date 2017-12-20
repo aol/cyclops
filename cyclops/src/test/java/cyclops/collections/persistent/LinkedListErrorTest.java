@@ -1,6 +1,6 @@
 package cyclops.collections.persistent;
 
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 

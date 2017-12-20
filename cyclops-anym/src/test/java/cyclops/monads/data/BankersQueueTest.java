@@ -2,13 +2,10 @@ package cyclops.monads.data;
 
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.PersistentQueueX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.BankersQueue;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.bankersQueue;
-import cyclops.monads.Witness.persistentQueueX;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Ignore;
 import org.junit.Test;

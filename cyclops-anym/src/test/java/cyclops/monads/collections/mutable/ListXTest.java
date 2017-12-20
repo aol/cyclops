@@ -4,13 +4,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 public class ListXTest extends AbstractAnyMSeqOrderedDependentTest<list> {
 

@@ -3,7 +3,7 @@ package cyclops.monads.collections.mutable;
 import com.oath.anym.AnyMSeq;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
-import cyclops.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.monads.AnyM;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;

@@ -4,7 +4,7 @@ import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import cyclops.control.Eval;
 import cyclops.control.Future;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.anym.transformers.ValueTransformer;
 import org.junit.Test;
 

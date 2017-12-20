@@ -6,17 +6,15 @@ import static org.junit.Assert.assertThat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 
-import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.MapX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.MapX;
 import cyclops.companion.MapXs;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SetX;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

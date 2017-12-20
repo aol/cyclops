@@ -2,7 +2,7 @@ package com.oath.cyclops.data.collections.extensions.lazy;
 
 
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.reactive.ReactiveSeq;
 import lombok.EqualsAndHashCode;
 

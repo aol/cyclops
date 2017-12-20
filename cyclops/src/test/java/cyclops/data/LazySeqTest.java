@@ -2,7 +2,6 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.mutable.ListX;
 import cyclops.companion.Reducers;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;

@@ -5,7 +5,7 @@ import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.data.tuple.Tuple2;

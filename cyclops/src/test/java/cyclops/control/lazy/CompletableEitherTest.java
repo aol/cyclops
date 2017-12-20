@@ -6,7 +6,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.LazyEither.CompletableEither;
 import cyclops.function.Monoid;
@@ -140,8 +140,8 @@ public class CompletableEitherTest {
     }
     @Test
     public void visitEither(){
-        assertThat(just.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
-        assertThat(none.mapBoth(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
+        assertThat(just.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.right("yes")));
+        assertThat(none.bimap(secondary->"no", primary->"yes"),equalTo(LazyEither.left("no")));
     }
     @Test
     public void testToMaybe() {

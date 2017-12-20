@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import org.junit.Test;
 

@@ -10,7 +10,7 @@ import java.util.Optional;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 
 public class OptionalsTest {

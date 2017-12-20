@@ -1,9 +1,12 @@
 package cyclops.control;
 
+import com.oath.cyclops.hkt.DataWitness.either;
+import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.companion.Semigroups;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
@@ -60,15 +63,15 @@ import java.util.function.*;
  *  <pre>
  *  {@code
  *      Either.right("hello").map(v->v+" world")
- *    //Either.right["hello world"]
+ *    //LazyEither.right["hello world"]
  *  }
  *  </pre>
  *
- *  Instantiating an Either - Left
+ *  Instantiating an LazyEither - Left
  *  <pre>
  *  {@code
- *      Either.left("hello").map(v->v+" world")
- *    //Either.seconary["hello"]
+ *      LazyEither.left("hello").map(v->v+" world")
+ *    //LazyEither.left["hello"]
  *  }
  *  </pre>
  *
@@ -77,14 +80,14 @@ import java.util.function.*;
  *   Values can be accumulated via
  *  <pre>
  *  {@code
- *  Xor.accumulateLeft(ListX.of(Either.left("failed1"),
+ *  LazyEither.accumulateLeft(ListX.of(Either.left("failed1"),
                                                     Either.left("failed2"),
                                                     Either.right("success")),
                                                     SemigroupK.stringConcat)
  *
  *  //failed1failed2
  *
- *   Either<String,String> fail1 = Either.left("failed1");
+ *   LazyEither<String,String> fail1 = Either.left("failed1");
      fail1.swap().combine((a,b)->a+b)
                  .combine(Either.left("failed2").swap())
                  .combine(Either.<String,String>right("success").swap())
@@ -104,6 +107,13 @@ import java.util.function.*;
 public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
+  public static <ST,T> LazyEither<ST,T> narrowK2(final Higher2<either, ST,T> xor) {
+     return fromEither(Either.narrowK2(xor));
+
+  }
+  public static <ST,T> LazyEither<ST,T> narrowK(final Higher<Higher<either, ST>,T> xor) {
+    return fromEither(Either.narrowK(xor));
+  }
     default LazyEither<LT,RT> accumulate(Either<LT,RT> next, Semigroup<RT> sg){
         return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
     }
@@ -824,14 +834,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     <R> R visit(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
 
-    @Deprecated // use bimap instead
-    default <R1, R2> LazyEither<R1, R2> mapBoth(final Function<? super LT, ? extends R1> secondary,
-                                                final Function<? super RT, ? extends R2> primary) {
-        if (isLeft())
-            return (LazyEither<R1, R2>) swap().map(secondary)
-                                          .swap();
-        return (LazyEither<R1, R2>) map(primary);
-    }
+
 
     /*
      * (non-Javadoc)

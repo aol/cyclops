@@ -1,6 +1,6 @@
 package cyclops.monads.transformers.seq.nestedfoldable;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import com.oath.anym.transformers.FoldableTransformerSeq;
 import cyclops.monads.AnyMs;

@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 public class SchedulingTest {
 
@@ -23,9 +23,9 @@ public class SchedulingTest {
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
 				.schedule("* * * * * ?", ex);
-		
+
 		Thread.sleep(5000);
-		
+
 	}
 	@Test
 	public void cronDebounceTest() throws InterruptedException{
@@ -37,8 +37,8 @@ public class SchedulingTest {
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 	@Test
 	public void fixedRateTest() throws InterruptedException{
@@ -58,8 +58,8 @@ public class SchedulingTest {
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 	@Test
 	public void fixedRateDelay() throws InterruptedException{
@@ -71,7 +71,7 @@ public class SchedulingTest {
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
 				.toList(),equalTo(Arrays.asList(1)));
-		
-		
+
+
 	}
 }

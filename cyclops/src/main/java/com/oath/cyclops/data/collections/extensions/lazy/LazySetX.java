@@ -2,7 +2,7 @@ package com.oath.cyclops.data.collections.extensions.lazy;
 
 
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.reactive.ReactiveSeq;
 
 import java.util.Iterator;

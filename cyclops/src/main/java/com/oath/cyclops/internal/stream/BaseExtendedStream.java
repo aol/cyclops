@@ -4,18 +4,14 @@ import com.oath.cyclops.types.Unwrapable;
 
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
 import cyclops.reactive.ReactiveSeq;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;

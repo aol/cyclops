@@ -1,8 +1,8 @@
 package cyclops.data;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.companion.Semigroups;
 import cyclops.control.Maybe;
 import cyclops.control.Option;

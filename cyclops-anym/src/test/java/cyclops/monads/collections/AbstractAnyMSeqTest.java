@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.*;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.Maybe;
@@ -52,7 +52,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.function.Monoid;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import com.oath.cyclops.util.SimpleTimer;
 
