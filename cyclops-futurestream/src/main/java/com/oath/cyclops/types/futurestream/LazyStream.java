@@ -38,7 +38,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
     public Iterator<U> iterator();
 
     /**
-     * Trigger a lazy reactiveStream as a task on the provided Executor
+     * Trigger a lazy stream as a task on the provided Executor
      *
      *
      *
@@ -75,7 +75,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Trigger a lazy reactiveStream
+     * Trigger a lazy stream
      */
     default void runOnCurrent() {
 
@@ -84,7 +84,7 @@ public interface LazyStream<U> extends BlockingStream<U> {
     }
 
     /**
-     * Trigger a lazy reactiveStream and return the results in the Collection created by
+     * Trigger a lazy stream and return the results in the Collection created by
      * the collector
      *
      * @param collector

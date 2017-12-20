@@ -26,7 +26,7 @@ public class SeqUtils {
      * </pre>
      *
      * @param stream Stream to reverse
-     * @return Reversed reactiveStream
+     * @return Reversed stream
      */
     public static <U> Stream<U> reverse(final Stream<U> stream) {
         return reversedStream(stream.collect(Collectors.toList()));
@@ -66,7 +66,7 @@ public class SeqUtils {
      * }
      * </pre>
      * @param s Streamable to cycle
-     * @return New cycling reactiveStream
+     * @return New cycling stream
      */
     public static <U> Stream<U> cycle(final int times, final Streamable<U> s) {
         return Stream.iterate(s.stream(), s1 -> s.stream())
@@ -75,10 +75,10 @@ public class SeqUtils {
     }
 
     /**
-      * Projects an immutable toX of this reactiveStream. Initial iteration over the toX is not thread safe
+      * Projects an immutable toX of this stream. Initial iteration over the toX is not thread safe
       * (can't be performed by multiple threads concurrently) subsequent iterations are.
       *
-      * @return An immutable toX of this reactiveStream.
+      * @return An immutable toX of this stream.
       */
     public static final <A> CollectionX<A> toLazyCollection(final Stream<A> stream) {
         return toLazyCollection(stream.iterator());

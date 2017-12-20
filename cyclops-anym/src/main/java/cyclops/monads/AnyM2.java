@@ -282,7 +282,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * {@code
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
      *
-     *    Stream<Integer> reactiveStream = monad.reactiveStream();
+     *    Stream<Integer> stream = monad.stream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
@@ -398,7 +398,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * @return List of AnyMs
 
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
-        return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
+        return StreamSupport.stream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/

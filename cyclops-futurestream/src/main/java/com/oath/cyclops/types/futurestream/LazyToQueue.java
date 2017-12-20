@@ -51,8 +51,8 @@ public interface LazyToQueue<U> extends ToQueue<U> {
      * The supplied function can be used to determine properties of the Queue to be used
      *
      *  @param fn Function to be applied to default Queue. Returned Queue will be used to conver this Stream to a Queue
-     *	@return This reactiveStream converted to a Queue
-     * @see com.oath.cyclops.react.reactiveStream.traits.ToQueue#toQueue(java.util.function.Function)
+     *	@return This stream converted to a Queue
+     * @see com.oath.cyclops.react.stream.traits.ToQueue#toQueue(java.util.function.Function)
      */
     @Override
     default Queue<U> toQueue(final Function<Queue, Queue> fn) {
@@ -91,7 +91,7 @@ public interface LazyToQueue<U> extends ToQueue<U> {
      *
      *	@param shards Map of key to Queue shards
      *	@param sharder Sharding function, element to key converter
-     * @see com.oath.cyclops.react.reactiveStream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
+     * @see com.oath.cyclops.react.stream.traits.ToQueue#toQueue(java.util.Map, java.util.function.Function)
      */
     @Override
     default <K> void toQueue(final Map<K, Queue<U>> shards, final Function<? super U, ? extends K> sharder) {

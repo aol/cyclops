@@ -20,7 +20,7 @@ import cyclops.control.Either;
 import cyclops.function.Memoize;
 
 /**
- * A reactiveBuffer-streams Subscriber that can take 1 value from a reactiveBuffer-streams publisher and convert
+ * A reactive-streams Subscriber that can take 1 value from a reactive-streams publisher and convert
  * it into various forms
  *
  * <pre>

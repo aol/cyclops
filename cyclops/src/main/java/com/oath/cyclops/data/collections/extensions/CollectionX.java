@@ -224,7 +224,7 @@ public interface CollectionX<T> extends IterableX<T>,
     <X extends Throwable> CollectionX<T> onEmptyError(Supplier<? extends X> supplier);
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#reactiveStream()
+     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#stream()
      */
     @Override
     default ReactiveSeq<T> stream() {
@@ -781,7 +781,7 @@ public interface CollectionX<T> extends IterableX<T>,
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
-     * supplied reactiveStream
+     * supplied stream
      *
      * <pre>
      * {@code
@@ -816,7 +816,7 @@ public interface CollectionX<T> extends IterableX<T>,
 
     /**
      * Perform a two level nested internal iteration over this Stream and the
-     * supplied reactiveStream
+     * supplied stream
      *
      * <pre>
      * {@code

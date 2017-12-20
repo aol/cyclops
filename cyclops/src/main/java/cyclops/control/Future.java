@@ -229,14 +229,14 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      *
      *
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-        Future<Integer> future = Future.fromPublisher(reactiveStream,ex);
+        Future<Integer> future = Future.fromPublisher(stream,ex);
 
         //Future[1]
      *
@@ -258,9 +258,9 @@ public class Future<T> implements To<Future<T>>,
      * Construct a Future asyncrhonously that contains a single value extracted from the supplied Iterable
      * <pre>
      * {@code
-     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-        Future<Integer> future = Future.fromIterable(reactiveStream,ex);
+        Future<Integer> future = Future.fromIterable(stream,ex);
 
         //Future[1]
      *
@@ -277,12 +277,12 @@ public class Future<T> implements To<Future<T>>,
     }
 
     /**
-     * Construct a Future syncrhonously that contains a single value extracted from the supplied reactiveBuffer-streams Publisher
+     * Construct a Future syncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-        Future<Integer> future = Future.fromPublisher(reactiveStream);
+        Future<Integer> future = Future.fromPublisher(stream);
 
         //Future[1]
      *
@@ -327,9 +327,9 @@ public class Future<T> implements To<Future<T>>,
      *
      * <pre>
      * {@code
-     *  ReactiveSeq<Integer> reactiveStream =  ReactiveSeq.of(1,2,3);
+     *  ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-        Future<Integer> future = Future.fromIterable(reactiveStream);
+        Future<Integer> future = Future.fromIterable(stream);
 
         //Future[1]
      *
@@ -902,7 +902,7 @@ public class Future<T> implements To<Future<T>>,
     /*
      * (non-Javadoc)
      *
-     * @see com.oath.cyclops.types.Value#reactiveStream()
+     * @see com.oath.cyclops.types.Value#stream()
      */
     @Override
     public ReactiveSeq<T> stream() {

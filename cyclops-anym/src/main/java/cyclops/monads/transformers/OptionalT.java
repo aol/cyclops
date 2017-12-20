@@ -178,8 +178,8 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	Function<OptionalWT<Integer>, OptionalWT<Integer>> optTAdd2 = OptionalWT.lift(add2);
 
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
+    	AnyMSeq<Integer> stream = AnyM.fromStream(withNulls);
+    	AnyMSeq<Optional<Integer>> streamOpt = stream.map(Optional::completedOptional);
     	List<Integer> results = optTAdd2.applyHKT(OptionalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Optional<Integer>>>unwrap()
@@ -213,8 +213,8 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
     	BiFunction<OptionalWT<Integer>,OptionalWT<Integer>,OptionalWT<Integer>> optTAdd2 = OptionalWT.lift2(add);
 
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Optional<Integer>> streamOpt = reactiveStream.map(Optional::completedOptional);
+    	AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
+    	AnyMSeq<Optional<Integer>> streamOpt = stream.map(Optional::completedOptional);
 
     	Optional<Optional<Integer>> two = Optional.completedOptional(Optional.completedOptional(2));
     	AnyMSeq<Optional<Integer>> Optional=  AnyM.fromOptionalW(two);

@@ -325,7 +325,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * {@code
      *    AnyM<Integer> monad =  AnyM.fromOptional(Optional.of(10));
      *
-     *    Stream<Integer> reactiveStream = monad.reactiveStream();
+     *    Stream<Integer> stream = monad.stream();
      *    //ReactiveSeq[10]
      * }
      * </pre>
@@ -580,7 +580,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /**
-     * Construct an AnyM that wraps a reactiveBuffer-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
+     * Construct an AnyM that wraps a reactive-streams Publisher. If there is no registered Comprehender for the supplied Publisher, this method
      *  will recover to convert the Publisher to a type that cyclops2-react can understand.
      *
      *  <pre>
@@ -1215,7 +1215,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * @return List of AnyMs
 
     public static <T> ListX<AnyMSeq<T>> listFromIterator(final Iterable<Iterator<T>> fromEither5) {
-        return StreamSupport.reactiveStream(fromEither5.spliterator(), false)
+        return StreamSupport.stream(fromEither5.spliterator(), false)
                             .map(i -> AnyM.fromIterable(() -> i))
                             .collect(ListX.listXCollector());
     }*/

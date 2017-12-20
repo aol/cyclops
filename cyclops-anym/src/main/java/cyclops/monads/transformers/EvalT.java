@@ -174,8 +174,8 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	Function<EvalWT<Integer>, EvalWT<Integer>> optTAdd2 = EvalWT.lift(add2);
 
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> reactiveStream = AnyM.fromStream(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
+    	AnyMSeq<Integer> stream = AnyM.fromStream(withNulls);
+    	AnyMSeq<Eval<Integer>> streamOpt = stream.map(Eval::completedEval);
     	List<Integer> results = optTAdd2.applyHKT(EvalWT.of(streamOpt))
     									.unwrap()
     									.<Stream<Eval<Integer>>>unwrap()
@@ -209,8 +209,8 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
     	BiFunction<EvalWT<Integer>,EvalWT<Integer>,EvalWT<Integer>> optTAdd2 = EvalWT.lift2(add);
 
     	Stream<Integer> withNulls = Stream.of(1,2,3);
-    	AnyMSeq<Integer> reactiveStream = AnyM.ofMonad(withNulls);
-    	AnyMSeq<Eval<Integer>> streamOpt = reactiveStream.map(Eval::completedEval);
+    	AnyMSeq<Integer> stream = AnyM.ofMonad(withNulls);
+    	AnyMSeq<Eval<Integer>> streamOpt = stream.map(Eval::completedEval);
 
     	Eval<Eval<Integer>> two = Eval.completedEval(Eval.completedEval(2));
     	AnyMSeq<Eval<Integer>> Eval=  AnyM.fromEvalW(two);
