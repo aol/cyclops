@@ -2,15 +2,15 @@
 
 Cyclops pure provides support for advanced functional data structures and higher kinded type classes for a wide range of cyclops data types.
 
-* control : advanced functional control structure such as
+* [control](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/control) : advanced functional control structure such as
             Reader, Writer, State, ReaderWriterStrate, IO
-* arrow : Kleisli arrow and related types
-* free : free monad and related types
-* kinds : Higher Kinded proxies for JDK types
-* typeclasses :  interface definitions for many popular typeclasses
-* instances : typeclass instances for cyclops and JDK data types
-* transformers : monad transformer interface definitions
-* hkt : Manager classes to make working with Higher Kinded typeclasses cleaner in Java
+* [arrow](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/arrow) : Kleisli arrow and related types
+* [free](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/free) : free monad and related types
+* [kinds](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/kinds) : Higher Kinded proxies for JDK types
+* [typeclasses](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/typeclasses) :  interface definitions for many popular typeclasses
+* [instances](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/instances) : typeclass instances for cyclops and JDK data types
+* [transformers](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/transformers) : monad transformer interface definitions
+* [hkt](https://github.com/aol/cyclops-react/tree/master/cyclops-pure/src/main/java/cyclops/hkt) : Manager classes to make working with Higher Kinded typeclasses cleaner in Java
 
 Since cyclops 10.0.0-M5
 
