@@ -26,13 +26,13 @@ import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
-  private final Publisher<? extends T> fn;
+  private final Publisher<T> fn;
 
   public static <T> IO<T> of(Supplier<? extends T> s){
-    return new IO<T>(Eval.later(s));
+    return new IO<T>(Eval.narrow(Eval.later(s)));
   }
   public static <T> IO<T> of(Supplier<? extends T> s,Executor ex){
-    return new IO<T>(Future.of(s,ex));
+    return new IO<T>(Future.narrow(Future.of(s,ex)));
   }
 
   public static <T> IO<T> fromPublisher(Publisher<T> p){
@@ -48,7 +48,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   }
 
   public <R> IO<R> flatMap(Function<? super T, ? extends IO<? extends R>> s){
-     return fromPublisher(Spouts.from(fn).mergeMap(t->Spouts.from(s.apply(t).stream())));
+     return fromPublisher(Spouts.from(fn).mergeMap(t->s.apply(t).publisher()));
   }
 
   public static <T,X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s){
@@ -65,12 +65,12 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
     Spouts.from(fn).forEach(consumerElement,consumerError,onComplete);
   }
   public Try<T,Throwable> run(){
-    Try<? extends T, Throwable> t = Future.fromPublisher(fn).get();
-    return (Try<T,Throwable>)t;
+    return  Future.fromPublisher(fn)
+                  .get();
   }
 
   public Publisher<T> publisher(){
-    return (Publisher<T>)fn;
+    return fn;
   }
   @Override
   public final void subscribe(final Subscriber<? super T> sub) {
