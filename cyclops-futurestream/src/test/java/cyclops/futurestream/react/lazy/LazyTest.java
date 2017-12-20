@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import com.oath.cyclops.types.mixins.Printable;
+import cyclops.companion.Semigroups;
 import org.junit.Test;
 
 import cyclops.companion.FutureStreamSemigroups;
@@ -36,7 +37,7 @@ public class LazyTest implements Printable {
     @Test
     public void combineNoOrder(){
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->a.equals(b), FutureStreamSemigroups.intSum)
+                   .combine((a, b)->a.equals(b), Semigroups.intSum)
                    .toListX(),equalTo(ListX.of(1,2,3)));
 
     }
@@ -44,7 +45,7 @@ public class LazyTest implements Printable {
     public void combine(){
 
         assertThat(LazyReact.parallelCommonBuilder().of(1,2,3)
-                   .combine((a, b)->true, FutureStreamSemigroups.intSum).toListX(),
+                   .combine((a, b)->true, Semigroups.intSum).toListX(),
                    equalTo(Arrays.asList(6)));
 
     }
@@ -216,7 +217,7 @@ public class LazyTest implements Printable {
             assertThat( react
                             .iterate(1, i->i+1)
                             .limit(5)
-                            .reduce(FutureStreamSemigroups.intSum).get(),equalTo(15));
+                            .reduce(Semigroups.intSum).get(),equalTo(15));
         }
     }
 
@@ -224,14 +225,14 @@ public class LazyTest implements Printable {
 	public void generateTest(){
 	   assertThat( new LazyReact().generate(()->"hello")
 	                   .limit(5)
-	                   .reduce(FutureStreamSemigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+	                   .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
 
 	}
 	@Test
     public void generateAsyncTest(){
        assertThat( new LazyReact().generateAsync(()->"hello")
                        .limit(5)
-                       .reduce(FutureStreamSemigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
+                       .reduce(Semigroups.stringConcat).get(),equalTo("hellohellohellohellohello"));
 
     }
 
