@@ -1,13 +1,9 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
-import com.oath.cyclops.types.reactive.ValueSubscriber;
-import com.oath.cyclops.util.box.Mutable;
-import cyclops.data.Seq;
 import cyclops.data.tuple.*;
-import cyclops.function.Function0;
 import cyclops.function.Function3;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -15,10 +11,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -58,7 +52,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   public <R> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s){
     return map(t->Try.withCatch(()->s.apply(t)));
   }
-  public <R,X extends Throwable> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s,final Class<? extends X>... classes){
+  public <R,X extends Throwable> IO<Try<R, X>> mapTry(Function<? super T, ? extends R> s,final Class<? extends X>... classes){
     return map(t->Try.withCatch(()->s.apply(t),classes));
   }
   public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
