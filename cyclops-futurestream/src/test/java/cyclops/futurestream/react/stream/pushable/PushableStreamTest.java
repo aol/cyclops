@@ -27,9 +27,9 @@ import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
-import cyclops.collections.immutable.PersistentSetX;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.PersistentSetX;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.stream.pushable.MultipleStreamSource;
 import cyclops.stream.pushable.PushableStream;
 

@@ -22,8 +22,8 @@ import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.Queue.QueueTimeoutException;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
@@ -53,7 +53,7 @@ import java.util.stream.*;
 
 public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                          LazyStream<U>,
-  ReactiveSeq<U>,
+                                          ReactiveSeq<U>,
                                           LazyToQueue<U>,
                                           ConfigurableStream<U, FastFuture<U>>,
                                           FutureStreamSynchronousPublisher<U> {

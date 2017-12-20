@@ -3,8 +3,8 @@ package cyclops;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.*;
-import cyclops.collections.immutable.*;
-import cyclops.collections.mutable.MapX;
+import cyclops.reactive.collections.immutable.PersistentMapX;
+import cyclops.reactive.collections.mutable.MapX;
 import cyclops.companion.Reducers;
 
 import java.util.*;

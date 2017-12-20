@@ -1,7 +1,7 @@
 package cyclops.function;
 
 
-import cyclops.typeclasses.Ord;
+import cyclops.data.Ord;
 
 import java.util.Comparator;
 

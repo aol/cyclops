@@ -1,6 +1,6 @@
 package cyclops.streams.push;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
 
@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class ReactiveRangeTest {
-    
+
     @Test
     public void reversedRange(){
        Spouts.range(10, -10).printOut();
@@ -38,7 +38,7 @@ public class ReactiveRangeTest {
     }
     @Test
     public void intStreamCompare0(){
-       
+
         assertThat(IntStream.range(0,10).sum(),
                 equalTo(Spouts.range(0,10).sumInt(i->i)));
     }
@@ -91,21 +91,21 @@ public class ReactiveRangeTest {
     }
 	@Test
 	public void limitRange() throws InterruptedException{
-		
+
 		assertThat(Spouts.range(0,Integer.MAX_VALUE)
 				 .limit(100)
 				 .count(),equalTo(100L));
 	}
 	@Test
 	public void limitList() throws InterruptedException{
-		
+
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
 		assertThat(Spouts.fromIterable(list)
 				 .limit(100)
 				 .count(),equalTo(100L));
-		
+
 	}
 
 	@Test
@@ -170,29 +170,29 @@ public class ReactiveRangeTest {
     }
 	@Test
 	public void limitArray() throws InterruptedException{
-		
+
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
 		assertThat(Spouts.of(list.toArray())
 				 .limit(100)
 				 .count(),equalTo(100L));
-		
+
 	}
 	@Test
 	public void skipArray() throws InterruptedException{
-		
+
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
 		assertThat(Spouts.of(list.toArray())
 				 .skip(100)
 				 .count(),equalTo(900L));
-		
+
 	}
 	@Test
 	public void skipRange() throws InterruptedException{
-		
+
 		assertThat(Spouts.range(0,1000)
 				 .skip(100)
 				 .count(),equalTo(900L));
@@ -206,43 +206,43 @@ public class ReactiveRangeTest {
     }
 	@Test
 	public void skipRangeReversed() throws InterruptedException{
-		
+
 		assertThat(Spouts.range(0,1000)
 				 .skip(100).reverse()
 				 .count(),equalTo(900L));
 	}
 	@Test
 	public void skipList() throws InterruptedException{
-		
+
 		List<Integer> list= new ArrayList<>();
 		for(int i=0;i<1000;i++)
 			list.add(i);
 		assertThat(Spouts.fromIterable(list)
 				 .skip(100)
 				 .count(),equalTo(900L));
-		
+
 	}
 	@Test
 	public void reversedOfArray() throws InterruptedException{
 		List<Integer> list= new ArrayList<>();
 		list.add(1);
 		list.add(2);
-		
+
 		assertThat(Spouts.of(1,2).reverse()
 							.toList(),
 							equalTo(Arrays.asList(2,1)));
-		
+
 	}
 	@Test
 	public void reversedOfList() throws InterruptedException{
 		List<Integer> list= new ArrayList<>();
 		list.add(1);
 		list.add(2);
-		
+
 		assertThat(Spouts.fromIterable(list).reverse()
 							.toList(),
 							equalTo(Arrays.asList(2,1)));
-		
+
 	}
-	
+
 }

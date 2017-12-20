@@ -1,13 +1,10 @@
 package cyclops.function;
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.companion.Semigroups;
 import cyclops.data.ImmutableList;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.typeclasses.Cokleisli;
-import cyclops.typeclasses.Kleisli;
-import cyclops.typeclasses.functions.MonoidK;
+
 import org.reactivestreams.Publisher;
 
 import java.util.Arrays;

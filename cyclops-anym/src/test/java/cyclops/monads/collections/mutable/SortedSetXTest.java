@@ -2,11 +2,10 @@ package cyclops.monads.collections.mutable;
 
 
 import com.oath.anym.AnyMSeq;
-import cyclops.collections.mutable.SortedSetX;
+import cyclops.reactive.collections.mutable.SortedSetX;
 import cyclops.monads.AnyM;
 
 import cyclops.data.tuple.Tuple2;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.sortedSet;
 import cyclops.monads.collections.AbstractAnyMSeqTest;
 import org.junit.Test;

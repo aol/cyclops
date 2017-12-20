@@ -12,13 +12,13 @@ import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
-import cyclops.collections.immutable.*;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.collections.immutable.VectorX;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -26,7 +26,7 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.WitnessType;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,

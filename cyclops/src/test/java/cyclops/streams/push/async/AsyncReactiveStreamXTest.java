@@ -1,7 +1,7 @@
 package cyclops.streams.push.async;
 
 import cyclops.companion.Streams;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;

@@ -19,7 +19,7 @@ import com.oath.cyclops.react.async.subscription.Continueable;
 import cyclops.futurestream.LazyReact;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.react.SimpleReactFailedStageException;

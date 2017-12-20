@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import cyclops.companion.Reducers;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.LinkedListX;
 
 public class PStacksTest {
 

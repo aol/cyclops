@@ -1,20 +1,23 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.persistent.PersistentIndexed;
-import com.oath.cyclops.types.persistent.PersistentList;
+import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
+import com.oath.cyclops.types.persistent.PersistentList;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.control.Either;
-import com.oath.cyclops.hkt.DataWitness.lazySeq;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -24,12 +27,9 @@ import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
 import org.reactivestreams.Publisher;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -898,7 +898,12 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> lazy(T head, Supplier<ImmutableList<T>> tail) {
         return Cons.cons(head,()->tail.get().lazySeq());
     }
-
+    public static <T> LazySeq<T> narrowK(final Higher<lazySeq, T> list) {
+      return (LazySeq<T>)list;
+    }
+    public static <C2,T> Higher<C2, Higher<lazySeq,T>> widen2(Higher<C2, LazySeq<T>> list){
+      return (Higher)list;
+    }
   @Override
   ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
 
@@ -1313,6 +1318,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
       public LazySeq<T> filter(Predicate<? super T> pred) {
         return this;
       }
+    }
+    public static <T> Higher<lazySeq, T> widen(LazySeq<T> narrow) {
+      return narrow;
     }
 
 }

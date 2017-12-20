@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.collections.immutable.VectorX;
+import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;

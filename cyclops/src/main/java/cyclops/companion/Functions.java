@@ -1,21 +1,19 @@
 package cyclops.companion;
 
-import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.factory.Unit;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
-import cyclops.control.Reader;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.typeclasses.monad.Monad;
+
 
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Collection of useful functions
+ * Collection of useful arrow
  * Also see {@link Semigroups}
  *          {@link Monoids}
  *          {@link cyclops.function.Predicates}
@@ -69,9 +67,7 @@ public class Functions {
         return t-> (W)w.unit(t);
     }
 
-    public static final  <T,CRE> Function1<? super T,? extends Higher<CRE,T>> arrow(Monad<CRE> monad){
-        return t-> monad.unit(t);
-    }
+
 
     public static final  <T> Function1<? super Iterable<T>,? extends T> head(){
         return it -> ReactiveSeq.fromIterable(it).firstValue(null);
@@ -103,8 +99,31 @@ public class Functions {
                                                         Function3<? super R, ? super R1, ? super R2, Function<? super T,? extends R3>> value4,
                                                         Function4<? super R, ? super R1, ? super R2, ? super R3, ? extends R4> yieldingFunction) {
 
-        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
-        return rd.forEach4(value2, value3, value4, yieldingFunction);
+      Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
+      return fn1.flatMapFn(in -> {
+
+        Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
+        return a.flatMapFn(ina -> {
+          Function1<T,R2> b = Function1.narrow(Function1.of(value3.apply(in,ina)));
+          return b.flatMapFn(inb -> {
+
+            Function1<T,R3> c = Function1.narrow(Function1.of(value4.apply(in,ina,inb)));
+
+            return c.mapFn(in2 -> {
+
+              return yieldingFunction.apply(in, ina, inb, in2);
+
+
+            });
+
+          });
+
+
+        });
+
+
+      });
+
 
 
 
@@ -115,9 +134,22 @@ public class Functions {
                                                   BiFunction<? super R, ? super R1, Function<? super T,? extends R2>> value3,
                                                   Function3<? super R, ? super R1, ? super R2, ? extends R4> yieldingFunction) {
 
+      Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
+      return fn1.flatMapFn(in -> {
 
-        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
-        return rd.forEach3(value2, value3, yieldingFunction);
+        Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
+        return a.flatMapFn(ina -> {
+          Function1<T,R2> b = Function1.narrow(Function1.of(value3.apply(in,ina)));
+          return b.mapFn(in2 -> {
+            return yieldingFunction.apply(in, ina, in2);
+
+          });
+
+
+
+        });
+
+      });
     }
 
 
@@ -126,8 +158,20 @@ public class Functions {
                                                 Function<? super R, Function<? super T,? extends R1>> value2,
                                                  BiFunction<? super R, ? super R1, ? extends R4> yieldingFunction) {
 
-        Reader< T,R> rd = Reader.narrow(FluentFunctions.of(fn));
-        return rd.forEach2(value2, yieldingFunction);
+      Function1<T,R> fn1 = Function1.narrow(Function1.of(fn));
+      return fn1.flatMapFn(in -> {
+
+        Function1<T,R1> a = Function1.narrow(Function1.of(value2.apply(in)));
+        return a.mapFn(in2 -> {
+          return yieldingFunction.apply(in, in2);
+
+        });
+
+
+
+
+      });
+
 
 
     }

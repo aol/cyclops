@@ -5,7 +5,7 @@ import com.oath.cyclops.react.threads.SequentialElasticPools;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.futurestream.SimpleReact;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Either;
 import com.oath.cyclops.react.Status;
 

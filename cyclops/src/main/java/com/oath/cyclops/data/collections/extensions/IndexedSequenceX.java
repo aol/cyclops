@@ -1,6 +1,6 @@
 package com.oath.cyclops.data.collections.extensions;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import java.util.List;
 import java.util.function.Function;

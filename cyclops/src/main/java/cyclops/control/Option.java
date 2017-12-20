@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Sealed2;
 import com.oath.cyclops.types.*;
@@ -34,7 +35,7 @@ public interface Option<T> extends To<Option<T>>,
                                     Recoverable<T>,
                                     Sealed2<T,Option.None<T>>,
                                     Iterable<T>,
-                                    Higher<DataWitness.option,T>,
+                                    Higher<option,T>,
                                     Serializable{
 
 
@@ -43,7 +44,29 @@ public interface Option<T> extends To<Option<T>>,
 
     @SuppressWarnings("rawtypes")
     final static Option EMPTY = new Option.None<>();
+    public static  <T,R> Option<R> tailRec(T initial, Function<? super T, ? extends Option<? extends Either<T, R>>> fn){
+      Option<? extends Either<T, R>> next[] = new Option[1];
+      next[0] = Option.some(Either.left(initial));
+      boolean cont = true;
+      do {
+        cont = next[0].visit(p -> p.visit(s -> {
+          next[0] = narrowK(fn.apply(s));
+          return true;
+        }, pr -> false), () -> false);
+      } while (cont);
 
+      return next[0].map(x->x.visit(l->null,r->r));
+    }
+    public static <T> Option<T> narrowK(final Higher<option, T> opt) {
+      return (Option<T>)opt;
+    }
+    public static <T> Higher<option, T> widen(Option<T> narrow) {
+    return narrow;
+  }
+    public static <C2,T> Higher<C2, Higher<option,T>> widen2(Higher<C2, Option<T>> nestedMaybe){
+
+      return (Higher)nestedMaybe;
+    }
     /**
      * @return Get the zero Maybe (single instance)
      */

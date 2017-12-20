@@ -20,7 +20,7 @@ public class CokleisliM<T,R,W extends WitnessType<W>> implements Function1<AnyM<
     public R apply(AnyM<W, T> a) {
         return fn.apply(a);
     }
-    public <R1> CokleisliM<T,R1,W> map(Function<? super R, ? extends R1> mapper){
+    public <R1> CokleisliM<T,R1,W> mapFn(Function<? super R, ? extends R1> mapper){
         return cokleisli(fn.andThen(mapper));
     }
 
@@ -40,6 +40,8 @@ public class CokleisliM<T,R,W extends WitnessType<W>> implements Function1<AnyM<
     }
 
 
-
-
+    @Override
+    public <R1> CokleisliM<T,R1,W> map(Function<? super R, ? extends R1> fn) {
+      return mapFn(fn);
+    }
 }

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

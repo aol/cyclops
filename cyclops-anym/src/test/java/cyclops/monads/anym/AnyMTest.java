@@ -26,17 +26,15 @@ import java.util.stream.Stream;
 import com.oath.anym.AnyMSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.*;
 import cyclops.monads.WitnessType;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.QueueX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.reactive.collections.mutable.SetX;
 
 
 import reactor.core.publisher.Flux;

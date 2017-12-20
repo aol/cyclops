@@ -23,7 +23,7 @@ import com.oath.cyclops.util.SimpleTimer;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.ListX;
 
 import lombok.Value;
 public class BatchingTest {

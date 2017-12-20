@@ -2,9 +2,9 @@ package cyclops.collections;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
