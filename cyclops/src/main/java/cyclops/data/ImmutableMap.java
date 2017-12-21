@@ -8,7 +8,6 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;

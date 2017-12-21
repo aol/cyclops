@@ -7,7 +7,6 @@ import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.companion.Reducers;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.companion.Streams;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;

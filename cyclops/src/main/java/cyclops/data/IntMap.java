@@ -440,13 +440,13 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<VectorX<T>> sliding(int windowSize) {
-        return (IntMap<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    public IntMap<Seq<T>> sliding(int windowSize) {
+        return (IntMap<Seq<T>>) ImmutableList.super.sliding(windowSize);
     }
 
     @Override
-    public IntMap<VectorX<T>> sliding(int windowSize, int increment) {
-        return (IntMap<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    public IntMap<Seq<T>> sliding(int windowSize, int increment) {
+        return (IntMap<Seq<T>>) ImmutableList.super.sliding(windowSize,increment);
     }
 
     @Override

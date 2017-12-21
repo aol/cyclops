@@ -13,7 +13,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.reactive.collections.mutable.ListX;
 
 import cyclops.companion.Streams;

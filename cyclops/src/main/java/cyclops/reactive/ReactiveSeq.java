@@ -30,6 +30,7 @@ import cyclops.companion.Streams;
 import com.oath.cyclops.async.*;
 import com.oath.cyclops.async.adapters.*;
 import com.oath.cyclops.async.adapters.Queue;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.MapX;
 import cyclops.reactive.collections.immutable.VectorX;
@@ -1363,7 +1364,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    default ReactiveSeq<VectorX<T>> sliding(int windowSize){
+    default ReactiveSeq<Seq<T>> sliding(int windowSize){
         return sliding(windowSize,1);
     }
 
@@ -1388,7 +1389,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with sliding view
      */
     @Override
-    ReactiveSeq<VectorX<T>> sliding(int windowSize, int increment);
+    ReactiveSeq<Seq<T>> sliding(int windowSize, int increment);
 
     /**
      * Group elements in a Stream

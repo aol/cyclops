@@ -6,7 +6,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.oath.cyclops.hkt.Higher;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.*;
 

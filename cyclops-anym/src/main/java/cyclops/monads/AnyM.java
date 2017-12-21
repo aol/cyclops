@@ -50,8 +50,6 @@ import cyclops.control.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
 import cyclops.data.tuple.Tuple2;
-import cyclops.reactive.collections.immutable.*;
-import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;

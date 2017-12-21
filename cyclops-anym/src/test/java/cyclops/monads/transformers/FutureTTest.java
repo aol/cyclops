@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.reactive.collections.mutable.ListX;
 
 

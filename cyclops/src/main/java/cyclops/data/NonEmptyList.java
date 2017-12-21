@@ -310,13 +310,13 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<VectorX<T>> sliding(int windowSize) {
-        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize);
+    public NonEmptyList<Seq<T>> sliding(int windowSize) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.sliding(windowSize);
     }
 
     @Override
-    public NonEmptyList<VectorX<T>> sliding(int windowSize, int increment) {
-        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize,increment);
+    public NonEmptyList<Seq<T>> sliding(int windowSize, int increment) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.sliding(windowSize,increment);
     }
 
     @Override

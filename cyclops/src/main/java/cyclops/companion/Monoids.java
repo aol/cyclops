@@ -14,8 +14,6 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
-import cyclops.reactive.collections.immutable.*;
-import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;

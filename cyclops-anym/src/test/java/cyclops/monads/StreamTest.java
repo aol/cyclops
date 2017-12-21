@@ -8,7 +8,6 @@ import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.reactive.ReactiveSeq;

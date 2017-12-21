@@ -1,9 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.data.Vector;
-
+import cyclops.data.Seq;
 
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -17,11 +15,11 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
                                 implements CopyableSpliterator<R>,ComposableFunction<R,T,SlidingSpliterator<T,?>> {
     private final Spliterator<T> source;
 
-    private final Function<? super VectorX<T>, ? extends R> finalizer;
+    private final Function<? super Seq<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;
-    final Mutable<Vector<T>> list = Mutable.of(Vector.empty());
-    public SlidingSpliterator(final Spliterator<T> source,  Function<? super VectorX<T>, ? extends R> finalizer,
+    final Mutable<Seq<T>> list = Mutable.of(Seq.empty());
+    public SlidingSpliterator(final Spliterator<T> source,  Function<? super Seq<T>, ? extends R> finalizer,
                                 int windowSize, int increment) {
         super(source.estimateSize(),source.characteristics() & Spliterator.ORDERED);
 
@@ -49,7 +47,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
             list.mutate(var -> var.insertAt(Math.max(0, var.size()), t));
             if(list.get().size()==windowSize){
 
-                action.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+                action.accept(finalizer.apply(list.get()));
                 sent = true;
 
                 for (int i = 0; i < increment && list.get()
@@ -63,7 +61,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
         });
         if(!sent && data){
-            action.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+            action.accept(finalizer.apply(list.get()));
         }
 
     }
@@ -91,7 +89,7 @@ public class SlidingSpliterator<T,R> extends Spliterators.AbstractSpliterator<R>
 
         }
         if(data)
-            action.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+            action.accept(finalizer.apply(list.get()));
 
         return canAdvance;
     }

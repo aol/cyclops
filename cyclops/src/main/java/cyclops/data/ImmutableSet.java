@@ -350,12 +350,12 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<VectorX<T>> sliding(int windowSize) {
+    default ImmutableSet<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableSet<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableSet<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 
