@@ -3,7 +3,6 @@ package cyclops.monads.collections;
 import com.oath.anym.AnyMSeq;
 import cyclops.companion.Semigroups;
 import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;

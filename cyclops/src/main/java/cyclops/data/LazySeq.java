@@ -668,13 +668,13 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<VectorX<T>> sliding(int windowSize) {
-        return (LazySeq<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    default LazySeq<Seq<T>> sliding(int windowSize) {
+        return (LazySeq<Seq<T>>) ImmutableList.super.sliding(windowSize);
     }
 
     @Override
-    default LazySeq<VectorX<T>> sliding(int windowSize, int increment) {
-        return (LazySeq<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    default LazySeq<Seq<T>> sliding(int windowSize, int increment) {
+        return (LazySeq<Seq<T>>) ImmutableList.super.sliding(windowSize,increment);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
 import com.oath.cyclops.types.stream.HeadAndTail;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
@@ -409,13 +410,13 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<VectorX<T>> sliding(final int windowSize) {
-        return (IterableX<VectorX<T>>)ExtendedTraversable.super.sliding(windowSize);
+    default IterableX<Seq<T>> sliding(final int windowSize) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.sliding(windowSize);
     }
 
     @Override
-    default IterableX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (IterableX<VectorX<T>>)ExtendedTraversable.super.sliding(windowSize,increment);
+    default IterableX<Seq<T>> sliding(final int windowSize, final int increment) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.sliding(windowSize,increment);
     }
 
     @Override

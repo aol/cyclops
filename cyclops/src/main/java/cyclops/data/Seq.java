@@ -457,7 +457,7 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<VectorX<T>> sliding(int windowSize) {
+    default Seq<Vector<T>> sliding(int windowSize) {
         return (Seq<VectorX<T>>) ImmutableList.super.sliding(windowSize);
     }
 

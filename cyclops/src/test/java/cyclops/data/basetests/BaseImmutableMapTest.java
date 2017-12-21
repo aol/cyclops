@@ -1,6 +1,5 @@
 package cyclops.data.basetests;
 
-import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.MapXs;

@@ -3,6 +3,7 @@ package com.oath.cyclops.types.traversable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.FilterableTransformable;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -342,7 +343,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Size of sliding window
      * @return SequenceM with sliding view
      */
-    default Traversable<VectorX<T>> sliding(final int windowSize) {
+    default Traversable<Seq<T>> sliding(final int windowSize) {
         return traversable().sliding(windowSize);
     }
 
@@ -367,7 +368,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            for each window
      * @return SequenceM with sliding view
      */
-    default Traversable<VectorX<T>> sliding(final int windowSize, final int increment) {
+    default Traversable<Seq<T>> sliding(final int windowSize, final int increment) {
         return traversable().sliding(windowSize, increment);
     }
 

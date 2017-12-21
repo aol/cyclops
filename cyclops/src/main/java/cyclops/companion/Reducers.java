@@ -8,9 +8,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
 
-import cyclops.reactive.collections.immutable.*;
-
-
 import lombok.experimental.UtilityClass;
 
 import java.util.Comparator;

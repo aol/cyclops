@@ -289,12 +289,12 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<VectorX<T>> sliding(int windowSize) {
+    default ImmutableSortedSet<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableSortedSet<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableSortedSet<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 

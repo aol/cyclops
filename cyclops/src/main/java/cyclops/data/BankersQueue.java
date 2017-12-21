@@ -702,13 +702,13 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<VectorX<T>> sliding(int windowSize) {
-        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize);
+    default BankersQueue<Seq<T>> sliding(int windowSize) {
+        return (BankersQueue<Seq<T>>) ImmutableQueue.super.sliding(windowSize);
     }
 
     @Override
-    default BankersQueue<VectorX<T>> sliding(int windowSize, int increment) {
-        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize,increment);
+    default BankersQueue<Seq<T>> sliding(int windowSize, int increment) {
+        return (BankersQueue<Seq<T>>) ImmutableQueue.super.sliding(windowSize,increment);
     }
 
     @Override

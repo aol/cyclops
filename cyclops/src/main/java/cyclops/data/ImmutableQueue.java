@@ -508,12 +508,12 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<VectorX<T>> sliding(int windowSize) {
+    default ImmutableQueue<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableQueue<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableQueue<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 

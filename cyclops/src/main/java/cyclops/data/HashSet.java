@@ -456,13 +456,13 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<VectorX<T>> sliding(int windowSize) {
-          return (HashSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize);
+      public HashSet<Seq<T>> sliding(int windowSize) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.sliding(windowSize);
       }
 
       @Override
-      public HashSet<VectorX<T>> sliding(int windowSize, int increment) {
-          return (HashSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize,increment);
+      public HashSet<Seq<T>> sliding(int windowSize, int increment) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.sliding(windowSize,increment);
       }
 
       @Override

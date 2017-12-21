@@ -1,7 +1,6 @@
 package cyclops.control;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.Higher;
 
 
@@ -44,7 +43,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.UtilityClass;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;

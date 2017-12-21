@@ -1,7 +1,6 @@
 package cyclops.typeclasses.monads;
 
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Future;
 import cyclops.instances.reactive.IterableInstances;
 import cyclops.reactive.collections.mutable.ListX;
@@ -24,7 +23,6 @@ import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import java.util.Optional;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static org.hamcrest.Matchers.equalTo;

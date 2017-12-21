@@ -16,7 +16,6 @@ import com.oath.cyclops.types.mixins.Printable;
 import cyclops.companion.Semigroups;
 import org.junit.Test;
 
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.mutable.ListX;
 

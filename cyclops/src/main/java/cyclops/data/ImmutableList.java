@@ -508,12 +508,12 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<VectorX<T>> sliding(int windowSize) {
+    default ImmutableList<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableList<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableList<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 

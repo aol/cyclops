@@ -21,7 +21,6 @@ import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.companion.Semigroups;
 
-import cyclops.reactive.collections.immutable.*;
 import org.junit.Test;
 
 
