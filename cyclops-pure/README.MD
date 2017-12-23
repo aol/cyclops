@@ -14,6 +14,14 @@ Cyclops pure provides support for advanced functional data structures and higher
 
 Since cyclops 10.0.0-M5
 
+### cyclops-pure builds on top of cyclops
+
+The core Cyclops module provides a range of general purpose and purely functional data types
+
+* [cyclops control](https://github.com/aol/cyclops-react/tree/master/cyclops/src/main/java/cyclops/control) : Control types such as Option, Either, Try, Future and Lazy analogues such as Maybe, LazyEither. 
+* [cyclops data](https://github.com/aol/cyclops-react/tree/master/cyclops/src/main/java/cyclops/data) : Purely functional data types such as Vector (bitmapped array trie), HashMap (hash array mapped trie), Seq (linked list), LazySeq (lazy list), DifferenceList, NonEmptyList, Zipper, HashSet, BankersQueue, Discrete Interval Encoded Trie and more)
+* [cyclops reactive](https://github.com/aol/cyclops-react/tree/master/cyclops/src/main/java/cyclops/reactive) : API for both iterative and reactive based streaming
+
 ## Get cyclops-pure
 
 
