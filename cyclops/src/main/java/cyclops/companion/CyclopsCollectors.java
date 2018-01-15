@@ -11,7 +11,7 @@ import com.oath.cyclops.data.collections.extensions.lazy.*;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.mutable.DequeX;
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 
 import cyclops.reactive.collections.mutable.QueueX;
 
@@ -37,11 +37,11 @@ public interface CyclopsCollectors {
     }
 
     /**
-     * @return Collector for ListX
+     * @return Collector for Seq
      */
-    static <T> Collector<T, ?, ListX<T>> toListX() {
-        return java.util.stream.Collectors.collectingAndThen(ListX.defaultCollector(), (final List<T> d) -> new LazyListX<T>(
-                                                                                                           d, null,ListX.defaultCollector(),Evaluation.LAZY));
+    static <T> Collector<T, ?, Seq<T>> toSeq() {
+        return java.util.stream.Collectors.collectingAndThen(Seq.defaultCollector(), (final List<T> d) -> new LazySeq<T>(
+                                                                                                           d, null,Seq.defaultCollector(),Evaluation.LAZY));
 
     }
 

@@ -3,8 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.treeSet;
@@ -24,6 +23,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -36,6 +37,9 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
 
     private static final long serialVersionUID = 1L;
 
+    static <T extends Comparable<? super T>>  Collector<T, ArrayList<T>, TreeSet<T>> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),TreeSet::fromIterable);
+    }
     public TreeSet(RedBlackTree.Tree<T, T> map, Comparator<? super T> comp) {
         this.map = RedBlackTree.rootIsBlack(map);
         this.comp = comp;
@@ -57,6 +61,9 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
     public static <T> TreeSet<T> fromIterable(Iterable<T> it,Comparator<? super T> comp){
         return ReactiveSeq.fromIterable(it).foldLeft(empty(comp),(m, t2)->m.plus(t2));
+    }
+    public static <T extends Comparable<? super T>> TreeSet<T> fromIterable(Iterable<T> it){
+      return ReactiveSeq.fromIterable(it).foldLeft(empty(Comparators.naturalComparator()),(m, t2)->m.plus(t2));
     }
 
     static <U, T> TreeSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
@@ -496,13 +503,13 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<VectorX<T>> sliding(int windowSize) {
-        return (TreeSet<VectorX<T>>) ImmutableSortedSet.super.sliding(windowSize);
+    public TreeSet<Seq<T>> sliding(int windowSize) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.sliding(windowSize);
     }
 
     @Override
-    public TreeSet<VectorX<T>> sliding(int windowSize, int increment) {
-        return (TreeSet<VectorX<T>>) ImmutableSortedSet.super.sliding(windowSize,increment);
+    public TreeSet<Seq<T>> sliding(int windowSize, int increment) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.sliding(windowSize,increment);
     }
 
     @Override
@@ -511,13 +518,13 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (TreeSet<ListX<T>>) ImmutableSortedSet.super.groupedUntil(predicate);
+    public TreeSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedUntil(predicate);
     }
 
     @Override
-    public TreeSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (TreeSet<ListX<T>>) ImmutableSortedSet.super.groupedStatefullyUntil(predicate);
+    public TreeSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -526,8 +533,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (TreeSet<ListX<T>>) ImmutableSortedSet.super.groupedWhile(predicate);
+    public TreeSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedWhile(predicate);
     }
 
     @Override
@@ -541,8 +548,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<ListX<T>> grouped(int groupSize) {
-        return (TreeSet<ListX<T>>) ImmutableSortedSet.super.grouped(groupSize);
+    public TreeSet<Seq<T>> grouped(int groupSize) {
+        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.grouped(groupSize);
     }
 
     @Override

@@ -3,7 +3,6 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -133,11 +132,6 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
     @Override
     public boolean contains(Tuple2<K, V> t) {
         return map.contains(t);
-    }
-
-    @Override
-    public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(k -> k._1(), v -> v._2());
     }
 
     public LinkedMap<K, V> put(K key, V value) {

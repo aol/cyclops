@@ -4,8 +4,9 @@ import com.oath.cyclops.types.Unwrapable;
 
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.companion.Streams;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 
@@ -138,12 +139,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final ListX<T> reduce(final Stream<? extends Monoid<T>> reducers) {
+    public final Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         return Streams.reduce(this, reducers);
     }
 
     @Override
-    public final ListX<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+    public final Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return Streams.reduce(this, reducers);
     }
 

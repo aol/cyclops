@@ -278,8 +278,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *  Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(Eval.now(10),Eval.now(1)));
-        //Eval.now(ListX.of(10,1)));
+     *  Eval<Seq<Integer>> maybes =Eval.sequence(Seq.of(Eval.now(10),Eval.now(1)));
+        //Eval.now(Seq.of(10,1)));
      *
      * }
      * </pre>
@@ -329,7 +329,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * <pre>
 
      * {@code
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(Seq.of(just,Eval.now(1)),Reducers.toPersistentSetX());
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
@@ -347,7 +347,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+     *   Eval<String> evals =Eval.accumulate(Seq.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
          //Eval.now("101")
      * }
      * </pre>
@@ -369,7 +369,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
+     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,Seq.of(just,Eval.now(1)));
          //Eval.now(11)
      *
      * }

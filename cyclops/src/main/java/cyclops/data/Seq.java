@@ -8,9 +8,7 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -32,6 +30,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //safe list implementation that does not support exceptional states
@@ -44,6 +44,9 @@ public interface Seq<T> extends ImmutableList<T>,
                                 Higher<seq,T> {
 
 
+    static <T> Collector<T, ArrayList<T>, Seq<T>> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),Seq::fromIterable);
+    }
     @Override
     default<R> Seq<R> unitIterable(Iterable<R> it){
         if(it instanceof Seq){
@@ -100,8 +103,8 @@ public interface Seq<T> extends ImmutableList<T>,
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
-    default LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(this);
+    default LazySeq<T> linkedSeq(){
+        return LazySeq.fromIterable(this);
     }
 
     static <T> Seq<T> fromIterable(Iterable<T> it){
@@ -457,13 +460,14 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<Vector<T>> sliding(int windowSize) {
-        return (Seq<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    default Seq<Seq<T>> sliding(int windowSize) {
+        return (Seq<Seq<T>>) ImmutableList.super.sliding(windowSize);
     }
 
+
     @Override
-    default Seq<VectorX<T>> sliding(int windowSize, int increment) {
-        return (Seq<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    default Seq<Seq<T>> sliding(int windowSize, int increment) {
+        return (Seq<Seq<T>>) ImmutableList.super.sliding(windowSize,increment);
     }
 
     @Override
@@ -472,13 +476,13 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (Seq<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    default Seq<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (Seq<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    default Seq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (Seq<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    default Seq<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (Seq<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -487,8 +491,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (Seq<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    default Seq<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (Seq<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
@@ -502,8 +506,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<ListX<T>> grouped(int groupSize) {
-        return (Seq<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    default Seq<Seq<T>> grouped(int groupSize) {
+        return (Seq<Seq<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

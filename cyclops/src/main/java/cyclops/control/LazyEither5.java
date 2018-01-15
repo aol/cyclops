@@ -278,8 +278,8 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
        Either4<String,String,String,Integer> none = Either4.left("none");
 
 
-     * Either4<ListX<String>,ListX<String>,ListX<String>,ListX<Integer>> xors =Either4.sequence(ListX.of(just,none,Either4.right(1)));
-       //Eitehr.right(ListX.of(10,1)));
+     * Either4<Seq<String>,Seq<String>,Seq<String>,Seq<Integer>> xors =Either4.sequence(Seq.of(just,none,Either4.right(1)));
+       //Eitehr.right(Seq.of(10,1)));
      *
      * }</pre>
      *
@@ -306,7 +306,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     return sequence(stream.map(h->h.map(fn)));
   }
     /**
-     * Traverse a Collection of Either3 producing an Either4 with a ListX, applying the transformation function to every
+     * Traverse a Collection of Either3 producing an Either4 with a Seq, applying the transformation function to every
      * element in the list
      *
      * @param xors Either4s to sequence and transform
@@ -327,7 +327,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
      * Either4<String,String,String,Integer> just  = Either4.right(10);
        Either4<String,String,String,Integer> none = Either4.left("none");
      *
-     *  Either4<ListX<String>,ListX<String>,Integer> xors = Either4.accumulateRight(Monoids.intSum,ListX.of(just,none,Either4.right(1)));
+     *  Either4<Seq<String>,Seq<String>,Integer> xors = Either4.accumulateRight(Monoids.intSum,Seq.of(just,none,Either4.right(1)));
         //Either4.right(11);
      *
      * }

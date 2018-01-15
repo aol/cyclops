@@ -418,8 +418,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * {@code
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
-     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.right(1)));
-        //Ior.right(ListX.of("none")))
+     *  Ior<Seq<Integer>,Seq<String>> iors =Ior.sequenceLeft(Seq.of(just,none,Ior.right(1)));
+        //Ior.right(Seq.of("none")))
      *
      * }
      * </pre>
@@ -440,7 +440,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * {@code
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
-     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
       //Ior.right(PersistentSetX.of("none"))));
       * }
      * </pre>
@@ -462,7 +462,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     *  Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.left("1")),i->""+i,Monoids.stringConcat);
+     *  Ior<?,String> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.left("1")),i->""+i,Monoids.stringConcat);
         //Ior.right("none1")
      *
      * }
@@ -491,7 +491,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,Seq.of(Ior.both(2, "boo!"),Ior.left(1)));
        //Ior.right(3);  2+1
      *
      *
@@ -517,8 +517,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
        Ior<String,Integer> none = Ior.left("none");
 
 
-     * Ior<String,ReactiveSeq<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
-       //Ior.right(ListX.of(10,1)));
+     * Ior<String,ReactiveSeq<Integer>> iors =Ior.sequenceRight(Seq.of(just,none,Ior.right(1)));
+       //Ior.right(Seq.of(10,1)));
      *
      * }</pre>
      *
@@ -552,7 +552,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
         //Ior.right(PersistentSetX.of(10,1))));
      * }
      * </pre>
@@ -574,7 +574,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,String> iors = Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),i->""+i,SemigroupK.stringConcat);
+     * Ior<?,String> iors = Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),i->""+i,SemigroupK.stringConcat);
        //Ior.right("101"));
      * }
      * </pre>
@@ -601,7 +601,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,Integer> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),SemigroupK.intSum);
+     *  Ior<?,Integer> iors =Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),SemigroupK.intSum);
         //Ior.right(11);
      *
      * }

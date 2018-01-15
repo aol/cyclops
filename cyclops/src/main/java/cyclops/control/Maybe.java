@@ -499,8 +499,8 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
      *
-     * Maybe<ListX<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
-    //Maybe.of(ListX.of(10, 1));
+     * Maybe<Seq<Integer>> maybes = Maybe.sequenceJust(Seq.of(just, none, Maybe.of(1)));
+    //Maybe.of(Seq.of(10, 1));
      * }
      * </pre>
      *
@@ -536,7 +536,7 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
      *
-     *  Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+     *  Maybe<Seq<Integer>> maybes = Maybe.sequence(Seq.of(just, none, Maybe.of(1)));
     //Maybe.none();
      *
      * }
@@ -588,7 +588,7 @@ public interface Maybe<T> extends Option<T> {
      * {@code
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
-     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
+     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(Seq.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
     //Maybe.of(PersistentSetX.of(10, 1)));
      *
      * }
@@ -612,7 +612,7 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
 
-     *  Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
+     *  Maybe<String> maybes = Maybe.accumulateJust(Seq.of(just, none, Maybe.of(1)), i -> "" + i,
     SemigroupK.stringConcat);
     //Maybe.of("101")
      *
@@ -638,7 +638,7 @@ public interface Maybe<T> extends Option<T> {
      * <pre>
      * {@code
      *
-     *  Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(just, none, Maybe.of(1)));
+     *  Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,Seq.of(just, none, Maybe.of(1)));
     //Maybe.of(11)
      *
      * }

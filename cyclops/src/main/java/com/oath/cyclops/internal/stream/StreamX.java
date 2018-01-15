@@ -4,7 +4,7 @@ import com.oath.cyclops.internal.stream.spliterators.CopyableSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.IteratableSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
@@ -67,7 +67,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))));
@@ -77,7 +77,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate(Supplier<Deque<T>> bufferFactory) {
 
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2,bufferFactory);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2,bufferFactory);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))));
@@ -87,7 +87,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))),
@@ -99,7 +99,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))),
@@ -109,7 +109,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3,bufferFactory);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3,bufferFactory);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))),
@@ -121,7 +121,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     @Override
     @SuppressWarnings("unchecked")
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
-        ListX<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4,bufferFactory);
+        Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4,bufferFactory);
 
         return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
                 createSeq(new IteratableSpliterator<>(copy.get(1))),

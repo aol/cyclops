@@ -8,12 +8,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+
 import cyclops.control.Option;
 
 
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 
 
@@ -135,17 +136,17 @@ public interface Function0<R> extends Supplier<R> {
         }
 
 
-        default Function0<ListX<R>> liftList() {
-            return () -> ListX.of(apply());
+        default Function0<Seq<R>> liftList() {
+            return () -> Seq.of(apply());
         }
 
 
-        default Function0<LinkedListX<R>> liftPStack() {
-            return () -> LinkedListX.of(apply());
+        default Function0<LazySeq<R>> liftLazySeq() {
+            return () -> LazySeq.of(apply());
         }
 
-        default Function0<VectorX<R>> liftPVector() {
-            return () -> VectorX.of(apply());
+        default Function0<Vector<R>> liftVector() {
+            return () -> Vector.of(apply());
         }
     }
 

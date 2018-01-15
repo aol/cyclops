@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import com.oath.cyclops.types.stream.HotStream;
 import cyclops.control.Option;
 import cyclops.data.*;
+import cyclops.data.HashMap;
 import cyclops.data.HashSet;
 import cyclops.data.TreeSet;
 import cyclops.data.Vector;
@@ -24,8 +25,7 @@ import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
+import cyclops.data.Seq;
 
 /**
  * Represents a type that may be reducable (foldable) to a single value or toX
@@ -166,9 +166,9 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
 
-    default ListX<Tuple2<T,BigDecimal>> withPercentiles(){
+    default Seq<Tuple2<T,BigDecimal>> withPercentiles(){
 
-        ListX<T> list = stream().toListX();
+        Seq<T> list = stream().toSeq();
 
         int precision = new Double(Math.log10(list.size())).intValue();
 
@@ -191,7 +191,7 @@ public interface Folds<T> extends Iterable<T>  {
 
 
     default double variance(ToDoubleFunction<T> fn){
-        ListX<T> list = stream().toListX();
+        Seq<T> list = stream().toSeq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
@@ -200,7 +200,7 @@ public interface Folds<T> extends Iterable<T>  {
 
     }
     default double populationVariance(ToDoubleFunction<T> fn){
-        ListX<T> list = stream().toListX();
+        Seq<T> list = stream().toSeq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
@@ -210,7 +210,7 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
     default double stdDeviation(ToDoubleFunction<T> fn){
-        ListX<T> list = stream().toListX();
+        Seq<T> list = stream().toSeq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return Math.sqrt( list.mapToDouble(fn)
                 .map(i->i-avg)
@@ -463,7 +463,7 @@ public interface Folds<T> extends Iterable<T>  {
      * @param reducers
      * @return List of reduced values
      */
-    default ListX<T> reduce(final Stream<? extends Monoid<T>> reducers) {
+    default Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         return stream().reduce(reducers);
     }
 
@@ -489,7 +489,7 @@ public interface Folds<T> extends Iterable<T>  {
      * @param reducers
      * @return
      */
-    default ListX<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+    default Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return stream().reduce(reducers);
     }
 
@@ -648,7 +648,7 @@ public interface Folds<T> extends Iterable<T>  {
      *
      * </pre>
      */
-    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> HashMap<K, Seq<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
 

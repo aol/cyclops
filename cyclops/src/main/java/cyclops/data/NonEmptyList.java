@@ -4,9 +4,7 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
@@ -45,8 +43,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     public ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
-    public LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(this);
+    public LazySeq<T> linkedSeq(){
+        return LazySeq.fromIterable(this);
     }
     public static <T> NonEmptyList<T> of(T head, T... value){
         LazySeq<T> list = LazySeq.of(value);
@@ -325,19 +323,19 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedUntil(predicate);
+    public NonEmptyList<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.groupedUntil(predicate);
     }
 
     @Override
-    public NonEmptyList<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedStatefullyUntil(predicate);
+    public NonEmptyList<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.groupedStatefullyUntil(predicate);
     }
 
 
     @Override
-    public NonEmptyList<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedWhile(predicate);
+    public NonEmptyList<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.groupedWhile(predicate);
     }
 
     @Override
@@ -351,8 +349,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<ListX<T>> grouped(int groupSize) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.grouped(groupSize);
+    public NonEmptyList<Seq<T>> grouped(int groupSize) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.grouped(groupSize);
     }
 
     @Override

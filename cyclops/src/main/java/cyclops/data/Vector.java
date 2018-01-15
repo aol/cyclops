@@ -1,16 +1,16 @@
 package cyclops.data;
 
 
-import com.oath.cyclops.types.persistent.PersistentIndexed;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import com.oath.cyclops.hkt.DataWitness.vector;
 import cyclops.data.base.BAMT;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
@@ -20,14 +20,14 @@ import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor
@@ -45,6 +45,9 @@ public class Vector<T> implements ImmutableList<T>,
         return ( Vector<T>)appendAll((Iterable<T>)list);
     }
 
+    static <T> Collector<T, ArrayList<T>, Vector<T>> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),Vector::fromIterable);
+    }
     @Override
     public boolean containsValue(T value) {
         return stream().filter(i->Objects.equals(i,value)).findFirst().isPresent();
@@ -221,9 +224,7 @@ public class Vector<T> implements ImmutableList<T>,
     public Vector<T> removeFirst(Predicate<? super T> pred) {
         return (Vector<T>)ImmutableList.super.removeFirst(pred);
     }
-    public VectorX<T> vectorX(){
-        return stream().to().vectorX(Evaluation.LAZY);
-    }
+
     public ReactiveSeq<T> stream(){
         return ReactiveSeq.concat(root.stream(),tail.stream());
     }
@@ -410,28 +411,28 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<VectorX<T>> sliding(int windowSize) {
-        return (Vector<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    public Vector<Seq<T>> sliding(int windowSize) {
+        return (Vector<Seq<T>>) ImmutableList.super.sliding(windowSize);
     }
 
     @Override
-    public Vector<VectorX<T>> sliding(int windowSize, int increment) {
-        return (Vector<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    public Vector<Seq<T>> sliding(int windowSize, int increment) {
+        return (Vector<Seq<T>>) ImmutableList.super.sliding(windowSize,increment);
     }
 
     @Override
-    public <C extends Collection<? super T>> Vector<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> Vector<C> grouped(int size, Supplier<C> supplier) {
         return (Vector<C>) ImmutableList.super.grouped(size,supplier);
     }
 
     @Override
-    public Vector<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (Vector<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    public Vector<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (Vector<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    public Vector<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (Vector<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    public Vector<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (Vector<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -440,23 +441,23 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (Vector<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    public Vector<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (Vector<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
-    public <C extends Collection<? super T>> Vector<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> Vector<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (Vector<C>) ImmutableList.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> Vector<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> Vector<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (Vector<C>) ImmutableList.super.groupedUntil(predicate,factory);
     }
 
     @Override
-    public Vector<ListX<T>> grouped(int groupSize) {
-        return (Vector<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    public Vector<Seq<T>> grouped(int groupSize) {
+        return (Vector<Seq<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

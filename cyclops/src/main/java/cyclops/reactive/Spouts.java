@@ -11,7 +11,7 @@ import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
@@ -311,7 +311,7 @@ public interface Spouts {
 
 
 
-    static <T> ReactiveSeq<T> mergeLatestList(ListX<? extends Publisher<? extends T>> publisher){
+    static <T> ReactiveSeq<T> mergeLatestList(Seq<? extends Publisher<? extends T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
@@ -336,7 +336,7 @@ public interface Spouts {
 
 
     }
-    static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
+    static <T> ReactiveSeq<T> amb(Seq<? extends Publisher<? extends T>> list){
         return amb(list.toArray(new ReactiveSeq[0]));
     }
     static <T> ReactiveSeq<T> amb(Publisher<? extends T>... array){
@@ -533,12 +533,12 @@ public interface Spouts {
     }
     public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(Seq.fromPublisher(pubs)
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(Seq.fromPublisher(pubs)
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){

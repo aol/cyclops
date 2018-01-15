@@ -2,12 +2,11 @@ package com.oath.cyclops.types.traversable;
 
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.data.Seq;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.SetX;
+import cyclops.data.HashSet;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -86,18 +85,18 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return new ConvertableSequence<>(this);
     }
 
-    default ListX<T> toListX(){
-        return to().listX();
+    default Seq<T> toSeq(){
+        return to().seq();
     }
-    default SetX<T> toSetX(){
-        return to().setX();
+    default HashSet<T> toHashSet(){
+        return HashSet.fromIterable(this);
     }
     /**
      * Perform an async fold on the provided executor
      *
      *  <pre>
      *  {@code
-     *    Future<Integer> sum =  ListX.of(1,2,3)
+     *    Future<Integer> sum =  Seq.of(1,2,3)
      *                                 .map(this::load)
      *                                 .foldFuture(exec,list->list.reduce(0,(a,b)->a+b))
      *
@@ -122,7 +121,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      * Perform a maybe caching fold (results are memoized)
      *  <pre>
      *  {@code
-     *    Eval<Integer> sum =  ListX.of(1,2,3)
+     *    Eval<Integer> sum =  Seq.of(1,2,3)
      *                                 .map(this::load)
      *                                 .foldLazy(list->list.reduce(0,(a,b)->a+b))
      *
@@ -144,7 +143,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      * Try a fold, capturing any unhandling execution exceptions (that fold the provided classes)
      *  <pre>
      *  {@code
-     *    Try<Integer,Throwable> sum =  ListX.of(1,2,3)
+     *    Try<Integer,Throwable> sum =  Seq.of(1,2,3)
      *                                       .map(this::load)
      *                                       .foldLazy(list->list.reduce(0,(a,b)->a+b),IOException.class)
      *
@@ -174,7 +173,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
      *
      * <pre>
      * {@code
-     * ListX.of(1,2,3,4,5,6,7,8,9)
+     * Seq.of(1,2,3,4,5,6,7,8,9)
     .dropRight(5)
     .plus(10)
     .visit((x,xs) ->
@@ -420,38 +419,38 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default <C extends Collection<? super T>> IterableX<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> IterableX<C> grouped(final int size, final Supplier<C> supplier) {
         return (IterableX<C>)ExtendedTraversable.super.grouped(size,supplier);
     }
 
     @Override
-    default IterableX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
-        return (IterableX<ListX<T>>)ExtendedTraversable.super.groupedUntil(predicate);
+    default IterableX<Seq<T>> groupedUntil(final Predicate<? super T> predicate) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedUntil(predicate);
     }
 
     @Override
-    default IterableX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (IterableX<ListX<T>>)ExtendedTraversable.super.groupedStatefullyUntil(predicate);
+    default IterableX<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedStatefullyUntil(predicate);
     }
 
   @Override
-    default IterableX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return (IterableX<ListX<T>>)ExtendedTraversable.super.groupedWhile(predicate);
+    default IterableX<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedWhile(predicate);
     }
 
     @Override
-    default <C extends Collection<? super T>> IterableX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> IterableX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return (IterableX<C>)ExtendedTraversable.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> IterableX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> IterableX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return (IterableX<C>)ExtendedTraversable.super.groupedUntil(predicate,factory);
     }
 
     @Override
-    default IterableX<ListX<T>> grouped(final int groupSize) {
-        return (IterableX<ListX<T>>)ExtendedTraversable.super.grouped(groupSize);
+    default IterableX<Seq<T>> grouped(final int groupSize) {
+        return (IterableX<Seq<T>>)ExtendedTraversable.super.grouped(groupSize);
     }
 
     @Override

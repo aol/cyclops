@@ -1,15 +1,14 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.reactive.collections.immutable.PersistentSetX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
@@ -88,9 +87,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return (ImmutableSet<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
     }
 
-    default PersistentSetX<T> persistentSetX(){
-        return stream().to().persistentSetX(Evaluation.LAZY);
-    }
+
     boolean containsValue(T value);
     int size();
     ImmutableSet<T> add(T value);
@@ -360,17 +357,17 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSet<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableSet<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
     @Override
-    default ImmutableSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ImmutableSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
@@ -379,22 +376,22 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
-    default ImmutableSet<ListX<T>> grouped(int groupSize) {
+    default ImmutableSet<Seq<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

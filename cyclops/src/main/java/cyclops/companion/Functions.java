@@ -49,10 +49,10 @@ public class Functions {
      *
      * <pre>
      *     {@code
-     *      ListX<Integer> myList = ListX.of(1,2,3);
-            Fn1<? super String, ? extends ListX<String>> arrow = Functions.arrowUnit(myList);
+     *      Seq<Integer> myList = Seq.of(1,2,3);
+            Fn1<? super String, ? extends Seq<String>> arrow = Functions.arrowUnit(myList);
 
-            ListX<String> list = arrow.applyHKT("hello world");
+            Seq<String> list = arrow.applyHKT("hello world");
      *
      *     }
      * </pre>

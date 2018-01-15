@@ -187,10 +187,10 @@ public class CompletableFutures {
      *
      * <pre>
      * {@code
-     *   CompletableFuture<ListX<Integer>> futures =CompletableFuture.sequence(ListX.of(
+     *   CompletableFuture<Seq<Integer>> futures =CompletableFuture.sequence(Seq.of(
      *                                                          CompletableFuture.completedFuture(10),
      *                                                          CompletableFuture.completedFuture(1)));
-         //ListX.of(10,1)
+         //Seq.of(10,1)
      *
      * }
      * </pre>
@@ -207,10 +207,10 @@ public class CompletableFutures {
      *
      * <pre>
      * {@code
-     *   CompletableFuture<ListX<Integer>> futures =CompletableFuture.sequence(ListX.of(
+     *   CompletableFuture<Seq<Integer>> futures =CompletableFuture.sequence(Seq.of(
      *                                                          CompletableFuture.completedFuture(10),
      *                                                          CompletableFuture.completedFuture(1)));
-         //ListX.of(10,1)
+         //Seq.of(10,1)
      *
      * }
      * </pre>
@@ -249,7 +249,7 @@ public class CompletableFutures {
       CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException())
                                                .getFuture();
 
-     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(Seq.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
 
        //CompletableFuture[PersistentSetX[10,1]]
      *  }
@@ -277,7 +277,7 @@ public class CompletableFutures {
      *
      * <pre>
      * {@code
-     * CompletableFuture<String> future = CompletableFutures.accumulate(ListX.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
+     * CompletableFuture<String> future = CompletableFutures.accumulate(Seq.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
         //CompletableFuture["101"]
      * }
      * </pre>
@@ -307,7 +307,7 @@ public class CompletableFutures {
      * <pre>
      * {@code
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
-     * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum, ListX.of(just,CompletableFuture.completedFuture(1)));
+     * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum, Seq.of(just,CompletableFuture.completedFuture(1)));
        //CompletableFuture[11]
      * }
      * </pre>
@@ -336,7 +336,7 @@ public class CompletableFutures {
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
        CompletableFuture<Integer> none = Future.ofError(new NoSuchElementException()).getFuture();
 
-     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(ListX.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
+     * CompletableFuture<PersistentSetX<Integer>> futures = CompletableFutures.accumulateSuccess(Seq.of(just,none,CompletableFuture.completedFuture(1)),Reducers.toPersistentSetX());
 
        //CompletableFuture[PersistentSetX[10,1]]
      *  }
@@ -357,7 +357,7 @@ public class CompletableFutures {
      *
      * <pre>
      * {@code
-     * CompletableFuture<String> future = Future.accumulate(ListX.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
+     * CompletableFuture<String> future = Future.accumulate(Seq.of(CompletableFuture.completedFuture(10),CompletableFuture.completedFuture(1)),i->""+i,Monoids.stringConcat);
         //CompletableFuture["101"]
      * }
      * </pre>
@@ -383,7 +383,7 @@ public class CompletableFutures {
      * {@code
      * CompletableFuture<Integer> just =CompletableFuture.completedFuture(10);
      *
-     * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum,ListX.of(just,CompletableFuture.completableFuture(1)));
+     * CompletableFuture<Integer> future =CompletableFutures.accumulate(Monoids.intSum,Seq.of(just,CompletableFuture.completableFuture(1)));
        //CompletableFuture[11]
      * }
      * </pre>

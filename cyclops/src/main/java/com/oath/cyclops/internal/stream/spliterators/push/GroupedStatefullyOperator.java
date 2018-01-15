@@ -1,12 +1,14 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
+
 import java.util.Collection;
 import java.util.function.*;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class GroupedStatefullyOperator<T,C extends PersistentCollection<? super T>,R> extends BaseOperator<T,R> {
 
 
 
@@ -29,7 +31,7 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         StreamSubscription[] upstream = {null};
         StreamSubscription sub = new StreamSubscription(){
             @Override
@@ -55,7 +57,7 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
         };
         upstream[0] =  source.subscribe(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(predicate.test((C)next[0],e)){
                             onNext.accept(finalizer.apply((C)next[0]));
                             sub.requested.decrementAndGet();
@@ -91,10 +93,10 @@ public class GroupedStatefullyOperator<T,C extends Collection<? super T>,R> exte
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         source.subscribeAll(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(predicate.test((C)next[0],e)){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();

@@ -12,8 +12,6 @@ import java.util.function.Function;
  */
 public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
 
-
-
     private final Function<? super Seq<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;

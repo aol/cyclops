@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.reactive.Streamable;
 
 public class SeqUtils {
@@ -80,11 +79,11 @@ public class SeqUtils {
       *
       * @return An immutable toX of this stream.
       */
-    public static final <A> CollectionX<A> toLazyCollection(final Stream<A> stream) {
+    public static final <A> Collection<A> toLazyCollection(final Stream<A> stream) {
         return toLazyCollection(stream.iterator());
     }
 
-    public static final <A> CollectionX<A> toLazyCollection(final Iterator<A> iterator) {
+    public static final <A> Collection<A> toLazyCollection(final Iterator<A> iterator) {
         return toLazyCollection(iterator, false);
     }
 
@@ -92,16 +91,16 @@ public class SeqUtils {
      * Lazily constructs a Collection from specified Stream. Collections iterator may be safely used
      * concurrently by multiple threads.
     */
-    public static final <A> CollectionX<A> toConcurrentLazyCollection(final Stream<A> stream) {
+    public static final <A> Collection<A> toConcurrentLazyCollection(final Stream<A> stream) {
         return toConcurrentLazyCollection(stream.iterator());
     }
 
-    public static final <A> CollectionX<A> toConcurrentLazyCollection(final Iterator<A> iterator) {
+    public static final <A> Collection<A> toConcurrentLazyCollection(final Iterator<A> iterator) {
         return toLazyCollection(iterator, true);
     }
 
-    private static final <A> CollectionX<A> toLazyCollection(final Iterator<A> iterator, final boolean concurrent) {
-        return CollectionX.fromCollection(createLazyCollection(iterator, concurrent));
+    private static final <A> Collection<A> toLazyCollection(final Iterator<A> iterator, final boolean concurrent) {
+        return createLazyCollection(iterator, concurrent);
 
     }
 

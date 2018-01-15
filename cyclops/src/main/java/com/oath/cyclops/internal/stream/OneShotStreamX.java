@@ -5,7 +5,7 @@ import com.oath.cyclops.internal.stream.spliterators.ReversableSpliterator;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.data.tuple.Tuple2;
@@ -104,7 +104,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
                 .map4(s -> createSeq(s, reversible.map(r -> r.copy())));
     }
     @Override
-    public ListX<ReactiveSeq<T>> multicast(int num){
+    public Seq<ReactiveSeq<T>> multicast(int num){
         return Streams.toBufferingCopier(iterator(),num,()->new ArrayDeque<T>(100))
                 .map(ReactiveSeq::fromIterator);
     }
