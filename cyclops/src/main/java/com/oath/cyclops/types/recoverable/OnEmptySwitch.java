@@ -16,7 +16,7 @@ public interface OnEmptySwitch<T, R> {
      *
      * <pre>
      * {@code
-     *     ListX.zero().onEmptySwitch(()->ListX.of(1));
+     *     Seq.zero().onEmptySwitch(()->Seq.of(1));
      * }
      * </pre>
      *

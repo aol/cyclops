@@ -3,8 +3,8 @@ package cyclops.data;
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.immutable.LazySeq;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.function.Function1;
 import cyclops.reactive.ReactiveSeq;
@@ -73,7 +73,7 @@ public interface Enumeration<E> {
     }
 
     static <E> Enumeration<E> enumsList(List<E> seq){
-        return new EnumerationByIndexed<E>(ListX.fromIterable(seq));
+        return new EnumerationByIndexed<E>(Seq.fromIterable(seq));
     }
     @AllArgsConstructor
     static class EnumerationByEnum<E extends Enum<E>> implements  Enumeration<E>{
@@ -166,12 +166,12 @@ public interface Enumeration<E> {
                     .filter(Option::isPresent).flatMap(Option::stream);
     }
 
-    default ListX<E> list(E e){
+    default Seq<E> list(E e){
         return stream(e)
                 .to().listX(Evaluation.LAZY);
     }
-    default LinkedListX<E> linkedList(E e){
+    default LazySeq<E> linkedList(E e){
         return stream(e)
-                .to().linkedListX(Evaluation.LAZY);
+                .to().linkedSeq(Evaluation.LAZY);
     }
 }

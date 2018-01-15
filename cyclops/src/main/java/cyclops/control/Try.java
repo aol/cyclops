@@ -236,7 +236,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException> just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
    *
-   *  Xor<ListX<Integer>,ListX<NoSuchElementException>> xors =Try.sequenceFailures(ListX.of(just,none,Try.success(1)));
+   *  Xor<Seq<Integer>,Seq<NoSuchElementException>> xors =Try.sequenceFailures(Seq.of(just,none,Try.success(1)));
   //[Primary[NoSuchElementException]]
    *
    * }
@@ -257,7 +257,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException>  just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
-   *  Xor<?,PersistentSetX<String>> xors = Try.accumulateFailures(ListX.of(just,none,Try.success(1)),Reducers.<String>toPersistentSetX());
+   *  Xor<?,PersistentSetX<String>> xors = Try.accumulateFailures(Seq.of(just,none,Try.success(1)),Reducers.<String>toPersistentSetX());
   //Primary[PersistentSetX[NoSuchElementException]]]
    * }
    * </pre>
@@ -279,7 +279,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException> just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
-   *   Xor<?,String> xors = Try.accumulateFailures(ListX.of(just,none,Try.failure("1")),i->""+i,Monoids.stringConcat);
+   *   Xor<?,String> xors = Try.accumulateFailures(Seq.of(just,none,Try.failure("1")),i->""+i,Monoids.stringConcat);
   //Primary[NoSuchElementException]]
    *
    * }
@@ -309,8 +309,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
 
-   * Xor<ListX<String>,ListX<Integer>> xors =Try.sequenceSuccess(ListX.of(just,none,Try.success(1)));
-  //Primary(ListX.of(10,1)));
+   * Xor<Seq<String>,Seq<Integer>> xors =Try.sequenceSuccess(Seq.of(just,none,Try.success(1)));
+  //Primary(Seq.of(10,1)));
    *
    * }</pre>
    *
@@ -330,7 +330,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException> just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
-   *  Try<PersistentSetX<Integer>,Throwable> xors =Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),Reducers.toPersistentSetX());
+   *  Try<PersistentSetX<Integer>,Throwable> xors =Try.accumulateSuccesses(Seq.of(just,none,Try.success(1)),Reducers.toPersistentSetX());
   //Primary[PersistentSetX[10,1]]
    * }
    * </pre>
@@ -352,7 +352,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException> just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
 
-   *  Xor<?,String> iors = Try.accumulateSuccesses(ListX.of(just,none,Try.success(1)),i->""+i,Monoids.stringConcat);
+   *  Xor<?,String> iors = Try.accumulateSuccesses(Seq.of(just,none,Try.success(1)),i->""+i,Monoids.stringConcat);
   //Primary["101"]
    * }
    * </pre>
@@ -377,7 +377,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    *  Try<Integer,NoSuchElementException> just  = Try.success(10);
   Try<Integer,NoSuchElementException> none = Try.failure(new NoSuchElementException());
    *
-   *  Try<?,Integer> xors = Try.accumulateSuccesses(Monoids.intSum,ListX.of(just,none,Try.success(1)));
+   *  Try<?,Integer> xors = Try.accumulateSuccesses(Monoids.intSum,Seq.of(just,none,Try.success(1)));
   //Primary[11]
    *
    * }
@@ -397,7 +397,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
    * input values of the same type and returns the combined result) {@see cyclops2.Monoids }.
    * <pre>
    * {@code
-   * Try.accumulateFailures(ListX.of(Try.failure(new NoSuchElementException());,
+   * Try.accumulateFailures(Seq.of(Try.failure(new NoSuchElementException());,
    * Try.failure(new NoSuchElementException());
   Try.success("success")),SemigroupK.stringConcat)
 

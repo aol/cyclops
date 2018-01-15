@@ -3,8 +3,7 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.hashSet;
@@ -27,6 +26,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,6 +36,9 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     @Getter
     private final HAMT.Node<T,T> map;
 
+    static <T> Collector<T, ArrayList<T>, HashSet<T>> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),HashSet::fromIterable);
+    }
 
     public static <T> HashSet<T> empty(){
         return new HashSet<T>( HAMT.empty());
@@ -471,13 +475,13 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedUntil(predicate);
+      public HashSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.groupedUntil(predicate);
       }
 
       @Override
-      public HashSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
+      public HashSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
       }
 
       @Override
@@ -486,8 +490,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedWhile(predicate);
+      public HashSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.groupedWhile(predicate);
       }
 
       @Override
@@ -501,8 +505,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<ListX<T>> grouped(int groupSize) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.grouped(groupSize);
+      public HashSet<Seq<T>> grouped(int groupSize) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.grouped(groupSize);
       }
 
       @Override

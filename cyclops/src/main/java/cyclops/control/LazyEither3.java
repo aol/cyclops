@@ -229,7 +229,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
        Either3<String,String,Integer> none = Either3.left("none");
 
 
-     * Either3<String,String,ReactiveSeq<Integer>> xors =Either3.sequence(ListX.of(just,none,Either3.right(1)));
+     * Either3<String,String,ReactiveSeq<Integer>> xors =Either3.sequence(Seq.of(just,none,Either3.right(1)));
        //Eitehr.right(ReactiveSeq.of(10,1)));
      *
      * }</pre>
@@ -257,7 +257,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     return sequence(stream.map(h->h.map(fn)));
   }
     /**
-     * Traverse a Collection of Either3 producing an Either3 with a ListX, applying the transformation function to every
+     * Traverse a Collection of Either3 producing an Either3 with a Seq, applying the transformation function to every
      * element in the list
      *
      * @param xors Either3s to sequence and transform
@@ -278,7 +278,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * Either3<String,String,Integer> just  = Either3.right(10);
        Either3<String,String,Integer> none = Either3.left("none");
      *
-     *  Either3<ListX<String>,ListX<String>,Integer> xors = Either3.accumulateRight(Monoids.intSum,ListX.of(just,none,Either3.right(1)));
+     *  Either3<Seq<String>,Seq<String>,Integer> xors = Either3.accumulateRight(Monoids.intSum,Seq.of(just,none,Either3.right(1)));
         //Either3.right(11);
      *
      * }

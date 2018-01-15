@@ -4,13 +4,13 @@ import com.oath.cyclops.internal.stream.SeqUtils;
 import com.oath.cyclops.internal.stream.StreamableImpl;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
+import cyclops.data.Seq;
+
 import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
@@ -42,10 +42,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
                                         IterableX<T>,
                                         Unit<T> {
 
-    public static <T> Streamable<T> fromObject(final Object toCoerce) {
-        return new StreamableImpl(
-                                  Impl.collectStream(toCoerce));
-    }
 
     @Override
     default ReactiveSeq<T> reactiveSeq() {
@@ -60,8 +56,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable
      */
     public static <T> Streamable<T> fromStream(final Stream<T> stream) {
-        return new StreamableImpl(
-                                  Impl.collectStream(stream));
+        return new StreamableImpl(new PrintableIterable<>(Streams.toLazyCollection(stream)));
     }
 
     /**
@@ -73,58 +68,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
     public static <T> Streamable<T> fromIterable(final Iterable<T> iterable) {
         if(iterable instanceof Streamable)
             return (Streamable<T>)iterable;
-        return new StreamableImpl(
-                                  Impl.collectStream(iterable));
+        return new StreamableImpl(iterable);
     }
 
-    /**
-     * @param toCoerce Efficiently / lazily Makes Stream repeatable, guards iteration with locks on initial iteration
-     * @return
-     */
-    public static <T> Streamable<T> synchronizedFromStream(final Stream<T> toCoerce) {
-        return new StreamableImpl(
-                                  Impl.collectStreamConcurrent(toCoerce));
-    }
 
-    public static <T> Streamable<T> synchronizedFromIterable(final Iterable<T> toCoerce) {
-        return new StreamableImpl(
-                                  Impl.collectStreamConcurrent(toCoerce));
-    }
-
-    static class Impl {
-
-        private static <T> Iterable<T> collectStreamConcurrent(final T object) {
-            if (object instanceof Stream) {
-
-                final Collection c = SeqUtils.toConcurrentLazyCollection((Stream) object);
-                return new PrintableIterable<T>(
-                                                c);
-            }
-            if (object instanceof Object[]) {
-                return (Iterable<T>) Arrays.asList((Object[]) object);
-            }
-            if (object instanceof Iterable)
-                return (Iterable<T>) object;
-
-            return Arrays.asList(object);
-        }
-
-        private static <T> Iterable<T> collectStream(final T object) {
-            if (object instanceof Stream) {
-
-                final Collection c = SeqUtils.toLazyCollection((Stream) object);
-                return new PrintableIterable<T>(
-                                                c);
-            }
-            if (object instanceof Object[]) {
-                return (Iterable<T>) Arrays.asList((Object[]) object);
-            }
-            if (object instanceof Iterable)
-                return (Iterable<T>) object;
-
-            return Arrays.asList(object);
-        }
-    }
 
     @AllArgsConstructor
     static class PrintableIterable<T> implements Iterable<T> {
@@ -221,7 +168,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Streamable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default Streamable<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
 
         return Streamable.fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
     }
@@ -600,9 +547,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable converted to a List
      */
     default List<T> toList() {
-
-        if (getStreamable() instanceof List)
-            return ListX.fromIterable((List) getStreamable());
         return reactiveSeq().toList();
     }
 
@@ -753,7 +697,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return this Streamable converted to an Optional List
 
     @Override
-    default Optional<ListX<T>> optional() {
+    default Optional<Seq<T>> optional() {
         return reactiveSeq().optional();
     }
      */
@@ -1053,7 +997,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<VectorX<T>> sliding(final int windowSize) {
+    default Streamable<Seq<T>> sliding(final int windowSize) {
         return fromStream(reactiveSeq().sliding(windowSize));
     }
 
@@ -1079,7 +1023,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with sliding view
      */
     @Override
-    default Streamable<VectorX<T>> sliding(final int windowSize, final int increment) {
+    default Streamable<Seq<T>> sliding(final int windowSize, final int increment) {
         return fromStream(reactiveSeq().sliding(windowSize, increment));
     }
 
@@ -1102,7 +1046,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with elements grouped by size
      */
     @Override
-    default Streamable<ListX<T>> grouped(final int groupSize) {
+    default Streamable<Seq<T>> grouped(final int groupSize) {
         return fromStream(reactiveSeq().grouped(groupSize));
     }
 
@@ -1120,7 +1064,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     @Override
-    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> cyclops.data.HashMap<K, Seq<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return reactiveSeq().groupBy(classifier);
     }
 
@@ -1570,7 +1514,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return
      */
     @Override
-    default ListX<T> reduce(final Stream<? extends Monoid<T>> reducers) {
+    default Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
         return reactiveSeq().reduce(reducers);
     }
 
@@ -1595,7 +1539,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return
      */
     @Override
-    default ListX<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+    default Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return reactiveSeq().reduce(reducers);
     }
 
@@ -2477,7 +2421,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
-    default Streamable<ListX<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
+    default Streamable<Seq<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, t));
     }
 
@@ -2496,8 +2440,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param factory Collection factory
      * @return Streamable batched by size and time
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
-            final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Streamable<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
+                                                                                                      final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, unit, factory));
     }
 
@@ -2515,7 +2459,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
-    default Streamable<ListX<T>> groupedByTime(final long time, final TimeUnit t) {
+    default Streamable<Seq<T>> groupedByTime(final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().groupedByTime(time, t));
     }
 
@@ -2537,7 +2481,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param factory Collection factory
      * @return Streamable batched into toX types by time period
      */
-    default <C extends Collection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedByTime(time, unit, factory));
     }
 
@@ -2558,7 +2502,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into toX types by size
      */
     @Override
-    default <C extends Collection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {
         return fromStream(reactiveSeq().grouped(size, supplier));
     }
 
@@ -2616,7 +2560,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
 
     @Override
-    default Streamable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default Streamable<Seq<T>> groupedUntil(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedUntil(predicate));
     }
 
@@ -2634,7 +2578,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into lists determined by the predicate supplied
      */
     @Override
-    default Streamable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Streamable<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedWhile(predicate));
     }
 
@@ -2654,7 +2598,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into collections determined by the predicate supplied
      */
     @Override
-    default <C extends Collection<? super T>> Streamable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Streamable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedWhile(predicate, factory));
     }
 
@@ -2676,7 +2620,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into collections determined by the predicate supplied
      */
     @Override
-    default <C extends Collection<? super T>> Streamable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Streamable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return fromStream(reactiveSeq().groupedUntil(predicate, factory));
 
     }

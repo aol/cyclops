@@ -13,6 +13,7 @@ import cyclops.companion.Streams;
 import cyclops.control.Option;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
+import cyclops.data.HashSet;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import cyclops.data.tuple.Tuple2;
 
 import cyclops.companion.Reducers;
 import cyclops.reactive.collections.mutable.DequeX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.mutable.MapX;
 import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.reactive.collections.mutable.SetX;
@@ -111,11 +112,11 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return res;
     }
 
-    public LinkedListX<T> linkedListX(){
-        return linkedListX(Evaluation.EAGER);
+    public LazySeq<T> linkedSeq(){
+        return linkedSeq(Evaluation.EAGER);
     }
-    public LinkedListX<T> linkedListX(Evaluation c) {
-        LinkedListX<T> res = LinkedListX.fromIterable(iterable);
+    public LazySeq<T> linkedSeq(Evaluation c) {
+        LazySeq<T> res = LazySeq.fromIterable(iterable);
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -140,8 +141,8 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return res;
     }
 
-    public SetX<T> setX(){
-        return setX(Evaluation.EAGER);
+    public HashSet<T> set(){
+        return HashSet.fromIterable(this);
     }
     public SetX<T> setX(Evaluation c) {
         SetX<T> res = SetX.fromIterable(iterable);
@@ -150,11 +151,11 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return res;
     }
 
-    public ListX<T> listX(){
-        return listX(Evaluation.EAGER);
+    public Seq<T> seq(){
+        return Seq.fromIterable(iterable);
     }
-    public ListX<T> listX(Evaluation c) {
-        ListX<T> res = ListX.fromIterable(iterable);
+    public Seq<T> listX(Evaluation c) {
+        Seq<T> res = Seq.fromIterable(iterable);
         if(Evaluation.EAGER ==c) {
             return res.materialize();
         }
@@ -183,25 +184,25 @@ public class  ConvertableSequence<T> implements ToStream<T> {
         return MapX.fromMap(stream().collect(Collectors.toMap(keyMapper, valueMapper)));
     }
 
-    public Maybe<ListX<T>> maybe() {
+    public Maybe<Seq<T>> maybe() {
         return value().toMaybe();
 
     }
-    public Option<ListX<T>> option() {
-        final ListX<T> list = listX();
+    public Option<Seq<T>> option() {
+        final Seq<T> list = listX();
         if (list.size() == 0)
             return Option.none();
         return Option.of(list);
     }
 
-    public Optional<ListX<T>> optional() {
-        final ListX<T> list = listX();
+    public Optional<Seq<T>> optional() {
+        final Seq<T> list = listX();
         if (list.size() == 0)
             return Optional.empty();
         return Optional.of(list);
     }
 
-    public Value<ListX<T>> value() {
+    public Value<Seq<T>> value() {
         return Eval.later(() -> listX());
     }
     public Maybe<T> firstValue() {

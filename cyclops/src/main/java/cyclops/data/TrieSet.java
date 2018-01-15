@@ -1,10 +1,11 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.trieSet;
@@ -26,6 +27,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -38,6 +41,9 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return new TrieSet<T>( HashedPatriciaTrie.empty());
     }
 
+    static <T> Collector<T, ArrayList<T>, TrieSet<T>> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),TrieSet::fromIterable);
+    }
     static <U, T> TrieSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
     }
@@ -396,28 +402,28 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<VectorX<T>> sliding(int windowSize) {
-        return (TrieSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize);
+    public TrieSet<Seq<T>> sliding(int windowSize) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.sliding(windowSize);
     }
 
     @Override
-    public TrieSet<VectorX<T>> sliding(int windowSize, int increment) {
-        return (TrieSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize,increment);
+    public TrieSet<Seq<T>> sliding(int windowSize, int increment) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.sliding(windowSize,increment);
     }
 
     @Override
-    public <C extends Collection<? super T>> TrieSet<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> TrieSet<C> grouped(int size, Supplier<C> supplier) {
         return (TrieSet<C>) ImmutableSet.super.grouped(size,supplier);
     }
 
     @Override
-    public TrieSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (TrieSet<ListX<T>>) ImmutableSet.super.groupedUntil(predicate);
+    public TrieSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedUntil(predicate);
     }
 
     @Override
-    public TrieSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (TrieSet<ListX<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
+    public TrieSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -426,8 +432,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (TrieSet<ListX<T>>) ImmutableSet.super.groupedWhile(predicate);
+    public TrieSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedWhile(predicate);
     }
 
     @Override
@@ -441,8 +447,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<ListX<T>> grouped(int groupSize) {
-        return (TrieSet<ListX<T>>) ImmutableSet.super.grouped(groupSize);
+    public TrieSet<Seq<T>> grouped(int groupSize) {
+        return (TrieSet<Seq<T>>) ImmutableSet.super.grouped(groupSize);
     }
 
     @Override

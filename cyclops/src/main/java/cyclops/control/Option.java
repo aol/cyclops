@@ -261,8 +261,8 @@ public interface Option<T> extends To<Option<T>>,
      *  Option<Integer> just = Option.of(10);
         Option<Integer> none = Option.none();
      *
-     * Option<ListX<Integer>> maybes = Option.sequenceJust(ListX.of(just, none, Option.of(1)));
-      //Option.of(ListX.of(10, 1));
+     * Option<Seq<Integer>> maybes = Option.sequenceJust(Seq.of(just, none, Option.of(1)));
+      //Option.of(Seq.of(10, 1));
      * }
      * </pre>
      *
@@ -284,7 +284,7 @@ public interface Option<T> extends To<Option<T>>,
      *  Option<Integer> just = Option.of(10);
         Option<Integer> none = Option.none();
      *
-     *  Option<ListX<Integer>> maybes = Option.sequence(ListX.of(just, none, Option.of(1)));
+     *  Option<Seq<Integer>> maybes = Option.sequence(Seq.of(just, none, Option.of(1)));
        //Option.none();
      *
      * }
@@ -348,7 +348,7 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *  Option<Integer> just = Option.of(10);
     Option<Integer> none = Option.none();
-     * Option<PersistentSetX<Integer>> maybes = Option.accumulateJust(ListX.of(just, none, Option.of(1)), Reducers.toPersistentSetX());
+     * Option<PersistentSetX<Integer>> maybes = Option.accumulateJust(Seq.of(just, none, Option.of(1)), Reducers.toPersistentSetX());
     //Option.of(PersistentSetX.of(10, 1)));
      *
      * }
@@ -372,7 +372,7 @@ public interface Option<T> extends To<Option<T>>,
      *  Option<Integer> just = Option.of(10);
     Option<Integer> none = Option.none();
 
-     *  Option<String> maybes = Option.accumulateJust(ListX.of(just, none, Option.of(1)), i -> "" + i,
+     *  Option<String> maybes = Option.accumulateJust(Seq.of(just, none, Option.of(1)), i -> "" + i,
     SemigroupK.stringConcat);
     //Option.of("101")
      *
@@ -398,7 +398,7 @@ public interface Option<T> extends To<Option<T>>,
      * <pre>
      * {@code
      *
-     *  Option<Integer> maybes = Option.accumulateJust(Monoids.intSum,ListX.of(just, none, Option.of(1)));
+     *  Option<Integer> maybes = Option.accumulateJust(Monoids.intSum,Seq.of(just, none, Option.of(1)));
     //Option.of(11)
      *
      * }

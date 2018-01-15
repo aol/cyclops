@@ -23,7 +23,7 @@ public interface Higher<T1,T2> extends Convert<Higher<T1,T2>>{
      * <pre>
      * {@code
      *  Functor<ListType.µ> f = TypeClasses.General
-    .<ListType.µ,List<?>>functor(ListType::narrow,(list,fn)->ListX.fromIterable(list).map(fn));
+    .<ListType.µ,List<?>>functor(ListType::narrow,(list,fn)->Seq.fromIterable(list).map(fn));
 
     List<Integer> mapped2 = f.map(a->a+1, ListType.widen(Arrays.asList(1,2,3)))
     .then_(f::transform,λ(this::mult3))

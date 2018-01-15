@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed2;
@@ -9,9 +10,8 @@ import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -88,9 +88,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().removeFirst(pred));
 
     }
-    default LinkedListX<T> linkdedListX(){
-        return stream().to().linkedListX(Evaluation.LAZY);
-    }
+
 
     default ImmutableList<T> subList(int start, int end){
         return drop(start).take(end-start);
@@ -518,17 +516,17 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableList<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ImmutableList<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
         return unitStream(stream().groupedStatefullyUntil(predicate));
     }
 
@@ -537,22 +535,22 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableList<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
-    default ImmutableList<ListX<T>> grouped(int groupSize) {
+    default ImmutableList<Seq<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

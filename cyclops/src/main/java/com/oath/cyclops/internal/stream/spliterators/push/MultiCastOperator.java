@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 
 import java.util.function.Consumer;
 
@@ -21,10 +21,10 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
 
     final int expect;
 
-    ListX<Consumer<? super T>> registeredOnNext = ListX.empty();
-    ListX<Consumer<? super Throwable>> registeredOnError= ListX.empty();
-    ListX<Runnable> registeredOnComplete= ListX.empty();
-    ListX<StreamSubscription> subs = ListX.empty();
+    Seq<Consumer<? super T>> registeredOnNext = Seq.empty();
+    Seq<Consumer<? super Throwable>> registeredOnError= Seq.empty();
+    Seq<Runnable> registeredOnComplete= Seq.empty();
+    Seq<StreamSubscription> subs = Seq.empty();
 
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {

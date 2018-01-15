@@ -10,9 +10,12 @@ import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,14 +23,17 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     private static final long serialVersionUID = 1L;
     private final LazySeq<Character> string;
 
-    private static final LazyString Nil = fromLazyList(LazySeq.empty());
-    public static LazyString fromLazyList(LazySeq<Character> string){
+    private static final LazyString Nil = fromLazySeq(LazySeq.empty());
+    public static LazyString fromLazySeq(LazySeq<Character> string){
         return new LazyString(string);
     }
     public static LazyString of(CharSequence seq){
-        return fromLazyList(LazySeq.fromStream( seq.chars().mapToObj(i -> (char) i)));
+        return fromLazySeq(LazySeq.fromStream( seq.chars().mapToObj(i -> (char) i)));
     }
 
+    static Collector<Character, ArrayList<Character>, LazyString> collector() {
+      return Collectors.collectingAndThen(Collectors.toList(),a-> fromLazySeq(LazySeq.fromIterable(a)));
+    }
 
     @Override
     public<R> LazySeq<R> unitIterable(Iterable<R> it){
@@ -41,7 +47,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     public LazyString op(Function<? super LazySeq<Character>, ? extends LazySeq<Character>> custom){
-        return fromLazyList(custom.apply(string));
+        return fromLazySeq(custom.apply(string));
     }
 
     public LazyString substring(int start){
@@ -51,26 +57,26 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return drop(start).take(end-start);
     }
     public LazyString toUpperCase(){
-        return fromLazyList(string.map(c->c.toString().toUpperCase().charAt(0)));
+        return fromLazySeq(string.map(c->c.toString().toUpperCase().charAt(0)));
     }
     public LazyString toLowerCase(){
-        return fromLazyList(string.map(c->c.toString().toLowerCase().charAt(0)));
+        return fromLazySeq(string.map(c->c.toString().toLowerCase().charAt(0)));
     }
     public LazySeq<LazyString> words() {
-        return string.split(t -> t.equals(' ')).map(l->fromLazyList(l));
+        return string.split(t -> t.equals(' ')).map(l-> fromLazySeq(l));
     }
     public LazySeq<LazyString> lines() {
-        return string.split(t -> t.equals('\n')).map(l->fromLazyList(l));
+        return string.split(t -> t.equals('\n')).map(l-> fromLazySeq(l));
     }
     public LazyString mapChar(Function<Character,Character> fn){
-        return fromLazyList(string.map(fn));
+        return fromLazySeq(string.map(fn));
     }
     public LazyString flatMapChar(Function<Character,LazyString> fn){
-        return fromLazyList(string.flatMap(fn.andThen(s->s.string)));
+        return fromLazySeq(string.flatMap(fn.andThen(s->s.string)));
     }
     @Override
     public LazyString filter(Predicate<? super Character> predicate) {
-        return fromLazyList(string.filter(predicate));
+        return fromLazySeq(string.filter(predicate));
     }
 
     @Override
@@ -123,7 +129,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return string.stream();
     }
     public LazyString take(final long n) {
-        return fromLazyList(string.take(n));
+        return fromLazySeq(string.take(n));
 
     }
 
@@ -138,10 +144,10 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     public LazyString  drop(final long num) {
-        return fromLazyList(string.drop(num));
+        return fromLazySeq(string.drop(num));
     }
     public LazyString  reverse() {
-        return fromLazyList(string.reverse());
+        return fromLazySeq(string.reverse());
     }
     public Option<Character> get(int pos){
         return string.get(pos);
@@ -158,29 +164,29 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     public LazyString prepend(Character value){
-        return fromLazyList(string.prepend(value));
+        return fromLazySeq(string.prepend(value));
     }
 
     @Override
     public LazyString prependAll(Iterable<? extends Character> value) {
-        return fromLazyList(string.prependAll(value)) ;
+        return fromLazySeq(string.prependAll(value)) ;
     }
 
     @Override
     public LazyString appendAll(Character value) {
-        return fromLazyList(string.appendAll(value)) ;
+        return fromLazySeq(string.appendAll(value)) ;
     }
 
     @Override
     public LazyString appendAll(Iterable<? extends Character> value) {
-        return fromLazyList(string.appendAll(value)) ;
+        return fromLazySeq(string.appendAll(value)) ;
     }
 
     public LazyString prependAll(LazyString value){
-        return fromLazyList(string.prependAll(value.string));
+        return fromLazySeq(string.prependAll(value.string));
     }
     public LazyString append(String s){
-        return fromLazyList(string.appendAll(LazySeq.fromStream( s.chars().mapToObj(i -> (char) i))));
+        return fromLazySeq(string.appendAll(LazySeq.fromStream( s.chars().mapToObj(i -> (char) i))));
     }
     public int size(){
         return length();

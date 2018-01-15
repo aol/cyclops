@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
+
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -9,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class GroupedWhileOperator<T,C extends PersistentCollection<? super T>,R> extends BaseOperator<T,R> {
 
 
 
@@ -31,7 +33,7 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         StreamSubscription[] upstream = {null};
         StreamSubscription sub = new StreamSubscription(){
             @Override
@@ -56,7 +58,7 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
         };
         upstream[0] = source.subscribe(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
 
                         if(!predicate.test(e)){
 
@@ -94,10 +96,10 @@ public class GroupedWhileOperator<T,C extends Collection<? super T>,R> extends B
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         source.subscribeAll(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(!predicate.test(e)){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();

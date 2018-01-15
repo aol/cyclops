@@ -44,7 +44,7 @@ public interface DataWitness {
   public static enum sortedSet {}
   public static enum set {}
   public static enum list {}
-  public static enum linkedListX {}
+  public static enum linkedSeq {}
   public static enum vectorX {}
   public static enum persistentQueueX{}
   public static enum persistentSetX {}

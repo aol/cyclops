@@ -6,7 +6,7 @@ import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.intMap;
@@ -455,13 +455,13 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (IntMap<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    public IntMap<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (IntMap<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    public IntMap<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (IntMap<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    public IntMap<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
+        return (IntMap<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
     }
 
     @Override
@@ -470,8 +470,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (IntMap<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    public IntMap<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (IntMap<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
@@ -485,8 +485,8 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public IntMap<ListX<T>> grouped(int groupSize) {
-        return (IntMap<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    public IntMap<Seq<T>> grouped(int groupSize) {
+        return (IntMap<Seq<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

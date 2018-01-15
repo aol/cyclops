@@ -2,7 +2,7 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -39,7 +39,7 @@ public class LazyConcat<IN> {
 
     public LazyConcat(StreamSubscription sub,
 
-                      ListX<Operator<IN>> operators, Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+                      Seq<Operator<IN>> operators, Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         this.sub = sub;
         this.operators = operators;
         this.onNext = onNext;

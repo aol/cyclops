@@ -1,21 +1,13 @@
-package cyclops.companion;
+package cyclops;
 
+import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.Zippable;
-import cyclops.control.Future;
-import cyclops.control.Ior;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
-import cyclops.control.Either;
-import cyclops.data.*;
-import cyclops.data.HashSet;
-import cyclops.data.Seq;
-import cyclops.data.TreeSet;
-import cyclops.data.Vector;
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import cyclops.control.*;
+import cyclops.data.NaturalTransformation;
 import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.data.NaturalTransformation;
-import com.oath.cyclops.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
@@ -42,45 +34,32 @@ import java.util.stream.Stream;
  *
  *  @author johnmcclean
  */
-public interface Semigroups {
+public interface ReactiveSemigroups {
 
 
+    /**
+     * To manage javac type inference first assign the semigroup
+     * <pre>
+     * {@code
+     *
+     *    Semigroup<ListX<Integer>> listX = Semigroups.collectionXConcat();
+     *    Semigroup<SetX<Integer>> setX = Semigroups.collectionXConcat();
+     *
+     *
+     *
+     * }
+     * </pre>
+     * @return A Semigroup that can combine any cyclops2-react extended Collection type
+     */
+    static <T, C extends FluentCollectionX<T>> Semigroup<C> collectionXConcat() {
 
-    static <T, C extends PersistentCollection<T>> Semigroup<C> persistentCollectionConcat() {
+        return (a, b) -> (C) a.plusAll(b);
+    }
+    static <T, C extends PersistentCollection<T>> Semigroup<C> pcollectionConcat() {
 
         return (C a, C b) -> (C)a.plusAll(b);
     }
 
-    static <T> Semigroup<LazySeq<T>> lazySeqConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<Seq<T>> seqConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<Vector<T>> vectorConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<IntMap<T>> intMapConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<HashSet<T>> hashSetConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<HashSet<T>> trieSetConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<TreeSet<T>> treeSetConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<Bag<T>> bagConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<BankersQueue<T>> bankersQueueConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
-    static <T> Semigroup<LazyString> lazyStringConcat() {
-      return Semigroups.persistentCollectionConcat();
-    }
 
     /**
      * Concatenate mutable collections
@@ -113,37 +92,113 @@ public interface Semigroups {
      * @return A combiner for mutable lists
      */
     static <T> Semigroup<List<T>> mutableListConcat() {
-        return Semigroups.mutableCollectionConcat();
+        return ReactiveSemigroups.mutableCollectionConcat();
     }
 
     /**
      * @return A combiner for mutable sets
      */
     static <T> Semigroup<Set<T>> mutableSetConcat() {
-        return Semigroups.mutableCollectionConcat();
+        return ReactiveSemigroups.mutableCollectionConcat();
     }
 
     /**
      * @return A combiner for mutable SortedSets
      */
     static <T> Semigroup<SortedSet<T>> mutableSortedSetConcat() {
-        return Semigroups.mutableCollectionConcat();
+        return ReactiveSemigroups.mutableCollectionConcat();
     }
 
     /**
      * @return A combiner for mutable Queues
      */
     static <T> Semigroup<Queue<T>> mutableQueueConcat() {
-        return Semigroups.mutableCollectionConcat();
+        return ReactiveSemigroups.mutableCollectionConcat();
     }
 
     /**
      * @return A combiner for mutable Deques
      */
     static <T> Semigroup<Deque<T>> mutableDequeConcat() {
-        return Semigroups.mutableCollectionConcat();
+        return ReactiveSemigroups.mutableCollectionConcat();
     }
 
+    /**
+     * @return A combiner for ListX (concatenates two ListX into a single ListX)
+     */
+    static <T> Semigroup<ListX<T>> listXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for SetX (concatenates two SetX into a single SetX)
+     */
+    static <T> Semigroup<SetX<T>> setXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
+     */
+    static <T> Semigroup<SortedSetX<T>> sortedSetXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
+     */
+    static <T> Semigroup<QueueX<T>> queueXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
+     */
+    static <T> Semigroup<DequeX<T>> dequeXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for LinkedListX (concatenates two LinkedListX into a single LinkedListX)
+     */
+    static <T> Semigroup<LinkedListX<T>> linkedListXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
+     */
+    static <T> Semigroup<VectorX<T>> vectorXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
+     */
+    static <T> Semigroup<PersistentSetX<T>> persistentSetXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
+     */
+    static <T> Semigroup<OrderedSetX<T>> orderedSetXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
+     */
+    static <T> Semigroup<PersistentQueueX<T>> persistentQueueXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
+
+    /**
+     * @return A combiner for BagX (concatenates two BagX into a single BagX)
+     */
+    static <T> Semigroup<BagX<T>> bagXConcat() {
+        return ReactiveSemigroups.collectionXConcat();
+    }
 
     /**
      * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
@@ -166,6 +221,18 @@ public interface Semigroups {
      */
     static <T, C extends Collection<T>> Semigroup<C> collectionConcat() {
         return (a, b) -> {
+            if (a instanceof FluentCollectionX) {
+                return (C) ((FluentCollectionX) a).plusAll(b);
+            }
+            if (a instanceof PersistentCollection) {
+                return (C) ((PersistentCollection) a).plusAll(b);
+            }
+            if (b instanceof FluentCollectionX) {
+                return (C) ((FluentCollectionX) b).plusAll(a);
+            }
+            if (b instanceof PersistentCollection) {
+                return (C) ((PersistentCollection) b).plusAll(a);
+            }
             a.addAll(b);
             return a;
         };
@@ -173,9 +240,9 @@ public interface Semigroups {
     /**
      * <pre>
      * {@code
-     *  BinaryOperator<Seq<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
+     *  BinaryOperator<ListX<Integer>> sumInts = Semigroups.combineZippables(Semigroups.intSum);
 
-        sumInts.apply(Seq.of(1,2,3), Seq.of(4,5,6));
+        sumInts.apply(ListX.of(1,2,3), ListX.of(4,5,6));
 
         //List[5,7,9];
      *
@@ -185,7 +252,7 @@ public interface Semigroups {
      * @param semigroup Semigroup to combine the values inside the zippables
      * @return Combination of two Zippables
      */
-    static <T,A extends Zippable<T>> Semigroup<A> combineZippables(BiFunction<T,T,T> semigroup) {
+    static <T,A extends Zippable<T>> Semigroup<A> combineZippables(BiFunction<T, T, T> semigroup) {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
     /**
@@ -205,7 +272,7 @@ public interface Semigroups {
      * @param semigroup Semigroup to combine the values inside the Scalar Functors (Maybe, Xor, Ior, Try, Eva, FeatureToggle etc)
      * @return Combination of two Scalar Functors
      */
-    static <T,A extends Zippable<T>> Semigroup<A> combineScalarFunctors(BiFunction<T,T,T> semigroup) {
+    static <T,A extends Zippable<T>> Semigroup<A> combineScalarFunctors(BiFunction<T, T, T> semigroup) {
         return (a, b) -> (A) a.zip(b, semigroup);
     }
 
@@ -221,7 +288,7 @@ public interface Semigroups {
         return (a, b) -> a.onEmptySwitch(()->b);
     }
     static <T> Semigroup<ReactiveSeq<T>> ambReactiveSeq() {
-        return (a,b)->(ReactiveSeq<T>)Semigroups.<T>amb().apply(a,b);
+        return (a,b)->(ReactiveSeq<T>) ReactiveSemigroups.<T>amb().apply(a,b);
     }
 
     static <T> Semigroup<ReactiveSeq<T>> mergeLatestReactiveSeq() {

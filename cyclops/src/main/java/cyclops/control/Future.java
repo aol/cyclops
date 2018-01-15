@@ -1,6 +1,6 @@
 package cyclops.control;
 
-import com.oath.cyclops.data.collections.extensions.CollectionX;
+
 import com.oath.cyclops.hkt.Higher;
 
 
@@ -449,8 +449,8 @@ public class Future<T> implements To<Future<T>>,
      *
      * <pre>
      * {@code
-     *   Future<ListX<Integer>> futures =Future.sequence(ListX.of(Future.ofResult(10),Future.ofResult(1)));
-         //ListX.of(10,1)
+     *   Future<Seq<Integer>> futures =Future.sequence(Seq.of(Future.ofResult(10),Future.ofResult(1)));
+         //Seq.of(10,1)
      *
      * }
      * </pre>
@@ -471,7 +471,7 @@ public class Future<T> implements To<Future<T>>,
      * {@code
      *   Future<Integer> just = Future.ofResult(10);
      *   Future<ReactiveSeq<Integer>> futures =Future.sequence(Stream.of(just,Future.ofResult(1)));
-         //ListX.of(10,1)
+         //Seq.of(10,1)
      *
      * }
      * </pre>
@@ -509,7 +509,7 @@ public class Future<T> implements To<Future<T>>,
        Future<Integer> none = Future.ofError(new NoSuchElementException());
 
 
-     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(Seq.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
        //Future[PersistentSetX[10,1]]
      *  }
      *  </pre>
@@ -528,7 +528,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
        Future<Integer> none = Future.ofError(new NoSuchElementException());
-     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(ListX.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
+     * Future<PersistentSetX<Integer>> futures = Future.accumulateSuccess(Seq.of(just,none,Future.ofResult(1)),Reducers.toPersistentSetX());
 
        //Future[PersistentSetX[10,1]]
      *  }
@@ -548,7 +548,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * <pre>
      * {@code
-     * Future<String> future = Future.accumulate(ListX.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
+     * Future<String> future = Future.accumulate(Seq.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
         //Future["101"]
      * }
      * </pre>
@@ -570,7 +570,7 @@ public class Future<T> implements To<Future<T>>,
      * <pre>
      * {@code
      * Future<Integer> just =Future.of(CompletableFuture.completedFuture(10));
-     * Future<Integer> future =Future.accumulate(Monoids.intSum, ListX.of(just,Future.ofResult(1)));
+     * Future<Integer> future =Future.accumulate(Monoids.intSum, Seq.of(just,Future.ofResult(1)));
        //Future[11]
      * }
      * </pre>
@@ -592,7 +592,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * <pre>
      * {@code
-     * Future<String> future = Future.accumulate(ListX.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
+     * Future<String> future = Future.accumulate(Seq.of(Future.ofResult(10),Future.ofResult(1)),i->""+i,Monoids.stringConcat);
         //Future["101"]
      * }
      * </pre>
@@ -602,7 +602,7 @@ public class Future<T> implements To<Future<T>>,
      * @param reducer Monoid to combine values from each Future
      * @return Future asynchronously populated with the accumulate operation
      */
-    public static <T, R> Future<R> accumulate(final CollectionX<Future<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+    public static <T, R> Future<R> accumulate(final IterableX<Future<T>> fts, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(fts).map(s -> s.map(mapper)
                                        .reduce(reducer)
                                        );
@@ -617,7 +617,7 @@ public class Future<T> implements To<Future<T>>,
      *
      * <pre>
      * {@code
-     * Future<Integer> future =Future.accumulate(Monoids.intSum,ListX.of(just,Future.ofResult(1)));
+     * Future<Integer> future =Future.accumulate(Monoids.intSum,Seq.of(just,Future.ofResult(1)));
        //Future[11]
      * }
      * </pre>

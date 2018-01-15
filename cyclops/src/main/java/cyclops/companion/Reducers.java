@@ -92,15 +92,15 @@ public class Reducers {
     /**
      * <pre>
      * {@code
-     * LinkedListX<Integer> q = Reducers.toLinkedListX()
+     * LazySeq<Integer> q = Reducers.toLazySeq()
                                         .mapReduce(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
-     * @return Reducer for LinkedListX
+     * @return Reducer for LazySeq
      */
-    public static <T> Reducer<LinkedListX<T>,T> toLinkedListX() {
-        return Reducer.fromMonoid(Monoids.linkedListXConcat(), a -> LinkedListX.singleton(a));
+    public static <T> Reducer<LazySeq<T>,T> toLazySeq() {
+        return Reducer.fromMonoid(Monoids.linkedSeqConcat(), a -> LazySeq.singleton(a));
     }
 
     /**
