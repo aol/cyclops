@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.filter;
 
-
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.LazySeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
@@ -18,7 +17,7 @@ public class FilterIterableTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.fromIterable(ListX.fill(Math.min(elements,10_000),10l)).filter(i->true);
+		return Spouts.fromIterable(LazySeq.fill(Math.min(elements,10_000),10l)).filter(i->true);
 
 	}
 

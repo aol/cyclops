@@ -3,7 +3,6 @@ package com.oath.cyclops.internal.stream.spliterators.push.zip;
 import com.oath.cyclops.internal.stream.spliterators.push.Fixtures;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import cyclops.control.Future;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple;
@@ -95,7 +94,7 @@ public class ZipAsyncTest {
     @Test
     public void zip2InvertedOf(){
         Spouts.of(1,2,3)
-                    .toListX();
+                    .toList();
         for(int i=0;i<500;i++) {
             System.out.println("*************Iteration " + i);
             System.out.println("*************Iteration " + i);
@@ -131,7 +130,7 @@ public class ZipAsyncTest {
             System.out.println("*************Iteration " + i+"***********************");
             List<Tuple2<Integer, Integer>> list = flux(1, 2, 3, 4, 5, 6)
                     .zip(flux(100, 200, 300, 400).stream())
-                    .toListX();
+                    .toList();
 
             System.out.println(list);
 
@@ -178,45 +177,7 @@ public class ZipAsyncTest {
         }
 
     }
-    @Test
-    public void asyncZipSimple(){
-        /**
-        nextAsync().printOut();
-        Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync()).printOut();
-        Spouts.of(1,2,3,4,5)
-                .zipS(Spouts.of(1,2)).printOut();
-**/
-        /**
-        Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync()).forEach(System.out::println,
-                System.err::println);
-**/
 
-        /**
-        Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync())
-                .listX()
-                .printOut();
-**/
-
-
-
-       ListX<Tuple2<Integer,Integer>> list = Spouts.of(1,2,3,4,5)
-                                                    .peek(System.out::println)
-                                                    .zipWithStream(nextAsync())
-                                                    .toListX();
-
-       System.out.println("List creation is non-blocking");
-
-       list.printOut();
-       System.out.println("Print out the list asynchronously");
-
-
-
-
-
-    }
     @Test
     public void asyncReduce(){
         assertThat(Spouts.of(1, 2, 3, 4, 5)
@@ -252,13 +213,7 @@ public class ZipAsyncTest {
     @Test
     public void asyncZip(){
         System.out.println(Thread.currentThread().getId());
-        Spouts.of(1,2,3,4,5)
-                .zipWithStream(nextAsync())
-                .grouped(2)
-                .flatMap(i->i.stream())
-                .toListX()
-                .materialize()
-                .printOut();
+
 
 
 
@@ -269,7 +224,7 @@ public class ZipAsyncTest {
                 .zipWithStream(nextAsync())
                 .grouped(2)
                 .flatMap(i->i.stream())
-                .toListX(),equalTo(ListX.of(Tuple.tuple(1,1),Tuple.tuple(2,2))));
+                .toList(),equalTo(Arrays.asList(Tuple.tuple(1,1),Tuple.tuple(2,2))));
 
     }
     private ReactiveSeq<Integer> nextAsync() {

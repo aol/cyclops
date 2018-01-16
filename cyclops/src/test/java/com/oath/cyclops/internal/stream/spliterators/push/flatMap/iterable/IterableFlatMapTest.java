@@ -2,7 +2,6 @@ package com.oath.cyclops.internal.stream.spliterators.push.flatMap.iterable;
 
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -68,7 +67,7 @@ public class IterableFlatMapTest {
 
         Assert.assertThat(of(1,2,3)
                 .concatMap(i-> Maybe.of(i))
-                .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
+                .toList(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
     }
@@ -76,13 +75,13 @@ public class IterableFlatMapTest {
     public void flatMap(){
         assertThat(Spouts.of(1,2,3)
                 .concatMap(i->Spouts.of(i))
-                .toList(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void flatMap2(){
         assertThat(Spouts.of(1,2,3)
                 .concatMap(i->Spouts.of(1,i))
-                .toList(),equalTo(ListX.of(1,1,1,2,1,3)));
+                .toList(),equalTo(Arrays.asList(1,1,1,2,1,3)));
     }
     @Test
     public void flatMapAsync2(){
@@ -90,7 +89,7 @@ public class IterableFlatMapTest {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .concatMap(i -> nextAsync())
                     .toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -112,7 +111,7 @@ public class IterableFlatMapTest {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .concatMap(i -> nextAsyncRS())
                     .toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -184,7 +183,7 @@ public class IterableFlatMapTest {
 
             List<Integer> res = sub.reactiveStream().collect(Collectors.toList());
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
             int one = 0;
@@ -212,7 +211,7 @@ public class IterableFlatMapTest {
                                                   .peek(System.out::println)
                                       .concatMap(i -> nextAsyncRS())).collect(Collectors.toList());
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));
             int one = 0;
             int two = 0;

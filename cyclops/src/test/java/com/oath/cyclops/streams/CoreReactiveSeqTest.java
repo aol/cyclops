@@ -58,7 +58,7 @@ public  class CoreReactiveSeqTest {
             sub.onNext(1);
             sub.onNext(2);
             sub.onComplete();
-        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+        }).toList(), CoreMatchers.equalTo(Arrays.asList(1,2)));
     }
     @Test
     public void subscribeErrorOnComplete(){
