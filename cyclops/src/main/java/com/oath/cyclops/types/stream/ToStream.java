@@ -19,7 +19,7 @@ public interface ToStream<T> extends Iterable<T> {
 
 
 
-    default ReactiveSeq<T> reactiveSeq() {
+    default ReactiveSeq<T> stream() {
         return ReactiveSeq.fromSpliterator(this.spliterator());
     }
 

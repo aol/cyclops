@@ -2,7 +2,7 @@ package cyclops.streams.push;
 
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -70,7 +70,7 @@ public class BlockingTest {
 
     @Test
     public void spoutCollect(){
-        assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
+        assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void findFirst(){
@@ -103,10 +103,10 @@ public class BlockingTest {
     public void simpleList(){
         List<Integer> list = new ArrayList<>();
         Spouts.of(1,2).forEach(list::add);
-        assertThat(list,equalTo(ListX.of(1,2)));
+        assertThat(list,equalTo(Arrays.asList(1,2)));
         list = new ArrayList<>();
         Spouts.of(1,2).map(i->i*2).forEach(list::add);
-        assertThat(list,equalTo(ListX.of(2,4)));
+        assertThat(list,equalTo(Arrays.asList(2,4)));
     }
 
 

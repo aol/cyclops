@@ -1,6 +1,6 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -84,14 +84,14 @@ public class ReactiveJDKStreamRSTest {
 	@Test
 	public void testDistinctReactiveSeq(){
 		List<String> names = Arrays.asList("Java", "C");
-		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
+		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
 		assertThat(d.size(),is(2));
 	}
 
 	@Test
 	public void testDistinctReactiveSeqMultipleDuplicates(){
 		List<String> names = Arrays.asList("Java", "C", "Java", "Java","java", "java");
-		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toListX();
+		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
 		System.out.println(d);
 		assertThat(d.size(),is(3));
 	}

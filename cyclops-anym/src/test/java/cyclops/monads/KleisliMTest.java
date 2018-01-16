@@ -24,31 +24,31 @@ public class KleisliMTest {
     public void firstK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(10),
-                equalTo(k1.firstK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::_1).toList()));
+                equalTo(k1.firstK().apply(Tuple.tuple(10,-1)).stream().map(Tuple2::_1).toList()));
     }
 
     @Test
     public void secondK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(-1),
-                equalTo(k1.secondK().apply(Tuple.tuple(10,-1)).reactiveSeq().map(Tuple2::_2).toList()));
+                equalTo(k1.secondK().apply(Tuple.tuple(10,-1)).stream().map(Tuple2::_2).toList()));
     }
     @Test
     public void leftK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(Option.some(10)),
-                equalTo(k1.leftK(stream.INSTANCE).apply(Either.left(10)).reactiveSeq().map(Either::getLeft).toList()));
+                equalTo(k1.leftK(stream.INSTANCE).apply(Either.left(10)).stream().map(Either::getLeft).toList()));
     }
     @Test
     public void rightK(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
         assertThat(ListX.of(Option.some(10)),
-                equalTo(k1.rightK(stream.INSTANCE).apply(Either.right(10)).reactiveSeq().map(Either::get).toList()));
+                equalTo(k1.rightK(stream.INSTANCE).apply(Either.right(10)).stream().map(Either::get).toList()));
     }
     @Test
     public void andThen(){
         KleisliM<stream, Integer, Integer> k1 = t -> AnyM.fromArray(t);
-        assertThat("10",equalTo(k1.andThen(s->s.reactiveSeq()
+        assertThat("10",equalTo(k1.andThen(s->s.stream()
                                                         .join()).apply(10)));
     }
 

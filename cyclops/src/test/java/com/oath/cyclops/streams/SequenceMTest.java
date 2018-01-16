@@ -8,7 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.testng.Assert.assertNull;
-import static org.testng.AssertJUnit.assertNotNull;
+
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ import org.junit.Test;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 public class SequenceMTest {
 
@@ -36,7 +36,7 @@ public class SequenceMTest {
     public void combine(){
         assertThat(ReactiveSeq.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3)));
+                   .toList(),equalTo(Arrays.asList(4,3)));
 
     }
 	@Test
@@ -314,19 +314,11 @@ public class SequenceMTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
-	@Test
-	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = ReactiveSeq.of(1,2,3,4,5,6)
-												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-	}
 	@Test
 	public void splitBy(){
 		assertThat( ReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
@@ -341,15 +333,7 @@ public class SequenceMTest {
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
-	@Test
-	public void testLazyCollection(){
-		Collection<Integer> col = ReactiveSeq.of(1,2,3,4,5)
-											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
-		System.out.println("takeOne!");
-		col.forEach(System.out::println);
-		assertThat(col.size(),equalTo(5));
-	}
+
 	int peek = 0;
 
 	@Test

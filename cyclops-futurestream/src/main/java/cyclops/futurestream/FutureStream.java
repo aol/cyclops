@@ -11,11 +11,11 @@ import com.oath.cyclops.react.SimpleReactFailedStageException;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.types.futurestream.*;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Adapter;
@@ -1318,7 +1318,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see com.oath.cyclops.react.stream.traits.FutureStream#batchBySizeAndTime(int, long, java.util.concurrent.TimeUnit)
      */
     @Override
-    default FutureStream<ListX<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
+    default ReactiveSeq<Vector<U>> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit) {
         return fromStream(stream().groupedBySizeAndTime(size, time, unit));
      }
     @Override
@@ -2918,7 +2918,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#grouped(int)
      */
     @Override
-    default Traversable<Vector<U>> grouped(final int groupSize) {
+    default FutureStream<Vector<U>> grouped(final int groupSize) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .grouped(groupSize));
     }
@@ -3154,7 +3154,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchUntil(java.util.function.Predicate)
      */
     @Override
-    default IterableX<Vector<U>> groupedUntil(final Predicate<? super U> predicate) {
+    default FutureStream<Vector<U>> groupedUntil(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedUntil(predicate));
     }
@@ -3163,7 +3163,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<Vector<U>> groupedWhile(final Predicate<? super U> predicate) {
+    default FutureStream<Vector<U>> groupedWhile(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedWhile(predicate));
     }
@@ -3172,7 +3172,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super U>> FutureStream<C> groupedWhile(final Predicate<? super U> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super U>> FutureStream<C> groupedWhile(final Predicate<? super U> predicate, final Supplier<C> factory) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedWhile(predicate, factory));
     }
@@ -3190,7 +3190,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super U>> FutureStream<C> groupedUntil(final Predicate<? super U> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super U>> FutureStream<C> groupedUntil(final Predicate<? super U> predicate, final Supplier<C> factory) {
 
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedUntil(predicate, factory));

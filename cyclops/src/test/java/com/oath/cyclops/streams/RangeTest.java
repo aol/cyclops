@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
@@ -114,62 +113,62 @@ public class RangeTest {
 	@Test
 	public void rangeLong(){
 		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE)
-				.limit(2).toListX(),equalTo(ListX.of(0l,1l)));
+				.limit(2).toList(),equalTo(Arrays.asList(0l,1l)));
 	}
 	@Test
 	public void rangeLongReversed(){
 		assertThat(ReactiveSeq.rangeLong(0,Long.MAX_VALUE).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(9223372036854775807l, 9223372036854775806l)));
+				.limit(2).toList(),equalTo(Arrays.asList(9223372036854775807l, 9223372036854775806l)));
 	}
     @Test
     public void rangeLongReversedSkip(){
         assertThat(ReactiveSeq.rangeLong(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(2l,1l)));
+                .skip(3).toList(),equalTo(Arrays.asList(2l,1l)));
     }
     @Test
     public void rangeLongSkip(){
         assertThat(ReactiveSeq.rangeLong(0,5)
-                .skip(3).toListX(),equalTo(ListX.of(3l,4l)));
+                .skip(3).toList(),equalTo(Arrays.asList(3l,4l)));
     }
 	@Test
 	public void rangeInt(){
 		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
-				.limit(2).toListX(),equalTo(ListX.of(0,1)));
+				.limit(2).toList(),equalTo(Arrays.asList(0,1)));
 	}
 	@Test
 	public void rangeIntReversed(){
 		assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(2147483647, 2147483646)));
+				.limit(2).toList(),equalTo(Arrays.asList(2147483647, 2147483646)));
 	}
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(ReactiveSeq.range(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(2,1)));
+                .skip(3).toList(),equalTo(Arrays.asList(2,1)));
     }
 
     @Test
     public void rangeIntSkip2(){
         assertThat(ReactiveSeq.range(0,5)
-                .skip(3).toListX(),equalTo(ListX.of(3,4)));
+                .skip(3).toList(),equalTo(Arrays.asList(3,4)));
     }
 
     @Test
     public void take2Reversed(){
         ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).printOut();
-        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).toListX(),equalTo(ListX.of(2147483647, 2147483646)));
+        assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse().limit(2).toList(),equalTo(Arrays.asList(2147483647, 2147483646)));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE).reverse()
-                .limit(10).skip(8).toListX(),equalTo(ListX.of(2147483639, 2147483638)));
+                .limit(10).skip(8).toList(),equalTo(Arrays.asList(2147483639, 2147483638)));
     }
 
     @Test
     public void rangeIntSkip(){
 
         assertThat(ReactiveSeq.range(0,Integer.MAX_VALUE)
-                .limit(10).skip(8).toListX(),equalTo(ListX.of(8, 9)));
+                .limit(10).skip(8).toList(),equalTo(Arrays.asList(8, 9)));
     }
 	@Test
 	public void limitArray() throws InterruptedException{

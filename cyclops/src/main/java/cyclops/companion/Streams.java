@@ -11,6 +11,7 @@ import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.control.Either;
 
+import cyclops.data.Vector;
 
 import cyclops.function.*;
 
@@ -1706,9 +1707,9 @@ public class Streams {
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    public final static <T> Stream<Seq<T>> grouped(final Stream<T> stream, final int groupSize) {
-        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),()->Seq.empty(),
-                c->Seq.fromIterable(c),groupSize),stream.isParallel());
+    public final static <T> Stream<Vector<T>> grouped(final Stream<T> stream, final int groupSize) {
+        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),()->Vector.empty(),
+                c->Vector.fromIterable(c),groupSize),stream.isParallel());
 
 
     }

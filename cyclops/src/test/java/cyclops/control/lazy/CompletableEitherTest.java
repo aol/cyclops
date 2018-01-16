@@ -6,7 +6,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.*;
 import cyclops.control.LazyEither.CompletableEither;
 import cyclops.function.Monoid;
@@ -125,7 +125,7 @@ public class CompletableEitherTest {
 
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,Arrays.asList(Ior.both(2, "boo!"),Ior.left(1)));
         assertThat(iors,equalTo(Ior.right(3)));
     }
 
@@ -213,8 +213,8 @@ public class CompletableEitherTest {
 
     @Test
     public void testStream() {
-        assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(),equalTo(ListX.of()));
+        assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(),equalTo(Arrays.asList()));
     }
 
     @Test
@@ -226,7 +226,7 @@ public class CompletableEitherTest {
     public void testConvertTo() {
 
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 
@@ -234,7 +234,7 @@ public class CompletableEitherTest {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test

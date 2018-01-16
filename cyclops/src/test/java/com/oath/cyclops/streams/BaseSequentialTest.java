@@ -201,11 +201,11 @@ public class BaseSequentialTest {
     public void skipLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
         Option<Integer> head1 = dup._1().limit(1).to().option().flatMap(l -> {
-            return l.size() > 0 ? l.get(0) : Option.none();
+            return l.size() > 0 ? l.get(0) : Option.<Integer>none();
         });
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup._2().skip(1).triplicate();
         Option<Integer> head2 = dup2._1().limit(1).to().option().flatMap(l -> {
-            return l.size() > 0 ? l.get(0) : Option.none();
+            return l.size() > 0 ? l.get(0) : Option.<Integer>none();
         });
         assertThat(dup2._2().skip(1).toList(), equalTo(Arrays.asList(3)));
 

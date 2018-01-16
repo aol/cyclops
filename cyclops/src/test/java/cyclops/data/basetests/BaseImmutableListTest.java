@@ -1,7 +1,7 @@
 package cyclops.data.basetests;
 
-import cyclops.collections.AbstractIterableXTest;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.basetests.AbstractIterableXTest;
+
 import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
@@ -129,8 +129,8 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
       Assert.assertThat(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         .mergeMap(i -> of(i, i * 2, i * 4)
-          .mergeMap(x -> of(5, 6, 7))).toListX().size(),
-        equalTo(ListX.of(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+          .mergeMap(x -> of(5, 6, 7))).toList().size(),
+        equalTo(Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
           5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
           , 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7
           , 7, 7, 7, 7, 7).size()));
@@ -146,8 +146,8 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
 
       Assert.assertThat(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         .mergeMap(3,i -> Spouts.of(i, i * 2, i * 4)
-          .mergeMap(3,x -> of(5, 6, 7))).toListX().size(),
-        equalTo(ListX.of(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7).size()));
+          .mergeMap(3,x -> of(5, 6, 7))).toList().size(),
+        equalTo(Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7).size()));
 
     }
   }

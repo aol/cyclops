@@ -287,8 +287,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ReactiveSeq<T>> sequence(final IterableX<? extends Eval<T>> evals) {
-        return sequence(evals.stream());
+    public static <T> Eval<ReactiveSeq<T>> sequence(final Iterable<? extends Eval<T>> evals) {
+        return sequence(ReactiveSeq.fromIterable(evals));
 
     }
 
@@ -338,7 +338,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Reducer<R,T> reducer) {
+    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Reducer<R,T> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
@@ -358,7 +358,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return  Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
                                           .reduce(reducer)
                                           );
@@ -380,7 +380,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return Eval with a value
      */
-    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final IterableX<Eval<T>> evals) {
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final Iterable<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
 

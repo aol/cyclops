@@ -1,10 +1,14 @@
 package cyclops.data.basetests;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.collections.AbstractIterableXTest;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.SetX;
+import cyclops.Sets;
+import cyclops.data.Seq;
+import cyclops.data.TreeSet;
+import cyclops.data.Vector;
+import cyclops.data.basetests.AbstractIterableXTest;
+import cyclops.data.*;
+
+
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -75,7 +79,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void testIntersperseNoOrd() {
 
-        assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
+        assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toList(),hasItem(0));
 
 
 
@@ -85,8 +89,8 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     public void cycleMonoidNoOrder(){
         assertThat(of(1,2,3)
                         .cycle(Reducers.toCountInt(),3)
-                        .toSetX(),
-                equalTo(SetX.of(3)));
+                        .toSet(),
+                equalTo(new java.util.HashSet<>(Arrays.asList(3))));
     }
     @Test
     public void permuations3NoOrd() {
@@ -121,17 +125,17 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     }
     @Test
     public void testCycleNoOrd() {
-        assertEquals(asList(1, 2 ),of(1, 2).cycle(3).toListX());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3).cycle(2).toListX());
+        assertEquals(asList(1, 2 ),of(1, 2).cycle(3).toList());
+        assertEquals(asList(1, 2, 3), of(1, 2, 3).cycle(2).toList());
     }
     @Test
     public void testCycleTimesNoOrd() {
-        assertEquals(asList(1, 2),of(1, 2).cycle(3).toListX());
+        assertEquals(asList(1, 2),of(1, 2).cycle(3).toList());
     }
 
     @Test
     public void slidingIncrementNoOrd() {
-        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0).size(), greaterThan(1));
@@ -141,26 +145,26 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void testCycleWhileNoOrd() {
         count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
+        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toList());
 
     }
     @Test
     public void testCycleUntilNoOrd() {
         count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toList());
     }
     @Test
     public void testCycleUntil() {
         count =0;
-        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toList());
         count =0;
-        assertEquals(3,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
+        assertEquals(3,of(1, 2, 3).cycleUntil(next->count++==6).toList().size());
 
     }
     @Test
     public void testCycleWhile() {
         count =0;
-        assertEquals(3,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
+        assertEquals(3,of(1, 2, 3).cycleWhile(next->count++<6).toList().size());
 
     }
     @Test
@@ -170,46 +174,46 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
 
     @Test
     public void allCombinations3NoOrd() {
-        SetX<SetX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSetX()).toSetX();
+        Set<Set<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSet()).toSet();
         System.out.println(x);
-        assertTrue(x.containsValue(SetX.empty()));
-        assertTrue(x.containsValue(SetX.of(1)));
-        assertTrue(x.containsValue(SetX.of(2)));
-        assertTrue(x.containsValue(SetX.of(3)));
-        assertTrue(x.containsValue(SetX.of(1,2)));
-        assertTrue(x.containsValue(SetX.of(1,3)));
-        assertTrue(x.containsValue(SetX.of(2,3)));
-        assertTrue(x.containsValue(SetX.of(1,2,3)));
+        assertTrue(x.contains(Sets.empty()));
+        assertTrue(x.contains(Sets.set(1)));
+        assertTrue(x.contains(Sets.set(2)));
+        assertTrue(x.contains(Sets.set(3)));
+        assertTrue(x.contains(Sets.set(1,2)));
+        assertTrue(x.contains(Sets.set(1,3)));
+        assertTrue(x.contains(Sets.set(2,3)));
+        assertTrue(x.contains(Sets.set(1,2,3)));
 
     }
     @Test
     public void combinations2NoOrd() {
-        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
-        assertTrue(x.containsValue(SetX.of(1,2)));
-        assertTrue(x.containsValue(SetX.of(1,3)));
-        assertTrue(x.containsValue(SetX.of(2,3)));
+        Set<Set<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSet()).toSet();
+        assertTrue(x.contains(Sets.set(1,2)));
+        assertTrue(x.contains(Sets.set(1,3)));
+        assertTrue(x.contains(Sets.set(2,3)));
     }
     @Test
     public void testCycleTimesNoOrder() {
-        assertEquals(2,of(1, 2).cycle(3).toListX().size());
+        assertEquals(2,of(1, 2).cycle(3).toList().size());
     }
     @Test
     public void combineNoOrd(){
         assertThat(of(1,1,2,3)
                 .combine((a, b)->a.equals(b), Semigroups.intSum)
-                .toListX(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void slidingNoOrd() {
-        SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
+        Set<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSet();
 
         System.out.println(list);
-        assertTrue(list.containsValue(VectorX.of(1,2)));
+        assertTrue(list.contains(Vector.of(1,2)));
     }
     @Test
     public void testCycleNoOrder() {
-        assertEquals(2,of(1, 2).cycle(3).toListX().size());
-        assertEquals(3, of(1, 2, 3).cycle(2).toListX().size());
+        assertEquals(2,of(1, 2).cycle(3).toList().size());
+        assertEquals(3, of(1, 2, 3).cycle(2).toList().size());
     }
     @Test
     public void take2Reversed(){
@@ -218,8 +222,8 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     }
     @Test
     public void allCombinations3() {
-        assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toListX(),hasItems(ListX.of(), ListX.of(1), ListX.of(2),
-                ListX.of(3), ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3), ListX.of(1, 2, 3)));
+        assertThat(of(1, 2, 3).combinations().map(s->s.toList()).toList(),hasItems(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+                Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3)));
     }
     @Test
     public void rangeLongReversedSkip(){
@@ -239,7 +243,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(range(0,5).reverse()
-                .skip(3).toListX().size(),equalTo(2));
+                .skip(3).toList().size(),equalTo(2));
     }
     @Test
     public void rangeIntReversedSkip(){
@@ -250,7 +254,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void combinations2() {
         assertThat(of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
-                hasItems(ListX.of(1, 2), ListX.of(1, 3), ListX.of(2, 3)));
+                hasItems(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3)));
     }
     @Test
     public void rangeInt(){
@@ -274,45 +278,45 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
         System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());
         ImmutableSet<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList());
 
-        assertTrue(x.containsValue(ListX.of(1,2,3)));
-        assertTrue(x.containsValue(ListX.of(3,2,1)));
-        assertTrue(x.containsValue(ListX.of(2,1,3)));
-        assertTrue(x.containsValue(ListX.of(2,3,1)));
-        assertTrue(x.containsValue(ListX.of(3,1,2)));
-        assertTrue(x.containsValue(ListX.of(1,3,2)));
+        assertTrue(x.containsValue(Arrays.asList(1,2,3)));
+        assertTrue(x.containsValue(Arrays.asList(3,2,1)));
+        assertTrue(x.containsValue(Arrays.asList(2,1,3)));
+        assertTrue(x.containsValue(Arrays.asList(2,3,1)));
+        assertTrue(x.containsValue(Arrays.asList(3,1,2)));
+        assertTrue(x.containsValue(Arrays.asList(1,3,2)));
     }
     @Test
     public void batchWhileCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .groupedWhile(i->i%3!=0,()-> Vector.empty())
                 .toList().size(),equalTo(2));
-        ImmutableSet<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
-                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+        ImmutableSet<Vector<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () ->  Vector.empty());
 
-        assertTrue(x.containsValue(ListX.of(1,2,3)));
-        assertTrue(x.containsValue(ListX.of(4,5,6)));
+        assertTrue(x.containsValue(Vector.of(1,2,3)));
+        assertTrue(x.containsValue(Vector.of(4,5,6)));
 
     }
     @Test
     public void batchUntilCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .groupedUntil(i->i%3==0,()->Vector.empty())
                 .toList().size(),equalTo(2));
         assertTrue(of(1,2,3,4,5,6)
-                .groupedUntil(i->i%3==0,()->new ArrayList<>())
-                .toList().contains(ListX.of(1,2,3)));
+                .groupedUntil(i->i%3==0,()->Vector.empty())
+                .toList().contains(Arrays.asList(1,2,3)));
     }
     @Test
     public void batchBySizeSet(){
-        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()-> TreeSet.empty()).toList());
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(1));
     }
     @Test
     public void combine(){
         assertThat(of(1,1,2,3)
                 .combine((a, b)->a.equals(b),Semigroups.intSum)
-                .toListX(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
 
     }
     @Test

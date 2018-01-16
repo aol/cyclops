@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import cyclops.companion.PersistentMapXs;
+
 import org.junit.Test;
 
 import java.util.Comparator;
@@ -12,7 +12,8 @@ public class TreeMapTest {
 
     @Test
     public void put(){
-        TreeMap<Integer,String> map = TreeMap.fromMap(Comparator.naturalOrder(), PersistentMapXs.of(1,"hello",2,"world"));
+
+        TreeMap<Integer,String> map = TreeMap.fromMap(Comparator.naturalOrder(), HashMap.of(1,"hello",2,"world"));
 
         map.stream().printOut();
 

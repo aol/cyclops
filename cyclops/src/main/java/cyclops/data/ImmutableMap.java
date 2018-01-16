@@ -365,7 +365,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
 
     /**
-     * Convert this MapX to a LazySeq via the provided transformation function
+     * Convert this ImmutableMap to a LazySeq via the provided transformation function
      *
      * @param fn Mapping function to transform each Map entry into a single value
      * @return LazySeq of transformed values

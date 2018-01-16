@@ -287,9 +287,9 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2,LT3, PT> LazyEither4<LT1,LT2,LT3,ReactiveSeq<PT>> sequence(final IterableX<? extends LazyEither4<LT1, LT2, LT3, PT>> xors) {
+    public static <LT1,LT2,LT3, PT> LazyEither4<LT1,LT2,LT3,ReactiveSeq<PT>> sequence(final Iterable<? extends LazyEither4<LT1, LT2, LT3, PT>> xors) {
         Objects.requireNonNull(xors);
-        return sequence(xors.stream().filter(LazyEither4::isRight));
+        return sequence(ReactiveSeq.fromIterable(xors).filter(LazyEither4::isRight));
     }
   public static  <L1,L2,L3,T> LazyEither4<L1, L2, L3, ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither4<L1, L2, L3, T>> stream) {
 
@@ -312,7 +312,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param fn Transformation function
      * @return An Either4 with a transformed list
      */
-    public static <LT1,LT2, LT3,PT,R> LazyEither4<LT1,LT2,LT3,ReactiveSeq<R>> traverse(final IterableX<LazyEither4<LT1, LT2, LT3, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, LT3,PT,R> LazyEither4<LT1,LT2,LT3,ReactiveSeq<R>> traverse(final Iterable<LazyEither4<LT1, LT2, LT3, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -338,7 +338,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @param reducer  Reducer to accumulate results
      * @return  Either4 populated with the accumulate right operation
      */
-    public static <LT1,LT2,LT3, RT> LazyEither4<LT1, LT2,LT3, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither4<LT1, LT2, LT3, RT>> xors) {
+    public static <LT1,LT2,LT3, RT> LazyEither4<LT1, LT2,LT3, RT> accumulate(final Monoid<RT> reducer, final Iterable<LazyEither4<LT1, LT2, LT3, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 

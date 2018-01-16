@@ -99,8 +99,8 @@ public class RangeTest {
 
     @Test
     public void stream() throws Exception {
-        System.out.println(ReactiveSeq.range(1,5).toListX());
-        assertThat(five.stream().toListX(),equalTo(ReactiveSeq.range(1,6).toListX()));
+        System.out.println(ReactiveSeq.range(1,5).toList());
+        assertThat(five.stream().toList(),equalTo(ReactiveSeq.range(1,6).toList()));
     }
 
     @Test

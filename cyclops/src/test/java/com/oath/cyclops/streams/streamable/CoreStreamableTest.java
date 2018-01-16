@@ -17,7 +17,8 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.HashMap;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -50,15 +51,15 @@ public  class CoreStreamableTest {
 		Streamable<Integer> stream2 = list.flatMap(s -> s).map(i -> i * 10);
 		Streamable<Integer> stream3 = list.flatMap(s -> s).map(i -> i * 100);
 
-		assertThat(stream2.toListX(),equalTo(ListX.of(10,20,30)));
-		assertThat(stream3.toListX(),equalTo(ListX.of(100,200,300)));
+		assertThat(stream2.toList(),equalTo(Arrays.asList(10,20,30)));
+		assertThat(stream3.toList(),equalTo(Arrays.asList(100,200,300)));
 
 	}
 
 	@Test
     public void testFlatMap(){
 	    assertThat(Streamable.of(1,2,3).flatMap(i->Streamable.of(i))
-                .toList(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
     }
 	@Test
     public void testContains() {
@@ -224,12 +225,12 @@ public  class CoreStreamableTest {
 
 	@Test
 	public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(2));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(4));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(1));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(3));
 
 	        assertEquals(2, map1.size());
 
@@ -254,7 +255,7 @@ public  class CoreStreamableTest {
 
         List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
                 .zip(of(100,200,300,400).stream())
-                .toListX();
+                .toList();
 
 
         List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
@@ -290,13 +291,13 @@ public  class CoreStreamableTest {
     public void testSkipLast(){
         assertThat(of(1,2,3,4,5)
                 .skipLast(2)
-                .toListX(),equalTo(Arrays.asList(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
     }
 
 
 	    @Test
 		public void testCycleTimes(){
-            assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toListX());
+            assertEquals(asList(1, 2, 1, 2, 1, 2),of(1, 2).cycle(3).toList());
         }
 
 	    @Test

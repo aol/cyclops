@@ -1,12 +1,12 @@
-package com.oath.cyclops.types;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+package cyclops;
 
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import org.junit.Test;
 
 import java.util.Comparator;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractConvertableSequenceTest {
     public abstract <T> ConvertableSequence<T> of(T...elements);
@@ -14,16 +14,20 @@ public abstract class AbstractConvertableSequenceTest {
     @Test
     public void emptyConvert(){
 
-        assertFalse(empty().option().isPresent());
-        assertFalse(empty().seq().size()>0);
-        assertFalse(empty().lazySeq().size()>0);
-        assertFalse(empty().vector().size()>0);
-        assertFalse(empty().bankersQueue().size()>0);
-        assertFalse(empty().hashSet().size()>0);
-        assertFalse(empty().treeSet((Comparator)Comparator.naturalOrder()).size()>0);
-        assertFalse(empty().hashMap(t->t,t->t).size()>0);
+        assertFalse(empty().optional().isPresent());
+        assertFalse(empty().listX().size()>0);
+        assertFalse(empty().dequeX().size()>0);
+        assertFalse(empty().linkedListX().size()>0);
+        assertFalse(empty().queueX().size()>0);
+        assertFalse(empty().vectorX().size()>0);
+        assertFalse(empty().persistentQueueX().size()>0);
+        assertFalse(empty().setX().size()>0);
+        assertFalse(empty().sortedSetX().size()>0);
+        assertFalse(empty().orderedSetX().size()>0);
+        assertFalse(empty().bagX().size()>0);
+        assertFalse(empty().persistentMapX(t->t, t->t).size()>0);
+        assertFalse(empty().mapX(t->t,t->t).size()>0);
         assertFalse(empty().streamable().size()>0);
-
 
 
     }

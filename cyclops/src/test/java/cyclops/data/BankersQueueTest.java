@@ -1,7 +1,7 @@
 package cyclops.data;
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.data.basetests.BaseImmutableQueueTest;
 import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;
@@ -57,7 +57,7 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
     }
     @Test
     public void fromStreamToList(){
-        assertThat(fromStream(Stream.of(1,2,3)).toList(),equalTo(ListX.of(1,2,3)));
+        assertThat(fromStream(Stream.of(1,2,3)).toList(),equalTo(Arrays.asList(1,2,3)));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
         ).to()
                 .streamable();
 
-        assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-        assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+        assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+        assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
     }
 }

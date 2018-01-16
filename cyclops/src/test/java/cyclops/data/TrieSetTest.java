@@ -1,13 +1,12 @@
 package cyclops.data;
 
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -62,29 +61,29 @@ public class TrieSetTest extends BaseImmutableSetTest{
     }
     @Test
     public void multiple(){
-        assertThat(of(1, 2, 3,1,2,3).toSetX(),equalTo(SetX.of(1,2,3)));
+        assertThat(of(1, 2, 3,1,2,3).toSet(),equalTo(new java.util.HashSet<>(Arrays.asList(1,2,3))));
     }
     @Test
     public void testOnEmpty2() throws X {
         System.out.println(of().onEmpty(1));
-        assertEquals(asList(1), of().onEmpty(1).toListX());
+        assertEquals(asList(1), of().onEmpty(1).toList());
 
     }
 
     @Test
     public void allCombinations3NoOrd() {
-        of(1, 2, 3).combinations().map(s -> s.toList()).toListX().printOut();
 
-        ListX<ListX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toListX()).toListX();
+
+        Seq<Seq<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSeq()).toSeq();
         System.out.println(x);
-        assertTrue(x.containsValue(ListX.empty()));
-        assertTrue(x.containsValue(ListX.of(1)));
-        assertTrue(x.containsValue(ListX.of(2)));
-        assertTrue(x.containsValue(ListX.of(3)));
-        assertTrue(x.containsValue(ListX.of(1,2)));
-        assertTrue(x.containsValue(ListX.of(1,3)));
-        assertTrue(x.containsValue(ListX.of(2,3)));
-        assertTrue(x.containsValue(ListX.of(1,2,3)));
+        assertTrue(x.containsValue(Seq.empty()));
+        assertTrue(x.containsValue(Seq.of(1)));
+        assertTrue(x.containsValue(Seq.of(2)));
+        assertTrue(x.containsValue(Seq.of(3)));
+        assertTrue(x.containsValue(Seq.of(1,2)));
+        assertTrue(x.containsValue(Seq.of(1,3)));
+        assertTrue(x.containsValue(Seq.of(2,3)));
+        assertTrue(x.containsValue(Seq.of(1,2,3)));
 
 
     }

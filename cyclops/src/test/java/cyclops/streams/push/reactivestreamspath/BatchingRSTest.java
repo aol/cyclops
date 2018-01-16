@@ -1,7 +1,7 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import com.oath.cyclops.util.SimpleTimer;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -44,22 +44,22 @@ public class BatchingRSTest {
 	@Test
 	public void batchUntilCollection(){
 		assertThat(Spouts.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
+				.groupedUntil(i->i%3==0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
+				.groupedUntil(i->i%3==0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
 		System.out.println("*"+Spouts.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList());
 		assertThat(Spouts.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
@@ -349,14 +349,14 @@ public class BatchingRSTest {
 
 	@Test
 	public void batchBySizeSet(){
-		System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).to(Streamable::fromStream).toList());
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).to(Streamable::fromStream).toList().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).to(Streamable::fromStream).toList().size(),is(1));
+		System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList());
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(1));
 	}
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(of().grouped(3,()->new TreeSet<>()).to(Streamable::fromStream).toList().size(),is(0));
+		assertThat(of().grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){

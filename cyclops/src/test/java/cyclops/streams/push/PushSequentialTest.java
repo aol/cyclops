@@ -1,7 +1,7 @@
 package cyclops.streams.push;
 
 import com.oath.cyclops.streams.BaseSequentialTest;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
@@ -26,8 +26,8 @@ public class PushSequentialTest extends BaseSequentialTest {
     @Test
     public void duplicateReplay(){
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
-        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
     }
     @Test
     public void iterate(){

@@ -1,9 +1,12 @@
 package cyclops.control;
 
+import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.immutable.PersistentSetX;
-import cyclops.reactive.collections.mutable.ListX;
+
+
 import cyclops.companion.*;
+import cyclops.data.HashSet;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -223,56 +226,56 @@ public class FutureTest {
 
     @Test
     public void testSequence() {
-        Future<ReactiveSeq<Integer>> maybes = Future.sequence(ListX.of(just, Future.ofResult(1)));
-        assertThat(maybes.map(s->s.toList()).orElse(ListX.empty()),equalTo(ListX.of(10,1)));
+        Future<ReactiveSeq<Integer>> maybes = Future.sequence(Arrays.asList(just, Future.ofResult(1)));
+        assertThat(maybes.map(s->s.toList()).orElse(Arrays.asList()),equalTo(Arrays.asList(10,1)));
     }
     @Test
     public void testSequenceCF() {
-        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(ListX.of(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
+        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(Arrays.asList(just.getFuture(),none.getFuture(), Future.ofResult(1).getFuture()));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
 
     }
     @Test
     public void testAccumulateSuccessSemigroup() {
-        Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),ListX.of(just,none, Future.ofResult(1)));
+        Future<Integer> maybes = Future.accumulateSuccess(Monoid.of(0,(a,b)->a+1),Arrays.asList(just,none, Future.ofResult(1)));
 
         assertThat(maybes.get(),equalTo(Try.success(2)));
     }
     @Test
     public void testAccumulateSuccess() {
-        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.ofResult(1)), Reducers.toPersistentSetX());
+        Future<PersistentSet<Integer>> maybes = Future.accumulateSuccess(Arrays.asList(just,none, Future.ofResult(1)), Reducers.toPersistentSet());
 
-        assertThat(maybes.get(),equalTo(Try.success(PersistentSetX.of(10,1))));
+        assertThat(maybes.get(),equalTo(Try.success(HashSet.of(10,1))));
     }
     @Test @Ignore
     public void testAccumulateJNonBlocking() {
-        Future<PersistentSetX<Integer>> maybes = Future.accumulateSuccess(ListX.of(just,none, Future.of(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSetX());
+        Future<PersistentSet<Integer>> maybes = Future.accumulateSuccess(Arrays.asList(just,none, Future.of(()->{while(true){System.out.println("hello");}},Executors.newFixedThreadPool(1)), Future.ofResult(1)),Reducers.toPersistentSet());
         System.out.println("not blocked");
 
     }
     @Test
     public void testAccumulateNoValue() {
-        Future<String> maybes = Future.accumulate(ListX.of(), i->""+i,Monoids.stringConcat);
+        Future<String> maybes = Future.accumulate(Arrays.asList(), i->""+i,Monoids.stringConcat);
         assertThat(maybes.orElse("npo"),equalTo(""));
     }
     @Test
     public void testAccumulateOneValue() {
-        Future<String> maybes = Future.accumulate(ListX.of(just), i->""+i,Monoids.stringConcat);
+        Future<String> maybes = Future.accumulate(Arrays.asList(just), i->""+i,Monoids.stringConcat);
         assertThat(maybes.get(),equalTo(Try.success("10")));
     }
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Future<String> maybes = Future.accumulate(ListX.of(just, Future.ofResult(1)), i->""+i,Monoids.stringConcat);
+        Future<String> maybes = Future.accumulate(Arrays.asList(just, Future.ofResult(1)), i->""+i,Monoids.stringConcat);
         assertThat(maybes.get(),equalTo(Try.success("101")));
     }
     @Test
     public void testAccumulateJust() {
-        Future<Integer> maybes = Future.accumulate(Monoids.intSum,ListX.of(just, Future.ofResult(1)));
+        Future<Integer> maybes = Future.accumulate(Monoids.intSum,Arrays.asList(just, Future.ofResult(1)));
         assertThat(maybes.get(),equalTo(Try.success(11)));
     }
     @Test
     public void testAccumulateError() {
-        Future<Integer> maybes = Future.accumulate(Monoids.intSum,ListX.of(none, Future.ofResult(1)));
+        Future<Integer> maybes = Future.accumulate(Monoids.intSum,Arrays.asList(none, Future.ofResult(1)));
         assertTrue(maybes.isFailed());
     }
 
@@ -313,8 +316,8 @@ public class FutureTest {
 
     @Test
     public void testStream() {
-        assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(),equalTo(ListX.of()));
+        assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(),equalTo(Arrays.asList()));
     }
 
     @Test
@@ -325,14 +328,14 @@ public class FutureTest {
     @Test
     public void testConvertTo() {
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 

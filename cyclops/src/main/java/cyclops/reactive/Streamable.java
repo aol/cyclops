@@ -8,7 +8,6 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.companion.Streams;
 import cyclops.data.Seq;
 
@@ -50,7 +49,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     Iterable<T> getStreamable();
 
     @Override
-    default ReactiveSeq<T> reactiveSeq() {
+    default ReactiveSeq<T> stream() {
 
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
@@ -285,7 +284,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
             }
 
             @Override
-            public ReactiveSeq<T> reactiveSeq() {
+            public ReactiveSeq<T> stream() {
                 return Streams.oneShotStream(Stream.of(values));
             }
 
@@ -307,7 +306,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return The tail of this Streamable
      */
     default Streamable<T> tail() {
-        return Streamable.fromStream(reactiveSeq().headAndTail()
+        return Streamable.fromStream(this.stream().headAndTail()
                                                   .tail());
     }
 
@@ -321,7 +320,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return The head of this Streamable
      */
     default T head() {
-        return reactiveSeq().headAndTail()
+        return this.stream().headAndTail()
                             .head();
     }
 
@@ -340,7 +339,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return New Streamable with provided Streamable appended
      */
     default Streamable<T> appendAll(final Streamable<T> t) {
-        return Streamable.fromStream(reactiveSeq().appendStream(t.reactiveSeq()));
+        return Streamable.fromStream(this.stream().appendStream(this.stream()));
     }
 
     /**
@@ -357,7 +356,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Filtered Streamable
      */
     default Streamable<T> removeValue(final T t) {
-        return Streamable.fromStream(reactiveSeq().removeValue(t));
+        return Streamable.fromStream(this.stream().removeValue(t));
     }
 
     /**
@@ -376,7 +375,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with values prepended
      */
     default Streamable<T> prepend(final T t) {
-        return Streamable.fromStream(reactiveSeq().prepend(t));
+        return Streamable.fromStream(this.stream().prepend(t));
     }
 
     /*
@@ -391,7 +390,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> distinct() {
-        return Streamable.fromStream(reactiveSeq().distinct());
+        return Streamable.fromStream(this.stream().distinct());
     }
 
     /**
@@ -410,7 +409,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Value from reduction
      */
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> function) {
-        return reactiveSeq().foldLeft(identity, function);
+        return this.stream().foldLeft(identity, function);
     }
 
     /**
@@ -430,7 +429,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     */
     @Override
     default <U> U foldRight(final U seed, final BiFunction<? super T, ? super U, ? extends U> function) {
-        return reactiveSeq().foldRight(seed, function);
+        return this.stream().foldRight(seed, function);
     }
 
     /**
@@ -452,7 +451,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <R> Streamable<R> map(final Function<? super T, ? extends R> fn) {
-        return Streamable.fromStream(reactiveSeq().map(fn));
+        return Streamable.fromStream(this.stream().map(fn));
     }
 
     /**
@@ -471,7 +470,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> peek(final Consumer<? super T> fn) {
-        return Streamable.fromStream(reactiveSeq().peek(fn));
+        return Streamable.fromStream(this.stream().peek(fn));
     }
 
     /* (non-Javadoc)
@@ -479,15 +478,14 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> filter(final Predicate<? super T> fn) {
-        return Streamable.fromStream(reactiveSeq().filter(fn));
+        return Streamable.fromStream(this.stream().filter(fn));
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#flatMap(java.util.function.Function)
      */
     default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
-        return Streamable.fromStream(reactiveSeq().flatMap(i -> fn.apply(i)
-                                                                  .reactiveSeq()));
+        return Streamable.fromStream(this.stream().flatMap(i -> this.stream()));
     }
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
@@ -508,7 +506,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return
      */
     default <R> Streamable<R> coflatMap(Function<? super Streamable<T>, ? extends R> fn){
-        return Streamable.fromStream(reactiveSeq().coflatMap(i -> fn.apply(Streamable.fromStream(i))));
+        return Streamable.fromStream(this.stream().coflatMap(i -> fn.apply(Streamable.fromStream(i))));
 
     }
     /**
@@ -516,28 +514,28 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default long count() {
-        return reactiveSeq().count();
+        return this.stream().count();
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#forEachOrdered(java.util.function.Consumer)
      */
     default void forEachOrdered(final Consumer<? super T> action) {
-        reactiveSeq().forEachOrdered(action);
+        this.stream().forEachOrdered(action);
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#toArray()
      */
     default Object[] toArray() {
-        return reactiveSeq().toArray();
+        return this.stream().toArray();
     }
 
     /* (non-Javadoc)
      * @see java.util.stream.Stream#toArray(java.util.function.IntFunction)
      */
     default <A> A[] toArray(final IntFunction<A[]> generator) {
-        return reactiveSeq().toArray(generator);
+        return this.stream().toArray(generator);
     }
 
     /**
@@ -553,11 +551,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable converted to a List
      */
     default List<T> toList() {
-        return reactiveSeq().toList();
+        return this.stream().toList();
     }
 
     default <R> R collect(final Supplier<R> supplier, final BiConsumer<R, ? super T> accumulator, final BiConsumer<R, R> combiner) {
-        return reactiveSeq().collect(supplier, accumulator, combiner);
+        return this.stream().collect(supplier, accumulator, combiner);
     }
 
     /* (non-Javadoc)
@@ -566,7 +564,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
 
-        return reactiveSeq().collect(collector);
+        return this.stream().collect(collector);
     }
 
 
@@ -613,7 +611,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Sequence between supplied indexes of original Sequence
      */
     default Streamable<T> subStream(final int start, final int end) {
-        return Streamable.fromStream(reactiveSeq().subStream(start, end));
+        return Streamable.fromStream(this.stream().subStream(start, end));
     }
 
 
@@ -624,7 +622,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return size
      */
     default int size() {
-        return reactiveSeq().size();
+        return this.stream().size();
     }
 
     /**
@@ -727,7 +725,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> cycle(final long times) {
-        return Streamable.fromStream(reactiveSeq().cycle(times));
+        return Streamable.fromStream(this.stream().cycle(times));
     }
 
     /**
@@ -742,7 +740,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with values repeated
      */
     default Streamable<T> cycle() {
-        return Streamable.fromStream(reactiveSeq().cycle());
+        return Streamable.fromStream(this.stream().cycle());
     }
 
     /**
@@ -784,13 +782,13 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     default Tuple2<Streamable<T>, Streamable<T>> splitAt(final int where) {
 
-        return reactiveSeq().splitAt(where)
+        return this.stream().splitAt(where)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
     }
 
     default Tuple2<Option<T>, Streamable<T>> splitAtHead(){
-        return reactiveSeq().splitAtHead().map2(s->s.to().streamable());
+        return this.stream().splitAtHead().map2(s->s.to().streamable());
     }
 
     /**
@@ -823,7 +821,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     default Tuple2<Streamable<T>, Streamable<T>> splitBy(final Predicate<T> splitter) {
-        return reactiveSeq().splitBy(splitter)
+        return this.stream().splitBy(splitter)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
     }
@@ -840,7 +838,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     default Tuple2<Streamable<T>, Streamable<T>> partition(final Predicate<T> splitter) {
-        return reactiveSeq().partition(splitter)
+        return this.stream().partition(splitter)
                             .map1(s -> fromStream(s))
                             .map2(s -> fromStream(s));
     }
@@ -866,7 +864,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> cycle(final Monoid<T> m, final long times) {
-        return fromStream(reactiveSeq().cycle(m, times));
+        return fromStream(this.stream().cycle(m, times));
     }
 
     /**
@@ -888,7 +886,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> cycleWhile(final Predicate<? super T> predicate) {
-        return Streamable.fromStream(reactiveSeq().cycleWhile(predicate));
+        return Streamable.fromStream(this.stream().cycleWhile(predicate));
     }
 
     /**
@@ -910,7 +908,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> cycleUntil(final Predicate<? super T> predicate) {
-        return Streamable.fromStream(reactiveSeq().cycleUntil(predicate));
+        return Streamable.fromStream(this.stream().cycleUntil(predicate));
     }
 
     /**
@@ -926,7 +924,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <U> Streamable<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return fromStream(reactiveSeq().zip(other));
+        return fromStream(this.stream().zip(other));
     }
 
 
@@ -944,7 +942,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *</pre>
      */
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Streamable<? extends S> second, final Streamable<? extends U> third) {
-        return fromStream(reactiveSeq().zip3(second.reactiveSeq(), third.reactiveSeq()));
+        return fromStream(this.stream().zip3(this.stream(), this.stream()));
     }
 
     /**
@@ -962,7 +960,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Streamable<? extends T2> second, final Streamable<? extends T3> third,
             final Streamable<? extends T4> fourth) {
-        return fromStream(reactiveSeq().zip4(second.reactiveSeq(), third.reactiveSeq(), fourth.reactiveSeq()));
+        return fromStream(this.stream().zip4(this.stream(), this.stream(), this.stream()));
     }
 
     /**
@@ -976,7 +974,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<Tuple2<T, Long>> zipWithIndex() {
-        return fromStream(reactiveSeq().zipWithIndex());
+        return fromStream(this.stream().zipWithIndex());
     }
 
 
@@ -1004,7 +1002,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<Seq<T>> sliding(final int windowSize) {
-        return fromStream(reactiveSeq().sliding(windowSize));
+        return fromStream(this.stream().sliding(windowSize));
     }
 
     /**
@@ -1030,7 +1028,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<Seq<T>> sliding(final int windowSize, final int increment) {
-        return fromStream(reactiveSeq().sliding(windowSize, increment));
+        return fromStream(this.stream().sliding(windowSize, increment));
     }
 
     /**
@@ -1052,8 +1050,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with elements grouped by size
      */
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
-        return fromStream(reactiveSeq().grouped(groupSize));
+    default Streamable<Vector<T>> grouped(final int groupSize) {
+        return fromStream(this.stream().grouped(groupSize));
     }
 
     /**
@@ -1071,7 +1069,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <K> HashMap<K, Vector<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return reactiveSeq().groupBy(classifier);
+        return this.stream().groupBy(classifier);
     }
 
     /**
@@ -1091,7 +1089,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> scanLeft(final Monoid<T> monoid) {
-        return fromStream(reactiveSeq().scanLeft(monoid));
+        return fromStream(this.stream().scanLeft(monoid));
     }
 
     /**
@@ -1105,7 +1103,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <U> Streamable<U> scanLeft(final U identity, final BiFunction<? super U, ? super T, ? extends U> function) {
-        return fromStream(reactiveSeq().scanLeft(identity, function));
+        return fromStream(this.stream().scanLeft(identity, function));
     }
 
     /**
@@ -1119,7 +1117,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> scanRight(final Monoid<T> monoid) {
-        return fromStream(reactiveSeq().scanRight(monoid));
+        return fromStream(this.stream().scanRight(monoid));
     }
 
     /**
@@ -1135,7 +1133,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <U> Streamable<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
-        return fromStream(reactiveSeq().scanRight(identity, combiner));
+        return fromStream(this.stream().scanRight(identity, combiner));
     }
 
     /**
@@ -1146,7 +1144,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> sorted() {
-        return fromStream(reactiveSeq().sorted());
+        return fromStream(this.stream().sorted());
     }
 
     /**
@@ -1161,7 +1159,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> sorted(final Comparator<? super T> c) {
-        return fromStream(reactiveSeq().sorted(c));
+        return fromStream(this.stream().sorted(c));
     }
 
     /**
@@ -1178,7 +1176,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> skip(final long num) {
-        return fromStream(reactiveSeq().skip(num));
+        return fromStream(this.stream().skip(num));
     }
 
     /**
@@ -1197,7 +1195,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> skipWhile(final Predicate<? super T> p) {
-        return fromStream(reactiveSeq().skipWhile(p));
+        return fromStream(this.stream().skipWhile(p));
     }
 
     /**
@@ -1215,7 +1213,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> skipUntil(final Predicate<? super T> p) {
-        return fromStream(reactiveSeq().skipUntil(p));
+        return fromStream(this.stream().skipUntil(p));
     }
 
     /**
@@ -1231,7 +1229,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> limit(final long num) {
-        return fromStream(reactiveSeq().limit(num));
+        return fromStream(this.stream().limit(num));
     }
 
     /**
@@ -1247,7 +1245,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> limitWhile(final Predicate<? super T> p) {
-        return fromStream(reactiveSeq().limitWhile(p));
+        return fromStream(this.stream().limitWhile(p));
     }
 
     /**
@@ -1263,7 +1261,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> limitUntil(final Predicate<? super T> p) {
-        return fromStream(reactiveSeq().limitUntil(p));
+        return fromStream(this.stream().limitUntil(p));
 
     }
 
@@ -1278,7 +1276,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean allMatch(final Predicate<? super T> c) {
-        return reactiveSeq().allMatch(c);
+        return this.stream().allMatch(c);
     }
 
     /**
@@ -1292,7 +1290,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean anyMatch(final Predicate<? super T> c) {
-        return reactiveSeq().anyMatch(c);
+        return this.stream().anyMatch(c);
     }
 
     /**
@@ -1307,7 +1305,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean xMatch(final int num, final Predicate<? super T> c) {
-        return reactiveSeq().xMatch(num, c);
+        return this.stream().xMatch(num, c);
     }
 
     /*
@@ -1320,7 +1318,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean noneMatch(final Predicate<? super T> c) {
-        return reactiveSeq().noneMatch(c);
+        return this.stream().noneMatch(c);
     }
 
     /**
@@ -1334,7 +1332,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default String join() {
-        return reactiveSeq().join();
+        return this.stream().join();
     }
 
     /**
@@ -1347,7 +1345,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default String join(final String sep) {
-        return reactiveSeq().join(sep);
+        return this.stream().join(sep);
     }
 
     /**
@@ -1360,7 +1358,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default String join(final String sep, final String start, final String end) {
-        return reactiveSeq().join(sep, start, end);
+        return this.stream().join(sep, start, end);
     }
 
 
@@ -1378,7 +1376,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Optional<T> findFirst() {
-        return reactiveSeq().findFirst();
+        return this.stream().findFirst();
     }
 
     /**
@@ -1396,7 +1394,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Optional<T> findAny() {
-        return reactiveSeq().findAny();
+        return this.stream().findAny();
     }
 
     /**
@@ -1415,7 +1413,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <R> R mapReduce(final Reducer<R,T> reducer) {
-        return reactiveSeq().mapReduce(reducer);
+        return this.stream().mapReduce(reducer);
     }
 
     /**
@@ -1449,7 +1447,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return reactiveSeq().mapReduce(mapper, reducer);
+        return this.stream().mapReduce(mapper, reducer);
     }
 
     /**
@@ -1465,7 +1463,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T reduce(final Monoid<T> reducer) {
-        return reactiveSeq().reduce(reducer);
+        return this.stream().reduce(reducer);
     }
 
     /*
@@ -1478,7 +1476,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Optional<T> reduce(final BinaryOperator<T> accumulator) {
-        return reactiveSeq().reduce(accumulator);
+        return this.stream().reduce(accumulator);
     }
 
     /* (non-Javadoc)
@@ -1486,7 +1484,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     */
     @Override
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
-        return reactiveSeq().reduce(identity, accumulator);
+        return this.stream().reduce(identity, accumulator);
     }
 
     /* (non-Javadoc)
@@ -1494,7 +1492,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     */
     @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
-        return reactiveSeq().reduce(identity, accumulator, combiner);
+        return this.stream().reduce(identity, accumulator, combiner);
     }
 
     /**
@@ -1521,7 +1519,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
-        return reactiveSeq().reduce(reducers);
+        return this.stream().reduce(reducers);
     }
 
     /**
@@ -1546,7 +1544,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
-        return reactiveSeq().reduce(reducers);
+        return this.stream().reduce(reducers);
     }
 
     /**
@@ -1563,7 +1561,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T foldRight(final Monoid<T> reducer) {
-        return reactiveSeq().foldRight(reducer);
+        return this.stream().foldRight(reducer);
     }
 
     /**
@@ -1580,7 +1578,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T foldRight(final T identity, final BinaryOperator<T> accumulator) {
-        return reactiveSeq().foldRight(identity, accumulator);
+        return this.stream().foldRight(identity, accumulator);
     }
 
     /**
@@ -1600,7 +1598,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <R> R foldRightMapToType(final Reducer<R,T> reducer) {
-        return reactiveSeq().foldRightMapToType(reducer);
+        return this.stream().foldRightMapToType(reducer);
     }
 
     /**
@@ -1615,7 +1613,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean startsWithIterable(final Iterable<T> iterable) {
-        return reactiveSeq().startsWithIterable(iterable);
+        return this.stream().startsWithIterable(iterable);
     }
 
     /**
@@ -1626,7 +1624,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean startsWith(final Stream<T> iterator) {
-        return reactiveSeq().startsWith(iterator);
+        return this.stream().startsWith(iterator);
     }
 
 
@@ -1652,7 +1650,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return
      */
     default <R> Streamable<R> concatMapterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromStream(reactiveSeq().concatMap(fn));
+        return fromStream(this.stream().concatMap(fn));
     }
 
     /**
@@ -1671,7 +1669,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return new stage in Sequence with flatMap operation to be lazily applied
     */
     default <R> Streamable<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
-        return fromStream(reactiveSeq().flatMapStream(fn));
+        return fromStream(this.stream().flatMapStream(fn));
     }
 
     /**
@@ -1684,7 +1682,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> intersperse(final T value) {
-        return fromStream(reactiveSeq().intersperse(value));
+        return fromStream(this.stream().intersperse(value));
     }
 
     /**
@@ -1697,7 +1695,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     @SuppressWarnings("unchecked")
     default <U> Streamable<U> ofType(final Class<? extends U> type) {
-        return fromStream(reactiveSeq().ofType(type));
+        return fromStream(this.stream().ofType(type));
     }
 
 
@@ -1719,7 +1717,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> reverse() {
-        return fromStream(reactiveSeq().reverse());
+        return fromStream(this.stream().reverse());
     }
 
     /* (non-Javadoc)
@@ -1727,7 +1725,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> shuffle() {
-        return fromStream(reactiveSeq().shuffle());
+        return fromStream(this.stream().shuffle());
     }
 
     /**
@@ -1748,7 +1746,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().appendStream(stream.reactiveSeq()));
+        return fromStream(this.stream().appendStream(this.stream()));
     }
 
     /**
@@ -1770,20 +1768,20 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
-        return fromStream(reactiveSeq().prependStream(stream.reactiveSeq()));
+        return fromStream(this.stream().prependStream(this.stream()));
     }
     default Streamable<T> prependStream(final Stream<? extends T> stream) {
-        return fromStream(reactiveSeq().prependStream(stream));
+        return fromStream(this.stream().prependStream(stream));
     }
 
     @Override
     default Streamable<T> appendAll(T value){
-        return fromStream(reactiveSeq().appendAll(value));
+        return fromStream(this.stream().appendAll(value));
     }
 
     @Override
     default Streamable<T> insertStreamAt(int pos, Stream<T> stream){
-        return fromStream(reactiveSeq().insertStreamAt(pos,stream));
+        return fromStream(this.stream().insertStreamAt(pos,stream));
     }
 
     /**
@@ -1802,7 +1800,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with appended values
      */
     default Streamable<T> appendAll(final T... values) {
-        return fromStream(reactiveSeq().appendAll(values));
+        return fromStream(this.stream().appendAll(values));
     }
 
     /**
@@ -1821,10 +1819,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with values prepended
      */
     default Streamable<T> prependAll(final T... values) {
-        return fromStream(reactiveSeq().prependAll(values));
+        return fromStream(this.stream().prependAll(values));
     }
   default Streamable<T> prependAll(final Iterable<? extends T> value) {
-    return fromStream(reactiveSeq().prependAll(value));
+    return fromStream(this.stream().prependAll(value));
   }
 
     /**
@@ -1845,7 +1843,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with new data inserted
      */
     default Streamable<T> insertAt(final int pos, final T... values) {
-        return fromStream(reactiveSeq().insertAt(pos, values));
+        return fromStream(this.stream().insertAt(pos, values));
     }
 
     /**
@@ -1865,7 +1863,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with elements removed
      */
     default Streamable<T> deleteBetween(final int start, final int end) {
-        return fromStream(reactiveSeq().deleteBetween(start, end));
+        return fromStream(this.stream().deleteBetween(start, end));
     }
 
     /**
@@ -1885,7 +1883,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return newly conjoined Streamable
      */
     default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
-        return fromStream(reactiveSeq().insertStreamAt(pos, stream.reactiveSeq()));
+        return fromStream(this.stream().insertStreamAt(pos, this.stream()));
     }
 
 
@@ -1903,7 +1901,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default boolean endsWithIterable(final Iterable<T> iterable) {
-        return reactiveSeq().endsWithIterable(iterable);
+        return this.stream().endsWithIterable(iterable);
     }
 
     /**
@@ -1918,7 +1916,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return true if Streamable endswith values in the supplied Stream
      */
     default boolean endsWith(final Streamable<T> stream) {
-        return reactiveSeq().endsWithIterable(stream);
+        return this.stream().endsWithIterable(stream);
     }
 
     /**
@@ -1941,7 +1939,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that skips all elements until time period has elapsed
      */
     default Streamable<T> skip(final long time, final TimeUnit unit) {
-        return fromStream(reactiveSeq().skip(time, unit));
+        return fromStream(this.stream().skip(time, unit));
     }
 
     /**
@@ -1962,7 +1960,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that returns all elements until time period has elapsed
      */
     default Streamable<T> limit(final long time, final TimeUnit unit) {
-        return fromStream(reactiveSeq().limit(time, unit));
+        return fromStream(this.stream().limit(time, unit));
     }
 
     /**
@@ -1975,7 +1973,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> skipLast(final int num) {
-        return fromStream(reactiveSeq().skipLast(num));
+        return fromStream(this.stream().skipLast(num));
     }
 
     /**
@@ -1994,7 +1992,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<T> limitLast(final int num) {
-        return fromStream(reactiveSeq().limitLast(num));
+        return fromStream(this.stream().limitLast(num));
     }
 
     /**
@@ -2016,7 +2014,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return a Connectable HotStream
      */
     default HotStream<T> hotStream(final Executor e) {
-        return reactiveSeq().hotStream(e);
+        return this.stream().hotStream(e);
     }
 
     /**
@@ -2033,7 +2031,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T firstValue(T alt) {
-        return reactiveSeq().firstValue(null);
+        return this.stream().firstValue(null);
     }
 
     /**
@@ -2048,7 +2046,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default T singleOrElse(T alt) {
-        return reactiveSeq().singleOrElse(alt);
+        return this.stream().singleOrElse(alt);
 
     }
 
@@ -2064,7 +2062,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Maybe<T> elementAt(final long index) {
-        return reactiveSeq().elementAt(index);
+        return this.stream().elementAt(index);
     }
 
     /**
@@ -2082,7 +2080,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Element and Sequence
      */
     default Tuple2<T, Streamable<T>> elementAtAndStream(final long index) {
-        return reactiveSeq().elementAtAndStream(index)
+        return this.stream().elementAtAndStream(index)
                             .map2(s -> fromStream(s));
     }
 
@@ -2098,7 +2096,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Sequence that adds the time between elements in millis to each element
      */
     default Streamable<Tuple2<T, Long>> elapsed() {
-        return fromStream(reactiveSeq().elapsed());
+        return fromStream(this.stream().elapsed());
     }
 
     /**
@@ -2115,7 +2113,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Sequence that adds a timestamp to each element
      */
     default Streamable<Tuple2<T, Long>> timestamp() {
-        return fromStream(reactiveSeq().timestamp());
+        return fromStream(this.stream().timestamp());
     }
 
     /**
@@ -2231,7 +2229,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *
      */
     public static <T, U> Tuple2<Streamable<T>, Streamable<U>> unzip(final Streamable<Tuple2<T, U>> sequence) {
-        return ReactiveSeq.unzip(sequence.reactiveSeq())
+        return ReactiveSeq.unzip(this.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s));
     }
@@ -2246,7 +2244,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     public static <T1, T2, T3> Tuple3<Streamable<T1>, Streamable<T2>, Streamable<T3>> unzip3(final Streamable<Tuple3<T1, T2, T3>> sequence) {
-        return ReactiveSeq.unzip3(sequence.reactiveSeq())
+        return ReactiveSeq.unzip3(this.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
                           .map3(s -> fromStream(s));
@@ -2265,7 +2263,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     public static <T1, T2, T3, T4> Tuple4<Streamable<T1>, Streamable<T2>, Streamable<T3>, Streamable<T4>> unzip4(
             final Streamable<Tuple4<T1, T2, T3, T4>> sequence) {
-        return ReactiveSeq.unzip4(sequence.reactiveSeq())
+        return ReactiveSeq.unzip4(this.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
                           .map3(s -> fromStream(s))
@@ -2290,56 +2288,55 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that will switch to an alternative Stream if empty
      */
     default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
-        return fromStream(reactiveSeq().onEmptySwitch(() -> switchTo.get()
-                                                                    .reactiveSeq()));
+        return fromStream(this.stream().onEmptySwitch(() -> this.stream()));
     }
 
     @Override
     default Streamable<T> onEmpty(final T value) {
-        return fromStream(reactiveSeq().onEmpty(value));
+        return fromStream(this.stream().onEmpty(value));
     }
 
     @Override
     default Streamable<T> onEmptyGet(final Supplier<? extends T> supplier) {
-        return fromStream(reactiveSeq().onEmptyGet(supplier));
+        return fromStream(this.stream().onEmptyGet(supplier));
     }
 
 
     default <X extends Throwable> Streamable<T> onEmptyError(final Supplier<? extends X> supplier) {
-        return fromStream(reactiveSeq().onEmptyError(supplier));
+        return fromStream(this.stream().onEmptyError(supplier));
     }
 
     default Streamable<T> concat(final Streamable<T> other) {
-        return fromStream(reactiveSeq().append(other));
+        return fromStream(this.stream().append(other));
     }
 
     default Streamable<T> concat(final T other) {
-        return fromStream(reactiveSeq().appendAll(other));
+        return fromStream(this.stream().appendAll(other));
     }
 
     default Streamable<T> concat(final T... other) {
-        return fromStream(reactiveSeq().appendAll(other));
+        return fromStream(this.stream().appendAll(other));
     }
 
     default <U> Streamable<T> distinct(final Function<? super T, ? extends U> keyExtractor) {
-        return fromStream(reactiveSeq().distinct(keyExtractor));
+        return fromStream(this.stream().distinct(keyExtractor));
     }
 
     @Override
     default Streamable<T> shuffle(final Random random) {
-        return fromStream(reactiveSeq().shuffle(random));
+        return fromStream(this.stream().shuffle(random));
 
     }
 
     @Override
     default Streamable<T> slice(final long from, final long to) {
-        return fromStream(reactiveSeq().slice(from, to));
+        return fromStream(this.stream().slice(from, to));
 
     }
 
     @Override
     default <U extends Comparable<? super U>> Streamable<T> sorted(final Function<? super T, ? extends U> function) {
-        return fromStream(reactiveSeq().sorted(function));
+        return fromStream(this.stream().sorted(function));
 
     }
 
@@ -2361,7 +2358,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that emits x elements per time period
      */
     default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
-        return reactiveSeq().xPer(x, time, t);
+        return this.stream().xPer(x, time, t);
 
     }
 
@@ -2385,7 +2382,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that emits 1 element per time period
      */
     default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
-        return reactiveSeq().onePer(time, t);
+        return this.stream().onePer(time, t);
 
     }
 
@@ -2406,7 +2403,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return
      */
     default Streamable<T> debounce(final long time, final TimeUnit t) {
-        return fromStream(reactiveSeq().debounce(time, t));
+        return fromStream(this.stream().debounce(time, t));
     }
 
     /**
@@ -2427,8 +2424,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param t time unit for batch
      * @return Streamable batched by size and time
      */
-    default Streamable<Seq<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, t));
+    default Streamable<Vector<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
+        return fromStream(this.stream().groupedBySizeAndTime(size, time, t));
     }
 
     /**
@@ -2448,7 +2445,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     default <C extends PersistentCollection<? super T>> Streamable<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
                                                                                                       final Supplier<C> factory) {
-        return fromStream(reactiveSeq().groupedBySizeAndTime(size, time, unit, factory));
+        return fromStream(this.stream().groupedBySizeAndTime(size, time, unit, factory));
     }
 
     /**
@@ -2466,7 +2463,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into lists by time period
      */
     default Streamable<Vector<T>> groupedByTime(final long time, final TimeUnit t) {
-        return fromStream(reactiveSeq().groupedByTime(time, t));
+        return fromStream(this.stream().groupedByTime(time, t));
     }
 
     /**
@@ -2488,7 +2485,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into toX types by time period
      */
     default <C extends PersistentCollection<? super T>> Streamable<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
-        return fromStream(reactiveSeq().groupedByTime(time, unit, factory));
+        return fromStream(this.stream().groupedByTime(time, unit, factory));
     }
 
     /**
@@ -2509,7 +2506,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <C extends PersistentCollection<? super T>> Streamable<C> grouped(final int size, final Supplier<C> supplier) {
-        return fromStream(reactiveSeq().grouped(size, supplier));
+        return fromStream(this.stream().grouped(size, supplier));
     }
 
     /**
@@ -2529,7 +2526,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that emits each element after a fixed delay
      */
     default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
-        return reactiveSeq().fixedDelay(l, unit);
+        return this.stream().fixedDelay(l, unit);
     }
 
     /**
@@ -2548,7 +2545,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Sequence with a random jitter between element emission
      */
     default Streamable<T> jitter(final long maxJitterPeriodInNanos) {
-        return fromStream(reactiveSeq().jitter(maxJitterPeriodInNanos));
+        return fromStream(this.stream().jitter(maxJitterPeriodInNanos));
     }
 
     /**
@@ -2567,7 +2564,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
-        return fromStream(reactiveSeq().groupedUntil(predicate));
+        return fromStream(this.stream().groupedUntil(predicate));
     }
 
     /**
@@ -2585,7 +2582,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default Streamable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return fromStream(reactiveSeq().groupedWhile(predicate));
+        return fromStream(this.stream().groupedWhile(predicate));
     }
 
     /**
@@ -2605,7 +2602,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <C extends PersistentCollection<? super T>> Streamable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return fromStream(reactiveSeq().groupedWhile(predicate, factory));
+        return fromStream(this.stream().groupedWhile(predicate, factory));
     }
 
     /**
@@ -2627,7 +2624,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <C extends PersistentCollection<? super T>> Streamable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
-        return fromStream(reactiveSeq().groupedUntil(predicate, factory));
+        return fromStream(this.stream().groupedUntil(predicate, factory));
 
     }
 
@@ -2646,7 +2643,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that can recover from an Exception
      */
     default Streamable<T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return fromStream(reactiveSeq().recover(fn));
+        return fromStream(this.stream().recover(fn));
     }
 
     /**
@@ -2668,7 +2665,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that can recover from a particular exception
      */
     default <EX extends Throwable> Streamable<T> recover(final Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return fromStream(reactiveSeq().recover(exceptionClass, fn));
+        return fromStream(this.stream().recover(exceptionClass, fn));
 
     }
 
@@ -2696,7 +2693,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     @Override
     default <R> Streamable<R> retry(final Function<? super T,? extends  R> fn) {
-        return fromStream(reactiveSeq().retry(fn));
+        return fromStream(this.stream().retry(fn));
     }
 
     /**

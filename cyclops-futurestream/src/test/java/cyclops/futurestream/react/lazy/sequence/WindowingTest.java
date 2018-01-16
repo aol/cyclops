@@ -183,8 +183,8 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(DuplicationTest.of(5));
-		assertThat(fixed.reactiveSeq().grouped(3).elementAt(0).toOptional().get(),equalTo(Arrays.asList(5)));
-		assertThat(fixed.reactiveSeq().grouped(3).count(),equalTo(1l));
+		assertThat(fixed.stream().grouped(3).elementAt(0).toOptional().get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.stream().grouped(3).count(),equalTo(1l));
 	}
 
 	@Test

@@ -1,7 +1,8 @@
 package com.oath.cyclops.internal.stream.spliterators.push.map;
 
 
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.data.LazySeq;
 import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.tck.PublisherVerification;
@@ -19,7 +20,7 @@ public class MapTckPublisherTest extends PublisherVerification<Long>{
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
 
-		return Spouts.fromIterable(ListX.fill(Math.min(elements,10_000),10l)).map(i->i*2);
+		return Spouts.fromIterable(LazySeq.fill(Math.min(elements,10_000),10l)).map(i->i*2);
 
 	}
 

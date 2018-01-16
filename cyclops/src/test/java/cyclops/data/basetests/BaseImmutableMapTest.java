@@ -1,9 +1,9 @@
 package cyclops.data.basetests;
 
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
-import cyclops.companion.MapXs;
-import cyclops.companion.PersistentMapXs;
+import cyclops.data.*;
 import cyclops.control.Option;
 import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
@@ -66,40 +66,10 @@ public abstract  class BaseImmutableMapTest {
         assertThat(of(1,3).toString(),equalTo("[{1=3}]"));
     }
     @Test
-    public void toPStackX(){
+    public void toSeq(){
         ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        LinkedListX<String> strs = maps.toLinkedListX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(ListX.of("a1","b2")));
-    }
-    @Test
-    public void toPSetX(){
-        ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        PersistentSetX<String> strs = maps.toPersistentSetX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(PersistentSetX.of("a1","b2")));
-    }
-    @Test
-    public void toPOrderedSetX(){
-        ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        OrderedSetX<String> strs = maps.toOrderedSetX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(OrderedSetX.of("a1","b2")));
-    }
-    @Test
-    public void toPBagX(){
-        ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        BagX<String> strs = maps.toBagX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(BagX.of("a1","b2")));
-    }
-    @Test
-    public void toPQueueX(){
-        ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        PersistentQueueX<String> strs = maps.toPersistentQueueX(t->""+t._1()+t._2());
-        assertThat(strs.toList(),equalTo(PersistentQueueX.of("a1","b2").toList()));
-    }
-    @Test
-    public void toPVectorX(){
-        ImmutableMap<String,Integer> maps = of("a",1,"b",2);
-        VectorX<String> strs = maps.toVectorX(t->""+t._1()+t._2());
-        assertThat(strs,equalTo(VectorX.of("a1","b2")));
+        Seq<String> strs = maps.toSeq(t->""+t._1()+t._2());
+        assertThat(strs,equalTo(Seq.of("a1","b2")));
     }
 
     @Test
@@ -119,7 +89,9 @@ public abstract  class BaseImmutableMapTest {
     @Test
     public void onEmptySwitch(){
 
-        assertThat(this.<String,Integer>empty().onEmptySwitch(()-> fromMap(MapXs.of("hello",10))).get("hello"),equalTo(Option.some(10)));
+        Map<String,Integer> m = new HashMap<>();
+        m.put("hello",10);
+        assertThat(this.<String,Integer>empty().onEmptySwitch(()-> fromMap(m)).get("hello"),equalTo(Option.some(10)));
     }
 
 
@@ -151,7 +123,7 @@ public abstract  class BaseImmutableMapTest {
         Map<String,Integer> map = new java.util.HashMap<>();
         map.put("1",1);
         map.put("2",2);
-        assertThat(PersistentMapXs.map("1",1).put("2", 2).build(),equalTo(map));
+        assertThat(of("1",1).put("2", 2),equalTo(map));
     }
     @Test
     public void testMapKVPutAll() {
@@ -169,7 +141,7 @@ public abstract  class BaseImmutableMapTest {
         map2.put("4",4);
         map2.put("5",5);
         map2.put("6",6);
-        assertThat(PersistentMapXs.map("1",1).putAll(map2).build(),equalTo(map));
+        assertThat(of("1",1).putAll(cyclops.data.HashMap.fromMap(map2)),equalTo(map));
     }
 
     @Test
@@ -294,7 +266,7 @@ public abstract  class BaseImmutableMapTest {
   @Test
   public void viewTest(){
     Map<Integer,String> map = of(1,"hello",2,"world").mapView();
-    Map<Integer,String> hashMap = MapXs.of(1,"hello",2,"world");
+    Map<Integer,String> hashMap = of(1,"hello",2,"world").mapView();
     assertThat(map.size(),equalTo(2));
     assertThat(map,equalTo(hashMap));
 

@@ -537,8 +537,8 @@ public interface Maybe<T> extends Option<T> {
      * @param maybes Maybes to Sequence
      * @return Maybe with a List of values
      */
-    public static <T> Maybe<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Maybe<T>> maybes) {
-        return sequence(maybes.filter(Maybe::isPresent).stream());
+    public static <T> Maybe<ReactiveSeq<T>> sequenceJust(final Iterable<? extends Maybe<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes).filter(Maybe::isPresent).stream());
     }
   public static  <T> Maybe<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Maybe<T>> stream) {
 
@@ -576,8 +576,8 @@ public interface Maybe<T> extends Option<T> {
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
-    public static <T> Maybe<ReactiveSeq<T>> sequence(final IterableX<? extends Maybe<T>> maybes) {
-        return sequence(maybes.stream());
+    public static <T> Maybe<ReactiveSeq<T>> sequence(final Iterable<? extends Maybe<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes));
 
     }
 
@@ -628,7 +628,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Reducer<R,T> reducer) {
+    public static <T, R> Maybe<R> accumulateJust(final Iterable<Maybe<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -654,7 +654,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Function<? super T, R> mapper,
+    public static <T, R> Maybe<R> accumulateJust(final Iterable<Maybe<T>> maybes, final Function<? super T, R> mapper,
                                                  final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -680,7 +680,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final IterableX<Maybe<T>> maybes) {
+    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final Iterable<Maybe<T>> maybes) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 

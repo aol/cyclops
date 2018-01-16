@@ -122,12 +122,12 @@ public class DIETTest {
     @Test
     public void flatMap(){
         DIET<Integer> d2 = diet.flatMap(i -> DIET.cons(range(500, 1000)));
-        List<Integer> l = d2.stream().toListX();
+        List<Integer> l = d2.stream().toList();
         System.out.println(d2);
 
         System.out.println(range(500,1000).stream().size());
 
-        assertThat(d2.stream().toListX().size(),equalTo(501));
+        assertThat(d2.stream().toList().size(),equalTo(501));
 
     }
 
