@@ -8,6 +8,7 @@ import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 
+import cyclops.data.*;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
@@ -17,6 +18,7 @@ import com.oath.cyclops.async.adapters.Topic;
 import cyclops.data.Seq;
 import cyclops.companion.Streams;
 import cyclops.control.*;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -289,14 +291,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public Traversable<cyclops.data.Vector<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingOperator<T, Seq<T>, Seq<T>>(source, () -> Seq.empty(), c -> c, groupSize));
+    public ReactiveSeq<Vector<T>> grouped(final int groupSize) {
+        return createSeq(new GroupingOperator<T, Vector<T>, Vector<T>>(source, () -> Vector.empty(), c -> c, groupSize));
 
     }
 
     @Override
-    public ReactiveSeq<cyclops.data.Vector<T>> groupedWhile(final BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Seq.of(), Function.identity(), predicate));
+    public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
     }
 
     @Override
@@ -306,8 +308,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public Traversable<cyclops.data.Vector<T>> groupedUntil(final BiPredicate<cyclops.data.Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullyOperator<>(source, () -> Seq.of(), Function.identity(), predicate.negate()));
+    public ReactiveSeq<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullyOperator<>(source, () -> Vector.empty(), Function.identity(), predicate.negate()));
     }
 
     @Override
@@ -320,7 +322,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public final ReactiveSeq<T> distinct() {
 
         Supplier<Predicate<? super T>> predicate = () -> {
-            Set<T> values = new HashSet<>();
+            Set<T> values = new java.util.HashSet<>();
             return in -> values.add(in);
         };
         return this.filterLazyPredicate(predicate);
@@ -748,7 +750,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public <U> ReactiveSeq<T> distinct(final Function<? super T, ? extends U> keyExtractor) {
         Supplier<Predicate<? super T>> predicate = () -> {
-            Set<U> values = new HashSet<>();
+            Set<U> values = new java.util.HashSet<>();
             return in -> values.add(keyExtractor.apply(in));
         };
         return this.filterLazyPredicate(predicate);
@@ -763,9 +765,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<cyclops.data.Vector<T>> groupedByTime(final long time, final TimeUnit t) {
+    public ReactiveSeq<Vector<T>> groupedByTime(final long time, final TimeUnit t) {
         return createSeq(new GroupedByTimeOperator<>(source,
-                () -> Seq.empty(),
+                () -> Vector.empty(),
                 Function.identity(), time, t));
     }
 
@@ -781,8 +783,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public Traversable<cyclops.data.Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return createSeq(new GroupedWhileOperator<>(source, () -> Seq.of(), Function.identity(), predicate));
+    public ReactiveSeq<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+        return createSeq(new GroupedWhileOperator<>(source, () -> Vector.empty(), Function.identity(), predicate));
 
 
     }

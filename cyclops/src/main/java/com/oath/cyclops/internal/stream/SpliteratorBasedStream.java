@@ -178,13 +178,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public Traversable<Vector<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingSpliterator<T,Seq<T>,Seq<T>>(get(),()->Seq.empty(), c->c,groupSize), this.reversible);
+    public ReactiveSeq<Vector<T>> grouped(final int groupSize) {
+        return createSeq(new GroupingSpliterator<T,Vector<T>,Vector<T>>(get(),()->Vector.empty(), c->c,groupSize), this.reversible);
 
     }
     @Override
-    public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Seq.of(),Function.identity(), predicate), this.reversible);
+    public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate), this.reversible);
     }
     @Override
     public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
@@ -192,8 +192,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate), this.reversible);
     }
     @Override
-    public Traversable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Seq.of(),Function.identity(), predicate.negate()), this.reversible);
+    public ReactiveSeq<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate.negate()), this.reversible);
     }
     @Override
     public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
@@ -596,7 +596,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     @Override
     public ReactiveSeq<Vector<T>> groupedByTime(final long time, final TimeUnit t) {
         return createSeq(new GroupedByTimeSpliterator<>(get(),
-                ()->Seq.empty(),
+                ()->Vector.empty(),
                 Function.identity(),time, t), reversible);
     }
 
@@ -614,16 +614,14 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+    public ReactiveSeq<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return groupedWhile(predicate.negate());
 
     }
 
     @Override
-    public Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return createSeq(new GroupedWhileSpliterator<>(get(),()->Seq.of(),Function.identity(), predicate), this.reversible);
-
-
+    public ReactiveSeq<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+        return createSeq(new GroupedWhileSpliterator<>(get(), () -> Vector.<T>empty(), Function.identity(), predicate), this.reversible);
     }
 
     @Override

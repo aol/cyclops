@@ -174,7 +174,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Traversable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+    default Streamable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
 
         return Streamable.fromIterable(IterableX.super.groupedUntil(predicate));
     }
@@ -2465,7 +2465,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param t  time unit for batch
      * @return Streamable batched into lists by time period
      */
-    default Streamable<Seq<T>> groupedByTime(final long time, final TimeUnit t) {
+    default Streamable<Vector<T>> groupedByTime(final long time, final TimeUnit t) {
         return fromStream(reactiveSeq().groupedByTime(time, t));
     }
 
@@ -2584,7 +2584,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into lists determined by the predicate supplied
      */
     @Override
-    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Streamable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedWhile(predicate));
     }
 
