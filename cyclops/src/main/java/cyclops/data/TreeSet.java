@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.Seq;
@@ -37,8 +38,9 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
 
     private static final long serialVersionUID = 1L;
 
-    static <T extends Comparable<? super T>>  Collector<T, ArrayList<T>, TreeSet<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),TreeSet::fromIterable);
+    static <T extends Comparable<? super T>>  Collector<T, Set<T>, TreeSet<T>> collector() {
+        Collector<T, ?, Set<T>> c  = Collectors.toSet();
+        return Collectors.<T, Set<T>, Iterable<T>,TreeSet<T>>collectingAndThen((Collector)c,TreeSet::fromIterable);
     }
     public TreeSet(RedBlackTree.Tree<T, T> map, Comparator<? super T> comp) {
         this.map = RedBlackTree.rootIsBlack(map);
@@ -513,7 +515,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public <C extends Collection<? super T>> TreeSet<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> TreeSet<C> grouped(int size, Supplier<C> supplier) {
         return (TreeSet<C>) ImmutableSortedSet.super.grouped(size,supplier);
     }
 
@@ -538,12 +540,12 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public <C extends Collection<? super T>> TreeSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> TreeSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (TreeSet<C>) ImmutableSortedSet.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> TreeSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> TreeSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (TreeSet<C>) ImmutableSortedSet.super.groupedUntil(predicate,factory);
     }
 

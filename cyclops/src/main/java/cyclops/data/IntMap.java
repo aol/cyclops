@@ -1,11 +1,11 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -159,6 +159,11 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
+    public IntMap<T> append(T value) {
+        return plus(value);
+    }
+
+    @Override
     public IntMap<T> prependAll(Iterable<? extends T> value) {
         return unitStream(stream().prependAll(value));
     }
@@ -210,9 +215,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return size==0;
     }
 
-    public VectorX<T> vectorX(){
-        return stream().to().vectorX(Evaluation.LAZY);
-    }
+
     public ReactiveSeq<T> stream(){
         return intMap.stream();
     }
@@ -450,7 +453,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public <C extends Collection<? super T>> IntMap<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> IntMap<C> grouped(int size, Supplier<C> supplier) {
         return (IntMap<C>) ImmutableList.super.grouped(size,supplier);
     }
 
@@ -475,12 +478,12 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     }
 
     @Override
-    public <C extends Collection<? super T>> IntMap<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> IntMap<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (IntMap<C>) ImmutableList.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> IntMap<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> IntMap<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (IntMap<C>) ImmutableList.super.groupedUntil(predicate,factory);
     }
 
@@ -791,6 +794,11 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         @Override
         public ImmutableList<T> prepend(T value) {
             return empty();
+        }
+
+        @Override
+        public ImmutableList<T> append(T value) {
+            return plus(value);
         }
 
         @Override

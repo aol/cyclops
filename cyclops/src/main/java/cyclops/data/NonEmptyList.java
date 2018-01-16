@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
@@ -125,6 +126,46 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     public NonEmptyList<T> prepend(T value){
         return cons(value, lazySeq());
+    }
+
+    @Override
+    public NonEmptyList<T> append(T value) {
+        return insertAt(Math.max(0, size()),value);
+    }
+
+    @Override
+    public NonEmptyList<T> replaceFirst(T currentElement, T newElement) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.replaceFirst(currentElement,newElement);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAt(int pos, T... values) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(pos,values);
+    }
+
+    @Override
+    public NonEmptyList<T> plusAll(Iterable<? extends T> list) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.plusAll(list);
+    }
+
+    @Override
+    public NonEmptyList<T> plus(T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.plus(value);
+    }
+
+    @Override
+    public NonEmptyList<T> updateAt(int pos, T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.updateAt(pos,value);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(pos,values);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAt(int i, T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(i,value);
     }
 
     @Override
@@ -318,7 +359,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> grouped(int size, Supplier<C> supplier) {
         return (NonEmptyList<C>) ImmutableList.Some.super.grouped(size,supplier);
     }
 
@@ -339,12 +380,12 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (NonEmptyList<C>) ImmutableList.Some.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (NonEmptyList<C>) ImmutableList.Some.super.groupedUntil(predicate,factory);
     }
 

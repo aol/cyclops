@@ -6,6 +6,7 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.*;
+import cyclops.function.checked.CheckedSupplier;
 import cyclops.reactive.Spouts;
 import com.oath.cyclops.types.reactive.Completable;
 import cyclops.function.Monoid;
@@ -91,6 +92,35 @@ return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
 public interface Maybe<T> extends Option<T> {
 
 
+    public static <T> Maybe<T> attempt(CheckedSupplier<T> s){
+        return Maybe.fromLazy(Eval.later(()->{
+            try {
+                return just(s.get());
+            } catch (Throwable throwable) {
+                return Maybe.nothing();
+            }
+        }));
+    }
+    default <R> Maybe<R> attemptMap(Function<? super T,? extends R> fn){
+        return flatMap(t->{
+            try{
+                return just(fn.apply(t));
+            }catch(Throwable e){
+                return nothing();
+            }
+        });
+
+    }
+    default <R> Maybe<R> attemptFlatMap(Function<? super T,? extends Option<? extends R>> fn){
+        return flatMap(t->{
+            try{
+                return fn.apply(t);
+            }catch(Throwable e){
+                return nothing();
+            }
+        });
+
+    }
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
     }

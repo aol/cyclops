@@ -10,6 +10,7 @@ import com.oath.cyclops.types.recoverable.Recoverable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.*;
 import cyclops.function.*;
+import cyclops.function.checked.CheckedSupplier;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
@@ -42,6 +43,23 @@ public interface Option<T> extends To<Option<T>>,
 
 
 
+    public static <T> Option<T> attempt(CheckedSupplier<T> s){
+        try {
+            return some(s.get());
+        } catch (Throwable throwable) {
+            return none();
+        }
+    }
+    default <R> Option<R> attemptFlatMap(Function<? super T,? extends Option<? extends R>> fn){
+        return flatMap(t->{
+            try{
+                return fn.apply(t);
+            }catch(Throwable e){
+                return none();
+            }
+        });
+
+    }
     @SuppressWarnings("rawtypes")
     final static Option EMPTY = new Option.None<>();
     public static  <T,R> Option<R> tailRec(T initial, Function<? super T, ? extends Option<? extends Either<T, R>>> fn){

@@ -146,10 +146,7 @@ public interface Semigroups {
 
 
     /**
-     * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
-     * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
-     *
+     * This Semigroup will combine JDK Collections.
      *
      * To manage javac type inference first assign the semigroup
      * <pre>

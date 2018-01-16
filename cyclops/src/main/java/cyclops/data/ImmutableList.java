@@ -134,6 +134,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> prepend(T value);
+    ImmutableList<T> append(T value);
+
 
 
     ImmutableList<T> appendAll(T value);

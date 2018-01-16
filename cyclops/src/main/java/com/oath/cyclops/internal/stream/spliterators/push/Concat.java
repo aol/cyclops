@@ -3,6 +3,7 @@ package com.oath.cyclops.internal.stream.spliterators.push;
 import cyclops.data.Seq;
 import org.reactivestreams.Subscription;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -30,8 +31,9 @@ public class Concat<IN> {
 
 
     public Concat(StreamSubscription sub,
-
-                   Seq<Operator<IN>> operators, Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+                  Seq<Operator<IN>> operators,
+                  Consumer<? super IN> onNext,
+                  Consumer<? super Throwable> onError, Runnable onComplete) {
         this.sub = sub;
         this.operators = operators;
         this.onNext = onNext;
@@ -201,7 +203,7 @@ public class Concat<IN> {
             }
             return true;
         }
-        Subscription local = operators.get(index).subscribe(this::onNext ,this::onError,this::onComplete);
+        Subscription local = operators.getOrElse(index,null).subscribe(this::onNext ,this::onError,this::onComplete);
         if(processAll){
             local.request(Long.MAX_VALUE);
             active.set(local);

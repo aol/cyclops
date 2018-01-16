@@ -6,6 +6,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.data.Seq;
@@ -44,9 +45,16 @@ public interface Seq<T> extends ImmutableList<T>,
                                 Higher<seq,T> {
 
 
-    static <T> Collector<T, ArrayList<T>, Seq<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),Seq::fromIterable);
+    static <T> Collector<T, List<T>, Seq<T>> collector() {
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,Seq<T>>collectingAndThen((Collector)c,Seq::fromIterable);
     }
+
+    @Override
+    default Seq<T> append(T value){
+        return insertAt(Math.max(0, size()),value);
+    }
+
     @Override
     default<R> Seq<R> unitIterable(Iterable<R> it){
         if(it instanceof Seq){
@@ -471,7 +479,7 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default <C extends Collection<? super T>> Seq<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> Seq<C> grouped(int size, Supplier<C> supplier) {
         return (Seq<C>) ImmutableList.super.grouped(size,supplier);
     }
 
@@ -496,12 +504,12 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default <C extends Collection<? super T>> Seq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Seq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (Seq<C>) ImmutableList.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> Seq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Seq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (Seq<C>) ImmutableList.super.groupedUntil(predicate,factory);
     }
 

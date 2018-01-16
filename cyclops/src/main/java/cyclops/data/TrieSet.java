@@ -41,8 +41,9 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return new TrieSet<T>( HashedPatriciaTrie.empty());
     }
 
-    static <T> Collector<T, ArrayList<T>, TrieSet<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),TrieSet::fromIterable);
+    static <T> Collector<T, Set<T>, TrieSet<T>> collector() {
+        Collector<T, ?, Set<T>> c  = Collectors.toSet();
+        return Collectors.<T, Set<T>, Iterable<T>,TrieSet<T>>collectingAndThen((Collector)c,TrieSet::fromIterable);
     }
     static <U, T> TrieSet<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
@@ -437,12 +438,12 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public <C extends Collection<? super T>> TrieSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> TrieSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (TrieSet<C>) ImmutableSet.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> TrieSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> TrieSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (TrieSet<C>) ImmutableSet.super.groupedUntil(predicate,factory);
     }
 

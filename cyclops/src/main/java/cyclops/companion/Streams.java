@@ -6,17 +6,17 @@ import com.oath.cyclops.internal.stream.operators.MultiReduceOperator;
 import com.oath.cyclops.internal.stream.operators.OnePerOperator;
 import com.oath.cyclops.internal.stream.operators.RecoverOperator;
 import com.oath.cyclops.internal.stream.spliterators.*;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.data.Seq;
 import cyclops.control.Either;
 
 
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import com.oath.cyclops.util.box.Mutable;
-import com.oath.cyclops.data.collections.extensions.CollectionX;
+
 import cyclops.data.Seq;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
@@ -424,7 +424,7 @@ public class Streams {
      * @return CompletableFuture with a List of values
      */
     public final static <T> CompletableFuture<List<T>> streamToCompletableFuture(final Stream<T> stream) {
-        return CompletableFuture.completedFuture(stream.collect(CyclopsCollectors.toSeq()));
+        return CompletableFuture.completedFuture(stream.collect(Collectors.toList()));
 
     }
 
@@ -1059,29 +1059,7 @@ public class Streams {
         return appendStream(appendStream(Tuple2._1().limit(pos), insert), Tuple2._2().skip(pos));
     }
 
-    /**
-     * Convert to a Stream with the result of a reduction operation repeated
-     * specified times
-     *
-     * <pre>
-     * {@code
-     *   		List<Integer> list = Streams.cycle(Stream.of(1,2,2),Reducers.toCountInt(),3)
-     * 										.
-     * 										.collect(CyclopsCollectors.toList());
-     * 	//is asList(3,3,3);
-     *   }
-     * </pre>
-     *
-     * @param m
-     *            Monoid to be used in reduction
-     * @param times
-     *            Number of times value should be repeated
-     * @return Stream with reduced values repeated
-     */
-    public final static <T> Stream<T> cycle(final Stream<T> stream, final Monoid<T> m, final int times) {
-        return Streams.cycle(times, Streamable.fromObject(m.foldLeft(stream)));
 
-    }
 
     /**
      * extract head and tail together
@@ -1635,7 +1613,7 @@ public class Streams {
      *            Size of sliding window
      * @return Stream with sliding view
      */
-    public final static <T> Stream<VectorX<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
+    public final static <T> Stream<Seq<T>> sliding(final Stream<T> stream, final int windowSize, final int increment) {
         return StreamSupport.stream(new SlidingSpliterator<>(stream.spliterator(),Function.identity(),
                 windowSize,increment),stream.isParallel());
     }
@@ -1704,7 +1682,7 @@ public class Streams {
      * @param windowSize size of window
      * @return
      */
-    public final static <T> Stream<VectorX<T>> sliding(final Stream<T> stream, final int windowSize) {
+    public final static <T> Stream<Seq<T>> sliding(final Stream<T> stream, final int windowSize) {
         return sliding(stream, windowSize, 1);
     }
 
@@ -1729,7 +1707,7 @@ public class Streams {
      * @return Stream with elements grouped by size
      */
     public final static <T> Stream<Seq<T>> grouped(final Stream<T> stream, final int groupSize) {
-        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),()->new ArrayList<>(groupSize),
+        return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),()->Seq.empty(),
                 c->Seq.fromIterable(c),groupSize),stream.isParallel());
 
 
@@ -1756,7 +1734,7 @@ public class Streams {
      * @param factory Supplier for creating Collections for holding grouping
      * @return  Stream with elements grouped by size
      */
-    public final static <T, C extends Collection<? super T>> Stream<C> grouped(final Stream<T> stream, final int groupSize,
+    public final static <T, C extends PersistentCollection<? super T>> Stream<C> grouped(final Stream<T> stream, final int groupSize,
             final Supplier<C> factory) {
         return StreamSupport.stream(new GroupingSpliterator<>(stream.spliterator(),factory,
                 Function.identity(),groupSize),stream.isParallel());
@@ -1774,9 +1752,6 @@ public class Streams {
         return Streamable.fromStream(stream);
     }
 
-    public final static <T> Streamable<T> toConcurrentLazyStreamable(final Stream<T> stream) {
-        return Streamable.synchronizedFromStream(stream);
-    }
 
     public final static <U, T> Stream<U> scanRight(final Stream<T> stream, final U identity,
             final BiFunction<? super T, ? super U, ? extends U> combiner) {
@@ -2356,13 +2331,14 @@ public class Streams {
 
         return  Seq.range(0,copies)
                 .zipWithIndex()
-                .map(t->()-> toBufferingCopier(it.iterator(),copies).get(t._2().intValue()));
+                .map(t->()-> toBufferingCopier(it.iterator(),copies).getOrElseGet(t._2().intValue(),()->Arrays.<A>asList().iterator()));
     }
     public static final <A> Seq<Iterable<A>> toBufferingCopier(final Iterable<A> it, final int copies,Supplier<Deque<A>> bufferSupplier) {
 
         return  Seq.range(0,copies)
                 .zipWithIndex()
-                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).get(t._2().intValue()));
+                .map(t->() ->  toBufferingCopier(it.iterator(),copies,bufferSupplier).getOrElseGet(t._2().intValue(),
+                        ()->Arrays.<A>asList().iterator()));
     }
 
     public static final <A> Seq<Iterator<A>> toBufferingCopier(final Iterator<A> iterator, final int copies) {
@@ -2592,13 +2568,13 @@ public class Streams {
      * @param factory Supplier to create toX for groupings
      * @return Stream grouped into Collections determined by predicate
      */
-    public final static <T, C extends Collection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
-            final Supplier<C> factory) {
+    public final static <T, C extends PersistentCollection<? super T>> Stream<C> groupedWhile(final Stream<T> stream, final Predicate<? super T> predicate,
+                                                                                                         final Supplier<C> factory) {
         return StreamSupport.stream(new GroupedWhileSpliterator<>(stream.spliterator(),factory,Function.identity(),predicate.negate()),stream.isParallel());
 
     }
     @Deprecated
-    public final static <T, C extends Collection<? super T>> Stream<C> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate,
+    public final static <T, C extends PersistentCollection<? super T>> Stream<C> batchWhile(final Stream<T> stream, final Predicate<? super T> predicate,
             final Supplier<C> factory) {
         return groupedWhile(stream,predicate,factory);
     }
@@ -2802,6 +2778,6 @@ public class Streams {
 
 
     public static  <T,R> Stream<R> tailRec(T initial, Function<? super T, ? extends Stream<? extends Either<T, R>>> fn) {
-        return Seq.tailRec(initial,fn.andThen(ReactiveSeq::fromStream)).stream();
+        return ReactiveSeq.tailRec(initial,fn.andThen(ReactiveSeq::fromStream)).stream();
     }
 }

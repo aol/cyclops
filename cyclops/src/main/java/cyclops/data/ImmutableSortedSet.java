@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSortedSet;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.traversable.Traversable;
@@ -295,7 +296,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
@@ -320,12 +321,12 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 

@@ -6,10 +6,7 @@ import com.oath.cyclops.internal.stream.spliterators.*;
 
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.ConvertableToReactiveSeq;
-import com.oath.cyclops.types.stream.HeadAndTail;
-import com.oath.cyclops.types.stream.HotStream;
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.*;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;
@@ -3542,7 +3539,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     public static <T> ReactiveSeq<T> generate(Generator<T> gen){
-        return gen.stream();
+        return gen.reactiveSeq();
     }
     /**
      * Construct a ReactiveSeq from an Iterable
@@ -3557,8 +3554,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return (ReactiveSeq<T>)iterable;
 
         }
-        if( iterable instanceof ConvertableToReactiveSeq){
-            return ((ConvertableToReactiveSeq<T>)iterable).reactiveSeq();
+        if( iterable instanceof ToStream){
+            return ((ToStream<T>)iterable).reactiveSeq();
         }
 
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.

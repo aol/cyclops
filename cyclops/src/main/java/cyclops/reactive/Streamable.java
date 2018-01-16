@@ -37,11 +37,14 @@ import java.util.stream.*;
  *
  * @param <T> Data type for Stream
  */
+@FunctionalInterface
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
                                         IterableX<T>,
                                         Unit<T> {
 
+
+    Iterable<T> getStreamable();
 
     @Override
     default ReactiveSeq<T> reactiveSeq() {
@@ -2713,7 +2716,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default boolean isEmpty() {
-        return ToStream.super.isEmpty();
+        return !iterator().hasNext();
     }
 
     @Override
