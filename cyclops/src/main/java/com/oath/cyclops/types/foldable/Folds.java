@@ -648,7 +648,7 @@ public interface Folds<T> extends Iterable<T>  {
      *
      * </pre>
      */
-    default <K> HashMap<K, Seq<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> HashMap<K, Vector<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
 

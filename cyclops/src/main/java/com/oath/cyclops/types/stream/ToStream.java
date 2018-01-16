@@ -15,13 +15,10 @@ import com.oath.cyclops.internal.stream.SeqUtils;
  *
  * @param <T> Data type of elements in the this ToStream type
  */
-public interface ToStream<T> extends Iterable<T>, ConvertableToReactiveSeq<T> {
+public interface ToStream<T> extends Iterable<T> {
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.stream.ConvertableToReactiveSeq#reactiveSeq()
-     */
-    @Override
+
     default ReactiveSeq<T> reactiveSeq() {
         return ReactiveSeq.fromSpliterator(this.spliterator());
     }

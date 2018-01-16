@@ -45,8 +45,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                                     Higher<lazySeq,T> {
 
 
-    static <T> Collector<T, ArrayList<T>, LazySeq<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),LazySeq::fromIterable);
+    static <T> Collector<T, List<T>, LazySeq<T>> collector() {
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,LazySeq<T>>collectingAndThen((Collector)c,LazySeq::fromIterable);
     }
     @Override
     default<R> LazySeq<R> unitIterable(Iterable<R> it){
@@ -87,6 +88,9 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
     static <T> LazySeq<T> fill(T t){
         return LazySeq.fromStream(ReactiveSeq.fill(t));
+    }
+    static <T> LazySeq<T> fill(long limit, T t){
+        return LazySeq.fromStream(ReactiveSeq.fill(t).take(limit));
     }
     static <U, T> LazySeq<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));

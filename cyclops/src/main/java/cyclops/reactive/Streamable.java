@@ -1,6 +1,6 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.internal.stream.SeqUtils;
+
 import com.oath.cyclops.internal.stream.StreamableImpl;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
@@ -11,6 +11,8 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Streams;
 import cyclops.data.Seq;
 
+import cyclops.data.HashMap;
+import cyclops.data.Vector;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
@@ -1067,7 +1069,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     @Override
-    default <K> cyclops.data.HashMap<K, Seq<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> HashMap<K, Vector<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return reactiveSeq().groupBy(classifier);
     }
 

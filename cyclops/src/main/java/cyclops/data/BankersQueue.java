@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 
 public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,T>, Serializable {
 
-    static <T> Collector<T, ArrayList<T>, BankersQueue<T>> collector() {
+    static <T> Collector<T, List<T>, BankersQueue<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();
         return Collectors.<T, List<T>, Iterable<T>,BankersQueue<T>>collectingAndThen((Collector)c,BankersQueue::fromIterable);
     }

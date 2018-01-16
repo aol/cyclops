@@ -1,4 +1,4 @@
-package com.oath.cyclops.streams;
+package cyclops.reactive.collections.mutable;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -14,9 +14,9 @@ public class HeadTailTest {
 	@Test
 	public void empty(){
 
-		assertFalse(ListX.empty().headAndTail().headMaybe().isPresent());
-		assertFalse(ListX.empty().headAndTail().headOptional().isPresent());
-		assertTrue(ListX.empty().headAndTail().headStream().size()==0);
+		Assert.assertFalse(ListX.empty().headAndTail().headMaybe().isPresent());
+		Assert.assertFalse(ListX.empty().headAndTail().headOptional().isPresent());
+		Assert.assertTrue(ListX.empty().headAndTail().headStream().size()==0);
 
 
 	}

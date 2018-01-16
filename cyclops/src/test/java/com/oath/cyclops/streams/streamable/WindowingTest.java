@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.reactive.collections.immutable.VectorX;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 public class WindowingTest {
 	Streamable<Integer> empty;

@@ -4,6 +4,7 @@ package cyclops.reactive;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 
+
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
@@ -30,9 +31,10 @@ import com.oath.cyclops.async.*;
 import com.oath.cyclops.async.adapters.*;
 import com.oath.cyclops.async.adapters.Queue;
 import cyclops.data.Seq;
-import cyclops.data.Seq;
 
 
+import cyclops.data.Vector;
+import cyclops.data.HashMap;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1649,9 +1651,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  Map<Integer, List<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
-     *  assertEquals(asList(2, 4), map1.getValue(0));
-     *  assertEquals(asList(1, 3), map1.getValue(1));
+     *  HashMap<Integer, Vector<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
+     *  assertEquals(Vector.of(2, 4), map1.getOrElse(0,Vector.empty()));
+     *  assertEquals(Vector.of(1, 3), map1.getOrElse(1,Vector.empty()));
      *  assertEquals(2, map1.size());
      *
      * }
@@ -1659,8 +1661,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * </pre>
      */
     @Override
-    default <K> cyclops.data.HashMap<K, Seq<T>> groupBy(final Function<? super T, ? extends K> classifier) {
-        return (cyclops.data.HashMap<K, Seq<T>>)this.collect(Collectors.groupingBy(classifier, (Supplier)cyclops.data.HashMap::empty, Seq.collector()));
+    default <K> HashMap<K, Vector<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+        return this.foldLeft(HashMap.<K, Vector<T>>empty(), (a, b) -> {
+            K k = classifier.apply(b);
+            Vector<T> s = a.getOrElse(k, Vector.empty());
+            return a.put(k, s.plus(b));
+        });
     }
 
     /*
