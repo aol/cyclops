@@ -47,6 +47,10 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().toArray();
     }
 
+    default boolean contains(T value){
+        return anyMatch(p->Objects.equals(p,value));
+    }
+
     default <R> R iterableTo(Function<? super Iterable<? super T>,? extends R> fn){
         return fn.apply(this);
     }

@@ -8,7 +8,10 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Future;
@@ -584,7 +587,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (QueueX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -983,7 +986,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see LazyCollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default QueueX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (QueueX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -992,7 +995,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      * @see LazyCollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default QueueX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (QueueX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

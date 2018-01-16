@@ -21,6 +21,7 @@ public interface PersistentCollection<T> extends Iterable<T>{
          return size()==0;
      }
 
+     //@TODO align with Folds#contains
      default boolean containsValue(T item){
          return stream().filter(t-> Objects.equals(t,item)).findFirst().isPresent();
      }

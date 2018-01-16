@@ -4,7 +4,8 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.hashSet;
@@ -477,13 +478,13 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-          return (HashSet<Seq<T>>) ImmutableSet.super.groupedUntil(predicate);
+      public HashSet<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
       }
 
       @Override
-      public HashSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-          return (HashSet<Seq<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
+      public HashSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
       }
 
       @Override
@@ -492,8 +493,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-          return (HashSet<Seq<T>>) ImmutableSet.super.groupedWhile(predicate);
+      public HashSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedWhile(predicate);
       }
 
       @Override
@@ -507,8 +508,8 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<Seq<T>> grouped(int groupSize) {
-          return (HashSet<Seq<T>>) ImmutableSet.super.grouped(groupSize);
+      public HashSet<Vector<T>> grouped(int groupSize) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.grouped(groupSize);
       }
 
       @Override

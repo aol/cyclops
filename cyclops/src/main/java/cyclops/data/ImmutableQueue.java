@@ -4,13 +4,11 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -520,13 +518,13 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableQueue<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableQueue<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     default <U> ImmutableQueue<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
@@ -534,7 +532,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableQueue<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
@@ -549,7 +547,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<Seq<T>> grouped(int groupSize) {
+    default ImmutableQueue<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

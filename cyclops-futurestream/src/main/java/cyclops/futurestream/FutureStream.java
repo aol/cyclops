@@ -15,6 +15,7 @@ import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Adapter;
@@ -22,6 +23,7 @@ import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.Queue.QueueTimeoutException;
 import com.oath.cyclops.async.adapters.QueueFactory;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
@@ -1496,7 +1498,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @return Stream of Lists
      */
     @Override
-    default FutureStream<ListX<U>> groupedByTime(final long time, final TimeUnit unit) {
+    default ReactiveSeq<Vector<U>> groupedByTime(final long time, final TimeUnit unit) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedByTime(time, unit));
 
@@ -2916,7 +2918,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#grouped(int)
      */
     @Override
-    default FutureStream<ListX<U>> grouped(final int groupSize) {
+    default Traversable<Vector<U>> grouped(final int groupSize) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .grouped(groupSize));
     }
@@ -3127,7 +3129,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<ListX<U>> groupedStatefullyUntil(final BiPredicate<ListX<? super U>, ? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .groupedStatefullyUntil(predicate));
+                                     .groupedUntil(predicate));
     }
     @Override
     default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
@@ -3139,7 +3141,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<ListX<U>> groupedStatefullyWhile(final BiPredicate<ListX<? super U>, ? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                .groupedStatefullyUntil(predicate));
+                .groupedUntil(predicate));
     }
     @Override
     default <C extends Collection<U>,R> FutureStream<R> groupedStatefullyWhile(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
@@ -3152,7 +3154,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchUntil(java.util.function.Predicate)
      */
     @Override
-    default FutureStream<ListX<U>> groupedUntil(final Predicate<? super U> predicate) {
+    default IterableX<Vector<U>> groupedUntil(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedUntil(predicate));
     }
@@ -3161,7 +3163,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#batchWhile(java.util.function.Predicate)
      */
     @Override
-    default FutureStream<ListX<U>> groupedWhile(final Predicate<? super U> predicate) {
+    default Traversable<Vector<U>> groupedWhile(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .groupedWhile(predicate));
     }

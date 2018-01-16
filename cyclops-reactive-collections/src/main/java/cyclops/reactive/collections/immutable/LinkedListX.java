@@ -5,12 +5,15 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.control.*;
 
 import cyclops.data.Seq;
 import com.oath.cyclops.types.foldable.Evaluation;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -720,7 +723,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
     @Override
-    default LinkedListX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (LinkedListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -1106,7 +1109,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -1118,7 +1121,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

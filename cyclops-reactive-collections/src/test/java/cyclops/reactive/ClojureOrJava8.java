@@ -1,4 +1,4 @@
-package com.oath.cyclops;
+package cyclops.reactive;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

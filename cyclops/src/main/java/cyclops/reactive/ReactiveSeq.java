@@ -5,9 +5,9 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 
 
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;
@@ -1409,7 +1409,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Stream with elements grouped by size
      */
     @Override
-    ReactiveSeq<Seq<T>> grouped(int groupSize);
+    ReactiveSeq<Vector<T>> grouped(int groupSize);
 
     /**
      * Create ReactiveSeq of Seq where
@@ -1433,12 +1433,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq windowed while predicate holds
      */
     @Override
-    ReactiveSeq<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate);
+    ReactiveSeq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate);
     <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                       Function<? super C, ? extends R> finalizer);
-    ReactiveSeq<Seq<T>> groupedStatefullyWhile(BiPredicate<Seq<? super T>, ? super T> predicate);
-    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
-                                                                                Function<? super C, ? extends R> finalizer);
+    ReactiveSeq<Vector<T>> groupedWhile(BiPredicate<Seq<? super T>, ? super T> predicate);
+    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                                      Function<? super C, ? extends R> finalizer);
     /**
      * Batch elements by size into a List
      *
@@ -1507,7 +1507,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            time unit for batch
      * @return ReactiveSeq batched into lists by time period
      */
-    ReactiveSeq<Seq<T>> groupedByTime(long time, TimeUnit t);
+    ReactiveSeq<Vector<T>> groupedByTime(long time, TimeUnit t);
 
     /**
      * Batch elements by time into a toX created by the supplied factory
@@ -1570,7 +1570,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
-    default ReactiveSeq<Seq<T>> groupedUntil(Predicate<? super T> predicate){
+    default ReactiveSeq<Vector<T>> groupedUntil(Predicate<? super T> predicate){
         return groupedWhile(predicate.negate());
 
     }
@@ -1592,7 +1592,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq batched into lists determined by the predicate supplied
      */
     @Override
-    ReactiveSeq<Seq<T>> groupedWhile(Predicate<? super T> predicate);
+    ReactiveSeq<Vector<T>> groupedWhile(Predicate<? super T> predicate);
 
     /**
      * Create a ReactiveSeq batched by a Collection, where each batch is populated
@@ -1695,11 +1695,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<T> scanLeft(Monoid<T> monoid){
-
             return scanLeft(monoid.zero(),monoid);
-
-
-
     }
 
     /**

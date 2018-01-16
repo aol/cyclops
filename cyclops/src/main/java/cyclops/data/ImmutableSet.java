@@ -3,12 +3,10 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.data.Seq;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
@@ -20,7 +18,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -362,13 +359,13 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     default <U> ImmutableSet<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
@@ -376,7 +373,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
@@ -391,7 +388,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<Seq<T>> grouped(int groupSize) {
+    default ImmutableSet<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

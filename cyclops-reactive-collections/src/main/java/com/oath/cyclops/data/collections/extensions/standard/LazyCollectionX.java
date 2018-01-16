@@ -14,6 +14,9 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.reactive.collections.mutable.ListX;
@@ -225,7 +228,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see CollectionX#grouped(int)
      */
     @Override
-    default LazyCollectionX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return fromStream(stream().grouped(groupSize)
                                   .map(ListX::fromIterable));
     }
@@ -677,7 +680,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see CollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default LazyCollectionX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return fromStream(stream().groupedUntil(predicate));
     }
@@ -686,7 +689,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see CollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default LazyCollectionX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return fromStream(stream().groupedWhile(predicate));
     }
@@ -714,7 +717,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      */
     @Override
     default LazyCollectionX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return fromStream(stream().groupedStatefullyUntil(predicate));
+        return fromStream(stream().groupedUntil(predicate));
     }
 
     @Override

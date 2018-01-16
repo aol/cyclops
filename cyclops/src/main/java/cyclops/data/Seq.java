@@ -9,7 +9,8 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -484,13 +485,13 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (Seq<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
+    default Seq<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (Seq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    default Seq<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (Seq<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    default Seq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (Seq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
@@ -499,8 +500,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (Seq<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
+    default Seq<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (Seq<Vector<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
@@ -514,8 +515,8 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<Seq<T>> grouped(int groupSize) {
-        return (Seq<Seq<T>>) ImmutableList.super.grouped(groupSize);
+    default Seq<Vector<T>> grouped(int groupSize) {
+        return (Seq<Vector<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

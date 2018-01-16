@@ -7,6 +7,8 @@ import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.control.*;
@@ -693,7 +695,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (VectorX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -1082,7 +1084,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (VectorX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -1094,7 +1096,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (VectorX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

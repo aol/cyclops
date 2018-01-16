@@ -4,14 +4,12 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 
-import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -523,13 +521,13 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableList<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableList<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableList<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     default <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
@@ -537,7 +535,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableList<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
@@ -552,7 +550,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<Seq<T>> grouped(int groupSize) {
+    default ImmutableList<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

@@ -912,13 +912,13 @@ public abstract class AbstractIterableXTest {
     @Test
     public void windowStatefullyUntil(){
         System.out.println(of(1,2,3,4,5,6)
-                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+                .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
-                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+                .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         System.out.println(Streamable.of(1,2,3,4,5,6)
-                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+                .groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
         assertThat(of(1,2,3,4,5,6)
-                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
+                .groupedUntil((s, i)->s.containsValue(4) ? true : false)
                 .toList().size(),equalTo(2));
 
 
@@ -927,7 +927,7 @@ public abstract class AbstractIterableXTest {
     public void windowStatefullyWhileEmpty(){
 
         assertThat(of()
-                .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+                .groupedUntil((s, i)->s.contains(4) ? true : false)
                 .toList().size(),equalTo(0));
 
     }

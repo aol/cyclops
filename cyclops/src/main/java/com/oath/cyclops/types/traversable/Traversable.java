@@ -5,18 +5,17 @@ import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.FilterableTransformable;
 import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -410,7 +409,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Batch until predicate holds, applyHKT open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<Seq<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return traversable().groupedUntil(predicate);
     }
 
@@ -424,7 +423,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+     *              .groupedUntil((s,i)->s.contains(4) ? true : false)
      *              .toList().size(),equalTo(5));
      * }
      * </pre>
@@ -433,8 +432,8 @@ public interface Traversable<T> extends Publisher<T>,
      *            Window while true
      * @return Traversable windowed while predicate holds
      */
-    default Traversable<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return traversable().groupedStatefullyUntil(predicate);
+    default Traversable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return traversable().groupedUntil(predicate);
     }
 
   /**
@@ -454,7 +453,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Batch while predicate holds, applyHKT open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return traversable().groupedWhile(predicate);
     }
 
@@ -465,7 +464,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchWhile(i->i%3!=0)
+     *              .groupedWhile(i->i%3!=0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
@@ -525,7 +524,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    default Traversable<Seq<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return traversable().grouped(groupSize);
     }
 

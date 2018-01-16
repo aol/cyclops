@@ -5,11 +5,14 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPQueueX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.control.*;
 import cyclops.data.BankersQueue;
 import com.oath.cyclops.types.foldable.Evaluation;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -672,7 +675,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     @Override
-    default PersistentQueueX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (PersistentQueueX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -1207,7 +1210,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     @Override
-    default PersistentQueueX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (PersistentQueueX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -1219,7 +1222,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     @Override
-    default PersistentQueueX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (PersistentQueueX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

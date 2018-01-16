@@ -1,6 +1,8 @@
 package cyclops.reactive.collections.immutable;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
@@ -10,6 +12,7 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -570,7 +573,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (PersistentSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -967,7 +970,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -979,7 +982,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

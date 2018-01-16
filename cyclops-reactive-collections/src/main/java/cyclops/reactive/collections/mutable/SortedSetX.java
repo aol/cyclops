@@ -5,6 +5,8 @@ import com.oath.cyclops.data.collections.extensions.lazy.LazySortedSetX;
 import com.oath.cyclops.types.foldable.Evaluation;
 
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
@@ -557,7 +559,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<cyclops.data.Vector<T>> grouped(final int groupSize) {
         return (SortedSetX<ListX<T>>) (SortedSetX<T>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -949,13 +951,13 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<cyclops.data.Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
-    default SortedSetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<cyclops.data.Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

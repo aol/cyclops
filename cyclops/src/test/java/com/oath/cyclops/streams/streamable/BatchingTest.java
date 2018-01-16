@@ -18,17 +18,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+
+import com.oath.cyclops.types.persistent.PersistentCollection;
+import cyclops.data.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import cyclops.data.Seq;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import cyclops.reactive.Streamable;
-import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.util.SimpleTimer;
 
 import lombok.Value;
@@ -55,22 +58,22 @@ public class BatchingTest {
 	@Test
 	public void batchUntilCollection(){
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
+				.groupedUntil(i->i%3==0,()-> Seq.empty())
 				.toList().size(),equalTo(2));
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
+				.groupedUntil(i->i%3==0,()->Seq.empty())
 				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Seq.empty())
 				.toList());
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Seq.empty())
 				.toList().size(),equalTo(2));
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Seq.empty())
 				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
 	}
 	@Test
@@ -155,7 +158,7 @@ public class BatchingTest {
 				.grouped(10)
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
-				.flatMapStream(Collection::stream)
+				.concatMap(i->i)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual))
 				.forEach(a->{});
@@ -274,7 +277,7 @@ public class BatchingTest {
 	public void batchBySizeAndTimeSizeCollection(){
 
 		assertThat(of(1,2,3,4,5,6)
-						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
+						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->Seq.empty())
 						.toList().get(0)
 						.size(),is(3));
 	}
@@ -302,40 +305,14 @@ public class BatchingTest {
 						.toList()
 						.size(),is(0));
 	}
-	@Test @Ignore
-	public void batchBySizeAndTimeTime(){
 
-		for(int i=0;i<10;i++){
-			System.out.println(i);
-			List<ListX<Integer>> list = of(1,2,3,4,5,6)
-					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
-					.toList();
 
-			assertThat(list
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
-	@Test @Ignore
-	public void batchBySizeAndTimeTimeCollection(){
-
-		for(int i=0;i<10;i++){
-			System.out.println(i);
-			List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
-					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
-					.toList();
-
-			assertThat(list
-							.get(0)
-							,not(hasItem(6)));
-		}
-	}
 	@Test
 	public void windowBySizeAndTimeTime(){
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = of(1,2,3,4,5,6)
+			List<Seq<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.groupedBySizeAndTime(10,1,TimeUnit.MILLISECONDS)
 
@@ -352,13 +329,12 @@ public class BatchingTest {
 	@Test
 	public void batchBySizeSet(){
 
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(1).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(1).size(),is(1));
 	}
 	@Test
 	public void batchBySizeSetEmpty(){
-
-		assertThat(of().grouped(3,()->new TreeSet<>()).toList().size(),is(0));
+        assertThat(Streamable.<Integer>of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -413,7 +389,7 @@ public class BatchingTest {
 	@Test
 	public void batchByTimeSet(){
 
-		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).toList().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -421,7 +397,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchByTimeInternalSizeCollection(){
-		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->Seq.empty()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void windowByTimeInternalSize(){

@@ -7,6 +7,7 @@ import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.data.Seq;
 import cyclops.data.HashSet;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -424,18 +425,18 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<Seq<T>> groupedUntil(final Predicate<? super T> predicate) {
-        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedUntil(predicate);
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+        return (IterableX<Vector<T>>)ExtendedTraversable.super.groupedUntil(predicate);
     }
 
     @Override
-    default IterableX<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedStatefullyUntil(predicate);
+    default IterableX<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (IterableX<Vector<T>>)ExtendedTraversable.super.groupedUntil(predicate);
     }
 
   @Override
-    default IterableX<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return (IterableX<Seq<T>>)ExtendedTraversable.super.groupedWhile(predicate);
+    default IterableX<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+        return (IterableX<Vector<T>>)ExtendedTraversable.super.groupedWhile(predicate);
     }
 
     @Override
@@ -449,8 +450,8 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<Seq<T>> grouped(final int groupSize) {
-        return (IterableX<Seq<T>>)ExtendedTraversable.super.grouped(groupSize);
+    default Traversable<Vector<T>> grouped(final int groupSize) {
+        return (IterableX<Vector<T>>)ExtendedTraversable.super.grouped(groupSize);
     }
 
     @Override
