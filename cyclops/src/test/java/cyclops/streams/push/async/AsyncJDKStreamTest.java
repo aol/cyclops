@@ -1,6 +1,6 @@
 package cyclops.streams.push.async;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -42,13 +42,13 @@ public class AsyncJDKStreamTest {
 	@Test
 	public void testDistinctReactiveSeq(){
 
-		ListX<String> d = of("Java", "C").distinct(n -> n + ":" + n).toListX();
+		List<String> d = of("Java", "C").distinct(n -> n + ":" + n).toList();
 		assertThat(d.size(),equalTo(2));
 	}
 
 	@Test
 	public void testDistinctReactiveSeqMultipleDuplicates(){
-		ListX<String> d = of("Java", "C", "Java", "Java","java", "java").distinct(n -> n + ":" + n).toListX();
+		List<String> d = of("Java", "C", "Java", "Java","java", "java").distinct(n -> n + ":" + n).toList();
 		System.out.println(d);
 		assertThat(d.size(),equalTo(3));
 	}
@@ -64,11 +64,11 @@ public class AsyncJDKStreamTest {
 		    System.out.println("************Iteration " + l);
 		    System.out.println("************Iteration " + l);
 
-		    assertThat(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
+		    assertThat(Arrays.asList(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
 				    equalTo(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 						    .mergeMap(i -> rs(i, i * 2, i * 4)
 								    .mergeMap(x -> rs(5, 6, 7)))
-						    .toListX().size()));
+						    .toList().size()));
 
 	    }
     }
@@ -82,7 +82,7 @@ public class AsyncJDKStreamTest {
            assertThat(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .mergeMap(i -> rs(i, i * 2, i * 4)
                             .mergeMap(x -> rs(5, 6, 7)))
-                    .toListX(),equalTo(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7)));
+                    .toList(),equalTo(Arrays.asList(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7)));
 
         }
     }
@@ -95,7 +95,7 @@ public class AsyncJDKStreamTest {
             System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .mergeMap(i -> rs(i, i * 2, i * 4)
                             .mergeMap(x -> rs(5, 6, 7)))
-                    .toListX());
+                    .toList());
         }
     }
     @Test
@@ -104,13 +104,13 @@ public class AsyncJDKStreamTest {
                 .mergeMap(i->rs(i,i*2,i*4)
                         .mergeMap(x->rs(5,6,7)
                         .mergeMap(y->rs(2,3,4))))
-                .toListX());
+                .toList());
 
         assertThat(this.rs(1,2)
           .mergeMap(i->rs(i,i*2,i*4)
             .mergeMap(x->rs(5,6,7)
               .mergeMap(y->rs(2,3,4))))
-          .toListX(),equalTo(ListX.of(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4,
+          .toList(),equalTo(Arrays.asList(2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4,
           2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4)));
     }
     @Test
@@ -122,7 +122,7 @@ public class AsyncJDKStreamTest {
             System.out.println(this.rs("1", "2")
                     .mergeMap(i -> rs(1, 2,3))
                       .mergeMap(x -> rs('a','b'))
-                    .toListX());
+                    .toList());
         }
     }
     @Test
@@ -134,7 +134,7 @@ public class AsyncJDKStreamTest {
             System.out.println(this.rs("1", "2","3")
                     .mergeMap(i -> rs(1, 2,3,4,5))
                     .mergeMap(x -> rs('a','b'))
-                    .toListX());
+                    .toList());
         }
     }
     @Test

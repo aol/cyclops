@@ -450,7 +450,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
+    default IterableX<Vector<T>> grouped(final int groupSize) {
         return (IterableX<Vector<T>>)ExtendedTraversable.super.grouped(groupSize);
     }
 

@@ -665,8 +665,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 												).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
 	@Test
@@ -675,8 +675,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 												.map(i->i*2).to()
 												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	/**
 	@Test

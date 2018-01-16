@@ -271,7 +271,7 @@ public interface Option<T> extends To<Option<T>>,
 
     /**
      * Sequence operation, take a Collection of Options and turn it into a Option with a Collection
-     * Only successes are retained. By constrast with {@link Option#sequence(IterableX)} Option#none/ None types are
+     * Only successes are retained. By constrast with {@link Option#sequence(Iterable)} Option#none/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -287,13 +287,13 @@ public interface Option<T> extends To<Option<T>>,
      * @param maybes Option to Sequence
      * @return Option with a List of values
      */
-    public static <T> Option<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Option<T>> maybes) {
-        return sequence(maybes.stream().filter(Option::isPresent));
+    public static <T> Option<ReactiveSeq<T>> sequenceJust(final Iterable<? extends Option<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes).filter(Option::isPresent));
     }
 
     /**
      * Sequence operation, take a Collection of Options and turn it into a Option with a Collection
-     * By constrast with {@link Option#sequenceJust(IterableX)} if any Option types are None / zero
+     * By constrast with {@link Option#sequenceJust(Iterable)} if any Option types are None / zero
      * the return type will be an zero Option / None
      *
      * <pre>
@@ -312,14 +312,14 @@ public interface Option<T> extends To<Option<T>>,
      * @param maybes Option to Sequence
      * @return  Option with a List of values
      */
-    public static <T> Option<ReactiveSeq<T>> sequence(final IterableX<? extends Option<T>> maybes) {
-        return sequence(maybes.stream());
+    public static <T> Option<ReactiveSeq<T>> sequence(final Iterable<? extends Option<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes));
 
     }
 
     /**
      * Sequence operation, take a Stream of Option and turn it into a Option with a Stream
-     * By constrast with {@link Maybe#sequenceJust(IterableX)} Option#zero/ None types are
+     * By constrast with {@link Maybe#sequenceJust(Iterable)} Option#zero/ None types are
      * result in the returned Maybe being Option.zero / None
      *
      *
@@ -376,7 +376,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final IterableX<Option<T>> maybes, final Reducer<R,T> reducer) {
+    public static <T, R> Option<R> accumulateJust(final Iterable<Option<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -402,7 +402,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T, R> Option<R> accumulateJust(final IterableX<Option<T>> maybes, final Function<? super T, R> mapper,
+    public static <T, R> Option<R> accumulateJust(final Iterable<Option<T>> maybes, final Function<? super T, R> mapper,
                                                  final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -428,7 +428,7 @@ public interface Option<T> extends To<Option<T>>,
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Option<T> accumulateJust(final Monoid<T> reducer,final IterableX<Option<T>> maybes) {
+    public static <T> Option<T> accumulateJust(final Monoid<T> reducer,final Iterable<Option<T>> maybes) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 

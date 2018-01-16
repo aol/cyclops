@@ -1,12 +1,13 @@
 package cyclops.control;
 
-import cyclops.reactive.collections.immutable.PersistentSetX;
+import com.oath.cyclops.types.persistent.PersistentSet;
+import cyclops.data.HashSet;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Eval.CompletableEval;
 import cyclops.control.Eval.Module.Later;
 import cyclops.function.Monoid;
@@ -104,8 +105,8 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testSequence() {
-		Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(ListX.of(just,CompletableEvalTest.now(1)));
-		assertThat(maybes.map(r->r.toList()),equalTo(Eval.now(ListX.of(10,1))));
+		Eval<ReactiveSeq<Integer>> maybes =Eval.sequence(Arrays.asList(just,CompletableEvalTest.now(1)));
+		assertThat(maybes.map(r->r.toList()),equalTo(Eval.now(Arrays.asList(10,1))));
 	}
 
 
@@ -113,18 +114,18 @@ public class CompletableEvalTest {
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
 
 
-		Eval<PersistentSetX<Integer>> maybes =Eval.accumulate(ListX.of(just,CompletableEvalTest.now(1)),Reducers.toPersistentSetX());
-		assertThat(maybes,equalTo(Eval.now(PersistentSetX.of(10,1))));
+		Eval<PersistentSet<Integer>> maybes =Eval.accumulate(Arrays.asList(just,CompletableEvalTest.now(1)),Reducers.toPersistentSet());
+		assertThat(maybes,equalTo(Eval.now(HashSet.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Eval<String> maybes =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+		Eval<String> maybes =Eval.accumulate(Arrays.asList(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
 		assertThat(maybes,equalTo(Eval.now("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,CompletableEvalTest.now(1)));
+		Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,Arrays.asList(just,CompletableEvalTest.now(1)));
 		assertThat(maybes,equalTo(Eval.now(11)));
 	}
 
@@ -174,8 +175,8 @@ public class CompletableEvalTest {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().filter(i->i!=null).toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+		assertThat(none.stream().filter(i->i!=null).toList(),equalTo(Arrays.asList()));
 	}
 
 	@Test
@@ -186,14 +187,14 @@ public class CompletableEvalTest {
 
     public void testConvertTo() {
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 

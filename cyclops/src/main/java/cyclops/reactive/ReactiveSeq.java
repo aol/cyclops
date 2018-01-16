@@ -7,7 +7,6 @@ import com.oath.cyclops.internal.stream.spliterators.*;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;
@@ -1457,7 +1456,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param t time unit for batch
      * @return ReactiveSeq batched by size and time
      */
-    ReactiveSeq<Seq<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
+    ReactiveSeq<Vector<T>> groupedBySizeAndTime(int size, long time, TimeUnit t);
 
     /**
      * Batch elements by size into a toX created by the supplied factory
@@ -3541,7 +3540,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     public static <T> ReactiveSeq<T> generate(Generator<T> gen){
-        return gen.reactiveSeq();
+        return gen.stream();
     }
     /**
      * Construct a ReactiveSeq from an Iterable
@@ -3557,7 +3556,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
         }
         if( iterable instanceof ToStream){
-            return ((ToStream<T>)iterable).reactiveSeq();
+            return ((ToStream<T>)iterable).stream();
         }
 
         //we can't just use the Iterable's Spliteratable as it might not be repeatable / copyable.
@@ -3997,7 +3996,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<ReactiveSeq<T>> permutations() {
         final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
                                                                .permutations();
-        return streamable.reactiveSeq();
+        return streamable.stream();
     }
 
 

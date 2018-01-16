@@ -3,14 +3,14 @@ package cyclops.streams;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.util.SimpleTimer;
 import com.google.common.collect.Lists;
-import cyclops.reactive.collections.immutable.BagX;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.control.Future;
 import cyclops.control.Eval;
+import cyclops.data.Bag;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -147,25 +147,25 @@ public class ReactiveSeqTest {
                         .takeOne().isPresent(),equalTo(false));
         assertThat(of(1,2,3)
                               .takeOne().toOptional().get(),equalTo(1));
-        assertThat(ListX.of(1,2,3)
+        assertThat(of(1,2,3)
                               .takeOne().toOptional().get(),equalTo(1));
 
         assertThat(of(1,2,3)
                               .elementAt(0).toOptional().get(),equalTo(1));
-        assertThat(ListX.of(1,2,3)
+        assertThat(of(1,2,3)
                               .elementAt(0l).toOptional().get(),equalTo(1));
         assertThat(of(1,2,3)
                 .elementAt(1).toOptional().get(),equalTo(2));
-        assertThat(ListX.of(1,2,3)
+        assertThat(of(1,2,3)
                         .elementAt(1l).toOptional().get(),equalTo(2));
     }
 
     @Test
     public void cycleWhile(){
-        of(1).toListX();
+        of(1).toList();
         count =0;
-        ListX<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
-                .cycleUntil(next->count++==6).toListX();
+        List<Integer> b= ReactiveSeq.fromStream(Stream.of(1, 2, 3)).peek(System.out::println)
+                .cycleUntil(next->count++==6).toList();
 
         System.out.println("B " + b);
         assertEquals(asList(1, 2,3, 1, 2,3),b);
@@ -174,7 +174,7 @@ public class ReactiveSeqTest {
     public void combineNoOrderMonoid(){
         assertThat(of(1,2,3)
                 .combine(Monoids.intSum,(a, b)->a.equals(b))
-                .toListX(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
 
     }
     @Test
@@ -197,7 +197,7 @@ public class ReactiveSeqTest {
     public void crossJoinTest(){
         assertThat(of(1, 2)
                    .crossJoin(of('a', 'b'))
-                   .toList(),equalTo(ListX.of(tuple(1,'a'),
+                   .toList(),equalTo(Arrays.asList(tuple(1,'a'),
                                               tuple(1,'b'),
                                               tuple(2,'a'),
                                               tuple(2,'b'))));
@@ -241,7 +241,7 @@ public class ReactiveSeqTest {
                     .recover(t -> -1L)
                     .toList();
 
-            assertThat(ListX.of(7001l, -1l, 7003l, 7004l, 8001l, 8002l, -1l,
+            assertThat(Arrays.asList(7001l, -1l, 7003l, 7004l, 8001l, 8002l, -1l,
                     8004l, 5001l, 5002l, 5003l, -1l, 6001l, -1l, 6003l, 6004l),
                     equalTo(data));
 
@@ -249,7 +249,7 @@ public class ReactiveSeqTest {
     }
     @Test
     public void cycleUntil(){
-        System.out.println("List " + BagX.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
+        System.out.println("List " + Bag.of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toList());
     }
 
     @Test
@@ -259,9 +259,9 @@ public class ReactiveSeqTest {
         ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
         ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
         ReactiveSeq<Integer> by10Plus2 = by10.to(mapInts(i -> i + 2));
-        assertThat(by10.toListX(), equalTo(Arrays.asList(10, 20, 30)));
-        assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
-        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
+        assertThat(by10.toList(), equalTo(Arrays.asList(10, 20, 30)));
+        assertThat(plus2.toList(), equalTo(Arrays.asList(3, 4, 5)));
+        assertThat(by10Plus2.toList(), equalTo(Arrays.asList(12, 22, 32)));
     }
 
     @Test
@@ -271,9 +271,9 @@ public class ReactiveSeqTest {
         ReactiveSeq<Long> by10 = list.map(i -> i * 10);
         ReactiveSeq<Long> plus2 = list.map(i -> i + 2);
         ReactiveSeq<Long> by10Plus2 = by10.to(mapLongs(i -> i + 2));
-        assertThat(by10.toListX(), equalTo(Arrays.asList(10l, 20l, 30l)));
-        assertThat(plus2.toListX(), equalTo(Arrays.asList(3l, 4l, 5l)));
-        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12l, 22l, 32l)));
+        assertThat(by10.toList(), equalTo(Arrays.asList(10l, 20l, 30l)));
+        assertThat(plus2.toList(), equalTo(Arrays.asList(3l, 4l, 5l)));
+        assertThat(by10Plus2.toList(), equalTo(Arrays.asList(12l, 22l, 32l)));
     }
     @Test
     public void multipathsDoubles() {
@@ -282,9 +282,9 @@ public class ReactiveSeqTest {
         ReactiveSeq<Double> by10 = list.map(i -> i * 10);
         ReactiveSeq<Double> plus2 = list.map(i -> i + 2);
         ReactiveSeq<Double> by10Plus2 = by10.to(mapDoubles(i -> i + 2));
-        assertThat(by10.toListX(), equalTo(Arrays.asList(10d, 20d, 30d)));
-        assertThat(plus2.toListX(), equalTo(Arrays.asList(3d, 4d, 5d)));
-        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12d, 22d, 32d)));
+        assertThat(by10.toList(), equalTo(Arrays.asList(10d, 20d, 30d)));
+        assertThat(plus2.toList(), equalTo(Arrays.asList(3d, 4d, 5d)));
+        assertThat(by10Plus2.toList(), equalTo(Arrays.asList(12d, 22d, 32d)));
     }
 
     @Test
@@ -549,14 +549,14 @@ public class ReactiveSeqTest {
         ReactiveSeq<Integer> stream2 = stream.flatMap(s -> s).map(i -> i * 10);
         ReactiveSeq<Integer> stream3 = stream.flatMap(s -> s).map(i -> i * 100);
 
-        assertThat(stream2.toListX(),equalTo(ListX.of(10,20,30)));
-        assertThat(stream3.toListX(),equalTo(ListX.of(100,200,300)));
+        assertThat(stream2.toList(),equalTo(Arrays.asList(10,20,30)));
+        assertThat(stream3.toList(),equalTo(Arrays.asList(100,200,300)));
 
     }
     @Test
     public void arrayConcat(){
         assertThat(ReactiveSeq.concat(of(1,2,3), of(100,200,300))
-                   .map(i->i*1000).toListX(),equalTo(ListX.of(1000,
+                   .map(i->i*1000).toList(),equalTo(Arrays.asList(1000,
                 2000,
                 3000,
                 100000,
@@ -710,9 +710,9 @@ public class ReactiveSeqTest {
         ReactiveSeq<Integer> by10 = list.map(i -> i * 10);
         ReactiveSeq<Integer> plus2 = list.map(i -> i + 2);
         ReactiveSeq<Integer> by10Plus2 = by10.map(i -> i + 2);
-        assertThat(by10.toListX(), equalTo(Arrays.asList(10, 20, 30)));
-        assertThat(plus2.toListX(), equalTo(Arrays.asList(3, 4, 5)));
-        assertThat(by10Plus2.toListX(), equalTo(Arrays.asList(12, 22, 32)));
+        assertThat(by10.toList(), equalTo(Arrays.asList(10, 20, 30)));
+        assertThat(plus2.toList(), equalTo(Arrays.asList(3, 4, 5)));
+        assertThat(by10Plus2.toList(), equalTo(Arrays.asList(12, 22, 32)));
     }
 /**
     @Test @Ignore
@@ -807,7 +807,7 @@ public class ReactiveSeqTest {
     public void combineNoOrder(){
         assertThat(of(1,2,3)
                 .combine((a, b)->a.equals(b), Semigroups.intSum)
-                .toListX(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
 
     }
 
@@ -821,11 +821,11 @@ public class ReactiveSeqTest {
         Iterator<Integer> it = stream.map(s->s.length())
                                      .flatMap(s-> IntStream.range(0,s).boxed())
                                      .iterator();
-        ListX<Integer> result = ListX.empty();
+        List<Integer> result = new ArrayList<>();
         while(it.hasNext()){
             result.add(it.next());
         }
-       assertThat(result,equalTo(ListX.of(0,1,2,3,4)));
+       assertThat(result,equalTo(Arrays.asList(0,1,2,3,4)));
     }
     @Test
     public void testIteratorPull(){
@@ -836,11 +836,11 @@ public class ReactiveSeqTest {
         Iterator<Integer> it = stream.map(s->s.length())
                 .flatMap(s-> IntStream.range(0,s).boxed())
                 .iterator();
-        ListX<Integer> result = ListX.empty();
+        List<Integer> result = new ArrayList<>();
         while(it.hasNext()){
             result.add(it.next());
         }
-        assertThat(result,equalTo(ListX.of(0,1,2,3,4)));
+        assertThat(result,equalTo(Arrays.asList(0,1,2,3,4)));
     }
     @Test
     public void forEachWithError(){
@@ -902,7 +902,7 @@ public class ReactiveSeqTest {
 
         pushable.onNext("hello");
         pushable.onComplete();
-        assertThat(list.orElse(ListX.empty()).size(),equalTo(1));
+        assertThat(list.orElse(new ArrayList<>()).size(),equalTo(1));
 
     }
 

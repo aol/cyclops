@@ -10,8 +10,6 @@ import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 
 import cyclops.companion.*;
@@ -582,7 +580,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
+    public ReactiveSeq<Vector<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
         return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),()->Seq.fromIterable(new ArrayList<>(size)),
                         Function.identity(),size,time,t),
                 reversible);

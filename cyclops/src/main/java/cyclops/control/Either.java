@@ -10,7 +10,6 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.types.traversable.IterableX;
 
 import cyclops.data.LazySeq;
 import cyclops.function.*;
@@ -467,8 +466,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param xors Eithers to sequence
      * @return Either sequenced and swapped
      */
-    public static <ST, PT> Either<PT, ReactiveSeq<ST>> sequenceLeft(final IterableX<Either<ST, PT>> xors) {
-        return sequence(xors.stream().filter(Either::isLeft).map(i->i.swap())).map(s->ReactiveSeq.fromStream(s));
+    public static <ST, PT> Either<PT, ReactiveSeq<ST>> sequenceLeft(final Iterable<Either<ST, PT>> xors) {
+        return sequence(ReactiveSeq.fromIterable(xors).filter(Either::isLeft).map(i->i.swap())).map(s->ReactiveSeq.fromStream(s));
     }
   public static  <L,T> Either<L,Stream<T>> sequence(Stream<? extends Either<L,T>> stream) {
 
@@ -499,7 +498,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate left operation
      */
-    public static <LT, RT, R> Either<RT, R> accumulateLeft(final IterableX<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
+    public static <LT, RT, R> Either<RT, R> accumulateLeft(final Iterable<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
         return sequenceLeft(xors).map(s -> s.mapReduce(reducer));
     }
     /**
@@ -526,7 +525,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer Semigroup to combine values from each Ior
      * @return Either populated with the accumulate Left operation
      */
-    public static <ST, PT, R> Either<PT, R> accumulateLeft(final IterableX<Either<ST, PT>> xors, final Function<? super ST, R> mapper,
+    public static <ST, PT, R> Either<PT, R> accumulateLeft(final Iterable<Either<ST, PT>> xors, final Function<? super ST, R> mapper,
                                                                   final Monoid<R> reducer) {
         return sequenceLeft(xors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
@@ -553,8 +552,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param eithers Eithers to sequence
      * @return Either Sequenced
      */
-    public static <ST, PT> Either<ST, ReactiveSeq<PT>> sequenceRight(final IterableX<Either<ST, PT>> eithers) {
-        return sequence(eithers.stream().filter(Either::isRight)).map(s->ReactiveSeq.fromStream(s));
+    public static <ST, PT> Either<ST, ReactiveSeq<PT>> sequenceRight(final Iterable<Either<ST, PT>> eithers) {
+        return sequence(ReactiveSeq.fromIterable(eithers).filter(Either::isRight)).map(s->ReactiveSeq.fromStream(s));
     }
     /**
      * Accumulate the result of the Right types in the Collection of Eithers provided using the supplied Reducer  {@see cyclops2.Reducers}.
@@ -572,7 +571,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate right operation
      */
-    public static <LT, RT, R> Either<LT, R> accumulateRight(final IterableX<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
+    public static <LT, RT, R> Either<LT, R> accumulateRight(final Iterable<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
         return sequenceRight(xors).map(s -> s.mapReduce(reducer));
     }
 
@@ -597,7 +596,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer Reducer to accumulate results
      * @return Either populated with the accumulate right operation
      */
-    public static <ST, PT, R> Either<ST, R> accumulateRight(final IterableX<Either<ST, PT>> xors, final Function<? super PT, R> mapper,
+    public static <ST, PT, R> Either<ST, R> accumulateRight(final Iterable<Either<ST, PT>> xors, final Function<? super PT, R> mapper,
                                                                    final Monoid<R> reducer) {
         return sequenceRight(xors).map(s -> s.map(mapper)
                                                .reduce(reducer));
@@ -623,7 +622,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer  Reducer to accumulate results
      * @return  Either populated with the accumulate right operation
      */
-    public static <ST, PT> Either<ST, PT> accumulateRight(final Monoid<PT> reducer, final IterableX<Either<ST, PT>> xors) {
+    public static <ST, PT> Either<ST, PT> accumulateRight(final Monoid<PT> reducer, final Iterable<Either<ST, PT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
 
@@ -659,7 +658,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param reducer  Semigroup to combine values from each Either
      * @return Either populated with the accumulate Left operation
      */
-    public static <ST, PT> Either<PT, ST> accumulateLeft(final Monoid<ST> reducer, final IterableX<Either<ST, PT>> xors) {
+    public static <ST, PT> Either<PT, ST> accumulateLeft(final Monoid<ST> reducer, final Iterable<Either<ST, PT>> xors) {
         return sequenceLeft(xors).map(s -> s.reduce(reducer));
     }
 
@@ -776,7 +775,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
     }
 
 
-    default Either<LazySeq<LT>, RT> list() {
+    default Either<LazySeq<LT>, RT> lazySeq() {
         return mapLeft(LazySeq::of);
     }
 
@@ -788,8 +787,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param fn Combiner function for right values
      * @return Combined Either
      */
-    default <T2, R> Either<LazySeq<LT>, R> combineToList(final Either<LT, ? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        return list().combine(app.list(), Semigroups.lazySeqConcat(), fn);
+    default <T2, R> Either<LazySeq<LT>, R> combineToLazySeq(final Either<LT, ? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
+        return lazySeq().combine(app.lazySeq(), Semigroups.lazySeqConcat(), fn);
     }
 
     /**

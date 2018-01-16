@@ -416,7 +416,7 @@ public class ReactiveZippingRSTest {
 	public void zip3Stream(){
 		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
-						.toListX();
+						.toList();
 
 		System.out.println(list);
 		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());

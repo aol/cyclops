@@ -239,9 +239,10 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @param xors Either3 to sequence
      * @return Either3 Sequenced
      */
-    public static <LT1,LT2, PT> LazyEither3<LT1,LT2,ReactiveSeq<PT>> sequence(final IterableX<? extends LazyEither3<LT1, LT2, PT>> xors) {
+    public static <LT1,LT2, PT> LazyEither3<LT1,LT2,ReactiveSeq<PT>> sequence(final Iterable<? extends LazyEither3<LT1, LT2, PT>> xors) {
         Objects.requireNonNull(xors);
-        return sequence(xors.stream().filter(LazyEither3::isRight));
+        return sequence(ReactiveSeq.fromIterable(xors).filter(LazyEither3::isRight));
+
     }
   public static  <L1,L2,T> LazyEither3<L1,L2,ReactiveSeq<T>> sequence(ReactiveSeq<? extends LazyEither3<L1,L2,T>> stream) {
 
@@ -264,7 +265,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @param fn Transformation function
      * @return An Either3 with a transformed list
      */
-    public static <LT1,LT2, PT,R> LazyEither3<LT1,LT2,ReactiveSeq<R>> traverse(final IterableX<LazyEither3<LT1, LT2, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1,LT2, PT,R> LazyEither3<LT1,LT2,ReactiveSeq<R>> traverse(final Iterable<LazyEither3<LT1, LT2, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequence(xors).map(l->l.map(fn));
     }
 
@@ -290,7 +291,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @param reducer  Reducer to accumulate results
      * @return  Either3 populated with the accumulate right operation
      */
-    public static <LT1,LT2, RT> LazyEither3<LT1,LT2, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither3<LT1, LT2, RT>> xors) {
+    public static <LT1,LT2, RT> LazyEither3<LT1,LT2, RT> accumulate(final Monoid<RT> reducer, final Iterable<LazyEither3<LT1, LT2, RT>> xors) {
         return sequence(xors).map(s -> s.reduce(reducer));
     }
 

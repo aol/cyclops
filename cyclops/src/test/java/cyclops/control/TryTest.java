@@ -3,7 +3,7 @@ package cyclops.control;
 import cyclops.function.Monoid;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.companion.Streams;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,8 +120,8 @@ public class TryTest {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+		assertThat(none.stream().toList(),equalTo(Arrays.asList()));
 	}
 
 	@Test
@@ -132,14 +132,14 @@ public class TryTest {
 	@Test
     public void testConvertTo() {
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 

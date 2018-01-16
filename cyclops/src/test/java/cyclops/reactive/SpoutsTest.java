@@ -6,7 +6,7 @@ import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.reactive.collections.mutable.ListX;
+
 
 import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
@@ -170,11 +170,11 @@ public class SpoutsTest {
     }
     @Test
     public void asyncStream(){
-        assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toListX()));
+        assertThat(Arrays.asList(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toList()));
     }
     @Test
     public void asyncStreamAsync(){
-        assertThat(ListX.of(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).to().listX(LAZY)));
+        assertThat(Arrays.asList(1,2,3),equalTo(Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1)).toList()));
     }
     @Test
     public void combineLatest(){
@@ -202,7 +202,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1,2,3)));
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void iterate(){
@@ -213,7 +213,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1,2,3)));
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void array(){
@@ -223,7 +223,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1,2,3)));
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void iterable(){
@@ -233,7 +233,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1,2,3)));
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void range(){
@@ -243,7 +243,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1,2,3)));
+        assertThat(list,equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void rangeLong(){
@@ -253,7 +253,7 @@ public class SpoutsTest {
             list.add(it.next());
 
         }
-        assertThat(list,equalTo(ListX.of(1l,2l,3l)));
+        assertThat(list,equalTo(Arrays.asList(1l,2l,3l)));
     }
 
     @Test
@@ -272,7 +272,7 @@ public class SpoutsTest {
     }
     @Test
     public void publishOn(){
-        assertThat(Spouts.reactive(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+        assertThat(Spouts.reactive(Stream.of(1,2),Executors.newFixedThreadPool(1)).toList(), CoreMatchers.equalTo(Arrays.asList(1,2)));
     }
     @Test
     public void iteratorTest(){
@@ -302,18 +302,18 @@ public class SpoutsTest {
         assertThat(Spouts.of(1,2,3,4)
                 .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(), Matchers.equalTo(ListX.of(4,100,8,300)));
+                .toList(), Matchers.equalTo(Arrays.asList(4,100,8,300)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9)
                 .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                .toList(), Matchers.equalTo(Arrays.asList(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9,10,11,12)
                 .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%4==0).map(i->i*2),
                         s2->s2.filter(i->i%4==1).map(i->i*100),
                         s3->s3.filter(i->i%4==2).map(i->i*1000),
                         s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+                .toList(), Matchers.equalTo(Arrays.asList(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void async(){
@@ -321,23 +321,23 @@ public class SpoutsTest {
             sub.onNext(1);
             sub.onNext(2);
             sub.onComplete();
-           }).toList(),equalTo(ListX.of(1,2)));
+           }).toList(),equalTo(Arrays.asList(1,2)));
     }
     @Test
     public void generate() throws Exception {
         assertThat(Spouts.generate(()->1)
                          .limit(5)
-                         .toListX(),equalTo(ListX.of(1,1,1,1,1)));
+                         .toList(),equalTo(Arrays.asList(1,1,1,1,1)));
 
         assertThat(Spouts.generate(()->Spouts.of(1))
                 .limit(1)
                 .flatMap(i->i)
-                .toListX(),equalTo(ListX.of(1)));
+                .toList(),equalTo(Arrays.asList(1)));
 
         assertThat(Spouts.generate(()->Spouts.of(1,2))
                 .limit(1)
                 .flatMap(i->i)
-                .collect(Collectors.toList()),equalTo(ListX.of(1,2)));
+                .collect(Collectors.toList()),equalTo(Arrays.asList(1,2)));
     }
 
     @Test
@@ -355,25 +355,25 @@ public class SpoutsTest {
 
     @Test
     public void collect(){
-        assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
+        assertThat(Spouts.of(1,2,3).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void defer() throws Exception {
 
         Flux.just(1,2,3).publish(f->f);
         assertThat(Spouts.of(1,2,3).flatMap(i->Spouts.of(i)).collect(Collectors.toList())
-                        ,equalTo(ListX.of(1,2,3)));
+                        ,equalTo(Arrays.asList(1,2,3)));
         assertThat(Spouts.defer(()-> Flux.just(1,2,3))
-                .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
+                .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
         assertThat(Spouts.deferFromStream(()-> ReactiveSeq.of(1,2,3))
-                .collect(Collectors.toList()),equalTo(ListX.of(1,2,3)));
+                .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
     }
 
     @Test
     public void ambMonoid(){
 
         for(int i=0;i<1000;i++) {
-            assertThat(Monoids.<Integer>ambReactiveSeq().foldLeft(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toListX(), isOneOf(ListX.of(100, 200, 300), ListX.of(1, 2, 3)));
+            assertThat(Monoids.<Integer>ambReactiveSeq().foldLeft(Stream.of((Spouts.of(1, 2, 3)), Spouts.of(100, 200, 300))).toList(), isOneOf(Arrays.asList(100, 200, 300), Arrays.asList(1, 2, 3)));
 
         }
 
@@ -385,7 +385,7 @@ public class SpoutsTest {
 
     @Test
     public void nextAsyncToListX(){
-        nextAsync().toListX().printOut();
+        System.out.println(nextAsync().toList());
 
     }
     @Test
@@ -412,7 +412,7 @@ public class SpoutsTest {
                 .publishTo(queue)
                 .peek(System.out::println)
                 .merge(queue)
-                .toListX(), Matchers.equalTo(ListX.of(1,1,2,2,3,3)));
+                .toList(), Matchers.equalTo(Arrays.asList(1,1,2,2,3,3)));
     }
     @Test
     public void duplicateTest(){
@@ -430,7 +430,7 @@ public class SpoutsTest {
         assertThat(Spouts.of(1,2,3,4)
                 .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
+                .toList(), Matchers.equalTo(Arrays.asList(4, 100, 8, 300)));
     }
 
     @Test
@@ -439,24 +439,24 @@ public class SpoutsTest {
         assertThat(Spouts.of(1,2,3,4)
                 .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
+                .toList(), Matchers.equalTo(Arrays.asList(4, 100, 8, 300)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9)
                 .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(), Matchers.equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                .toList(), Matchers.equalTo(Arrays.asList(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(Spouts.of(1,2,3,4,5,6,7,8,9,10,11,12)
                 .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
                         s2->s2.filter(i->i%4==1).map(i->i*100),
                         s3->s3.filter(i->i%4==2).map(i->i*1000),
                         s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(), Matchers.equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+                .toList(), Matchers.equalTo(Arrays.asList(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void iteratePred(){
-        System.out.println(Spouts.iterate(0,i->i<10,i->i+1).toListX());
+        System.out.println(Spouts.iterate(0,i->i<10,i->i+1).toList());
         assertThat(Spouts.iterate(0,i->i<10,i->i+1)
-                .toListX().size(), Matchers.equalTo(10));
+                .toList().size(), Matchers.equalTo(10));
     }
     @Test
     public void broadcastTest(){
@@ -466,8 +466,8 @@ public class SpoutsTest {
 
         ReactiveSeq<Integer> stream1 = topic.stream();
         ReactiveSeq<Integer> stream2 = topic.stream();
-        assertThat(stream1.toListX(), Matchers.equalTo(ListX.of(1,2,3)));
-        assertThat(stream2.toListX(), Matchers.equalTo(ListX.of(1,2,3)));
+        assertThat(stream1.toList(), Matchers.equalTo(Arrays.asList(1,2,3)));
+        assertThat(stream2.toList(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
     }
     @Test
@@ -494,7 +494,7 @@ public class SpoutsTest {
 
     @Test
     public void ambTest(){
-        assertThat(Spouts.of(1,2,3).ambWith(Flux.just(10,20,30)).toListX(), Matchers.isOneOf(ListX.of(1,2,3),ListX.of(10,20,30)));
+        assertThat(Spouts.of(1,2,3).ambWith(Flux.just(10,20,30)).toList(), Matchers.isOneOf(Arrays.asList(1,2,3),Arrays.asList(10,20,30)));
     }
 
 

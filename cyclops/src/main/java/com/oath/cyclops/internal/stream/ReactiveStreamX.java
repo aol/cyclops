@@ -5,10 +5,8 @@ import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 
-import cyclops.data.*;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
@@ -757,8 +755,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return createSeq(new GroupedByTimeAndSizeOperator<>(this.source, () -> Seq.empty(),
+    public ReactiveSeq<Vector<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
+        return createSeq(new GroupedByTimeAndSizeOperator<>(this.source, () -> Vector.empty(),
                 Function.identity(), time, t, size)
         );
 

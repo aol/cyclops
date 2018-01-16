@@ -1,10 +1,12 @@
 package cyclops.control;
 
-import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.data.LazySeq;
 import cyclops.companion.Monoids;
 import cyclops.companion.Semigroups;
-import cyclops.reactive.collections.mutable.ListX;
+
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -34,12 +36,7 @@ public class EitherTest {
 
 
 
-
-
-
-
-
-		assertThat(Either.accumulateLeft(Monoids.stringConcat,ListX.of(Either.left("failed1"),
+		assertThat(Either.accumulateLeft(Monoids.stringConcat, Arrays.asList(Either.left("failed1"),
 													Either.left("failed2"),
 													Either.right("success"))
 													).orElse(":"),equalTo("failed1failed2"));
@@ -60,14 +57,14 @@ public class EitherTest {
 	@Test
     public void applicativeColleciton(){
         Either<String,String> fail1 =  Either.left("failed1");
-        Either<LinkedListX<String>,String> result = fail1.list().combine(Either.left("failed2").list(), Semigroups.collectionXConcat(),(a, b)->a+b);
-        assertThat(result.leftOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
+        Either<LazySeq<String>,String> result = fail1.lazySeq().combine(Either.left("failed2").lazySeq(), Semigroups.lazySeqConcat(),(a, b)->a+b);
+        assertThat(result.leftOrElse(LazySeq.empty()),equalTo(LazySeq.of("failed1","failed2")));
     }
 	@Test
     public void applicativePStack(){
         Either<String,String> fail1 =  Either.left("failed1");
-        Either<LinkedListX<String>,String> result = fail1.combineToList(Either.<String,String>left("failed2"),(a, b)->a+b);
-        assertThat(result.leftOrElse(LinkedListX.empty()),equalTo(LinkedListX.of("failed1","failed2")));
+        Either<LazySeq<String>,String> result = fail1.combineToLazySeq(Either.<String,String>left("failed2"),(a, b)->a+b);
+        assertThat(result.leftOrElse(LazySeq.empty()),equalTo(LazySeq.of("failed1","failed2")));
     }
 
 

@@ -5,7 +5,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Semigroups;
 import cyclops.data.LazySeq;
 import cyclops.function.*;
@@ -407,13 +406,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param xors Either to sequence
      * @return Either Sequenced
      */
-    public static <LT1, PT> LazyEither<LT1,ReactiveSeq<PT>> sequenceRight(final IterableX<LazyEither<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<LT1,ReactiveSeq<PT>> sequenceRight(final Iterable<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-        return sequence(xors.stream().filter(LazyEither::isRight));
+        return sequence(ReactiveSeq.fromIterable(xors).filter(LazyEither::isRight));
     }
-    public static <LT1, PT> LazyEither<ReactiveSeq<LT1>,PT> sequenceLeft(final IterableX<LazyEither<LT1, PT>> xors) {
+    public static <LT1, PT> LazyEither<ReactiveSeq<LT1>,PT> sequenceLeft(final Iterable<LazyEither<LT1, PT>> xors) {
         Objects.requireNonNull(xors);
-      LazyEither<PT, ReactiveSeq<LT1>> res = sequence(xors.stream()
+      LazyEither<PT, ReactiveSeq<LT1>> res = sequence(ReactiveSeq.fromIterable(xors)
                             .filter(LazyEither::isRight)
                         .map(i -> i.swap()));
         return res.swap();
@@ -439,10 +438,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param fn Transformation function
      * @return An Either with a transformed list
      */
-    public static <LT1, PT,R> LazyEither<LT1,ReactiveSeq<R>> traverseRight(final IterableX<LazyEither<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
+    public static <LT1, PT,R> LazyEither<LT1,ReactiveSeq<R>> traverseRight(final Iterable<LazyEither<LT1, PT>> xors, Function<? super PT, ? extends R> fn) {
         return  sequenceRight(xors).map(l->l.map(fn));
     }
-    public static <LT1, PT,R> LazyEither<ReactiveSeq<R>,PT> traverseLeft(final IterableX<LazyEither<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
+    public static <LT1, PT,R> LazyEither<ReactiveSeq<R>,PT> traverseLeft(final Iterable<LazyEither<LT1, PT>> xors, Function<? super LT1, ? extends R> fn) {
         return  sequenceLeft(xors).mapLeft(l->l.map(fn));
     }
 
@@ -468,7 +467,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param reducer  Reducer to accumulate results
      * @return  Either populated with the accumulate right operation
      */
-    public static <LT1, RT> LazyEither<LT1, RT> accumulate(final Monoid<RT> reducer, final IterableX<LazyEither<LT1, RT>> xors) {
+    public static <LT1, RT> LazyEither<LT1, RT> accumulate(final Monoid<RT> reducer, final Iterable<LazyEither<LT1, RT>> xors) {
         return sequenceRight(xors).map(s -> s.reduce(reducer));
     }
 
@@ -545,10 +544,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @see com.oath.cyclops.control.Xor#combineToList(com.oath.cyclops.control.Xor, java.util.function.BiFunction)
      */
     @Override
-    default <T2, R> LazyEither<LazySeq<LT>, R> combineToList(Either<LT, ? extends T2> app,
-                                                             BiFunction<? super RT, ? super T2, ? extends R> fn) {
+    default <T2, R> LazyEither<LazySeq<LT>, R> combineToLazySeq(Either<LT, ? extends T2> app,
+                                                                BiFunction<? super RT, ? super T2, ? extends R> fn) {
 
-        return (LazyEither<LazySeq<LT>, R>)Either.super.combineToList(app, fn);
+        return (LazyEither<LazySeq<LT>, R>)Either.super.combineToLazySeq(app, fn);
     }
     /* (non-Javadoc)
      * @see com.oath.cyclops.control.Xor#combine(com.oath.cyclops.control.Xor, java.util.function.BinaryOperator, java.util.function.BiFunction)
@@ -948,7 +947,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     /**
      * @return An Either with the left type converted to a persistent list, for use with accumulating app function
      */
-    default LazyEither<LazySeq<LT>, RT> list() {
+    default LazyEither<LazySeq<LT>, RT> lazySeq() {
         return mapLeft(LazySeq::of);
     }
 
@@ -962,7 +961,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     default <T2, R> LazyEither<LazySeq<LT>, R> combineToList(final LazyEither<LT, ? extends T2> app,
                                                                  final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        return list().combine(app.list(), Semigroups.lazySeqConcat(), fn);
+        return lazySeq().combine(app.lazySeq(), Semigroups.lazySeqConcat(), fn);
     }
 
     /**

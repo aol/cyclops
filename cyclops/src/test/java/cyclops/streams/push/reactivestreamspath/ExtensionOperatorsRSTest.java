@@ -3,7 +3,7 @@ package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Maybe;
 
 import cyclops.reactive.ReactiveSeq;
@@ -33,7 +33,7 @@ public class ExtensionOperatorsRSTest {
     public void combine(){
         assertThat(Spouts.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .to(Streamable::fromStream).toListX(),equalTo(ListX.of(4,3)));
+                   .to(Streamable::fromStream).toList(),equalTo(Arrays.asList(4,3)));
 
     }
 	@Test
@@ -315,18 +315,18 @@ public class ExtensionOperatorsRSTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = Spouts.of(1,2,3,4,5,6)
 												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
+												.lazyStreamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	@Test
 	public void splitBy(){
@@ -346,7 +346,7 @@ public class ExtensionOperatorsRSTest {
 	public void testLazyCollection(){
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
 											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
+											.lazyCollection();
 		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

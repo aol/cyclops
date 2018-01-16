@@ -4,7 +4,7 @@ package cyclops.streams.push;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Maybe;
 
 import cyclops.reactive.ReactiveSeq;
@@ -34,7 +34,7 @@ public class ExtensionOperatorsTest {
     public void combine(){
         assertThat(Spouts.of(1,1,2,3)
                    .combine((a, b)->a.equals(b),Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3)));
+                   .toList(),equalTo(Arrays.asList(4,3)));
 
     }
 	@Test
@@ -259,7 +259,7 @@ public class ExtensionOperatorsTest {
             }
         }).request(1l);
 
-        assertThat(result.orElse(null),equalTo(ListX.of(5)));
+        assertThat(result.orElse(null),equalTo(Arrays.asList(5)));
         System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
 
 
@@ -341,18 +341,18 @@ public class ExtensionOperatorsTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
 	@Test
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = Spouts.of(1,2,3,4,5,6)
 												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
+												.lazyStreamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	@Test
 	public void splitBy(){
@@ -372,7 +372,7 @@ public class ExtensionOperatorsTest {
 	public void testLazyCollection(){
 		Collection<Integer> col = Spouts.of(1,2,3,4,5)
 											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
+											.lazyCollection();
 		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

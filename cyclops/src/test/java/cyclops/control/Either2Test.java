@@ -1,8 +1,9 @@
 package cyclops.control;
 
+import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.immutable.PersistentSetX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.HashSet;
+
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
@@ -42,24 +43,24 @@ public class Either2Test {
 
 	@Test
     public void testSequenceSecondary() {
-    Either<Integer, ReactiveSeq<String>> xors = Either.sequenceLeft(ListX.of(just, none, Either.right(1)));
-        assertThat(xors.map(s->s.toList()),equalTo(Either.right(ListX.of("none"))));
+    Either<Integer, ReactiveSeq<String>> xors = Either.sequenceLeft(Arrays.asList(just, none, Either.right(1)));
+        assertThat(xors.map(s->s.toList()),equalTo(Either.right(Arrays.asList("none"))));
     }
 
     @Test
     public void testAccumulateSecondary2() {
-        Either<?,PersistentSetX<String>> xors = Either.accumulateLeft(ListX.of(just,none, Either.right(1)),Reducers.<String>toPersistentSetX());
-        assertThat(xors,equalTo(Either.right(PersistentSetX.of("none"))));
+        Either<?,PersistentSet<String>> xors = Either.accumulateLeft(Arrays.asList(just,none, Either.right(1)),Reducers.<String>toPersistentSet());
+        assertThat(xors,equalTo(Either.right(HashSet.of("none"))));
     }
 
     @Test
     public void testAccumulateSecondarySemigroup() {
-        Either<?,String> xors = Either.accumulateLeft(ListX.of(just,none, Either.left("1")), i->""+i, Monoids.stringConcat);
+        Either<?,String> xors = Either.accumulateLeft(Arrays.asList(just,none, Either.left("1")), i->""+i, Monoids.stringConcat);
         assertThat(xors,equalTo(Either.right("none1")));
     }
     @Test
     public void testAccumulateSecondarySemigroupIntSum() {
-        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+        Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,Arrays.asList(Ior.both(2, "boo!"),Ior.left(1)));
         assertThat(iors,equalTo(Ior.right(3)));
     }
 
@@ -99,30 +100,30 @@ public class Either2Test {
 
 	@Test
 	public void testSequence() {
-		Either.sequenceRight(ListX.of(just, Either.right(1))).printOut();
-    Either<String, ReactiveSeq<Integer>> maybes = Either.sequenceRight(ListX.of(just, none, Either.right(1)));
-		assertThat(maybes.map(s->s.toList()),equalTo(Either.right(ListX.of(10,1))));
+		Either.sequenceRight(Arrays.asList(just, Either.right(1))).printOut();
+    Either<String, ReactiveSeq<Integer>> maybes = Either.sequenceRight(Arrays.asList(just, none, Either.right(1)));
+		assertThat(maybes.map(s->s.toList()),equalTo(Either.right(Arrays.asList(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-		Either<?,PersistentSetX<Integer>> maybes = Either.accumulateRight(ListX.of(just,none, Either.right(1)),Reducers.toPersistentSetX());
-		assertThat(maybes,equalTo(Either.right(PersistentSetX.of(10,1))));
+		Either<?,PersistentSet<Integer>> maybes = Either.accumulateRight(Arrays.asList(just,none, Either.right(1)),Reducers.toPersistentSet());
+		assertThat(maybes,equalTo(Either.right(HashSet.of(10,1))));
 	}
 
 	@Test
 	public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-		Either<?,String> maybes = Either.accumulateRight(ListX.of(just,none, Either.right(1)), i->""+i,Monoids.stringConcat);
+		Either<?,String> maybes = Either.accumulateRight(Arrays.asList(just,none, Either.right(1)), i->""+i,Monoids.stringConcat);
 		assertThat(maybes,equalTo(Either.right("101")));
 	}
 	@Test
 	public void testAccumulateJust() {
-		Either<?,Integer> maybes = Either.accumulateRight(Monoids.intSum,ListX.of(just,none, Either.right(1)));
+		Either<?,Integer> maybes = Either.accumulateRight(Monoids.intSum,Arrays.asList(just,none, Either.right(1)));
 		assertThat(maybes,equalTo(Either.right(11)));
 	}
 	@Test
     public void testAccumulateSecondary() {
-        Either<?,String> maybes = Either.accumulateLeft(Monoids.stringConcat,ListX.of(just,none, Either.left("hello")));
+        Either<?,String> maybes = Either.accumulateLeft(Monoids.stringConcat,Arrays.asList(just,none, Either.left("hello")));
         assertThat(maybes,equalTo(Either.right("nonehello")));
     }
 
@@ -161,8 +162,8 @@ public class Either2Test {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+		assertThat(none.stream().toList(),equalTo(Arrays.asList()));
 	}
 
 	@Test
@@ -174,7 +175,7 @@ public class Either2Test {
     public void testConvertTo() {
 
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 
@@ -182,7 +183,7 @@ public class Either2Test {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 	@Test

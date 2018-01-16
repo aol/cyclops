@@ -1,6 +1,6 @@
 package cyclops.streams.push.syncflux;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -24,13 +24,13 @@ public class SyncJDKStreamTest {
 	@Test
 	public void testDistinctReactiveSeq(){
 
-		ListX<String> d = of("Java", "C").distinct(n -> n + ":" + n).toListX();
+		List<String> d = of("Java", "C").distinct(n -> n + ":" + n).toList();
 		assertThat(d.size(),equalTo(2));
 	}
 
 	@Test
 	public void testDistinctReactiveSeqMultipleDuplicates(){
-		ListX<String> d = of("Java", "C", "Java", "Java","java", "java").distinct(n -> n + ":" + n).toListX();
+		List<String> d = of("Java", "C", "Java", "Java","java", "java").distinct(n -> n + ":" + n).toList();
 		System.out.println(d);
 		assertThat(d.size(),equalTo(3));
 	}

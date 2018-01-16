@@ -25,11 +25,7 @@ import org.junit.Test;
 
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.DequeX;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.reactive.collections.mutable.SetX;
-import cyclops.reactive.collections.mutable.SortedSetX;
+
 public class SemigroupsTest {
 
 
@@ -63,7 +59,7 @@ public class SemigroupsTest {
         two.add(6);
 
         Set<Integer> result = Semigroups.<Integer>mutableSetConcat().apply(one, two);
-        assertThat(result,equalTo(SetX.of(1,2,3,4,5,6)));
+        assertThat(result,equalTo(new HashSet<>(Arrays.asList(1,2,3,4,5,6))));
     }
 
     @Test
@@ -79,7 +75,7 @@ public class SemigroupsTest {
         two.add(6);
 
         SortedSet<Integer> result = Semigroups.<Integer>mutableSortedSetConcat().apply(one, two);
-        assertThat(result,equalTo(SortedSetX.of(1,2,3,4,5,6)));
+        assertThat(result,equalTo(new TreeSet<>(Arrays.asList(1,2,3,4,5,6))));
     }
 
     @Test
@@ -95,7 +91,7 @@ public class SemigroupsTest {
         two.add(6);
 
         Queue<Integer> result = Semigroups.<Integer>mutableQueueConcat().apply(one, two);
-        assertThat(result.stream().collect(Collectors.toList()),equalTo(ListX.of(1,2,3,4,5,6)));
+        assertThat(result.stream().collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,4,5,6)));
     }
 
     @Test
@@ -111,152 +107,14 @@ public class SemigroupsTest {
         two.add(6);
 
         Deque<Integer> result = Semigroups.<Integer>mutableDequeConcat().apply(one, two);
-        assertThat(result.stream().collect(Collectors.toList()),equalTo(ListX.of(1,2,3,4,5,6)));
+        assertThat(result.stream().collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3,4,5,6)));
     }
 
-    @Test
-    public void testListXConcat() {
-        ListX<Integer>  list1= ListX.of(1,2,3);
 
 
-        ListX<Integer> list2 = ListX.of(4,5,6);
-
-
-        ListX<Integer> result = Semigroups.<Integer>listXConcat().apply(list1, list2);
-        assertThat(result,equalTo(Arrays.asList(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testSetXConcat() {
-        SetX<Integer> one =SetX.of(1,2,3);
-
-
-        SetX<Integer> two = SetX.of(4,5,6);
-
-
-        SetX<Integer> result = Semigroups.<Integer>setXConcat().apply(one,two);
-        assertThat(result,equalTo(SetX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testSortedSetXConcat() {
-        SortedSetX<Integer> one =SortedSetX.of(1,2,3);
-
-
-        SortedSetX<Integer> two = SortedSetX.of(4,5,6);
-
-
-        SortedSetX<Integer> result = Semigroups.<Integer>sortedSetXConcat().apply(one,two);
-        assertThat(result,equalTo(SetX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testQueueXConcat() {
-        QueueX<Integer> one =QueueX.of(1,2,3);
-
-
-        QueueX<Integer> two = QueueX.of(4,5,6);
-
-
-        QueueX<Integer> result = Semigroups.<Integer>queueXConcat().apply(one,two);
-        assertThat(result.toList(),equalTo(ListX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testDequeXConcat() {
-        DequeX<Integer> one =DequeX.of(1,2,3);
-
-
-        DequeX<Integer> two = DequeX.of(4,5,6);
-
-
-        DequeX<Integer> result = Semigroups.<Integer>dequeXConcat().apply(one,two);
-        assertThat(result.toList(),equalTo(DequeX.of(1,2,3,4,5,6).toList()));
-    }
-
-    @Test
-    public void testPStackXConcat() {
-        LinkedListX<Integer> one = LinkedListX.of(1,2,3);
-
-
-        LinkedListX<Integer> two = LinkedListX.of(4,5,6);
-
-
-        LinkedListX<Integer> result = Semigroups.<Integer>linkedListXConcat().apply(one,two);
-        assertThat(result,equalTo(LinkedListX.of(4,5,6,1,2,3)));
-    }
-    @Test
-    public void testPVectorXConcat() {
-        VectorX<Integer> one = VectorX.of(1,2,3);
-
-
-        VectorX<Integer> two = VectorX.of(4,5,6);
-
-
-        VectorX<Integer> result = Semigroups.<Integer>vectorXConcat().apply(one,two);
-        assertThat(result,equalTo(VectorX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testPSetXConcat() {
-        PersistentSetX<Integer> one = PersistentSetX.of(1,2,3);
-
-
-        PersistentSetX<Integer> two = PersistentSetX.of(4,5,6);
-
-
-        PersistentSetX<Integer> result = Semigroups.<Integer>persistentSetXConcat().apply(one,two);
-        assertThat(result,equalTo(PersistentSetX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testPOrderedSetXConcat() {
-        OrderedSetX<Integer> one = OrderedSetX.of(1,2,3);
-
-
-        OrderedSetX<Integer> two = OrderedSetX.of(4,5,6);
-
-
-        OrderedSetX<Integer> result = Semigroups.<Integer>orderedSetXConcat().apply(one,two);
-        assertThat(result,equalTo(OrderedSetX.of(1,2,3,4,5,6)));
-    }
-
-    @Test
-    public void testPQueueXConcat() {
-        PersistentQueueX<Integer> one = PersistentQueueX.of(1,2,3);
-
-
-        PersistentQueueX<Integer> two = PersistentQueueX.of(4,5,6);
-
-
-        PersistentQueueX<Integer> result = Semigroups.<Integer>persistentQueueXConcat().apply(one,two);
-        assertThat(result.toList(),equalTo(PersistentQueueX.of(1,2,3,4,5,6).toList()));
-    }
-
-    @Test
-    public void testPBagXConcat() {
-        BagX<Integer> one = BagX.of(1,2,3);
-
-
-        BagX<Integer> two = BagX.of(4,5,6);
-
-
-        BagX<Integer> result = Semigroups.<Integer>bagXConcat().apply(one,two);
-        assertThat(result,equalTo(BagX.of(1,2,3,4,5,6)));
-    }
-    @Test
-    public void testCollectionConcatListX() {
-        ListX<Integer> in1 = ListX.of(1,2);
-        ListX<Integer> in2 = ListX.of(3,4);
-        Semigroup<ListX<Integer>> listX = Semigroups.collectionXConcat();
-
-        ListX<Integer> list =listX.apply(in1, in2);
-
-        assertThat(Semigroups.collectionConcat().apply(ListX.of(1,3,4),Arrays.asList(4,5,6)),equalTo(Arrays.asList(1,3,4,4,5,6)));
-    }
     @Test
     public void testCollectionConcatListX2() {
-        assertThat(Semigroups.collectionConcat().apply(Arrays.asList(4,5,6),ListX.of(1,3,4)),equalTo(Arrays.asList(1,3,4,4,5,6)));
+        assertThat(Semigroups.collectionConcat().apply(Arrays.asList(4,5,6),Arrays.asList(1,3,4)),equalTo(Arrays.asList(1,3,4,4,5,6)));
     }
     @Test
     public void testCollectionConcatArrayList() {
@@ -274,7 +132,7 @@ public class SemigroupsTest {
         list = list.plus(2);
         list = list.plus(4);
         Semigroup<List<Integer>> combiner= Semigroups.collectionConcat();
-        assertThat(combiner.apply(list.toListX(),Arrays.<Integer>asList(4,5,6)),equalTo(Arrays.asList(1,2,4,4,5,6)));
+        assertThat(combiner.apply(list.toList(),Arrays.<Integer>asList(4,5,6)),equalTo(Arrays.asList(1,2,4,4,5,6)));
     }
     @Test
     public void testCollectionConcatPVector2() {
@@ -283,7 +141,7 @@ public class SemigroupsTest {
         list = list.plus(2);
         list = list.plus(4);
         Semigroup<List<Integer>> combiner= Semigroups.collectionConcat();
-        assertThat(combiner.apply(Arrays.asList(4,5,6),list.toListX()),equalTo(Arrays.asList(1,2,4,4,5,6)));
+        assertThat(combiner.apply(Arrays.asList(4,5,6),list.toList()),equalTo(Arrays.asList(1,2,4,4,5,6)));
     }
 
     @Test
@@ -298,7 +156,7 @@ public class SemigroupsTest {
 
     @Test
     public void testCombineReactiveSeq() {
-        assertThat(Semigroups.combineReactiveSeq().apply(ReactiveSeq.of(1,2,3),ReactiveSeq.of(4,5,6)).toList(),equalTo(ListX.of(1,2,3,4,5,6)));
+        assertThat(Semigroups.combineReactiveSeq().apply(ReactiveSeq.of(1,2,3),ReactiveSeq.of(4,5,6)).toList(),equalTo(Arrays.asList(1,2,3,4,5,6)));
     }
 
 

@@ -1,7 +1,7 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 import cyclops.companion.Streams;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
@@ -54,7 +54,7 @@ public  class AsyncRSReactiveStreamXTest {
 
         assertThat(of(1,2,3)
                         .mergeMap(i->Maybe.of(i))
-                        .toListX(),Matchers.hasItems(1,2,3));
+                        .toList(),Matchers.hasItems(1,2,3));
 
 
     }
@@ -139,7 +139,7 @@ public  class AsyncRSReactiveStreamXTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,1)));
+		assertThat(list2,equalTo(Arrays.asList(1,1)));
 	}
     @Test
 	public void cycleIterate(){
@@ -147,7 +147,7 @@ public  class AsyncRSReactiveStreamXTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,1)));
+		assertThat(list2,equalTo(Arrays.asList(1,1)));
 	}
 	@Test
 	public void cycleIterate2(){
@@ -155,7 +155,7 @@ public  class AsyncRSReactiveStreamXTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,2,1,2)));
+		assertThat(list2,equalTo(Arrays.asList(1,2,1,2)));
 	}
 
 
@@ -186,8 +186,8 @@ public  class AsyncRSReactiveStreamXTest {
 	public void testCycleLong() {
 
 
-		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toListX());
-		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toListX());
+		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toList());
+		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toList());
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
@@ -308,7 +308,7 @@ public  class AsyncRSReactiveStreamXTest {
 
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 				                            .zip(of(100,200,300,400).stream())
-				                            .toListX();
+				                            .toList();
 
 		System.out.println(list);
 
@@ -342,7 +342,7 @@ public  class AsyncRSReactiveStreamXTest {
 	public void testSkipLast(){
 		assertThat(of(1,2,3,4,5)
 				.skipLast(2)
-				.toListX(),equalTo(Arrays.asList(1,2,3)));
+				.toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastForEach(){
@@ -457,12 +457,12 @@ public  class AsyncRSReactiveStreamXTest {
 	@Test
 	public void shuffle(){
 
-		assertEquals(3, of(1, 2, 3).shuffle().toListX().size());
+		assertEquals(3, of(1, 2, 3).shuffle().toList().size());
 	}
 	@Test
 	public void shuffleRandom(){
 		Random r = new Random();
-		assertEquals(3, of(1, 2, 3).shuffle(r).toListX().size());
+		assertEquals(3, of(1, 2, 3).shuffle(r).toList().size());
 	}
 
 
@@ -478,13 +478,12 @@ public  class AsyncRSReactiveStreamXTest {
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
-
+            assertThat(map1.getOrElse(0, cyclops.data.Vector.empty()),hasItem(2));
+            assertThat(map1.getOrElse(0, cyclops.data.Vector.empty()),hasItem(4));
+            assertThat(map1.getOrElse(1, cyclops.data.Vector.empty()),hasItem(1));
+            assertThat(map1.getOrElse(1, cyclops.data.Vector.empty()),hasItem(3));
 	        assertEquals(2, map1.size());
 
 

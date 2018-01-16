@@ -3,14 +3,16 @@ package com.oath.cyclops.util;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 import cyclops.companion.CompletableFutures;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
 
-import cyclops.reactive.collections.mutable.ListX;
 
 public class CompletableFuturesTest {
 
@@ -30,18 +32,18 @@ public class CompletableFuturesTest {
 
     @Test
     public void testSequenceError() {
-        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(ListX.of(just,none));
+        CompletableFuture<ReactiveSeq<Integer>> maybes = CompletableFutures.sequence(ReactiveSeq.of(just,none));
         assertThat(maybes.isCompletedExceptionally(),equalTo(true));
     }
     @Test
     public void testSequenceErrorAsync() {
-        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,active));
+        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(Seq.of(just,active));
         assertThat(maybes.isDone(),equalTo(false));
     }
     @Test
     public void testSequenceTwo() {
-        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(ListX.of(just,just2));
-        assertThat(maybes.join().toList(),equalTo(ListX.of(10,20)));
+        CompletableFuture<ReactiveSeq<Integer>> maybes =CompletableFutures.sequence(Vector.of(just,just2));
+        assertThat(maybes.join().toList(),equalTo(Arrays.asList(10,20)));
     }
 
 }

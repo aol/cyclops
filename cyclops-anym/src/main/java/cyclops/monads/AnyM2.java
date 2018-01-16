@@ -73,7 +73,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                                                                 ToStream<T>,
                                                                 Publisher<T> {
     @Override
-    default ReactiveSeq<T> reactiveSeq() {
+    default ReactiveSeq<T> stream() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
 

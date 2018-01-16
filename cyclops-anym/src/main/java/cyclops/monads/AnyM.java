@@ -116,7 +116,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             Publisher<T>,
   Filters<T> {
     @Override
-    default ReactiveSeq<T> reactiveSeq() {
+    default ReactiveSeq<T> stream() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
 
