@@ -1,10 +1,6 @@
 package cyclops.data;
 
-
-import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.reactive.collections.immutable.LazySeq;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
 import cyclops.control.Option;
 import cyclops.function.Function1;
 import cyclops.reactive.ReactiveSeq;
@@ -68,7 +64,7 @@ public interface Enumeration<E> {
         }
     };
     }
-    static <E> Enumeration<E> enums(IndexedSequenceX<E> seq){
+    static <E> Enumeration<E> enums(PersistentIndexed<E> seq){
         return new EnumerationByIndexed<E>(seq);
     }
 
@@ -115,11 +111,11 @@ public interface Enumeration<E> {
     @AllArgsConstructor
     static class EnumerationByIndexed<E> implements Enumeration<E>{
 
-        private final IndexedSequenceX<E> seq;
+        private final PersistentIndexed<E> seq;
         final Function1<E,Integer> memo = this::calcFromEnum;
         @Override
         public Option<E> toEnum(int e) {
-            return seq.elementAt(e);
+            return seq.get(e);
         }
 
         @Override
@@ -138,7 +134,7 @@ public interface Enumeration<E> {
         }
         public int calcFromEnum(E e) {
             for(int i=0;i<seq.size();i++){
-                if(seq.elementAt(i)==e){
+                if(seq.get(i)==e){
                     return i;
                 }
             }
@@ -166,12 +162,12 @@ public interface Enumeration<E> {
                     .filter(Option::isPresent).flatMap(Option::stream);
     }
 
-    default Seq<E> list(E e){
+    default Seq<E> seq(E e){
         return stream(e)
-                .to().listX(Evaluation.LAZY);
+                .to().seq();
     }
-    default LazySeq<E> linkedList(E e){
+    default LazySeq<E> lazySeq(E e){
         return stream(e)
-                .to().linkedSeq(Evaluation.LAZY);
+                .to().lazySeq();
     }
 }

@@ -69,8 +69,8 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> duplicate() {
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))));
 
 
     }
@@ -79,8 +79,8 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
 
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 2,bufferFactory);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))));
 
     }
 
@@ -89,9 +89,9 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate() {
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))),
-                createSeq(new IteratableSpliterator<>(copy.get(2))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(2,()->ReactiveSeq.empty()))));
 
 
     }
@@ -101,19 +101,19 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate() {
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))),
-                createSeq(new IteratableSpliterator<>(copy.get(2))),
-                createSeq(new IteratableSpliterator<>(copy.get(3))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(2,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(3,()->ReactiveSeq.empty()))));
     }
     @Override
     @SuppressWarnings("unchecked")
     public Tuple3<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> triplicate(Supplier<Deque<T>> bufferFactory) {
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 3,bufferFactory);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))),
-                createSeq(new IteratableSpliterator<>(copy.get(2))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(2,()->ReactiveSeq.empty()))));
 
 
     }
@@ -123,10 +123,10 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple4<ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>, ReactiveSeq<T>> quadruplicate(Supplier<Deque<T>> bufferFactory) {
         Seq<Iterable<T>> copy = Streams.toBufferingCopier(() -> Spliterators.iterator(copy()), 4,bufferFactory);
 
-        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.get(0))),
-                createSeq(new IteratableSpliterator<>(copy.get(1))),
-                createSeq(new IteratableSpliterator<>(copy.get(2))),
-                createSeq(new IteratableSpliterator<>(copy.get(3))));
+        return Tuple.tuple(createSeq(new IteratableSpliterator<>(copy.getOrElseGet(0,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(1,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(2,()->ReactiveSeq.empty()))),
+                createSeq(new IteratableSpliterator<>(copy.getOrElseGet(3,()->ReactiveSeq.empty()))));
     }
 
     @Override

@@ -82,7 +82,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 break;
 
         }
-        ReactiveSeq<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ReactiveSeq.empty());
+        ReactiveSeq<R> x = Either.sequenceRight(next.stream()).orElse(ReactiveSeq.empty());
         return LazySeq.fromIterator(x.iterator());
     }
     static <T> LazySeq<T> fill(T t){
@@ -396,6 +396,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
 
+    @Override
+    default LazySeq<T> append(T value){
+        return insertAt(Math.max(0, size()),value);
+    }
 
     default Option<T> get(int pos){
         if(pos<0)

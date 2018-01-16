@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  *
  * @author johnmcclean
  */
-public interface Monoids {
+public interface ReactiveMonoids {
 
     /**
      * To manage javac type inference first assign the monoid

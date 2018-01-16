@@ -45,8 +45,9 @@ public class Vector<T> implements ImmutableList<T>,
         return ( Vector<T>)appendAll((Iterable<T>)list);
     }
 
-    static <T> Collector<T, ArrayList<T>, Vector<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),Vector::fromIterable);
+    static <T> Collector<T, List<T>, Vector<T>> collector() {
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,Vector<T>>collectingAndThen((Collector)c,Vector::fromIterable);
     }
     @Override
     public boolean containsValue(T value) {
@@ -770,12 +771,17 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public ImmutableList<T> prepend(T value) {
+    public Vector<T> prepend(T value) {
         return unitStream(stream().prepend(value));
     }
 
     @Override
-    public ImmutableList<T> prependAll(Iterable<? extends T> value) {
+    public Vector<T> append(T value) {
+        return plus(value);
+    }
+
+    @Override
+    public Vector<T> prependAll(Iterable<? extends T> value) {
         return unitStream(stream().prependAll(value));
     }
 
@@ -905,6 +911,11 @@ public class Vector<T> implements ImmutableList<T>,
         @Override
         public ImmutableList<T> prepend(T value) {
             return empty();
+        }
+
+        @Override
+        public ImmutableList<T> append(T value) {
+            return plus(value);
         }
 
         @Override

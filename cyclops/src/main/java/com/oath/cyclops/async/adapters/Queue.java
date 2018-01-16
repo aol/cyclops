@@ -284,7 +284,7 @@ public class Queue<T> implements Adapter<T> {
                   }
               }catch(Queue.ClosedQueueException e){
                   if(result.size()>0)
-                    throw new ClosedQueueException(Seq.of(result));
+                    throw new ClosedQueueException(Arrays.asList(result));
               }
 
 

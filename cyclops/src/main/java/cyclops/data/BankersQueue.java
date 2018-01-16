@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.Seq;
@@ -30,7 +31,8 @@ import java.util.stream.Stream;
 public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,T>, Serializable {
 
     static <T> Collector<T, ArrayList<T>, BankersQueue<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),BankersQueue::fromIterable);
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,BankersQueue<T>>collectingAndThen((Collector)c,BankersQueue::fromIterable);
     }
     static <T> BankersQueue<T> fromStream(Stream<T> stream){
         return fromIterable(ReactiveSeq.fromStream(stream));
@@ -713,7 +715,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> grouped(int size, Supplier<C> supplier) {
         return (BankersQueue<C>) ImmutableQueue.super.grouped(size,supplier);
     }
 
@@ -738,12 +740,12 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (BankersQueue<C>) ImmutableQueue.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (BankersQueue<C>) ImmutableQueue.super.groupedUntil(predicate,factory);
     }
 

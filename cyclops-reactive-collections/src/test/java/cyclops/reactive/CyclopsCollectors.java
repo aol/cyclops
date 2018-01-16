@@ -1,4 +1,4 @@
-package cyclops.companion;
+package cyclops.reactive;
 
 import java.util.Deque;
 import java.util.List;

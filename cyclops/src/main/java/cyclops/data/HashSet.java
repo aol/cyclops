@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.Seq;
@@ -36,8 +37,9 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     @Getter
     private final HAMT.Node<T,T> map;
 
-    static <T> Collector<T, ArrayList<T>, HashSet<T>> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),HashSet::fromIterable);
+    static <T> Collector<T, Set<T>, HashSet<T>> collector() {
+        Collector<T, ?, Set<T>> c  = Collectors.toSet();
+        return Collectors.<T, Set<T>, Iterable<T>,HashSet<T>>collectingAndThen((Collector)c,HashSet::fromIterable);
     }
 
     public static <T> HashSet<T> empty(){
@@ -470,7 +472,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> grouped(int size, Supplier<C> supplier) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> grouped(int size, Supplier<C> supplier) {
           return (HashSet<C>) ImmutableSet.super.grouped(size,supplier);
       }
 
@@ -495,12 +497,12 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
           return (HashSet<C>) ImmutableSet.super.groupedWhile(predicate,factory);
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
           return (HashSet<C>) ImmutableSet.super.groupedUntil(predicate,factory);
       }
 

@@ -2,7 +2,6 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -162,11 +161,6 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
         return new TreeMap<>(RedBlackTree.fromStream(comp,s),comp);
     }
 
-
-    @Override
-    public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(t->t._1(),t->t._2());
-    }
 
     @Override
     public TreeMap<K, V> put(K key, V value) {

@@ -29,32 +29,22 @@ public class MultiCastOperator<T> extends BaseOperator<T,T> {
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
 
-        registeredOnNext.add(onNext);
-        registeredOnError.add(onError);
-        registeredOnComplete.add(onComplete);
+        registeredOnNext= registeredOnNext.plus(onNext);
+        registeredOnError=registeredOnError.plus(onError);
+        registeredOnComplete =registeredOnComplete.plus(onComplete);
         StreamSubscription result = new StreamSubscription(){
 
         };
-        /**
-        (source.forEachAsync(pendingRequests -> {
-                        for(int i=0;i<subs.size();i++){
-                            if(subs.getValue(i).isActive())
-                                registeredOnNext.getValue(i).accept(pendingRequests);
-                        }
 
-
-                    }
-                    , pendingRequests->registeredOnError.forEach(t->t.accept(pendingRequests)), ()->registeredOnComplete.forEach(n->n.run())));
-        **/
         return result;
 
     }
 
     @Override
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        registeredOnNext.add(onNext);
-        registeredOnError.add(onError);
-        registeredOnComplete.add(onCompleteDs);
+        registeredOnNext= registeredOnNext.plus(onNext);
+        registeredOnError = registeredOnError.plus(onError);
+        registeredOnComplete=registeredOnComplete.plus(onCompleteDs);
 
             source.subscribeAll(e -> {
 

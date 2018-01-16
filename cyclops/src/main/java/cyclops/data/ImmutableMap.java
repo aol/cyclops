@@ -371,7 +371,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
      * @return LazySeq of transformed values
      */
     default <T> LazySeq<T> toLazySeq(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return LazySeq.narrow(stream().map(fn).to().linkedSeq());
+        return LazySeq.narrow(stream().map(fn).to().lazySeq());
 
     }
 

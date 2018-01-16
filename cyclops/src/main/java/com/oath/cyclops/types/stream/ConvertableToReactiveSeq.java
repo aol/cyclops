@@ -10,6 +10,7 @@ import cyclops.reactive.ReactiveSeq;
  *
  * @param <T> Data type of elements in this convertable type
  */
+//@TODO replace only with ToStream
 public interface ConvertableToReactiveSeq<T> {
     /**
      * @return ReactiveSeq generated from this convertable type

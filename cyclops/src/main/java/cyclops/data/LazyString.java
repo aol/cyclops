@@ -11,6 +11,8 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -27,12 +29,16 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     public static LazyString fromLazySeq(LazySeq<Character> string){
         return new LazyString(string);
     }
+    public static LazyString fromIterable(Iterable<Character> string){
+        return new LazyString(LazySeq.fromIterable(string));
+    }
     public static LazyString of(CharSequence seq){
         return fromLazySeq(LazySeq.fromStream( seq.chars().mapToObj(i -> (char) i)));
     }
 
-    static Collector<Character, ArrayList<Character>, LazyString> collector() {
-      return Collectors.collectingAndThen(Collectors.toList(),a-> fromLazySeq(LazySeq.fromIterable(a)));
+    static Collector<Character, List<Character>, LazyString> collector() {
+        Collector<Character, ?, List<Character>> c  = Collectors.toList();
+        return Collectors.<Character, List<Character>, Iterable<Character>,LazyString>collectingAndThen((Collector)c,LazyString::fromIterable);
     }
 
     @Override
@@ -165,6 +171,11 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
 
     public LazyString prepend(Character value){
         return fromLazySeq(string.prepend(value));
+    }
+
+    @Override
+    public LazyString append(Character value) {
+        return fromLazySeq(string.append(value));
     }
 
     @Override

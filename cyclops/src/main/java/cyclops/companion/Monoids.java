@@ -1,6 +1,6 @@
 package cyclops.companion;
 
-import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.Zippable;
 import cyclops.control.Future;
@@ -33,23 +33,7 @@ import java.util.stream.Stream;
  */
 public interface Monoids {
 
-    /**
-     * To manage javac type inference first assign the monoid
-     * <pre>
-     * {@code
-     *
-     *    Monoid<Seq<Integer>> listX = Monoid.of(identity,Semigroups.collectionXConcat(Seq.zero());
-     *    Monoid<SetX<Integer>> setX = Monoid.of(identity,Semigroups.collectionXConcat(SetX.zero());
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A Monoid that can combine any cyclops2-react extended Collection type
-     */
-    static <T, C extends FluentCollectionX<T>> Monoid<C> collectionXConcat(C identity) {
-        return Monoid.of(identity, Semigroups.<T,C>collectionXConcat());
-    }
+
 
     /**
      * Concatenate mutable collections
@@ -71,129 +55,16 @@ public interface Monoids {
         return Monoid.of(identity, Semigroups.mutableCollectionConcat());
     }
 
-    /**
-     * @return A combiner for mutable lists
-     */
-    static <T> Monoid<List<T>> mutableListConcat() {
-        return Monoid.of(Seq.empty(),Semigroups.mutableCollectionConcat());
-    }
-
-    /**
-     * @return A combiner for mutable sets
-     */
-    static <T> Monoid<Set<T>> mutableSetConcat() {
-        return Monoid.of(SetX.empty(),Semigroups.mutableCollectionConcat());
-    }
-
-    /**
-     * @return A combiner for mutable SortedSets
-     */
-    static <T> Monoid<SortedSet<T>> mutableSortedSetConcat() {
-        return Monoid.of(SortedSetX.empty(),Semigroups.mutableCollectionConcat());
-    }
-
-    /**
-     * @return A combiner for mutable Queues
-     */
-    static <T> Monoid<Queue<T>> mutableQueueConcat() {
-        return Monoid.of(QueueX.empty(),Semigroups.mutableCollectionConcat());
-    }
-
-    /**
-     * @return A combiner for mutable Deques
-     */
-    static <T> Monoid<Deque<T>> mutableDequeConcat() {
-        return Monoid.of(DequeX.empty(),Semigroups.mutableCollectionConcat());
-    }
-
-    /**
-     * @return A combiner for Seq (concatenates two Seq into a single Seq)
-     */
-    static <T> Monoid<Seq<T>> listXConcat() {
-        return Monoid.of(Seq.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for SetX (concatenates two SetX into a single SetX)
-     */
-    static <T> Monoid<SetX<T>> setXConcat() {
-        return Monoid.of(SetX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for SortedSetX (concatenates two SortedSetX into a single SortedSetX)
-     */
-    static <T> Monoid<SortedSetX<T>> sortedSetXConcat() {
-        return Monoid.of(SortedSetX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for QueueX (concatenates two QueueX into a single QueueX)
-     */
-    static <T> Monoid<QueueX<T>> queueXConcat() {
-        return Monoid.of(QueueX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for DequeX (concatenates two DequeX into a single DequeX)
-     */
-    static <T> Monoid<DequeX<T>> dequeXConcat() {
-        return Monoid.of(DequeX.empty(),Semigroups.collectionXConcat());
-    }
 
     static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
         return Monoid.of(empty,Semigroups.persistentCollectionConcat());
     }
 
-    /**
-     * @return A combiner for LazySeq (concatenates two LazySeq into a single LazySeq)
-     */
-    static <T> Monoid<LazySeq<T>> linkedSeqConcat() {
-        return Monoid.of(LazySeq.empty(),Semigroups.linkedSeqConcat());
-    }
 
     /**
-     * @return A combiner for VectorX (concatenates two VectorX into a single VectorX)
-     */
-    static <T> Monoid<VectorX<T>> vectorXConcat() {
-        return Monoid.of(VectorX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for PersistentSetX (concatenates two PersistentSetX into a single PersistentSetX)
-     */
-    static <T> Monoid<PersistentSetX<T>> persistentSetXConcat() {
-        return Monoid.of(PersistentSetX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for OrderedSetX (concatenates two OrderedSetX into a single OrderedSetX)
-     */
-    static <T> Monoid<OrderedSetX<T>> orderedSetXConcat() {
-        return Monoid.of(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for PersistentQueueX (concatenates two PersistentQueueX into a single PersistentQueueX)
-     */
-    static <T> Monoid<PersistentQueueX<T>> persistentQueueXConcat() {
-        return Monoid.of(PersistentQueueX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * @return A combiner for BagX (concatenates two BagX into a single BagX)
-     */
-    static <T> Monoid<BagX<T>> bagXConcat() {
-        return Monoid.of(BagX.empty(),Semigroups.collectionXConcat());
-    }
-
-    /**
-     * This Semigroup will recover to combine JDK Collections. If the Supplied are instances of cyclops2-react extended Collections
-     * or a pCollection persisent toX a new Collection type is created that contains the entries from both supplied collections.
-     * If the supplied Collections are standard JDK mutable collections Colleciton b is appended to Collection a and a is returned.
+     * This Monoid will combine JDK Collections.
      *
-     *
-     * To manage javac type inference to assign the semigroup
+     * To manage javac type inference to assign the monoid
      * <pre>
      * {@code
      *

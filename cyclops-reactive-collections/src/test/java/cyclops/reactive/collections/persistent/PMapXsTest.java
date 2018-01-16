@@ -6,13 +6,13 @@ import static org.junit.Assert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
-import cyclops.companion.PersistentMapXs;
+import cyclops.reactive.companion.PersistentMapXs;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import org.junit.Test;
 
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.companion.MapXs;
+import cyclops.reactive.companion.MapXs;
 public class PMapXsTest {
     @Test
     public void toStringTest(){

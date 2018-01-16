@@ -1,4 +1,4 @@
-package cyclops;
+package cyclops.reactive;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.To;

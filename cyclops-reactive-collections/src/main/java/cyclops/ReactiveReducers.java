@@ -1,13 +1,12 @@
-package cyclops.companion;
+package cyclops;
 
 
 import com.oath.cyclops.types.persistent.*;
+import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
-
-
 import lombok.experimental.UtilityClass;
 
 import java.util.Comparator;
@@ -32,7 +31,7 @@ import java.util.Comparator;
  *
  */
 @UtilityClass
-public class Reducers {
+public class ReactiveReducers {
 
 
 
@@ -45,8 +44,92 @@ public class Reducers {
 
     }
 
+    /**
+     *
+     * <pre>
+     * {@code
+     * PersistentQueueX<Integer> q = Reducers.toPersistentQueueX()
+                                             .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer to PersistentQueueX types
+     */
+    public static <T> Reducer<PersistentQueueX<T>,T> toPersistentQueueX() {
+        return Reducer.fromMonoid(Monoids.persistentQueueXConcat(), a -> PersistentQueueX.singleton(a));
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * OrderedSetX<Integer> q = Reducers.toOrderedSetX()
+                                        .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer to OrderedSetX
+     */
+    public static <T> Reducer<OrderedSetX<T>,T> toOrderedSetX() {
+        return Reducer.fromMonoid(Monoids.orderedSetXConcat(), a -> OrderedSetX.singleton(Comparators.naturalOrderIdentityComparator(),a));
+
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * PersistentSetX<Integer> q = Reducers.toPersistentSetX()
+                                           .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer for PersistentSetX
+     */
+    public static <T> Reducer<PersistentSetX<T>,T> toPersistentSetX() {
+        return Reducer.fromMonoid(Monoids.persistentSetXConcat(), a -> PersistentSetX.singleton(a));
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * LazySeq<Integer> q = Reducers.toLazySeq()
+                                        .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer for LazySeq
+     */
+    public static <T> Reducer<LazySeq<T>,T> toLazySeq() {
+        return Reducer.fromMonoid(Monoids.linkedSeqConcat(), a -> LazySeq.singleton(a));
+    }
+
+    /**
+     * <pre>
+     * {@code
+     * VectorX<Integer> q = Reducers.<Integer>toVectorX()
+                                .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer for VectorX
+     */
+    public static <T> Reducer<VectorX<T>,T> toVectorX() {
+        return Reducer.fromMonoid(Monoids.vectorXConcat(), a -> VectorX.singleton(a));
+    }
 
 
+    /**
+     * <pre>
+     * {@code
+     * BagX<Integer> q = Reducers.<Integer>toBagX()
+                                .mapReduce(Stream.of(1,2,3,4));
+     *
+     * }
+     * </pre>
+     * @return Reducer for BagX
+     */
+    public static <T> Reducer<BagX<T>,T> toBagX() {
+        return Reducer.fromMonoid(Monoids.bagXConcat(), a -> BagX.singleton(a));
+    }
 
     private static <T> PersistentQueue<T> queueSingleton(final T value) {
         PersistentQueue<T> result = BankersQueue.empty();
@@ -169,6 +252,24 @@ public class Reducers {
             return HashMap.of((K) w._1(), (V) w._2());
 
         });
+
+    }
+    /**
+     * <pre>
+     * {@code
+     * PersistentMapX<Integer,String> q = Reducers.toPMapX()
+                                        .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
+     *
+     * }
+     * </pre>
+     * @return Reducer for PersistentMapX
+     */
+    public static <K, V> Reducer<PersistentMapX<K, V>,Tuple2<K,V>> toPMapX() {
+        return Reducer.of(PersistentMapX.empty(), (final PersistentMapX<K, V> a) -> b -> a.putAll(b), (in) -> {
+            Tuple2<K, V> w = in;
+            return PersistentMapX.singleton((K) w._1(), (V) w._2());
+        });
+
 
     }
 

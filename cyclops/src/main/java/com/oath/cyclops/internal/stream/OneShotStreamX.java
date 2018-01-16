@@ -114,7 +114,7 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
         return Tuple2.of(
                 Tuple2._1().to().option()
-                        .flatMap(l -> l.size() > 0 ? Option.some(l.get(0)) : Option.none()),
+                        .flatMap(l -> l.size() > 0 ? l.get(0) : Option.none()),
                 Tuple2._2());
     }
 

@@ -14,11 +14,11 @@ public class LazyArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
     public LazyArrayConcatonatingOperator(Operator<IN>... sources){
-        this.operators = Seq.empty();
+        Seq<Operator<IN>> ops  = Seq.empty();
         for(Operator<IN> next : sources){
-            operators.add(next);
+            ops = ops.append(next);
         }
-
+        this.operators = ops;
 
     }
     public LazyArrayConcatonatingOperator(Seq<Operator<IN>> sources){
