@@ -7,9 +7,12 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.companion.Reducers;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -589,7 +592,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (BagX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -977,7 +980,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (BagX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -989,7 +992,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (BagX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

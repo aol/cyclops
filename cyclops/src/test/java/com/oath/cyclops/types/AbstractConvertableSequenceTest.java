@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import org.junit.Test;
 
+import java.util.Comparator;
+
 public abstract class AbstractConvertableSequenceTest {
     public abstract <T> ConvertableSequence<T> of(T...elements);
     public abstract <T> ConvertableSequence<T> empty();
@@ -32,21 +34,17 @@ public abstract class AbstractConvertableSequenceTest {
     @Test
     public void presentConvert(){
 
-        assertTrue(of(1).optional().isPresent());
-        assertTrue(of(1).listX().size()>0);
-        assertTrue(of(1).dequeX().size()>0);
-        assertTrue(of(1).linkedListX().size()>0);
-        assertTrue(of(1).queueX().size()>0);
-        assertTrue(of(1).vectorX().size()>0);
-        assertTrue(of(1).queueX().size()>0);
-        assertTrue(of(1).setX().size()>0);
-        assertTrue(of(1).sortedSetX().size()>0);
-        assertTrue(of(1).orderedSetX().size()>0);
-        assertTrue(of(1).bagX().size()>0);
-        assertTrue(of(1).persistentMapX(t->t, t->t).size()>0);
-        assertTrue(of(1).mapX(t->t,t->t).size()>0);
-        assertTrue(of(1).streamable().size()>0);
+        assertTrue(of(1).option().isPresent());
 
+        assertTrue(of(1).seq().size()>0);
+        assertTrue(of(1).lazySeq().size()>0);
+        assertTrue(of(1).bankersQueue().size()>0);
+        assertTrue(of(1).vector().size()>0);
+        assertTrue(of(1).hashSet().size()>0);
+        assertTrue(of(1).treeSet(Comparator.naturalOrder()).size()>0);
+        assertTrue(of(1).streamable().size()>0);
+        assertTrue(of(1).bag().size()>0);
+        assertTrue(of(1).hashMap(t->t, t->t).size()>0);
 
     }
 

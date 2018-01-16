@@ -8,6 +8,7 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.companion.Streams;
 import cyclops.data.Seq;
 
@@ -173,9 +174,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default Streamable<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
+    default Traversable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
 
-        return Streamable.fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
+        return Streamable.fromIterable(IterableX.super.groupedUntil(predicate));
     }
 
 
@@ -1051,7 +1052,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Stream with elements grouped by size
      */
     @Override
-    default Streamable<Seq<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return fromStream(reactiveSeq().grouped(groupSize));
     }
 
@@ -2565,7 +2566,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
 
     @Override
-    default Streamable<Seq<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedUntil(predicate));
     }
 
@@ -2583,7 +2584,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable batched into lists determined by the predicate supplied
      */
     @Override
-    default Streamable<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return fromStream(reactiveSeq().groupedWhile(predicate));
     }
 

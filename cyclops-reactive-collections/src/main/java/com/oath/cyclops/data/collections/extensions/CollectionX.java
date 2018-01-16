@@ -5,6 +5,8 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.stream.HeadAndTail;
+import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
@@ -89,7 +91,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    CollectionX<ListX<T>> groupedUntil(Predicate<? super T> predicate);
+    IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
@@ -101,7 +103,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    CollectionX<ListX<T>> groupedWhile(Predicate<? super T> predicate);
+    Traversable<Vector<T>> groupedWhile(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
@@ -438,7 +440,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
-    CollectionX<ListX<T>> grouped(int groupSize);
+    Traversable<Vector<T>> grouped(int groupSize);
 
 
     /* (non-Javadoc)

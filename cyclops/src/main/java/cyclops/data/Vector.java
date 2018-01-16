@@ -5,6 +5,8 @@ import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -168,7 +170,6 @@ public class Vector<T> implements ImmutableList<T>,
     }
     public static <T> Vector<T> iterate(final T seed, final UnaryOperator<T> f,int max) {
         return fromStream(ReactiveSeq.iterate(seed,f).limit(max));
-
     }
 
     public static <T, U> Tuple2<Vector<T>, Vector<U>> unzip(final Vector<Tuple2<T, U>> sequence) {
@@ -427,13 +428,13 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (Vector<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
+    public Vector<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (Vector<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    public Vector<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (Vector<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    public Vector<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (Vector<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
@@ -442,8 +443,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (Vector<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
+    public Vector<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (Vector<Vector<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
@@ -457,8 +458,8 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<Seq<T>> grouped(int groupSize) {
-        return (Vector<Seq<T>>) ImmutableList.super.grouped(groupSize);
+    public Vector<Vector<T>> grouped(int groupSize) {
+        return (Vector<Vector<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

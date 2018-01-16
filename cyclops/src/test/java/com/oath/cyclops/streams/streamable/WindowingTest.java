@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
+import cyclops.data.Seq;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,26 +67,27 @@ public class WindowingTest {
 
 	@Test
 	public void windowStatefullyWhile(){
+
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
+				.groupedUntil((s, i)->s.containsValue(4) ? true : false)
 				);
 		assertThat(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
+				.groupedUntil((s, i)->s.containsValue(4) ? true : false)
 
-				.toListX().size(),equalTo(2));
+				.toList().size(),equalTo(2));
 
 	}
 	@Test
 	public void windowStatefullyWhileEmpty(){
 
 		assertThat(Streamable.of()
-				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
-				.toListX().size(),equalTo(0));
+				.groupedUntil((s, i)->s.contains(4) ? true : false)
+				.toList().size(),equalTo(0));
 
 	}
 	@Test
 	public void sliding() {
-		List<VectorX<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<Seq<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -93,7 +95,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<VectorX<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<Seq<Integer>> list = Streamable.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		System.out.println(list);
 		assertThat(list.get(0), hasItems(1, 2, 3));

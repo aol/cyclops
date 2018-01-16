@@ -5,6 +5,7 @@ import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
@@ -288,24 +289,24 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> grouped(final int groupSize) {
+    public Traversable<cyclops.data.Vector<T>> grouped(final int groupSize) {
         return createSeq(new GroupingOperator<T, Seq<T>, Seq<T>>(source, () -> Seq.empty(), c -> c, groupSize));
 
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedStatefullyWhile(final BiPredicate<Seq<? super T>, ? super T> predicate) {
+    public ReactiveSeq<cyclops.data.Vector<T>> groupedWhile(final BiPredicate<Seq<? super T>, ? super T> predicate) {
         return createSeq(new GroupedStatefullyOperator<>(source, () -> Seq.of(), Function.identity(), predicate));
     }
 
     @Override
-    public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
-                                                                                        Function<? super C, ? extends R> finalizer) {
+    public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                                              Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate));
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedStatefullyUntil(final BiPredicate<Seq<? super T>, ? super T> predicate) {
+    public Traversable<cyclops.data.Vector<T>> groupedUntil(final BiPredicate<cyclops.data.Vector<? super T>, ? super T> predicate) {
         return createSeq(new GroupedStatefullyOperator<>(source, () -> Seq.of(), Function.identity(), predicate.negate()));
     }
 
@@ -762,7 +763,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedByTime(final long time, final TimeUnit t) {
+    public ReactiveSeq<cyclops.data.Vector<T>> groupedByTime(final long time, final TimeUnit t) {
         return createSeq(new GroupedByTimeOperator<>(source,
                 () -> Seq.empty(),
                 Function.identity(), time, t));
@@ -780,7 +781,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<Seq<T>> groupedWhile(final Predicate<? super T> predicate) {
+    public Traversable<cyclops.data.Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return createSeq(new GroupedWhileOperator<>(source, () -> Seq.of(), Function.identity(), predicate));
 
 

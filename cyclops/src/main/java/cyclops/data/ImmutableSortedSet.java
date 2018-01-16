@@ -3,9 +3,8 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSortedSet;
-import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -17,7 +16,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -301,13 +299,13 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableSortedSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableSortedSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
@@ -316,7 +314,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableSortedSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
@@ -331,7 +329,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<Seq<T>> grouped(int groupSize) {
+    default ImmutableSortedSet<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

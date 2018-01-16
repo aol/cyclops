@@ -8,6 +8,8 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
@@ -551,7 +553,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<cyclops.data.Vector<T>> grouped(final int groupSize) {
         return (SetX) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -967,7 +969,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see LazyCollectionX#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default SetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<cyclops.data.Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (SetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -976,7 +978,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see LazyCollectionX#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default SetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<cyclops.data.Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (SetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

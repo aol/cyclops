@@ -7,6 +7,7 @@ import com.oath.cyclops.internal.stream.operators.OnePerOperator;
 import com.oath.cyclops.internal.stream.operators.RecoverOperator;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.control.Either;
 
@@ -17,7 +18,6 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import com.oath.cyclops.util.box.Mutable;
 
-import cyclops.data.Seq;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.NonPausableHotStream;
@@ -2530,7 +2530,7 @@ public class Streams {
     /**
      * Group data in a Stream using knowledge of the current batch and the next entry to determing grouping limits
      *
-     * @see ReactiveSeq#groupedStatefullyUntil(BiPredicate)
+     * @see Traversable#groupedUntil(BiPredicate)
      *
      * @param stream Stream to group
      * @param predicate Predicate to determine grouping

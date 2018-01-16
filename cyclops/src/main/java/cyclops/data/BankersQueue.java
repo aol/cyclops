@@ -3,7 +3,8 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple3;
@@ -720,13 +721,13 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (BankersQueue<Seq<T>>) ImmutableQueue.super.groupedUntil(predicate);
+    default BankersQueue<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedUntil(predicate);
     }
 
     @Override
-    default BankersQueue<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (BankersQueue<Seq<T>>) ImmutableQueue.super.groupedStatefullyUntil(predicate);
+    default BankersQueue<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedUntil(predicate);
     }
 
     @Override
@@ -735,8 +736,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (BankersQueue<Seq<T>>) ImmutableQueue.super.groupedWhile(predicate);
+    default BankersQueue<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedWhile(predicate);
     }
 
     @Override
@@ -750,8 +751,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<Seq<T>> grouped(int groupSize) {
-        return (BankersQueue<Seq<T>>) ImmutableQueue.super.grouped(groupSize);
+    default BankersQueue<Vector<T>> grouped(int groupSize) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.grouped(groupSize);
     }
 
     @Override

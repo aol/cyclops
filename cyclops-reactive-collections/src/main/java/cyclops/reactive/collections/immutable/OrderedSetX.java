@@ -2,6 +2,8 @@ package cyclops.reactive.collections.immutable;
 
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Comparators;
 import cyclops.data.TreeSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;
@@ -13,6 +15,7 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.control.Either;
 import cyclops.control.Option;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -593,7 +596,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return (OrderedSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
@@ -989,7 +992,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (OrderedSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
@@ -1001,7 +1004,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (OrderedSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }

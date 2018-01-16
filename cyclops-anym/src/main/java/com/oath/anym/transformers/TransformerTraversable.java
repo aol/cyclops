@@ -138,7 +138,7 @@ public interface TransformerTraversable<T>{
      * @return List Transformer view into batched Traversable
      */
     default ListT<reactiveSeq,T> groupedStatefullyUntilT(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return ListT.fromStream(stream().groupedStatefullyUntil(predicate));
+        return ListT.fromStream(stream().groupedUntil(predicate));
     }
 
     /**

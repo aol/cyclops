@@ -4,7 +4,8 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.treeSet;
@@ -520,13 +521,13 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedUntil(predicate);
+    public TreeSet<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (TreeSet<Vector<T>>) ImmutableSortedSet.super.groupedUntil(predicate);
     }
 
     @Override
-    public TreeSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedStatefullyUntil(predicate);
+    public TreeSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (TreeSet<Vector<T>>) ImmutableSortedSet.super.groupedUntil(predicate);
     }
 
     @Override
@@ -535,8 +536,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.groupedWhile(predicate);
+    public TreeSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (TreeSet<Vector<T>>) ImmutableSortedSet.super.groupedWhile(predicate);
     }
 
     @Override
@@ -550,8 +551,8 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<Seq<T>> grouped(int groupSize) {
-        return (TreeSet<Seq<T>>) ImmutableSortedSet.super.grouped(groupSize);
+    public TreeSet<Vector<T>> grouped(int groupSize) {
+        return (TreeSet<Vector<T>>) ImmutableSortedSet.super.grouped(groupSize);
     }
 
     @Override

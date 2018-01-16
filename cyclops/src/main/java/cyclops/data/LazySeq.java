@@ -4,13 +4,13 @@ package cyclops.data;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -695,13 +695,13 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (LazySeq<Seq<T>>) ImmutableList.super.groupedUntil(predicate);
+    default LazySeq<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    default LazySeq<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (LazySeq<Seq<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    default LazySeq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
@@ -710,8 +710,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (LazySeq<Seq<T>>) ImmutableList.super.groupedWhile(predicate);
+    default LazySeq<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
@@ -725,8 +725,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<Seq<T>> grouped(int groupSize) {
-        return (LazySeq<Seq<T>>) ImmutableList.super.grouped(groupSize);
+    default LazySeq<Vector<T>> grouped(int groupSize) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override

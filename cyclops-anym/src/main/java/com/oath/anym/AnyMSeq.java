@@ -18,6 +18,7 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.extensability.MonadAdapter;
+import cyclops.data.Vector;
 import cyclops.monads.WitnessType;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -543,7 +544,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.groupedUntil(predicate));
     }
@@ -554,7 +555,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     @Override
     default AnyMSeq<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
+        return fromIterable(IterableX.super.groupedUntil(predicate));
     }
 
     /* (non-Javadoc)
@@ -574,7 +575,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default AnyMSeq<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.groupedWhile(predicate));
     }
@@ -601,7 +602,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
      * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
-    default AnyMSeq<W,ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
 
         return fromIterable(IterableX.super.grouped(groupSize));
     }

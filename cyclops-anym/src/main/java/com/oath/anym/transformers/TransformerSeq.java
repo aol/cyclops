@@ -13,6 +13,7 @@ import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.control.Trampoline;
+import cyclops.data.Vector;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
@@ -366,7 +367,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return unitAnyM(transformerStream().map(s -> s.groupedUntil(predicate)));
 
     }
@@ -376,7 +377,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      */
     @Override
     default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitAnyM(transformerStream().map(s -> s.groupedStatefullyUntil(predicate)));
+        return unitAnyM(transformerStream().map(s -> s.groupedUntil(predicate)));
 
     }
 
@@ -384,7 +385,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return unitAnyM(transformerStream().map(s -> s.groupedWhile(predicate)));
     }
 
@@ -409,7 +410,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
      * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
-    default Traversable<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return unitAnyM(transformerStream().map(s -> s.grouped(groupSize)));
     }
 

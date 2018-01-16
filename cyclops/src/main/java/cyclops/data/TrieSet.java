@@ -5,7 +5,8 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 
-import cyclops.data.Seq;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.trieSet;
@@ -418,13 +419,13 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<Seq<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedUntil(predicate);
+    public TrieSet<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (TrieSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
     }
 
     @Override
-    public TrieSet<Seq<T>> groupedStatefullyUntil(BiPredicate<Seq<? super T>, ? super T> predicate) {
-        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
+    public TrieSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (TrieSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
     }
 
     @Override
@@ -433,8 +434,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<Seq<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (TrieSet<Seq<T>>) ImmutableSet.super.groupedWhile(predicate);
+    public TrieSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (TrieSet<Vector<T>>) ImmutableSet.super.groupedWhile(predicate);
     }
 
     @Override
@@ -448,8 +449,8 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
     @Override
-    public TrieSet<Seq<T>> grouped(int groupSize) {
-        return (TrieSet<Seq<T>>) ImmutableSet.super.grouped(groupSize);
+    public TrieSet<Vector<T>> grouped(int groupSize) {
+        return (TrieSet<Vector<T>>) ImmutableSet.super.grouped(groupSize);
     }
 
     @Override
@@ -486,8 +487,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     public TrieSet<T> sorted(Comparator<? super T> c) {
         return (TrieSet<T>) ImmutableSet.super.sorted(c);
     }
-
-
 
     @Override
     public TrieSet<T> takeUntil(Predicate<? super T> p) {

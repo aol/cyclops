@@ -5,6 +5,7 @@ import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.transformers.FoldableTransformerSeq;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
@@ -417,7 +418,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    public StreamT<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    public IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
@@ -435,7 +436,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public StreamT<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    public Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
     }
@@ -462,7 +463,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#grouped(int)
      */
     @Override
-    public StreamT<W,ListX<T>> grouped(final int groupSize) {
+    public Traversable<Vector<T>> grouped(final int groupSize) {
 
         return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.grouped(groupSize);
     }

@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-
+import cyclops.data.*;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -20,12 +20,13 @@ import cyclops.companion.Semigroups;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Topic;
 import com.oath.cyclops.async.adapters.Queue;
+import cyclops.data.HashMap;
 import cyclops.data.LazySeq;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.SetX;
+
 import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
+import cyclops.data.Vector;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -272,7 +273,7 @@ public class BaseSequentialTest {
                     .toList();
             assertThat(list, hasItems(1, 2, 3));
             assertThat(list.size(), equalTo(6));
-            assertThat(new HashSet<>(list), equalTo(new HashSet<>(Arrays.asList(1, 2, 3))));
+
 
             System.gc();
         }
@@ -671,33 +672,30 @@ public class BaseSequentialTest {
             assertThat(of(1, 2, 3).to().option(), equalTo(Optional.of(LazySeq.of(1, 2, 3))));
         }
     }
-
     @Test
-    public void presentConvert2() {
+    public void presentConvert2(){
 
-        assertTrue(of(1, 2).to().option().isPresent());
-        Option<LazySeq<Integer>> opt = of(1, 2).to().option();
-        assertThat(opt, equalTo(Optional.of(ListX.of(1, 2))));
+        assertTrue(of(1,2).to().option().isPresent());
+        assertTrue(of(1,2).toList().size()==2);
+        assertTrue(of(1,2).to().seq().size()==2);
+        assertTrue(of(1,2).to().lazySeq().size()==2);
+        assertTrue(of(1,2).to().bankersQueue().size()==2);
+        assertTrue(of(1,2).to().vector().size()==2);
+        assertTrue(of(1,2).to().hashSet().size()==2);
+        assertTrue(of(1,2).toSet().size()==2);
+        assertTrue(of(1,2).to().treeSet(Comparator.naturalOrder()).size()==2);
+        assertTrue(of(1,2).to().streamable().size()==2);
+        assertTrue(of(1,2).to().bag().size()==2);
+        assertTrue(of(1,2).to().hashMap(t->t, t->t).size()==2);
 
-        assertTrue(of(1, 2).toListX().size() == 2);
-        assertTrue(of(1, 2).to().dequeX().size() == 2);
-        assertTrue(of(1, 2).to().linkedListX().size() == 2);
-        assertTrue(of(1, 2).to().queueX().size() == 2);
-        assertTrue(of(1, 2).to().vectorX().size() == 2);
-        assertTrue(of(1, 2).to().persistentQueueX().size() == 2);
-        assertTrue(of(1, 2).toSetX().size() == 2);
-        assertTrue(of(1, 2).to().sortedSetX().size() == 2);
-        assertTrue(of(1, 2).to().orderedSetX().size() == 2);
-        assertTrue(of(1, 2).to().bagX().size() == 2);
-        assertTrue(of(1, 2).to().persistentMapX(t -> t, t -> t).size() == 2);
-        assertTrue(of(1, 2).to().mapX(t -> t, t -> t).size() == 2);
 
-        assertTrue(of(1, 2).toSet().size() == 2);
-        assertTrue(of(1, 2).toList().size() == 2);
-        assertTrue(of(1, 2).to().streamable().size() == 2);
+        assertTrue(of(1,2).toSet().size()==2);
+        assertTrue(of(1,2).toList().size()==2);
+        assertTrue(of(1,2).to().streamable().size()==2);
 
 
     }
+
 
 
     private int addOne(Integer i) {
@@ -1034,9 +1032,9 @@ public class BaseSequentialTest {
 
     @Test
     public void testGroupByEager() {
-        Map<Integer, ListX<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
-        assertEquals(asList(2, 4), map1.get(0));
-        assertEquals(asList(1, 3), map1.get(1));
+        HashMap<Integer, Vector<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
         assertEquals(2, map1.size());
 
 
@@ -1073,7 +1071,7 @@ public class BaseSequentialTest {
 
     @Test
     public void zip2() {
-        assertThat(of(1, 2).zipWithStream(of('a', 'b')).toList(), equalTo(ListX.of(tuple(1, 'a'), tuple(2, 'b'))));
+        assertThat(of(1, 2).zipWithStream(of('a', 'b')).toList(), equalTo(Arrays.asList(tuple(1, 'a'), tuple(2, 'b'))));
     }
 
     @Test
@@ -1221,60 +1219,60 @@ public class BaseSequentialTest {
 
     @Test
     public void skipInvestigate() {
-        System.out.println("0" + of(1, 2, 3).skip(0).toListX());
+        System.out.println("0" + of(1, 2, 3).skip(0).toList());
 
-        assertThat(of(1, 2, 3).skip(0).toListX(), equalTo(ListX.of(1, 2, 3)));
+        assertThat(of(1, 2, 3).skip(0).toList(), equalTo(Arrays.asList(1, 2, 3)));
     }
 
     @Test
     public void splitAtInvestigate() {
 
 
-        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toListX());
+        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toList());
 
-        assertThat(of(1, 2, 3).splitAt(0)._2().toListX(), equalTo(ListX.of(1, 2, 3)));
+        assertThat(of(1, 2, 3).splitAt(0)._2().toList(), equalTo(Arrays.asList(1, 2, 3)));
     }
 
     @Test
     public void splitAtHeadInvestigate() {
-        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toListX());
+        System.out.println("0" + of(1, 2, 3).splitAt(0)._2().toList());
         System.out.println(of(1, 2, 3).splitAtHead()._1());
-        System.out.println(of(1, 2, 3).splitAtHead()._2().toListX());
+        System.out.println(of(1, 2, 3).splitAtHead()._2().toList());
         System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-        System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toListX());
-        assertThat(of(1, 2, 3).splitAtHead()._2().toListX(), equalTo(ListX.of(2, 3)));
+        System.out.println(of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
+        assertThat(of(1, 2, 3).splitAtHead()._2().toList(), equalTo(Arrays.asList(2, 3)));
     }
 
     @Test
     public void splitAtHeadImpl2() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
 
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t._2().skip(1).toList(), equalTo(ListX.of()));
+        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._2().skip(1).toList(), equalTo(Arrays.asList()));
 
     }
 
     @Test
     public void limitReplay() {
         final ReactiveSeq<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
-        assertThat(t.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t.limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t.limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t.limit(1).toList(), equalTo(Arrays.asList(1)));
     }
 
     @Test
     public void duplicateReplay() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
     }
 
     @Test
     public void splitLimit() {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
-        assertThat(stream.limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(ListX.of(1)));
+        assertThat(stream.limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
     }
 
 
