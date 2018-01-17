@@ -50,8 +50,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromIterable(this);
-       // return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
+        return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
     }
 
 
@@ -336,7 +335,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return New Streamable with provided Streamable appended
      */
     default Streamable<T> appendAll(final Streamable<T> t) {
-        return Streamable.fromStream(this.stream().appendStream(this.stream()));
+        return Streamable.fromStream(this.stream().appendStream(t.stream()));
     }
 
     /**
@@ -1741,7 +1740,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream appended
      */
     default Streamable<T> appendStreamable(final Streamable<T> stream) {
-        return fromStream(this.stream().appendStream(this.stream()));
+        return fromStream(this.stream().appendStream(stream.stream()));
     }
 
     /**
@@ -1763,7 +1762,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable with Stream prepended
      */
     default Streamable<T> prependStreamable(final Streamable<T> stream) {
-        return fromStream(this.stream().prependStream(this.stream()));
+        return fromStream(this.stream().prependStream(stream.stream()));
     }
     default Streamable<T> prependStream(final Stream<? extends T> stream) {
         return fromStream(this.stream().prependStream(stream));
@@ -1878,7 +1877,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return newly conjoined Streamable
      */
     default Streamable<T> insertStreamableAt(final int pos, final Streamable<T> stream) {
-        return fromStream(this.stream().insertStreamAt(pos, this.stream()));
+        return fromStream(this.stream().insertStreamAt(pos, stream.stream()));
     }
 
 

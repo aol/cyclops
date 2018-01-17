@@ -285,8 +285,8 @@ public class StreamableSeqOpertationsTest {
 		    @Test
 		    public void testGroupByEager() {
 		        HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-		        assertEquals(asList(2, 4), map1.get(0));
-		        assertEquals(asList(1, 3), map1.get(1));
+		        assertEquals(Option.some(Vector.of(2, 4)), map1.get(0));
+		        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
 		        assertEquals(2, map1.size());
 
 

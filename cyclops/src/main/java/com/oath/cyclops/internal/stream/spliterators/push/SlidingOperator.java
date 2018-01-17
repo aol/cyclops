@@ -10,7 +10,7 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class SlidingOperator<T,R> extends BaseOperator<T,R> {
 
     private final Function<? super Seq<T>, ? extends R> finalizer;
     private final int windowSize;

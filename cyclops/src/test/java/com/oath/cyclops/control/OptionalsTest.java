@@ -17,11 +17,11 @@ public class OptionalsTest {
 	@Test
 	public void testSequence() {
 		Optional<ReactiveSeq<Integer>> maybes =Optionals.sequence(Seq.of(Optional.of(10),Optional.of(20),Optional.of(1)));
-		assertThat(maybes.map(s->s.toList()),equalTo(Optional.of(Seq.of(10,20,1))));
+		assertThat(maybes.map(s->s.toSeq()),equalTo(Optional.of(Seq.of(10,20,1))));
 	}
 	@Test
     public void testSequencePresent() {
-        Optional<List<Integer>> maybes =Optionals.sequencePresent(Seq.of(Optional.of(10),Optional.empty(),Optional.of(1))).map(s->s.toList());
+        Optional<Seq<Integer>> maybes =Optionals.sequencePresent(Seq.of(Optional.of(10),Optional.empty(),Optional.of(1))).map(s->s.toSeq());
         assertThat(maybes,equalTo(Optional.of(Seq.of(10,1))));
     }
 	@Test

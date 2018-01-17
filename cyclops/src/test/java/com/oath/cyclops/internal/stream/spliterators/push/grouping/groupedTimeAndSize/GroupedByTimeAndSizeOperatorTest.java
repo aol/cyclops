@@ -1,6 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push.grouping.groupedTimeAndSize;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
+import cyclops.data.Vector;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,28 +15,28 @@ public class GroupedByTimeAndSizeOperatorTest extends AbstractOperatorTest {
 
 
     public Operator<Integer> createEmpty(){
-        return new MapOperator<List<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new ArrayOfValuesOperator<>(),
-                ()->new ArrayList<Integer>(),i->i,1, TimeUnit.SECONDS,2),i->i.get(0));
+        return new MapOperator<Vector<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new ArrayOfValuesOperator<>(),
+                ()->Vector.empty(),i->i,1, TimeUnit.SECONDS,2),i->i.getOrElse(0,-1));
     }
     public Operator<Integer> createOne(){
-        return new MapOperator<List<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new ArrayOfValuesOperator<>(1),
-                ()->new ArrayList<Integer>(),i->i,1, TimeUnit.SECONDS,2),i->i.get(0));
+        return new MapOperator<Vector<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new ArrayOfValuesOperator<>(1),
+                ()->Vector.empty(),i->i,1, TimeUnit.SECONDS,2),i->i.getOrElse(0,-1));
 
     }
 
     public Operator<Integer> createThree(){
         List<Integer> list = Arrays.asList(1,2,3,4,5,6,7,8,9);
-        return new MapOperator<List<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new IterableSourceOperator(list),
-                ()->new ArrayList<Integer>(),i->i,3, TimeUnit.SECONDS,3),i->i.get(0));
+        return new MapOperator<Vector<Integer>,Integer>(new GroupedByTimeAndSizeOperator(new IterableSourceOperator(list),
+                ()->Vector.empty(),i->i,3, TimeUnit.SECONDS,3),i->i.getOrElse(0,-1));
     }
     public Operator<Integer> createTwoAndError(){
 
-        return new MapOperator<List<Integer>,Integer>(new GroupedByTimeAndSizeOperator(Fixtures.twoAndErrorSource,
-                ()->new ArrayList<Integer>(),i->i,1, TimeUnit.SECONDS,1),i->i.get(0));
+        return new MapOperator<Vector<Integer>,Integer>(new GroupedByTimeAndSizeOperator(Fixtures.twoAndErrorSource,
+                ()->Vector.empty(),i->i,1, TimeUnit.SECONDS,1),i->i.getOrElse(0,-1));
     }
     public Operator<Integer> createThreeErrors(){
-        return new MapOperator<List<Integer>,Integer>(new GroupedByTimeAndSizeOperator(Fixtures.threeErrorsSource,
-                ()->new ArrayList<Integer>(),i->i,1, TimeUnit.SECONDS,6),i->i.get(0));
+        return new MapOperator<Vector<Integer>,Integer>(new GroupedByTimeAndSizeOperator(Fixtures.threeErrorsSource,
+                ()->Vector.empty(),i->i,1, TimeUnit.SECONDS,6),i->i.getOrElse(0,-1));
     }
 
 
