@@ -1,6 +1,7 @@
 package cyclops.streams.push;
 
 
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
 
@@ -58,7 +59,7 @@ public class ReactiveRangeTest {
     }
     @Test
     public void longStreamCompareReversed(){
-        assertThat(Spouts.rangeLong(-5,6).toList(),equalTo(Arrays.asList(-5,-4,-3,-2,-1,0,1,2,3,4,5).map(Integer::longValue)));
+        assertThat(Spouts.rangeLong(-5,6).toList(),equalTo(ReactiveSeq.of(-5,-4,-3,-2,-1,0,1,2,3,4,5).map(Integer::longValue).toList()));
         Spouts.rangeLong(-5,6).printOut();
 		Spouts.rangeLong(-5,6).reverse().printOut();
         assertThat(0L,

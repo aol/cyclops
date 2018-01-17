@@ -1,8 +1,11 @@
 package cyclops.streams.push.asyncreactivestreams;
 
+import cyclops.data.*;
 import cyclops.companion.Streams;
 
 import cyclops.control.Maybe;
+import cyclops.data.HashMap;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

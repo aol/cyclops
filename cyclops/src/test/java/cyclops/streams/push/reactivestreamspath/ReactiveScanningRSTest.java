@@ -5,6 +5,8 @@ import cyclops.companion.Reducers;
 import cyclops.reactive.Streamable;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;

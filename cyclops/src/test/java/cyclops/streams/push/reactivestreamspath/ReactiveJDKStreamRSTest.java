@@ -84,14 +84,14 @@ public class ReactiveJDKStreamRSTest {
 	@Test
 	public void testDistinctReactiveSeq(){
 		List<String> names = Arrays.asList("Java", "C");
-		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
+		List<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
 		assertThat(d.size(),is(2));
 	}
 
 	@Test
 	public void testDistinctReactiveSeqMultipleDuplicates(){
 		List<String> names = Arrays.asList("Java", "C", "Java", "Java","java", "java");
-		ListX<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
+		List<String> d = ReactiveSeq.fromIterable(names).distinct(n -> n + ":" + n).toList();
 		System.out.println(d);
 		assertThat(d.size(),is(3));
 	}

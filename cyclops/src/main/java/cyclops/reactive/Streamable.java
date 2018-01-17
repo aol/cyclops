@@ -50,9 +50,10 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> stream() {
-
-        return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
+        return ReactiveSeq.fromIterable(this);
+       // return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
     }
+
 
     /**
      * (Lazily) Construct a Streamable from a Stream.
@@ -273,10 +274,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
     public static <T> Streamable<T> of(final T... values) {
         final Iterable<T> it = Arrays.asList(values);
         return new Streamable<T>() {
-            @Override
-            public ReactiveSeq<T> stream() {
-                return Streams.oneShotStream(Stream.of(values));
-            }
 
             @Override
             public Iterable<T> getStreamable() {
@@ -481,11 +478,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return Streamable.fromStream(this.stream().filter(fn));
     }
 
-    /* (non-Javadoc)
-     * @see java.util.stream.Stream#flatMap(java.util.function.Function)
-     */
+
     default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
-        return Streamable.fromStream(this.stream().flatMap(i -> this.stream()));
+        return Streamable.fromStream(stream().flatMap(i -> fn.apply(i).stream()));
     }
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
@@ -942,7 +937,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *</pre>
      */
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Streamable<? extends S> second, final Streamable<? extends U> third) {
-        return fromStream(this.stream().zip3(this.stream(), this.stream()));
+        return fromStream(stream().zip3(second.stream(), third.stream()));
     }
 
     /**
@@ -960,7 +955,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     default <T2, T3, T4> Streamable<Tuple4<T, T2, T3, T4>> zip4(final Streamable<? extends T2> second, final Streamable<? extends T3> third,
             final Streamable<? extends T4> fourth) {
-        return fromStream(this.stream().zip4(this.stream(), this.stream(), this.stream()));
+        return fromStream(this.stream().zip4(second.stream(), third.stream(), fourth.stream()));
     }
 
     /**
@@ -2229,7 +2224,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *
      */
     public static <T, U> Tuple2<Streamable<T>, Streamable<U>> unzip(final Streamable<Tuple2<T, U>> sequence) {
-        return ReactiveSeq.unzip(this.stream())
+        return ReactiveSeq.unzip(sequence.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s));
     }
@@ -2244,7 +2239,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      */
     public static <T1, T2, T3> Tuple3<Streamable<T1>, Streamable<T2>, Streamable<T3>> unzip3(final Streamable<Tuple3<T1, T2, T3>> sequence) {
-        return ReactiveSeq.unzip3(this.stream())
+        return ReactiveSeq.unzip3(sequence.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
                           .map3(s -> fromStream(s));
@@ -2263,7 +2258,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      */
     public static <T1, T2, T3, T4> Tuple4<Streamable<T1>, Streamable<T2>, Streamable<T3>, Streamable<T4>> unzip4(
             final Streamable<Tuple4<T1, T2, T3, T4>> sequence) {
-        return ReactiveSeq.unzip4(this.stream())
+        return ReactiveSeq.unzip4(sequence.stream())
                           .map1(s -> fromStream(s))
                           .map2(s -> fromStream(s))
                           .map3(s -> fromStream(s))
@@ -2709,10 +2704,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return stream().anyMatch(c -> t.equals(c));
     }
 
-    @Override
-    default ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromIterable(this);
-    }
+
 
     @Override
     default boolean isEmpty() {

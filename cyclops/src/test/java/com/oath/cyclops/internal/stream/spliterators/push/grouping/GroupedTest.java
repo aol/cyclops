@@ -27,7 +27,7 @@ public class GroupedTest {
     }
     @Test
     public void limitPosition(){
-        Spouts.iterate(0l, i->i+1l).grouped(1).map(l->l.get(0)).limit(5)
+        Spouts.iterate(0l, i->i+1l).grouped(1).map(l->l.getOrElse(0,-1l)).limit(5)
               .subscribe(new Subscriber<Long>() {
                   @Override
                   public void onSubscribe(Subscription s) {
@@ -66,7 +66,7 @@ public class GroupedTest {
 
     @Test
     public void cancelRange3(){
-        Spouts.rangeLong(0l, Long.MAX_VALUE).grouped(1).skip(2).map(l->l.get(0)).limit(20)
+        Spouts.rangeLong(0l, Long.MAX_VALUE).grouped(1).skip(2).map(l->l.getOrElse(0,-1l)).limit(20)
                 .subscribe(new Subscriber<Long>() {
                     @Override
                     public void onSubscribe(Subscription s) {

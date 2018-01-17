@@ -1,5 +1,7 @@
 package cyclops.streams.push;
 
+import cyclops.data.Vector;
+import cyclops.data.TreeSet;
 import com.oath.cyclops.util.SimpleTimer;
 
 import cyclops.reactive.ReactiveSeq;
@@ -158,7 +160,7 @@ public class BatchingTest {
 				.grouped(10)
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
-				.flatMap(Collection::stream)
+				.concatMap(i->i)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual))
 				.forEach(a->{});
@@ -261,15 +263,15 @@ public class BatchingTest {
 	public void batchBySizeAndTimeSizeCollection(){
 
 		assertThat(of(1,2,3,4,5,6)
-						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
+						.groupedBySizeAndTime(3, 10, TimeUnit.SECONDS, () -> Vector.empty())
 						.toList().get(0)
 						.size(),is(3));
 	}
 	@Test
 	public void batchBySizeAndTimeSizeCollectionIterator(){
 
-		Iterator<ArrayList<Integer>> it = of(1, 2, 3, 4, 5, 6)
-				.groupedBySizeAndTime(3, 10, TimeUnit.SECONDS, () -> new ArrayList<>()).iterator();
+		Iterator<Vector<Integer>> it = of(1, 2, 3, 4, 5, 6)
+				.groupedBySizeAndTime(3, 10, TimeUnit.SECONDS, () -> Vector.empty()).iterator();
 		assertThat(ReactiveSeq.fromIterator(it)
 				.toList().get(0)
 				.size(),is(3));
@@ -303,7 +305,7 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = of(1,2,3,4,5,6)
+			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 
@@ -317,8 +319,8 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
-					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
+			List<Vector<Integer>> list = of(1,2,3,4,5,6)
+					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->Vector.empty())
 					.toList();
 
 			assertThat(list
@@ -331,7 +333,7 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = of(1,2,3,4,5,6)
+			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 
@@ -354,7 +356,7 @@ public class BatchingTest {
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
+		assertThat(Spouts.<Integer>of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -409,7 +411,7 @@ public class BatchingTest {
 	@Test
 	public void batchByTimeSet(){
 
-		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).toList().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -417,7 +419,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchByTimeInternalSizeCollection(){
-		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->Vector.empty()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 
 

@@ -39,7 +39,7 @@ public class GroupedWhileTest {
     public void groupedWhile10(){
         Spouts.iterate(0l, i->i+1l)
                 .groupedWhile(i->false)
-                .map(l->l.get(0))
+                .map(l->l.getOrElse(0,-1l))
                 .limit(3).subscribe(new Subscriber<Long>() {
             @Override
             public void onSubscribe(Subscription s) {

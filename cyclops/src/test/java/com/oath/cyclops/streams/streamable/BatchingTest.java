@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import cyclops.data.Seq;
+import cyclops.data.Vector;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -312,7 +313,7 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<Seq<Integer>> list = of(1,2,3,4,5,6)
+			List<Vector<Integer>> list = of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.groupedBySizeAndTime(10,1,TimeUnit.MILLISECONDS)
 

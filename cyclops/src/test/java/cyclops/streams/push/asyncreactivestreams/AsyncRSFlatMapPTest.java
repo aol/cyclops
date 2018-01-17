@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -73,7 +74,7 @@ public class AsyncRSFlatMapPTest {
     public void flatMapPList(){
         for(int l=0;l<1_000;l++) {
             System.out.println("Starting!");
-            ListX<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+            List<Integer> it = this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
                     .mergeMap(4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
                             .mergeMap(4, x -> of2(5, 6, 7, 7, 8, 9)))
                     .toList();
@@ -88,7 +89,7 @@ public class AsyncRSFlatMapPTest {
                     .mergeMap( 4, i -> of2(i, i * 2, i * 4, 5, 6, 7, 8, 9)
                             .mergeMap( 4, x -> of2(5, 6, 7, 7, 8, 9)))
                     .iterator();
-            assertThat("Iteration " + l,ListX.fromIterator(it).size(),equalTo(480));
+            assertThat("Iteration " + l,ReactiveSeq.fromIterator(it).size(),equalTo(480));
         }
     }
     @Test
@@ -130,7 +131,7 @@ public class AsyncRSFlatMapPTest {
                         .mergeMap(k->of(k)))
                 .iterator();
 
-        assertThat(ListX.fromIterator(it).size(),equalTo(8));
+        assertThat(ReactiveSeq.fromIterator(it).size(),equalTo(8));
     }
     @Test
     public void flatMapPub1(){
