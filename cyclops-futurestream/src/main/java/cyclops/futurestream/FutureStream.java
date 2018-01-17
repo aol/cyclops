@@ -24,8 +24,7 @@ import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.Queue.QueueTimeoutException;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.Streams;
