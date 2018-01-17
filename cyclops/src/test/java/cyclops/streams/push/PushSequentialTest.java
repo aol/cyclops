@@ -7,6 +7,8 @@ import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;

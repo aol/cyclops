@@ -1,9 +1,6 @@
-package cyclops.streams.push;
+package cyclops.reactive;
 
 
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -31,7 +28,56 @@ public class ReactiveStreamsTest {
         assertThat( ReactiveSeq.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
                 Arrays.asList(1,2,3)));
     }
-
+    @Test
+    public void fromFluxListX(){
+        assertThat( ListX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxSetX(){
+        assertThat( SetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxQueueX(){
+        assertThat( QueueX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxDequeX(){
+        assertThat( DequeX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxSortedSetX(){
+        assertThat( SortedSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxPSetX(){
+        assertThat( PersistentSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxPOrderedSetX(){
+        assertThat( OrderedSetX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxPStackX(){
+        assertThat( LinkedListX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxPVectorX(){
+        assertThat( VectorX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
+    @Test
+    public void fromFluxPBagX(){
+        assertThat( BagX.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
+                Arrays.asList(1,2,3)));
+    }
     @Test
     public void fromFluxStreamableX(){
         assertThat( Streamable.fromPublisher(Flux.just(1,2,3)).toList(),equalTo(
