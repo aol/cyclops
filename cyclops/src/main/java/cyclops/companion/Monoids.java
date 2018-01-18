@@ -35,51 +35,11 @@ public interface Monoids {
 
 
 
-    /**
-     * Concatenate mutable collections
-     *
-     * To manage javac type inference first assign the Monoid
-     * <pre>
-     * {@code
-     *
-     *    Monoid<List<Integer>> list =  Monoid.of(identity,Semigroups.collectionConcat(Arrays.asList());
-     *    Monoid<Set<Integer>> set =  Monoid.of(identity,Semigroups.collectionConcat(new HashSet());
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A  Monoid that can combine any mutable toX type
-     */
-    static <T, C extends Collection<T>> Monoid<C> mutableCollectionConcat(C identity) {
-        return Monoid.of(identity, Semigroups.mutableCollectionConcat());
-    }
-
-
     static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
         return Monoid.of(empty,Semigroups.persistentCollectionConcat());
     }
 
 
-    /**
-     * This Monoid will combine JDK Collections.
-     *
-     * To manage javac type inference to assign the monoid
-     * <pre>
-     * {@code
-     *
-     *    Monoid<List<Integer>> list = Monoids.collectionConcat();
-     *    Monoid<Set<Integer>> set = Monoids.collectionConcat();
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A Semigroup that attempts to combine the supplied Collections
-     */
-    static <T, C extends Collection<T>> Monoid<C> collectionConcat(C zero) {
-        return Monoid.of(zero, Semigroups.collectionConcat());
-    }
     /**
      * Example sum integer Maybes
      * <pre>

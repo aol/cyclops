@@ -50,12 +50,16 @@ public interface Semigroups {
 
         return (C a, C b) -> (C)a.plusAll(b);
     }
+    static <T, C extends ImmutableList<T>> Semigroup<C> immutableListConcat() {
+
+        return (C a, C b) -> (C)a.appendAll(b);
+    }
 
     static <T> Semigroup<LazySeq<T>> lazySeqConcat() {
-      return Semigroups.persistentCollectionConcat();
+      return Semigroups.immutableListConcat();
     }
     static <T> Semigroup<Seq<T>> seqConcat() {
-      return Semigroups.persistentCollectionConcat();
+      return Semigroups.immutableListConcat();
     }
     static <T> Semigroup<Vector<T>> vectorConcat() {
       return Semigroups.persistentCollectionConcat();
@@ -82,91 +86,7 @@ public interface Semigroups {
       return Semigroups.persistentCollectionConcat();
     }
 
-    /**
-     * Concatenate mutable collections
-     *
-     * To manage javac type inference first assign the semigroup
-     * <pre>
-     * {@code
-     *
-     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
-     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A Semigroup that can combine any mutable toX type
-     */
-    static <T, C extends Collection<T>> Semigroup<C> mutableCollectionConcat() {
-        return (a, b) -> {
 
-            a.addAll(b);
-            return a;
-        };
-    }
-
-  /**  static <T> Semigroup<NonEmptyList<T>> nonEmptyList(){
-        return (a,b)->b.prependAll(a);
-    }**/
-    /**
-     * @return A combiner for mutable lists
-     */
-    static <T> Semigroup<List<T>> mutableListConcat() {
-        return Semigroups.mutableCollectionConcat();
-    }
-
-    /**
-     * @return A combiner for mutable sets
-     */
-    static <T> Semigroup<Set<T>> mutableSetConcat() {
-        return Semigroups.mutableCollectionConcat();
-    }
-
-    /**
-     * @return A combiner for mutable SortedSets
-     */
-    static <T> Semigroup<SortedSet<T>> mutableSortedSetConcat() {
-        return Semigroups.mutableCollectionConcat();
-    }
-
-    /**
-     * @return A combiner for mutable Queues
-     */
-    static <T> Semigroup<Queue<T>> mutableQueueConcat() {
-        return Semigroups.mutableCollectionConcat();
-    }
-
-    /**
-     * @return A combiner for mutable Deques
-     */
-    static <T> Semigroup<Deque<T>> mutableDequeConcat() {
-        return Semigroups.mutableCollectionConcat();
-    }
-
-
-    /**
-     * This Semigroup will combine JDK Collections.
-     *
-     * To manage javac type inference first assign the semigroup
-     * <pre>
-     * {@code
-     *
-     *    Semigroup<List<Integer>> list = Semigroups.collectionConcat();
-     *    Semigroup<Set<Integer>> set = Semigroups.collectionConcat();
-     *
-     *
-     *
-     * }
-     * </pre>
-     * @return A Semigroup that attempts to combine the supplied Collections
-     */
-    static <T, C extends Collection<T>> Semigroup<C> collectionConcat() {
-        return (a, b) -> {
-            a.addAll(b);
-            return a;
-        };
-    }
     /**
      * <pre>
      * {@code
