@@ -1402,7 +1402,7 @@ public abstract class AbstractIterableXTest {
 
         of("a").zipWithIndex().map(t -> t._2()).printOut();
 		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toList());
+		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().toList());
 
 	}
 

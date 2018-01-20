@@ -219,7 +219,7 @@ public class ZippingFuturesTest {
 		Assert.assertEquals(asList(), DuplicationTest.of().actOnFutures().zipWithIndex().toList());
 
 		assertThat(DuplicationTest.of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		Assert.assertEquals(asList(new Tuple2("a", 0L)), DuplicationTest.of("a").zipWithIndex().toList());
+		Assert.assertEquals(asList(Tuple.tuple("a", 0L)), DuplicationTest.of("a").zipWithIndex().toList());
 
 	}
 

@@ -3645,7 +3645,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     public static <T, U> Tuple2<ReactiveSeq<T>, ReactiveSeq<U>> unzip(final ReactiveSeq<Tuple2<T, U>> sequence) {
         final Tuple2<ReactiveSeq<Tuple2<T, U>>, ReactiveSeq<Tuple2<T, U>>> tuple2 = sequence.duplicate();
-        return new Tuple2(
+        return Tuple.tuple(
                           tuple2._1().map(Tuple2::_1), tuple2._2().map(Tuple2::_2));
     }
 

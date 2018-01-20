@@ -5,6 +5,7 @@ import com.oath.cyclops.async.adapters.Topic;
 
 import cyclops.control.Option;
 import cyclops.control.Maybe;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -194,9 +195,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
 
-
-
-        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = Tuple.tuple(
                 t._1().limit(1), t._2().skip(1));
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         assertThat(t._2().skip(1).toList(),equalTo(Arrays.asList()));
@@ -210,7 +209,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
 
 
-        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = Tuple.tuple(
                 t._1().limit(1), t._2().skip(1));
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         assertThat(t._2().skip(1).toList(),equalTo(Arrays.asList()));

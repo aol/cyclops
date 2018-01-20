@@ -744,7 +744,7 @@ public class Streams {
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> splitAt(final Stream<T> stream, final int where) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
-        return new Tuple2(
+        return Tuple.tuple(
                           Tuple2._1().limit(where), Tuple2._2().skip(where));
     }
 
@@ -760,7 +760,7 @@ public class Streams {
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> splitBy(final Stream<T> stream, final Predicate<T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
-        return new Tuple2(
+        return Tuple.tuple(
                           limitWhile(Tuple2._1(), splitter), skipWhile(Tuple2._2(), splitter));
     }
 
@@ -777,7 +777,7 @@ public class Streams {
      */
     public final static <T> Tuple2<Stream<T>, Stream<T>> partition(final Stream<T> stream, final Predicate<? super T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
-        return new Tuple2(
+        return Tuple.tuple(
                           Tuple2._1().filter(splitter), Tuple2._2().filter(splitter.negate()));
     }
 
@@ -798,7 +798,7 @@ public class Streams {
     public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator());
-        return new Tuple2(
+        return Tuple.tuple(
                           Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
     /**
@@ -818,14 +818,14 @@ public class Streams {
     public final static <T> Tuple2<Stream<T>, Stream<T>> duplicate(final Stream<T> stream,Supplier<Deque<T>> bufferFactory) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(),bufferFactory);
-        return new Tuple2(
+        return Tuple.tuple(
                 Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
 
     private final static <T> Tuple2<Stream<T>, Stream<T>> duplicatePos(final Stream<T> stream, final int pos) {
 
         final Tuple2<Iterator<T>, Iterator<T>> Tuple2 = Streams.toBufferingDuplicator(stream.iterator(), pos);
-        return new Tuple2(
+        return Tuple.tuple(
                           Streams.stream(Tuple2._1()), Streams.stream(Tuple2._2()));
     }
 
@@ -2307,7 +2307,7 @@ public class Streams {
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, final long pos) {
         final LinkedList<A> bufferTo = new LinkedList<A>();
         final LinkedList<A> bufferFrom = new LinkedList<A>();
-        return new Tuple2(
+        return Tuple.tuple(
                           new DuplicatingIterator(
                                                   bufferTo, bufferFrom, iterator, Long.MAX_VALUE, 0),
                           new DuplicatingIterator(
@@ -2320,7 +2320,7 @@ public class Streams {
     public static final <A> Tuple2<Iterator<A>, Iterator<A>> toBufferingDuplicator(final Iterator<A> iterator, final long pos,Supplier<Deque<A>> bufferFactory) {
         final Deque<A> bufferTo = bufferFactory.get();
         final Deque<A> bufferFrom = bufferFactory.get();
-        return new Tuple2(
+        return Tuple.tuple(
                 new DuplicatingIterator(
                         bufferTo, bufferFrom, iterator, Long.MAX_VALUE, 0),
                 new DuplicatingIterator(

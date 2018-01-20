@@ -2105,7 +2105,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     default Tuple2<FutureStream<U>, FutureStream<U>> duplicateFutureStream() {
         final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> duplicated = this.duplicate();
-        return new Tuple2(
+        return Tuple.tuple(
                           fromStream(duplicated._1()), fromStream(duplicated._2()));
     }
 
@@ -2148,7 +2148,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     default Tuple2<FutureStream<U>, FutureStream<U>> partitionFutureStream(final Predicate<? super U> predicate) {
         final Tuple2<ReactiveSeq<U>, ReactiveSeq<U>> partition = partition(predicate);
-        return new Tuple2(
+        return Tuple.tuple(
                           fromStream(partition._1()), fromStream(partition._2()));
     }
 

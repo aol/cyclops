@@ -27,6 +27,7 @@ import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -486,7 +487,7 @@ public abstract class AbstractTraversableTest {
         assertEquals(asList(), of().zipWithIndex().stream().toList());
 
         assertThat(of("a").zipWithIndex().stream().map(t -> t._2()).findFirst().get(), is(0l));
-        assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().stream().toList());
+        assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().stream().toList());
 
     }
 
