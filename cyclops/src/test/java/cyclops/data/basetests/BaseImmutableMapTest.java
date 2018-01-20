@@ -123,7 +123,7 @@ public abstract  class BaseImmutableMapTest {
         Map<String,Integer> map = new java.util.HashMap<>();
         map.put("1",1);
         map.put("2",2);
-        assertThat(of("1",1).put("2", 2),equalTo(map));
+        assertThat(of("1",1).put("2", 2).javaMap(),equalTo(map));
     }
     @Test
     public void testMapKVPutAll() {
@@ -141,7 +141,7 @@ public abstract  class BaseImmutableMapTest {
         map2.put("4",4);
         map2.put("5",5);
         map2.put("6",6);
-        assertThat(of("1",1).putAll(cyclops.data.HashMap.fromMap(map2)),equalTo(map));
+        assertThat(of("1",1).putAll(cyclops.data.HashMap.fromMap(map2)).javaMap(),equalTo(map));
     }
 
     @Test
