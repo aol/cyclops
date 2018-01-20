@@ -274,14 +274,14 @@ public class ZippingTest {
 		Assert.assertEquals(asList(), DuplicationTest.of().zipWithIndex().toList());
 
 		assertThat(DuplicationTest.of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		Assert.assertEquals(asList(new Tuple2("a", 0L)), DuplicationTest.of("a").zipWithIndex().toList());
+		Assert.assertEquals(asList(Tuple.tuple("a", 0L)), DuplicationTest.of("a").zipWithIndex().toList());
 
 	}
 
 	@Test
 	public void testUnzip() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
@@ -294,7 +294,7 @@ public class ZippingTest {
 	@Test
 	public void testUnzipWithLimits() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> DuplicationTest.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 

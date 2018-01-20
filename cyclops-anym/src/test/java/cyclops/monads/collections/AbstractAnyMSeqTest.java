@@ -33,6 +33,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.*;
 import cyclops.futurestream.LazyReact;
@@ -914,7 +915,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		assertEquals(asList(), of().zipWithIndex().toListX());
 
 		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().toListX());
+		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().toListX());
 
 	}
 

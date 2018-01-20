@@ -7,6 +7,7 @@ import com.oath.cyclops.async.adapters.Topic;
 import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -213,7 +214,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
 
 
-        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = Tuple.tuple(
                 t._1().limit(1), t._2().skip(1));
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         assertThat(t._2().skip(1).toList(),equalTo(Arrays.asList()));
@@ -227,7 +228,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
 
 
 
-        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = new Tuple2(
+        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = Tuple.tuple(
                 t._1().limit(1), t._2().skip(1));
         assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         assertThat(t._2().skip(1).toList(),equalTo(Arrays.asList()));
@@ -356,9 +357,9 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
 
         System.out.println("Second..");
-        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
+        assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
         System.out.println("Third..");
-        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
+        assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L), Tuple.tuple("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 
 
     }

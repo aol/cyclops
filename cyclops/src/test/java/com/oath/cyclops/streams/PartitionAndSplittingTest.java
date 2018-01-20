@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import cyclops.control.Option;
+import cyclops.data.LazySeq;
+import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
@@ -93,6 +95,17 @@ public class PartitionAndSplittingTest {
 	}
 
 	@Test
+    public void splitAtHeadBug(){
+        final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> Tuple2 = ReactiveSeq.of(1).splitAt(1);
+
+        Option<LazySeq<Integer>> a = Tuple2._1().to().option();
+        Option<Option<Integer>> x = a
+            .flatMap(l -> l.size() > 0 ? Option.of(l.get(0)) : Option.none());
+
+
+        assertEquals(Option.of(1), ReactiveSeq.of(1).splitAtHead()._1());
+    }
+	@Test
 	public void testSplitAtHead() {
 
 		assertEquals(asList(), ReactiveSeq.of(1).splitAtHead()._2().toList());
@@ -100,6 +113,7 @@ public class PartitionAndSplittingTest {
 		assertEquals(Option.none(), of().splitAtHead()._1());
 		assertEquals(asList(), ReactiveSeq.of().splitAtHead()._2().toList());
 
+        Tuple2<Option<Integer>, ReactiveSeq<Integer>> x = ReactiveSeq.of(1).splitAtHead();
 		assertEquals(Option.of(1), ReactiveSeq.of(1).splitAtHead()._1());
 
 		assertEquals(Option.of(1), ReactiveSeq.of(1, 2).splitAtHead()._1());

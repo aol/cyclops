@@ -581,7 +581,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public ReactiveSeq<Vector<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),()->Seq.fromIterable(new ArrayList<>(size)),
+        return createSeq(new GroupedByTimeAndSizeSpliterator<>(this.get(),()->Vector.<T>empty(),
                         Function.identity(),size,time,t),
                 reversible);
 

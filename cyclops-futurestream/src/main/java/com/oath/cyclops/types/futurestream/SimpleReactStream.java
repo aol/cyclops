@@ -102,7 +102,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
         final Tuple2<ReactiveSeq<CompletableFuture<U>>, ReactiveSeq<CompletableFuture<U>>> split = ReactiveSeq.fromStream((Stream<CompletableFuture<U>>) stream)
                                                                                       .splitAt(position);
 
-        return new Tuple2(
+        return Tuple.tuple(
                           fromListCompletableFuture(split._1().collect(Collectors.toList())),
                           fromListCompletableFuture(split._2().collect(Collectors.toList())));
     }
@@ -130,7 +130,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
         final Stream stream = getLastActive().stream();
         final Tuple2<ReactiveSeq<CompletableFuture<U>>, ReactiveSeq<CompletableFuture<U>>> duplicated = ReactiveSeq.fromStream((Stream<CompletableFuture<U>>) stream)
                                                                                            .duplicate();
-        final Tuple2 dup = new Tuple2(
+        final Tuple2 dup = Tuple.tuple(
                                       fromStreamOfFutures(duplicated._1()), fromStreamOfFutures(duplicated._2()));
 
         return dup;

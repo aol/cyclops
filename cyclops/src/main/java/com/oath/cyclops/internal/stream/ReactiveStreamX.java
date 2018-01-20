@@ -1221,10 +1221,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Tuple2<Option<T>, ReactiveSeq<T>> splitAtHead() {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = splitAt(1);
-        return new Tuple2(
+        return Tuple.tuple(
                 Tuple2._1().to().option()
                         .flatMap(l -> {
-                            return l.size() > 0 ? Option.of(l.get(0)) : Option.none();
+                            return l.size() > 0 ? l.get(0) : Option.none();
                         }),
                 Tuple2._2());
     }
@@ -1232,7 +1232,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitAt(final int where) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
-        return new Tuple2(
+        return Tuple.tuple(
                 Tuple2._1().limit(where), Tuple2._2().skip(where));
 
 
@@ -1241,14 +1241,14 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
-        return new Tuple2(
+        return Tuple.tuple(
                 Tuple2._1().limitWhile(splitter), Tuple2._2().skipWhile(splitter));
     }
 
     @Override
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> partition(final Predicate<? super T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
-        return new Tuple2(
+        return Tuple.tuple(
                 Tuple2._1().filter(splitter), Tuple2._2().filter(splitter.negate()));
 
     }

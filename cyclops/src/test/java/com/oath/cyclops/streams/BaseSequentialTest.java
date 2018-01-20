@@ -27,6 +27,7 @@ import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -215,10 +216,17 @@ public class BaseSequentialTest {
 
     @Test
     public void splitThenSplit() {
-        assertThat(of(1, 2, 3).to().option(), equalTo(Option.of(Arrays.asList(1, 2, 3))));
+        assertThat(of(1, 2, 3).to().option(), equalTo(Option.of(LazySeq.of(1, 2, 3))));
         // System.out.println(of(1, 2, 3).splitAtHead()._2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
-        assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+        ReactiveSeq<Integer> x = of(1, 2, 3).splitAtHead()._2()
+            .splitAtHead()._2();
+        System.out.println("s is  " + x.seq());
+        Option<Integer> o = of(1, 2, 3).splitAtHead()._2()
+                                    .splitAtHead()._2()
+                                    .splitAtHead()._1();
+        System.out.println("o is " + o);
+        assertEquals(Option.of(3), o);
     }
 
     @Test
@@ -669,7 +677,7 @@ public class BaseSequentialTest {
     @Test
     public void optionalConvert() {
         for (int i = 0; i < 10; i++) {
-            assertThat(of(1, 2, 3).to().option(), equalTo(Optional.of(LazySeq.of(1, 2, 3))));
+            assertThat(of(1, 2, 3).to().option(), equalTo(Option.of(LazySeq.of(1, 2, 3))));
         }
     }
     @Test
@@ -1080,8 +1088,8 @@ public class BaseSequentialTest {
         assertEquals(asList(), of().zipWithIndex().toList());
         assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
         assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
-        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
-        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
+        assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
+        assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L), Tuple.tuple("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
     }
 
 
@@ -1290,7 +1298,7 @@ public class BaseSequentialTest {
 
     @Test
     public void testUnzip() {
-        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
         Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
         assertThat(u1._1().toList(), equalTo(asList(1, 2, 3)));

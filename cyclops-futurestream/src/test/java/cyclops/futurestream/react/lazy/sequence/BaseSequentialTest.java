@@ -424,8 +424,8 @@ public class BaseSequentialTest {
 		    	//assertEquals(asList(), of().zipWithIndex().toList());
 		       // assertEquals(asList(tuple("a", 0L)), of("a").zip(of(0L)).toList());
 		        //assertEquals(asList(tuple("a", 0L)), of("a").zipWithIndex().toList());
-		    	assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
-		        assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L), new Tuple2("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
+		    	assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L)), of("a", "b").zipWithIndex().toList());
+		        assertEquals(asList(Tuple.tuple("a", 0L), Tuple.tuple("b", 1L), Tuple.tuple("c", 2L)), of("a", "b", "c").zipWithIndex().toList());
 		    }
 
 
@@ -572,7 +572,7 @@ public class BaseSequentialTest {
 
 		    @Test
 		    public void testUnzip() {
-		        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		        Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
 		        Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 		        assertThat(u1._1().toList(),equalTo(asList(1, 2, 3)));
