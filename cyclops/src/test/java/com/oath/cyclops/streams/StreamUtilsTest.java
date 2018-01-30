@@ -174,7 +174,7 @@ utilResultList:[1]
 
 		 assertThat(Streams.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
 
-		                  ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
+		                  ,equalTo(Seq.of("helloworldwoo!",",hello,world,woo!")));
 	}
 	@Test
 	public void reducer2(){
@@ -183,7 +183,7 @@ utilResultList:[1]
 		val result = Streams.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
 
 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
+		assertThat(result,equalTo(Seq.of(10,24)));
 	}
 
 	int count;
