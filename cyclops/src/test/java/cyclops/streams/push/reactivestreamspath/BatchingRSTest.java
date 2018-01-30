@@ -32,7 +32,7 @@ public class BatchingRSTest {
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
-				.to(Streamable::fromStream).toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.to(Streamable::fromStream).toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
@@ -42,7 +42,7 @@ public class BatchingRSTest {
 				.size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
-				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
@@ -51,7 +51,7 @@ public class BatchingRSTest {
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->Vector.empty())
-				.to(Streamable::fromStream).toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.to(Streamable::fromStream).toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
@@ -63,7 +63,7 @@ public class BatchingRSTest {
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
 		assertThat(Spouts.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->Vector.empty())
-				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchByTime2(){
