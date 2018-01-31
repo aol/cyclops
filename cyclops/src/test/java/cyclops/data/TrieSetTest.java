@@ -97,4 +97,6 @@ public class TrieSetTest extends BaseImmutableSetTest{
     assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),
       equalTo(of(1,2,3,2).indexOf(e->Objects.equals(2,e))));
   }
+
+
 }

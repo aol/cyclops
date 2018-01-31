@@ -2409,7 +2409,7 @@ public abstract class AbstractIterableXTest {
                 .toList().size(),equalTo(2));
         assertThat(of(1,2,3,4,5,6)
                 .groupedUntil(i->i%3==0,()->Vector.empty())
-                .toList().get(0),equalTo(Arrays.asList(1,2,3)));
+                .toList().get(0),equalTo(Vector.of(1,2,3)));
     }
     @Test
     public void batchWhileCollection(){
@@ -2417,7 +2417,7 @@ public abstract class AbstractIterableXTest {
                 .groupedWhile(i->i%3!=0,()->Vector.empty())
                 .toList().size(),equalTo(2));
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->Vector.empty()),equalTo(of(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+                .groupedWhile(i->i%3!=0,()->Vector.empty()),equalTo(of(Vector.of(1,2,3),Vector.of(4,5,6))));
     }
 
 

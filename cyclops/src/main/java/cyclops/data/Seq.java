@@ -20,6 +20,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -801,11 +802,17 @@ public interface Seq<T> extends ImmutableList<T>,
         public final T head;
         public final Seq<T> tail;
         private final int size;
-        private final int hash;
+        private final Supplier<Integer> hash = Memoize.memoizeSupplier(()->{
+            int hashCode = 1;
+            for (T e : this)
+                hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+            return hashCode;
+        });
 
         public static <T> Cons<T> cons(T value, Seq<T> tail){
-            return new Cons<>(value,tail,tail.size()+1, 31 * Objects.hashCode(value) + Objects.hashCode(tail));
+            return new Cons<>(value,tail,tail.size()+1);
         }
+
 
         @Override
         public Tuple2<T, ImmutableList<T>> unapply() {
@@ -924,7 +931,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         @Override
         public int hashCode() {
-            return hash;
+            return hash.get();
         }
 
         @Override
