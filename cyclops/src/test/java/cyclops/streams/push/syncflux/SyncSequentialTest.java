@@ -5,6 +5,7 @@ import com.oath.cyclops.async.adapters.Topic;
 
 import cyclops.control.Option;
 import cyclops.control.Maybe;
+import cyclops.data.LazySeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -272,7 +273,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
     @Test
     public void splitThenSplit(){
-        assertThat(of(1,2,3).to().option(),equalTo(Option.of(Arrays.asList(1,2,3))));
+        assertThat(of(1,2,3).to().option(),equalTo(Option.of(LazySeq.of(1,2,3))));
        // System.out.println(of(1, 2, 3).splitAtHead().v2.listX());
         System.out.println("split " + of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
         assertEquals(Option.of(3), of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
