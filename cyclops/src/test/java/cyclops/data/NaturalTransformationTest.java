@@ -32,7 +32,7 @@ public class NaturalTransformationTest {
 
     @Test
     public void streamToList(){
-        assertThat(streamToList.apply(ReactiveSeq.of(1,2,3)),equalTo(Arrays.asList(1,2,3)));
+        assertThat(streamToList.apply(ReactiveSeq.of(1,2,3)),equalTo(Vector.of(1,2,3)));
     }
     @Test
     public void streamToListAndThenToVectorX(){

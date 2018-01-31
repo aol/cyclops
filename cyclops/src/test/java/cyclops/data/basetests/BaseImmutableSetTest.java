@@ -304,7 +304,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
                 .toList().size(),equalTo(2));
         assertTrue(of(1,2,3,4,5,6)
                 .groupedUntil(i->i%3==0,()->Vector.empty())
-                .toList().contains(Arrays.asList(1,2,3)));
+                .toList().contains(Vector.of(1,2,3)));
     }
     @Test
     public void batchBySizeSet(){
