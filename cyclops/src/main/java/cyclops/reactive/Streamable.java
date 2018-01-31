@@ -2282,7 +2282,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Streamable that will switch to an alternative Stream if empty
      */
     default Streamable<T> onEmptySwitch(final Supplier<Streamable<T>> switchTo) {
-        return fromStream(this.stream().onEmptySwitch(() -> this.stream()));
+        return fromStream(this.stream().onEmptySwitch(() -> switchTo.get().stream()));
     }
 
     @Override

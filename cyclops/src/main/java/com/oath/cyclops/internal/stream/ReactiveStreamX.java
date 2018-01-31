@@ -13,6 +13,7 @@ import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.async.adapters.Topic;
+import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.companion.Streams;
 import cyclops.control.*;
@@ -1286,7 +1287,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return grouped(Integer.MAX_VALUE, ()->Seq.empty())
+        return grouped(Integer.MAX_VALUE, ()-> Vector.empty())
+                .map(ReactiveSeq::fromIterable)
                 .concatMap(s -> s.cycle(times));
 
     }
