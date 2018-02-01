@@ -50,7 +50,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     @Override
     default ReactiveSeq<T> stream() {
-        return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
+        return Streams.oneShotStream(this);
+     //   return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
     }
 
 

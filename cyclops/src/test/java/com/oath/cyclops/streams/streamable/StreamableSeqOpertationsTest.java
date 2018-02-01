@@ -18,12 +18,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.internal.stream.OneShotStreamX;
 import cyclops.control.Option;
 import cyclops.data.HashMap;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -440,6 +442,7 @@ public class StreamableSeqOpertationsTest {
 			        assertEquals(asList(1, 2, 3, 4, 5, 6), s.get().splitAt(7)._1().toList());
 			      	}
 		    }
+
 
 		    @Test
 		    public void testSplitAtHead() {

@@ -2022,7 +2022,7 @@ public class Streams {
         return true;
 
     }
-    public static <T> ReactiveSeq<T> oneShotStreamI(final Iterable<T> iterable) {
+    public static <T> ReactiveSeq<T> oneShotStream(final Iterable<T> iterable) {
         Objects.requireNonNull(iterable);
         return new OneShotStreamX<T>(new IteratableSpliterator<T>(iterable), Optional.empty());
 
