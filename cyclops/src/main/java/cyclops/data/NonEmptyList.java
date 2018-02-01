@@ -10,6 +10,7 @@ import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple3;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -135,9 +136,11 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<T> replaceFirst(T currentElement, T newElement) {
-        return (NonEmptyList<T>)ImmutableList.Some.super.replaceFirst(currentElement,newElement);
+    public NonEmptyList<T> replaceFirst(T currentElement, T newElement){
+        return ImmutableList.Some.super.replaceFirst(currentElement,newElement)
+                            .fold(cons->cons(cons.head(),cons.tail()),nil->this);
     }
+
 
     @Override
     public NonEmptyList<T> insertAt(int pos, T... values) {

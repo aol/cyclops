@@ -12,6 +12,7 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 
 import cyclops.data.LazySeq;
+import cyclops.data.Vector;
 import cyclops.function.*;
 import cyclops.companion.Semigroups;
 
@@ -789,6 +790,9 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      */
     default <T2, R> Either<LazySeq<LT>, R> combineToLazySeq(final Either<LT, ? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
         return lazySeq().combine(app.lazySeq(), Semigroups.lazySeqConcat(), fn);
+    }
+    default <T2, R> Either<Vector<LT>, R> combineToVector(final Either<LT, ? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
+        return mapLeft(Vector::of).combine(app.mapLeft(Vector::of), Semigroups.vectorConcat(), fn);
     }
 
     /**
