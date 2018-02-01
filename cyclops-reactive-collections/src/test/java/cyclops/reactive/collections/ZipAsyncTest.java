@@ -1,4 +1,4 @@
-package cyclops.reactive.collections.mutable;
+package cyclops.reactive.collections;
 
 import com.oath.cyclops.internal.stream.spliterators.push.Fixtures;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
@@ -7,6 +7,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Assert;
 import org.junit.Test;
 import reactor.core.publisher.Flux;

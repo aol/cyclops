@@ -11,8 +11,6 @@ import org.junit.Test;
 
 import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
-import cyclops.reactive.companion.MapXs;
 import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.reactive.collections.mutable.SortedSetX;

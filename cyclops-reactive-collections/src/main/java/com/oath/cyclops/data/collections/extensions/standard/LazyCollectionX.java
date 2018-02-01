@@ -716,7 +716,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see CollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default LazyCollectionX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default LazyCollectionX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
         return fromStream(stream().groupedUntil(predicate));
     }
 

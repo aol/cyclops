@@ -1,9 +1,9 @@
 package cyclops.reactive.collections.mutable;
 
+import com.oath.cyclops.data.ReactiveWitness.set;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazySetX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
-import com.oath.cyclops.hkt.DataWitness.set;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
@@ -1005,9 +1005,9 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
      * @see LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default SetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SetX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (SetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 

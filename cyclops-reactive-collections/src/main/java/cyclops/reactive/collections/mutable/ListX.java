@@ -1,5 +1,6 @@
 package cyclops.reactive.collections.mutable;
 
+import com.oath.cyclops.data.ReactiveWitness.list;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
@@ -38,7 +39,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.oath.cyclops.hkt.DataWitness.list;
+
 
 /**
  * An eXtended List type, that offers additional functional style operators such as bimap, filter and more
@@ -1174,9 +1175,9 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default ListX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default ListX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (ListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 

@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
-import cyclops.reactive.collections.mutable.MapX;
 import cyclops.data.tuple.Tuple2;
 
 import lombok.AllArgsConstructor;

@@ -986,9 +986,9 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default BagX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (BagX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (BagX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override

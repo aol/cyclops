@@ -1,6 +1,7 @@
 package cyclops.reactive.collections.immutable;
 
 
+import com.oath.cyclops.data.ReactiveWitness.vectorX;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.persistent.PersistentList;
@@ -17,7 +18,6 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import com.oath.cyclops.hkt.DataWitness.vectorX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
@@ -1090,9 +1090,9 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default VectorX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (VectorX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (VectorX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override

@@ -975,9 +975,9 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default SortedSetX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (SortedSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 
