@@ -17,7 +17,6 @@ import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import com.oath.cyclops.hkt.DataWitness.linkedListX;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -1115,9 +1114,9 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default LinkedListX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (LinkedListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override

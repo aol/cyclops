@@ -1,6 +1,7 @@
 package com.oath.cyclops;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.data.collections.extensions.CollectionXImpl;
 import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.stream.ToStream;
@@ -13,6 +14,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
+import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.*;
 import lombok.AllArgsConstructor;
 
@@ -167,17 +169,6 @@ public class ConvertableSequence<T> implements ToStream<T> {
     }
 
 
-
-    public <K, V> PersistentMapX<K, V> persistentMapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
-
-        final ReactiveSeq<Tuple2<K, V>> stream = stream().map(t -> Tuple.tuple(keyMapper.apply(t), valueMapper.apply(t)));
-        return stream.mapReduce(Reducers.toPMapX());
-    }
-
-    public <K, V> MapX<K, V> mapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
-        return MapX.fromMap(stream().collect(Collectors.toMap(keyMapper, valueMapper)));
-    }
-
     public Maybe<ListX<T>> maybe() {
         return value().toMaybe();
 
@@ -222,52 +213,16 @@ public class ConvertableSequence<T> implements ToStream<T> {
      * @return
      */
     public CollectionX<T> lazyCollection() {
-        return Streams.toLazyCollection(ReactiveSeq.fromIterable(iterable));
+        return new CollectionXImpl<>(Streams.toLazyCollection(ReactiveSeq.fromIterable(iterable)));
     }
 
-    /**
-     * Lazily converts this ReactiveSeq into a Collection. This does not trigger
-     * the Stream. E.g.
-     *
-     * <pre>
-     * {@code
-     *  Collection<Integer> col = ReactiveSeq.of(1, 2, 3, 4, 5)
-     *                                       .peek(System.out::println)
-     *                                       .lazyCollectionSynchronized();
-     *
-     *  col.forEach(System.out::println);
-     * }
-     *
-     * // Will print out "first!" before anything else
-     * </pre>
-     *
-     * @return
-     */
-    public CollectionX<T> lazyCollectionSynchronized() {
-        return Streams.toConcurrentLazyCollection(ReactiveSeq.fromIterable(iterable));
-    }
+
     public Streamable<T> lazyStreamable() {
         return Streams.toLazyStreamable(ReactiveSeq.fromIterable(iterable));
     }
 
 
-    /**
-     * <pre>
-     * {@code
-     *  Streamable<Integer> repeat = ReactiveSeq.of(1, 2, 3, 4, 5, 6).map(i -> i + 2).lazyStreamableSynchronized();
-     *
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     *  assertThat(repeat.stream().toList(), equalTo(Arrays.asList(2, 4, 6, 8, 10, 12)));
-     * }
-     * </pre>
-     *
-     * @return Streamable that replay this ReactiveSeq, populated lazily and can
-     *         be populated across threads
-     */
-    public Streamable<T> lazyStreamableSynchronized() {
-        return Streams.toConcurrentLazyStreamable(ReactiveSeq.fromIterable(iterable));
 
-    }
 
 
     public <C extends Collection<T>> C collection(final Supplier<C> factory) {

@@ -2,10 +2,12 @@ package com.oath.cyclops.data.collections.extensions;
 
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -13,7 +15,6 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
@@ -85,37 +86,34 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
      */
     @Override
-    <C extends Collection<? super T>> CollectionX<C> grouped(int size, Supplier<C> supplier);
+    <C extends PersistentCollection<? super T>> CollectionX<C> grouped(int size, Supplier<C> supplier);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
      */
     @Override
-    IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate);
+    CollectionX<Vector<T>> groupedUntil(Predicate<? super T> predicate);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
-     */
     @Override
-    CollectionX<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate);
+    CollectionX<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    Traversable<Vector<T>> groupedWhile(Predicate<? super T> predicate);
+    CollectionX<Vector<T>> groupedWhile(Predicate<? super T> predicate);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    <C extends Collection<? super T>> CollectionX<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory);
+    <C extends PersistentCollection<? super T>> CollectionX<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    <C extends Collection<? super T>> CollectionX<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
+    <C extends PersistentCollection<? super T>> CollectionX<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#intersperse(java.lang.Object)
@@ -332,11 +330,9 @@ public interface CollectionX<T> extends IterableX<T>,
         return stream().findAny();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Folds#groupBy(java.util.function.Function)
-     */
+
     @Override
-    default <K> MapX<K, ListX<T>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> cyclops.data.HashMap<K, Vector<T>> groupBy(final Function<? super T, ? extends K> classifier) {
         return stream().groupBy(classifier);
     }
     @Override
@@ -440,7 +436,7 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
      */
     @Override
-    Traversable<Vector<T>> grouped(int groupSize);
+    IterableX<Vector<T>> grouped(int groupSize);
 
 
     /* (non-Javadoc)
@@ -491,13 +487,13 @@ public interface CollectionX<T> extends IterableX<T>,
      * @see com.oath.cyclops.types.traversable.Traversable#sliding(int)
      */
     @Override
-    CollectionX<VectorX<T>> sliding(int windowSize);
+    CollectionX<Seq<T>> sliding(int windowSize);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#sliding(int, int)
      */
     @Override
-    CollectionX<VectorX<T>> sliding(int windowSize, int increment);
+    CollectionX<Seq<T>> sliding(int windowSize, int increment);
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)

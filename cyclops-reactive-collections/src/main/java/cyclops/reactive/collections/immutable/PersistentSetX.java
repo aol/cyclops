@@ -1,5 +1,6 @@
 package cyclops.reactive.collections.immutable;
 
+import com.oath.cyclops.data.ReactiveWitness.persistentSetX;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
@@ -16,7 +17,7 @@ import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
-import com.oath.cyclops.hkt.DataWitness.persistentSetX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
@@ -976,9 +977,9 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PersistentSetX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override

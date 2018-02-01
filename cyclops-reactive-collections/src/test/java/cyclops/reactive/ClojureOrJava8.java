@@ -12,7 +12,6 @@ import org.junit.Test;
 
 
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
 import cyclops.companion.MapXs;
 import cyclops.reactive.collections.mutable.SetX;
 

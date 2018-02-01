@@ -998,9 +998,9 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default OrderedSetX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (OrderedSetX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (OrderedSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override

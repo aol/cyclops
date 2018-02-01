@@ -1,9 +1,10 @@
 package cyclops.reactive.collections.mutable;
 
+import com.oath.cyclops.data.ReactiveWitness.deque;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyDequeX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
-import com.oath.cyclops.hkt.DataWitness.deque;
+
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
@@ -1151,9 +1152,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
      */
     @Override
-    default DequeX<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default DequeX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (DequeX<ListX<T>>) LazyCollectionX.super.groupedStatefullyUntil(predicate);
+        return (DequeX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 

@@ -3,7 +3,6 @@ package cyclops.reactive.collections;
 import com.oath.cyclops.types.persistent.*;
 import cyclops.companion.MapXs;
 import cyclops.companion.PersistentMapXs;
-import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
 

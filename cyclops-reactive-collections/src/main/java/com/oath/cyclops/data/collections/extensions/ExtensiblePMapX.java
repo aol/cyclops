@@ -3,7 +3,6 @@ package com.oath.cyclops.data.collections.extensions;
 
 import com.oath.cyclops.data.collections.extensions.persistent.PMapXImpl;
 import com.oath.cyclops.types.persistent.PersistentMap;
-import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import lombok.NonNull;

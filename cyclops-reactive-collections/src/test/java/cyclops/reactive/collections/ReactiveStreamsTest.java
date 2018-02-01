@@ -1,6 +1,9 @@
-package cyclops.reactive;
+package cyclops.reactive.collections;
 
 
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import cyclops.reactive.Streamable;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
