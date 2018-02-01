@@ -153,8 +153,12 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
         ImmutableMap<K,V> res = HashMap.empty();
         Vector<Tuple2<K,V>> ordering =order;
         for(Tuple2<K,V> t : narrow){
+            if(containsKey(t._1()))
+                ordering = ordering.replaceFirst(Tuple.tuple(t._1(),getOrElse(t._1(),null)),t);
+            else
+                ordering =ordering.plus(t);
             res = res.put(t);
-            ordering= ordering.plus(t);
+
         }
         return new LinkedMap<K,V>(res,ordering);
     }

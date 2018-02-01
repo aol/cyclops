@@ -56,10 +56,10 @@ public interface Semigroups {
     }
 
     static <T> Semigroup<LazySeq<T>> lazySeqConcat() {
-        return (a,b) -> b.appendAll(a);
+        return Semigroups.immutableListConcat();
     }
     static <T> Semigroup<Seq<T>> seqConcat() {
-      return (a,b) -> b.appendAll(a);
+      return Semigroups.immutableListConcat();
     }
     static <T> Semigroup<Vector<T>> vectorConcat() {
       return Semigroups.persistentCollectionConcat();

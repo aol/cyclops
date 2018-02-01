@@ -67,27 +67,13 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
 
     default Map<K,V> javaMap(){
-        return new Map<K, V>() {
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
+        return new AbstractMap<K, V>() {
+
+
 
             @Override
             public String toString() {
                 return ImmutableMap.this.toString();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if(obj instanceof Map){
-                    Map<K,V> m = (Map<K,V>)obj;
-                    if(m.size()!=size())
-                        return false;
-                    return stream().collect(Collectors.toMap(t->t._1(),t->t._2()))
-                                   .equals(m);
-                }
-                return super.equals(obj);
             }
 
             @Override
