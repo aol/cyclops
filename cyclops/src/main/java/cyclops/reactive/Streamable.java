@@ -3,6 +3,7 @@ package cyclops.reactive;
 
 import com.oath.cyclops.internal.stream.StreamableImpl;
 import com.oath.cyclops.types.factory.Unit;
+import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
@@ -43,6 +44,7 @@ import java.util.stream.*;
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
                                         IterableX<T>,
+                                        Contains<T>,
                                         Unit<T> {
 
 
@@ -51,7 +53,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default ReactiveSeq<T> stream() {
         return Streams.oneShotStream(this);
-     //   return Streams.oneShotStream(StreamSupport.stream(getStreamable().spliterator(),false));
     }
 
 

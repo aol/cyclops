@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
@@ -32,6 +33,7 @@ import java.util.stream.Stream;
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
                                             OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
                                             OnEmptyError<T, ImmutableQueue<T>>,
+                                            Contains<T>,
                                             IterableX<T>, To<ImmutableQueue<T>>, PersistentQueue<T> {
 
 

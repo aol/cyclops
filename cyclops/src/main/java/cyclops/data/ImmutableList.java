@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
@@ -34,6 +35,7 @@ import static cyclops.matching.Api.*;
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
                                           IterableX<T>,
+                                          Contains<T>,
                                           PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                             OnEmptyError<T, ImmutableList<T>>,

@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,ImmutableSet<T>>,PersistentSet<T>,
                                         OnEmptyError<T, ImmutableSet<T>>,
+                                         Contains<T>,
                                          IterableX<T>{
 
     <R> ImmutableSet<R> unitIterable(Iterable<R> it);

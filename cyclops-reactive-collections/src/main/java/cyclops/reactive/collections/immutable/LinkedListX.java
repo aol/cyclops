@@ -1,6 +1,6 @@
 package cyclops.reactive.collections.immutable;
 
-
+import com.oath.cyclops.data.ReactiveWitness.linkedListX;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyLinkedListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;

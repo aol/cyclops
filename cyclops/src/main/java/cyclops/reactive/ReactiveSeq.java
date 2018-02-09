@@ -5,6 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.*;
 
 
+import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
 import cyclops.control.*;
@@ -107,6 +108,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         Stream<T>,
                                         OnEmptySwitch<T, Stream<T>>,
                                         IterableX<T>,
+                                        Contains<T>,
                                         Unit<T>,
                                         Higher<reactiveSeq,T> {
 

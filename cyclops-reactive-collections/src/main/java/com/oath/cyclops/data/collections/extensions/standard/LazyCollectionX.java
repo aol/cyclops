@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Vector;
@@ -228,7 +229,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
      * @see CollectionX#grouped(int)
      */
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
+    default LazyCollectionX<Vector<T>> grouped(final int groupSize) {
         return fromStream(stream().grouped(groupSize)
                                   .map(ListX::fromIterable));
     }
@@ -656,58 +657,43 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().combinations(size));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.ExtendedTraversable#combinations()
-     */
-    /* (non-Javadoc)
-     * @see CollectionX#combinations()
-     */
+
     @Override
     default LazyCollectionX<ReactiveSeq<T>> combinations() {
         return fromStream(stream().combinations());
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#grouped(int, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> LazyCollectionX<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> LazyCollectionX<C> grouped(final int size, final Supplier<C> supplier) {
 
         return fromStream(stream().grouped(size, supplier));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#groupedUntil(java.util.function.Predicate)
-     */
+
     @Override
-    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default LazyCollectionX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return fromStream(stream().groupedUntil(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#groupedWhile(java.util.function.Predicate)
-     */
+
     @Override
-    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default LazyCollectionX<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return fromStream(stream().groupedWhile(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> LazyCollectionX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> LazyCollectionX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return fromStream(stream().groupedWhile(predicate, factory));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> LazyCollectionX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> LazyCollectionX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return fromStream(stream().groupedUntil(predicate, factory));
     }
