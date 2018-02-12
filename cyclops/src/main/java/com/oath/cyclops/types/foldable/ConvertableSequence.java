@@ -9,7 +9,9 @@ import cyclops.data.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,7 +30,9 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 public class  ConvertableSequence<T> implements ToStream<T> {
-    Iterable<T> iterable;
+    @Getter(AccessLevel.PROTECTED)
+    private final Iterable<T> iterable;
+
 
     @Override
     public Iterator<T> iterator() {

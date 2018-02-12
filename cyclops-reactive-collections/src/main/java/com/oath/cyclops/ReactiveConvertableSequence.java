@@ -3,6 +3,7 @@ package com.oath.cyclops;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.CollectionXImpl;
 import com.oath.cyclops.types.Value;
+import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Reducers;
@@ -33,35 +34,21 @@ import java.util.stream.Collectors;
  *
  * @param <T> Data types of elements in this ConvertableSequence
  */
-@AllArgsConstructor
-public class ConvertableSequence<T> implements ToStream<T> {
-    Iterable<T> iterable;
+public class ReactiveConvertableSequence<T> extends ConvertableSequence<T> {
 
-    @Override
-    public Iterator<T> iterator() {
-        return iterable.iterator();
+    public static <T> ReactiveConvertableSequence<T> converter(Iterable<T> it){
+        return new ReactiveConvertableSequence<>(it);
     }
 
-
-
-
-
-    public ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromIterable(iterable);
+    public ReactiveConvertableSequence(Iterable<T> iterable) {
+        super(iterable);
     }
 
-
-
-
-    public Streamable<T> streamable() {
-
-        return Streamable.fromIterable(iterable);
-    }
     public PersistentQueueX<T> persistentQueueX(){
         return persistentQueueX(Evaluation.EAGER);
     }
     public PersistentQueueX<T> persistentQueueX(Evaluation c) {
-        PersistentQueueX<T> res = PersistentQueueX.fromIterable(iterable);
+        PersistentQueueX<T> res = PersistentQueueX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -72,7 +59,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
     }
 
     public PersistentSetX<T> persistentSetX(Evaluation c) {
-        PersistentSetX<T> res = PersistentSetX.fromIterable(iterable);
+        PersistentSetX<T> res = PersistentSetX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -82,7 +69,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return orderedSetX(Evaluation.EAGER);
     }
     public OrderedSetX<T> orderedSetX(Evaluation c) {
-        OrderedSetX<T> res = OrderedSetX.fromIterable(iterable);
+        OrderedSetX<T> res = OrderedSetX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -92,7 +79,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return bagX(Evaluation.LAZY);
     }
     public BagX<T> bagX(Evaluation c) {
-        BagX<T> res = BagX.fromIterable(iterable);
+        BagX<T> res = BagX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -102,7 +89,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return vectorX(Evaluation.EAGER);
     }
     public VectorX<T> vectorX(Evaluation c) {
-        VectorX<T> res = VectorX.fromIterable(iterable);
+        VectorX<T> res = VectorX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -112,7 +99,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return linkedListX(Evaluation.EAGER);
     }
     public LinkedListX<T> linkedListX(Evaluation c) {
-        LinkedListX<T> res = LinkedListX.fromIterable(iterable);
+        LinkedListX<T> res = LinkedListX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -122,7 +109,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return dequeX(Evaluation.EAGER);
     }
     public DequeX<T> dequeX(Evaluation c) {
-        DequeX<T> res = DequeX.fromIterable(iterable);
+        DequeX<T> res = DequeX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -131,7 +118,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return sortedSetX(Evaluation.EAGER);
     }
     public SortedSetX<T> sortedSetX(Evaluation c) {
-        SortedSetX<T> res = SortedSetX.fromIterable(iterable);
+        SortedSetX<T> res = SortedSetX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -141,7 +128,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return setX(Evaluation.EAGER);
     }
     public SetX<T> setX(Evaluation c) {
-        SetX<T> res = SetX.fromIterable(iterable);
+        SetX<T> res = SetX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
@@ -151,7 +138,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return listX(Evaluation.EAGER);
     }
     public ListX<T> listX(Evaluation c) {
-        ListX<T> res = ListX.fromIterable(iterable);
+        ListX<T> res = ListX.fromIterable(getIterable());
         if(Evaluation.EAGER ==c) {
             return res.materialize();
         }
@@ -162,18 +149,18 @@ public class ConvertableSequence<T> implements ToStream<T> {
         return queueX(Evaluation.EAGER);
     }
     public QueueX<T> queueX(Evaluation c) {
-        QueueX<T> res = QueueX.fromIterable(iterable);
+        QueueX<T> res = QueueX.fromIterable(getIterable());
         if(c== Evaluation.EAGER)
             return res.materialize();
         return res;
     }
 
 
-    public Maybe<ListX<T>> maybe() {
+    public Maybe<ListX<T>> maybeListX() {
         return value().toMaybe();
 
     }
-    public Option<ListX<T>> option() {
+    public Option<ListX<T>> optionListX() {
         final ListX<T> list = listX();
         if (list.size() == 0)
             return Option.none();
@@ -213,12 +200,12 @@ public class ConvertableSequence<T> implements ToStream<T> {
      * @return
      */
     public CollectionX<T> lazyCollection() {
-        return new CollectionXImpl<>(Streams.toLazyCollection(ReactiveSeq.fromIterable(iterable)));
+        return new CollectionXImpl<>(Streams.toLazyCollection(ReactiveSeq.fromIterable(getIterable())));
     }
 
 
     public Streamable<T> lazyStreamable() {
-        return Streams.toLazyStreamable(ReactiveSeq.fromIterable(iterable));
+        return Streams.toLazyStreamable(ReactiveSeq.fromIterable(getIterable()));
     }
 
 
@@ -226,7 +213,7 @@ public class ConvertableSequence<T> implements ToStream<T> {
 
 
     public <C extends Collection<T>> C collection(final Supplier<C> factory) {
-        return ReactiveSeq.fromIterable(iterable).collect(Collectors.toCollection(factory));
+        return ReactiveSeq.fromIterable(getIterable()).collect(Collectors.toCollection(factory));
     }
 
 
