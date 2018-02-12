@@ -12,11 +12,14 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
+import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
@@ -33,6 +36,11 @@ import cyclops.control.Trampoline;
 import org.reactivestreams.Publisher;
 
 public interface LazyCollectionX<T> extends FluentCollectionX<T> {
+
+    @Override
+    default ReactiveConvertableSequence<T> to(){
+        return new ReactiveConvertableSequence<>(this);
+    }
 
     //Add to each collection type : also check AnyMSeq
     @Override
@@ -225,13 +233,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().slice(from, to));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#grouped(int)
-     */
+
     @Override
     default LazyCollectionX<Vector<T>> grouped(final int groupSize) {
-        return fromStream(stream().grouped(groupSize)
-                                  .map(ListX::fromIterable));
+        return fromStream(stream().grouped(groupSize));
     }
 
 
@@ -254,33 +259,25 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
 
-  /* (non-Javadoc)
-   * @see CollectionX#sliding(int)
-   */
+
     @Override
-    default LazyCollectionX<VectorX<T>> sliding(final int windowSize) {
+    default LazyCollectionX<Seq<T>> sliding(final int windowSize) {
         return fromStream(stream().sliding(windowSize));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#sliding(int, int)
-     */
+
     @Override
-    default LazyCollectionX<VectorX<T>> sliding(final int windowSize, final int increment) {
+    default LazyCollectionX<Seq<T>> sliding(final int windowSize, final int increment) {
         return fromStream(stream().sliding(windowSize, increment));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#scanLeft(cyclops2.function.Monoid)
-     */
+
     @Override
     default LazyCollectionX<T> scanLeft(final Monoid<T> monoid) {
         return fromStream(stream().scanLeft(monoid));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> LazyCollectionX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
         return fromStream(stream().scanLeft(seed, function));
@@ -637,21 +634,13 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see CollectionX#permutations()
-     */
     @Override
     default LazyCollectionX<ReactiveSeq<T>> permutations() {
         return fromStream(stream().permutations());
 
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.ExtendedTraversable#combinations(int)
-     */
-    /* (non-Javadoc)
-     * @see CollectionX#combinations(int)
-     */
+
     @Override
     default LazyCollectionX<ReactiveSeq<T>> combinations(final int size) {
         return fromStream(stream().combinations(size));
@@ -698,11 +687,9 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().groupedUntil(predicate, factory));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
-     */
+
     @Override
-    default LazyCollectionX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default LazyCollectionX<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
         return fromStream(stream().groupedUntil(predicate));
     }
 
