@@ -1,5 +1,6 @@
 package cyclops.reactive.collections.mutable;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.ReactiveWitness.deque;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyDequeX;
@@ -8,10 +9,12 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
@@ -125,7 +128,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static DequeX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
 
@@ -140,7 +143,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static DequeX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
 
@@ -161,7 +164,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     static <U, T> DequeX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
     /**
@@ -175,7 +178,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
 
@@ -190,7 +193,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
 
@@ -205,7 +208,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     public static <T> DequeX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
 
     }
@@ -281,7 +284,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
      */
     public static <T> DequeX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .dequeX(LAZY);
     }
 
@@ -651,20 +654,15 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<R>) LazyCollectionX.super.trampoline(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#slice(long, long)
-     */
+
     @Override
     default DequeX<T> slice(final long from, final long to) {
         return (DequeX<T>) LazyCollectionX.super.slice(from, to);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#grouped(int)
-     */
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
-        return (DequeX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
+    default DequeX<Vector<T>> grouped(final int groupSize) {
+        return (DequeX<Vector<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
 
@@ -686,33 +684,25 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
 
-  /* (non-Javadoc)
-   * @see LazyCollectionX#sliding(int)
-   */
+
     @Override
-    default DequeX<VectorX<T>> sliding(final int windowSize) {
-        return (DequeX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
+    default DequeX<Seq<T>> sliding(final int windowSize) {
+        return (DequeX<Seq<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#sliding(int, int)
-     */
+
     @Override
-    default DequeX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (DequeX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
+    default DequeX<Seq<T>> sliding(final int windowSize, final int increment) {
+        return (DequeX<Seq<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanLeft(cyclops2.function.Monoid)
-     */
+
     @Override
     default DequeX<T> scanLeft(final Monoid<T> monoid) {
         return (DequeX<T>) LazyCollectionX.super.scanLeft(monoid);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> DequeX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
         return (DequeX<U>) LazyCollectionX.super.scanLeft(seed, function);
@@ -1107,34 +1097,30 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see LazyCollectionX#grouped(int, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> DequeX<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> DequeX<C> grouped(final int size, final Supplier<C> supplier) {
 
         return (DequeX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedUntil(java.util.function.Predicate)
-     */
-    @Override
-    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (DequeX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+    @Override
+    default DequeX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+
+        return (DequeX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedWhile(java.util.function.Predicate)
-     */
-    @Override
-    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (DequeX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
+    @Override
+    default DequeX<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+
+        return (DequeX<Vector<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     /* (non-Javadoc)
      * @see LazyCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> DequeX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> DequeX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (DequeX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
@@ -1143,27 +1129,18 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see LazyCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> DequeX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> DequeX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (DequeX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
-     */
     @Override
-    default DequeX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default DequeX<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
 
-        return (DequeX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+        return (DequeX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
-     */
     @Override
     default DequeX<T> onEmptySwitch(final Supplier<? extends Deque<T>> supplier) {
         if (isEmpty())
@@ -1310,6 +1287,9 @@ public interface DequeX<T> extends To<DequeX<T>>,
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().dequeX(Evaluation.LAZY);
+        return Either.sequenceRight(next)
+                     .orElse(ReactiveSeq.empty())
+                     .to(ReactiveConvertableSequence::converter)
+                     .dequeX(Evaluation.LAZY);
     }
 }

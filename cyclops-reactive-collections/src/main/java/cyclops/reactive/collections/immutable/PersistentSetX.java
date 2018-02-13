@@ -1,9 +1,12 @@
 package cyclops.reactive.collections.immutable;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.ReactiveWitness.persistentSetX;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.ReactiveReducers;
 import cyclops.control.*;
 import cyclops.data.HashSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPSetX;
@@ -13,6 +16,7 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -116,7 +120,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     public static PersistentSetX<Integer> range(final int start, final int end) {
         return ReactiveSeq.range(start, end)
-                          .to().persistentSetX(LAZY);
+                          .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
     }
 
     /**
@@ -130,7 +134,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     public static PersistentSetX<Long> rangeLong(final long start, final long end) {
         return ReactiveSeq.rangeLong(start, end)
-                .to().persistentSetX(LAZY);
+                .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
     }
 
     /**
@@ -150,7 +154,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     static <U, T> PersistentSetX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                .to().persistentSetX(LAZY);
+                .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
     }
 
     /**
@@ -164,7 +168,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                .to().persistentSetX(LAZY);
+                .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
     }
 
     /**
@@ -178,7 +182,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     public static <T> PersistentSetX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                .to().persistentSetX(LAZY);
+                .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
 
     }
 
@@ -247,13 +251,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     public static <T> PersistentSetX<T> fromPublisher(final Publisher<? extends T> publisher) {
         return Spouts.from((Publisher<T>) publisher)
-                .to().persistentSetX(LAZY);
+                .to(ReactiveConvertableSequence::converter).persistentSetX(LAZY);
     }
 
 
 
     default <T> PersistentSetX<T> fromStream(final ReactiveSeq<T> stream) {
-        return Reducers.<T>toPersistentSetX()
+        return ReactiveReducers.<T>toPersistentSetX()
                        .mapReduce(stream);
     }
 
@@ -574,8 +578,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
-        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
+    default PersistentSetX<Vector<T>> grouped(final int groupSize) {
+        return (PersistentSetX<Vector<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
 
@@ -623,13 +627,13 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<VectorX<T>> sliding(final int windowSize) {
-        return (PersistentSetX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
+    default PersistentSetX<Seq<T>> sliding(final int windowSize) {
+        return (PersistentSetX<Seq<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
     @Override
-    default PersistentSetX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (PersistentSetX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
+    default PersistentSetX<Seq<T>> sliding(final int windowSize, final int increment) {
+        return (PersistentSetX<Seq<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
     @Override
@@ -669,7 +673,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return this.stream()
                    .cycle(times)
-                .to().linkedListX(LAZY);
+                .to(ReactiveConvertableSequence::converter).linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -680,7 +684,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return this.stream()
                    .cycle(m, times)
-                .to().linkedListX(LAZY);
+                .to(ReactiveConvertableSequence::converter).linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -691,7 +695,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return this.stream()
                    .cycleWhile(predicate)
-                .to().linkedListX(LAZY);
+                .to(ReactiveConvertableSequence::converter).linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -702,7 +706,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         return this.stream()
                    .cycleUntil(predicate)
-                .to().linkedListX(LAZY);
+                .to(ReactiveConvertableSequence::converter).linkedListX(LAZY);
     }
 
     /* (non-Javadoc)
@@ -965,37 +969,37 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
 
     @Override
-    default <C extends Collection<? super T>> PersistentSetX<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> PersistentSetX<C> grouped(final int size, final Supplier<C> supplier) {
 
         return (PersistentSetX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
     @Override
-    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default PersistentSetX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+        return (PersistentSetX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
-    default PersistentSetX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default PersistentSetX<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+        return (PersistentSetX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
     @Override
-    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default PersistentSetX<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (PersistentSetX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
+        return (PersistentSetX<Vector<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
     @Override
-    default <C extends Collection<? super T>> PersistentSetX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> PersistentSetX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PersistentSetX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> PersistentSetX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> PersistentSetX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (PersistentSetX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
@@ -1137,7 +1141,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().persistentSetX(Evaluation.LAZY);
+        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to(ReactiveConvertableSequence::converter).persistentSetX(Evaluation.LAZY);
     }
 
 }
