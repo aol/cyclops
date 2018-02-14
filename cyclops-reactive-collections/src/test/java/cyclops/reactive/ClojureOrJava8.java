@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.reactive.collections.mutable.MapX;
+import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
 
 import cyclops.reactive.collections.mutable.ListX;
-import cyclops.companion.MapXs;
 import cyclops.reactive.collections.mutable.SetX;
 
 import lombok.AllArgsConstructor;
@@ -56,9 +58,6 @@ public class ClojureOrJava8 {
     }
     @Test
     public void groupedSet(){
-
-
-
         SetX.of(10,20,30,40,50)
             .grouped(2)
             .printOut();
@@ -68,7 +67,9 @@ public class ClojureOrJava8 {
 
     public MapX<Integer, ListX<Person>> cyclopsJava8(ListX<Person> people){
 
-      return people.groupBy(Person::getAge);
+      return MapX.fromPersistentMap(people.groupBy(Person::getAge)
+                                          .map(v->v.to(ReactiveConvertableSequence::converter)
+                                                .listX()));
 
 
     }
@@ -108,7 +109,8 @@ public class ClojureOrJava8 {
 
     public String listToString(ListX<String> list){
 
-        return list.visit(((x,xs)->x+" "+listToString(xs.toListX())),()->"");
+        return list.visit(((x,xs)->x+" "+listToString(xs.to(ReactiveConvertableSequence::converter)
+                                                    .listX())),()->"");
 
     }
 
