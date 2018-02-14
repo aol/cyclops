@@ -1,11 +1,13 @@
 package cyclops.reactive.collections.mutable;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.ReactiveWitness.list;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.data.collections.extensions.standard.MutableSequenceX;
 import com.oath.cyclops.hkt.Higher;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
@@ -16,6 +18,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.Function3;
@@ -65,7 +68,9 @@ public interface ListX<T> extends To<ListX<T>>,
         return headAndTail().head();
     }
     default ListX<T> tail(){
-        return headAndTail().tail().to().listX(Evaluation.LAZY);
+        return headAndTail().tail()
+                            .to(ReactiveConvertableSequence::converter)
+                            .listX(Evaluation.LAZY);
     }
 
     @Override
@@ -138,7 +143,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return Range ListX
      */
     public static ListX<Integer> range(final int start, final int end) {
-        return ReactiveSeq.range(start, end).to()
+        return ReactiveSeq.range(start, end).to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
 
@@ -152,7 +157,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return Range ListX
      */
     public static ListX<Long> rangeLong(final long start, final long end) {
-        return ReactiveSeq.rangeLong(start, end).to()
+        return ReactiveSeq.rangeLong(start, end).to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
 
@@ -173,7 +178,7 @@ public interface ListX<T> extends To<ListX<T>>,
      */
     static <U, T> ListX<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ReactiveSeq.unfold(seed, unfolder)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
     /**
@@ -187,7 +192,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return ReactiveSeq.fill(s)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
 
@@ -202,7 +207,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
         return ReactiveSeq.generate(s)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
 
@@ -217,7 +222,7 @@ public interface ListX<T> extends To<ListX<T>>,
     public static <T> ListX<T> iterate(final long limit, final T seed, final UnaryOperator<T> f) {
         return ReactiveSeq.iterate(seed, f)
                           .limit(limit)
-                          .to()
+                          .to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
 
     }
@@ -364,7 +369,7 @@ public interface ListX<T> extends To<ListX<T>>,
      * @return ListX
      */
     public static <T> ListX<T> fromPublisher(final Publisher<? extends T> publisher) {
-        return Spouts.from((Publisher<T>) publisher).to()
+        return Spouts.from((Publisher<T>) publisher).to(ReactiveConvertableSequence::converter)
                           .listX(Evaluation.LAZY);
     }
     /**
@@ -651,18 +656,13 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.sorted(function);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#grouped(int)
-     */
+
     @Override
-    default Traversable<Vector<T>> grouped(final int groupSize) {
-        return (ListX<ListX<T>>) LazyCollectionX.super.grouped(groupSize);
+    default ListX<Vector<T>> grouped(final int groupSize) {
+        return (ListX<Vector<T>>) LazyCollectionX.super.grouped(groupSize);
     }
 
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#zip(java.lang.Iterable)
-     */
     @Override
     default <U> ListX<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return (ListX) LazyCollectionX.super.zip(other);
@@ -678,67 +678,50 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
 
-  /* (non-Javadoc)
-   * @see LazyCollectionX#sliding(int)
-   */
+
     @Override
-    default ListX<VectorX<T>> sliding(final int windowSize) {
-        return (ListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize);
+    default ListX<Seq<T>> sliding(final int windowSize) {
+        return (ListX<Seq<T>>) LazyCollectionX.super.sliding(windowSize);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#sliding(int, int)
-     */
+
     @Override
-    default ListX<VectorX<T>> sliding(final int windowSize, final int increment) {
-        return (ListX<VectorX<T>>) LazyCollectionX.super.sliding(windowSize, increment);
+    default ListX<Seq<T>> sliding(final int windowSize, final int increment) {
+        return (ListX<Seq<T>>) LazyCollectionX.super.sliding(windowSize, increment);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanLeft(cyclops2.function.Monoid)
-     */
+
     @Override
     default ListX<T> scanLeft(final Monoid<T> monoid) {
         return (ListX<T>) LazyCollectionX.super.scanLeft(monoid);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> ListX<U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
         return (ListX<U>) LazyCollectionX.super.scanLeft(seed, function);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanRight(cyclops2.function.Monoid)
-     */
+
     @Override
     default ListX<T> scanRight(final Monoid<T> monoid) {
         return (ListX<T>) LazyCollectionX.super.scanRight(monoid);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> ListX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
         return (ListX<U>) LazyCollectionX.super.scanRight(identity, combiner);
     }
 
-    /* Makes a defensive copy of this ListX replacing the value at i with the specified element
-     *  (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.MutableSequenceX#with(int, java.lang.Object)
-     */
+
     @Override
     default ListX<T> insertAt(final int i, final T element) {
         return from(stream()
                             .insertAt(i, element));
     }
 
-    /* (non-Javadoc)
-     * @see java.util.List#subList(int, int)
-     */
+
     @Override
     public ListX<T> subList(int start, int end);
 
@@ -821,27 +804,18 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.cycle(times);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#cycle(com.oath.cyclops.sequence.Monoid, int)
-     */
     @Override
     default ListX<T> cycle(final Monoid<T> m, final long times) {
 
         return (ListX<T>) LazyCollectionX.super.cycle(m, times);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#cycleWhile(java.util.function.Predicate)
-     */
     @Override
     default ListX<T> cycleWhile(final Predicate<? super T> predicate) {
-
         return (ListX<T>) LazyCollectionX.super.cycleWhile(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#cycleUntil(java.util.function.Predicate)
-     */
+
     @Override
     default ListX<T> cycleUntil(final Predicate<? super T> predicate) {
         return (ListX<T>) LazyCollectionX.super.cycleUntil(predicate);
@@ -1126,58 +1100,46 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-    * @see LazyCollectionX#grouped(int, java.util.function.Supplier)
-    */
+
     @Override
-    default <C extends Collection<? super T>> ListX<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ListX<C> grouped(final int size, final Supplier<C> supplier) {
 
         return (ListX<C>) LazyCollectionX.super.grouped(size, supplier);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedUntil(java.util.function.Predicate)
-     */
-    @Override
-    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (ListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+    @Override
+    default ListX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+
+        return (ListX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedWhile(java.util.function.Predicate)
-     */
-    @Override
-    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (ListX<ListX<T>>) LazyCollectionX.super.groupedWhile(predicate);
+    @Override
+    default ListX<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+
+        return (ListX<Vector<T>>) LazyCollectionX.super.groupedWhile(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> ListX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ListX<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (ListX<C>) LazyCollectionX.super.groupedWhile(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> ListX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ListX<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (ListX<C>) LazyCollectionX.super.groupedUntil(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#groupedStatefullyUntil(java.util.function.BiPredicate)
-     */
-    @Override
-    default ListX<ListX<T>> groupedUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListX<ListX<T>>) LazyCollectionX.super.groupedUntil(predicate);
+    @Override
+    default ListX<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+
+        return (ListX<Vector<T>>) LazyCollectionX.super.groupedUntil(predicate);
     }
 
 
@@ -1343,6 +1305,21 @@ public interface ListX<T> extends To<ListX<T>>,
     default <T2, T3, T4, R> ListX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return (ListX<R>)LazyCollectionX.super.zip4(second,third,fourth,fn);
     }
+    /**
+     * Intercalate
+     *
+     * @param listOfLists List of lists which this IndexedSequenceX instance will be intercalated into.
+     * @return List with current IndexedSequenceX inserted between each List.
+     */
+    default ListX<T> intercalate(List<? extends List<? extends T>> listOfLists) {
+        ListX thisListX = this.to().listX();
+        if (listOfLists.isEmpty()) {
+            return thisListX;
+        } else {
+            ListX listOfListsX = ListX.fromIterable(listOfLists);
+            return listOfListsX.intersperse(thisListX).concatMap(x -> x);
+        }
+    }
     public static  <T,R> ListX<R> tailRec(T initial, Function<? super T, ? extends Iterable<? extends Either<T, R>>> fn) {
         ListX<Either<T, R>> lazy = ListX.of(Either.left(initial));
         ListX<Either<T, R>> next = lazy.eager();
@@ -1360,6 +1337,9 @@ public interface ListX<T> extends To<ListX<T>>,
                 break;
 
         }
-        return Either.sequenceRight(next).orElse(ReactiveSeq.empty()).to().listX(Evaluation.LAZY);
+        return Either.sequenceRight(next)
+                     .orElse(ReactiveSeq.empty())
+                     .to(ReactiveConvertableSequence::converter)
+                     .listX(Evaluation.LAZY);
     }
 }

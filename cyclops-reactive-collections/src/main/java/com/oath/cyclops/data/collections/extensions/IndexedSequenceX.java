@@ -81,19 +81,5 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
     @Override
     <R> IndexedSequenceX<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper);
 
-    /**
-     * Intercalate
-     *
-     * @param listOfLists List of lists which this IndexedSequenceX instance will be intercalated into.
-     * @return List with current IndexedSequenceX inserted between each List.
-     */
-    default ListX<T> intercalate(List<? extends List<? extends T>> listOfLists) {
-        ListX thisListX = this.toListX();
-        if (listOfLists.isEmpty()) {
-            return thisListX;
-        } else {
-            ListX listOfListsX = ListX.fromIterable(listOfLists);
-            return listOfListsX.intersperse(thisListX).concatMap(x -> x);
-        }
-    }
+
 }

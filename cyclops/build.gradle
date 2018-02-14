@@ -61,7 +61,6 @@ dependencies {
   testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
   testCompile 'com.google.guava:guava:19.0'
-  testCompile 'com.google.guava:guava-testlib:19.0'
   testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
   testCompile 'junit:junit:4.12'
   testCompile 'org.hamcrest:hamcrest-all:1.3'

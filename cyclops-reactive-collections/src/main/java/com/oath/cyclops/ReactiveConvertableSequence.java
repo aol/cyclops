@@ -53,7 +53,9 @@ public class ReactiveConvertableSequence<T> extends ConvertableSequence<T> {
             return res.materialize();
         return res;
     }
-
+    public <K, V> MapX<K, V> mapX(final Function<? super T, ? extends K> keyMapper, final Function<? super T, ? extends V> valueMapper) {
+        return MapX.fromMap(stream().collect(Collectors.toMap(keyMapper, valueMapper)));
+    }
     public PersistentSetX<T> persistentSetX(){
         return persistentSetX(Evaluation.EAGER);
     }
