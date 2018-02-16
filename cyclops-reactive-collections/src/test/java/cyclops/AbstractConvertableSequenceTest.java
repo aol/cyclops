@@ -1,5 +1,6 @@
 package cyclops;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import org.junit.Test;
 
@@ -9,8 +10,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractConvertableSequenceTest {
-    public abstract <T> ConvertableSequence<T> of(T...elements);
-    public abstract <T> ConvertableSequence<T> empty();
+    public abstract <T> ReactiveConvertableSequence<T> of(T...elements);
+    public abstract <T> ReactiveConvertableSequence<T> empty();
     @Test
     public void emptyConvert(){
 
@@ -25,7 +26,6 @@ public abstract class AbstractConvertableSequenceTest {
         assertFalse(empty().sortedSetX().size()>0);
         assertFalse(empty().orderedSetX().size()>0);
         assertFalse(empty().bagX().size()>0);
-        assertFalse(empty().persistentMapX(t->t, t->t).size()>0);
         assertFalse(empty().mapX(t->t,t->t).size()>0);
         assertFalse(empty().streamable().size()>0);
 

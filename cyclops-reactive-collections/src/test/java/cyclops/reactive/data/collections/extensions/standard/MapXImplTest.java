@@ -1,5 +1,6 @@
 package cyclops.reactive.data.collections.extensions.standard;
 
+import com.oath.cyclops.data.collections.extensions.standard.MapXImpl;
 import org.junit.Test;
 
 import java.util.HashMap;

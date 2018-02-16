@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.AbstractCollectionXTest;
 import cyclops.reactive.collections.immutable.PersistentQueueX;
@@ -37,7 +38,7 @@ public class PQueueXTest extends AbstractCollectionXTest {
 		Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
 				.onePer(1, TimeUnit.MILLISECONDS)
 				.take(1000)
-				.to()
+				.to(ReactiveConvertableSequence::converter)
 				.persistentQueueX(Evaluation.LAZY)
 				.peek(i->counter.incrementAndGet())
 				.materialize();

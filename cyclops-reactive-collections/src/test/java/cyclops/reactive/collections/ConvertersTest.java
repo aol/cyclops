@@ -1,8 +1,11 @@
 package cyclops.reactive.collections;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.persistent.*;
-import cyclops.companion.MapXs;
-import cyclops.companion.PersistentMapXs;
+
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.*;
+import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
 
@@ -21,20 +24,20 @@ public class ConvertersTest {
     @Test
     public void convert(){
 
-        LinkedList<Integer> list1 = Arrays.asList(1,2,3).to(MapXs.Converters::LinkedList);
-        ArrayList<Integer> list2 = Arrays.asList(1,2,3).to(MapXs.Converters::ArrayList);
+        LinkedList<Integer> list1 = ListX.of(1,2,3).to(MapXs.Converters::LinkedList);
+        ArrayList<Integer> list2 = ListX.of(1,2,3).to(MapXs.Converters::ArrayList);
 
 
         assertThat(list1,equalTo(list2));
         assertThat(list1,equalTo(Arrays.asList(1,2,3)));
 
-        PersistentList<Integer> pstack = LinkedArrays.asList(1,2,3).to(MapXs.Converters::PStack);
+        PersistentList<Integer> pstack = LinkedListX.of(1,2,3).to(MapXs.Converters::PStack);
         PersistentList<Integer> pvector = VectorX.of(1,2,3).to(MapXs.Converters::PVector);
         PersistentSet<Integer> pset = PersistentSetX.of(1,2,3).to(MapXs.Converters::PSet);
         PersistentSortedSet<Integer> pOrderedSet = OrderedSetX.of(1,2,3).to(MapXs.Converters::POrderedSet);
         PersistentBag<Integer> pBag = BagX.of(1,2,3).to(MapXs.Converters::PBag);
         PersistentQueue<Integer> pQueue = PersistentQueueX.of(1,2,3).to(MapXs.Converters::PQueue);
-        PersistentMap<Integer,Integer> pMap = PersistentMapXs.of(1,2).to(MapXs.Converters::PMap);
+
 
         HashSet<Integer> set = SetX.of(1,2,3).to(MapXs.Converters::HashSet);
         ArrayDeque<Integer> deque = DequeX.of(1,2,3).to(MapXs.Converters::ArrayDeque);
@@ -44,11 +47,10 @@ public class ConvertersTest {
 
         assertThat(pstack,equalTo(pvector));
         assertThat(pset,equalTo(pOrderedSet));
-        assertThat(pset,equalTo(pBag.stream().to().persistentSetX()));
+        assertThat(pset,equalTo(pBag.stream().to(ReactiveConvertableSequence::converter).persistentSetX()));
         assertThat(pQueue.stream().collect(Collectors.toList()), equalTo(list1));
 
-        assertThat(map,not(equalTo(pMap)));
-        assertThat(pMap,not(equalTo(map)));
+
         assertThat(set,equalTo(tset));
         assertThat(deque.stream().collect(Collectors.toList()),equalTo(list1));
         assertThat(queue.stream().collect(Collectors.toList()),equalTo(list1));

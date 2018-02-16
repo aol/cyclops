@@ -7,13 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cyclops.data.tuple.Tuple;
+import cyclops.reactive.collections.mutable.*;
+import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
-import cyclops.reactive.collections.mutable.DequeX;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.reactive.collections.mutable.SetX;
-import cyclops.reactive.collections.mutable.SortedSetX;
 public class MapXsTest {
 
     @Test

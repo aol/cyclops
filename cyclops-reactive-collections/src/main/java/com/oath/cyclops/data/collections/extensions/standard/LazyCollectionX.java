@@ -37,10 +37,7 @@ import org.reactivestreams.Publisher;
 
 public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
-    @Override
-    default ReactiveConvertableSequence<T> to(){
-        return new ReactiveConvertableSequence<>(this);
-    }
+
 
     //Add to each collection type : also check AnyMSeq
     @Override

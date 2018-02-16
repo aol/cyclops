@@ -29,7 +29,7 @@ configurations {
 }
 dependencies {
     compile project(':cyclops')
-
+    testCompile project(':cyclops').sourceSets.test.output
     provided 'org.projectlombok:lombok:1.16.12'
     testCompile project(':cyclops').sourceSets.test.output
     testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'

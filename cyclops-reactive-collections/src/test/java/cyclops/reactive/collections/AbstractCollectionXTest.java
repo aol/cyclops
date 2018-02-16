@@ -5,9 +5,11 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 
+import cyclops.data.basetests.AbstractIterableXTest;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
+import cyclops.data.TreeSet;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -25,7 +27,7 @@ import static org.hamcrest.Matchers.*;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
 
-public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
+public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 	public abstract <T> FluentCollectionX<T> empty();
 	public abstract <T> FluentCollectionX<T> of(T... values);
 	public abstract  CollectionX<Integer> range(int start, int end);
@@ -41,12 +43,12 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     boolean set = false;
     @Test
     public void testOnEmpty() throws AbstractIterableXTest.X {
-        assertEquals(asList(1), of().onEmpty(1).toListX());
-        assertEquals(asList(1), of().onEmptyGet(() -> 1).toListX());
+        assertEquals(asList(1), of().onEmpty(1).to().listX());
+        assertEquals(asList(1), of().onEmptyGet(() -> 1).to().listX());
 
-        assertEquals(asList(2), of(2).onEmpty(1).toListX());
-        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toListX());
-        assertEquals(asList(2), of(2).onEmptyError(() -> new AbstractIterableXTest.X()).toListX());
+        assertEquals(asList(2), of(2).onEmpty(1).to().listX());
+        assertEquals(asList(2), of(2).onEmptyGet(() -> 1).to().listX());
+        assertEquals(asList(2), of(2).onEmptyError(() -> new AbstractIterableXTest.X()).to().listX());
 
 
     }
@@ -415,8 +417,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest{
     }
     @Test
     public void batchBySizeSet(){
-        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
-        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList());
+        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).materialize().grouped(3,()->TreeSet.empty()).toList().size(),is(1));
     }
 }

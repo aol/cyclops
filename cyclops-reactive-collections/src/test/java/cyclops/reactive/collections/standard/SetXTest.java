@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.AbstractSetTest;
@@ -52,7 +53,7 @@ public class SetXTest extends AbstractSetTest {
         Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
                 .onePer(1, TimeUnit.MILLISECONDS)
                 .take(1000)
-                .to()
+                .to(ReactiveConvertableSequence::converter)
                 .setX(Evaluation.LAZY)
                 .peek(i->counter.incrementAndGet())
                 .materialize();

@@ -15,8 +15,10 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.AbstractSetTest;
 import cyclops.reactive.collections.immutable.OrderedSetX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -55,14 +57,14 @@ public class POrderedSetXTest extends AbstractSetTest {
     @Test
     public void batchWhileCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .groupedWhile(i->i%3!=0,()-> Vector.empty())
                 .toList().size(),equalTo(2));
-        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
-                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
-        SetX<List<Integer>> s = x.toSetX();
+        CollectionX<Vector<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> Vector.empty());
+        SetX<Vector<Integer>> s = x.toSetX();
 
-        assertTrue(s.containsValue(ListX.of(1,2,3)));
-        assertTrue(s.containsValue(ListX.of(4,5,6)));
+        assertTrue(s.containsValue(Vector.of(1,2,3)));
+        assertTrue(s.containsValue(Vector.of(4,5,6)));
 
     }
 	@Override
@@ -74,7 +76,7 @@ public class POrderedSetXTest extends AbstractSetTest {
 		Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
 				.onePer(1, TimeUnit.MILLISECONDS)
 				.take(1000)
-				.to()
+				.to(ReactiveConvertableSequence::converter)
 				.orderedSetX(Evaluation.LAZY)
 				.peek(i->counter.incrementAndGet())
 				.materialize();
