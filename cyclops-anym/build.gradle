@@ -31,6 +31,7 @@ configurations {
 dependencies {
   compile project(':cyclops')
   compile project(':cyclops-futurestream')
+    compile project(':cyclops-reactive-collections')
   compile project(':cyclops-pure')
   provided 'org.projectlombok:lombok:1.16.12'
   testCompile project(':cyclops').sourceSets.test.output

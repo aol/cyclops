@@ -1,5 +1,6 @@
 package cyclops.reactive.collections.standard;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.reactive.collections.CollectionXTestsWithNulls;
@@ -51,7 +52,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
                 .onePer(1, TimeUnit.MILLISECONDS)
                 .take(1000)
-                .to()
+                .to(ReactiveConvertableSequence::converter)
                 .listX(Evaluation.LAZY)
                 .peek(i->counter.incrementAndGet())
                 .materialize();
@@ -145,7 +146,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         ListX<Integer> list = ListX.of(1,2,3)
                                    .to(l->l.stream())
                                    .map(i->i*2)
-                                   .to(r->r.toSetX())
+                                   .to(r->r.to(ReactiveConvertableSequence::converter).setX())
                                    .to(s->s.toListX());
 
         assertThat(list,equalTo(ListX.of(2,4,6)));

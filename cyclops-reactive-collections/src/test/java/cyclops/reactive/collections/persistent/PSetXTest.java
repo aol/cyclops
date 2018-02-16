@@ -1,5 +1,6 @@
 package cyclops.reactive.collections.persistent;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -46,7 +47,7 @@ public class PSetXTest extends AbstractSetTest {
         Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
                 .onePer(1, TimeUnit.MILLISECONDS)
                 .take(1000)
-                .to()
+                .to(ReactiveConvertableSequence::converter)
                 .persistentSetX(Evaluation.LAZY)
                 .peek(i->counter.incrementAndGet())
                 .materialize();

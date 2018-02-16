@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -125,7 +127,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
     }
     @Test
     public void sliding() {
-        ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+        ListX<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2));
@@ -134,7 +136,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
     @Test
     public void slidingIncrement() {
-        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2, 3));
@@ -242,36 +244,36 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 
 	@Test
     public void allCombinations3() {
-        assertThat(of(1, 2, 3).combinations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(of(1, 2, 3).combinations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
 	@Test
 	public void emptyAllCombinations() {
-		assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
+		assertThat(of().combinations().map(s -> s.to(ReactiveConvertableSequence::converter).listX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
 	}
 
 	@Test
     public void emptyPermutations() {
-        assertThat(of().permutations().map(s->s.toListX()).toListX(),equalTo(Arrays.asList()));
+        assertThat(of().permutations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void permuations3() {
-    	System.out.println(of(1, 2, 3).permutations().map(s->s.toListX()).toListX());
-        assertThat(of(1, 2, 3).permutations().map(s->s.toListX()).toListX(),
+    	System.out.println(of(1, 2, 3).permutations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX());
+        assertThat(of(1, 2, 3).permutations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX(),
         		equalTo(of(of(1, 2, 3),
         		of(1, 3, 2), of(2, 1, 3), of(2, 3, 1), of(3, 1, 2), of(3, 2, 1)).peek(i->System.out.println("peek - " + i)).map(s->s.toListX()).toListX()));
     }
 
 	@Test
 	public void emptyCombinations() {
-		assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
+		assertThat(of().combinations(2).map(s -> s.to(ReactiveConvertableSequence::converter).listX()).toListX(), equalTo(Arrays.asList()));
 	}
 
 	 @Test
 	public void combinations2() {
-	        assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX(),
+	        assertThat(of(1, 2, 3).combinations(2).map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }
 

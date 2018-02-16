@@ -1,5 +1,6 @@
 package com.oath.cyclops.data.collections.extensions;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
@@ -20,6 +21,7 @@ import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
+import cyclops.reactive.collections.mutable.SetX;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
@@ -45,7 +47,17 @@ public interface CollectionX<T> extends IterableX<T>,
     CollectionX<T> lazy();
     CollectionX<T> eager();
 
+    @Override
+    default ReactiveConvertableSequence<T> to(){
+        return new ReactiveConvertableSequence<>(this);
+    }
 
+    default ListX<T> toListX(){
+        return to().listX();
+    }
+    default SetX<T> toSetX(){
+        return to().setX();
+    }
 
     default <R> R toX(Function<? super CollectionX<T>,? extends R> fn){
         return fn.apply(this);

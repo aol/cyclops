@@ -115,6 +115,12 @@ test {
 test {
   systemProperties 'property': 'value'
 }
+task packageTests(type: Jar) {
+    from sourceSets.test.output
+    classifier = 'tests'
+}
+
+artifacts.archives packageTests
 
 javadoc {
   configure((CoreJavadocOptions) getOptions()) {

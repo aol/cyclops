@@ -17,9 +17,12 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.util.SimpleTimer;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.AbstractSetTest;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -65,7 +68,9 @@ public class SortedSetXTest extends AbstractSetTest {
     public void combinations2NoOrder2() {
 
         //ListX.of(1, 2, 3).combinations(2).map(t->t.toListX()).printOut();
-        CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.toListX());
+        CollectionX<ListX<Integer>> st = of(1, 2, 3).combinations(2).map(s -> s.to(ReactiveConvertableSequence::converter)
+            .listX()
+);
         st.toListX().printOut();
        // assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().getValue(0).size(),
         //        equalTo(2));
@@ -75,7 +80,7 @@ public class SortedSetXTest extends AbstractSetTest {
         Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
                 .onePer(1, TimeUnit.MILLISECONDS)
                 .take(1000)
-                .to()
+                .to(ReactiveConvertableSequence::converter)
                 .sortedSetX(Evaluation.LAZY)
                 .peek(i->counter.incrementAndGet())
                 .materialize();
@@ -174,7 +179,7 @@ public class SortedSetXTest extends AbstractSetTest {
 
     @Test
     public void allCombinations3NoOrd() {
-        ListX<SetX<Integer>> x = SortedSetX.of(1, 2, 3).combinations().map(s -> s.to().setX()).to().listX();
+        ListX<SetX<Integer>> x = SortedSetX.of(1, 2, 3).combinations().map(s -> s.to(ReactiveConvertableSequence::converter).setX()).to().listX();
         System.out.println(x);
         assertTrue(x.containsValue(SetX.empty()));
         assertTrue(x.containsValue(SetX.of(1)));
@@ -188,7 +193,8 @@ public class SortedSetXTest extends AbstractSetTest {
     }
     @Test
     public void combinations2NoOrd() {
-        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
+        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.to(ReactiveConvertableSequence::converter)
+                                    .setX()).toSetX();
         assertTrue(x.containsValue(SetX.of(1,2)));
         assertTrue(x.containsValue(SetX.of(1,3)));
         assertTrue(x.containsValue(SetX.of(2,3)));
@@ -205,26 +211,26 @@ public class SortedSetXTest extends AbstractSetTest {
     }
     @Test @Ignore
     public void slidingNoOrd() {
-        SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
+        SetX<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
 
-        list.containsValue(VectorX.of(1,2));
-        VectorX<Integer> vec = list.elementAt(0).orElse(null);
+        list.containsValue(Seq.of(1,2));
+        Seq<Integer> vec = list.elementAt(0).orElse(null);
 
         System.out.println(vec);
-        System.out.println("same" +vec.equals(VectorX.of(1,2)));
-        System.out.println(list.containsValue(VectorX.of(1,2)));
-        assertTrue(list.containsValue(VectorX.of(1,2)));
+        System.out.println("same" +vec.equals(Seq.of(1,2)));
+        System.out.println(list.containsValue(Seq.of(1,2)));
+        assertTrue(list.containsValue(Seq.of(1,2)));
     }
     @Test @Ignore
     public void batchWhileCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .groupedWhile(i->i%3!=0,()-> Vector.empty())
                 .toList().size(),equalTo(2));
-        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
-                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+        CollectionX<Vector<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> Vector.empty());
 
-        assertTrue(x.toSetX().containsValue(ListX.of(1,2,3)));
-        assertTrue(x.toSetX().containsValue(ListX.of(4,5,6)));
+        assertTrue(x.toSetX().containsValue(Vector.of(1,2,3)));
+        assertTrue(x.toSetX().containsValue(Vector.of(4,5,6)));
 
     }
 

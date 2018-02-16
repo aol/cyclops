@@ -1,5 +1,6 @@
 package cyclops.reactive.collections;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.stream.spliterators.push.Fixtures;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import cyclops.control.Future;
@@ -62,7 +63,8 @@ public class ZipAsyncTest {
        ListX<Tuple2<Integer,Integer>> list = Spouts.of(1,2,3,4,5)
                                                     .peek(System.out::println)
                                                     .zipWithStream(nextAsync())
-                                                    .toListX();
+                                                    .to(ReactiveConvertableSequence::converter)
+                                                     .listX();
 
        System.out.println("List creation is non-blocking");
 
@@ -82,7 +84,8 @@ public class ZipAsyncTest {
                 .zipWithStream(nextAsync())
                 .grouped(2)
                 .flatMap(i->i.stream())
-                .toListX()
+                .to(ReactiveConvertableSequence::converter)
+                 .listX()
                 .materialize()
                 .printOut();
 
@@ -95,7 +98,9 @@ public class ZipAsyncTest {
                 .zipWithStream(nextAsync())
                 .grouped(2)
                 .flatMap(i->i.stream())
-                .toListX(),equalTo(ListX.of(Tuple.tuple(1,1),Tuple.tuple(2,2))));
+            .to(ReactiveConvertableSequence::converter)
+            .listX()
+,equalTo(ListX.of(Tuple.tuple(1,1),Tuple.tuple(2,2))));
 
     }
     private ReactiveSeq<Integer> nextAsync() {

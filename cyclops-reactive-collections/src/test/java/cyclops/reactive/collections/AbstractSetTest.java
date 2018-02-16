@@ -1,7 +1,10 @@
 package cyclops.reactive.collections;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
@@ -13,11 +16,12 @@ import cyclops.reactive.ReactiveSeq;
 import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
+import cyclops.data.TreeSet;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.TreeSet;
+
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,7 +65,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void testIntersperseNoOrd() {
 
-        assertThat(((IterableX<Integer>)of(1,2,3).intersperse(0)).toListX(),hasItem(0));
+        assertThat(((CollectionX<Integer>)of(1,2,3).intersperse(0)).to().listX(),hasItem(0));
 
 
 
@@ -102,56 +106,17 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toList().size(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10).size()));
     }
-    /**
-    @Test
-    public void testCycleNoOrd() {
-        assertEquals(asList(1, 2 ),of(1, 2).cycle(3).toListX());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3).cycle(2).toListX());
-    }
 
-    @Test
-    public void testCycleTimesNoOrd() {
-        System.out.println(of(1, 2).cycle(3).materialize());
-        assertEquals(asList(1, 2),of(1, 2).cycle(3).materialize().toListX());
-    }
-     **/
 
     @Test
     public void slidingIncrementNoOrd() {
-        List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+        List<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
         System.out.println(list);
         assertThat(list.get(0).size(), greaterThan(1));
         assertThat(list.get(1).size(), greaterThan(1));
     }
-    /**
-    int count =0;
-    @Test
-    public void testCycleWhileNoOrd() {
-        count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
 
-    }
-    @Test
-    public void testCycleUntilNoOrd() {
-        count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
-    }
-    @Test
-    public void testCycleUntil() {
-        count =0;
-        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
-        count =0;
-        assertEquals(3,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
-
-    }
-    @Test
-    public void testCycleWhile() {
-        count =0;
-        assertEquals(3,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
-
-    }
-     **/
     @Test
     public void testScanLeftStringConcatMonoid() {
         assertThat(of("a", "b", "c").scanLeft(Reducers.toString("")).toList(), hasItems( "a", "ab", "abc"));
@@ -159,7 +124,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
 
     @Test
     public void allCombinations3NoOrd() {
-        SetX<SetX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSetX()).toSetX();
+        SetX<SetX<Integer>> x = of(1, 2, 3).combinations().map(s -> s.to(ReactiveConvertableSequence::converter).setX()).toSetX();
         System.out.println(x);
         assertTrue(x.containsValue(SetX.empty()));
         assertTrue(x.containsValue(SetX.of(1)));
@@ -173,7 +138,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     }
     @Test
     public void combinations2NoOrd() {
-        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.toSetX()).toSetX();
+        SetX<SetX<Integer>> x = of(1, 2, 3).combinations(2).map(s -> s.to(ReactiveConvertableSequence::converter).setX()).toSetX();
         assertTrue(x.containsValue(SetX.of(1,2)));
         assertTrue(x.containsValue(SetX.of(1,3)));
         assertTrue(x.containsValue(SetX.of(2,3)));
@@ -192,10 +157,10 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     }
     @Test
     public void slidingNoOrd() {
-        SetX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
+        SetX<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toSetX();
 
         System.out.println(list);
-        assertTrue(list.containsValue(VectorX.of(1,2)));
+        assertTrue(list.containsValue(Seq.of(1,2)));
     }
     @Test
     public void duplicates(){
@@ -344,29 +309,29 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void batchWhileCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .groupedWhile(i->i%3!=0,()->Vector.empty())
                 .toList().size(),equalTo(2));
-        CollectionX<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
-                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+        CollectionX<Vector<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> Vector.empty());
 
-        assertTrue(x.containsValue(ListX.of(1,2,3)));
-        assertTrue(x.containsValue(ListX.of(4,5,6)));
+        assertTrue(x.containsValue(Vector.of(1,2,3)));
+        assertTrue(x.containsValue(Vector.of(4,5,6)));
 
     }
     @Test
     public void batchUntilCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .groupedUntil(i->i%3==0,()-> Vector.empty())
                 .toList().size(),equalTo(2));
         assertTrue(of(1,2,3,4,5,6)
-                .groupedUntil(i->i%3==0,()->new ArrayList<>())
+                .groupedUntil(i->i%3==0,()->Vector.empty())
                 .toList().contains(ListX.of(1,2,3)));
     }
     @Test
     public void batchBySizeSet(){
-        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList());
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-        assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+        System.out.println("List = " + of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList());
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
+        assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(1));
     }
     @Test
     public void combine(){

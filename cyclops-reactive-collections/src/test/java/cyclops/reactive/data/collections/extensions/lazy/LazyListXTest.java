@@ -1,5 +1,6 @@
 package cyclops.reactive.data.collections.extensions.lazy;
 
+import com.oath.cyclops.data.collections.extensions.lazy.LazyListX;
 import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 

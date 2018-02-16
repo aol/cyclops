@@ -9,15 +9,9 @@ import java.util.stream.Collector;
 
 import com.oath.cyclops.data.collections.extensions.lazy.*;
 import com.oath.cyclops.types.foldable.Evaluation;
-import cyclops.reactive.collections.mutable.DequeX;
+import cyclops.reactive.collections.mutable.*;
 
 import cyclops.data.Seq;
-
-import cyclops.reactive.collections.mutable.QueueX;
-
-import cyclops.reactive.collections.mutable.SetX;
-
-import cyclops.reactive.collections.mutable.SortedSetX;
 
 
 /**
@@ -39,9 +33,9 @@ public interface CyclopsCollectors {
     /**
      * @return Collector for Seq
      */
-    static <T> Collector<T, ?, Seq<T>> toSeq() {
-        return java.util.stream.Collectors.collectingAndThen(Seq.defaultCollector(), (final List<T> d) -> new LazySeq<T>(
-                                                                                                           d, null,Seq.defaultCollector(),Evaluation.LAZY));
+    static <T> Collector<T, ?, ListX<T>> toListX() {
+        return java.util.stream.Collectors.collectingAndThen(ListX.defaultCollector(), (final List<T> d) -> new LazyListX<T>(
+                                                                                                           d, null,ListX.defaultCollector(),Evaluation.LAZY));
 
     }
 

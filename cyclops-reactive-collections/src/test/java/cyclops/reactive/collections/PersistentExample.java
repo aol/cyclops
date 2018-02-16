@@ -1,5 +1,6 @@
 package cyclops.reactive.collections;
 
+import cyclops.reactive.collections.immutable.*;
 import org.junit.Test;
 
 public class PersistentExample {

@@ -1,7 +1,9 @@
 package cyclops.reactive.collections.persistent;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.CollectionXTestsWithNulls;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.immutable.LinkedListX;
@@ -48,7 +50,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 		Spouts.async(Stream.generate(()->"next"), Executors.newFixedThreadPool(1))
 				.onePer(1, TimeUnit.MILLISECONDS)
 				.take(1000)
-				.to()
+				.to(ReactiveConvertableSequence::converter)
 				.linkedListX(Evaluation.LAZY)
 				.peek(i->counter.incrementAndGet())
 				.materialize();
@@ -69,7 +71,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 	}
     @Test
     public void sliding() {
-        ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+        ListX<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
 
         System.out.println(list);
         assertThat(list.get(0), hasItems(1, 2));
