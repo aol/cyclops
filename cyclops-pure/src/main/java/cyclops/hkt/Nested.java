@@ -1,6 +1,5 @@
 package cyclops.hkt;
 
-
 import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.*;
 import com.oath.cyclops.hkt.Higher;
@@ -9,11 +8,12 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.*;
 import cyclops.data.ImmutableList;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
@@ -23,6 +23,8 @@ import cyclops.function.Monoid;
 import cyclops.instances.control.EitherInstances;
 import cyclops.instances.control.FutureInstances;
 import cyclops.instances.control.TryInstances;
+import cyclops.instances.data.SeqInstances;
+import cyclops.instances.data.VectorInstances;
 import cyclops.instances.jdk.CompletableFutureInstances;
 import cyclops.instances.jdk.OptionalInstances;
 import cyclops.instances.jdk.StreamInstances;
@@ -161,14 +163,20 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         Higher<W1, Higher<W2, R>> res = composedFunctor.map(fn, nested);
         return new Nested<>(res,composedFunctor,def1,def2);
     }
-    public  Active<W1,ListX<T>> toListX(){
-        return Active.of(def1.functor().map(i->def2.foldable().listX(i),nested),def1);
+    public  Active<W1,Seq<T>> toSeq(){
+        return Active.of(def1.functor().map(i->def2.foldable().seq(i),nested),def1);
     }
-    public  ListX<T> toListXBoth(){
-        return toListX().foldLeft(Monoids.listXConcat());
+    public  Active<W1,LazySeq<T>> toLazySeq(){
+        return Active.of(def1.functor().map(i->def2.foldable().lazySeq(i),nested),def1);
+    }
+    public  Seq<T> toSeqBoth(){
+        return toSeq().foldLeft(Monoids.seqConcat());
+    }
+    public  LazySeq<T> toLazySeqBoth(){
+        return toLazySeq().foldLeft(Monoids.lazySeqConcat());
     }
     public Active<W1,ReactiveSeq<T>> stream(){
-        return toListX().map(i->i.stream());
+        return toLazySeq().map(i->i.stream());
     }
     public ReactiveSeq<T> streamBoth(){
         return stream().foldLeft(Monoids.combineReactiveSeq());
@@ -285,27 +293,27 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             return Active.of(def1.functor().map_(nested,f->narrow.apply(f)),def1);
         }
         public Nested<W1,W2,T> plus(Monoid<C> m,C add){
-            return sum(m,ListX.of(add));
+            return sum(m,LazySeq.of(add));
         }
-        public Nested<W1,W2,T> sum(C seed, BinaryOperator<C> op,ListX<C> list){
+        public Nested<W1,W2,T> sum(C seed, BinaryOperator<C> op,ImmutableList<C> list){
             return of(def1.functor().map_(nested,f-> {
                 C res = list.plus(narrow.apply(f)).foldLeft(seed, (a, b) -> op.apply(a, b));
                 return widen.apply(res);
             }),def1,def2);
         }
-        public Nested<W1,W2,T> sum(Monoid<C> s,ListX<C> list){
+        public Nested<W1,W2,T> sum(Monoid<C> s,ImmutableList<C> list){
             return of(def1.functor().map_(nested,f-> {
                 C res = list.plus(narrow.apply(f)).foldLeft(s.zero(), (a, b) -> s.apply(a, b));
                 return widen.apply(res);
             }),def1,def2);
         }
-        public Nested<W1,W2,T> sumInverted(Group<C> s, ListX<C> list){
+        public Nested<W1,W2,T> sumInverted(Group<C> s, ImmutableList<C> list){
             return of(def1.functor().map_(nested,f-> {
             C res = s.invert(list.plus(narrow.apply(f)).foldLeft(s.zero(),(a,b)->s.apply(a,b)));
             return widen.apply(res);
             }),def1,def2);
         }
-        public Maybe<Nested<W1,W2,T>> sum(ListX<C> list){
+        public Maybe<Nested<W1,W2,T>> sum(ImmutableList<C> list){
             return Nested.this.plus().flatMap(s ->
                     Maybe.just(sum(narrow.apply(s.monoid().zero()), (C a, C b) -> narrow.apply(s.monoid().apply(widen.apply(a), widen.apply(b))), list))
             );
@@ -555,33 +563,33 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return of(hkt, OptionalInstances.definitions(), StreamInstances.definitions());
     }
 
-    public static <T> Nested<optional,list,T> optionalList(Optional<? extends List<T>> optionalList){
-        OptionalKind<ListX<T>> opt = OptionalKind.widen(optionalList).map(ListX::fromIterable);
-        Higher<optional,Higher<list,T>> hkt = (Higher)opt;
-        return of(hkt, OptionalInstances.definitions(), ListXInstances.definitions());
+    public static <T> Nested<optional,seq,T> optionalSeq(Optional<? extends Seq<T>> optionalList){
+        OptionalKind<Seq<T>> opt = OptionalKind.widen(optionalList).map(Seq::fromIterable);
+        Higher<optional,Higher<seq,T>> hkt = (Higher)opt;
+        return of(hkt, OptionalInstances.definitions(), SeqInstances.definitions());
     }
     public static <T, X extends Throwable> Nested<future,Higher<tryType,X>,T> futureTry(Future<? extends Try<T,X>> futureTry){
         Higher<future,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
         return of(hkt, FutureInstances.definitions(), TryInstances.definitions());
     }
-    public static <T, X extends Throwable> Nested<list,Higher<tryType,X>,T> listTry(List<? extends Try<T,X>> futureTry){
-        Higher<list,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
-        return of(hkt, ListXInstances.definitions(), TryInstances.definitions());
+    public static <T, X extends Throwable> Nested<seq,Higher<tryType,X>,T> listTry(Seq<? extends Try<T,X>> futureTry){
+        Higher<seq,Higher<Higher<tryType,X>,T>> hkt = (Higher)futureTry;
+        return of(hkt, SeqInstances.definitions(), TryInstances.definitions());
     }
-    public static <L,R> Nested<list,Higher<either,L>,R> listXor(List<? extends Either<L,R>> listXor){
-        Higher<list,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
-        return of(hkt, ListXInstances.definitions(), EitherInstances.definitions());
+    public static <L,R> Nested<seq,Higher<either,L>,R> listXor(Seq<? extends Either<L,R>> listXor){
+        Higher<seq,Higher<Higher<either,L>,R>> hkt = (Higher)listXor;
+        return of(hkt, SeqInstances.definitions(), EitherInstances.definitions());
     }
     public static <L,R> Nested<future,Higher<either,L>,R> futureXor(Future<? extends Either<L,R>> futureXor){
         Higher<future,Higher<Higher<either,L>,R>> hkt = (Higher)futureXor;
         return of(hkt, FutureInstances.definitions(), EitherInstances.definitions());
     }
-    public static <T> Nested<future,list,T> futureList(Future<? extends List<T>> futureList){
-        return of(futureList.map(ListX::fromIterable), FutureInstances.definitions(), ListXInstances.definitions());
+    public static <T> Nested<future,seq,T> futureList(Future<? extends Seq<T>> futureList){
+        return of(futureList, FutureInstances.definitions(), SeqInstances.definitions());
     }
-    public static <T> Nested<future,vectorX,T> futureVector(Future<VectorX<T>> futureList){
-        Higher<future,Higher<vectorX,T>> hkt = (Higher)futureList;
-        return of(hkt, FutureInstances.definitions(), VectorXInstances.definitions());
+    public static <T> Nested<future,vector,T> futureVector(Future<Vector<T>> futureList){
+        Higher<future,Higher<vector,T>> hkt = (Higher)futureList;
+        return of(hkt, FutureInstances.definitions(), VectorInstances.definitions());
     }
     public static <W1,W2,T> Nested<W1,W2,T> narrowK(Higher<Higher<Higher<nested, W1>, W2>, T> ds){
         return (Nested<W1,W2,T>)ds;

@@ -248,6 +248,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return span(test.negate());
     }
 
+    default ImmutableList<T> tailOrElse(ImmutableList<T> tail){
+        return fold(s->s.tail(),nil->tail);
+    }
+
     public static interface Some<T> extends Deconstruct2<T,ImmutableList<T>>, ImmutableList<T> {
         ImmutableList<T> tail();
         T head();

@@ -8,16 +8,21 @@ import cyclops.control.Ior;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 import cyclops.control.Either;
-import cyclops.data.Comparators;
-import cyclops.data.NaturalTransformation;
+import cyclops.data.*;
+import cyclops.data.HashSet;
+import cyclops.data.TreeSet;
 import cyclops.function.Monoid;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
 import org.reactivestreams.Publisher;
 
 import java.math.BigInteger;
-import java.util.*;
+
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -38,7 +43,36 @@ public interface Monoids {
     static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
         return Monoid.of(empty,Semigroups.persistentCollectionConcat());
     }
-
+    static <T> Monoid<LazySeq<T>> lazySeqConcat() {
+        return Monoid.of(LazySeq.empty(),Semigroups.immutableListConcat());
+    }
+    static <T> Monoid<Seq<T>> seqConcat() {
+        return Monoid.of(Seq.empty(),Semigroups.immutableListConcat());
+    }
+    static <T> Monoid<Vector<T>> vectorConcat() {
+        return Monoid.of(Vector.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<IntMap<T>> intMapConcat() {
+        return Monoid.of(IntMap.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<HashSet<T>> hashSetConcat() {
+        return Monoid.of(HashSet.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<TrieSet<T>> trieSetConcat() {
+        return Monoid.of(TrieSet.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<TreeSet<T>> treeSetConcat(Comparator<T> c) {
+        return Monoid.of(TreeSet.empty(c),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<Bag<T>> bagConcat() {
+        return Monoid.of(Bag.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<BankersQueue<T>> bankersQueueConcat() {
+        return Monoid.of(BankersQueue.empty(),Semigroups.persistentCollectionConcat());
+    }
+    static <T> Monoid<LazyString> lazyStringConcat() {
+        return Monoid.of(LazyString.empty(),Semigroups.persistentCollectionConcat());
+    }
 
     /**
      * Example sum integer Maybes
@@ -144,28 +178,28 @@ public interface Monoids {
         return Monoid.of(Future.future(), Semigroups.firstSuccessfulFuture());
     }
     /**
-     * @return Combine two Xor's by taking the first right
+     * @return Combine two Eithers by taking the first right
      */
     static <ST,PT> Monoid<Either<ST,PT>> firstRightEither(ST zero) {
-        return Monoid.of(Either.left(zero), Semigroups.firstPrimaryXor());
+        return Monoid.of(Either.left(zero), Semigroups.firstRightEither());
     }
     /**
-     * @return Combine two Xor's by taking the first left
+     * @return Combine two Eithers by taking the first left
      */
-    static <ST,PT> Monoid<Either<ST,PT>> firstSecondaryXor(PT zero) {
-        return Monoid.of(Either.right(zero), Semigroups.firstSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> firstLeftEither(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.firstLeftEither());
     }
     /**
-     * @return Combine two Xor's by taking the last right
+     * @return Combine two Eithers by taking the last right
      */
-    static <ST,PT> Monoid<Either<ST,PT>> lastPrimaryXor(ST zero) {
-        return Monoid.of(Either.left(zero), Semigroups.lastPrimaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastRightEither(ST zero) {
+        return Monoid.of(Either.left(zero), Semigroups.lastRightEither());
     }
     /**
-     * @return Combine two Xor's by taking the last left
+     * @return Combine two Eithers by taking the last left
      */
-    static <ST,PT> Monoid<Either<ST,PT>> lastSecondaryXor(PT zero) {
-        return Monoid.of(Either.right(zero), Semigroups.lastSecondaryXor());
+    static <ST,PT> Monoid<Either<ST,PT>> lastLeftEither(PT zero) {
+        return Monoid.of(Either.right(zero), Semigroups.lastLeftEither());
     }
     /**
      * @return Combine two Try's by taking the first right

@@ -31,7 +31,7 @@ public class ActiveTest {
 
     @Test
     public void toList(){
-        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toListX(),equalTo(ListX.of(1,2,3)));
+        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toLazySeq(),equalTo(ListX.of(1,2,3)));
     }
     @Test
     public void foldMap(){
