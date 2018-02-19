@@ -56,7 +56,18 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
         return fromIterable(it);
     }
-
+    default T headOrElse(T head){
+        return visit(s->s.head(),nil->head);
+    }
+    default T headOrElseGet(Supplier<? extends T> head){
+        return visit(s->s.head(),nil->head.get());
+    }
+    default LazySeq<T> tailOrElse(LazySeq<T> tail){
+        return visit(s->s.tail(),nil->tail);
+    }
+    default LazySeq<T> tailOrElseGet(Supplier<? extends LazySeq<T>> tail){
+        return visit(s->s.tail(),nil->tail.get());
+    }
     @Override
     default boolean containsValue(T value) {
         return ImmutableList.super.containsValue(value);

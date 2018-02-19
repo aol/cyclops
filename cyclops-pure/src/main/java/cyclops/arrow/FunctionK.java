@@ -1,9 +1,10 @@
 package cyclops.arrow;
 
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.function.Function1;
-import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
@@ -55,13 +56,13 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
     static <T> FunctionK<reactiveSeq,optional,T> streamOptionals(){
         return of(i -> OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional()), OptionalInstances.definitions());
     }
-    static <T> FunctionK<list,reactiveSeq,T> listStream(){
-        return of(i -> ListX.narrowK(i).stream(), PublisherInstances.definitions());
+    static <T> FunctionK<seq,reactiveSeq,T> listStream(){
+        return of(i -> Seq.narrowK(i).stream(), PublisherInstances.definitions());
     }
-    static <T> FunctionK<list,option,T> listMaybe(){
-        return of(i -> ListX.narrowK(i).headAndTail().headMaybe(), MaybeInstances.definitions());
+    static <T> FunctionK<seq,option,T> listMaybe(){
+        return of(i -> Seq.narrowK(i).headAndTail().headMaybe(), MaybeInstances.definitions());
     }
-    static <T> FunctionK<list,optional,T> listOptional(){
-        return of(i -> OptionalKind.widen(ListX.narrowK(i).headAndTail().headOptional()),OptionalInstances.definitions());
+    static <T> FunctionK<seq,optional,T> listOptional(){
+        return of(i -> OptionalKind.widen(Seq.narrowK(i).headAndTail().headOptional()),OptionalInstances.definitions());
     }
 }

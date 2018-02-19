@@ -6,7 +6,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.arrow.*;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.LazySeq;
 import cyclops.control.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -177,18 +177,18 @@ public class Active<W,T> implements Filters<T>,
         return def1.foldable().allMatch(pred,single);
     }
 
-    public T getAt(int index){
-        return toListX().get(index);
+    public Option<T> getAt(int index){
+        return toLazySeq().get(index);
     }
 
     public Active<W,T> reverse(){
         return of(def1.traverse().reverse(single),def1);
     }
-    public  ListX<T> toListX(){
-        return def1.foldable().listX(single);
+    public LazySeq<T> toLazySeq(){
+        return def1.foldable().lazySeq(single);
     }
     public  ReactiveSeq<T> stream(){
-        return toListX().stream();
+        return toLazySeq().stream();
     }
     public  long size() {
         return def1.foldable().size(single);
@@ -281,21 +281,21 @@ public class Active<W,T> implements Filters<T>,
             return narrow.apply(single);
         }
         public Active<W,T> plus(Monoid<C> m,C add){
-            return sum(m,ListX.of(add));
+            return sum(m,LazySeq.of(add));
         }
-        public Active<W,T> sum(C seed, BinaryOperator<C> op,ListX<C> list){
+        public Active<W,T> sum(C seed, BinaryOperator<C> op,ImmutableList<C> list){
             C res =list.plus(narrow.apply(single)).foldLeft(seed,(a,b)->op.apply(a,b));
             return of(widen.apply(res),def1);
         }
-        public Active<W,T> sum(Monoid<C> s,ListX<C> list){
+        public Active<W,T> sum(Monoid<C> s,ImmutableList<C> list){
             C res =list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b));
             return of(widen.apply(res),def1);
         }
-        public Active<W,T> sumInverted(Group<C> s, ListX<C> list){
+        public Active<W,T> sumInverted(Group<C> s, ImmutableList<C> list){
             C res = s.invert(list.plus(narrow.apply(single)).foldLeft(s.zero(),(a,b)->s.apply(a,b)));
             return of(widen.apply(res),def1);
         }
-        public Maybe<Active<W,T>> sum(ListX<C> list){
+        public Maybe<Active<W,T>> sum(ImmutableList<C> list){
             return Active.this.plus().flatMap(s ->
                     Maybe.just(sum(narrow.apply(s.monoid().zero()), (C a, C b) -> narrow.apply(s.monoid().apply(widen.apply(a), widen.apply(b))), list))
             );

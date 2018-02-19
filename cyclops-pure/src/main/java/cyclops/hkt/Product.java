@@ -298,8 +298,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
 
     public  Tuple2<ListX<T>,ListX<T>> toListX(){
-        return run.transform((a, b)->Tuple.tuple(def1.foldable().listX(a),
-                def2.foldable().listX(b)));
+        return run.transform((a, b)->Tuple.tuple(def1.foldable().seq(a),
+                def2.foldable().seq(b)));
     }
     public  ListX<T> toListXBoth(){
         return toListX().transform((a, b)->a.plusAll(b));

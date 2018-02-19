@@ -70,7 +70,7 @@ public interface Semigroups {
     static <T> Semigroup<HashSet<T>> hashSetConcat() {
       return Semigroups.persistentCollectionConcat();
     }
-    static <T> Semigroup<HashSet<T>> trieSetConcat() {
+    static <T> Semigroup<TrieSet<T>> trieSetConcat() {
       return Semigroups.persistentCollectionConcat();
     }
     static <T> Semigroup<TreeSet<T>> treeSetConcat() {
@@ -202,27 +202,27 @@ public interface Semigroups {
         return (a, b) -> Future.firstSuccess(a,b);
     }
     /**
-     * @return Combine two Xor's by taking the first right
+     * @return Combine two Eithers by taking the first right
      */
-    static <ST,PT> Semigroup<Either<ST,PT>> firstPrimaryXor() {
+    static <ST,PT> Semigroup<Either<ST,PT>> firstRightEither() {
         return  (a, b) -> a.isRight() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the first left
+     * @return Combine two Eithers by taking the first left
      */
-    static <ST,PT> Semigroup<Either<ST,PT>> firstSecondaryXor() {
+    static <ST,PT> Semigroup<Either<ST,PT>> firstLeftEither() {
         return  (a, b) -> a.isLeft() ? a : b;
     }
     /**
-     * @return Combine two Xor's by taking the last right
+     * @return Combine two Eithers by taking the last right
      */
-    static <ST,PT> Semigroup<Either<ST,PT>> lastPrimaryXor() {
+    static <ST,PT> Semigroup<Either<ST,PT>> lastRightEither() {
         return  (a, b) -> b.isRight() ? b : a;
     }
     /**
-     * @return Combine two Xor's by taking the last left
+     * @return Combine two Eithers by taking the last left
      */
-    static <ST,PT> Semigroup<Either<ST,PT>> lastSecondaryXor() {
+    static <ST,PT> Semigroup<Either<ST,PT>> lastLeftEither() {
         return  (a, b) -> b.isLeft() ? b : a;
     }
     /**

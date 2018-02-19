@@ -51,6 +51,18 @@ public interface Seq<T> extends ImmutableList<T>,
         Collector<T, ?, List<T>> c  = Collectors.toList();
         return Collectors.<T, List<T>, Iterable<T>,Seq<T>>collectingAndThen((Collector)c,Seq::fromIterable);
     }
+    default T headOrElse(T head){
+        return visit(s->s.head(),nil->head);
+    }
+    default T headOrElseGet(Supplier<? extends T> head){
+        return visit(s->s.head(),nil->head.get());
+    }
+    default Seq<T> tailOrElse(Seq<T> tail){
+        return visit(s->s.tail(),nil->tail);
+    }
+    default Seq<T> tailOrElseGet(Supplier<? extends Seq<T>> tail){
+        return visit(s->s.tail(),nil->tail.get());
+    }
 
     @Override
     default Seq<T> append(T value){
@@ -853,7 +865,7 @@ public interface Seq<T> extends ImmutableList<T>,
           return res.reverse();
         }
         @Override
-        public ImmutableList<T> tail() {
+        public Seq<T> tail() {
             return tail;
         }
         public Seq<T> removeAt(final int i) {

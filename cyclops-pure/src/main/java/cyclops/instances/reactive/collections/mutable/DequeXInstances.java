@@ -1,7 +1,7 @@
 package cyclops.instances.reactive.collections.mutable;
 
 
-import com.oath.cyclops.hkt.DataWitness.deque;
+
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
