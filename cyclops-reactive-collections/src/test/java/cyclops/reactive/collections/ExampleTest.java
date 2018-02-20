@@ -2,7 +2,7 @@ package cyclops.reactive.collections;
 
 import java.util.Arrays;
 
-import cyclops.reactive.CyclopsCollectors;
+import cyclops.reactive.companion.CyclopsCollectors;
 import org.junit.Test;
 
 import cyclops.reactive.collections.mutable.DequeX;

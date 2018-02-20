@@ -1,6 +1,6 @@
 package cyclops.instances.reactive.collections.immutable;
 
-import com.oath.cyclops.hkt.DataWitness.persistentQueueX;
+import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import cyclops.arrow.Cokleisli;

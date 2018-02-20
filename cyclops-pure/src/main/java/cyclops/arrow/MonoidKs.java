@@ -25,7 +25,7 @@ import cyclops.reactive.ReactiveSeq;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-
+import static com.oath.cyclops.data.ReactiveWitness.*;
 
 public interface MonoidKs {
 
