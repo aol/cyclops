@@ -6,7 +6,7 @@ import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Either;
-import com.oath.cyclops.hkt.DataWitness.list;
+import com.oath.cyclops.data.ReactiveWitness.list;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.hkt.Active;
