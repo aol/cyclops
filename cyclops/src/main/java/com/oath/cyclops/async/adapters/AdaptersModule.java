@@ -321,7 +321,7 @@ public interface AdaptersModule {
         @Override
         public void forEachRemaining(Consumer<? super T> action) {
 
-            Spliterator.super.forEachRemaining(action);
+            super.forEachRemaining(action);
         }
         List<T> ancillaryData = null;
         @Override

@@ -32,7 +32,7 @@ dependencies {
   compile project(':cyclops')
   compile project(':cyclops-futurestream')
   compile project(':cyclops-pure')
-  provided 'org.projectlombok:lombok:1.16.12'
+  provided 'org.projectlombok:lombok:1.16.20'
   testCompile project(':cyclops').sourceSets.test.output
   testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'
   testCompile group: 'junit', name: 'junit', version: '4.12'
