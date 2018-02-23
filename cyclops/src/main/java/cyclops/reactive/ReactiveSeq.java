@@ -4798,7 +4798,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                       Function3<? super R1, ? super R2, ? super R3, ? extends R4> zipFn){
 
         Tuple3<ReactiveSeq<T>, ReactiveSeq<T>,ReactiveSeq<T>> d = triplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3);
         ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
         ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
         ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
@@ -4833,7 +4832,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                       Function<? super Stream<T>, ? extends Stream<? extends R>> path4){
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
         ReactiveSeq<R> res1 = d._1().parallel(fj, path1);
         ReactiveSeq<R> res2 = d._2().parallel(fj, path2);
         ReactiveSeq<R> res3 = d._3().parallel(fj, path3);
@@ -4860,7 +4858,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                                          Function4<? super R1, ? super R2, ? super R3, ? super R4, ? extends R5> zipFn){
 
         val d = quadruplicate(()->new ArrayDeque<T>(100));
-        val res = d.map1(path1).map2(path2).map3(path3).map4(path4);
+
         ReactiveSeq<R1> res1 = d._1().parallel(fj, path1);
         ReactiveSeq<R2> res2 = d._2().parallel(fj, path2);
         ReactiveSeq<R3> res3 = d._3().parallel(fj, path3);
