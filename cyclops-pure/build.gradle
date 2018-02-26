@@ -29,10 +29,11 @@ configurations {
 }
 dependencies {
 
+
     compile project(':cyclops')
     compile project(':cyclops-reactive-collections')
 
-    provided 'org.projectlombok:lombok:1.16.12'
+    provided 'org.projectlombok:lombok:1.16.20'
     testCompile project(':cyclops').sourceSets.test.output
     testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
     testCompile 'org.mockito:mockito-core:1.9.5'
@@ -42,6 +43,7 @@ dependencies {
     testCompile 'org.testng:testng:5.14.10'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
     testCompile 'io.vertx:vertx-core:3.0.0'
+
 }
 sourceSets {
     main.compileClasspath += [configurations.provided]

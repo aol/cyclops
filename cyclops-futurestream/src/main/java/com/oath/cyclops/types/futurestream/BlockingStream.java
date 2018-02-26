@@ -8,8 +8,8 @@ import java.util.stream.Collector;
 import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
 import com.oath.cyclops.util.ThrowsSoftened;
-import cyclops.companion.CyclopsCollectors;
 import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.companion.CyclopsCollectors;
 
 public interface BlockingStream<U> {
 

@@ -15,22 +15,25 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import cyclops.data.TreeSet;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.TreeSet;
+
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.MapX;
-import cyclops.companion.MapXs;
+
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -102,7 +105,7 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void sliding(){
-		List<VectorX<Integer>> list = of(1,2,3,4,5,6).sliding(2)
+		List<Seq<Integer>> list = of(1,2,3,4,5,6).sliding(2)
 									.collect(Collectors.toList());
 
 
@@ -111,7 +114,7 @@ public abstract class BaseSequentialSeqTest {
 	}
 	@Test
 	public void slidingInc(){
-		List<VectorX<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
+		List<Seq<Integer>> list = of(1,2,3,4,5,6).sliding(3,2)
 									.collect(Collectors.toList());
 
 
@@ -134,7 +137,7 @@ public abstract class BaseSequentialSeqTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			List<Vector<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 
@@ -147,7 +150,7 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void batchBySizeSet(){
-		System.out.println(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block());
+		System.out.println(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block());
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().get(0).size(),is(1));
 		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().size(),is(1));
 	}

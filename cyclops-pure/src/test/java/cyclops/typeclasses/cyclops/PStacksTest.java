@@ -4,12 +4,13 @@ import static cyclops.function.Lambda.l1;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import com.oath.cyclops.data.ReactiveWitness;
+import com.oath.cyclops.data.ReactiveWitness.linkedListX;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import com.oath.cyclops.hkt.DataWitness.linkedListX;
 import cyclops.arrow.MonoidKs;
 import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.reactive.collections.immutable.LinkedListXInstances;

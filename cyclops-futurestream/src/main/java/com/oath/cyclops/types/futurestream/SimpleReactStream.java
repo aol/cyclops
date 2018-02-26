@@ -1,5 +1,6 @@
 package com.oath.cyclops.types.futurestream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.react.stream.EagerStreamWrapper;
 import com.oath.cyclops.react.StageWithResults;
 import com.oath.cyclops.react.Status;
@@ -13,11 +14,12 @@ import cyclops.futurestream.SimpleReact;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.reactive.collections.mutable.ListX;
+
 import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.oath.cyclops.react.SimpleReactFailedStageException;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.mutable.ListX;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -347,7 +349,7 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
                                   .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false))
                                   .<BaseSimpleReactStream<U>> map(fs -> this.getSimpleReact()
                                                                             .construct(fs))
-                                  .toListX();
+                                  .to(ReactiveConvertableSequence::converter).listX();
     }
 
     /*

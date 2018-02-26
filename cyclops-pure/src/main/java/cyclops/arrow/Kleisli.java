@@ -56,7 +56,9 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
         return kleisliK(monad,andThen(am->monad.map(mapper,am)));
     }
     public <R1> Kleisli<W,T,R1> flatMap(Function<? super R, ? extends Higher<W,? extends R1>> mapper){
-        return kleisliK(monad,andThen(am->monad.flatMap((Function)mapper,am)));
+      Function<R,Higher<W,R1>> fn = (Function<R,Higher<W,R1>>)mapper;
+      Kleisli<W, T, R1> x = kleisliK(monad, andThen(am -> monad.flatMap(fn, am)));
+      return x;
     }
     public  <R2> Kleisli<W, T, Tuple2<R,R2>> zip(Kleisli<W, T, R2> o){
         return zip(o, Tuple::tuple);

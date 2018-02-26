@@ -1083,8 +1083,8 @@ public interface OperationsOnFutures<T> {
                                                                    .map(f -> f.toCompletableFuture())
                                                                    .grouped(2)
                                                                    .filter(list -> list.size() == 2)
-                                                                   .map(list -> list.get(0)
-                                                                                    .thenCombine(list.get(1), combiner))
+                                                                   .map(list -> list.getOrElse(0,null)
+                                                                                    .thenCombine(list.getOrElse(1,null), combiner))
                                                                    .map(cf -> FastFuture.fromCompletableFuture(cf)));
     }
 
