@@ -13,12 +13,14 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.react.async.future.FastFuture;
 import com.oath.cyclops.internal.react.async.future.PipelineBuilder;
 import com.oath.cyclops.react.async.subscription.Continueable;
 import cyclops.futurestream.LazyReact;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.adapters.QueueFactory;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.internal.react.exceptions.FilteredExecutionPathException;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
@@ -255,12 +257,12 @@ public interface LazySimpleReactStream<U> extends BlockingStream<U>, Configurabl
 
     default ListX<BaseSimpleReactStream<U>> copySimpleReactStream(final int times) {
 
-        return Streams.toBufferingCopier(iterator(), times)
-                          .stream()
-                          .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator) it, Spliterator.ORDERED), false))
-                          .<BaseSimpleReactStream<U>> map(fs -> (BaseSimpleReactStream) this.getSimpleReact()
-                                                                                            .construct((Stream) fs))
-                          .toListX();
+        ReactiveSeq<BaseSimpleReactStream<U>> x = Streams.toBufferingCopier(iterator(), times)
+            .stream()
+            .map(it -> StreamSupport.stream(Spliterators.spliteratorUnknownSize((Iterator) it, Spliterator.ORDERED), false))
+            .<BaseSimpleReactStream<U>>map(fs -> (BaseSimpleReactStream) this.getSimpleReact()
+                .construct((Stream) fs));
+           return               x.to(ReactiveConvertableSequence::converter).listX();
     }
 
     /**

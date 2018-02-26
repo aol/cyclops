@@ -18,7 +18,7 @@ public class NQueensVectorTest {
     }
     @Test
     public void run(){
-        val queens = placeQueens(num);
+        VectorX<VectorX<Integer>> queens = placeQueens(num);
         assertThat(queens.size(),equalTo(92));
         show(placeQueens(num));
     }

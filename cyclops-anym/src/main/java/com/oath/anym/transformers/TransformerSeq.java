@@ -373,7 +373,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.BiPredicate)
      */
     @Override
     default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {

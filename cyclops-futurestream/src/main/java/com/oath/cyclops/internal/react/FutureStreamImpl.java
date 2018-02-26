@@ -26,6 +26,7 @@ import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.companion.Streams;
+import cyclops.data.Seq;
 import cyclops.futurestream.FutureStream;
 
 import cyclops.function.Monoid;
@@ -34,7 +35,6 @@ import cyclops.futurestream.LazyReact;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.reactive.collections.mutable.ListX;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -286,12 +286,12 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public ListX<U> reduce(final Stream<? extends Monoid<U>> reducers) {
+    public Seq<U> reduce(final Stream<? extends Monoid<U>> reducers) {
         return Streams.reduce(this, reducers);
     }
 
     @Override
-    public ListX<U> reduce(final Iterable<? extends Monoid<U>> reducers) {
+    public Seq<U> reduce(final Iterable<? extends Monoid<U>> reducers) {
         return Streams.reduce(this, reducers);
     }
 

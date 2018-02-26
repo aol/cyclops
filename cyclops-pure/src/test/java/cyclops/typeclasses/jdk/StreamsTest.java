@@ -9,6 +9,7 @@ import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.jdk.StreamInstances;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import java.util.Arrays;

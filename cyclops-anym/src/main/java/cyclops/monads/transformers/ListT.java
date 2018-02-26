@@ -445,7 +445,7 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedStatefullyUntil(java.util.function.BiPredicate)
+     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.BiPredicate)
      */
     @Override
     public ListT<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {

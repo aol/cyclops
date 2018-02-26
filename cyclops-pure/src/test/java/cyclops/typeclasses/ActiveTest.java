@@ -1,6 +1,7 @@
 package cyclops.typeclasses;
 
 import com.oath.cyclops.hkt.Higher;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
@@ -71,7 +72,7 @@ public class ActiveTest {
         Active<list,Integer> list = ListXInstances.allTypeclasses(ListX.of(1,2,3));
 
         list.concreteMonoid(ListXInstances.kindKleisli(),ListXInstances.kindCokleisli())
-                .sum(ListX.of(ListX.of(1,2,3)));
+                .sum(Vector.of(ListX.of(1,2,3)));
 
         list.concreteFlatMap(ListXInstances.kindKleisli())
                 .flatMap(i->ListX.of(1,2,3));
@@ -148,7 +149,7 @@ public class ActiveTest {
 
     @Test
     public void custom(){
-        Active<list, ListX<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
+        Active<list, Vector<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
         assertThat(grouped.getActive()  ,equalTo(ListX.of(ListX.of(1,2,3))));
 
     }
