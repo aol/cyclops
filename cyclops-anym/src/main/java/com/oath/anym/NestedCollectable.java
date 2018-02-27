@@ -112,7 +112,7 @@ public interface NestedCollectable<W extends WitnessType<W>,T> {
     default ListX<ListX<T>> toListOfLists() {
         return nestedCollectables().stream()
                                    .map(s -> s.collect(ListX.listXCollector()))
-                                   .toListX();
+                                   .to(ReactiveConvertableSequence::converter)                .listX();
     }
 
     /**

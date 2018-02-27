@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.data.tuple.Tuple;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
