@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -400,56 +401,47 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT) FoldableTransformerSeq.super.zip4(second, third, fourth);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zipWithIndex()
-     */
+
     @Override
     public ListT<W,Tuple2<T, Long>> zipWithIndex() {
 
         return (ListT<W,Tuple2<T, Long>>) FoldableTransformerSeq.super.zipWithIndex();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#sliding(int)
-     */
     @Override
-    public ListT<W,VectorX<T>> sliding(final int windowSize) {
+    public ListT<W,Seq<T>> sliding(final int windowSize) {
 
-        return (ListT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+        return (ListT<W,Seq<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
-     */
-    @Override
-    public ListT<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (ListT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+    @Override
+    public ListT<W,Seq<T>> sliding(final int windowSize, final int increment) {
+
+        return (ListT<W,Seq<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#grouped(int, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> ListT<W,C> grouped(final int size, final Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> ListT<W,C> grouped(final int size, final Supplier<C> supplier) {
 
         return (ListT<W,C>) FoldableTransformerSeq.super.grouped(size, supplier);
     }
 
-   
+
     @Override
     public ListT<W,Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return (ListT<W,Vector<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.BiPredicate)
-     */
-    @Override
-    public ListT<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
+    @Override
+    public ListT<W,Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+
+        return (ListT<W,Vector<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
     /* (non-Javadoc)
