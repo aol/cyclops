@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.futurestream.FutureStream;
@@ -81,7 +83,7 @@ public class WindowingTest {
 	}
 	@Test
 	public void sliding() {
-		List<VectorX<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<Seq<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -89,7 +91,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<VectorX<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<Seq<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
@@ -98,7 +100,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<Vector<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -109,7 +111,7 @@ public class WindowingTest {
 	public void sliding2() {
 
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<Seq<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
 	}
@@ -117,7 +119,7 @@ public class WindowingTest {
 	@Test
 	public void slidingOverlap() {
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<Seq<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(3,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -133,7 +135,7 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEnd() {
 
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<Seq<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
 		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
 	}
@@ -197,7 +199,7 @@ public class WindowingTest {
 	public void groupedInfinite() {
 		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 
-		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
+		final ReactiveSeq<Vector<Integer>> grouped = infinite.grouped(3);
 		assertThat(grouped.elementAt(0).toOptional().get(),equalTo(Arrays.asList(1,2,3)));
 
 	}

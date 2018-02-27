@@ -409,7 +409,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Batch until predicate holds, applyHKT open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return traversable().groupedUntil(predicate);
     }
 

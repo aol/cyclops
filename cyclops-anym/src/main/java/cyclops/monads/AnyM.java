@@ -23,6 +23,7 @@ import com.oath.anym.AnyMValue;
 import com.oath.anym.AnyMValue2;
 import com.oath.anym.internal.adapters.StreamAdapter;
 import com.oath.anym.internal.monads.AnyMValue2Impl;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
@@ -50,6 +51,8 @@ import cyclops.control.Future;
 import cyclops.function.*;
 import cyclops.reactive.*;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.immutable.*;
+import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
@@ -114,11 +117,13 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             Transformable<T>,
                                                             ToStream<T>,
                                                             Publisher<T>,
-  Filters<T> {
+                                                            Filters<T> {
+    /**
     @Override
     default ReactiveSeq<T> stream() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
+    **/
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -1000,7 +1005,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static <ST, LT2, LT3,LT4,T> ListX<AnyMValue<lazyEither5,T>> listFromEither5(final Iterable<LazyEither5<ST, LT2, LT3, LT4, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> fromEither5(e))
-                .toListX();
+                .to(ReactiveConvertableSequence::converter)
+                .listX();
     }
 
     /**
@@ -1018,7 +1024,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static <ST, LT2, LT3,T> ListX<AnyMValue<lazyEither4,T>> listFromEither4(final Iterable<LazyEither4<ST, LT2, LT3, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> fromEither4(e))
-                .toListX();
+                .to(ReactiveConvertableSequence::converter)
+                .listX();
     }
     /**
      * Take an iterable containing Either3s and convert them into a List of AnyMs
@@ -1035,7 +1042,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     public static <ST, LT2, T> ListX<AnyMValue<lazyEither3,T>> listFromEither3(final Iterable<LazyEither3<ST, LT2, T>> anyM) {
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> AnyM.fromEither3(e))
-                .toListX();
+                .to(ReactiveConvertableSequence::converter)
+                .listX();
     }
     /**
      * Take an iterable containing Either3s and convert them into a List of AnyMs
@@ -1053,7 +1061,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(anyM);
         return ReactiveSeq.fromIterable(anyM)
                 .map(e -> AnyM.fromLazyEither(e))
-                .toListX();
+                .to(ReactiveConvertableSequence::converter)
+                .listX();
     }
     /**
      * Take an iterable containing Streams and convert them into a List of AnyMs
@@ -1226,7 +1235,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1> AnyM<W,ListX<T1>> sequence(final Collection<? extends AnyM<W,T1>> seq,W w) {
-        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to(ReactiveConvertableSequence::converter).listX(LAZY));
     }
 
     /**

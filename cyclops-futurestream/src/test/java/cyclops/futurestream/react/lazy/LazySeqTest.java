@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.react.ThreadPools;
 import cyclops.futurestream.react.base.BaseSeqTest;
 import cyclops.futurestream.FutureStream;
@@ -40,8 +41,8 @@ public abstract class LazySeqTest extends BaseSeqTest {
 
 	@Test
 	public void testCycleLong() {
-		assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).toListX().size());
-		assertEquals(asList(1, 2, 3, 1, 2, 3).size(), of(1, 2, 3).cycle(2).toListX().size());
+		assertEquals(asList(1, 2, 1, 2, 1, 2).size(),of(1, 2).cycle(3).to(ReactiveConvertableSequence::converter).listX().size());
+		assertEquals(asList(1, 2, 3, 1, 2, 3).size(), of(1, 2, 3).cycle(2).to(ReactiveConvertableSequence::converter).listX().size());
 	}
 	@Test
 	public void copy(){

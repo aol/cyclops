@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
@@ -53,7 +55,7 @@ public  class LFSNoOrderTest {
 	}
 	@Test
     public void stream(){
-        assertThat(of(1,2,3).stream().toListX(),hasItems(1,2,3));
+        assertThat(of(1,2,3).stream().to(ReactiveConvertableSequence::converter).listX(),hasItems(1,2,3));
     }
 
 
@@ -252,12 +254,12 @@ public  class LFSNoOrderTest {
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        cyclops.data.HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
+	        assertThat(map1.getOrElse(0,Vector.empty()).listView(),hasItem(2));
+	        assertThat(map1.getOrElse(0,Vector.empty()).listView(),hasItem(4));
+	        assertThat(map1.getOrElse(1,Vector.empty()).listView(),hasItem(1));
+	        assertThat(map1.getOrElse(1,Vector.empty()).listView(),hasItem(3));
 
 	        assertEquals(2, map1.size());
 

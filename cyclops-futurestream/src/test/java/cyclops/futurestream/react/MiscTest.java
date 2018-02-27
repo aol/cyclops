@@ -1,5 +1,6 @@
 package cyclops.futurestream.react;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.control.Future;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.SimpleReact;
@@ -77,7 +78,7 @@ public class MiscTest {
 
     PersistentSetX<String> setX =  seq.to(s->new LazyReact().fromStream(s))
       .map(data->"fan out across threads with futureStreams" + data)
-      .to().persistentSetX();
+      .to(ReactiveConvertableSequence::converter).persistentSetX();
 
 
 

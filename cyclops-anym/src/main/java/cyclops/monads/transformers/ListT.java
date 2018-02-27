@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
@@ -435,13 +436,11 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT<W,C>) FoldableTransformerSeq.super.grouped(size, supplier);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
-     */
+   
     @Override
-    public IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+    public ListT<W,Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
+        return (ListT<W,Vector<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
     /* (non-Javadoc)
@@ -457,25 +456,21 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
      */
     @Override
-    public Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+    public ListT<W,Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
+        return (ListT<W,Vector<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    public <C extends Collection<? super T>> ListT<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ListT<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (ListT<W,C>) FoldableTransformerSeq.super.groupedWhile(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    public <C extends Collection<? super T>> ListT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ListT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (ListT<W,C>) FoldableTransformerSeq.super.groupedUntil(predicate, factory);
     }
@@ -484,9 +479,9 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#grouped(int)
      */
     @Override
-    public Traversable<Vector<T>> grouped(final int groupSize) {
+    public ListT<W,Vector<T>> grouped(final int groupSize) {
 
-        return (ListT<W,ListX<T>>) FoldableTransformerSeq.super.grouped(groupSize);
+        return (ListT<W,Vector<T>>) FoldableTransformerSeq.super.grouped(groupSize);
     }
 
 
