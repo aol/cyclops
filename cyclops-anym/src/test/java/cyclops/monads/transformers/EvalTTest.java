@@ -1,7 +1,10 @@
 package cyclops.monads.transformers;
 
 
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.ReactiveReducers;
 import cyclops.companion.Semigroups;
+import cyclops.data.Seq;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import com.oath.cyclops.types.mixins.Printable;
@@ -114,8 +117,8 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(10)));
+		assertThat(none.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of()));
 	}
 
 	@Test
@@ -234,7 +237,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.mapReduce(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -264,13 +267,13 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
+		Seq<Integer> countAndTotal = just.reduce(ListX.of(Reducers.toCountInt(),Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
 	@Test
 	public void testReduceIterableOfReducerOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
+		Seq<Integer> countAndTotal = just.reduce(ListX.of(Reducers.toCountInt(),Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
@@ -288,7 +291,7 @@ public class EvalTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldRightMapToType(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 

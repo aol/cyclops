@@ -286,7 +286,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     @Override
     default ReactiveSeq<T> stream() {
-        return AnyM2.super.stream();
+        return AnyMValue.super.stream();
     }
 
     @Override

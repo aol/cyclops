@@ -11,10 +11,13 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.stream.HotStream;
 import cyclops.control.Maybe;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.SeqT;
+import cyclops.monads.transformers.VectorT;
 import cyclops.reactive.Streamable;
 import cyclops.monads.transformers.ListT;
 import cyclops.reactive.collections.mutable.ListX;
@@ -141,58 +144,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
         return nestedFoldables().map(s -> s.reduce(identity, accumulator, combiner));
     }
 
-    /**
-     * Reduce with multiple reducers in parallel NB if this Monad is an Optional
-     * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     *
-     * <pre>
-     * {
-     *  {@code
-     *  Monoid<Integer> sum = Monoid.of(0, (a, b) -> a + b);
-     *  Monoid<Integer> mult = Monoid.of(1, (a, b) -> a * b);
-     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4).reduce(Arrays.asList(sum, mult).transformerStream());
-     *
-     *  assertThat(result, equalTo(Arrays.asList(10, 24)));
-     *
-     * }
-     * </pre>
-     *
-     *
-     * @param reducers
-     * @return
-     */
-    default ListT<W,T> reduce(final Stream<? extends Monoid<T>> reducers) {
-        final AnyM<W,ListX<T>> anyM = nestedFoldables().map(s -> s.reduce(reducers));
-        return ListT.of(anyM);
 
-    }
-
-    /**
-     * Reduce with multiple reducers in parallel NB if this Monad is an Optional
-     * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
-     * was one value To reduce over the values on the list, called
-     * streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     *
-     * <pre>
-     * {@code
-     *      Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-     *      Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-     *      List<Integer> result = ReactiveSeq.of(1,2,3,4))
-     *                                      .reduce(Arrays.asList(sum,mult) );
-     *
-     *
-     *      assertThat(result,equalTo(Arrays.asList(10,24)));
-     *
-     * }
-     * </pre>
-     *
-     * @param reducers
-     * @return
-     */
-    default ListT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
-        return ListT.of(nestedFoldables().map(s -> s.reduce(reducers)));
+    default SeqT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+        return SeqT.of(nestedFoldables().map(s -> s.reduce(reducers)));
     }
     default AnyM<W,T> foldLeft(final Monoid<T> reducer) {
         return nestedFoldables().map(s -> s.foldLeft(reducer));
@@ -359,7 +313,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *
      * </pre>
      */
-    default <K> AnyM<W,MapX<K, ListX<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
+    default <K> AnyM<W,cyclops.data.HashMap<K, Vector<T>>> groupBy(final Function<? super T, ? extends K> classifier) {
         return nestedFoldables().map(s -> s.groupBy(classifier));
     }
 

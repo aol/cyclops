@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFunction1;
@@ -36,15 +38,7 @@ import lombok.val;
 
 
 public class AnyMTest {
-	/** no longer compiles!
-	@Test
-	public void multiReturn(){
-		AnyMValue<Integer> stream = AnyM.fromOptional(Optional.of(1))
-									.flatMap(i->ReactiveSeq.of(1,2,i).anyM());
 
-		stream.map(i->i+2);
-	}
-	**/
     @Test
     public void listTest(){
         List<String> l = AnyM.fromList(Arrays.asList(1,2,3))
@@ -254,7 +248,7 @@ public class AnyMTest {
 
 	@Test
 	public void sliding(){
-		List<VectorX<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
+		List<Seq<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(2)
 									.collect(Collectors.toList());
@@ -265,7 +259,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void slidingIncrement(){
-		List<VectorX<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
+		List<Seq<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.sliding(3,2)
 									.collect(Collectors.toList());
@@ -277,7 +271,7 @@ public class AnyMTest {
 	@Test
 	public void grouped(){
 
-		List<List<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
+		List<Vector<Integer>> list = fromStream(Stream.of(1,2,3,4,5,6))
 									.stream()
 									.grouped(3)
 									.collect(Collectors.toList());
@@ -319,7 +313,7 @@ public class AnyMTest {
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
 		val result = fromStream(Stream.of(1,2,3,4))
 						.stream()
-						.reduce(Arrays.asList(sum,mult).stream() );
+						.reduce(Arrays.asList(sum,mult) );
 
 
 		assertThat(result,equalTo(Arrays.asList(10,24)));

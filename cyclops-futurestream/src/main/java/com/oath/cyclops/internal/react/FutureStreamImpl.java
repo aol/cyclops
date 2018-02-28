@@ -285,10 +285,6 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return reduce(reducer.zero(),reducer);
     }
 
-    @Override
-    public Seq<U> reduce(final Stream<? extends Monoid<U>> reducers) {
-        return Streams.reduce(this, reducers);
-    }
 
     @Override
     public Seq<U> reduce(final Iterable<? extends Monoid<U>> reducers) {

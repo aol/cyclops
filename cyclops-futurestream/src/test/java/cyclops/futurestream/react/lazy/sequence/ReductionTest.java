@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import cyclops.futurestream.LazyReact;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import cyclops.companion.Reducers;
@@ -58,7 +59,7 @@ public class ReductionTest {
 	@Test
 	public void reduceWithMonoidStreamJoin(){
 		LazyReact.sequentialBuilder().of("hello","2","world","4").join(",");
-		assertThat(LazyReact.sequentialBuilder().of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))),
+		assertThat(LazyReact.sequentialBuilder().of("hello","2","world","4").reduce(ListX.of(Reducers.toString(","))),
 				equalTo(Arrays.asList(",hello,2,world,4")));
 	}
 	@Test

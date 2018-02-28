@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import cyclops.Converters;
+
+import cyclops.reactive.companion.Converters;
+import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;

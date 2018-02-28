@@ -3,9 +3,11 @@ package cyclops.monads.anym.value;
 
 import com.oath.anym.AnyMValue;
 import com.oath.anym.AnyMValue2;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.companion.Semigroups;
 import cyclops.control.Future;
+import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.*;
 import cyclops.control.Eval;
@@ -13,6 +15,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 
 import cyclops.companion.Streams;
@@ -156,8 +159,8 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(10)));
+		assertThat(none.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of()));
 	}
 
 	@Test
@@ -347,13 +350,13 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(),Reducers.toTotalInt()));
+		Seq<Integer> countAndTotal = just.reduce(ReactiveSeq.of(Reducers.toCountInt(),Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
 	@Test
 	public void testReduceIterableOfReducerOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
+        Seq<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 

@@ -1,10 +1,12 @@
 package cyclops.monads.transformers;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.transformers.FoldableTransformerSeq;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -387,65 +389,51 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,Tuple2<T, Long>>) FoldableTransformerSeq.super.zipWithIndex();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#sliding(int)
-     */
-    @Override
-    public StreamT<W,VectorX<T>> sliding(final int windowSize) {
 
-        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize);
+    @Override
+    public StreamT<W,Seq<T>> sliding(final int windowSize) {
+
+        return (StreamT<W,Seq<T>>) FoldableTransformerSeq.super.sliding(windowSize);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#sliding(int, int)
-     */
-    @Override
-    public StreamT<W,VectorX<T>> sliding(final int windowSize, final int increment) {
 
-        return (StreamT<W,VectorX<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
+    @Override
+    public StreamT<W,Seq<T>> sliding(final int windowSize, final int increment) {
+
+        return (StreamT<W,Seq<T>>) FoldableTransformerSeq.super.sliding(windowSize, increment);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#grouped(int, java.util.function.Supplier)
-     */
+
     @Override
-    public <C extends Collection<? super T>> StreamT<W,C> grouped(final int size, final Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> StreamT<W,C> grouped(final int size, final Supplier<C> supplier) {
 
         return (StreamT<W,C>) FoldableTransformerSeq.super.grouped(size, supplier);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate)
-     */
-    @Override
-    public IterableX<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
-        return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
+    @Override
+    public StreamT<W,Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
+
+        return (StreamT<W,Vector<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.BiPredicate)
-     */
-    @Override
-    public StreamT<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
 
-        return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.groupedStatefullyUntil(predicate);
+    @Override
+    public StreamT<W,Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+
+        return (StreamT<W,Vector<T>>) FoldableTransformerSeq.super.groupedUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate)
-     */
-    @Override
-    public Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
-        return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
+    @Override
+    public StreamT<W,Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+
+        return (StreamT<W,Vector<T>>) FoldableTransformerSeq.super.groupedWhile(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    public <C extends Collection<? super T>> StreamT<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> StreamT<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (StreamT<W,C>) FoldableTransformerSeq.super.groupedWhile(predicate, factory);
     }
@@ -454,33 +442,25 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
      * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    public <C extends Collection<? super T>> StreamT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> StreamT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return (StreamT<W,C>) FoldableTransformerSeq.super.groupedUntil(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#grouped(int)
-     */
-    @Override
-    public Traversable<Vector<T>> grouped(final int groupSize) {
 
-        return (StreamT<W,ListX<T>>) FoldableTransformerSeq.super.grouped(groupSize);
+    @Override
+    public StreamT<W,Vector<T>> grouped(final int groupSize) {
+
+        return (StreamT<W,Vector<T>>) FoldableTransformerSeq.super.grouped(groupSize);
     }
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#distinct()
-     */
     @Override
     public StreamT<W,T> distinct() {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.distinct();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#scanLeft(cyclops2.function.Monoid)
-     */
     @Override
     public StreamT<W,T> scanLeft(final Monoid<T> monoid) {
 

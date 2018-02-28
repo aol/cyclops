@@ -1,4 +1,4 @@
-package cyclops.monads.transformers;
+package cyclops.monads.transformers.jdk;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
@@ -22,8 +22,6 @@ import org.reactivestreams.Publisher;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.function.*;
-import java.util.stream.Stream;
-
 
 
 /**
