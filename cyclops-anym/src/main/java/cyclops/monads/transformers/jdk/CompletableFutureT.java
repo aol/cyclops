@@ -1,4 +1,4 @@
-package cyclops.monads.transformers;
+package cyclops.monads.transformers.jdk;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;

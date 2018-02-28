@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
@@ -24,7 +25,7 @@ public class UnwrapTest {
 	@Test
 	public void unwrapOptional(){
 		Optional<ListX<String>> stream = AnyM.streamOf("hello","world")
-											.stream().to()
+											.stream().to(ReactiveConvertableSequence::converter)
 											.optional();
 		assertThat(stream.get(),equalTo(Arrays.asList("hello","world")));
 	}

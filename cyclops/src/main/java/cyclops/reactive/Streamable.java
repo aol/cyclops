@@ -1491,32 +1491,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return this.stream().reduce(identity, accumulator, combiner);
     }
 
-    /**
-     * Reduce with multiple reducers in parallel
-     * NB if this Monad is an Optional [Arrays.asList(1,2,3)]  reduce will operate on the Optional as if the list was one value
-     * To reduce over the values on the list, called streamedMonad() first. I.e. streamedMonad().reduce(reducer)
-     *
-     * <pre>
-     * {@code
-     * Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-       Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-       List<Integer> result = Streamable.of(1,2,3,4)
-    					.reduce(Arrays.asList(sum,mult).stream() );
 
-
-    	assertThat(result,equalTo(Arrays.asList(10,24)));
-     *
-     * }
-     * </pre>
-     *
-     *
-     * @param reducers
-     * @return
-     */
-    @Override
-    default Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
-        return this.stream().reduce(reducers);
-    }
 
     /**
      * Reduce with multiple reducers in parallel

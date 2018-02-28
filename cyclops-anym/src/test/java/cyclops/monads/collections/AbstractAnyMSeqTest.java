@@ -33,6 +33,10 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.HashMap;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.*;
@@ -305,7 +309,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        HashMap<Integer, ListX<Integer>> mapA =of(1, 2, 3, 4).groupBy(i -> i % 2).map(ListX::fromIterable);
+            Map<Integer, ListX<Integer>> map1 = mapA.javaMap();
 
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));
@@ -578,7 +583,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void testSkipLast(){
 		assertThat(of(1,2,3,4,5)
 							.skipLast(2)
-							.toListX(),equalTo(Arrays.asList(1,2,3)));
+							.to(ReactiveConvertableSequence::converter)
+                             .listX(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
@@ -670,22 +676,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
-	@Test
-	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
 
-		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-	}
-	/**
-	@Test
-	public void splitBy(){
-		assertThat( of(1, 2, 3, 4, 5, 6).stream().splitBy(i->i<4).v1.toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4).v2.toList(),equalTo(Arrays.asList(4,5,6)));
-	}
-	**/
+
 	@Test
 	public void testLazy(){
 		Collection<Integer> col = of(1,2,3,4,5)
@@ -695,15 +687,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
-	@Test
-	public void testLazyCollection(){
-		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
-		System.out.println("takeOne!");
-		col.forEach(System.out::println);
-		assertThat(col.size(),equalTo(5));
-	}
+
 	int peek = 0;
 	@Test
 	public void testPeek() {
@@ -748,7 +732,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 		List<Tuple2<Integer,Integer>> list = of(1,2,3,4,5,6)
 											.zip(of(100,200,300,400))
-											.toListX()
+											.to(ReactiveConvertableSequence::converter)
+                                             .listX()
                       .materialize();
 
 
@@ -769,7 +754,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 		List<Tuple2<Integer,Integer>> list =  of(1,2,3,4,5,6)
 													.zip( of(100,200,300,400).stream())
-													.toListX();
+													.to(ReactiveConvertableSequence::converter)
+                                                    .listX();
 
 		assertThat(asList(1,2,3,4,5,6),hasItem(list.get(0)._1()));
 		assertThat(asList(100,200,300,400),hasItem(list.get(0)._2()));
@@ -912,10 +898,10 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 	@Test
 	public void testZipWithIndex() {
-		assertEquals(asList(), of().zipWithIndex().toListX());
+		assertEquals(asList(), of().zipWithIndex().to(ReactiveConvertableSequence::converter).listX());
 
 		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().toListX());
+		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().to(ReactiveConvertableSequence::converter).listX());
 
 	}
 
@@ -925,19 +911,18 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	@Test
 	public void emptyConvert(){
 
-		assertFalse(empty().to().optional().isPresent());
-		assertFalse(empty().toListX().size()>0);
-		assertFalse(empty().to().dequeX().size()>0);
-		assertFalse(empty().to().linkedListX().size()>0);
-		assertFalse(empty().to().queueX().size()>0);
-		assertFalse(empty().to().vectorX().size()>0);
-		assertFalse(empty().to().persistentQueueX().size()>0);
-		assertFalse(empty().toSetX().size()>0);
-		assertFalse(empty().to().sortedSetX().size()>0);
-		assertFalse(empty().to().orderedSetX().size()>0);
-		assertFalse(empty().to().bagX().size()>0);
-		assertFalse(empty().to().persistentMapX(t->t, t->t).size()>0);
-		assertFalse(empty().to().mapX(t->t,t->t).size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).optional().isPresent());
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).listX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).dequeX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).linkedListX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).queueX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).vectorX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).persistentQueueX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).setX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).sortedSetX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).orderedSetX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).bagX().size()>0);
+		assertFalse(empty().to(ReactiveConvertableSequence::converter).mapX(t->t,t->t).size()>0);
 
 		assertFalse(empty().toSet().size()>0);
 		assertFalse(empty().toList().size()>0);
@@ -948,19 +933,18 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	@Test
 	public void presentConvert(){
 
-		assertTrue(of(1).to().optional().isPresent());
-		assertTrue(of(1).toListX().size()>0);
-		assertTrue(of(1).to().dequeX().size()>0);
-		assertTrue(of(1).to().linkedListX().size()>0);
-		assertTrue(of(1).to().queueX().size()>0);
-		assertTrue(of(1).to().vectorX().size()>0);
-		assertTrue(of(1).to().persistentQueueX().size()>0);
-		assertTrue(of(1).toSetX().size()>0);
-		assertTrue(of(1).to().sortedSetX().size()>0);
-		assertTrue(of(1).to().orderedSetX().size()>0);
-		assertTrue(of(1).to().bagX().size()>0);
-		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
-		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).optional().isPresent());
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).listX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).dequeX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).linkedListX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).queueX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).vectorX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).persistentQueueX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).setX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).sortedSetX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).orderedSetX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).bagX().size()>0);
+		assertTrue(of(1).to(ReactiveConvertableSequence::converter).mapX(t->t,t->t).size()>0);
 
 		assertTrue(of(1).toSet().size()>0);
 		assertTrue(of(1).toList().size()>0);
@@ -977,7 +961,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         public void batchBySizeCollection(){
 
 
-            assertThat(of(1,2,3,4,5,6).grouped(3,()->ListX.empty()).elementAt(0).toOptional().get().size(),is(3));
+            assertThat(of(1,2,3,4,5,6).grouped(3,()->Vector.empty()).elementAt(0).toOptional().get().size(),is(3));
 
            // assertThat(of(1,1,1,1,1,1).grouped(3,()->new ListXImpl<>()).getValue(1).getValue().size(),is(1));
         }
@@ -1056,8 +1040,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         public void testShuffle() {
             Supplier<AnyMSeq<W,Integer>> s = () ->of(1, 2, 3);
 
-            assertEquals(3, s.get().shuffle().toListX().size());
-            assertThat(s.get().shuffle().toListX(), hasItems(1, 2, 3));
+            assertEquals(3, s.get().shuffle().to(ReactiveConvertableSequence::converter).listX().size());
+            assertThat(s.get().shuffle().to(ReactiveConvertableSequence::converter).listX(), hasItems(1, 2, 3));
 
 
         }
@@ -1066,8 +1050,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             Random r = new Random();
             Supplier<AnyMSeq<W,Integer>> s = () ->of(1, 2, 3);
 
-            assertEquals(3, s.get().shuffle(r).toListX().size());
-            assertThat(s.get().shuffle(r).toListX(), hasItems(1, 2, 3));
+            assertEquals(3, s.get().shuffle(r).to(ReactiveConvertableSequence::converter).listX().size());
+            assertThat(s.get().shuffle(r).to(ReactiveConvertableSequence::converter).listX(), hasItems(1, 2, 3));
 
 
         }
@@ -1164,36 +1148,36 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void batchUntil(){
                 assertThat(of(1,2,3,4,5,6)
                         .groupedUntil(i->false)
-                        .toListX().size(),equalTo(1));
+                        .to(ReactiveConvertableSequence::converter).listX().size(),equalTo(1));
 
             }
             @Test
             public void batchWhile(){
                 assertThat(of(1,2,3,4,5,6)
                         .groupedWhile(i->true)
-                        .toListX()
+                        .to(ReactiveConvertableSequence::converter).listX()
                         .size(),anyOf(equalTo(1),equalTo(6)));
 
             }
             @Test
             public void batchUntilSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedUntil(i->false,()->ListX.empty())
-                        .toListX().size(),equalTo(1));
+                        .groupedUntil(i->false,()->Vector.empty())
+                        .to(ReactiveConvertableSequence::converter).listX().size(),equalTo(1));
 
             }
             @Test
             public void batchWhileSupplier(){
                 assertThat(of(1,2,3,4,5,6)
-                        .groupedWhile(i->true,()->ListX.empty())
-                        .toListX()
+                        .groupedWhile(i->true,()->Vector.empty())
+                        .to(ReactiveConvertableSequence::converter).listX()
                         .size(),equalTo(1));
 
             }
 
             @Test
             public void slidingNoOrder() {
-                ListX<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).toListX();
+                ListX<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(2).to(ReactiveConvertableSequence::converter).listX();
 
                 System.out.println(list);
                 assertThat(list.get(0).size(), equalTo(2));
@@ -1202,7 +1186,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
             @Test
             public void slidingIncrementNoOrder() {
-                List<VectorX<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
+                List<Seq<Integer>> list = of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(java.util.stream.Collectors.toList());
 
                 System.out.println(list);
 
@@ -1213,14 +1197,14 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void combineNoOrder(){
                 assertThat(of(1,2,3)
                            .combine((a, b)->a.equals(b), Semigroups.intSum)
-                           .toListX(),equalTo(ListX.of(1,2,3)));
+                           .to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(1,2,3)));
 
             }
     @Test
     public void combineNoOrderMonoid(){
         assertThat(of(1,2,3)
                 .combine(Monoids.intSum,(a, b)->a.equals(b))
-                .toListX(),equalTo(ListX.of(1,2,3)));
+                .to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(1,2,3)));
 
     }
 
@@ -1228,7 +1212,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void zip3NoOrder(){
                 List<Tuple3<Integer,Integer,Character>> list =
                         of(1,2,3,4).zip3(of(100,200,300,400).stream(),of('a','b','c','d').stream())
-                                                        .toListX();
+                                                        .to(ReactiveConvertableSequence::converter).listX();
 
                 System.out.println(list);
                 List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
@@ -1249,7 +1233,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             public void zip4NoOrder(){
                 List<Tuple4<Integer,Integer,Character,String>> list =
                         of(1,2,3,4).zip4(of(100,200,300,400).stream(),of('a','b','c','d').stream(),of("hello","world","boo!","2").stream())
-                                                        .toListX();
+                                                        .to(ReactiveConvertableSequence::converter).listX();
                 System.out.println(list);
                 List<Integer> right = list.stream().map(t -> t._2()).collect(java.util.stream.Collectors.toList());
                 assertThat(right,hasItem(100));
@@ -1272,7 +1256,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             @Test
             public void testIntersperseNoOrder() {
 
-                assertThat((of(1,2,3).intersperse(0)).toListX(),hasItem(0));
+                assertThat((of(1,2,3).intersperse(0)).to(ReactiveConvertableSequence::converter).listX(),hasItem(0));
 
 
 
@@ -1288,19 +1272,19 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
                 assertThat(of(1,  0.2, 2, 0.3, 3)
 
-                        .ofType(Serializable.class).toListX(),containsInAnyOrder(1, 0.2, 2,0.3, 3));
+                        .ofType(Serializable.class).to(ReactiveConvertableSequence::converter).listX(),containsInAnyOrder(1, 0.2, 2,0.3, 3));
 
             }
 
             @Test
             public void allCombinations3NoOrder() {
-                System.out.println(of(1, 2, 3).combinations().map(s->s.toListX()).toListX());
-                assertThat(of(1, 2, 3).combinations().map(s->s.toListX()).toListX().size(),equalTo(8));
+                System.out.println(of(1, 2, 3).combinations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX());
+                assertThat(of(1, 2, 3).combinations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX().size(),equalTo(8));
             }
 
             @Test
             public void emptyAllCombinationsNoOrder() {
-                assertThat(of().combinations().map(s -> s.toListX()).toListX(), equalTo(Arrays.asList(Arrays.asList())));
+                assertThat(of().combinations().map(s -> s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX(), equalTo(Arrays.asList(Arrays.asList())));
             }
 
             @Test
@@ -1310,20 +1294,20 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
             @Test
             public void permuations3NoOrder() {
-                System.out.println(of(1, 2, 3).permutations().map(s->s.toListX()).toListX());
-                assertThat(of(1, 2, 3).permutations().map(s->s.toListX()).toListX().get(0).size(),
+                System.out.println(of(1, 2, 3).permutations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX());
+                assertThat(of(1, 2, 3).permutations().map(s->s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX().get(0).size(),
                         equalTo(3));
             }
 
             @Test
             public void emptyCombinationsNoOrder() {
-                assertThat(of().combinations(2).map(s -> s.toListX()).toListX(), equalTo(Arrays.asList()));
+                assertThat(of().combinations(2).map(s -> s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX(), equalTo(Arrays.asList()));
             }
 
              @Test
             public void combinations2NoOrder() {
 
-                    assertThat(of(1, 2, 3).combinations(2).map(s->s.toListX()).toListX().get(0).size(),
+                    assertThat(of(1, 2, 3).combinations(2).map(s->s.to(ReactiveConvertableSequence::converter).listX()).to(ReactiveConvertableSequence::converter).listX().get(0).size(),
                             equalTo(2));
                 }
         protected Object sleep(int i) {

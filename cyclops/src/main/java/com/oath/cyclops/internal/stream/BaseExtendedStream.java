@@ -138,10 +138,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return unwrapStream().reduce(identity, accumulator, combiner);
     }
 
-    @Override
-    public final Seq<T> reduce(final Stream<? extends Monoid<T>> reducers) {
-        return Streams.reduce(this, reducers);
-    }
+
 
     @Override
     public final Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {

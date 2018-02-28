@@ -2,6 +2,7 @@ package cyclops.monads.collections.mutable;
 
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
@@ -72,10 +73,10 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<rea
     }
     @Test
     public void materialize(){
-        ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX();
         System.out.println("D " + d);
         count =0;
-        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX());
     }
     @Test
     public void testCycleUntil() {
@@ -83,16 +84,16 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<rea
         ReactiveSeq<Integer> stream1 = Spouts.of(1,2,3);
         ReactiveSeq<Integer> stream2 = AnyM.fromStream(stream1).unwrap();
         assertTrue(stream1== stream2);
-        System.out.println("Stream2 cycling " + stream2.cycleUntil(next->count++==6).toListX().materialize());
+        System.out.println("Stream2 cycling " + stream2.cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX().materialize());
         count=0;
         System.out.println("Cycle until!");
-        ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX().materialize();
+        ListX<Integer> a =Spouts.of(1,2,3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX().materialize();
         count=0;
-        ListX<Integer> b= Witness.reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).toListX();
+        ListX<Integer> b= Witness.reactiveSeq(of(1, 2, 3)).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX();
         count=0;
-        ListX<Integer> c= Witness.reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).toListX();
+        ListX<Integer> c= Witness.reactiveSeq(of(1, 2, 3).cycleUntil(next->count++==6)).to(ReactiveConvertableSequence::converter).listX();
         count=0;
-        ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+        ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX();
         System.out.println("A " + a);
         count=0;
         System.out.println("B " + b);
@@ -102,11 +103,11 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<rea
         System.out.println("D " + d);
         count=0;
 
-        System.out.println("Cycle"  +Spouts.of(1,2,3).cycleUntil(next->count++==6).toListX());
+        System.out.println("Cycle"  +Spouts.of(1,2,3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX());
         System.out.println("Print!");
         //  of(1, 2, 3).cycleUntil(next->count++==6).printOut();
         count=0;
-        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+        assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX());
 
     }
 	@Override

@@ -181,7 +181,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
      * @return ListT
      */
     public static <W extends WitnessType<W>,A> ListT<W,A> fromAnyM(final AnyM<W,A> anyM) {
-        return of(anyM.map(ListX::of));
+        AnyM<W, ListX<A>> y = anyM.map(i->ListX.of(i));
+        return of(y);
     }
 
     /**
@@ -346,18 +347,14 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT<W,T>) FoldableTransformerSeq.super.cycleUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+
     @Override
     public <U, R> ListT<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (ListT<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
+
     @Override
     public <U, R> ListT<W,R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 

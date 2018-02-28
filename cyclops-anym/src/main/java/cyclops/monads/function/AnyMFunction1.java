@@ -1,5 +1,6 @@
 package cyclops.monads.function;
 
+import cyclops.function.Function0;
 import cyclops.function.Function1;
 import cyclops.monads.AnyMs;
 import cyclops.monads.KleisliM;
@@ -7,6 +8,7 @@ import cyclops.monads.WitnessType;
 import cyclops.monads.AnyM;
 import cyclops.monads.transformers.FutureT;
 import cyclops.monads.transformers.ListT;
+import cyclops.reactive.collections.mutable.ListX;
 
 import java.util.function.Function;
 
@@ -38,7 +40,7 @@ public interface AnyMFunction1<W extends WitnessType<W>,T1,R> extends KleisliM<W
     return x;
   }
   static <W extends WitnessType<W>,T,R> Function1<T, ListT<W,R>> liftListT(Function1<? super T, ? extends R> fn,W witness) {
-    Function1<T, R> a = Function1.narrow(fn);
-    return a.functionOps().liftList().andThen(l->AnyMs.liftM(l,witness));
+      Function1<T,ListX<R>> f = i-> ListX.of(fn.apply(i));
+    return f.andThen(l->AnyMs.liftM(l,witness));
   }
 }

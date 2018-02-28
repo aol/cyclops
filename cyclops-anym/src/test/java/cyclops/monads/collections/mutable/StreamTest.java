@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.util.stream.Stream;
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.Witness.stream;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
@@ -35,7 +36,7 @@ public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<stream> {
         System.out.println("Cycle until!");
         count =0;
         ListX<Integer> b= of(1, 2, 3).peek(System.out::println)
-                            .cycleUntil(next->count++==6).toListX();
+                            .cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX();
         System.out.println("2 " + b);
 
     }

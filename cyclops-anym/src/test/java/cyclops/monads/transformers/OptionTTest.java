@@ -1,24 +1,22 @@
 package cyclops.monads.transformers;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.ReactiveReducers;
-import cyclops.companion.Semigroups;
-import cyclops.data.Seq;
-import cyclops.monads.AnyMs;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.*;
 import com.oath.cyclops.types.mixins.Printable;
 import com.oath.cyclops.util.box.Mutable;
+import cyclops.ReactiveReducers;
 import cyclops.companion.Reducers;
+import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.monads.transformers.jdk.OptionalT;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.control.*;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
+import cyclops.monads.AnyMs;
+import cyclops.monads.Witness;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,18 +30,18 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 
-public class OptionalTTest implements Printable {
+public class OptionTTest implements Printable {
 
-	OptionalT<optional,Integer> just;
-	OptionalT<optional,Integer> none;
-	OptionalT<optional,Integer> one;
+	OptionT<Witness.optional,Integer> just;
+    OptionT<Witness.optional,Integer> none;
+    OptionT<Witness.optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 
 
-		just = AnyMs.liftM(Optional.of(10), optional.INSTANCE);
-		none = OptionalT.of(AnyM.ofNullable(null));
-		one = OptionalT.of(AnyM.ofNullable(Optional.of(1)));
+		just = AnyMs.liftM(Option.some(10),Witness.optional.INSTANCE);
+		none = OptionT.of(AnyM.ofNullable(null));
+		one = OptionT.of(AnyM.ofNullable(Option.some(1)));
 	}
 
 	@Test
@@ -57,10 +55,6 @@ public class OptionalTTest implements Printable {
 	         .map(i->print("maybe " + (i+10)));
 
 	}
-
-
-
-
 
 	private int add1(int i){
 		return i+1;
@@ -105,8 +99,8 @@ public class OptionalTTest implements Printable {
 	@Test
 	public void testFlatMap() {
 
-		assertThat(just.flatMap(i->Optional.of(i+5)).orElse(-1),equalTo(15));
-		assertThat(none.flatMap(i->Optional.of(i+5)).orElse(-1),equalTo(-1));
+		assertThat(just.flatMap(i->Maybe.of(i+5)).get(),equalTo(Option.some(15)));
+		assertThat(none.flatMap(i->Maybe.of(i+5)).orElse(-1),equalTo(-1));
 	}
 
 	@Test
@@ -131,7 +125,7 @@ public class OptionalTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        AnyM<optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
 
         assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -171,8 +165,8 @@ public class OptionalTTest implements Printable {
 
 	@Test
 	public void testMkString() {
-		assertThat(just.mkString(),equalTo("OptionalT[Optional[Optional[10]]]"));
-		assertThat(none.mkString(),equalTo("OptionalT[Optional.empty]"));
+		assertThat(just.mkString(),equalTo("MaybeT[Optional[Just[10]]]"));
+		assertThat(none.mkString(),equalTo("MaybeT[Optional.empty]"));
 	}
 
 
@@ -370,7 +364,7 @@ public class OptionalTTest implements Printable {
 
 	@Test
 	public void testMapFunctionOfQsuperTQextendsR1() {
-		assertThat(just.map(i->i+5).orElse(-1),equalTo(15));
+		assertThat(just.map(i->i+5).get(),equalTo(Maybe.just(15)));
 	}
 
 	@Test
@@ -380,7 +374,7 @@ public class OptionalTTest implements Printable {
 
 
 
-		just.get();
+		just.orElse(null);
 		assertThat(capture.get(),equalTo(10));
 	}
 

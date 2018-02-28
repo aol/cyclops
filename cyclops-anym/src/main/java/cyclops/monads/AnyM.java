@@ -147,6 +147,10 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     default <R, A> R collect(Collector<? super T, A, R> collector){
         return this.stream().collect(collector);
     }
+
+    default boolean isEmpty(){
+        return stream().isEmpty();
+    }
     @Override
     default Iterator<T> iterator() {
 
@@ -905,7 +909,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(maybe);
         return AnyMFactory.instance.value(maybe, Witness.maybe.INSTANCE);
     }
-    public static <T> AnyMValue<option,T> fromMaybe(final Option<T> option) {
+    public static <T> AnyMValue<option,T> fromOption(final Option<T> option) {
       Objects.requireNonNull(option);
       return AnyMFactory.instance.value(option, Witness.option.INSTANCE);
     }

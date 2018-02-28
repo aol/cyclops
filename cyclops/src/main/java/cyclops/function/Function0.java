@@ -136,9 +136,10 @@ public interface Function0<R> extends Supplier<R> {
         }
 
 
-        default Function0<Seq<R>> liftList() {
+        default Function0<Seq<R>> liftSeq() {
             return () -> Seq.of(apply());
         }
+
 
 
         default Function0<LazySeq<R>> liftLazySeq() {

@@ -2,15 +2,14 @@ package cyclops.monads;
 
 import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
-import cyclops.control.Future;
+import cyclops.control.*;
+import cyclops.monads.transformers.jdk.CompletableFutureT;
+import cyclops.monads.transformers.jdk.OptionalT;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Functions;
 import cyclops.companion.Streams;
-import cyclops.control.Either;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.monads.transformers.*;
 import cyclops.reactive.ReactiveSeq;
@@ -66,6 +65,12 @@ public interface AnyMs {
   public static <W extends WitnessType<W>,T> Function<W,MaybeT<W, T>> liftM(Maybe<T> s) {
     return w->liftM(s,w);
   }
+    public static  <W extends WitnessType<W>,T> OptionT<W, T> liftM(Option<T> m, W witness) {
+        return OptionT.of(witness.adapter().unit(m));
+    }
+    public static <W extends WitnessType<W>,T> Function<W,OptionT<W, T>> liftM(Option<T> s) {
+        return w->liftM(s,w);
+    }
   public static <W extends WitnessType<W>,T> FutureT<W, T> liftM(Future<T> f, W witness) {
     return FutureT.of(witness.adapter().unit(f));
   }
