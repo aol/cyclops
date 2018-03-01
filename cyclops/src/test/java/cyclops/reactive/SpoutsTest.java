@@ -110,8 +110,7 @@ public class SpoutsTest {
         Thread.sleep(510);
         sub.request(30);
 
-        if(i<30)
-            Thread.sleep(510);
+
         assertThat(i,equalTo(30));
         assertThat(count,equalTo(18));
     }

@@ -13,6 +13,8 @@ public interface PushSubscriber<T>{
 
     public void onComplete();
 
+    boolean isInitialized();
+
     static <T> PushSubscriber<T> of(Subscriber<T> sub){
         sub.onSubscribe(new Subscription() {
             @Override
@@ -39,6 +41,11 @@ public interface PushSubscriber<T>{
             @Override
             public void onComplete() {
                 sub.onComplete();
+            }
+
+            @Override
+            public boolean isInitialized() {
+                return true;
             }
         };
     }
