@@ -123,6 +123,10 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
 
+    public LazyString lazyString(){
+        LazySeq<Character> x = lazySeq().flatMap(i -> LazyString.of(i.toString()));
+        return LazyString.fromLazySeq(x);
+    }
 
 
     public <C extends Collection<T>> C collection(final Supplier<C> factory) {

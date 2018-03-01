@@ -1,5 +1,6 @@
 package com.oath.cyclops.types;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -41,6 +42,15 @@ public abstract class AbstractConvertableSequenceTest {
         assertTrue(of(1).bag().size()>0);
         assertTrue(of(1).hashMap(t->t, t->t).size()>0);
 
+    }
+
+    @Test
+    public void lazyString(){
+        assertThat(of(1,2).lazyString().toString(),equals(of(1,2).toString()));
+    }
+    @Test
+    public void lazyStringEmpty(){
+        assertThat(empty().lazyString().toString(),equals(empty().toString()));
     }
 
 
