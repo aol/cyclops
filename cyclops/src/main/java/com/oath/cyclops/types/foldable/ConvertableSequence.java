@@ -75,19 +75,23 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
 
-    public Maybe<LazySeq<T>> maybe() {
-        return Maybe.fromEval(Eval.later(()->
-            iterator().hasNext() ? Maybe.just(lazySeq()) : Maybe.<LazySeq<T>>nothing()
+    public Maybe<LazySeq<T>> lazyMaybe() {
+        return Maybe.fromEval(Eval.later(()->{
+                Iterator<T> it = iterator();
+                return  it.hasNext() ? Maybe.just(LazySeq.fromIterator(it)) : Maybe.<LazySeq<T>>nothing();
+            }
+
         )).flatMap(i->i);
 
     }
     public Option<LazySeq<T>> option() {
-        return iterator().hasNext() ? Option.<LazySeq<T>>some(lazySeq()) : Option.<LazySeq<T>>none();
+        Iterator<T> it = iterator();
+        return it.hasNext() ? Option.<LazySeq<T>>some(LazySeq.fromIterator(it)) : Option.<LazySeq<T>>none();
     }
 
 
 
-    public Maybe<T> firstValue() {
+    public Maybe<T> lazyFirstValue() {
        return Maybe.fromIterable(iterable);
     }
     /**

@@ -179,7 +179,7 @@ public class ReactiveConvertableSequence<T> extends ConvertableSequence<T> {
     public Value<ListX<T>> value() {
         return Eval.later(() -> listX());
     }
-    public Maybe<T> firstValue() {
+    public Maybe<T> lazyFirstValue() {
         return Eval.later(() -> listX(Evaluation.LAZY)).toMaybe()
                                        .flatMap(l->l.size()==0? Maybe.nothing() : Maybe.just(l.firstValue(null)));
     }

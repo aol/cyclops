@@ -8,6 +8,7 @@ import cyclops.control.Option;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -46,8 +48,16 @@ public class AsyncSequentialTest extends BaseSequentialTest {
         int[] index = {0};
         return Spouts.async(s->{
 
+            System.out.println("S "+ System.identityHashCode(s));
             new Thread(()-> {
-
+                /**try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }**/
+                while(!s.isInitialized()){
+                    LockSupport.parkNanos(1l);
+                }
                 for (U next : array) {
                     s.onNext(next);
                     if(index[0]++>100)
@@ -61,6 +71,14 @@ public class AsyncSequentialTest extends BaseSequentialTest {
     @Test
     public void testCycle() {
 
+    }
+    @Test
+    public void optionalConvert() {
+
+        for (int i = 0; i < 1_000; i++) {
+
+            assertThat(of((i*100)+1, (i*100)+2, (i*100)+3).to().option().map(s->s.seq()), equalTo(Option.of(Seq.of((i*100)+1, (i*100)+2, (i*100)+3))));
+        }
     }
 
     @Test

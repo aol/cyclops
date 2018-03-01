@@ -551,8 +551,10 @@ public class Queue<T> implements Adapter<T> {
     @Override
     public boolean offer(final T data) {
 
-        if (!open)
+        if (!open) {
             throw new ClosedQueueException();
+        }
+
         try {
             final boolean result = producerWait.offer(() -> this.queue.offer((T) nullSafe(data), this.offerTimeout, this.offerTimeUnit));
 
