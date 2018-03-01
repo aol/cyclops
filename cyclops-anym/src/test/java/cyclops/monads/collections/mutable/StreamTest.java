@@ -21,9 +21,7 @@ public class StreamTest extends AbstractAnyMSeqOrderedDependentTest<stream> {
 	public <T> AnyMSeq<stream,T> of(T... values) {
 		return AnyM.fromStream(Stream.of(values));
 	}
-	/* (non-Javadoc)
-	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
-	 */
+
 	@Override
 	public <T> AnyMSeq<stream,T> empty() {
 		return AnyM.fromStream(Stream.empty());

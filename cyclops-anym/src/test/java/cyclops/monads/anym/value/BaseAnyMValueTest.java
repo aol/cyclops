@@ -351,13 +351,13 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 	@Test
 	public void testReduceStreamOfQextendsMonoidOfT() {
 		Seq<Integer> countAndTotal = just.reduce(ReactiveSeq.of(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
+		assertThat(countAndTotal,equalTo(Seq.of(1,10)));
 	}
 
 	@Test
 	public void testReduceIterableOfReducerOfT() {
         Seq<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(),Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
+		assertThat(countAndTotal,equalTo(Seq.of(1,10)));
 	}
 
 

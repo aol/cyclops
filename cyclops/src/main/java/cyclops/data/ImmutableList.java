@@ -36,6 +36,7 @@ import static cyclops.matching.Api.*;
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
                                           IterableX<T>,
                                           Contains<T>,
+                                          Comparable<T>,
                                           PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                             OnEmptyError<T, ImmutableList<T>>,
@@ -46,6 +47,33 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> emptyUnit();
+    @Override
+    default int compareTo(final T o) {
+        if (o instanceof ImmutableList) {
+            final ImmutableList l = (ImmutableList) o;
+            if (this.size() == l.size()) {
+                final Iterator i1 = iterator();
+                final Iterator i2 = l.iterator();
+                if (i1.hasNext()) {
+                    if (i2.hasNext()) {
+                        final int comp = Comparator.<Comparable> naturalOrder()
+                            .compare((Comparable) i1.next(), (Comparable) i2.next());
+                        if (comp != 0)
+                            return comp;
+                    }
+                    return 1;
+                } else {
+                    if (i2.hasNext())
+                        return -1;
+                    else
+                        return 0;
+                }
+            }
+            return this.size() - ((ImmutableList) o).size();
+        } else
+            return 1;
+
+    }
 
     default boolean equalToDirectAccess(Iterable<T> iterable){
         int size = size();
