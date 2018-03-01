@@ -603,6 +603,12 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
+    default Seq<T> tailOrElse(ImmutableList<T> tail) {
+        ImmutableList<T> list = ImmutableList.super.tailOrElse(tail);
+        return Seq.fromIterable(list);
+    }
+
+    @Override
     default Seq<T> skipWhile(Predicate<? super T> p) {
         return (Seq<T>) ImmutableList.super.skipWhile(p);
     }
