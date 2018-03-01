@@ -80,6 +80,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     public LazyString flatMapChar(Function<Character,LazyString> fn){
         return fromLazySeq(string.flatMap(fn.andThen(s->s.string)));
     }
+
     @Override
     public LazyString filter(Predicate<? super Character> predicate) {
         return fromLazySeq(string.filter(predicate));
