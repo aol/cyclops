@@ -2,8 +2,10 @@ package cyclops.monads.collections.mutable;
 
 import com.oath.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.companion.Monoids;
 import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
@@ -30,6 +32,14 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
         return new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values);
     }
 
+
+
+    @Override
+    public void combineNoOrderMonoid() {
+        assertThat(of(1,2,3)
+            .combine(Monoids.intSum,(a, b)->a.equals(b))
+            .to(ReactiveConvertableSequence::converter).listX(),hasItem(2));
+    }
 
     @Test
 	public void materialize(){
