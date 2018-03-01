@@ -522,6 +522,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
   @Override
   <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
 
+
   default LazySeq<T> appendAll(Iterable<? extends T> it) {
         LazySeq<T> append = narrow(fromIterable(it));
         return this.visit(cons->{
@@ -785,6 +786,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @Override
     default LazySeq<T> dropUntil(Predicate<? super T> p) {
         return (LazySeq<T>) ImmutableList.super.dropUntil(p);
+    }
+
+    @Override
+    default LazySeq<T> removeAt(long pos) {
+        return (LazySeq<T>)ImmutableList.super.removeAt(pos);
+    }
+
+    @Override
+    default LazySeq<T> insertAt(int pos, T... values) {
+        return (LazySeq<T>)ImmutableList.super.insertAt(pos,values);
     }
 
     @Override
