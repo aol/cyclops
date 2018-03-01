@@ -662,14 +662,14 @@ public class BaseSequentialTest {
         assertTrue(of(1).to().hashSet().size()>0);
         assertTrue(of(1).toSet().size()>0);
         assertTrue(of(1).to().treeSet(Comparator.naturalOrder()).size()>0);
-        assertTrue(of(1).to().streamable().size()>0);
+
         assertTrue(of(1).to().bag().size()>0);
         assertTrue(of(1).to().hashMap(t->t, t->t).size()>0);
 
 
         assertTrue(of(1).toSet().size()>0);
         assertTrue(of(1).toList().size()>0);
-        assertTrue(of(1).to().streamable().size()>0);
+
 
 
     }

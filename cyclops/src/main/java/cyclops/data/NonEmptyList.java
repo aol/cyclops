@@ -307,7 +307,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     @Override
     public String toString() {
-        return stream().join(",","[","]");
+        return stream().join(", ","[","]");
     }
 
     @Override

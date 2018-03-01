@@ -49,11 +49,11 @@ public class  ConvertableSequence<T> implements ToStream<T> {
 
 
 
-
+/**
     public Streamable<T> streamable() {
 
         return Streamable.fromIterable(iterable);
-    }
+    }**/
     public BankersQueue<T> bankersQueue(){
         return BankersQueue.fromIterable(iterable);
     }
@@ -118,7 +118,7 @@ public class  ConvertableSequence<T> implements ToStream<T> {
     }
 
 
-    public Streamable<T> lazyStreamable() {
+    public Streamable<T> streamable() {
         return Streams.toLazyStreamable(ReactiveSeq.fromIterable(iterable));
     }
 

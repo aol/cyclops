@@ -970,7 +970,7 @@ public interface Seq<T> extends ImmutableList<T>,
             StringBuffer b = new StringBuffer("["+head);
             Iterator<T> it = tail.iterator();
             while(it.hasNext()){
-                b.append(","+it.next());
+                b.append(", "+it.next());
             }
             b.append("]");
             return b.toString();

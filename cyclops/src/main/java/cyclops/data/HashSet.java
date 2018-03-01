@@ -266,7 +266,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
 
       @Override
       public String toString(){
-          return stream().join(",","[","]");
+          return stream().join(", ","[","]");
       }
 
       public HashSet<T> take(final long n) {

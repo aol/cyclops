@@ -179,10 +179,10 @@ public class Zipper<T> implements Iterable<T>,
 
     @Override
     public String toString() {
-        String l = left.stream().join(",","[","");
+        String l = left.stream().join(", ","[","");
         String p = ",>>" + point.toString() + "<<";
 
-        String r = right.stream().join(",",",","]");
+        String r = right.stream().join(", ",",","]");
        return l + p +r ;
     }
 

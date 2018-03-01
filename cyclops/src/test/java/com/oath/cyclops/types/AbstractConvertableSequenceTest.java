@@ -22,7 +22,7 @@ public abstract class AbstractConvertableSequenceTest {
         assertFalse(empty().hashSet().size()>0);
         assertFalse(empty().treeSet((Comparator)Comparator.naturalOrder()).size()>0);
         assertFalse(empty().hashMap(t->t,t->t).size()>0);
-        assertFalse(empty().streamable().size()>0);
+
 
 
 
@@ -38,7 +38,6 @@ public abstract class AbstractConvertableSequenceTest {
         assertTrue(of(1).vector().size()>0);
         assertTrue(of(1).hashSet().size()>0);
         assertTrue(of(1).treeSet(Comparator.naturalOrder()).size()>0);
-        assertTrue(of(1).streamable().size()>0);
         assertTrue(of(1).bag().size()>0);
         assertTrue(of(1).hashMap(t->t, t->t).size()>0);
 

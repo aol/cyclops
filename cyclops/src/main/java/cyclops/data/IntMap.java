@@ -908,7 +908,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
     @Override
     public String toString(){
-        return stream().join(",","[","]");
+        return stream().join(", ","[","]");
     }
     private int calcHash() {
         int hashCode = 1;
