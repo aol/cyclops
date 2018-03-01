@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import com.oath.anym.AnyMSeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.monads.Witness.optional;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFunction1;
@@ -311,12 +312,12 @@ public class AnyMTest {
 	public void reducer1(){
 		Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
 		Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-		val result = fromStream(Stream.of(1,2,3,4))
-						.stream()
-						.reduce(Arrays.asList(sum,mult) );
+        Seq<Integer> result = fromStream(Stream.of(1, 2, 3, 4))
+            .stream()
+            .reduce(Arrays.asList(sum, mult));
 
 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
+		assertThat(result,equalTo(Seq.of(10,24)));
 	}
 
 
@@ -378,9 +379,9 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftMSimplex(){
-		AnyMFunction1<Witness.optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
+		AnyMFunction1<optional,Integer,Integer> lifted = AnyM.liftF((Integer a)->a+3);
 
-		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3));
+		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3));
 
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(6));
 	}
@@ -389,25 +390,25 @@ public class AnyMTest {
 
 	@Test
 	public void testLiftM2Simplex(){
-		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 
-		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
+		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 
 		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 	@Test
     public void testLiftM2AnyMValue(){
-		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 
-        AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
+        AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 
         assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
     }
 	@Test
 	public void testLiftM2SimplexNull(){
-		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2((Integer a, Integer b)->a+b);
 
-		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(null));
+		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(null));
 
 		assertThat(result.<Optional<Integer>>unwrap().isPresent(),equalTo(false));
 	}
@@ -417,11 +418,11 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLiftM2Mixed(){
-		AnyMFunction2<Witness.optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
+		AnyMFunction2<optional,Integer,Integer,Integer> lifted = AnyM.liftF2(this::add);
 
-		AnyM<Witness.optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
+		AnyM<optional,Integer> result = lifted.apply(AnyM.ofNullable(3),AnyM.ofNullable(4));
 
 
-		assertThat(result.<Optional<List<Integer>>>unwrap().get(),equalTo(7));
+		assertThat(result.<Optional<Integer>>unwrap().get(),equalTo(7));
 	}
 }
