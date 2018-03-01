@@ -141,7 +141,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default String mkString(){
 
-        return stream().map(t->"{"+t._1()+"="+t._2()+"}").join(",","[","]");
+        return stream().map(t->"{"+t._1()+"="+t._2()+"}").join(", ","[","]");
     }
 
     <K2,V2> DMap.Two<K,V,K2,V2> merge(ImmutableMap<K2, V2> one);

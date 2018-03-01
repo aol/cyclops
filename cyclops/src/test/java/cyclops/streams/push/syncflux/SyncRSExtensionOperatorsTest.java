@@ -314,9 +314,8 @@ public class SyncRSExtensionOperatorsTest {
 
 	@Test
 	public void streamable(){
-		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2).to()
-												.streamable();
+		Streamable<Integer> repeat = Streamable.fromStream(of(1,2,3,4,5,6)
+												.map(i->i*2));
 
 		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
@@ -326,7 +325,7 @@ public class SyncRSExtensionOperatorsTest {
 	public void concurrentLazyStreamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
 												.map(i->i*2).to()
-												.lazyStreamable();
+												.streamable();
 
 		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));

@@ -309,7 +309,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
 
     @Override
     public String toString() {
-        return stream().join(",","[","]");
+        return stream().join(", ","[","]");
     }
 
     public TreeSet<T> take(final long n) {

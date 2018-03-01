@@ -784,7 +784,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     default Tuple2<Option<T>, Streamable<T>> splitAtHead(){
-        return this.stream().splitAtHead().map2(s->s.to().streamable());
+        return this.stream().splitAtHead().map2(s->Streamable.fromStream(s));
     }
 
     /**

@@ -207,7 +207,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
 
     @Override
     public String toString(){
-        return stream().join(",","[","]");
+        return stream().join(", ","[","]");
     }
 
     public TrieSet<T> take(final long n) {

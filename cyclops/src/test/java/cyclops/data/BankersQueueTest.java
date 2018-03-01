@@ -161,11 +161,9 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
     @Test
     public void streamable(){
         System.out.println("S"+of(1,2,3,4,5,6));
-        Streamable<Integer> repeat = (of(1,2,3,4,5,6)
+        Streamable<Integer> repeat =Streamable.fromIterable (of(1,2,3,4,5,6)
                 .map(i->i*2)
-        ).to()
-                .streamable();
-
+        );
         assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
         assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
     }
