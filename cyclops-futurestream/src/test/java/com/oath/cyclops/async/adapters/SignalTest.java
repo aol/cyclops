@@ -17,6 +17,9 @@ public class SignalTest {
 		found =0;
 	}
 	int found =0;
+	public synchronized int getFound(){
+	    return found;
+    }
 	public synchronized void incrementFound(){
 		found++;
 	}
@@ -119,7 +122,7 @@ public class SignalTest {
 
 
 			}finally{
-				assertThat(found,is(3));
+				assertThat(getFound(),is(3));
 			}
 		}
 

@@ -283,8 +283,11 @@ public class Queue<T> implements Adapter<T> {
 
                   }
               }catch(Queue.ClosedQueueException e){
-                  if(result.size()>0)
-                    throw new ClosedQueueException(Arrays.asList(result));
+                  if(result.size()>0) {
+                      List list = new ArrayList<>();
+                      list.add(result);
+                      throw new ClosedQueueException(list);
+                  }
               }
 
 
@@ -458,11 +461,14 @@ public class Queue<T> implements Adapter<T> {
      * @author johnmcclean
      *
      */
-    @AllArgsConstructor
     public static class ClosedQueueException extends SimpleReactProcessingException {
         private static final long serialVersionUID = 1L;
         @Getter
         private final List currentData;
+
+        public ClosedQueueException(List currentData) {
+            this.currentData = currentData;
+        }
 
         public ClosedQueueException() {
             currentData = null;
