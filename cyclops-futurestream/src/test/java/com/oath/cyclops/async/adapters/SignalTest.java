@@ -107,7 +107,7 @@ public class SignalTest {
 				Signal<Integer> q =Signal.queueBackedSignal();
 
 
-				new SimpleReact().ofAsync(() -> q.set(1), ()-> q.set(1),()-> {sleep(20); return q.set(1); }, ()-> { sleep(40); q.close(); return 1;});
+				new SimpleReact().ofAsync(() -> q.set(1), ()-> q.set(1),()-> {sleep(5); return q.set(1); }, ()-> { sleep(100); q.close(); return 1;});
 
 
 
