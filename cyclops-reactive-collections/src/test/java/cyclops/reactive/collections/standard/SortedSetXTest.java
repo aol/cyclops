@@ -32,6 +32,7 @@ import cyclops.function.FluentFunctions;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -63,6 +64,14 @@ public class SortedSetXTest extends AbstractSetTest {
 
         counter = new AtomicLong(0);
         super.setup();
+    }
+    @Test
+    public void emptyAllCombinations() {
+        assertThat(of().combinations().map(s->s.toList()),equalTo(of(ListX.of())));
+    }
+    @Test
+    public void emptyAllCombinationsNoOrder() {
+        assertThat(of().combinations().map(s -> s.toList()), equalTo(of(ListX.of())));
     }
     @Test
     public void combinations2NoOrder2() {
