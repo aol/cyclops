@@ -36,15 +36,6 @@ public class ReactiveReducers {
 
 
 
-    private static <T> PersistentQueue<T> queueOf(final T... values) {
-        PersistentQueue<T> result = BankersQueue.empty();
-        for (final T value : values) {
-            result = result.plus(value);
-        }
-        return result;
-
-    }
-
 
     public static <T> Reducer<PersistentQueueX<T>,T> toPersistentQueueX() {
         return Reducer.fromMonoid(ReactiveMonoids.persistentQueueXConcat(), a -> PersistentQueueX.singleton(a));

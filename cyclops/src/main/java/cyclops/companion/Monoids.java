@@ -40,7 +40,7 @@ public interface Monoids {
 
 
 
-    static <T, C extends PersistentCollection<T>> Monoid<C> pcollectionConcat(C empty) {
+    static <T, C extends PersistentCollection<T>> Monoid<C> concatPersistentCollection(C empty) {
         return Monoid.of(empty,Semigroups.persistentCollectionConcat());
     }
     static <T> Monoid<LazySeq<T>> lazySeqConcat() {
