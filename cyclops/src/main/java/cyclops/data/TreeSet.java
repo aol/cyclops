@@ -125,6 +125,14 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         }
         return new TreeSet<>(tree,comp);
     }
+    public static <T extends Comparable<? super T>> TreeSet<T> of(T... values){
+        RedBlackTree.Tree<T, T> tree = RedBlackTree.empty(Comparator.naturalOrder());
+        for(T value : values){
+            tree = RedBlackTree.rootIsBlack(tree.plus(value,value));
+
+        }
+        return new TreeSet<>(tree,Comparator.naturalOrder());
+    }
     public static <T> TreeSet<T> fromSortedSet(SortedSet<T> set, Comparator<? super T> comp){
         Stream<Tuple2<T,T>> s = set.stream().map(e -> Tuple.tuple(e,e));
         return new TreeSet<T>(RedBlackTree.fromStream(set.comparator(),s),comp);

@@ -56,3 +56,15 @@ Lower score is better
 | OrderedSetX     | Functional extensions for working with persistent Ordered Sets            | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support                 |
 | PersistentQueueX     | Functional extensions for working with persistent Queues           | Optionally Reactive or Coreactive, Lazy, persistent, 3rd party support, Higher kinded                 |
 | BagX     | Functional extensions for working with persistent Bags (set like collections that allow duplicates)          | Optionally Reactive or Coreactive,Lazy, persistent, 3rd party support                 |
+
+
+
+# Examples
+
+Lazy execution using extended Collections
+```java
+Eval<Integer> lazyResult = ListX.of(1,2,3,4)
+                                 .map(i->i*10)
+                                 .foldLazy(s->s
+                                 .reduce( 50,(acc,next) -> acc+next));
+```

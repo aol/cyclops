@@ -501,7 +501,7 @@ public class QueueTest {
 			Queue<Integer> q = new Queue<>(new LinkedBlockingQueue<>());
 
 			new SimpleReact().ofAsync(() -> q.offer(1), () -> q.offer(2), () -> {
-				sleep(200);
+				sleep(20);
 				return q.offer(4);
 			}, () -> {
 				sleep(400);

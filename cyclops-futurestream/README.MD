@@ -23,6 +23,29 @@ Other features in this module include
 * [![Maven Central : cyclops-futurestream](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-futurestream/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-futurestream)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-futurestream/badge.svg)](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-futurestream)
 * [Javadoc for cyclops-futurestream](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-futurestream)
 
+
+# Examples
+
+FutureStream - parallel / async Streaming
+
+```java
+new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
+                      .map(d->"produced on " + Thread.currentThread().getId())
+                      .peek(System.out::println)
+                      .map(this::process)
+                      .flatMap(e->ReactiveSeq.range(0,e))
+                      .run();
+```
+
+
+## cyclops.futurestream
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Pipes    | Event bus for managing data transfer via Adapters to connected data structures           |   Async              |
+
+
+
 # More info
 
 ## <a name="futureStreams">FutureStreams
