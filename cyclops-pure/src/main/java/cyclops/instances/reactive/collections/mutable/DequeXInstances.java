@@ -1,12 +1,12 @@
 package cyclops.instances.reactive.collections.mutable;
 
 
-import com.oath.cyclops.hkt.DataWitness.deque;
+import static com.oath.cyclops.data.ReactiveWitness.*;
+
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
 import cyclops.reactive.collections.mutable.DequeX;
-import cyclops.companion.CyclopsCollectors;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -16,6 +16,7 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
+import cyclops.reactive.companion.CyclopsCollectors;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;

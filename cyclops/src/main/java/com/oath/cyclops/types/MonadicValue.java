@@ -4,6 +4,7 @@ import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Future;
+import cyclops.control.Option;
 import cyclops.control.Try;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
@@ -33,6 +34,10 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         return Future.of(()->map(fn),ex).flatMap(a->a.visit(s->Future.ofResult(s),()->Future.ofError(new NoSuchElementException())));
     }
 
+    default <R> Option<R> attemptMap(Function<? super T,? extends R> fn){
+        Try<R,Throwable> t = mapTry(fn);
+        return t.toOption();
+    }
     default <X extends Throwable,R> Try<R,X> mapTry(Function<? super T,? extends R> fn, Class<X>... exceptionTypes){
         Try<? extends MonadicValue<? extends R>, X> x = Try.withCatch(() -> map(fn),exceptionTypes);
         return x.flatMap(a->a.toTry(exceptionTypes));
@@ -50,7 +55,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
      */
     @Override
-     MonadicValue<T> filter(Predicate<? super T> predicate) ;
+    MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)

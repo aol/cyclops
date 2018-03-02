@@ -4,14 +4,13 @@ package cyclops.data;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.Filters;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -33,6 +32,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //safe LazyList (Stream) that does not support exceptional states
@@ -44,6 +45,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                                     Higher<lazySeq,T> {
 
 
+    static <T> Collector<T, List<T>, LazySeq<T>> collector() {
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,LazySeq<T>>collectingAndThen((Collector)c,LazySeq::fromIterable);
+    }
     @Override
     default<R> LazySeq<R> unitIterable(Iterable<R> it){
         if(it instanceof LazySeq){
@@ -51,7 +56,18 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
         return fromIterable(it);
     }
-
+    default T headOrElse(T head){
+        return visit(s->s.head(),nil->head);
+    }
+    default T headOrElseGet(Supplier<? extends T> head){
+        return visit(s->s.head(),nil->head.get());
+    }
+    default LazySeq<T> tailOrElse(LazySeq<T> tail){
+        return visit(s->s.tail(),nil->tail);
+    }
+    default LazySeq<T> tailOrElseGet(Supplier<? extends LazySeq<T>> tail){
+        return visit(s->s.tail(),nil->tail.get());
+    }
     @Override
     default boolean containsValue(T value) {
         return ImmutableList.super.containsValue(value);
@@ -78,11 +94,14 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 break;
 
         }
-        ReactiveSeq<R> x = Either.sequenceRight(next.stream().to().listX(Evaluation.LAZY)).orElse(ReactiveSeq.empty());
+        ReactiveSeq<R> x = Either.sequenceRight(next.stream()).orElse(ReactiveSeq.empty());
         return LazySeq.fromIterator(x.iterator());
     }
     static <T> LazySeq<T> fill(T t){
         return LazySeq.fromStream(ReactiveSeq.fill(t));
+    }
+    static <T> LazySeq<T> fill(long limit, T t){
+        return LazySeq.fromStream(ReactiveSeq.fill(t).take(limit));
     }
     static <U, T> LazySeq<T> unfold(final U seed, final Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return fromStream(ReactiveSeq.unfold(seed,unfolder));
@@ -145,8 +164,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
-    default LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(this);
+    default LazySeq<T> linkedSeq(){
+        return LazySeq.fromIterable(this);
     }
     LazySeq<T> append(Supplier<LazySeq<T>> list);
     @Override
@@ -392,6 +411,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
 
+    @Override
+    default LazySeq<T> append(T value){
+        return insertAt(Math.max(0, size()),value);
+    }
 
     default Option<T> get(int pos){
         if(pos<0)
@@ -498,6 +521,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
   @Override
   <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn);
+
 
   default LazySeq<T> appendAll(Iterable<? extends T> it) {
         LazySeq<T> append = narrow(fromIterable(it));
@@ -668,28 +692,28 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<VectorX<T>> sliding(int windowSize) {
-        return (LazySeq<VectorX<T>>) ImmutableList.super.sliding(windowSize);
+    default LazySeq<Seq<T>> sliding(int windowSize) {
+        return (LazySeq<Seq<T>>) ImmutableList.super.sliding(windowSize);
     }
 
     @Override
-    default LazySeq<VectorX<T>> sliding(int windowSize, int increment) {
-        return (LazySeq<VectorX<T>>) ImmutableList.super.sliding(windowSize,increment);
+    default LazySeq<Seq<T>> sliding(int windowSize, int increment) {
+        return (LazySeq<Seq<T>>) ImmutableList.super.sliding(windowSize,increment);
     }
 
     @Override
-    default <C extends Collection<? super T>> LazySeq<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> LazySeq<C> grouped(int size, Supplier<C> supplier) {
         return (LazySeq<C>) ImmutableList.super.grouped(size,supplier);
     }
 
     @Override
-    default LazySeq<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (LazySeq<ListX<T>>) ImmutableList.super.groupedUntil(predicate);
+    default LazySeq<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
-    default LazySeq<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (LazySeq<ListX<T>>) ImmutableList.super.groupedStatefullyUntil(predicate);
+    default LazySeq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedUntil(predicate);
     }
 
     @Override
@@ -698,23 +722,23 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     @Override
-    default LazySeq<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (LazySeq<ListX<T>>) ImmutableList.super.groupedWhile(predicate);
+    default LazySeq<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.groupedWhile(predicate);
     }
 
     @Override
-    default <C extends Collection<? super T>> LazySeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> LazySeq<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (LazySeq<C>) ImmutableList.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> LazySeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> LazySeq<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (LazySeq<C>) ImmutableList.super.groupedUntil(predicate,factory);
     }
 
     @Override
-    default LazySeq<ListX<T>> grouped(int groupSize) {
-        return (LazySeq<ListX<T>>) ImmutableList.super.grouped(groupSize);
+    default LazySeq<Vector<T>> grouped(int groupSize) {
+        return (LazySeq<Vector<T>>) ImmutableList.super.grouped(groupSize);
     }
 
     @Override
@@ -762,6 +786,16 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @Override
     default LazySeq<T> dropUntil(Predicate<? super T> p) {
         return (LazySeq<T>) ImmutableList.super.dropUntil(p);
+    }
+
+    @Override
+    default LazySeq<T> removeAt(long pos) {
+        return (LazySeq<T>)ImmutableList.super.removeAt(pos);
+    }
+
+    @Override
+    default LazySeq<T> insertAt(int pos, T... values) {
+        return (LazySeq<T>)ImmutableList.super.insertAt(pos,values);
     }
 
     @Override

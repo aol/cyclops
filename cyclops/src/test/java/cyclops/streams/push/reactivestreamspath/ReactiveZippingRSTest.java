@@ -1,5 +1,6 @@
 package cyclops.streams.push.reactivestreamspath;
 
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -321,14 +322,14 @@ public class ReactiveZippingRSTest {
 		assertEquals(asList(), of().zipWithIndex().to(Streamable::fromStream).toList());
 
 		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
-		assertEquals(asList(new Tuple2("a", 0L)), of("a").zipWithIndex().to(Streamable::fromStream).toList());
+		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().to(Streamable::fromStream).toList());
 
 	}
 
 	@Test
 	public void testUnzip() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
@@ -341,7 +342,7 @@ public class ReactiveZippingRSTest {
 	@Test
 	public void testUnzipWithLimits() {
 
-		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c"));
+		Supplier<ReactiveSeq<Tuple2<Integer, String>>> s = () -> of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c"));
 
 		Tuple2<ReactiveSeq<Integer>, ReactiveSeq<String>> u1 = ReactiveSeq.unzip(s.get());
 
@@ -416,7 +417,7 @@ public class ReactiveZippingRSTest {
 	public void zip3Stream(){
 		List<Tuple3<Integer,Integer,Character>> list =
 				of(1,2,3,4,5,6).zip3(of(100,200,300,400).stream(),of('a','b','c').stream())
-						.toListX();
+						.toList();
 
 		System.out.println(list);
 		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());

@@ -1,10 +1,12 @@
 package cyclops.typeclasses;
 
+import com.oath.cyclops.data.ReactiveWitness;
+import com.oath.cyclops.data.ReactiveWitness.list;
 import cyclops.control.Future;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
 import com.oath.cyclops.hkt.DataWitness.future;
-import com.oath.cyclops.hkt.DataWitness.list;
+
 import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.hkt.Nested;

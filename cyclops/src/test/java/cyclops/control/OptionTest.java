@@ -3,13 +3,15 @@ package cyclops.control;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.mixins.Printable;
 
+import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.immutable.PersistentSetX;
-import cyclops.reactive.collections.mutable.ListX;
+
+
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
+import cyclops.data.HashSet;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
@@ -43,6 +45,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     @Test
     public void recoverWith(){
+
         assertThat(none.recoverWith(()->Option.some(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
         assertThat(eager.recoverWith(()->Option.some(5)).toOptional().get(),equalTo(10));
@@ -163,40 +166,40 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     @Test
     public void testSequenceLazy() {
-        Option<ReactiveSeq<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequence(Arrays.asList(eager, none, Option.some(1)));
 
         assertThat(maybes, equalTo(Option.some(1).flatMap(i -> Option.none())));
     }
 
     @Test
     public void testSequence() {
-        Option<ReactiveSeq<Integer>> maybes = Option.sequence(ListX.of(eager, none, Option.some(1)));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequence(Arrays.asList(eager, none, Option.some(1)));
 
         assertThat(maybes, equalTo(Option.none()));
     }
 
     @Test
     public void testSequenceJust() {
-        Option<ReactiveSeq<Integer>> maybes = Option.sequenceJust(ListX.of(eager, none, Option.some(1)));
-        assertThat(maybes.map(s->s.toList()), equalTo(Option.some(ListX.of(10, 1))));
+        Option<ReactiveSeq<Integer>> maybes = Option.sequenceJust(Arrays.asList(eager, none, Option.some(1)));
+        assertThat(maybes.map(s->s.toList()), equalTo(Option.some(Arrays.asList(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Option<PersistentSetX<Integer>> maybes = Option.accumulateJust(ListX.of(eager, none, Option.some(1)), Reducers.toPersistentSetX());
-        assertThat(maybes, equalTo(Option.some(PersistentSetX.of(10, 1))));
+        Option<PersistentSet<Integer>> maybes = Option.accumulateJust(Arrays.asList(eager, none, Option.some(1)), Reducers.toPersistentSet());
+        assertThat(maybes, equalTo(Option.some(HashSet.of(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Option<String> maybes = Option.accumulateJust(ListX.of(eager, none, Option.some(1)), i -> "" + i,
+        Option<String> maybes = Option.accumulateJust(Arrays.asList(eager, none, Option.some(1)), i -> "" + i,
                 Monoids.stringConcat);
         assertThat(maybes, equalTo(Option.some("101")));
     }
 
     @Test
     public void testAccumulateJust() {
-        Option<Integer> maybes = Option.accumulateJust(Monoids.intSum,ListX.of(eager, none, Option.some(1)));
+        Option<Integer> maybes = Option.accumulateJust(Monoids.intSum,Arrays.asList(eager, none, Option.some(1)));
         assertThat(maybes, equalTo(Option.some(11)));
     }
 
@@ -252,8 +255,8 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     @Test
     public void testStream() {
-        assertThat(eager.stream().toListX(), equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(), equalTo(ListX.of()));
+        assertThat(eager.stream().toList(), equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(), equalTo(Arrays.asList()));
     }
 
     @Test
@@ -264,7 +267,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
     @Test
     public void testConvertTo() {
         Stream<Integer> toStream = eager.visit(m -> Stream.of(m), () -> Stream.of());
-        assertThat(toStream.collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
     @Test
@@ -272,7 +275,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> eager.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
     @Test

@@ -5,12 +5,13 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
+import com.oath.cyclops.data.ReactiveWitness;
+import com.oath.cyclops.data.ReactiveWitness.list;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
 import cyclops.function.Lambda;
-import com.oath.cyclops.hkt.DataWitness.list;
 import cyclops.arrow.MonoidKs;
 import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.reactive.collections.mutable.ListXInstances;

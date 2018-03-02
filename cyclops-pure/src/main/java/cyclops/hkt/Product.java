@@ -6,11 +6,12 @@ import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -296,16 +297,19 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return foldRight(Monoid.fromBiFunction(identity, semigroup));
 
     }
-
-    public  Tuple2<ListX<T>,ListX<T>> toListX(){
-        return run.transform((a, b)->Tuple.tuple(def1.foldable().listX(a),
-                def2.foldable().listX(b)));
+    public  Tuple2<LazySeq<T>,LazySeq<T>> toLazySeq(){
+        return run.transform((a, b)->Tuple.tuple(def1.foldable().lazySeq(a),
+            def2.foldable().lazySeq(b)));
     }
-    public  ListX<T> toListXBoth(){
-        return toListX().transform((a, b)->a.plusAll(b));
+    public  Tuple2<Seq<T>,Seq<T>> toSeq(){
+        return run.transform((a, b)->Tuple.tuple(def1.foldable().seq(a),
+                def2.foldable().seq(b)));
+    }
+    public  Seq<T> toSeqBoth(){
+        return toSeq().transform((a, b)->a.plusAll(b));
     }
     public Tuple2<ReactiveSeq<T>,ReactiveSeq<T>> stream(){
-        return toListX().transform((a, b)->Tuple.tuple(a.stream(),b.stream()));
+        return toLazySeq().transform((a, b)->Tuple.tuple(a.stream(),b.stream()));
     }
     public ReactiveSeq<T> streamBoth(){
         return stream().transform((a, b)->a.appendStream(b));

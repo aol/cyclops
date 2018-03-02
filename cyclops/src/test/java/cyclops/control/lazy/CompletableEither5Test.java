@@ -6,7 +6,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.*;
 import cyclops.control.LazyEither5.CompletableEither5;
 import cyclops.function.Monoid;
@@ -232,8 +232,8 @@ public class CompletableEither5Test {
 
     @Test
     public void testStream() {
-        assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(),equalTo(ListX.of()));
+        assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(),equalTo(Arrays.asList()));
     }
 
     @Test
@@ -245,7 +245,7 @@ public class CompletableEither5Test {
     public void testConvertTo() {
 
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 
@@ -253,7 +253,7 @@ public class CompletableEither5Test {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test

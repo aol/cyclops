@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.futurestream.FutureStream;
@@ -37,7 +39,7 @@ public class WindowingTest {
 				.toList().size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void windowUntil(){
@@ -49,7 +51,7 @@ public class WindowingTest {
 				.toList().size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void windowUntilEmpty(){
@@ -60,13 +62,13 @@ public class WindowingTest {
 	@Test
 	public void windowStatefullyUntil(){
 		System.out.println(DuplicationTest.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+				.groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
 		System.out.println(ReactiveSeq.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+				.groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
 		System.out.println(Streamable.of(1,2,3,4,5,6)
-				.groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false).toList());
+				.groupedUntil((s, i)->s.containsValue(4) ? true : false).toList());
 	    assertThat(DuplicationTest.of(1,2,3,4,5,6)
-	                .groupedStatefullyUntil((s,i)->s.containsValue(4) ? true : false)
+	                .groupedUntil((s, i)->s.containsValue(4) ? true : false)
 	                .toList().size(),equalTo(2));
 
 
@@ -75,13 +77,13 @@ public class WindowingTest {
 	public void windowStatefullyWhileEmpty(){
 
 		assertThat(DuplicationTest.of()
-				.groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+				.groupedUntil((s, i)->s.contains(4) ? true : false)
 				.toList().size(),equalTo(0));
 
 	}
 	@Test
 	public void sliding() {
-		List<VectorX<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
+		List<Seq<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2));
 		assertThat(list.get(1), hasItems(2, 3));
@@ -89,7 +91,7 @@ public class WindowingTest {
 
 	@Test
 	public void slidingIncrement() {
-		List<VectorX<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
+		List<Seq<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(3, 4, 5));
@@ -98,7 +100,7 @@ public class WindowingTest {
 	@Test
 	public void grouped() {
 
-		List<List<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
+		List<Vector<Integer>> list = DuplicationTest.of(1, 2, 3, 4, 5, 6).grouped(3).collect(Collectors.toList());
 
 		assertThat(list.get(0), hasItems(1, 2, 3));
 		assertThat(list.get(1), hasItems(4, 5, 6));
@@ -109,15 +111,15 @@ public class WindowingTest {
 	public void sliding2() {
 
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2).toList();
+		List<Seq<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2).toList();
 
-		assertThat(sliding, contains(asList(1, 2), asList(2, 3), asList(3, 4), asList(4, 5)));
+		assertThat(sliding, contains(Seq.of(1, 2), Seq.of(2, 3), Seq.of(3, 4), Seq.of(4, 5)));
 	}
 
 	@Test
 	public void slidingOverlap() {
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(3,2).toList();
+		List<List<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(3,2).map(s->s.toList()).toList();
 
 		assertThat(sliding, contains(asList(1, 2, 3), asList(3, 4, 5)));
 	}
@@ -133,9 +135,9 @@ public class WindowingTest {
 	public void slidingWithSmallWindowAtEnd() {
 
 
-		List<VectorX<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2,2).toList();
+		List<Seq<Integer>> sliding = DuplicationTest.of(1, 2, 3, 4, 5).sliding(2,2).toList();
 
-		assertThat(sliding, contains(asList(1, 2), asList(3, 4), asList(5)));
+		assertThat(sliding, contains(Seq.of(1, 2), Seq.of(3, 4), Seq.of(5)));
 	}
 
 	@Test
@@ -158,7 +160,7 @@ public class WindowingTest {
 	@Test
 	public void groupedShorter() throws Exception {
 
-		assertThat(DuplicationTest.of(5, 7, 9).grouped(4).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(DuplicationTest.of(5, 7, 9).grouped(4).elementAtAndStream(0)._1(),equalTo(Vector.of(5,7,9)));
 		assertThat(DuplicationTest.of(5, 7, 9).grouped(4).count(),equalTo(1l));
 
 
@@ -167,14 +169,14 @@ public class WindowingTest {
 	@Test
 	public void groupedEqualSize() throws Exception {
 
-		assertThat(DuplicationTest.of(5, 7, 9).grouped(3).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(DuplicationTest.of(5, 7, 9).grouped(3).elementAtAndStream(0)._1(),equalTo(Vector.of(5,7,9)));
 		assertThat(DuplicationTest.of(5, 7, 9).grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
 	public void multipleGrouped() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(DuplicationTest.of(5, 7, 9,10));
-		assertThat(DuplicationTest.of(5, 7, 9,10).grouped(3).elementAtAndStream(0)._1(),equalTo(Arrays.asList(5,7,9)));
+		assertThat(DuplicationTest.of(5, 7, 9,10).grouped(3).elementAtAndStream(0)._1(),equalTo(Vector.of(5,7,9)));
 		assertThat(DuplicationTest.of(5, 7, 9,10).grouped(3).count(),equalTo(2l));
 
 	}
@@ -183,8 +185,8 @@ public class WindowingTest {
 	@Test
 	public void return1() throws Exception {
 		final Streamable<Integer> fixed = Streamable.fromStream(DuplicationTest.of(5));
-		assertThat(fixed.reactiveSeq().grouped(3).elementAt(0).toOptional().get(),equalTo(Arrays.asList(5)));
-		assertThat(fixed.reactiveSeq().grouped(3).count(),equalTo(1l));
+		assertThat(fixed.stream().grouped(3).map(s->s.toList()).elementAt(0).toOptional().get(),equalTo(Arrays.asList(5)));
+		assertThat(fixed.stream().grouped(3).count(),equalTo(1l));
 	}
 
 	@Test
@@ -197,8 +199,8 @@ public class WindowingTest {
 	public void groupedInfinite() {
 		ReactiveSeq<Integer> infinite = ReactiveSeq.iterate(1, i->i+1);
 
-		final ReactiveSeq<ListX<Integer>> grouped = infinite.grouped(3);
-		assertThat(grouped.elementAt(0).toOptional().get(),equalTo(Arrays.asList(1,2,3)));
+		final ReactiveSeq<Vector<Integer>> grouped = infinite.grouped(3);
+		assertThat(grouped.elementAt(0).toOptional().get(),equalTo(Vector.of(1,2,3)));
 
 	}
 

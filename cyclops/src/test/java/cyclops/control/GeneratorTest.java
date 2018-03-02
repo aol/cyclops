@@ -1,10 +1,12 @@
 package cyclops.control;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static cyclops.reactive.Generator.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -26,7 +28,7 @@ public class GeneratorTest {
     @Test
     public void suspendLoop(){
         assertThat(ReactiveSeq.fromIterable(suspend(times(100),s->i<5 ? s.yield(i++) : s.yieldAndStop(i)))
-                .toListX(),equalTo(ListX.of(0,1,2,3,4,5)));
+                .toList(),equalTo(Arrays.asList(0,1,2,3,4,5)));
     }
     @Test
     public void methodRefYield(){
@@ -38,7 +40,7 @@ public class GeneratorTest {
                             this::next,
                             this::next);
                 }
-        )).take(3).toListX(),equalTo(ListX.of(1,0,1)));
+        )).take(3).toList(),equalTo(Arrays.asList(1,0,1)));
     }
 
     @Test
@@ -50,7 +52,7 @@ public class GeneratorTest {
                             () -> s.yield(3),
                             () -> s.yield(4));
                 }
-        )).take(12).toListX(),equalTo(ListX.of(1,2,3,4)));
+        )).take(12).toList(),equalTo(Arrays.asList(1,2,3,4)));
     }
     @Test
     public void sequenceWithFunctionWithCurrent(){
@@ -61,7 +63,7 @@ public class GeneratorTest {
                             () -> s.yield(3),
                             () -> s.yield(4));
                 }
-        )).take(12).toListX(),equalTo(ListX.of(1,3,3,4)));
+        )).take(12).toList(),equalTo(Arrays.asList(1,3,3,4)));
     }
     @Test
     public void sequenceWithMaybe(){
@@ -74,30 +76,30 @@ public class GeneratorTest {
                             () -> s.yield(3),
                             () -> s.yield(4));
                 }
-        )).take(120).toListX(),equalTo(ListX.of(1,6,3,4)));
+        )).take(120).toList(),equalTo(Arrays.asList(1,6,3,4)));
     }
     @Test
     public void suspendRefTest(){
         Generator<Integer> generator = suspendRef(times(10),this::next);
 
-        assertThat(generator.stream().toListX(),equalTo(ListX.of(0,1,2,3,4,5,6,7,8,9)));
+        assertThat(generator.stream().toList(),equalTo(Arrays.asList(0,1,2,3,4,5,6,7,8,9)));
 
     }
     @Test
     public void streamFn(){
-        assertThat(ReactiveSeq.generate(suspend((Integer i)->i<4,s2->s2.yield(i++))).toListX(),equalTo(ListX.of(0,1,2,3,4)));
+        assertThat(ReactiveSeq.generate(suspend((Integer i)->i<4,s2->s2.yield(i++))).toList(),equalTo(Arrays.asList(0,1,2,3,4)));
 
     }
     @Test
     public void stream(){
         assertThat( ReactiveSeq.generate(suspend(times(2),s2->s2.yield(i++)))
-                .toListX(),equalTo(ListX.of(0,1)));
+                .toList(),equalTo(Arrays.asList(0,1)));
 
     }
     @Test
     public void streamGen(){
         Generator<Integer> gen = suspend(times(2),s2->s2.yield(i++));
-        assertThat(gen.stream().toListX(),equalTo(ListX.of(0,1)));
+        assertThat(gen.stream().toList(),equalTo(Arrays.asList(0,1)));
     }
     int i = 0;
     @Test
@@ -112,7 +114,7 @@ public class GeneratorTest {
                     return s.yieldAll(1,
                                         gen.stream());
                 }
-        )).take(6).toListX(),equalTo(ListX.of(1, 100, 101, 1, 204, 205)));
+        )).take(6).toList(),equalTo(Arrays.asList(1, 100, 101, 1, 204, 205)));
 
     }
     int k = 9999;
@@ -132,7 +134,7 @@ public class GeneratorTest {
                     return s.yieldAll(gen1.stream(),
                             gen2.stream());
                 }
-        )).take(5).toListX(),equalTo(ListX.of(100, 101, 9999, 9998, 102)));
+        )).take(5).toList(),equalTo(Arrays.asList(100, 101, 9999, 9998, 102)));
 
     }
 
@@ -152,7 +154,7 @@ public class GeneratorTest {
                         }
                 )
                 .take(3)
-                .toListX(),equalTo(ListX.of(0,1,2)));
+                .toList(),equalTo(Arrays.asList(0,1,2)));
     }
 
     @Test
@@ -174,7 +176,7 @@ public class GeneratorTest {
                                                       }
                                                   }
 
-        )).take(6).toListX(),equalTo(ListX.of(1,7,8,11)));
+        )).take(6).toList(),equalTo(Arrays.asList(1,7,8,11)));
     }
 
 }

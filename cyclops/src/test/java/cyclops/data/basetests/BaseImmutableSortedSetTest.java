@@ -1,9 +1,10 @@
 package cyclops.data.basetests;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.data.HashSet;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
@@ -47,7 +48,7 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
     }
     @Test
     public void testCycleTimesNoOrder() {
-        assertEquals(2,of(1, 2).cycle(3).toListX().size());
+        assertEquals(2,of(1, 2).cycle(3).toList().size());
 
     }
 
@@ -57,25 +58,25 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
         Seq<List<Integer>> x = of(1, 2, 3).permutations().map(s -> s.toList()).seq();
 
 
-        assertTrue(x.containsValue(ListX.of(1,2,3)));
-        assertTrue(x.containsValue(ListX.of(3,2,1)));
-        assertTrue(x.containsValue(ListX.of(2,1,3)));
-        assertTrue(x.containsValue(ListX.of(2,3,1)));
-        assertTrue(x.containsValue(ListX.of(3,1,2)));
-        assertTrue(x.containsValue(ListX.of(1,3,2)));
+        assertTrue(x.containsValue(Arrays.asList(1,2,3)));
+        assertTrue(x.containsValue(Arrays.asList(3,2,1)));
+        assertTrue(x.containsValue(Arrays.asList(2,1,3)));
+        assertTrue(x.containsValue(Arrays.asList(2,3,1)));
+        assertTrue(x.containsValue(Arrays.asList(3,1,2)));
+        assertTrue(x.containsValue(Arrays.asList(1,3,2)));
     }
     @Test
     public void batchWhileCollection(){
         assertThat(of(1,2,3,4,5,6)
-                .groupedWhile(i->i%3!=0,()->new ArrayList<>())
+                .groupedWhile(i->i%3!=0,()-> Vector.empty())
                 .toList().size(),equalTo(2));
-        ImmutableSet<List<Integer>> x = of(1, 2, 3, 4, 5, 6)
-                .groupedWhile(i -> i % 3 != 0, () -> new ArrayList<>());
+        ImmutableSet<Vector<Integer>> x = of(1, 2, 3, 4, 5, 6)
+                .groupedWhile(i -> i % 3 != 0, () -> Vector.empty());
 
-        ImmutableList<List<Integer>> l = x.seq();
+        ImmutableList<Vector<Integer>> l = x.seq();
 
-        assertTrue(l.containsValue(ListX.of(1,2,3)));
-        assertTrue(l.containsValue(ListX.of(4,5,6)));
+        assertTrue(l.containsValue(Vector.of(1,2,3)));
+        assertTrue(l.containsValue(Vector.of(4,5,6)));
 
     }
   @Test

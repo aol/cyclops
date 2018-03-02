@@ -7,6 +7,7 @@ import static org.junit.Assert.assertThat;
 
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.monads.Witness;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.
 
 	@Test
     public void testCycleTimesNotAnyM(){
-        assertEquals(asList(1, 2, 1, 2, 1, 2),Streamable.of(1, 2).cycle(3).toListX());
+        assertEquals(asList(1, 2, 1, 2, 1, 2),Streamable.of(1, 2).cycle(3).to(ReactiveConvertableSequence::converter).listX());
     }
 	@Test
     public void when(){

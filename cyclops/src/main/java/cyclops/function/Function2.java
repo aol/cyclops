@@ -7,15 +7,15 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.oath.cyclops.types.foldable.To;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Option;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Try;
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.control.Future;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 
 @FunctionalInterface
@@ -121,21 +121,21 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
         }
 
 
-        default Function2<ListX<T1>,ListX<T2>, ListX<R>> listXZip() {
+        default Function2<Seq<T1>,Seq<T2>, Seq<R>> seqZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Function2<ListX<T1>,ListX<T2>, ListX<R>> listXM() {
+        default Function2<Seq<T1>,Seq<T2>, Seq<R>> seqM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Function2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXZip() {
+        default Function2<LazySeq<T1>,LazySeq<T2>, LazySeq<R>> lazySeqZip() {
             return (a,b) -> a.zip(b,this);
         }
 
-        default Function2<LinkedListX<T1>,LinkedListX<T2>, LinkedListX<R>> linkedListXM() {
+        default Function2<LazySeq<T1>,LazySeq<T2>, LazySeq<R>> linkedSeqM() {
             return (a,b) -> a.forEach2(x->b,this);
         }
-        default Function2<VectorX<T1>,VectorX<T2>, VectorX<R>> vectorXZip() {
+        default Function2<Vector<T1>,Vector<T2>, Vector<R>> vectorZip() {
             return (a,b) -> a.zip(b,this);
         }
 

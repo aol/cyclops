@@ -348,7 +348,7 @@ public class Memoize {
      * @return Memoized asynchronously updating function
      */
     public static <T1, T2, T3, T4, R> Function4<T1, T2, T3, T4, R> memoizeQuadFunctionAsync(final Function4<T1, T2, T3, T4, R> fn, ScheduledExecutorService ex, long updateRateInMillis) {
-        val memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()),ex,updateRateInMillis);
+        Function1<Tuple4<T1, T2, T3, T4>, R> memoise2 = memoizeFunctionAsync((final Tuple4<T1, T2, T3, T4> quad) -> fn.apply(quad._1(), quad._2(), quad._3(), quad._4()), ex, updateRateInMillis);
         return (t1, t2, t3, t4) -> memoise2.apply(tuple(t1, t2, t3, t4));
     }
 

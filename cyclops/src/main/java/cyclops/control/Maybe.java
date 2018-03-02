@@ -6,6 +6,7 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.*;
+import cyclops.function.checked.CheckedSupplier;
 import cyclops.reactive.Spouts;
 import com.oath.cyclops.types.reactive.Completable;
 import cyclops.function.Monoid;
@@ -91,6 +92,35 @@ return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
 public interface Maybe<T> extends Option<T> {
 
 
+    public static <T> Maybe<T> attempt(CheckedSupplier<T> s){
+        return Maybe.fromLazy(Eval.later(()->{
+            try {
+                return just(s.get());
+            } catch (Throwable throwable) {
+                return Maybe.nothing();
+            }
+        }));
+    }
+    default <R> Maybe<R> attemptMap(Function<? super T,? extends R> fn){
+        return flatMap(t->{
+            try{
+                return just(fn.apply(t));
+            }catch(Throwable e){
+                return nothing();
+            }
+        });
+
+    }
+    default <R> Maybe<R> attemptFlatMap(Function<? super T,? extends Option<? extends R>> fn){
+        return flatMap(t->{
+            try{
+                return fn.apply(t);
+            }catch(Throwable e){
+                return nothing();
+            }
+        });
+
+    }
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
     }
@@ -391,6 +421,9 @@ public interface Maybe<T> extends Option<T> {
      * {@code
      *     Maybe<Integer> maybe =  Maybe.fromEval(Eval.now(10));
      *     //Maybe[10]
+     *     Maybe<Integer> maybeNull = Maybe.fromEval(()->null);
+     *     //Maybe[null]
+     *
      *
      * }
      * </pre>
@@ -410,6 +443,9 @@ public interface Maybe<T> extends Option<T> {
 
     static <T> Maybe<T> fromEvalOptional(final Eval<Optional<T>> value){
         return new Lazy<T>(value.map(in->Maybe.<T>fromOptional(in)));
+    }
+    static <T> Maybe<T> fromLazyOption(final Supplier<Option<T>> value){
+        return new Lazy<T>(Eval.later(value).map(in->Maybe.<T>fromOption(in)));
     }
 
     /**
@@ -499,16 +535,16 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
      *
-     * Maybe<ListX<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
-    //Maybe.of(ListX.of(10, 1));
+     * Maybe<Seq<Integer>> maybes = Maybe.sequenceJust(Seq.of(just, none, Maybe.of(1)));
+    //Maybe.of(Seq.of(10, 1));
      * }
      * </pre>
      *
      * @param maybes Maybes to Sequence
      * @return Maybe with a List of values
      */
-    public static <T> Maybe<ReactiveSeq<T>> sequenceJust(final IterableX<? extends Maybe<T>> maybes) {
-        return sequence(maybes.filter(Maybe::isPresent).stream());
+    public static <T> Maybe<ReactiveSeq<T>> sequenceJust(final Iterable<? extends Maybe<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes).filter(Maybe::isPresent).stream());
     }
   public static  <T> Maybe<ReactiveSeq<T>> sequence(ReactiveSeq<? extends Maybe<T>> stream) {
 
@@ -536,7 +572,7 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
      *
-     *  Maybe<ListX<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+     *  Maybe<Seq<Integer>> maybes = Maybe.sequence(Seq.of(just, none, Maybe.of(1)));
     //Maybe.none();
      *
      * }
@@ -546,8 +582,8 @@ public interface Maybe<T> extends Option<T> {
      * @param maybes Maybes to Sequence
      * @return  Maybe with a List of values
      */
-    public static <T> Maybe<ReactiveSeq<T>> sequence(final IterableX<? extends Maybe<T>> maybes) {
-        return sequence(maybes.stream());
+    public static <T> Maybe<ReactiveSeq<T>> sequence(final Iterable<? extends Maybe<T>> maybes) {
+        return sequence(ReactiveSeq.fromIterable(maybes));
 
     }
 
@@ -588,7 +624,7 @@ public interface Maybe<T> extends Option<T> {
      * {@code
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
-     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
+     * Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(Seq.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
     //Maybe.of(PersistentSetX.of(10, 1)));
      *
      * }
@@ -598,7 +634,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Reducer to accumulate values with
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Reducer<R,T> reducer) {
+    public static <T, R> Maybe<R> accumulateJust(final Iterable<Maybe<T>> maybes, final Reducer<R,T> reducer) {
         return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
     }
 
@@ -612,7 +648,7 @@ public interface Maybe<T> extends Option<T> {
      *  Maybe<Integer> just = Maybe.of(10);
     Maybe<Integer> none = Maybe.none();
 
-     *  Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
+     *  Maybe<String> maybes = Maybe.accumulateJust(Seq.of(just, none, Maybe.of(1)), i -> "" + i,
     SemigroupK.stringConcat);
     //Maybe.of("101")
      *
@@ -624,7 +660,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T, R> Maybe<R> accumulateJust(final IterableX<Maybe<T>> maybes, final Function<? super T, R> mapper,
+    public static <T, R> Maybe<R> accumulateJust(final Iterable<Maybe<T>> maybes, final Function<? super T, R> mapper,
                                                  final Monoid<R> reducer) {
         return sequenceJust(maybes).map(s -> s.map(mapper)
                 .reduce(reducer));
@@ -638,7 +674,7 @@ public interface Maybe<T> extends Option<T> {
      * <pre>
      * {@code
      *
-     *  Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(just, none, Maybe.of(1)));
+     *  Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,Seq.of(just, none, Maybe.of(1)));
     //Maybe.of(11)
      *
      * }
@@ -650,7 +686,7 @@ public interface Maybe<T> extends Option<T> {
      * @param reducer Monoid to combine values from each Maybe
      * @return Maybe with reduced value
      */
-    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final IterableX<Maybe<T>> maybes) {
+    public static <T> Maybe<T> accumulateJust(final Monoid<T> reducer,final Iterable<Maybe<T>> maybes) {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 

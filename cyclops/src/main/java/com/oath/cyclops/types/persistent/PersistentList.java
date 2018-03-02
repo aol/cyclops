@@ -26,7 +26,7 @@ public interface PersistentList<T> extends PersistentIndexed<T> {
 
     PersistentList<T> removeAt(int i);
 
-  default ListView<T> listView(){
+    default ListView<T> listView(){
     return new ListView.Impl<>(this);
   }
 }

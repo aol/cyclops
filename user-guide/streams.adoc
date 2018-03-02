@@ -1388,7 +1388,7 @@ The unzip methods take a Stream containing tuples and convert them into a Tuple 
 ====
 [source,java]
 ----
-ReactiveSeq.unzip(ReactiveSeq.of(new Tuple2(1, "a"), new Tuple2(2, "b"), new Tuple2(3, "c")));
+ReactiveSeq.unzip(ReactiveSeq.of(Tuple.tuple(1, "a"), Tuple.tuple(2, "b"), Tuple.tuple(3, "c")));
 
 //Tuple2[ReactiveSeq[1,2,3],ReactiveSeq[a,b,c]]
 ----

@@ -1,10 +1,12 @@
 package cyclops.streams.push.async;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,9 +53,9 @@ public class AsyncCycle {
         //       t.v2.printOut();
 
 
-        assertThat(t._1().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._1().limit(1).toList(),equalTo(Arrays.asList(1)));
         System.out.println("Second!");
-        assertThat(t._2().cycle().limit(1).toList(),equalTo(ListX.of(1)));
+        assertThat(t._2().cycle().limit(1).toList(),equalTo(Arrays.asList(1)));
 
     }
 }

@@ -19,6 +19,11 @@ public class ReversedIterator<U> implements Streamable<U> {
     }
 
     @Override
+    public Iterable<U> getStreamable() {
+        return list;
+    }
+
+    @Override
     public ReactiveSeq<U> stream() {
         return ReactiveSeq.fromIterator(reversedIterator());
     }

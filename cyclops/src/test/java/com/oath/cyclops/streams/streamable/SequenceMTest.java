@@ -293,7 +293,7 @@ public class SequenceMTest {
 	public void testLazyCollection(){
 		Collection<Integer> col = Streamable.of(1,2,3,4,5)
 											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
+											.lazyCollection();
 		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

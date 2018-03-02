@@ -5,13 +5,14 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
 import com.oath.cyclops.types.reactive.PushSubscriber;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.*;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
 import com.oath.cyclops.internal.stream.spliterators.UnfoldSpliterator;
 import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
@@ -311,7 +312,7 @@ public interface Spouts {
 
 
 
-    static <T> ReactiveSeq<T> mergeLatestList(ListX<? extends Publisher<? extends T>> publisher){
+    static <T> ReactiveSeq<T> mergeLatestList(Seq<? extends Publisher<? extends T>> publisher){
         return mergeLatest((Publisher[])ReactiveSeq.fromPublisher(publisher).toArray(s->new Publisher[s]));
     }
     static <T> ReactiveSeq<T> mergeLatest(Publisher<? extends Publisher<T>> publisher){
@@ -336,8 +337,8 @@ public interface Spouts {
 
 
     }
-    static <T> ReactiveSeq<T> amb(ListX<? extends Publisher<? extends T>> list){
-        return amb(list.toArray(new ReactiveSeq[0]));
+    static <T> ReactiveSeq<T> amb(IterableX<? extends Publisher<? extends T>> list){
+        return amb(list.toArray(i->new ReactiveSeq[i]));
     }
     static <T> ReactiveSeq<T> amb(Publisher<? extends T>... array){
         return ambWith(array);
@@ -533,12 +534,12 @@ public interface Spouts {
     }
     public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(ListX.fromPublisher(pubs)
+        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){

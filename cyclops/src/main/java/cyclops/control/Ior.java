@@ -418,8 +418,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * {@code
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
-     *  Ior<ListX<Integer>,ListX<String>> iors =Ior.sequenceLeft(ListX.of(just,none,Ior.right(1)));
-        //Ior.right(ListX.of("none")))
+     *  Ior<Seq<Integer>,Seq<String>> iors =Ior.sequenceLeft(Seq.of(just,none,Ior.right(1)));
+        //Ior.right(Seq.of("none")))
      *
      * }
      * </pre>
@@ -428,8 +428,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param iors Iors to sequence
      * @return Ior sequenced and swapped
      */
-    public static <ST, PT> Ior<PT, ReactiveSeq<ST>> sequenceLeft(final IterableX<? extends Ior<ST, PT>> iors) {
-        return sequence(iors.stream().filterNot(Ior::isRight).map(Ior::swap));
+    public static <ST, PT> Ior<PT, ReactiveSeq<ST>> sequenceLeft(final Iterable<? extends Ior<ST, PT>> iors) {
+        return sequence(ReactiveSeq.fromIterable(iors).filterNot(Ior::isRight).map(Ior::swap));
 
     }
 
@@ -440,7 +440,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * {@code
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
-     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
+     *  Ior<?,PersistentSetX<String>> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.right(1)),Reducers.<String>toPersistentSetX());
       //Ior.right(PersistentSetX.of("none"))));
       * }
      * </pre>
@@ -448,7 +448,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate left operation
      */
-    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final IterableX<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
+    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final Iterable<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
         return sequenceLeft(iors).map(s -> s.mapReduce(reducer));
     }
 
@@ -462,7 +462,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     *  Ior<?,String> iors = Ior.accumulateLeft(ListX.of(just,none,Ior.left("1")),i->""+i,Monoids.stringConcat);
+     *  Ior<?,String> iors = Ior.accumulateLeft(Seq.of(just,none,Ior.left("1")),i->""+i,Monoids.stringConcat);
         //Ior.right("none1")
      *
      * }
@@ -475,7 +475,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Semigroup to combine values from each Ior
      * @return Ior populated with the accumulate Secondary operation
      */
-    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final IterableX<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
+    public static <ST, PT, R> Ior<PT, R> accumulateLeft(final Iterable<Ior<ST, PT>> iors, final Function<? super ST, R> mapper,
                                                                final Monoid<R> reducer) {
         return sequenceLeft(iors).map(s -> s.map(mapper)
                                                  .reduce(reducer));
@@ -491,7 +491,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,ListX.of(Ior.both(2, "boo!"),Ior.left(1)));
+     * Ior<?,Integer> iors = Ior.accumulateLeft(Monoids.intSum,Seq.of(Ior.both(2, "boo!"),Ior.left(1)));
        //Ior.right(3);  2+1
      *
      *
@@ -503,7 +503,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer  Semigroup to combine values from each Ior
      * @return populated with the accumulate Secondary operation
      */
-    public static <ST, PT> Ior<PT, ST> accumulateLeft(final Monoid<ST> reducer, final IterableX<Ior<ST, PT>> iors) {
+    public static <ST, PT> Ior<PT, ST> accumulateLeft(final Monoid<ST> reducer, final Iterable<Ior<ST, PT>> iors) {
         return sequenceLeft(iors).map(s -> s.reduce(reducer));
     }
 
@@ -517,8 +517,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
        Ior<String,Integer> none = Ior.left("none");
 
 
-     * Ior<String,ReactiveSeq<Integer>> iors =Ior.sequenceRight(ListX.of(just,none,Ior.right(1)));
-       //Ior.right(ListX.of(10,1)));
+     * Ior<String,ReactiveSeq<Integer>> iors =Ior.sequenceRight(Seq.of(just,none,Ior.right(1)));
+       //Ior.right(Seq.of(10,1)));
      *
      * }</pre>
      *
@@ -527,8 +527,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param iors Iors to sequence
      * @return Ior Sequenced
      */
-    public static <ST, PT> Ior<ST, ReactiveSeq<PT>> sequenceRight(final IterableX<Ior<ST, PT>> iors) {
-        return sequence(iors.stream().filterNot(Ior::isLeft));
+    public static <ST, PT> Ior<ST, ReactiveSeq<PT>> sequenceRight(final Iterable<Ior<ST, PT>> iors) {
+        return sequence(ReactiveSeq.fromIterable(iors).filterNot(Ior::isLeft));
     }
   public static  <L,T> Ior<L,ReactiveSeq<T>> sequence(ReactiveSeq<? extends Ior<L,T>> stream) {
 
@@ -552,7 +552,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
+     *  Ior<?,PersistentSetX<Integer>> iors =Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),Reducers.toPersistentSetX());
         //Ior.right(PersistentSetX.of(10,1))));
      * }
      * </pre>
@@ -560,7 +560,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ST, R> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
+    public static <ST, PT, R> Ior<ST, R> accumulateRight(final Iterable<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
         return sequenceRight(iors).map(s -> s.mapReduce(reducer));
     }
 
@@ -574,7 +574,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
 
-     * Ior<?,String> iors = Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),i->""+i,SemigroupK.stringConcat);
+     * Ior<?,String> iors = Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),i->""+i,SemigroupK.stringConcat);
        //Ior.right("101"));
      * }
      * </pre>
@@ -585,7 +585,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer Reducer to accumulate results
      * @return Ior populated with the accumulate right operation
      */
-    public static <ST, PT, R> Ior<ST, R> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
+    public static <ST, PT, R> Ior<ST, R> accumulateRight(final Iterable<Ior<ST, PT>> iors, final Function<? super PT, R> mapper,
                                                                 final Semigroup<R> reducer) {
         return sequenceRight(iors).map(s -> s.map(mapper)
                                                .reduce(reducer)
@@ -601,7 +601,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      *  Ior<String,Integer> just  = Ior.right(10);
         Ior<String,Integer> none = Ior.left("none");
      *
-     *  Ior<?,Integer> iors =Ior.accumulateRight(ListX.of(just,none,Ior.right(1)),SemigroupK.intSum);
+     *  Ior<?,Integer> iors =Ior.accumulateRight(Seq.of(just,none,Ior.right(1)),SemigroupK.intSum);
         //Ior.right(11);
      *
      * }
@@ -613,7 +613,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param reducer  Reducer to accumulate results
      * @return  Ior populated with the accumulate right operation
      */
-    public static <ST, PT> Ior<ST, PT> accumulateRight(final IterableX<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
+    public static <ST, PT> Ior<ST, PT> accumulateRight(final Iterable<Ior<ST, PT>> iors, final Semigroup<PT> reducer) {
         return sequenceRight(iors).map(s -> s.reduce(reducer)
                                                .get());
     }

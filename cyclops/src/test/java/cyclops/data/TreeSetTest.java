@@ -86,7 +86,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
 
         ImmutableSortedSet<Number> set = this.<Number>of(Comparators.identityComparator(),1, 10l, 2, 20l, 3);
         ImmutableSortedSet<Integer> setA = set.ofType(Integer.class);
-        assertThat(setA.toListX(),containsInAnyOrder(1, 2, 3));
+        assertThat(setA.toList(),containsInAnyOrder(1, 2, 3));
 
     }
     @Test

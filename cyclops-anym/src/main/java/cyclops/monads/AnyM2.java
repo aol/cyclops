@@ -2,6 +2,7 @@ package cyclops.monads;
 
 import com.oath.anym.AnyMSeq;
 import com.oath.anym.AnyMValue;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
 
@@ -72,10 +73,12 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                                                                 Transformable<T>,
                                                                 ToStream<T>,
                                                                 Publisher<T> {
+    /**
     @Override
-    default ReactiveSeq<T> reactiveSeq() {
+    default ReactiveSeq<T> stream() {
         return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
     }
+    **/
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -287,11 +290,11 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * }
      * </pre>
      *
-     */
+
     @Override
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
-    }
+    } */
 
 
 
@@ -419,7 +422,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * @return Monad with a List
      */
     public static <W extends WitnessType<W>,T1,T2> AnyM2<W,T2,ListX<T1>> sequence(final Collection<? extends AnyM2<W,T2,T1>> seq, W w) {
-        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to().listX(LAZY));
+        return sequence(seq.stream(),w).map(s->ReactiveSeq.fromStream(s).to(ReactiveConvertableSequence::converter).listX(LAZY));
     }
 
     /**

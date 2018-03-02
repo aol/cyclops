@@ -4,18 +4,19 @@ package com.oath.cyclops.internal.stream;
 import com.oath.cyclops.internal.stream.spliterators.push.CollectingSinkSpliterator;
 import com.oath.cyclops.internal.stream.spliterators.push.ValueEmittingSpliterator;
 import com.oath.cyclops.types.futurestream.Continuation;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 
 import cyclops.companion.*;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
+import cyclops.data.Vector;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
@@ -170,30 +171,30 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public final ReactiveSeq<VectorX<T>> sliding(final int windowSize, final int increment) {
+    public final ReactiveSeq<Seq<T>> sliding(final int windowSize, final int increment) {
         return createSeq(new SlidingSpliterator<>(get(),Function.identity(), windowSize,increment), reversible);
     }
 
     @Override
-    public ReactiveSeq<ListX<T>> grouped(final int groupSize) {
-        return createSeq(new GroupingSpliterator<T,List<T>,ListX<T>>(get(),()->new ArrayList(groupSize), c->ListX.fromIterable(c),groupSize), this.reversible);
+    public ReactiveSeq<Vector<T>> grouped(final int groupSize) {
+        return createSeq(new GroupingSpliterator<T,Vector<T>,Vector<T>>(get(),()->Vector.empty(), c->c,groupSize), this.reversible);
 
     }
     @Override
-    public ReactiveSeq<ListX<T>> groupedStatefullyWhile(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(get(),()->ListX.of(),Function.identity(), predicate), this.reversible);
+    public ReactiveSeq<Vector<T>> groupedWhile(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate), this.reversible);
     }
     @Override
-    public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                              Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate), this.reversible);
     }
     @Override
-    public ReactiveSeq<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return createSeq(new GroupedStatefullySpliterator<>(get(),()->ListX.of(),Function.identity(), predicate.negate()), this.reversible);
+    public ReactiveSeq<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate.negate()), this.reversible);
     }
     @Override
-    public <C extends Collection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                         Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate.negate()), this.reversible);
     }
@@ -579,8 +580,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public ReactiveSeq<ListX<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
-        return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),()->ListX.fromIterable(new ArrayList<>(size)),
+    public ReactiveSeq<Vector<T>> groupedBySizeAndTime(final int size, final long time, final TimeUnit t) {
+        return createSeq(new GroupedByTimeAndSizeSpliterator<>(this.get(),()->Vector.<T>empty(),
                         Function.identity(),size,time,t),
                 reversible);
 
@@ -591,9 +592,9 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     @Override
-    public ReactiveSeq<ListX<T>> groupedByTime(final long time, final TimeUnit t) {
+    public ReactiveSeq<Vector<T>> groupedByTime(final long time, final TimeUnit t) {
         return createSeq(new GroupedByTimeSpliterator<>(get(),
-                ()->ListX.fromIterable(new ArrayList<>(100)),
+                ()->Vector.empty(),
                 Function.identity(),time, t), reversible);
     }
 
@@ -611,30 +612,28 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public ReactiveSeq<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    public ReactiveSeq<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return groupedWhile(predicate.negate());
 
     }
 
     @Override
-    public ReactiveSeq<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
-        return createSeq(new GroupedWhileSpliterator<>(get(),()->ListX.of(),Function.identity(), predicate), this.reversible);
-
-
+    public ReactiveSeq<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
+        return createSeq(new GroupedWhileSpliterator<>(get(), () -> Vector.<T>empty(), Function.identity(), predicate), this.reversible);
     }
 
     @Override
-    public <C extends Collection<? super T>> ReactiveSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ReactiveSeq<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return createSeq(new GroupedWhileSpliterator<>(get(),factory,Function.identity(), predicate), this.reversible);
     }
 
     @Override
-    public <C extends Collection<? super T>> ReactiveSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ReactiveSeq<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
       return groupedWhile(predicate.negate(),factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
+    public <C extends PersistentCollection<? super T>> ReactiveSeq<C> groupedBySizeAndTime(final int size, final long time, final TimeUnit unit,
             final Supplier<C> factory) {
         return createSeq(new GroupedByTimeAndSizeSpliterator(this.get(),factory,
                         Function.identity(),size,time,unit),
@@ -643,7 +642,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public <C extends Collection<? super T>,R> ReactiveSeq<R> groupedBySizeAndTime(final int size, final long time,
+    public <C extends PersistentCollection<? super T>,R> ReactiveSeq<R> groupedBySizeAndTime(final int size, final long time,
                                                                                  final TimeUnit unit,
                                                                                  final Supplier<C> factory,
                                                                                  Function<? super C, ? extends R> finalizer
@@ -654,14 +653,14 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     }
     @Override
-    public <C extends Collection<? super T>,R> ReactiveSeq<R> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory, Function<? super C, ? extends R> finalizer) {
+    public <C extends PersistentCollection<? super T>,R> ReactiveSeq<R> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory, Function<? super C, ? extends R> finalizer) {
         return createSeq(new GroupedByTimeSpliterator(this.get(),factory,
                         finalizer,time,unit),
                 reversible);
 
     }
     @Override
-    public <C extends Collection<? super T>> ReactiveSeq<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ReactiveSeq<C> groupedByTime(final long time, final TimeUnit unit, final Supplier<C> factory) {
         return createSeq(new GroupedByTimeSpliterator(this.get(),factory,
                         Function.identity(),time,unit),
                 reversible);
@@ -669,7 +668,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public <C extends Collection<? super T>> ReactiveSeq<C> grouped(final int size, final Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> ReactiveSeq<C> grouped(final int size, final Supplier<C> factory) {
         return createSeq(new GroupingSpliterator<>(get(),factory, Function.identity(),size), this.reversible);
 
     }

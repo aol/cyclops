@@ -17,7 +17,7 @@ public class GroupedWhileTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.iterate(0l, i->i+1l).groupedWhile(i->false).map(l->l.get(0)).limit(elements);
+		return Spouts.iterate(0l, i->i+1l).groupedWhile(i->false).map(l->l.getOrElse(0,-1l)).limit(elements);
 
 	}
 

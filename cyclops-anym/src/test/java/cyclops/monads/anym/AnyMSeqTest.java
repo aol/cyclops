@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.stream;
@@ -70,7 +71,7 @@ public class AnyMSeqTest {
 
         System.out.println(" future list " + futureList);
 
-        ListX<ListX<Integer>> collected = futureList.to(Witness::toReactiveSeq).toListX();
+        ListX<ListX<Integer>> collected = futureList.to(Witness::toReactiveSeq).to(ReactiveConvertableSequence::converter).listX();
 
 
         System.out.println(collected);
@@ -93,7 +94,7 @@ public class AnyMSeqTest {
 
         AnyM<stream,ListX<String>> futureList = AnyM.traverse( AnyM.listFromStream(futures), (Integer i) -> "hello" +i, stream.INSTANCE);
 
-        ListX<ListX<String>> collected = futureList.to(Witness::toReactiveSeq).toListX();
+        ListX<ListX<String>> collected = futureList.to(Witness::toReactiveSeq).to(ReactiveConvertableSequence::converter).listX();
 
         assertThat(collected.get(0).size(),equalTo( list.size()));
 

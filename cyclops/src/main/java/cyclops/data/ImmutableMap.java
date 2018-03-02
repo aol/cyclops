@@ -8,8 +8,7 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import cyclops.reactive.collections.immutable.*;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -35,7 +34,6 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
 
 
-    PersistentMapX<K,V> persistentMapX();
     ImmutableMap<K,V> put(K key, V value);
     ImmutableMap<K,V> put(Tuple2<K, V> keyAndValue);
     ImmutableMap<K,V> putAll(PersistentMap<? extends K,? extends V> map);
@@ -69,27 +67,13 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
 
     default Map<K,V> javaMap(){
-        return new Map<K, V>() {
-            @Override
-            public int hashCode() {
-                return super.hashCode();
-            }
+        return new AbstractMap<K, V>() {
+
+
 
             @Override
             public String toString() {
                 return ImmutableMap.this.toString();
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if(obj instanceof Map){
-                    Map<K,V> m = (Map<K,V>)obj;
-                    if(m.size()!=size())
-                        return false;
-                    return stream().collect(Collectors.toMap(t->t._1(),t->t._2()))
-                                   .equals(m);
-                }
-                return super.equals(obj);
             }
 
             @Override
@@ -157,7 +141,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     default String mkString(){
 
-        return stream().map(t->"{"+t._1()+"="+t._2()+"}").join(",","[","]");
+        return stream().map(t->"{"+t._1()+"="+t._2()+"}").join(", ","[","]");
     }
 
     <K2,V2> DMap.Two<K,V,K2,V2> merge(ImmutableMap<K2, V2> one);
@@ -354,73 +338,27 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
         });
     }
     /**
-     * Convert this MapX to a ListX via the provided transformation function
+     * Convert this MapX to a Seq via the provided transformation function
      *
      * @param fn Mapping function to transform each Map entry into a single value
-     * @return ListX of transformed values
+     * @return Seq of transformed values
      */
-    default <T> ListX<T> toListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return ListX.narrow(stream().map(fn)
-                .toListX());
+    default <T> Seq<T> toSeq(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return Seq.narrow(stream().map(fn)
+                .toSeq());
     }
 
-    /**
-     * Convert this MapX to a PersistentSetX via the provided transformation function
-     *
-     * @param fn Mapping function to transform each Map entry into a single value
-     * @return PersistentSetX of transformed values
-     */
-    default <T> PersistentSetX<T> toPersistentSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return PersistentSetX.narrow(stream().map(fn).to()
-                .persistentSetX());
-    }
+
 
     /**
-     * Convert this MapX to a POrderdSetX via the provided transformation function
+     * Convert this ImmutableMap to a LazySeq via the provided transformation function
      *
      * @param fn Mapping function to transform each Map entry into a single value
-     * @return OrderedSetX of transformed values
+     * @return LazySeq of transformed values
      */
-    default <T> OrderedSetX<T> toOrderedSetX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return OrderedSetX.narrow(stream().map(fn).to().orderedSetX());
-    }
-
-    /**
-     * Convert this MapX to a QueueX via the provided transformation function
-     *
-     * @param fn Mapping function to transform each Map entry into a single value
-     * @return QueueX of transformed values
-     */
-    default <T> PersistentQueueX<T> toPersistentQueueX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return PersistentQueueX.narrow(stream().map(fn).to().persistentQueueX());
-    }
-
-    /**
-     * Convert this MapX to a LinkedListX via the provided transformation function
-     *
-     * @param fn Mapping function to transform each Map entry into a single value
-     * @return LinkedListX of transformed values
-     */
-    default <T> LinkedListX<T> toLinkedListX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return LinkedListX.narrow(stream().map(fn).to().linkedListX());
+    default <T> LazySeq<T> toLazySeq(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
+        return LazySeq.narrow(stream().map(fn).to().lazySeq());
 
     }
-    /**
-     * Convert this MapX to a VectorX via the provided transformation function
-     *
-     * @param fn Mapping function to transform each Map entry into a single value
-     * @return VectorX of transformed values
-     */
-    default <T> VectorX<T> toVectorX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return VectorX.narrow(stream().map(fn).to().vectorX());
-    }
-    /**
-     * Convert this MapX to a BagX via the provided transformation function
-     *
-     * @param fn Mapping function to transform each Map entry into a single value
-     * @return BagX of transformed values
-     */
-    default <T> BagX<T> toBagX(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
-        return BagX.narrow(stream().map(fn).to().bagX());
-    }
+
 }

@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monad;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.data.LazySeq;
 import cyclops.control.Constant;
 import cyclops.control.Maybe;
 import cyclops.control.State;
@@ -60,11 +60,11 @@ public interface Traverse<CRE> extends Applicative<CRE>{
     }
 
     default <T> Higher<CRE,T> reverse(Higher<CRE, T> ds){
-        Tuple2<LinkedListX<T>, Higher<CRE, T>> t2 = mapAccumL((t,h)-> tuple(t.plus(h),h),ds, LinkedListX.empty());
+        Tuple2<LazySeq<T>, Higher<CRE, T>> t2 = mapAccumL((t, h)-> tuple(t.plus(h),h),ds, LazySeq.empty());
 
         return runTraverseS(t ->
-                        State.<LinkedListX<T>>get()
-                                .forEach2(e -> State.put(e.tail()), (a, b) -> a.head())
+                        State.<LazySeq<T>>get()
+                                .forEach2(e -> State.put(e.tailOrElse(LazySeq.empty())), (a, b) -> a.headOrElse(null))
                 , t2._2(), t2._1())._2();
 
     }
@@ -80,7 +80,7 @@ public interface Traverse<CRE> extends Applicative<CRE>{
     }
 
     default <T,C2,T2,R> Higher<CRE,R> zipWith(Foldable<C2> foldable, BiFunction<? super T,? super Maybe<T2>,? extends R> f, Higher<CRE, T> ds, Higher<C2, T2> ds2) {
-        Iterator<T2> list =foldable.listX(ds2)
+        Iterator<T2> list =foldable.seq(ds2)
                                    .iterator();
         State<Maybe<T2>,  Higher<CRE, R>> st = State.narrowK(traverseA(StateInstances.applicative(),
                 a -> {

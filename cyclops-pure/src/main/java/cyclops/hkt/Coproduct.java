@@ -7,9 +7,12 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Future;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
+import cyclops.instances.data.LazySeqInstances;
+import cyclops.instances.data.SeqInstances;
+import cyclops.instances.data.VectorInstances;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.Eval;
@@ -272,12 +275,16 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return foldRight(Monoid.fromBiFunction(identity,semigroup));
 
     }
-    public  ListX<T> toListX(){
-        return xor.visit(left->def1.foldable().listX(left),
-                right->def2.foldable().listX(right));
+    public Seq<T> toSeq(){
+        return xor.visit(left->def1.foldable().seq(left),
+                right->def2.foldable().seq(right));
+    }
+    public LazySeq<T> toLazySeq(){
+        return xor.visit(left->def1.foldable().lazySeq(left),
+            right->def2.foldable().lazySeq(right));
     }
     public  ReactiveSeq<T> stream(){
-        return toListX().stream();
+        return toLazySeq().stream();
     }
     public Coproduct<W1,W2,T> reverse() {
         return xor.visit(l -> {
@@ -344,25 +351,25 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
 
 
 
-    public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(VectorX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(list),def1, VectorXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,vector,T> vector(Vector<T> list, InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Either.right(list),def1, VectorInstances.definitions());
     }
-    public static  <W1,T> Coproduct<W1,vectorX,T> vectorX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(VectorX.of(values)),def1, VectorXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,vector,T> vector(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Either.right(Vector.of(values)),def1, VectorInstances.definitions());
     }
-    public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(LinkedListX<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(list),def1, LinkedListXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,lazySeq,T> lazySeq(LazySeq<T> list,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Either.right(list),def1, LazySeqInstances.definitions());
     }
-    public static  <W1,T> Coproduct<W1,linkedListX,T> linkedListX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(LinkedListX.of(values)),def1, LinkedListXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,lazySeq,T> lazySeq(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Either.right(LazySeq.of(values)),def1, LazySeqInstances.definitions());
     }
 
 
-    public static  <W1,T> Coproduct<W1,list,T> listX(List<T> list,InstanceDefinitions<W1> def1){
-        return new Coproduct<>(Either.right(ListX.fromIterable(list)),def1, ListXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,seq,T> seq(Seq<T> list,InstanceDefinitions<W1> def1){
+        return new Coproduct<>(Either.right(list),def1, SeqInstances.definitions());
     }
-    public static  <W1,T> Coproduct<W1,list,T> listX(InstanceDefinitions<W1> def1,T... values){
-        return new Coproduct<>(Either.right(ListX.of(values)),def1, ListXInstances.definitions());
+    public static  <W1,T> Coproduct<W1,seq,T> seq(InstanceDefinitions<W1> def1,T... values){
+        return new Coproduct<>(Either.right(Seq.of(values)),def1, SeqInstances.definitions());
     }
     public static  <W1,T> Coproduct<W1,stream,T> stream(Stream<T> stream,InstanceDefinitions<W1> def1){
         return new Coproduct<>(Either.right(StreamKind.widen(stream)),def1, StreamInstances.definitions());

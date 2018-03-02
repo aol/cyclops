@@ -1,12 +1,10 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSortedSet;
-import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.reactive.collections.immutable.OrderedSetX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -18,7 +16,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -54,9 +51,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return unitStream(stream().removeAll(list));
     }
 
-    default OrderedSetX<T> orderedSetX(){
-        return stream().to().orderedSetX(Evaluation.LAZY);
-    }
+
     Comparator<? super T> comparator();
     ImmutableSortedSet<T> subSet(T fromElement, T toElement);
 
@@ -289,28 +284,28 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<VectorX<T>> sliding(int windowSize) {
+    default ImmutableSortedSet<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableSortedSet<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableSortedSet<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
     @Override
-    default ImmutableSortedSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableSortedSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableSortedSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
@@ -319,22 +314,22 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableSortedSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableSortedSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableSortedSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
-    default ImmutableSortedSet<ListX<T>> grouped(int groupSize) {
+    default ImmutableSortedSet<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

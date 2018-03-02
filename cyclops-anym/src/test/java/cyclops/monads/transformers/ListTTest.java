@@ -1,7 +1,7 @@
 package cyclops.monads.transformers;
 
 import cyclops.monads.Witness;
-import cyclops.monads.Witness.*;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Optional;
 
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import cyclops.Converters;
+
+import cyclops.reactive.companion.Converters;
+import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.monads.transformers.ListT;
 
 
 public class ListTTest {

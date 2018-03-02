@@ -278,8 +278,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *  Eval<ListX<Integer>> maybes =Eval.sequence(ListX.of(Eval.now(10),Eval.now(1)));
-        //Eval.now(ListX.of(10,1)));
+     *  Eval<Seq<Integer>> maybes =Eval.sequence(Seq.of(Eval.now(10),Eval.now(1)));
+        //Eval.now(Seq.of(10,1)));
      *
      * }
      * </pre>
@@ -287,8 +287,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param evals Collection of evals to convert into a single eval with a List of values
      * @return  Eval with a  list of values
      */
-    public static <T> Eval<ReactiveSeq<T>> sequence(final IterableX<? extends Eval<T>> evals) {
-        return sequence(evals.stream());
+    public static <T> Eval<ReactiveSeq<T>> sequence(final Iterable<? extends Eval<T>> evals) {
+        return sequence(ReactiveSeq.fromIterable(evals));
 
     }
 
@@ -329,7 +329,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * <pre>
 
      * {@code
-     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(ListX.of(just,Eval.now(1)),Reducers.toPersistentSetX());
+     *   Eval<PersistentSetX<Integer>> accumulated = Eval.accumulate(Seq.of(just,Eval.now(1)),Reducers.toPersistentSetX());
          //Eval.now(PersistentSetX.of(10,1)))
      * }
      * </pre>
@@ -338,7 +338,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Reducer<R,T> reducer) {
+    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Reducer<R,T> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
@@ -347,7 +347,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *   Eval<String> evals =Eval.accumulate(ListX.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
+     *   Eval<String> evals =Eval.accumulate(Seq.of(just,Eval.later(()->1)),i->""+i,Monoids.stringConcat);
          //Eval.now("101")
      * }
      * </pre>
@@ -358,7 +358,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return  Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final IterableX<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
+    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Function<? super T, R> mapper, final Monoid<R> reducer) {
         return sequence(evals).map(s -> s.map(mapper)
                                           .reduce(reducer)
                                           );
@@ -369,7 +369,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      *
      * <pre>
      * {@code
-     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,ListX.of(just,Eval.now(1)));
+     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,Seq.of(just,Eval.now(1)));
          //Eval.now(11)
      *
      * }
@@ -380,7 +380,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Combiner function to applyHKT to converted values
      * @return Eval with a value
      */
-    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final IterableX<Eval<T>> evals) {
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final Iterable<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
 

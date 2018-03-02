@@ -4,11 +4,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.control.Future;
+import cyclops.data.HashMap;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.QueueFactories;
 import cyclops.futurestream.SimpleReact;
-import cyclops.companion.MapXs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -499,8 +502,8 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void onePerSecondAndBatch() {
-		List<ListX<String>> collected = LazyReact
-				.sequentialCommonBuilder().generateAsync(() -> status)
+		List<Vector<String>> collected = LazyReact.sequentialCommonBuilder()
+                                                 .generateAsync(() -> status)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
 				.onePer(1, TimeUnit.SECONDS).groupedByTime(10, TimeUnit.SECONDS)
 				.limit(15).block();
@@ -512,7 +515,7 @@ public class Tutorial {
 	 */
 	@Test @Ignore
 	public void secondsTimeInterval() {
-		List<ListX<Integer>> collected = LazyReact
+		List<Vector<Integer>> collected = LazyReact
 				.sequentialCommonBuilder().iterate(0, it -> it + 1)
 				//.limit(100)
 				.withQueueFactory(QueueFactories.boundedQueue(1))
@@ -525,7 +528,7 @@ public class Tutorial {
 	@Test
 	@Ignore
 	public void range() {
-		List<ListX<Integer>> collected = LazyReact
+		List<Vector<Integer>> collected = LazyReact
 				.sequentialCommonBuilder()
 				.from(IntStream.range(0, 10)).grouped(5)
 				.block();
@@ -567,7 +570,7 @@ public class Tutorial {
 				.onePer(1, TimeUnit.MICROSECONDS)
 				.peek(batch -> System.out.println("batched : " + batch))
 				.map(this::processOrders)
-				.flatMap(Collection::stream)
+				.flatMap(PersistentCollection::stream)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual)).forEach(this::save);
 
@@ -770,8 +773,9 @@ public class Tutorial {
 				.map(this::parseJson)
 				.chunkSinceLastRead()
 				.peek(batch -> System.out.println("batched : " + batch))
+                .map(c-> Seq.fromIterable(c))
 				.map(this::processOrders)
-				.flatMap(Collection::stream)
+				.flatMap(PersistentCollection::stream)
 				.peek(individual -> System.out.println("Flattened : "
 						+ individual)).forEach(this::save);
 
@@ -781,15 +785,15 @@ public class Tutorial {
 
 	}
 
-	private Collection<Map> processOrders(Collection<Map> input) {
+	private PersistentCollection<Map> processOrders(PersistentCollection<Map> input) {
 		sleep(100);
-		return input.stream().map(m -> MapXs.of("processed", m))
-				.collect(Collectors.toList());
+		return Seq.fromIterable(input.stream().map(m -> HashMap.of("processed", m).javaMap())
+				.collect(Collectors.toList()));
 	}
 
 	private Map parseJson(String json) {
-		return MapXs.<Object,Object>of("id", count++).plus( "fold", "order").plus( "date",
-				new Date());
+		return HashMap.<Object,Object>of("id", count++).put( "fold", "order").put( "date",
+				new Date()).javaMap();
 	}
 
 	private String readFileToString(String name) {

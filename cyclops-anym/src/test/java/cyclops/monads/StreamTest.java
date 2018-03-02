@@ -1,14 +1,16 @@
 package cyclops.monads;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.companion.Semigroups;
 import cyclops.control.Future;
+import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
+import cyclops.monads.transformers.VectorT;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
-import cyclops.companion.FutureStreamSemigroups;
 import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.transformers.ListT;
 import cyclops.reactive.ReactiveSeq;
@@ -76,14 +78,14 @@ public class StreamTest {
   public void combineNoOrderAnyM(){
     assertThat(AnyM.fromStream(ReactiveSeq.of(1,2,3))
       .combine((a, b)->a.equals(b), Semigroups.intSum)
-      .toListX(),equalTo(ListX.of(1,2,3)));
+      .to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(1,2,3)));
 
   }
 
   @Test
   public void groupedT(){
 
-    ListT<reactiveSeq,Integer> nestedList = AnyM.fromStream(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10))
+    VectorT<reactiveSeq,Integer> nestedList = AnyM.fromStream(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10))
       .groupedT(2)
       .map(i->i*2);
 
@@ -214,7 +216,7 @@ public class StreamTest {
   public void lazy(){
 
 
-    ListX<VectorX<String>> list =     ListX.of(1,2,3,5,6,7,8)
+    ListX<Seq<String>> list =     ListX.of(1,2,3,5,6,7,8)
       .map(i->i*2)
       .filter(i->i<4)
       .sliding(2)

@@ -3,7 +3,6 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.function.Function3;
@@ -135,11 +134,6 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
         return map.contains(t);
     }
 
-    @Override
-    public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(k -> k._1(), v -> v._2());
-    }
-
     public LinkedMap<K, V> put(K key, V value) {
         Vector<Tuple2<K, V>> newOrder = get(key).map(v -> order.replaceFirst(Tuple.tuple(key, v), Tuple.tuple(key, value)))
                 .orElseGet(() -> order.plus(Tuple.tuple(key, value)));
@@ -159,8 +153,12 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
         ImmutableMap<K,V> res = HashMap.empty();
         Vector<Tuple2<K,V>> ordering =order;
         for(Tuple2<K,V> t : narrow){
+            if(containsKey(t._1()))
+                ordering = ordering.replaceFirst(Tuple.tuple(t._1(),getOrElse(t._1(),null)),t);
+            else
+                ordering =ordering.plus(t);
             res = res.put(t);
-            ordering= ordering.plus(t);
+
         }
         return new LinkedMap<K,V>(res,ordering);
     }

@@ -21,7 +21,9 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.data.HashMap;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -232,12 +234,12 @@ public  class BaseSequenceTest {
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(2));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(4));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(1));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(3));
 
 	        assertEquals(2, map1.size());
 

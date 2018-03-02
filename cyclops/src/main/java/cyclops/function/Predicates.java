@@ -3,7 +3,7 @@ package cyclops.function;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import com.oath.cyclops.types.Value;
 
 import java.util.*;
@@ -89,10 +89,10 @@ public class Predicates {
      * {@code
      *      import static cyclops2.function.Predicates.optionalPresent;
      *
-     *      ListX.of(Optional.ofNullable(null),Optional.of(1),null)
+     *      Seq.of(Optional.ofNullable(null),Optional.of(1),null)
      *            .filter(optionalPresent());
      *
-     *       //ListX[Optional[1]]
+     *       //Seq[Optional[1]]
      * }
      * </pre>
      *
@@ -108,10 +108,10 @@ public class Predicates {
      * {@code
      *      import static cyclops2.function.Predicates.valuePresent;
      *
-     *      ListX.of(Maybe.ofNullable(null),Maybe.just(1),null)
+     *      Seq.of(Maybe.ofNullable(null),Maybe.just(1),null)
      *            .filter(valuePresent());
      *
-     *       //ListX[Maybe[1]]
+     *       //Seq[Maybe[1]]
      * }
      * </pre>
      *  @return A Predicate that checks if it's input is a cyclops2-react Value (which also contains a present value)
@@ -127,10 +127,10 @@ public class Predicates {
      * {@code
      *      import static cyclops2.function.Predicates.valuePresent;
      *
-     *      ListX.of(Arrays.asList(),Arrays.asList(1),null)
+     *      Seq.of(Arrays.asList(),Arrays.asList(1),null)
      *            .filter(iterablePresent());
      *
-     *       //ListX[List[1]]
+     *       //Seq[List[1]]
      * }
      * </pre>
      * @return A Predicate that checks if it's input is an Iterable with at least one value
@@ -147,10 +147,10 @@ public class Predicates {
      * {@code
      *      import static cyclops2.function.Predicates.some;
      *
-     *      ListX.of(Arrays.asList(),Arrays.asList(1),null, Optional.zero(),Maybe.none())
+     *      Seq.of(Arrays.asList(),Arrays.asList(1),null, Optional.zero(),Maybe.none())
      *            .filter(some());
      *
-     *       //ListX[List[1]]
+     *       //Seq[List[1]]
      * }
      * </pre>
      *
@@ -324,10 +324,10 @@ public class Predicates {
 
     public static <V> Predicate<Iterable<? super V>> eqvIterable(final Iterable<? super V> iterable) {
 
-        return test -> test == null ? iterable == null ? true : ListX.fromIterable(iterable)
+        return test -> test == null ? iterable == null ? true : Seq.fromIterable(iterable)
                                                                      .isEmpty()
-                : ListX.fromIterable(test)
-                       .equals(ListX.fromIterable(iterable));
+                : Seq.fromIterable(test)
+                       .equals(Seq.fromIterable(iterable));
 
     }
 

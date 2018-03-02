@@ -66,7 +66,8 @@ public class VertxTest {
 	         .filter(req->req.getParam("num")!=null)
 	         .peek(i->System.out.println("grouping " + i))
 	         .grouped(2)
-	         .map(list-> tuple(list.get(0).response(),list.get(1).response(),getParam(list.get(0)),getParam(list.get(1))))
+	         .map(list-> tuple(list.getOrElse(0,null).response(),list.getOrElse(1,null).response(),getParam(list.getOrElse(0,null)),
+                 getParam(list.getOrElse(1,null))))
 	         .peek(i->System.out.println("peeking + "+i))
 	         .peek(t->t._1().end("adding "+(t._3()+t._4())))
 	         .peek(t->t._2().end("multiplying "+t._3()*t._4()))

@@ -1,9 +1,11 @@
 package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Reducers;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.reactive.Streamable;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static cyclops.reactive.Spouts.of;
 import static java.util.Arrays.asList;
@@ -35,13 +37,13 @@ public class ReactiveScanningRSTest {
 	@Test
     public void coflatMap(){
         assertThat(of("a", "b", "c").coflatMap(s->s.toList()).to(Streamable::fromStream).toList(),equalTo(
-                ListX.of(ListX.of("a","b","c"))));
+                Arrays.asList(Arrays.asList("a","b","c"))));
 
     }
 	@Test
 	public void reverse(){
         assertThat(of("a", "b", "c").reverse().to(Streamable::fromStream).toList(),equalTo(
-                ListX.of("c","b","a")));
+                Arrays.asList("c","b","a")));
 
 	}
 

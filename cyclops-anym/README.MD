@@ -86,8 +86,8 @@ Then to embed Optional inside AnyM we provide a static utility method
         Objects.requireNonNull(opt);
         return AnyM.fromValue(opt, optional.INSTANCE);
 
- } 
- 
+ }
+
 ```
 
 And call it
@@ -191,6 +191,45 @@ And to create an AnyMSeq use AnyM.ofSeq rather than ofValue
         Objects.requireNonNull(s);
         return AnyM.fromSeq(s, stream.INSTANCE);
 
- } 
- 
+ }
+
 ```
+
+
+# Type dictionary
+
+### cyclops.monads
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| AnyM     | Type safe monadic wrapper for any monad type            | Higher kinded                 |
+| AnyMValue     | Type safe monadic wrapper for any monadic sum type            | Higher kinded                 |
+| AnyMSeq     | Type safe monadic wrapper for any monadic non-scalar type            | Higher kinded                 |
+| KleisliM    | A functional interface that represents a manipulatable function that takes a  value and returns a monad            | Higher kinded                 |
+| CokleisliM    | A functional interface that represents a manipulatable function that takes a monad and returns a value           | Higher kinded                 |
+
+#### cyclops.monads.function
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| AnyMFunction0-AnyMFunction2     | Type aliases for monadically lifted functions          |                  |
+| BinaryAnyMFuntion    | Type aliases for monadically lifted functions          |                  |
+| UnaryAnyMFuntion    | Type aliases for monadically lifted functions          |                  |
+
+#### cyclops.monads.transformers
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| ListT     | Type safe list transformer for manipulating lists in a monadic context            | Higher kinded                 |
+| SeqT     | Type safe list transformer for manipulating cyclops Seq's (persistent linked lists) in a monadic context            | Higher kinded                 |
+| VectorT     | Type safe list transformer for manipulating cyclops Vector's (performant persistent Vectors) in a monadic context            | Higher kinded                 |
+| LazySeqT     | Type safe list transformer for manipulating cyclops LazySeq's in a monadic context            | Higher kinded                 |
+| StreamT     | Type safe Stream transformer for manipulating Streams in a monadic context            | Higher kinded                 |
+| FutureT     | Type safe future transformer for manipulating futures in a monadic context            | Higher kinded                 |
+| CompletableFutureT     | Type safe CompletableFuture transformer for manipulating futures in a monadic context     | Higher kinded |
+| OptionalT     | Type safe Optional transformer for manipulating optionals in a monadic context          | Higher kinded                |
+| XorT     | Type safe Monad transformer for manipulating Xors & Eithers in a monadic context            | Higher kinded                 |
+| MaybeT     | Type safe Maybe transformer for manipulating lazy / reactive Maybes in a monadic context            | Higher kinded                 |
+| OptionT     | Type safe Maybe transformer for manipulating strict Options in a monadic context            | Higher kinded                 |
+| EvalT     | Type safe Eval transformer of manipulating Evals in a monadic context            | Higher kinded                 |
+

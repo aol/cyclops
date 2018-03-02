@@ -15,9 +15,12 @@ import java.util.stream.Stream;
 
 import com.oath.anym.transformers.TransformerTraversable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.extensability.MonadAdapter;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.monads.WitnessType;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -512,54 +515,40 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.zipWithIndex());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int)
-     */
+
     @Override
-    default AnyMSeq<W,VectorX<T>> sliding(final int windowSize) {
+    default AnyMSeq<W,Seq<T>> sliding(final int windowSize) {
 
         return fromIterable(IterableX.super.sliding(windowSize));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sliding(int, int)
-     */
+
     @Override
-    default AnyMSeq<W,VectorX<T>> sliding(final int windowSize, final int increment) {
+    default AnyMSeq<W,Seq<T>> sliding(final int windowSize, final int increment) {
 
         return fromIterable(IterableX.super.sliding(windowSize, increment));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int, java.util.function.Supplier)
-     */
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<W,C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> AnyMSeq<W,C> grouped(final int size, final Supplier<C> supplier) {
 
         return fromIterable(IterableX.super.grouped(size, supplier));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate)
-     */
+
     @Override
-    default AnyMSeq<W,ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default AnyMSeq<W,Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.groupedUntil(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedStatefullyUntil(java.util.function.BiPredicate)
-     */
     @Override
-    default AnyMSeq<W,ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
+    default AnyMSeq<W,Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
 
-        return fromIterable(IterableX.super.groupedStatefullyUntil(predicate));
+        return fromIterable(IterableX.super.groupedUntil(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
-     */
+
     @Override
     default AnyMSeq<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
@@ -570,20 +559,16 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.combine(op,predicate));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate)
-     */
+
     @Override
-    default AnyMSeq<W,ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default AnyMSeq<W,Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.groupedWhile(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedWhile(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> AnyMSeq<W,C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return fromIterable(IterableX.super.groupedWhile(predicate, factory));
     }
@@ -592,16 +577,14 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
      * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
      */
     @Override
-    default <C extends Collection<? super T>> AnyMSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> AnyMSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
         return fromIterable(IterableX.super.groupedUntil(predicate, factory));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#grouped(int)
-     */
+
     @Override
-    default AnyMSeq<W,ListX<T>> grouped(final int groupSize) {
+    default AnyMSeq<W,Vector<T>> grouped(final int groupSize) {
 
         return fromIterable(IterableX.super.grouped(groupSize));
     }

@@ -1,6 +1,5 @@
 package cyclops.kinds;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.supplier;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Future;

@@ -1,7 +1,7 @@
 package com.oath.cyclops.types.foldable;
 
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -9,6 +9,7 @@ import cyclops.data.tuple.Tuple3;
 
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class StatCollectorsTest {
     @Test
     public void withPercentiles(){
         stats.withPercentiles().limit(4).printOut();
-        assertThat(stats.withPercentiles().limit(4).map(t->t.map2(bd->bd.intValue())),equalTo(ListX.of(Tuple.tuple(0,0),
+        assertThat(stats.withPercentiles().limit(4).map(t->t.map2(bd->bd.intValue())),equalTo(Vector.of(Tuple.tuple(0,0),
                     Tuple.tuple(1,1),Tuple.tuple(2,2),Tuple.tuple(3,3))));
     }
 

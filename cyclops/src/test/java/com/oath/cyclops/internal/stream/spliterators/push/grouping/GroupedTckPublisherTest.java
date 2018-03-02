@@ -17,7 +17,7 @@ public class GroupedTckPublisherTest extends PublisherVerification<Long>{
 
 	@Override
 	public Publisher<Long> createPublisher(long elements) {
-		return Spouts.iterate(0l, i->i+1l).grouped(1).map(l->l.get(0)).limit(elements);
+		return Spouts.iterate(0l, i->i+1l).grouped(1).map(l->l.getOrElse(0,-1l)).limit(elements);
 
 	}
 

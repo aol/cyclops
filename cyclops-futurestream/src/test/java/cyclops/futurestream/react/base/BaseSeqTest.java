@@ -24,15 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.TreeSet;
+
+import cyclops.data.ImmutableMap;
+import cyclops.data.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.data.Vector;
 import cyclops.reactive.collections.mutable.MapX;
-import cyclops.companion.MapXs;
 import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
@@ -120,7 +122,7 @@ public abstract class BaseSeqTest {
 
 		for(int i=0;i<5;i++){
 
-			List<ListX<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
+			List<Vector<Integer>> list = react(()->1,()->2,()->3,()->4,()->5,()->{sleep(150);return 6;})
 					.groupedBySizeAndTime(30,1,TimeUnit.MICROSECONDS)
 					.toList();
 
@@ -134,9 +136,9 @@ public abstract class BaseSeqTest {
 	public void batchBySizeSet(){
 
 
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<Integer>()).block().get(0).size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().get(0).size(),is(1));
 
-		assertThat(of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).block().size(),is(1));
+		assertThat(of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).block().size(),is(1));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -191,7 +193,7 @@ public abstract class BaseSeqTest {
 	@Test
 	public void batchByTimeSet(){
 		for(int i=0;i<5000;i++){
-			List <TreeSet<Integer>> set = ofThread(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).block();
+			List <TreeSet<Integer>> set = ofThread(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> TreeSet.empty()).block();
 
 			assertThat(set.get(0).size(),is(1));
 
@@ -221,9 +223,9 @@ public abstract class BaseSeqTest {
 		//for(int index=0;index<100;index++)
 		{
 
-			Map<Integer,Queue<Integer>> shards = MapXs.of(0,new Queue<Integer>()).plus(1,new Queue());
+			ImmutableMap<Integer,Queue<Integer>> shards = cyclops.data.HashMap.of(0,new Queue<Integer>()).put(1,new Queue());
 
-			Map<Integer, ? extends FutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards, i -> i%2);
+			Map<Integer, ? extends FutureStream<Integer>> sharded = of(1,2,3,4,5,6).shard(shards.javaMap(), i -> i%2);
 			sharded.get(0).forEach(next ->{
 				System.out.println ("next is " + next);
 			});
@@ -485,7 +487,8 @@ public abstract class BaseSeqTest {
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        ImmutableMap<Integer, List<Integer>> mapA =of(1, 2, 3, 4).groupBy(i -> i % 2).map(v->v.listView());
+	        Map<Integer,List<Integer>> map1 = mapA.javaMap();
 
 	        assertThat(map1.get(0),hasItem(2));
 	        assertThat(map1.get(0),hasItem(4));

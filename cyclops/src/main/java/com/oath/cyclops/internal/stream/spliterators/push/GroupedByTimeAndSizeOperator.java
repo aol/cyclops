@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
+
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -9,7 +11,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class GroupedByTimeAndSizeOperator<T,C extends PersistentCollection<? super T>,R> extends BaseOperator<T,R> {
 
 
 
@@ -39,7 +41,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         long toRun = t.toNanos(time);
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         long[] start ={System.nanoTime()};
         StreamSubscription[] upstream = {null};
         StreamSubscription sub = new StreamSubscription(){
@@ -68,7 +70,7 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
         upstream[0] = source.subscribe(e-> {
                     try {
 
-                        next[0].add(e);
+                        next[0] = next[0].plus(e);
                         if(next[0].size()==groupSize || System.nanoTime()-start[0] > toRun){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
@@ -106,12 +108,12 @@ public class GroupedByTimeAndSizeOperator<T,C extends Collection<? super T>,R> e
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         long toRun = t.toNanos(time);
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         long[] start ={System.nanoTime()};
         source.subscribeAll(e-> {
                     try {
 
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(next[0].size()==groupSize || System.nanoTime()-start[0] > toRun){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();
