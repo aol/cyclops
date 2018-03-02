@@ -421,6 +421,9 @@ public interface Maybe<T> extends Option<T> {
      * {@code
      *     Maybe<Integer> maybe =  Maybe.fromEval(Eval.now(10));
      *     //Maybe[10]
+     *     Maybe<Integer> maybeNull = Maybe.fromEval(()->null);
+     *     //Maybe[null]
+     *
      *
      * }
      * </pre>
@@ -440,6 +443,9 @@ public interface Maybe<T> extends Option<T> {
 
     static <T> Maybe<T> fromEvalOptional(final Eval<Optional<T>> value){
         return new Lazy<T>(value.map(in->Maybe.<T>fromOptional(in)));
+    }
+    static <T> Maybe<T> fromLazyOption(final Supplier<Option<T>> value){
+        return new Lazy<T>(Eval.later(value).map(in->Maybe.<T>fromOption(in)));
     }
 
     /**

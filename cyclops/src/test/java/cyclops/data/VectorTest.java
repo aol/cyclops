@@ -35,6 +35,7 @@ public class VectorTest extends BaseImmutableListTest {
         assertThat(l,equalTo(al));
         assertThat(l.hashCode(),equalTo(al.hashCode()));
 
+
         assertThat(Vector.of(1,2),equalTo(Seq.of(1,2)));
         assertThat(Vector.of(1,2).hashCode(),equalTo(Seq.of(1,2).hashCode()));
 
