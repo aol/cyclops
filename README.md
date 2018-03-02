@@ -74,69 +74,6 @@ compile 'com.aol.simplereact:cyclops-react:x.y.z'
 
 
 
-# 2.x Type dictionary
-
-## cyclops
-
-
-
-
-## cyclops.stream
-
-## cyclops.stream.ReactiveSeq
-
-cyclops defines reactive (push/ event drive) and coreactive (iterative / interactive) Streaming capabilities via the interface ReactiveSeq.
-
-There are 4 concrete implementations for this interface included in cyclops-react :-
-
-
-
-| concrete type | factories | description | characteristics |
-|------|-------------|-------------|-----------------|
-| ReactiveStreamX    | Spouts | Asynchronous push based Streams. Optionally back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded                |
-| StreamX    | ReactiveSeq | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Coreactive (pull), Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
-| OneShotStreamX    | Streams | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are not replayable. Backed by j.u.s.Stream via jool.seq            | Lazy, parallel option, integrated primitive support, Higher kinded               |
-| FutureStream     | LazyReact | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
-
-Additional implementations provided in cyclops integration modules
-
-| concrete type | factories | description | characteristics |
-|------|-------------|-------------|-----------------|
-| FluxReactiveSeq    | Fluxs | Asynchronous push based Streams, non-blocking back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion                |
-| ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded              |
-
-Additional implementations provided in cyclops integration modules for RxJava 2
-
-| concrete type | factories | description | characteristics |
-|------|-------------|-------------|-----------------|
-| ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion               |
-| FlowableReactiveSeq    | Flowables |  Asynchronous push based Streams, non-blocking back-pressure aware (via reactive-streams)             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion                |
-
-
-Classes / Interfaces that represent the API (cyclops-react) 
-
-| type | description | characteristics |
-|------|-------------|-----------------|
-| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
-| Spouts     | Creational factory methods for push based Streams with optional non-blocking back pressure (via reactive-streams).              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
-| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
-| Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
-| StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
-
-## com.oath.cyclops.async
-
-| type | description | characteristics |
-|------|-------------|-----------------|
-| SimpleReact     | Asynchronous bulk operations on Futures            | Eager async                 |
-| LazyReact     | Builder for FutureStreams           |                 |
-| Adapter     | Interface for data transfer Adapters to connected Streams. Closing the adapter, closes the streams (impls - Queue, Topic, Signal)           |    Async             |
-| Queue     | Facilitates asyncrhonous data transfer to mulitiple connected Streams, via any java.util.Queue impl, Continuations toallow consumers to become producers.           |    Async             |
-| Topic     | Asynchronous data transfer to multiple connected Streams, all connected Streams recieve each message           |   Async              |
-| Signal    | Asynchronous data transfer - changes in data are broadcast to connected Streams           |   Async              |
-| Pipes    | Event bus for managing data transfer via Adapters to connected data structures           |   Async              |
-
-
-
 
 
 

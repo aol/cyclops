@@ -196,7 +196,11 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 | Ord     |  Order (less, equal, more) |  Higher kinded               |
 | NaturalTransformation     | Transform one Higher Kinded type into another |  Higher kinded               |
 
-
+## cyclops.data.tuple
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Tuple     | Factory methods for Tuples | Strict, Higher kinded               |
+| Tuple0-Tuple8     | Tuple implementations | Strict, Higher kinded               |
 
 ## cyclops.control
 
@@ -275,6 +279,15 @@ async.complete(value)
 | Group     | A function for combining values of the same type, with an identity value and an inverse     |                  |
 | Reducer     | Accepted by cyclops fold /reduce methods for reducing sequences of values to cyclops data types     |                  |
 
+# cyclops.reactive
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| Spouts     | Creational factory methods for push based Streams with optional non-blocking back pressure (via reactive-streams).              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
+| Generator     | Kotlinesque Sequence Generator              |             |
+
 
 ## com.oath.cyclops.async
 
@@ -300,3 +313,46 @@ async.complete(value)
 | MutableChar     | A mutable primitive box type for characters     | Eager execution                 |
 | MutableByte     | A mutable primitive box type for bytes        | Eager execution                 |
 | MutableBoolean     | A mutable primitive box type for booleans        | Eager execution                 |
+
+## cyclops.stream
+
+## cyclops.stream.ReactiveSeq
+
+cyclops defines reactive (push/ event drive) and coreactive (iterative / interactive) Streaming capabilities via the interface ReactiveSeq.
+
+There are 4 concrete implementations for this interface included in cyclops-react :-
+
+
+
+| concrete type | factories | description | characteristics |
+|------|-------------|-------------|-----------------|
+| ReactiveStreamX    | Spouts | Asynchronous push based Streams. Optionally back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded                |
+| StreamX    | ReactiveSeq | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Coreactive (pull), Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| OneShotStreamX    | Streams | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are not replayable. Backed by j.u.s.Stream via jool.seq            | Lazy, parallel option, integrated primitive support, Higher kinded               |
+| FutureStream     | LazyReact | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
+
+Additional implementations provided in cyclops integration modules
+
+| concrete type | factories | description | characteristics |
+|------|-------------|-------------|-----------------|
+| FluxReactiveSeq    | Fluxs | Asynchronous push based Streams, non-blocking back-pressure aware (via reactive-streams)              | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion                |
+| ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded              |
+
+Additional implementations provided in cyclops integration modules for RxJava 2
+
+| concrete type | factories | description | characteristics |
+|------|-------------|-------------|-----------------|
+| ObservableReactiveSeq    | Observables |  Asynchronous push based Streams             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion               |
+| FlowableReactiveSeq    | Flowables |  Asynchronous push based Streams, non-blocking back-pressure aware (via reactive-streams)             | Reactive (push),Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator Fusion                |
+
+
+Classes / Interfaces that represent the API (cyclops-react)
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
+| Spouts     | Creational factory methods for push based Streams with optional non-blocking back pressure (via reactive-streams).              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| ReactiveSeq     | Synchronous sequential stream, extends JDK Stream interface. Custom Stream faster engine. Streams are replayable.              | Lazy, parallel option, integrated primitive support, replayable, Higher kinded, Operator fusion                |
+| Streamable     | Capturing and caching replayable Stream type              | Lazy, caching                |
+| StreamSource     | Push data asynchronously into synchronous sequential or parallel Streams (e.g. JDK Stream, ReactiveSeq)              |             |
+
