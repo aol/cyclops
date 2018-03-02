@@ -4938,18 +4938,18 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
     public static  <T,R> ReactiveSeq<R> tailRec(T initial, Function<? super T, ? extends ReactiveSeq<? extends Either<T, R>>> fn) {
-        ReactiveSeq<Either<T, R>>  next = ReactiveSeq.of(Either.left(initial));
-
+        ReactiveSeq<Either<T, R>>  lazy = ReactiveSeq.of(Either.left(initial));
+        List<Either<T, R>> next = lazy.toList();
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = ReactiveSeq.fromIterable(next).concatMap(e -> e.visit(s -> {
                     newValue[0]=true;
                     return fn.apply(s); },
                 p -> {
                     newValue[0]=false;
                     return ReactiveSeq.of(e);
-                }));
+                })).toList();
             if(!newValue[0])
                 break;
 

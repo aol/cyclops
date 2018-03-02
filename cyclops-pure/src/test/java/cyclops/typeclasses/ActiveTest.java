@@ -1,6 +1,7 @@
 package cyclops.typeclasses;
 
 import com.oath.cyclops.hkt.Higher;
+import cyclops.data.LazySeq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -32,7 +33,7 @@ public class ActiveTest {
 
     @Test
     public void toList(){
-        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toLazySeq(),equalTo(ListX.of(1,2,3)));
+        assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toLazySeq(),equalTo(LazySeq.of(1,2,3)));
     }
     @Test
     public void foldMap(){
@@ -106,11 +107,7 @@ public class ActiveTest {
         MonadRec<reactiveSeq> mr = IterableInstances.monadRec();
         mr.tailRec(0,i-> i<100_000 ? ReactiveSeq.of(Either.left(i+1)) : ReactiveSeq.of(Either.right(i+1)) )
                 .convert(ReactiveSeq::narrowK).printOut();
-        /**
-         active.concreteTailRec(ListX.kindKleisli())
-         .tailRec(0,i-> i<100_000 ? ListX.of(Xor.lazyLeft(i+1)) : ListX.of(Xor.lazyRight(i)) )
-         .concreteConversion(ListXInstances.kindCokleisli()).to(i->i).printOut();
-         **/
+
     }
     @Test
     public void concreteConversion() {
@@ -150,7 +147,7 @@ public class ActiveTest {
     @Test
     public void custom(){
         Active<list, Vector<Integer>> grouped = active.custom(ListX::narrowK, l -> l.grouped(10));
-        assertThat(grouped.getActive()  ,equalTo(ListX.of(ListX.of(1,2,3))));
+        assertThat(grouped.getActive()  ,equalTo(ListX.of(Vector.of(1,2,3))));
 
     }
 
