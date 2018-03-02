@@ -18,7 +18,7 @@ Currently part of the core but migrating to their own module as part of Cyclops 
 ## Get cyclops
 
 
-* [![Maven Central : cyclops](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops/badge.svg)
+* [![Maven Central : cyclops](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
 * [Javadoc for cyclops](http://www.javadoc.io/doc/com.oath.cyclops/cyclops)
 
 # Getting started examples
