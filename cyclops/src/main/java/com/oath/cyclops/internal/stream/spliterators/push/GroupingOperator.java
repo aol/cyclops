@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
+
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -8,7 +10,7 @@ import java.util.function.Supplier;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class GroupingOperator<T,C extends PersistentCollection<? super T>,R> extends BaseOperator<T,R> {
 
     private final Supplier<? extends C> factory;
     private final Function<? super C, ? extends R> finalizer;
@@ -26,7 +28,7 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
 
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         StreamSubscription[] upstream = {null};
         StreamSubscription sub = new StreamSubscription(){
             @Override
@@ -53,7 +55,7 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
         };
         upstream[0] = source.subscribe(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
 
@@ -88,10 +90,10 @@ public class GroupingOperator<T,C extends Collection<? super T>,R> extends BaseO
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        Collection[] next = {factory.get()};
+        PersistentCollection[] next = {factory.get()};
         source.subscribeAll(e-> {
                     try {
-                        next[0].add(e);
+                        next[0]=next[0].plus(e);
                         if(next[0].size()==groupSize){
                             onNext.accept(finalizer.apply((C)next[0]));
                             next[0] = factory.get();

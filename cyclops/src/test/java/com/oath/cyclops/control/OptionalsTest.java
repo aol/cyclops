@@ -7,26 +7,26 @@ import static org.junit.Assert.assertThat;
 import java.util.List;
 import java.util.Optional;
 
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Optionals;
 
 public class OptionalsTest {
 	@Test
 	public void testSequence() {
-		Optional<ReactiveSeq<Integer>> maybes =Optionals.sequence(ListX.of(Optional.of(10),Optional.of(20),Optional.of(1)));
-		assertThat(maybes.map(s->s.toList()),equalTo(Optional.of(ListX.of(10,20,1))));
+		Optional<ReactiveSeq<Integer>> maybes =Optionals.sequence(Seq.of(Optional.of(10),Optional.of(20),Optional.of(1)));
+		assertThat(maybes.map(s->s.toSeq()),equalTo(Optional.of(Seq.of(10,20,1))));
 	}
 	@Test
     public void testSequencePresent() {
-        Optional<List<Integer>> maybes =Optionals.sequencePresent(ListX.of(Optional.of(10),Optional.empty(),Optional.of(1))).map(s->s.toList());
-        assertThat(maybes,equalTo(Optional.of(ListX.of(10,1))));
+        Optional<Seq<Integer>> maybes =Optionals.sequencePresent(Seq.of(Optional.of(10),Optional.empty(),Optional.of(1))).map(s->s.toSeq());
+        assertThat(maybes,equalTo(Optional.of(Seq.of(10,1))));
     }
 	@Test
     public void testSequenceEmpty() {
-        Optional<ReactiveSeq<Integer>> maybes =Optionals.sequence(ListX.of(Optional.of(10),Optional.empty(),Optional.of(1)));
+        Optional<ReactiveSeq<Integer>> maybes =Optionals.sequence(Seq.of(Optional.of(10),Optional.empty(),Optional.of(1)));
         assertThat(maybes,equalTo(Optional.empty()));
     }
 

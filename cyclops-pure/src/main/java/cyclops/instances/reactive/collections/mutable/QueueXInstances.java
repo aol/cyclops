@@ -1,11 +1,12 @@
 package cyclops.instances.reactive.collections.mutable;
 
-import com.oath.cyclops.hkt.DataWitness.queue;
+
+import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
 import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.companion.CyclopsCollectors;
+import cyclops.reactive.companion.CyclopsCollectors;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;

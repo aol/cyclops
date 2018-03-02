@@ -8,17 +8,20 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
+import cyclops.data.Seq;
+import cyclops.data.TreeSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.oath.cyclops.react.ThreadPools;
+import cyclops.data.Vector;
 import cyclops.futurestream.react.lazy.DuplicationTest;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.futurestream.LazyReact;
@@ -34,7 +37,7 @@ public class BatchingTest {
 				.toList().size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
@@ -44,25 +47,25 @@ public class BatchingTest {
 				.size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
+				.groupedUntil(i->i%3==0,()-> Vector.empty())
 				.toList().size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
-				.groupedUntil(i->i%3==0,()->new ArrayList<>())
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.groupedUntil(i->i%3==0,()->Vector.empty())
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
+				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.toList().size(),equalTo(2));
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
-				.groupedWhile(i->i%3!=0,()->new ArrayList<>())
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.groupedWhile(i->i%3!=0,()->Vector.empty())
+				.toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchByTime2(){
@@ -192,7 +195,7 @@ public class BatchingTest {
 	public void batchBySizeAndTimeSizeCollection(){
 
 		assertThat(DuplicationTest.of(1,2,3,4,5,6)
-						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->new ArrayList<>())
+						.groupedBySizeAndTime(3,10,TimeUnit.SECONDS,()->Vector.empty())
 						.toList().get(0)
 						.size(),is(3));
 	}
@@ -225,7 +228,7 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
+			List<Vector<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 					.toList();
 
@@ -239,8 +242,8 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ArrayList<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
-					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
+			List<Vector<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
+					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->Vector.empty())
 					.toList();
 
 			assertThat(list
@@ -253,7 +256,7 @@ public class BatchingTest {
 
 		for(int i=0;i<10;i++){
 			System.out.println(i);
-			List<ListX<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
+			List<Vector<Integer>> list = DuplicationTest.of(1,2,3,4,5,6)
 					.map(n-> n==6? sleep(1) : n)
 					.groupedBySizeAndTime(10,1,TimeUnit.MICROSECONDS)
 
@@ -268,13 +271,13 @@ public class BatchingTest {
 	@Test
 	public void batchBySizeSet(){
 
-		assertThat(DuplicationTest.of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().get(0).size(),is(1));
-		assertThat(DuplicationTest.of(1,1,1,1,1,1).grouped(3,()->new TreeSet<>()).toList().size(),is(1));
+		assertThat(DuplicationTest.of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().get(0).size(),is(1));
+		assertThat(DuplicationTest.of(1,1,1,1,1,1).grouped(3,()->TreeSet.empty()).toList().size(),is(1));
 	}
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(DuplicationTest.of().grouped(3,()->new TreeSet<>()).toList().size(),is(0));
+		assertThat(DuplicationTest.<Integer>of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){
@@ -329,7 +332,7 @@ public class BatchingTest {
 	@Test
 	public void batchByTimeSet(){
 
-		assertThat(DuplicationTest.of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>()).toList().get(0).size(),is(1));
+		assertThat(DuplicationTest.of(1,1,1,1,1,1).groupedByTime(1500,TimeUnit.MICROSECONDS,()->TreeSet.empty()).toList().get(0).size(),is(1));
 	}
 	@Test
 	public void batchByTimeInternalSize(){
@@ -337,7 +340,7 @@ public class BatchingTest {
 	}
 	@Test
 	public void batchByTimeInternalSizeCollection(){
-		assertThat(DuplicationTest.of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()->new ArrayList<>()).collect(Collectors.toList()).size(),greaterThan(5));
+		assertThat(DuplicationTest.of(1,2,3,4,5,6).groupedByTime(1,TimeUnit.NANOSECONDS,()-> Seq.empty()).collect(Collectors.toList()).size(),greaterThan(5));
 	}
 	@Test
 	public void windowByTimeInternalSize(){

@@ -1,6 +1,7 @@
 package cyclops.instances.reactive.collections.immutable;
 
-import com.oath.cyclops.hkt.DataWitness.linkedListX;
+import static com.oath.cyclops.data.ReactiveWitness.*;
+
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;

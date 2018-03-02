@@ -1,8 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.data.Vector;
+import cyclops.data.Seq;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -11,17 +10,13 @@ import java.util.function.Function;
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOperator<T,R> {
+public class SlidingOperator<T,R> extends BaseOperator<T,R> {
 
-
-
-
-    //@TODO Seq / list would be more efficent than a Vector
-    private final Function<? super VectorX<T>, ? extends R> finalizer;
+    private final Function<? super Seq<T>, ? extends R> finalizer;
     private final int windowSize;
     private final int increment;
 
-    public SlidingOperator(Operator<T> source,  Function<? super VectorX<T>, ? extends R> finalizer,
+    public SlidingOperator(Operator<T> source,  Function<? super Seq<T>, ? extends R> finalizer,
                            int windowSize, int increment){
         super(source);
 
@@ -62,14 +57,14 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 super.cancel();
             }
         };
-        final Mutable<Vector<T>> list = Mutable.of(Vector.empty());
+        final Mutable<Seq<T>> list = Mutable.of(Seq.empty());
         boolean[] sent = {false};
         upstream[0] = source.subscribe(e-> {
                     try {
                         list.mutate(var -> var.insertAt(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
-                            onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+                            onNext.accept(finalizer.apply(list.get()));
                             sub.requested.decrementAndGet();
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
@@ -93,7 +88,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                         upstream[0].request(1);
                 },()->{
                     if(!sent[0] && list.get().size()>0)
-                        onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+                        onNext.accept(finalizer.apply(list.get()));
                     sub.requested.decrementAndGet();
                     onComplete.run();
                 });
@@ -102,14 +97,14 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
 
     @Override
     public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
-        final Mutable<Vector<T>> list = Mutable.of(Vector.empty());
+        final Mutable<Seq<T>> list = Mutable.of(Seq.empty());
         boolean[] sent = {false};
         source.subscribeAll(e-> {
                     try {
                         list.mutate(var -> var.insertAt(Math.max(0, var.size()),e));
                         if(list.get().size()==windowSize) {
 
-                            onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+                            onNext.accept(finalizer.apply(list.get()));
                             sent[0] = true;
                             for (int i = 0; i < increment && list.get()
                                     .size() > 0; i++)
@@ -126,7 +121,7 @@ public class SlidingOperator<T,C extends Collection<? super T>,R> extends BaseOp
                 }
                 ,onError,()->{
                     if(!sent[0]  && list.get().size()>0)
-                        onNext.accept(finalizer.apply(VectorX.fromIterable(list.get())));
+                        onNext.accept(finalizer.apply(list.get()));
                     onCompleteDs.run();
                 });
     }

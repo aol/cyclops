@@ -1,7 +1,7 @@
 package cyclops.typeclasses.monads;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.react.ThreadPools;
 import cyclops.control.Future;
 import cyclops.instances.reactive.IterableInstances;
 import cyclops.reactive.collections.mutable.ListX;
@@ -11,6 +11,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Reader;
 import cyclops.control.Either;
 import com.oath.cyclops.hkt.DataWitness.*;
+import com.oath.cyclops.data.ReactiveWitness.*;
 import cyclops.instances.control.FutureInstances;
 import cyclops.instances.control.MaybeInstances;
 import cyclops.instances.control.ReaderInstances;
@@ -24,7 +25,6 @@ import cyclops.typeclasses.monad.MonadRec;
 import org.junit.Test;
 
 import java.util.Optional;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -54,7 +54,9 @@ public class MonadRecTest {
         MonadRec<reactiveSeq> mr = PublisherInstances.monadRec(Executors.newFixedThreadPool(1));
         ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
                 .convert(ReactiveSeq::narrowK);
-        assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
+        assertThat(l.to(ReactiveConvertableSequence::converter).listX(),
+            equalTo(ReactiveSeq.of(100_001)
+                                    .to(ReactiveConvertableSequence::converter).listX()));
     }
 
     @Test
@@ -62,7 +64,7 @@ public class MonadRecTest {
       MonadRec<reactiveSeq> mr = IterableInstances.monadRec();
       ReactiveSeq<Integer> l = mr.tailRec(0, i -> i < 100_000 ? ReactiveSeq.of(Either.left(i + 1)) : ReactiveSeq.of(Either.right(i + 1)))
         .convert(ReactiveSeq::narrowK);
-      assertThat(l.to().listX(),equalTo(ReactiveSeq.of(100_001).to().listX()));
+      assertThat(l.to(ReactiveConvertableSequence::converter).listX(),equalTo(ReactiveSeq.of(100_001).to(ReactiveConvertableSequence::converter).listX()));
     }
     @Test
     public void maybeTest(){

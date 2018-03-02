@@ -1,10 +1,11 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.hashSet;
@@ -27,6 +28,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,6 +38,10 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
     @Getter
     private final HAMT.Node<T,T> map;
 
+    static <T> Collector<T, Set<T>, HashSet<T>> collector() {
+        Collector<T, ?, Set<T>> c  = Collectors.toSet();
+        return Collectors.<T, Set<T>, Iterable<T>,HashSet<T>>collectingAndThen((Collector)c,HashSet::fromIterable);
+    }
 
     public static <T> HashSet<T> empty(){
         return new HashSet<T>( HAMT.empty());
@@ -259,7 +266,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
 
       @Override
       public String toString(){
-          return stream().join(",","[","]");
+          return stream().join(", ","[","]");
       }
 
       public HashSet<T> take(final long n) {
@@ -456,28 +463,28 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<VectorX<T>> sliding(int windowSize) {
-          return (HashSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize);
+      public HashSet<Seq<T>> sliding(int windowSize) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.sliding(windowSize);
       }
 
       @Override
-      public HashSet<VectorX<T>> sliding(int windowSize, int increment) {
-          return (HashSet<VectorX<T>>) ImmutableSet.super.sliding(windowSize,increment);
+      public HashSet<Seq<T>> sliding(int windowSize, int increment) {
+          return (HashSet<Seq<T>>) ImmutableSet.super.sliding(windowSize,increment);
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> grouped(int size, Supplier<C> supplier) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> grouped(int size, Supplier<C> supplier) {
           return (HashSet<C>) ImmutableSet.super.grouped(size,supplier);
       }
 
       @Override
-      public HashSet<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedUntil(predicate);
+      public HashSet<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
       }
 
       @Override
-      public HashSet<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedStatefullyUntil(predicate);
+      public HashSet<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedUntil(predicate);
       }
 
       @Override
@@ -486,23 +493,23 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
       @Override
-      public HashSet<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.groupedWhile(predicate);
+      public HashSet<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.groupedWhile(predicate);
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
           return (HashSet<C>) ImmutableSet.super.groupedWhile(predicate,factory);
       }
 
       @Override
-      public <C extends Collection<? super T>> HashSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+      public <C extends PersistentCollection<? super T>> HashSet<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
           return (HashSet<C>) ImmutableSet.super.groupedUntil(predicate,factory);
       }
 
       @Override
-      public HashSet<ListX<T>> grouped(int groupSize) {
-          return (HashSet<ListX<T>>) ImmutableSet.super.grouped(groupSize);
+      public HashSet<Vector<T>> grouped(int groupSize) {
+          return (HashSet<Vector<T>>) ImmutableSet.super.grouped(groupSize);
       }
 
       @Override

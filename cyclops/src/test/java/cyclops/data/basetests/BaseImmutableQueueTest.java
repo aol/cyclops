@@ -1,13 +1,12 @@
 package cyclops.data.basetests;
 
-import cyclops.collections.AbstractIterableXTest;
+import cyclops.data.basetests.AbstractIterableXTest;
 import cyclops.companion.Monoids;
 import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
 

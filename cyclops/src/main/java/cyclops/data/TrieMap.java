@@ -3,7 +3,6 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.reactive.collections.immutable.PersistentMapX;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.trieMap;
 import cyclops.data.base.HashedPatriciaTrie;
@@ -49,12 +48,6 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
     public TrieMap<K,V> put(K key, V value){
         return new TrieMap<>(map.put(key.hashCode(),key,value));
     }
-
-    @Override
-    public PersistentMapX<K, V> persistentMapX() {
-        return stream().to().persistentMapX(t->t._1(),t->t._2());
-    }
-
 
 
     @Override

@@ -1,9 +1,12 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.reactive.collections.mutable.ListX;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Subscription;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
@@ -21,8 +24,8 @@ public abstract class AbstractOperatorTest {
 
     @Before
     public void setup(){
-        values = ListX.empty();
-        errors = ListX.empty();
+        values = new ArrayList<>();
+        errors = new ArrayList<>();
         onComplete = false;
         empty = createEmpty();
         one = createOne();
@@ -38,8 +41,8 @@ public abstract class AbstractOperatorTest {
     public abstract Operator<Integer> createTwoAndError();
     public abstract Operator<Integer> createThreeErrors();
 
-    protected ListX<Integer> values;
-    protected ListX<Throwable> errors;
+    protected List<Integer> values;
+    protected List<Throwable> errors;
     protected boolean onComplete;
 
     @Test

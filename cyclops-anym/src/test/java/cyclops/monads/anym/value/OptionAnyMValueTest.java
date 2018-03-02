@@ -18,8 +18,8 @@ import static org.junit.Assert.assertThat;
 public class OptionAnyMValueTest extends BaseAnyMValueTest<option> {
     @Before
     public void setUp() throws Exception {
-        just = AnyM.fromMaybe(Option.of(10));
-        none = AnyM.fromMaybe(Option.none());
+        just = AnyM.fromOption(Option.of(10));
+        none = AnyM.fromOption(Option.none());
     }
     @Test
     public void testPeek() {

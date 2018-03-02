@@ -1,6 +1,7 @@
 package cyclops.streams.push;
 
-import cyclops.reactive.collections.mutable.ListX;
+
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
 
@@ -49,7 +50,7 @@ public class ReactiveRangeTest {
     }
     @Test
     public void intStreamCompareReversed(){
-        assertThat(Spouts.range(-5,6).toList(),equalTo(ListX.of(-5,-4,-3,-2,-1,0,1,2,3,4,5)));
+        assertThat(Spouts.range(-5,6).toList(),equalTo(Arrays.asList(-5,-4,-3,-2,-1,0,1,2,3,4,5)));
         Spouts.range(-5,6).reverse().printOut();
 
         assertThat(0,
@@ -58,7 +59,7 @@ public class ReactiveRangeTest {
     }
     @Test
     public void longStreamCompareReversed(){
-        assertThat(Spouts.rangeLong(-5,6).toList(),equalTo(ListX.of(-5,-4,-3,-2,-1,0,1,2,3,4,5).map(Integer::longValue)));
+        assertThat(Spouts.rangeLong(-5,6).toList(),equalTo(ReactiveSeq.of(-5,-4,-3,-2,-1,0,1,2,3,4,5).map(Integer::longValue).toList()));
         Spouts.rangeLong(-5,6).printOut();
 		Spouts.rangeLong(-5,6).reverse().printOut();
         assertThat(0L,
@@ -111,62 +112,62 @@ public class ReactiveRangeTest {
 	@Test
 	public void rangeLong(){
 		assertThat(Spouts.rangeLong(0,Long.MAX_VALUE)
-				.limit(2).toListX(),equalTo(ListX.of(0l,1l)));
+				.limit(2).toList(),equalTo(Arrays.asList(0l,1l)));
 	}
 	@Test
 	public void rangeLongReversed(){
 		assertThat(Spouts.rangeLong(0,10).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(9l, 8l)));
+				.limit(2).toList(),equalTo(Arrays.asList(9l, 8l)));
 	}
     @Test
     public void rangeLongReversedSkip(){
         assertThat(Spouts.rangeLong(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(1l,0l)));
+                .skip(3).toList(),equalTo(Arrays.asList(1l,0l)));
     }
     @Test
     public void rangeLongSkip(){
         assertThat(Spouts.rangeLong(0,5)
-                .skip(3).toListX(),equalTo(ListX.of(3l,4l)));
+                .skip(3).toList(),equalTo(Arrays.asList(3l,4l)));
     }
 	@Test
 	public void rangeInt(){
 		assertThat(Spouts.range(0,Integer.MAX_VALUE)
-				.limit(2).toListX(),equalTo(ListX.of(0,1)));
+				.limit(2).toList(),equalTo(Arrays.asList(0,1)));
 	}
 	@Test
 	public void rangeIntReversed(){
 		assertThat(Spouts.range(0,10).reverse()
-				.limit(2).toListX(),equalTo(ListX.of(9, 8)));
+				.limit(2).toList(),equalTo(Arrays.asList(9, 8)));
 	}
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(Spouts.range(0,5).reverse()
-                .skip(3).toListX(),equalTo(ListX.of(1,0)));
+                .skip(3).toList(),equalTo(Arrays.asList(1,0)));
     }
 
     @Test
     public void rangeIntSkip2(){
         assertThat(Spouts.range(0,5)
-                .skip(3).toListX(),equalTo(ListX.of(3,4)));
+                .skip(3).toList(),equalTo(Arrays.asList(3,4)));
     }
 
     @Test
     public void take2Reversed(){
 
-        assertThat(Spouts.range(0,10).reverse().limit(2).toListX(),equalTo(ListX.of(9, 8)));
+        assertThat(Spouts.range(0,10).reverse().limit(2).toList(),equalTo(Arrays.asList(9, 8)));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(Spouts.range(0,10).reverse()
-                .limit(10).skip(8).toListX(),equalTo(ListX.of(1, 0)));
+                .limit(10).skip(8).toList(),equalTo(Arrays.asList(1, 0)));
     }
 
     @Test
     public void rangeIntSkip(){
 
         assertThat(Spouts.range(0,Integer.MAX_VALUE)
-                .limit(10).skip(8).toListX(),equalTo(ListX.of(8, 9)));
+                .limit(10).skip(8).toList(),equalTo(Arrays.asList(8, 9)));
     }
 	@Test
 	public void limitArray() throws InterruptedException{

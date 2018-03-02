@@ -13,10 +13,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +22,10 @@ import java.util.stream.Stream;
 
 import com.oath.anym.transformers.FoldableTransformerSeq;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.ReactiveReducers;
+import cyclops.data.HashMap;
+import cyclops.data.Vector;
 import cyclops.monads.WitnessType;
 import org.junit.Rule;
 import org.junit.Test;
@@ -122,7 +123,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testReduceStreamOfQextendsMonoidOfT() {
-        assertThat(of("hello","2","world","4").reduce(Stream.of(Reducers.toString(","))).singleOrElse("--").singleOrElse(null).length(),
+        assertThat(of("hello","2","world","4").reduce(ListX.of(Reducers.toString(","))).singleOrElse("--").singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
@@ -150,7 +151,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void foldRightMapToType() {
-        assertThat(of(1,2,3,4).foldRightMapToType(Reducers.toLinkedListX()).singleOrElse(null).size(),
+        assertThat(of(1,2,3,4).foldRightMapToType(ReactiveReducers.toLinkedListX()).singleOrElse(null).size(),
                 equalTo(4));
     }
 
@@ -214,8 +215,8 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void testGroupBy() {
-        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2).singleOrElse(null);
-
+        HashMap<Integer, Vector<Integer>> mapA =of(1, 2, 3, 4).groupBy(i -> i % 2).singleOrElse(null);
+        Map<Integer, List<Integer>> map1 = mapA.map(v->v.toList()).javaMap();
         assertThat(map1.get(0),hasItem(2));
         assertThat(map1.get(0),hasItem(4));
         assertThat(map1.get(1),hasItem(1));
@@ -282,26 +283,6 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
         assertThat(col.size(),equalTo(5));
     }
 
-    @Test
-    public void testToConcurrentLazyCollection() {
-        Collection<Integer> col = of(1,2,3,4,5).toNested(s->s.lazyCollectionSynchronized())
-
-                                    .singleOrElse(null);
-        System.out.println("takeOne!");
-        col.forEach(System.out::println);
-        assertThat(col.size(),equalTo(5));
-    }
-/**
-    @Test
-    public void testToConcurrentLazyStreamable() {
-        StreamableT<Integer> repeat = of(1,2,3,4,5,6)
-                                        .lazyStreamableSynchronized();
-
-        assertThat(repeat.reactiveSeq().toList(),hasItems(1,2,3,4,5,6));
-        assertThat(repeat.reactiveSeq().toList(),hasItems(1,2,3,4,5,6));
-
-    }
- **/
 
     @Test
     public void testFirstValue() {
@@ -321,7 +302,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testSingleOptional() {
 
-        assertThat(of(1,11).single().stream().toListX(),equalTo(ListX.of(Maybe.nothing())));
+        assertThat(of(1,11).single().stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(Maybe.nothing())));
     }
 
     @Test

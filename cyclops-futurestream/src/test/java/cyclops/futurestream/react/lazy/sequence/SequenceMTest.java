@@ -265,19 +265,11 @@ public class SequenceMTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
-	@Test
-	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = LazyReact.sequentialBuilder().of(1,2,3,4,5,6)
-												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-	}
 	@Test
 	public void splitBy(){
 		assertThat( LazyReact.sequentialBuilder().of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
@@ -285,21 +277,12 @@ public class SequenceMTest {
 	}
 	@Test
 	public void testLazy(){
-		CollectionX<Integer> col = LazyReact.sequentialBuilder().of(1,2,3,4,5)
+		CollectionX<Integer> col = CollectionX.fromCollection(LazyReact.sequentialBuilder().of(1,2,3,4,5)
 											.peek(System.out::println).to()
-											.lazyCollection();
+											.lazyCollection());
 
 
 		assertThat(col.map(i->"hello"+i).toList().size(),equalTo(5));
-		System.out.println("takeOne!");
-		col.forEach(System.out::println);
-		assertThat(col.size(),equalTo(5));
-	}
-	@Test
-	public void testLazyCollection(){
-		Collection<Integer> col = LazyReact.sequentialBuilder().of(1,2,3,4,5)
-											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
 		System.out.println("takeOne!");
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));

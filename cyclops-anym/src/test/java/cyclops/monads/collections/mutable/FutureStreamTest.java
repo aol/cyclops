@@ -1,8 +1,11 @@
 package cyclops.monads.collections.mutable;
 
 import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.companion.Monoids;
 import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
@@ -30,12 +33,20 @@ public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<future
     }
 
 
+
+    @Override
+    public void combineNoOrderMonoid() {
+        assertThat(of(1,2,3)
+            .combine(Monoids.intSum,(a, b)->a.equals(b))
+            .to(ReactiveConvertableSequence::converter).listX(),hasItem(2));
+    }
+
     @Test
 	public void materialize(){
-		ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).toListX();
+		ListX<Integer> d= of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX();
 		System.out.println("D " + d);
 		count =0;
-		assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
+		assertEquals(asList(1, 2,3, 1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).to(ReactiveConvertableSequence::converter).listX());
 	}
 	@Override
 	public <T> AnyMSeq<futureStream,T> of(T... values) {

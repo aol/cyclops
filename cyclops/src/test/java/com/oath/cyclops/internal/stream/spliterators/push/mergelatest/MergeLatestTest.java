@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.push.mergelatest;
 
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -76,10 +76,10 @@ public class MergeLatestTest {
                                       .map(i -> nextAsync()).grouped(3)
                                       .map(l -> Spouts.mergeLatest(l))
                                       .flatMap(i -> i)
-                                      .toListX();
+                                      .toList();
 
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -118,10 +118,10 @@ public class MergeLatestTest {
                                       .grouped(3)
                                       .map(l -> Spouts.mergeLatest(l))
                                       .mergeMap(i -> i)
-                                        .toListX();
+                                        .toList();
 
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -143,19 +143,19 @@ public class MergeLatestTest {
             assertThat(Spouts.of(1)
                     .map(i -> nextAsync()).grouped(1)
                     .map(l -> Spouts.mergeLatest(l))
-                    .flatMap(i -> i).toListX(), equalTo(ListX.of(1, 2)));
+                    .flatMap(i -> i).toList(), equalTo(Arrays.asList(1, 2)));
         }
     }
     @Test
     public void mergeSimple(){
         for(int i=0;i<ITERATIONS;i++) {
-            assertThat(Spouts.mergeLatest(nextAsync()).toList(), equalTo(ListX.of(1, 2)));
+            assertThat(Spouts.mergeLatest(nextAsync()).toList(), equalTo(Arrays.asList(1, 2)));
         }
     }
     @Test
     public void mergeSimpleList(){
         for(int i=0;i<ITERATIONS;i++) {
-            assertThat(Spouts.mergeLatest(ListX.of(nextAsync())).toList(), equalTo(ListX.of(1, 2)));
+            assertThat(Spouts.mergeLatest(ReactiveSeq.of(nextAsync())).toList(), equalTo(Arrays.asList(1, 2)));
         }
     }
     @Test
@@ -168,7 +168,7 @@ public class MergeLatestTest {
             List<Integer> res =  Spouts.mergeLatest(nextAsync(),nextAsync(),nextAsync())
                     .toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -194,7 +194,7 @@ public class MergeLatestTest {
             List<Integer> res =  ReactiveSeq.fromPublisher(Spouts.mergeLatest(nextAsync(),nextAsync(),nextAsync()))
                     .toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;

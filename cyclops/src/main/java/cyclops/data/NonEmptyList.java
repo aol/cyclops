@@ -1,15 +1,16 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
+import cyclops.data.tuple.Tuple3;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -45,8 +46,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     public ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
-    public LinkedListX<T> linkedListX(){
-        return LinkedListX.fromIterable(this);
+    public LazySeq<T> linkedSeq(){
+        return LazySeq.fromIterable(this);
     }
     public static <T> NonEmptyList<T> of(T head, T... value){
         LazySeq<T> list = LazySeq.of(value);
@@ -127,6 +128,48 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     public NonEmptyList<T> prepend(T value){
         return cons(value, lazySeq());
+    }
+
+    @Override
+    public NonEmptyList<T> append(T value) {
+        return insertAt(Math.max(0, size()),value);
+    }
+
+    @Override
+    public NonEmptyList<T> replaceFirst(T currentElement, T newElement){
+        return ImmutableList.Some.super.replaceFirst(currentElement,newElement)
+                            .fold(cons->cons(cons.head(),cons.tail()),nil->this);
+    }
+
+
+    @Override
+    public NonEmptyList<T> insertAt(int pos, T... values) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(pos,values);
+    }
+
+    @Override
+    public NonEmptyList<T> plusAll(Iterable<? extends T> list) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.plusAll(list);
+    }
+
+    @Override
+    public NonEmptyList<T> plus(T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.plus(value);
+    }
+
+    @Override
+    public NonEmptyList<T> updateAt(int pos, T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.updateAt(pos,value);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(pos,values);
+    }
+
+    @Override
+    public NonEmptyList<T> insertAt(int i, T value) {
+        return (NonEmptyList<T>)ImmutableList.Some.super.insertAt(i,value);
     }
 
     @Override
@@ -264,7 +307,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     @Override
     public String toString() {
-        return stream().join(",","[","]");
+        return stream().join(", ","[","]");
     }
 
     @Override
@@ -310,49 +353,49 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public NonEmptyList<VectorX<T>> sliding(int windowSize) {
-        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize);
+    public NonEmptyList<Seq<T>> sliding(int windowSize) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.sliding(windowSize);
     }
 
     @Override
-    public NonEmptyList<VectorX<T>> sliding(int windowSize, int increment) {
-        return (NonEmptyList<VectorX<T>>) ImmutableList.Some.super.sliding(windowSize,increment);
+    public NonEmptyList<Seq<T>> sliding(int windowSize, int increment) {
+        return (NonEmptyList<Seq<T>>) ImmutableList.Some.super.sliding(windowSize,increment);
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> grouped(int size, Supplier<C> supplier) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> grouped(int size, Supplier<C> supplier) {
         return (NonEmptyList<C>) ImmutableList.Some.super.grouped(size,supplier);
     }
 
     @Override
-    public NonEmptyList<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedUntil(predicate);
+    public NonEmptyList<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (NonEmptyList<Vector<T>>) ImmutableList.Some.super.groupedUntil(predicate);
     }
 
     @Override
-    public NonEmptyList<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedStatefullyUntil(predicate);
+    public NonEmptyList<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (NonEmptyList<Vector<T>>) ImmutableList.Some.super.groupedUntil(predicate);
     }
 
 
     @Override
-    public NonEmptyList<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.groupedWhile(predicate);
+    public NonEmptyList<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (NonEmptyList<Vector<T>>) ImmutableList.Some.super.groupedWhile(predicate);
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (NonEmptyList<C>) ImmutableList.Some.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    public <C extends Collection<? super T>> NonEmptyList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    public <C extends PersistentCollection<? super T>> NonEmptyList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (NonEmptyList<C>) ImmutableList.Some.super.groupedUntil(predicate,factory);
     }
 
     @Override
-    public NonEmptyList<ListX<T>> grouped(int groupSize) {
-        return (NonEmptyList<ListX<T>>) ImmutableList.Some.super.grouped(groupSize);
+    public NonEmptyList<Vector<T>> grouped(int groupSize) {
+        return (NonEmptyList<Vector<T>>) ImmutableList.Some.super.grouped(groupSize);
     }
 
     @Override

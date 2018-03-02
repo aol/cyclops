@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import cyclops.data.*;
+
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -21,7 +23,10 @@ import java.util.stream.Stream;
 import cyclops.companion.Streams;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.HashMap;
+import cyclops.data.LazySeq;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import org.hamcrest.CoreMatchers;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -58,7 +63,7 @@ public  class CoreReactiveSeqTest {
             sub.onNext(1);
             sub.onNext(2);
             sub.onComplete();
-        }).toList(), CoreMatchers.equalTo(ListX.of(1,2)));
+        }).toList(), CoreMatchers.equalTo(Arrays.asList(1,2)));
     }
     @Test
     public void subscribeErrorOnComplete(){
@@ -104,7 +109,7 @@ public  class CoreReactiveSeqTest {
                              .publishTo(queue)
                              .peek(System.out::println)
                              .merge(queue)
-                             .toListX(),equalTo(ListX.of(1,1,2,2,3,3)));
+                             .toList(),equalTo(Arrays.asList(1,1,2,2,3,3)));
     }
 
     @Test
@@ -112,16 +117,16 @@ public  class CoreReactiveSeqTest {
         assertThat(ReactiveSeq.of(1,2,3,4)
                 .parallelFanOut(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(),equalTo(ListX.of(4,100,8,300)));
+                .toList(),equalTo(Arrays.asList(4,100,8,300)));
 
         assertThat(ReactiveSeq.of(1,2,3,4)
                 .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100),(a,b)->a+b)
-                .toListX(),equalTo(ListX.of(104,308)));
+                .toList(),equalTo(Arrays.asList(104,308)));
     }
     @Test
     public void mergePTest(){
-        ListX<Integer> list = ReactiveSeq.of(3,6,9).mergeP(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toListX();
+        List<Integer> list = ReactiveSeq.of(3,6,9).mergeP(ReactiveSeq.of(2,4,8),ReactiveSeq.of(1,5,7)).toList();
         assertThat(list,hasItems(1,2,3,4,5,6,7,8,9));
         assertThat(list.size(),equalTo(9));
     }
@@ -180,8 +185,8 @@ public  class CoreReactiveSeqTest {
         for(int i=0;i<10;i++) {
             for(int k=1;k<5;k++) {
                 System.out.println (" Length : " + i + " - copies " + k);
-                ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ListX.range(0, i), k);
-                ListX<Integer> result = list.map(it -> ReactiveSeq.fromIterable(it))
+                Seq<Iterable<Integer>> list = Streams.toBufferingCopier(LazySeq.range(0, i), k);
+                Seq<Integer> result = list.map(it -> LazySeq.fromIterable(it))
                         .flatMap(s -> s);
 
                 for (int x = 0; x < i; x++) {
@@ -197,10 +202,10 @@ public  class CoreReactiveSeqTest {
     public void bufferingCopierTriplicateCompare(){
 
 
-        ListX<Iterable<Integer>> list = Streams.toBufferingCopier(ReactiveSeq.of(0, 1), 3);
-        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = Tuple.tuple(list.get(0).iterator(),
-                list.get(1).iterator(),
-                list.get(2).iterator());
+        Seq<Iterable<Integer>> list = Streams.toBufferingCopier(ReactiveSeq.of(0, 1), 3);
+        Tuple3<Iterator<Integer>, Iterator<Integer>, Iterator<Integer>> its = Tuple.tuple(list.getOrElse(0,Arrays.asList()).iterator(),
+                list.getOrElse(1,Arrays.asList()).iterator(),
+                list.getOrElse(2,Arrays.asList()).iterator());
 
         List<Integer> result = new ArrayList<>();
         while (its._1().hasNext() || its._2().hasNext() || its._3().hasNext()) {
@@ -314,7 +319,7 @@ public  class CoreReactiveSeqTest {
                 .fanOut(s1->s1.peek(System.out::println).filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                .toList(),equalTo(Arrays.asList(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
 
     }
     @Test
@@ -323,18 +328,18 @@ public  class CoreReactiveSeqTest {
         assertThat(ReactiveSeq.of(1,2,3,4)
                    .fanOut(s1->s1.filter(i->i%2==0).map(i->i*2),
                            s2->s2.filter(i->i%2!=0).map(i->i*100))
-                   .toListX(),equalTo(ListX.of(4,100,8,300)));
+                   .toList(),equalTo(Arrays.asList(4,100,8,300)));
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
                 .fanOut(s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                .toList(),equalTo(Arrays.asList(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
                              .fanOut(s1->s1.filter(i->i%4==0).map(i->i*2),
                                      s2->s2.filter(i->i%4==1).map(i->i*100),
                                      s3->s3.filter(i->i%4==2).map(i->i*1000),
                                      s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+                .toList(),equalTo(Arrays.asList(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void parallelFanOut2(){
@@ -342,24 +347,24 @@ public  class CoreReactiveSeqTest {
         assertThat(ReactiveSeq.of(1,2,3,4)
                 .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%2==0).map(i->i*2),
                         s2->s2.filter(i->i%2!=0).map(i->i*100))
-                .toListX(),equalTo(ListX.of(4,100,8,300)));
+                .toList(),equalTo(Arrays.asList(4,100,8,300)));
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9)
                 .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%3==0).map(i->i*2),
                         s2->s2.filter(i->i%3==1).map(i->i*100),
                         s3->s3.filter(i->i%3==2).map(i->i*1000))
-                .toListX(),equalTo(ListX.of(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
+                .toList(),equalTo(Arrays.asList(6, 100, 2000, 12, 400, 5000, 18, 700, 8000)));
         assertThat(ReactiveSeq.of(1,2,3,4,5,6,7,8,9,10,11,12)
                 .parallelFanOut(ForkJoinPool.commonPool(),s1->s1.filter(i->i%4==0).map(i->i*2),
                         s2->s2.filter(i->i%4==1).map(i->i*100),
                         s3->s3.filter(i->i%4==2).map(i->i*1000),
                         s4->s4.filter(i->i%4==3).map(i->i*10000))
-                .toListX(),equalTo(ListX.of(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
+                .toList(),equalTo(Arrays.asList(8, 100, 2000, 30000, 16, 500, 6000, 70000, 24, 900, 10000, 110000)));
     }
     @Test
     public void iteratePred(){
 
         assertThat(ReactiveSeq.iterate(0,i->i<10,i->i+1)
-                    .toListX().size(),equalTo(10));
+                    .toList().size(),equalTo(10));
     }
 	@Test
     public void broadcastTest(){
@@ -369,8 +374,8 @@ public  class CoreReactiveSeqTest {
 
         ReactiveSeq<Integer> stream1 = topic.stream();
         ReactiveSeq<Integer> stream2 = topic.stream();
-	    assertThat(stream1.toListX(),equalTo(ListX.of(1,2,3)));
-        assertThat(stream2.stream().toListX(),equalTo(ListX.of(1,2,3)));
+	    assertThat(stream1.toList(),equalTo(Arrays.asList(1,2,3)));
+        assertThat(stream2.stream().toList(),equalTo(Arrays.asList(1,2,3)));
 
     }
     @Test
@@ -396,7 +401,7 @@ public  class CoreReactiveSeqTest {
     @Test
 	public void ambTest(){
         for(int i=0;i<10;i++) {
-            assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toListX(), isOneOf(ListX.of(1, 2, 3), ListX.of(10, 20, 30)));
+            assertThat(ReactiveSeq.of(1, 2, 3).ambWith(Flux.just(10, 20, 30)).toList(), isOneOf(Arrays.asList(1, 2, 3), Arrays.asList(10, 20, 30)));
         }
 	}
 
@@ -407,11 +412,11 @@ public  class CoreReactiveSeqTest {
 
     Assert.assertThat(of(1,2,3)
       .mergeMap(i-> Maybe.of(i))
-      .toListX().size(), Matchers.equalTo(3));
+      .toList().size(), Matchers.equalTo(3));
 
     Assert.assertThat(of(1,2,3)
       .mergeMap(i-> Maybe.of(i))
-      .toListX(), Matchers.containsInAnyOrder(3,2,1));
+      .toList(), Matchers.containsInAnyOrder(3,2,1));
 
 
   }
@@ -496,7 +501,7 @@ public  class CoreReactiveSeqTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,1)));
+		assertThat(list2,equalTo(Arrays.asList(1,1)));
 	}
     @Test
 	public void cycleIterate(){
@@ -504,7 +509,7 @@ public  class CoreReactiveSeqTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,1)));
+		assertThat(list2,equalTo(Arrays.asList(1,1)));
 	}
 	@Test
 	public void cycleIterate2(){
@@ -512,7 +517,7 @@ public  class CoreReactiveSeqTest {
 		List<Integer> list2 = new ArrayList<>();
 		while(it.hasNext())
 			list2.add(it.next());
-		assertThat(list2,equalTo(ListX.of(1,2,1,2)));
+		assertThat(list2,equalTo(Arrays.asList(1,2,1,2)));
 	}
 
 
@@ -541,8 +546,8 @@ public  class CoreReactiveSeqTest {
     }
 	@Test
 	public void testCycleLong() {
-		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toListX());
-		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toListX());
+		assertEquals(asList(1, 2, 1, 2, 1, 2), Streams.oneShotStream(Stream.of(1, 2)).cycle(3).toList());
+		assertEquals(asList(1, 2, 3, 1, 2, 3), Streams.oneShotStream(Stream.of(1, 2,3)).cycle(2).toList());
 	}
 	@Test
 	public void onEmptySwitchEmpty(){
@@ -589,7 +594,7 @@ public  class CoreReactiveSeqTest {
 
 		List<Tuple2<Integer,Integer>> list =of(1,2,3,4,5,6)
 				.zip(of(100,200,300,400).stream())
-				.toListX();
+				.toList();
 
 
 		List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
@@ -616,7 +621,7 @@ public  class CoreReactiveSeqTest {
 	public void testSkipLast(){
 		assertThat(ReactiveSeq.of(1,2,3,4,5)
 				.skipLast(2)
-				.toListX(),equalTo(Arrays.asList(1,2,3)));
+				.toList(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastForEach(){
@@ -731,12 +736,12 @@ public  class CoreReactiveSeqTest {
 	@Test
 	public void shuffle(){
 
-		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle().toListX().size());
+		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle().toList().size());
 	}
 	@Test
 	public void shuffleRandom(){
 		Random r = new Random();
-		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle(r).toListX().size());
+		assertEquals(3, ReactiveSeq.of(1, 2, 3).shuffle(r).toList().size());
 	}
 
 
@@ -752,12 +757,12 @@ public  class CoreReactiveSeqTest {
 
 	    @Test
 	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+	        HashMap<Integer, Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
 
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(2));
+	        assertThat(map1.getOrElse(0,Vector.empty()),hasItem(4));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(1));
+	        assertThat(map1.getOrElse(1,Vector.empty()),hasItem(3));
 
 	        assertEquals(2, map1.size());
 

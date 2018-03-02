@@ -1,6 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 
 import java.util.function.Consumer;
 
@@ -10,18 +10,18 @@ import java.util.function.Consumer;
 public class LazyArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
-    private final ListX<Operator<IN>> operators;
+    private final Seq<Operator<IN>> operators;
 
 
     public LazyArrayConcatonatingOperator(Operator<IN>... sources){
-        this.operators = ListX.empty();
+        Seq<Operator<IN>> ops  = Seq.empty();
         for(Operator<IN> next : sources){
-            operators.add(next);
+            ops = ops.append(next);
         }
-
+        this.operators = ops;
 
     }
-    public LazyArrayConcatonatingOperator(ListX<Operator<IN>> sources){
+    public LazyArrayConcatonatingOperator(Seq<Operator<IN>> sources){
         this.operators = sources;
 
 

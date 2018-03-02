@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
 
+import cyclops.data.BankersQueue;
+import cyclops.data.ImmutableQueue;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
@@ -23,7 +25,6 @@ import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.QueueFactory;
-import cyclops.reactive.collections.mutable.QueueX;
 import com.oath.cyclops.types.futurestream.Continuation;
 
 import lombok.Getter;
@@ -180,7 +181,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
             LockSupport.parkNanos(100l);
         }
 
-        counter.subscription.plus(subscription);
+        counter.subscription.add(subscription);
 
 
         s.request(1);
@@ -222,8 +223,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
         public AtomicLong active = new AtomicLong(
                 0);
         public volatile boolean completable = false;
-        public final QueueX<Subscription> subscription = QueueX.fromIterable(Collectors.toCollection(() -> new ConcurrentLinkedQueue<Subscription>()),
-                Arrays.<Subscription> asList());
+        public final ConcurrentLinkedQueue<Subscription> subscription = new ConcurrentLinkedQueue<Subscription>();
         volatile boolean closed = false;
         public volatile int added = 0;
         final AtomicBoolean closing =new AtomicBoolean(false);
@@ -237,7 +237,7 @@ public class QueueBasedSubscriber<T> implements Subscriber<T> {
 
 
         counter.active.decrementAndGet();
-        counter.subscription.removeValue(subscription);
+        counter.subscription.remove(subscription);
         if (queue != null && counter.active.get() == 0) {
 
             if (counter.completable) {

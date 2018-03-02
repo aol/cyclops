@@ -19,10 +19,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
-import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.companion.Streams;
 import org.junit.Test;
 
@@ -70,7 +72,7 @@ utilResultList:[1]
         HotStream<String> hotStream = ReactiveSeq.of("a", "b", "c", "d", "e")
                 .peek(x -> System.out.println("peek1:" + x))
                 .schedule("* * * * * ?", ThreadPools.getStandardSchedular());
-    System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toListX() );
+    System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toList() );
     }
 	@Test
 	public void headTailReplay(){
@@ -172,7 +174,7 @@ utilResultList:[1]
 
 		 assertThat(Streams.reduce(Stream.of("hello", "world", "woo!"),Stream.of(concat,join))
 
-		                  ,equalTo(Arrays.asList("helloworldwoo!",",hello,world,woo!")));
+		                  ,equalTo(Seq.of("helloworldwoo!",",hello,world,woo!")));
 	}
 	@Test
 	public void reducer2(){
@@ -181,7 +183,7 @@ utilResultList:[1]
 		val result = Streams.reduce(Stream.of(1,2,3,4),Arrays.asList(sum,mult));
 
 
-		assertThat(result,equalTo(Arrays.asList(10,24)));
+		assertThat(result,equalTo(Seq.of(10,24)));
 	}
 
 	int count;
@@ -204,13 +206,7 @@ utilResultList:[1]
 		assertThat(Streams.cycle(3,Streamable.of(1,2,2))
 								.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,2,1,2,2,1,2,2)));
 	}
-	@Test
-	public void testCycleReduce(){
-		assertThat(Streams.cycle(Stream.of(1,2,2)
-											,Reducers.toCountInt(),3)
-											.collect(Collectors.toList()),
-											equalTo(Arrays.asList(3,3,3)));
-	}
+
 
 	@Test
 	public void testSkipUntil(){
@@ -264,7 +260,7 @@ utilResultList:[1]
 	}
 	@Test
 	public void sliding(){
-		List<VectorX<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
+		List<Seq<Integer>> list = Streams.sliding(Stream.of(1,2,3,4,5,6)
 												,2)
 									.collect(Collectors.toList());
 
@@ -275,7 +271,7 @@ utilResultList:[1]
 	@Test
 	public void grouped(){
 
-		List<List<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
+		List<Vector<Integer>> list = Streams.grouped(Stream.of(1,2,3,4,5,6)
 														,3)
 													.collect(Collectors.toList());
 

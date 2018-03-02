@@ -194,7 +194,7 @@ public interface Witness {
         @Override
         public MonadAdapter<sortedSet> adapter() {
             return new IterableXAdapter<sortedSet>(SortedSetX::empty,
-                    SortedSetX::of,SortedSetX::fromIterator,this);
+                    s->SortedSetX.of(s),SortedSetX::fromIterator,this);
         }
 
     }
@@ -204,7 +204,7 @@ public interface Witness {
         @Override
         public MonadAdapter<set> adapter() {
             return new IterableXAdapter<set>(SetX::empty,
-                    SetX::of,SetX::fromIterator,this);
+                    s->SetX.of(s),SetX::fromIterator,this);
         }
 
     }
@@ -214,7 +214,7 @@ public interface Witness {
         @Override
         public MonadAdapter<list> adapter() {
             return new IterableXAdapter<list>(ListX::empty,
-                    ListX::of,ListX::fromIterator,this);
+                    l->ListX.of(l),ListX::fromIterator,this);
         }
 
     }

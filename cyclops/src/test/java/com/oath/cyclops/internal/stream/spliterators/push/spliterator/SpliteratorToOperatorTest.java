@@ -3,7 +3,6 @@ package com.oath.cyclops.internal.stream.spliterators.push.spliterator;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.spliterators.push.FilterOperator;
 import com.oath.cyclops.internal.stream.spliterators.push.SpliteratorToOperator;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Before;
@@ -11,6 +10,8 @@ import org.junit.Test;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -23,13 +24,13 @@ import static org.junit.Assert.assertTrue;
  * Created by johnmcclean on 17/01/2017.
  */
 public class SpliteratorToOperatorTest {
-    ListX<Integer> values;
-    ListX<Throwable> errors;
+    List<Integer> values;
+    List<Throwable> errors;
     boolean onComplete;
     @Before
     public void setup(){
-        values = ListX.empty();
-        errors = ListX.empty();
+        values = new ArrayList<>();
+        errors = new ArrayList<>();
         onComplete = false;
         count = new AtomicInteger();
         error = new AtomicInteger();

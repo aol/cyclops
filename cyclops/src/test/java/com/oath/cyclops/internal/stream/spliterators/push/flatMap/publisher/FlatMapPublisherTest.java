@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push.flatMap.publisher;
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -107,7 +106,7 @@ public class FlatMapPublisherTest {
 
         Assert.assertThat(of(1,2,3)
                 .mergeMap(i-> Maybe.of(i))
-                .toListX(), Matchers.equalTo(Arrays.asList(1,2,3)));
+                .toList(), Matchers.equalTo(Arrays.asList(1,2,3)));
 
 
     }
@@ -115,7 +114,7 @@ public class FlatMapPublisherTest {
     public void flatMapP(){
         assertThat(Spouts.of(1,2,3)
                 .mergeMap(i->Spouts.of(i))
-                .toList(),equalTo(ListX.of(1,2,3)));
+                .toList(),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void flatMapP2(){
@@ -125,14 +124,14 @@ public class FlatMapPublisherTest {
     }
     @Test
     public void asyncFlatMap(){
-        ListX<Integer> res = Spouts.of(1,2,3)
+        List<Integer> res = Spouts.of(1,2,3)
                                     .map(i->nextAsync())
                                     .grouped(3)
                                     .mergeMap(l->Spouts.mergeLatest(l))
-                                    .toListX();
+                                    .toList();
 
 
-        assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+        assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
         assertThat(res, hasItems(1,2));
         int one = 0;
         int two = 0;
@@ -168,7 +167,7 @@ public class FlatMapPublisherTest {
                     .mergeMap(2, i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -195,7 +194,7 @@ public class FlatMapPublisherTest {
             System.out.println("****************************NEXT ITERATION "+ k);
             System.out.println("****************************NEXT ITERATION "+ k + "*************************!!!!!!!!!!!!!!!!!!!!!!!!!!!");
              System.out.println(Spouts.of(1, 2, 3)
-                    .mergeMap(3, i -> nextAsync()).toListX());
+                    .mergeMap(3, i -> nextAsync()).toList());
 
         }
     }
@@ -213,7 +212,7 @@ public class FlatMapPublisherTest {
                     .mergeMap(3, i -> nextAsync())
                     .toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -248,7 +247,7 @@ public class FlatMapPublisherTest {
                 res.add(it.next());
             }
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -292,7 +291,7 @@ public class FlatMapPublisherTest {
                                        .mergeMap(i -> nextAsync())
                                         .toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -322,7 +321,7 @@ public class FlatMapPublisherTest {
             List<Integer> res =   Spouts.from(Flux.just(1, 2, 3)
                     .flatMap(i -> nextAsync())).toList();
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -357,7 +356,7 @@ public class FlatMapPublisherTest {
 
 
             System.out.println("Result is " + res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -395,7 +394,7 @@ public class FlatMapPublisherTest {
             List<Integer> res =  Spouts.from(Flux.just(1, 2, 3)
                     .flatMap(i -> nextAsync())
             ).toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -417,7 +416,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -503,7 +502,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = Spouts.from(Spouts.of(1, 2, 3).peek(System.out::println)
                     .mergeMap(i -> nextAsync())).collect(Collectors.toList());
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
             int one = 0;
@@ -567,7 +566,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = Spouts.concat(nextAsync(),nextAsync(),nextAsync())
                     .collect(Collectors.toList());
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
             int one = 0;
@@ -599,7 +598,7 @@ public class FlatMapPublisherTest {
                 res.add(it.next());
             }
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
 
             assertThat(res, hasItems(1, 2));
             int one = 0;
@@ -624,15 +623,11 @@ public class FlatMapPublisherTest {
 
             Flux<Integer> flux = Flux.from(Spouts.of(1, 2, 3).peek(System.out::println)
                     .mergeMap(i -> nextAsync()));
-            /**Iterator<Integer> it = sub.iterator();
 
-            while(it.hasNext()){
-                System.out.println("it " + it.next());
-            }**/
             List<Integer> res = flux.collect(Collectors.toList())
                                     .block();
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));
             int one = 0;
             int two = 0;

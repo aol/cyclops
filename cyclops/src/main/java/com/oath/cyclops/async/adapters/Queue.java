@@ -15,7 +15,7 @@ import java.util.stream.StreamSupport;
 
 import com.oath.cyclops.react.async.subscription.Subscription;
 import com.oath.cyclops.async.QueueFactories;
-import cyclops.reactive.collections.mutable.ListX;
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.wait.DirectWaitStrategy;
 import com.oath.cyclops.async.wait.WaitStrategy;
@@ -250,7 +250,7 @@ public class Queue<T> implements Adapter<T> {
         listeningStreams.incrementAndGet(); //assumes all Streams that ever connected, remain connected
         return ReactiveSeq.fromStream(closingStreamBatch(batcher.apply((timeout, timeUnit) -> ensureOpen(timeout, timeUnit)), s));
     }
-    public ReactiveSeq<ListX<T>> streamGroupedByTime(long time, TimeUnit t){
+    public ReactiveSeq<Seq<T>> streamGroupedByTime(long time, TimeUnit t){
         return streamGroupedBySizeAndTime(Integer.MAX_VALUE,time,t);
 
     }
@@ -259,7 +259,7 @@ public class Queue<T> implements Adapter<T> {
 
         return result;
     }
-    public ReactiveSeq<ListX<T>> streamGroupedBySizeAndTime(int size, long time, TimeUnit t){
+    public ReactiveSeq<Seq<T>> streamGroupedBySizeAndTime(int size, long time, TimeUnit t){
         long toRun = t.toNanos(time);
         return streamBatch(new Subscription(), source->{
 
@@ -283,15 +283,18 @@ public class Queue<T> implements Adapter<T> {
 
                   }
               }catch(Queue.ClosedQueueException e){
-                  if(result.size()>0)
-                    throw new ClosedQueueException(ListX.of(result));
+                  if(result.size()>0) {
+                      List list = new ArrayList<>();
+                      list.add(result);
+                      throw new ClosedQueueException(list);
+                  }
               }
 
 
                 return result;
             };
         }).filter(l->l.size()>0)
-                .map(ListX::fromIterable);
+                .map(Seq::fromIterable);
     }
 
     public ReactiveSeq<T> streamControl(final Continueable s, final Function<Supplier<T>, Supplier<T>> batcher) {
@@ -458,11 +461,14 @@ public class Queue<T> implements Adapter<T> {
      * @author johnmcclean
      *
      */
-    @AllArgsConstructor
     public static class ClosedQueueException extends SimpleReactProcessingException {
         private static final long serialVersionUID = 1L;
         @Getter
         private final List currentData;
+
+        public ClosedQueueException(List currentData) {
+            this.currentData = currentData;
+        }
 
         public ClosedQueueException() {
             currentData = null;
@@ -545,8 +551,10 @@ public class Queue<T> implements Adapter<T> {
     @Override
     public boolean offer(final T data) {
 
-        if (!open)
+        if (!open) {
             throw new ClosedQueueException();
+        }
+
         try {
             final boolean result = producerWait.offer(() -> this.queue.offer((T) nullSafe(data), this.offerTimeout, this.offerTimeUnit));
 

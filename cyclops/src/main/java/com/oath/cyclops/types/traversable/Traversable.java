@@ -1,21 +1,21 @@
 package com.oath.cyclops.types.traversable;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.FilterableTransformable;
-import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
@@ -128,7 +128,7 @@ public interface Traversable<T> extends Publisher<T>,
                    .combine((a, b)->a.equals(b),SemigroupK.intSum)
                    .listX()
 
-     *  //ListX(3,4)
+     *  //Seq(3,4)
      * }</pre>
      *
      * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
@@ -150,7 +150,7 @@ public interface Traversable<T> extends Publisher<T>,
                   .combine(Monoids.intMult,(a, b)->a.equals(b))
                   .listX()
 
-     *  //ListX(1)
+     *  //Seq(1)
      * }</pre>
      *
      * Simalar to @see {@link Traversable#combine(BiPredicate, BinaryOperator)} but differs in that the first comparison is always to the Monoid zero
@@ -342,7 +342,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Size of sliding window
      * @return SequenceM with sliding view
      */
-    default Traversable<VectorX<T>> sliding(final int windowSize) {
+    default Traversable<Seq<T>> sliding(final int windowSize) {
         return traversable().sliding(windowSize);
     }
 
@@ -367,7 +367,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            for each window
      * @return SequenceM with sliding view
      */
-    default Traversable<VectorX<T>> sliding(final int windowSize, final int increment) {
+    default Traversable<Seq<T>> sliding(final int windowSize, final int increment) {
         return traversable().sliding(windowSize, increment);
     }
 
@@ -388,7 +388,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @param supplier Collection factory
      * @return SequenceM batched into toX types by size
      */
-    default <C extends Collection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
         return traversable().grouped(size, supplier);
     }
 
@@ -409,7 +409,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Batch until predicate holds, applyHKT open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<ListX<T>> groupedUntil(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return traversable().groupedUntil(predicate);
     }
 
@@ -423,7 +423,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .groupedStatefullyUntil((s,i)->s.contains(4) ? true : false)
+     *              .groupedUntil((s,i)->s.contains(4) ? true : false)
      *              .toList().size(),equalTo(5));
      * }
      * </pre>
@@ -432,8 +432,8 @@ public interface Traversable<T> extends Publisher<T>,
      *            Window while true
      * @return Traversable windowed while predicate holds
      */
-    default Traversable<ListX<T>> groupedStatefullyUntil(final BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return traversable().groupedStatefullyUntil(predicate);
+    default Traversable<Vector<T>> groupedUntil(final BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return traversable().groupedUntil(predicate);
     }
 
   /**
@@ -453,7 +453,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Batch while predicate holds, applyHKT open next batch
      * @return SequenceM batched into lists determined by the predicate supplied
      */
-    default Traversable<ListX<T>> groupedWhile(final Predicate<? super T> predicate) {
+    default Traversable<Vector<T>> groupedWhile(final Predicate<? super T> predicate) {
         return traversable().groupedWhile(predicate);
     }
 
@@ -464,7 +464,7 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      * assertThat(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .batchWhile(i->i%3!=0)
+     *              .groupedWhile(i->i%3!=0)
      *              .toList()
      *              .size(),equalTo(2));
      * }
@@ -477,7 +477,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return SequenceM batched into collections determined by the predicate
      *         supplied
      */
-    default <C extends Collection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Traversable<C> groupedWhile(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return traversable().groupedWhile(predicate, factory);
     }
 
@@ -503,7 +503,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return SequenceM batched into collections determined by the predicate
      *         supplied
      */
-    default <C extends Collection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> Traversable<C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
         return traversable().groupedUntil(predicate, factory);
     }
 
@@ -524,7 +524,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            Size of each Group
      * @return Stream with elements grouped by size
      */
-    default Traversable<ListX<T>> grouped(final int groupSize) {
+    default Traversable<Vector<T>> grouped(final int groupSize) {
         return traversable().grouped(groupSize);
     }
 
@@ -632,7 +632,7 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *     ListX.of(1,2,3).takeWhile(i<3);
+     *     Seq.of(1,2,3).takeWhile(i<3);
      *     //[1,2]
      * }
      * </pre>
@@ -648,7 +648,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Generate a new Traversable that drops elements from this Traversable as long as the predicate holds
      * <pre>
      * {@code
-     *     ListX.of(1,2,3).dropWhile(i<3);
+     *     Seq.of(1,2,3).dropWhile(i<3);
      *     //[3]
      * }
      * </pre>
@@ -663,7 +663,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Generate a new Traversable that takes elements from this Traversable until the predicate holds
       * <pre>
      * {@code
-     *     ListX.of(1,2,3).takeUntil(i<2);
+     *     Seq.of(1,2,3).takeUntil(i<2);
      *     //[1,2]
      * }
      * </pre>
@@ -679,7 +679,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Generate a new Traversable that drops elements from this Traversable until the predicate holds
      * <pre>
      * {@code
-     *     ListX.of(1,2,3).dropUntil(i>2);
+     *     Seq.of(1,2,3).dropUntil(i>2);
      *     //[3]
      * }
      * </pre>
@@ -694,7 +694,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Generate a new Traversable that drops the specified number elements from the take of this Traversable
      * <pre>
      * {@code
-     *     ListX.of(1,2,3).dropRight(2);
+     *     Seq.of(1,2,3).dropRight(2);
      *     //[1]
      * }
      * </pre>
@@ -709,7 +709,7 @@ public interface Traversable<T> extends Publisher<T>,
      * Generate a new Traversable that takes the specified number elements from the take of this Traversable
      * <pre>
      * {@code
-     *     ListX.of(1,2,3).takeRight(2);
+     *     Seq.of(1,2,3).takeRight(2);
      *     //[2,3]
      * }
      * </pre>

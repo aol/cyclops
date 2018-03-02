@@ -1,8 +1,11 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.QueueX;
+import cyclops.data.BankersQueue;
+import cyclops.data.Seq;
 
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -11,28 +14,29 @@ import java.util.function.Consumer;
 public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
 
 
-    private final ListX<Operator<IN>> operators;
+    private final Seq<Operator<IN>> operators;
 
 
     public ArrayConcatonatingOperator(Operator<IN>... sources){
-        this.operators = ListX.empty();
+        Seq<Operator<IN>> ops  = Seq.empty();
         for(Operator<IN> next : sources){
-            operators.add(next);
+            ops = ops.append(next);
         }
+        this.operators = ops;
 
 
     }
-    public ArrayConcatonatingOperator(ListX<Operator<IN>> sources){
+
+    public ArrayConcatonatingOperator(Seq<Operator<IN>> sources){
         this.operators = sources;
-
-
     }
+
 
 
 
     @Override
     public StreamSubscription subscribe(Consumer<? super IN> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
-        QueueX<StreamSubscription> subs = QueueX.empty();
+        BankersQueue<StreamSubscription> subs = BankersQueue.empty();
         int index[] = {0};
         boolean[] finished = {false};
 
@@ -97,7 +101,7 @@ public class ArrayConcatonatingOperator<IN> implements Operator<IN> {
         }
 
 
-        Operator<IN> next = operators.get(index);
+        Operator<IN> next = operators.getOrElse(index,null);
         next.subscribeAll(onNext,onError,()->subscribeAll(index+1,onNext,onError,onCompleteDs));
 
 

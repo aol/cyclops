@@ -1,17 +1,15 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.foldable.Contains;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -35,6 +33,7 @@ import java.util.stream.Stream;
 public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,ImmutableQueue.None<T>>,
                                             OnEmptySwitch<ImmutableQueue<T>, ImmutableQueue<T>>,
                                             OnEmptyError<T, ImmutableQueue<T>>,
+                                            Contains<T>,
                                             IterableX<T>, To<ImmutableQueue<T>>, PersistentQueue<T> {
 
 
@@ -107,9 +106,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return res[0].foldLeft(ar, (a,b)->a.prepend(b));
 
     }
-    default LinkedListX<T> linkdedListX(){
-        return stream().to().linkedListX(Evaluation.LAZY);
-    }
+
 
     default ImmutableQueue<T> subList(int start, int end){
         return drop(start).take(end-start);
@@ -508,28 +505,28 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<VectorX<T>> sliding(int windowSize) {
+    default ImmutableQueue<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableQueue<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableQueue<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableQueue<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableQueue<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
     @Override
-    default ImmutableQueue<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableQueue<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableQueue<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     default <U> ImmutableQueue<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
@@ -537,22 +534,22 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     }
 
     @Override
-    default ImmutableQueue<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableQueue<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
-    default ImmutableQueue<ListX<T>> grouped(int groupSize) {
+    default ImmutableQueue<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

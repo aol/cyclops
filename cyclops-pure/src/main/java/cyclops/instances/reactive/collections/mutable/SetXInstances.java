@@ -1,6 +1,6 @@
 package cyclops.instances.reactive.collections.mutable;
 
-import com.oath.cyclops.hkt.DataWitness.set;
+import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;

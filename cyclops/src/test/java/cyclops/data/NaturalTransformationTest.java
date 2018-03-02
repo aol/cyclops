@@ -1,13 +1,15 @@
 package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
-import com.oath.cyclops.hkt.DataWitness.list;
+
+
+import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
-import com.oath.cyclops.hkt.DataWitness.vectorX;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
@@ -15,29 +17,29 @@ import static org.junit.Assert.*;
 
 public class NaturalTransformationTest {
 
-    NaturalTransformation<reactiveSeq,list> streamToList = new NaturalTransformation<reactiveSeq, list>() {
+    NaturalTransformation<reactiveSeq,seq> streamToList = new NaturalTransformation<reactiveSeq, seq>() {
         @Override
-        public <T> Higher<list, T> apply(Higher<reactiveSeq, T> a) {
-            return a.convert(ReactiveSeq::narrowK).toListX();
+        public <T> Higher<seq, T> apply(Higher<reactiveSeq, T> a) {
+            return a.convert(ReactiveSeq::narrowK).toSeq();
         }
     };
-    NaturalTransformation<list,vectorX> listToVectorX = new NaturalTransformation<list, vectorX>() {
+    NaturalTransformation<seq,vector> listToVector= new NaturalTransformation<seq, vector>() {
         @Override
-        public <T> Higher<vectorX, T> apply(Higher<list, T> a) {
-            return a.convert(ListX::narrowK).to().vectorX();
+        public <T> Higher<vector, T> apply(Higher<seq, T> a) {
+            return a.convert(Seq::narrowK).to().vector();
         }
     };
 
     @Test
     public void streamToList(){
-        assertThat(streamToList.apply(ReactiveSeq.of(1,2,3)),equalTo(ListX.of(1,2,3)));
+        assertThat(streamToList.apply(ReactiveSeq.of(1,2,3)),equalTo(Vector.of(1,2,3)));
     }
     @Test
     public void streamToListAndThenToVectorX(){
-        assertThat(streamToList.andThen(listToVectorX).apply(ReactiveSeq.of(1,2,3)),equalTo(VectorX.of(1,2,3)));
+        assertThat(streamToList.andThen(listToVector).apply(ReactiveSeq.of(1,2,3)),equalTo(Vector.of(1,2,3)));
     }
     @Test
     public void compose(){
-        assertThat(listToVectorX.compose(streamToList).apply(ReactiveSeq.of(1,2,3)),equalTo(VectorX.of(1,2,3)));
+        assertThat(listToVector.compose(streamToList).apply(ReactiveSeq.of(1,2,3)),equalTo(Vector.of(1,2,3)));
     }
 }

@@ -2,14 +2,15 @@ package cyclops.control;
 
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.mixins.Printable;
-import cyclops.reactive.collections.immutable.PersistentSetX;
+import com.oath.cyclops.types.persistent.PersistentSet;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Maybe.CompletableMaybe;
+import cyclops.data.HashSet;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -210,7 +211,7 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testFilteringNoValue() {
-        assertThat(ReactiveSeq.of(1, 1).filter(i->i==1).toListX(), equalTo(ListX.of(1, 1)));
+        assertThat(ReactiveSeq.of(1, 1).filter(i->i==1).toList(), equalTo(Arrays.asList(1, 1)));
     }
 
     @Test
@@ -251,40 +252,40 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testSequenceLazy() {
-        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Arrays.asList(just, none, Maybe.of(1)));
 
         assertThat(maybes, equalTo(CompletableMaybeTest.just(1).flatMap(i -> Maybe.nothing())));
     }
 
     @Test
     public void testSequence() {
-        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(ListX.of(just, none, Maybe.of(1)));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequence(Arrays.asList(just, none, Maybe.of(1)));
 
         assertThat(maybes, equalTo(Maybe.nothing()));
     }
 
     @Test
     public void testSequenceJust() {
-        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequenceJust(ListX.of(just, none, Maybe.of(1)));
-        assertThat(maybes.map(s->s.toList()), equalTo(Maybe.of(ListX.of(10, 1))));
+        Maybe<ReactiveSeq<Integer>> maybes = Maybe.sequenceJust(Arrays.asList(just, none, Maybe.of(1)));
+        assertThat(maybes.map(s->s.toList()), equalTo(Maybe.of(Arrays.asList(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTReducerOfR() {
-        Maybe<PersistentSetX<Integer>> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), Reducers.toPersistentSetX());
-        assertThat(maybes, equalTo(Maybe.of(PersistentSetX.of(10, 1))));
+        Maybe<PersistentSet<Integer>> maybes = Maybe.accumulateJust(Arrays.asList(just, none, Maybe.of(1)), Reducers.toPersistentSet());
+        assertThat(maybes, equalTo(Maybe.of(HashSet.of(10, 1))));
     }
 
     @Test
     public void testAccumulateJustCollectionXOfMaybeOfTFunctionOfQsuperTRSemigroupOfR() {
-        Maybe<String> maybes = Maybe.accumulateJust(ListX.of(just, none, Maybe.of(1)), i -> "" + i,
+        Maybe<String> maybes = Maybe.accumulateJust(Arrays.asList(just, none, Maybe.of(1)), i -> "" + i,
                 Monoids.stringConcat);
         assertThat(maybes, equalTo(Maybe.of("101")));
     }
 
     @Test
     public void testAccumulateJust() {
-        Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,ListX.of(just, none, Maybe.of(1)));
+        Maybe<Integer> maybes = Maybe.accumulateJust(Monoids.intSum,Arrays.asList(just, none, Maybe.of(1)));
         assertThat(maybes, equalTo(Maybe.of(11)));
     }
 
@@ -339,8 +340,8 @@ public class CompletableMaybeTest implements Printable {
 
     @Test
     public void testStream() {
-        assertThat(just.stream().toListX(), equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(), equalTo(ListX.of()));
+        assertThat(just.stream().toList(), equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(), equalTo(Arrays.asList()));
     }
 
     @Test
@@ -351,7 +352,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testConvertTo() {
         Stream<Integer> toStream = just.visit(m -> Stream.of(m), () -> Stream.of());
-        assertThat(toStream.collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
     @Test
@@ -359,7 +360,7 @@ public class CompletableMaybeTest implements Printable {
         Future<Stream<Integer>> async = Future
                 .of(() -> just.visit(f -> Stream.of((int) f), () -> Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()), equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
     @Test

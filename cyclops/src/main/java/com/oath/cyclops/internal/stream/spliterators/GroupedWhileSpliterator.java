@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
+
 import java.util.Collection;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -8,7 +10,7 @@ import java.util.function.*;
 /**
  * Created by johnmcclean on 22/12/2016.
  */
-public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> extends Spliterators.AbstractSpliterator<R>
+public class GroupedWhileSpliterator<T, C extends PersistentCollection<? super T>,R> extends Spliterators.AbstractSpliterator<R>
                                 implements CopyableSpliterator<R>,ComposableFunction<R,T,GroupedWhileSpliterator<T,C,?>> {
     private final Spliterator<T> source;
     private final Supplier<? extends C> factory;
@@ -40,7 +42,7 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
 
         source.forEachRemaining(t->{
 
-            collection.add(t);
+            collection = (C)collection.plus(t);
 
             if(!predicate.test(t)){
                 action.accept(finalizer.apply(collection));
@@ -67,7 +69,7 @@ public class GroupedWhileSpliterator<T, C extends Collection<? super T>,R> exten
         boolean accepted[]= {true};
         while (accepted[0]) {
             boolean canAdvance = source.tryAdvance(t -> {
-                collection.add(t);
+                collection = (C)collection.plus(t);
 
                 accepted[0]=  predicate.test(t);
             });

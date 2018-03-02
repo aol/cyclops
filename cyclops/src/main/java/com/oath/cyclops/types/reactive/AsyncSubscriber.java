@@ -115,7 +115,7 @@ public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
 
 
             val cons = getAction().getAction();
-            if (cons != null)
+            //if (cons != null)
                 cons.accept(t);
 
 
@@ -125,7 +125,7 @@ public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
     public void onError(final Throwable t) {
         Objects.requireNonNull(t);
         val cons = getAction().getError();
-        if(cons!=null)
+      //  if(cons!=null)
               cons.accept(t);
 
 
@@ -137,7 +137,7 @@ public class AsyncSubscriber<T> implements Subscriber<T>, PushSubscriber<T> {
 
         val run = getAction().getOnComplete();
 
-        if(run!=null)
+       // if(run!=null)
             run.run();
 
     }

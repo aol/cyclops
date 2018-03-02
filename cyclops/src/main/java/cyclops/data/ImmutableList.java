@@ -1,17 +1,16 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.foldable.Contains;
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.reactive.collections.immutable.LinkedListX;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.control.Try;
@@ -36,6 +35,8 @@ import static cyclops.matching.Api.*;
 
 public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,ImmutableList.None<T>>,
                                           IterableX<T>,
+                                          Contains<T>,
+                                          Comparable<T>,
                                           PersistentList<T>,
                                           OnEmptySwitch<ImmutableList<T>,ImmutableList<T>>,
                                             OnEmptyError<T, ImmutableList<T>>,
@@ -46,6 +47,33 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> emptyUnit();
+    @Override
+    default int compareTo(final T o) {
+        if (o instanceof ImmutableList) {
+            final ImmutableList l = (ImmutableList) o;
+            if (this.size() == l.size()) {
+                final Iterator i1 = iterator();
+                final Iterator i2 = l.iterator();
+                if (i1.hasNext()) {
+                    if (i2.hasNext()) {
+                        final int comp = Comparator.<Comparable> naturalOrder()
+                            .compare((Comparable) i1.next(), (Comparable) i2.next());
+                        if (comp != 0)
+                            return comp;
+                    }
+                    return 1;
+                } else {
+                    if (i2.hasNext())
+                        return -1;
+                    else
+                        return 0;
+                }
+            }
+            return this.size() - ((ImmutableList) o).size();
+        } else
+            return 1;
+
+    }
 
     default boolean equalToDirectAccess(Iterable<T> iterable){
         int size = size();
@@ -88,9 +116,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().removeFirst(pred));
 
     }
-    default LinkedListX<T> linkdedListX(){
-        return stream().to().linkedListX(Evaluation.LAZY);
-    }
+
 
     default ImmutableList<T> subList(int start, int end){
         return drop(start).take(end-start);
@@ -136,6 +162,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     ImmutableList<T> prepend(T value);
+    ImmutableList<T> append(T value);
+
 
 
     ImmutableList<T> appendAll(T value);
@@ -246,6 +274,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
     default Tuple2<ImmutableList<T>,ImmutableList<T>> splitBy(Predicate<? super T> test) {
         return span(test.negate());
+    }
+
+    default ImmutableList<T> tailOrElse(ImmutableList<T> tail){
+        return fold(s->s.tail(),nil->tail);
     }
 
     public static interface Some<T> extends Deconstruct2<T,ImmutableList<T>>, ImmutableList<T> {
@@ -508,28 +540,28 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<VectorX<T>> sliding(int windowSize) {
+    default ImmutableList<Seq<T>> sliding(int windowSize) {
         return unitStream(stream().sliding(windowSize));
     }
 
     @Override
-    default ImmutableList<VectorX<T>> sliding(int windowSize, int increment) {
+    default ImmutableList<Seq<T>> sliding(int windowSize, int increment) {
         return unitStream(stream().sliding(windowSize,increment));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> grouped(int size, Supplier<C> supplier) {
         return unitStream(stream().grouped(size,supplier));
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableList<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return unitStream(stream().groupedStatefullyUntil(predicate));
+    default ImmutableList<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return unitStream(stream().groupedUntil(predicate));
     }
 
     default <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
@@ -537,22 +569,22 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     @Override
-    default ImmutableList<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
+    default ImmutableList<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
         return unitStream(stream().groupedWhile(predicate));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedWhile(predicate,factory));
     }
 
     @Override
-    default <C extends Collection<? super T>> ImmutableList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> ImmutableList<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return unitStream(stream().groupedUntil(predicate,factory));
     }
 
     @Override
-    default ImmutableList<ListX<T>> grouped(int groupSize) {
+    default ImmutableList<Vector<T>> grouped(int groupSize) {
         return unitStream(stream().grouped(groupSize));
     }
 

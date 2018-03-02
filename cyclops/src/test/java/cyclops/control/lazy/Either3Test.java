@@ -7,12 +7,13 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Future;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.reactive.collections.mutable.ListX;
+
 import cyclops.control.*;
 import cyclops.control.LazyEither3;
 import cyclops.control.LazyEither3.CompletableEither3;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.LazySeq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -20,6 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -139,27 +141,27 @@ public class Either3Test {
 
     @Test
     public void testTraverseLeft1() {
-        ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
+        LazySeq<LazyEither3<Integer,String,String>> list = LazySeq.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
         LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.traverse(list, s -> "hello:" + s);
-        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("hello:none"))));
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(Arrays.asList("hello:none"))));
     }
     @Test
     public void testSequenceLeft1() {
-        ListX<LazyEither3<Integer,String,String>> list = ListX.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
+        LazySeq<LazyEither3<Integer,String,String>> list = LazySeq.of(just,none, LazyEither3.<String,String,Integer>right(1)).map(LazyEither3::swap1);
       LazyEither3<Integer, String, ReactiveSeq<String>> xors = LazyEither3.sequence(list);
-        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("none"))));
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(Arrays.asList("none"))));
     }
     @Test
     public void testSequenceLeft2() {
-      ListX<LazyEither3<String, Integer, String>> list = ListX.of(just, left2, LazyEither3.<String, String, Integer>right(1)).map(LazyEither3::swap2);
+        LazySeq<LazyEither3<String, Integer, String>> list = LazySeq.of(just, left2, LazyEither3.<String, String, Integer>right(1)).map(LazyEither3::swap2);
       LazyEither3<String, Integer, ReactiveSeq<String>> xors = LazyEither3.sequence(list);
-        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(ListX.of("left2"))));
+        assertThat(xors.map(s->s.toList()),equalTo(LazyEither3.right(Arrays.asList("left2"))));
     }
 
 
     @Test
     public void testAccumulate() {
-      LazyEither3<String, String, Integer> iors = LazyEither3.accumulate(Monoids.intSum, ListX.of(none, just, LazyEither3.right(10)));
+      LazyEither3<String, String, Integer> iors = LazyEither3.accumulate(Monoids.intSum, Arrays.asList(none, just, LazyEither3.right(10)));
         assertThat(iors,equalTo(LazyEither3.right(20)));
     }
 
@@ -243,8 +245,8 @@ public class Either3Test {
 
     @Test
     public void testStream() {
-        assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-        assertThat(none.stream().toListX(),equalTo(ListX.of()));
+        assertThat(just.stream().toList(),equalTo(Arrays.asList(10)));
+        assertThat(none.stream().toList(),equalTo(Arrays.asList()));
     }
 
     @Test
@@ -256,7 +258,7 @@ public class Either3Test {
     public void testConvertTo() {
 
         Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
-        assertThat(toStream.collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 
@@ -264,7 +266,7 @@ public class Either3Test {
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
 
-        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(ListX.of(10)));
+        assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
     @Test

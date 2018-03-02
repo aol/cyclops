@@ -339,7 +339,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
      *
-     *  Optional<ListX<Integer>> opts = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
+     *  Optional<Seq<Integer>> opts = Optionals.sequence(Seq.of(just, none, Optional.of(1)));
         //Optional.zero();
      *
      * }
@@ -363,8 +363,8 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
      *
-     * Optional<ListX<Integer>> maybes = Optionals.sequencePresent(ListX.of(just, none, Optional.of(1)));
-       //Optional.of(ListX.of(10, 1));
+     * Optional<Seq<Integer>> maybes = Optionals.sequencePresent(Seq.of(just, none, Optional.of(1)));
+       //Optional.of(Seq.of(10, 1));
      * }
      * </pre>
      *
@@ -385,7 +385,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
      *
-     *  Optional<ListX<Integer>> maybes = Optionals.sequence(ListX.of(just, none, Optional.of(1)));
+     *  Optional<Seq<Integer>> maybes = Optionals.sequence(Seq.of(just, none, Optional.of(1)));
         //Optional.zero();
      *
      * }
@@ -422,7 +422,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
 
-     * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
+     * Optional<PersistentSetX<Integer>> opts = Optional.accumulateJust(Seq.of(just, none, Optional.of(1)), Reducers.toPersistentSetX());
        //Optional.of(PersistentSetX.of(10, 1)));
      *
      * }
@@ -445,7 +445,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
 
-     *  Optional<String> opts = Optional.accumulateJust(ListX.of(just, none, Optional.of(1)), i -> "" + i,
+     *  Optional<String> opts = Optional.accumulateJust(Seq.of(just, none, Optional.of(1)), i -> "" + i,
                                                      Monoids.stringConcat);
         //Optional.of("101")
      *
@@ -472,7 +472,7 @@ public class Optionals {
      *  Optional<Integer> just = Optional.of(10);
         Optional<Integer> none = Optional.zero();
 
-     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,ListX.of(just, none, Optional.of(1)),
+     *  Optional<String> opts = Optional.accumulateJust(Monoids.stringConcat,Seq.of(just, none, Optional.of(1)),
                                                      );
         //Optional.of("101")
      *

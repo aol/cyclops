@@ -1,9 +1,10 @@
 package cyclops.data;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.hkt.Higher;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
+import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple3;
@@ -20,17 +21,20 @@ import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,T>, Serializable {
 
+    static <T> Collector<T, List<T>, BankersQueue<T>> collector() {
+        Collector<T, ?, List<T>> c  = Collectors.toList();
+        return Collectors.<T, List<T>, Iterable<T>,BankersQueue<T>>collectingAndThen((Collector)c,BankersQueue::fromIterable);
+    }
     static <T> BankersQueue<T> fromStream(Stream<T> stream){
         return fromIterable(ReactiveSeq.fromStream(stream));
     }
@@ -702,28 +706,28 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<VectorX<T>> sliding(int windowSize) {
-        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize);
+    default BankersQueue<Seq<T>> sliding(int windowSize) {
+        return (BankersQueue<Seq<T>>) ImmutableQueue.super.sliding(windowSize);
     }
 
     @Override
-    default BankersQueue<VectorX<T>> sliding(int windowSize, int increment) {
-        return (BankersQueue<VectorX<T>>) ImmutableQueue.super.sliding(windowSize,increment);
+    default BankersQueue<Seq<T>> sliding(int windowSize, int increment) {
+        return (BankersQueue<Seq<T>>) ImmutableQueue.super.sliding(windowSize,increment);
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> grouped(int size, Supplier<C> supplier) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> grouped(int size, Supplier<C> supplier) {
         return (BankersQueue<C>) ImmutableQueue.super.grouped(size,supplier);
     }
 
     @Override
-    default BankersQueue<ListX<T>> groupedUntil(Predicate<? super T> predicate) {
-        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedUntil(predicate);
+    default BankersQueue<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedUntil(predicate);
     }
 
     @Override
-    default BankersQueue<ListX<T>> groupedStatefullyUntil(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedStatefullyUntil(predicate);
+    default BankersQueue<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedUntil(predicate);
     }
 
     @Override
@@ -732,23 +736,23 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<ListX<T>> groupedWhile(Predicate<? super T> predicate) {
-        return (BankersQueue<ListX<T>>) ImmutableQueue.super.groupedWhile(predicate);
+    default BankersQueue<Vector<T>> groupedWhile(Predicate<? super T> predicate) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.groupedWhile(predicate);
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> groupedWhile(Predicate<? super T> predicate, Supplier<C> factory) {
         return (BankersQueue<C>) ImmutableQueue.super.groupedWhile(predicate,factory);
     }
 
     @Override
-    default <C extends Collection<? super T>> BankersQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
+    default <C extends PersistentCollection<? super T>> BankersQueue<C> groupedUntil(Predicate<? super T> predicate, Supplier<C> factory) {
         return (BankersQueue<C>) ImmutableQueue.super.groupedUntil(predicate,factory);
     }
 
     @Override
-    default BankersQueue<ListX<T>> grouped(int groupSize) {
-        return (BankersQueue<ListX<T>>) ImmutableQueue.super.grouped(groupSize);
+    default BankersQueue<Vector<T>> grouped(int groupSize) {
+        return (BankersQueue<Vector<T>>) ImmutableQueue.super.grouped(groupSize);
     }
 
     @Override

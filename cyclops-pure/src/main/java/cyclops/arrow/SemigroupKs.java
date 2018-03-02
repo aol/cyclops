@@ -3,7 +3,6 @@ package cyclops.arrow;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.*;
 import com.oath.cyclops.hkt.DataWitness.*;
-import com.oath.cyclops.hkt.DataWitness.list;
 import com.oath.cyclops.hkt.DataWitness.optional;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
@@ -24,7 +23,7 @@ import cyclops.reactive.collections.mutable.SetX;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
-
+import static com.oath.cyclops.data.ReactiveWitness.*;
 
 public interface SemigroupKs{
 

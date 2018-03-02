@@ -1,6 +1,7 @@
 package cyclops.monads.anym;
 
 import com.oath.anym.AnyMValue;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.monads.Matchers;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
@@ -42,7 +43,7 @@ public class AnyMValueTest {
 
         Stream<AnyM<optional,Integer>> source = ReactiveSeq.of(just,AnyM.ofNullable(1));
         AnyM<optional,ListX<Integer>> maybes =AnyM.sequence(source, optional.INSTANCE)
-                                          .map(s->ReactiveSeq.fromStream(s).toListX());
+                                          .map(s->ReactiveSeq.fromStream(s).to(ReactiveConvertableSequence::converter).listX());
         assertThat(maybes, Matchers.equivalent(AnyM.ofNullable(ListX.of(10,1))));
     }
 	@Test

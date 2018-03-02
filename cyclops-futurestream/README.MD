@@ -23,6 +23,38 @@ Other features in this module include
 * [![Maven Central : cyclops-futurestream](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-futurestream/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-futurestream)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-futurestream/badge.svg)](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops-futurestream)
 * [Javadoc for cyclops-futurestream](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-futurestream)
 
+
+# Examples
+
+FutureStream - parallel / async Streaming
+
+```java
+new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
+                      .map(d->"produced on " + Thread.currentThread().getId())
+                      .peek(System.out::println)
+                      .map(this::process)
+                      .flatMap(e->ReactiveSeq.range(0,e))
+                      .run();
+```
+
+
+## cyclops.futurestream
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| FutureStream     | Asynchronous and parallel stream             | Lazy, async, parallel, Reactive                 |
+| SimpleReact     | Asynchronous bulk operations on Futures            | Eager async                 |
+| LazyReact     | Builder for FutureStreams           |                 |
+| Pipes    | Event bus for managing data transfer via Adapters to connected data structures           |   Async              |
+
+
+## cyclops.stream
+
+| type | description | characteristics |
+|------|-------------|-----------------|
+| StreamSource     | A factory class for 'pushable' JDK Streams            |                 |
+
+
 # More info
 
 ## <a name="futureStreams">FutureStreams
@@ -137,4 +169,9 @@ Other features in this module include
 
 * [Applying Backpressure across Streams](https://medium.com/@johnmcclean/applying-back-pressure-across-streams-f8185ad57f3a#.szymzi9nj)
 
+
+# Articles
+
+* [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
+* [Articles on medium](https://medium.com/search?q=simplereact)
 

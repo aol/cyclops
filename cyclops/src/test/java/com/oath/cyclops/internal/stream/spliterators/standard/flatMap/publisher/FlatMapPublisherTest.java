@@ -1,6 +1,5 @@
 package com.oath.cyclops.internal.stream.spliterators.standard.flatMap.publisher;
 
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -13,6 +12,7 @@ import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -45,11 +45,11 @@ public class FlatMapPublisherTest {
 
         Assert.assertThat(of(1,2,3)
                 .mergeMap(i-> Maybe.of(i))
-                .toListX().size(), Matchers.equalTo(3));
+                .toList().size(), Matchers.equalTo(3));
 
       Assert.assertThat(of(1,2,3)
         .mergeMap(i-> Maybe.of(i))
-        .toListX(), Matchers.containsInAnyOrder(3,2,1));
+        .toList(), Matchers.containsInAnyOrder(3,2,1));
 
 
     }
@@ -71,7 +71,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -93,7 +93,7 @@ public class FlatMapPublisherTest {
             List<Integer> res = Spouts.of(1, 2, 3)
                     .mergeMap(i -> nextAsync())
                     .toList();
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1,2));
             int one = 0;
             int two = 0;
@@ -250,7 +250,7 @@ public class FlatMapPublisherTest {
                                       .mergeMap(i -> nextAsync()))
                                         .collect(Collectors.toList());
             System.out.println(res);
-            assertThat(res.size(), equalTo(ListX.of(1, 2, 1, 2, 1, 2).size()));
+            assertThat(res.size(), equalTo(Arrays.asList(1, 2, 1, 2, 1, 2).size()));
             assertThat(res, hasItems(1, 2));
             int one = 0;
             int two = 0;
