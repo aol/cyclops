@@ -149,8 +149,49 @@ public String loadData(File f) throws IOException{
 public Try<String,IOException> loadData(File f);
 ```
 
+# Replace CompletableFuture with Future
+
+A Future implementation with more standard method names (map / flatMap / zip as opposed to thenApply / thenCombose / then Combine)
+```java
+
+CompletableFuture<Result> future;
+CompletableFuture<String> result = future.thenApply(this::process)
+                                         .thenCompose(this::asyncProces);
 
 
+Future<Result> future;
+Future<String> result = future.map(this::process)
+                              .flatMap(this::asyncProces);
+```
+
+# Replace basic Suppliers with Eval for Lazy Evaluation
+
+Eval offers a powerful abstraction over laziness with map / flatMap / zip operators, built in tail-recursion and more.
+
+```java
+Supplier<Integer> lazy = ()->calculateResult();
+
+Eval<Integer> lazy = Eval.later(()->calculateResult()); //Memoizing / caching lazy call
+Eval<String> chained = lazy.map(this::process)
+                           .flatMap(this::lazyProcess);
+
+```
+
+# Replace mutable java maps with HashMap
+
+cyclops.data.HashMap is a performant persistent HashMap (implemented via a Hash Array mapped Trie)
+
+```java
+Map<String,Integer> map = new j.u.HashMap<>();
+map.put("key",10)
+map.put("key2",200);
+map.remove("key");
+
+HashMap<String,Integer> map = cyclops.data.HashMap.of("key",10,"key2",200);
+Immutable<String,Integer> removed = map.remove("key");
+
+
+```
 ## Streaming
 
 cyclops-react defines an interface ReactiveSeq for advanced Streaming operations. Multiple implementations are provided for synchronous / asynchronous and sequential / parallel streaming within cyclops-react. Use ReactiveSeq.XXX creational methods to build synchronous Streams, or Spouts.XXX creational methods to build asynchronous Streams. For parallel Streaming consider FutureStream.builder().

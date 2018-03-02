@@ -2440,7 +2440,7 @@ public abstract class AbstractIterableXTest {
                 .peek(System.out::println)
                 .toList();
 
-        assertTrue(System.currentTimeMillis()-start>1900);
+        assertTrue(System.currentTimeMillis()-start>1000);
 
     }
     @Test

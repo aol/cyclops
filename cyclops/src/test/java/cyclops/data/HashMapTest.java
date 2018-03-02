@@ -19,6 +19,7 @@ public class HashMapTest {
 
     @Test
     public void add10000(){
+
         //19742
         long start = System.currentTimeMillis();
         HashMap<Integer,Integer> v = HashMap.empty();
@@ -30,8 +31,10 @@ public class HashMapTest {
     }
     @Test
     public void read100_000_00(){
+
         //6247
         HashMap<Integer,Integer> v = HashMap.empty();
+
         for(int i=0;i<100_000_00;i++){
             v =v.put(i,i);
         }
