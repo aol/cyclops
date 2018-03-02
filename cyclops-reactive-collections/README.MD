@@ -1,5 +1,13 @@
 # Cyclops Reactive Collections : Fast, lazy and asynchronous operations on mutable and persistent collections
 
+
+## Get cyclops-reactive-collections
+
+
+* [![Maven Central : cyclops-reactive-collections](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-reactive-collections/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-reactive-collections)
+* [Javadoc for cyclops-reactive-collections](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-reactive-collections)
+
+
 ## Enhanced performance
 
 Chaining combinator operations on traditional functional datastructures such as the core persistent data structures provided in cyclops.data (or in Vavr or the Scala SDK) results in traversing the datastructure multiple times, once per combinator operation.
@@ -32,6 +40,34 @@ Lower score is better
 <img width="553" alt="screen shot 2018-03-01 at 15 14 43" src="https://user-images.githubusercontent.com/9964792/36852335-4e02c0a2-1d63-11e8-9a81-ec600ee39c30.png">
 
 
+# Reactive Collections!
+
+In the example below we asynchronously populate an Xtended list using an asynchronously executing ReactiveSeq. Additional reactive operations can be performed on the List asynchronously.
+The ListX only blocks on first access to the data.
+
+```java
+
+AtomicBoolean complete = new AtomicBoolean(false);
+
+
+ReactiveSeq<Integer> async =  Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1));
+
+ListX<Integer> asyncList = listX(reactiveSeq(async))
+                                      .map(i->i+1);
+
+System.out.println("Blocked? " + complete.get());
+
+System.out.println("First value is "  + asyncList.get(0));
+
+System.out.println("Completed? " + complete.get());
+```
+Which will print
+
+```
+Blocked? false
+First value is 101
+Completed? true
+```
 
 ## Available data structures
 

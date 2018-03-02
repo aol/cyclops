@@ -18,10 +18,138 @@ Currently part of the core but migrating to their own module as part of Cyclops 
 ## Get cyclops
 
 
-* [![Maven Central : cyclops](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops/badge.svg)](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops)
+* [![Maven Central : cyclops](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)   [![javadoc.io](https://javadocio-badges.herokuapp.com/com.oath.cyclops/cyclops/badge.svg)
 * [Javadoc for cyclops](http://www.javadoc.io/doc/com.oath.cyclops/cyclops)
 
 # Getting started examples
+
+## Persistent (Functional) Data Structures
+
+We can replace verbose and error prone JDK mutable collections with safer, performant functional equivalents
+
+### Replace ArrayList with Vector
+
+```java
+
+List<Integer> arrayList = new ArrayList<>();
+arrayList.add(10);
+arrayList.add(20);
+arrayList.remove(10);
+
+```
+
+```java
+
+Vector<Integer> vector = Vector.of(10,20); //[10,20]
+Vector<Integer> removed = vector.removeValue(10); //[20]
+
+```
+
+### Replace LinkedList with Seq
+
+```java
+
+List<Integer> arrayList = new LinkedList<>();
+arrayList.add(10);
+arrayList.add(20);
+arrayList.remove(10);
+
+```
+
+```java
+
+Seq<Integer> functionalLinkedList = Seq.of(10,20); //[10,20]
+Seq<Integer> removed = functionalLinkedList.removeValue(10); //[20]
+
+```
+
+### Replace Stream with LazySeq or ReactiveSeq
+
+Java's Stream is lazy but not a data structure. Cyclops' LazySeq is a Lazy LinkedList (like Scala's Stream) and ReactiveSeq is a more powerful Stream implementation (that implements both the Stream interface and the reactive-streams spec for asynchronous streaming with non-blocking back pressure).
+
+
+
+```java
+
+Stream<Integer> arrayList = Stream.of(1,2,3)
+                                  .map(i->i*2);
+
+```
+
+
+```java
+
+LazySeq<Integer> arrayList = LazySeq.of(1,2,3)
+                                    .map(i->i*2);
+
+ReactiveSeq<Integer> arrayList = ReactiveSeq.of(1,2,3)
+                                            .map(i->i*2);
+```
+
+### Replace Optional with Option or Maybe
+
+Option and Maybe prevent you from representing illegal states, it isn't possible to call get() on an empty Option or Maybe.
+Option is eager and is the simplest and most performant choice for most use cases.
+Maybe is lazy and (optionally) 'reactive' that makes it a good use case for functions that may return a value that you may conditionally or asynchronously execute in the Future.
+
+```java
+
+Optional<Integer> opt = Optional.empty();
+if(opt.isPresent())
+   return opt.get();
+else
+   return 0;
+
+...
+//somewhere else
+opt.get(); // Exception!
+
+
+
+```
+
+```java
+
+
+Option<Integer> opt = Option.none();
+
+return opt.getOrElse(0);
+
+
+Maybe<Integer> lazy = Maybe.fromLazyOption(()->Option.some(10));
+//deferred Maybe[10]
+
+Maybe<Integer> lazy = Maybe.fromLazyOption(()->Option.none());
+//deferred Maybe[]
+
+//reactive
+
+Maybe<Integer> reactive = Maybe.fromFuture(future);
+//async Maybe[future value]
+```
+
+Complete / push data into Reactive Sum types (Maybe) via complete method
+```java
+CompletableMaybe<Integer> async = Maybe.maybe();
+async.map(this::doWorkWhenDataArrives);
+...
+//on a separate thread
+async.complete(value)
+```
+
+
+# Replace Exceptions with Try
+
+```java
+public String loadData(File f) throws IOException{
+
+}
+
+
+public Try<String,IOException> loadData(File f);
+```
+
+
 
 ## Streaming
 
@@ -221,14 +349,6 @@ ReactiveSeq<Integer> seq = Observables.of(1,2,3)
 
 ### cyclops.control : Reactive Sum Types
 
-Complete / push data into Reactive Sum types via complete method
-```java
-CompletableMaybe<Integer> async = Maybe.maybe();
-async.map(this::doWorkWhenDataArrives);
-...
-//on a separate thread
-async.complete(value)
-```
 
 | type | description | characteristics |
 |------|-------------|-----------------|

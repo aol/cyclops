@@ -51,6 +51,9 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
   @Test
   public void testMaybeWithNull() {
+      assertThat(Maybe.fromEval(Eval.later(()->null)),equalTo(Maybe.just(null)));
+      assertThat(Maybe.fromEvalNullable(Eval.later(()->null)),equalTo(Maybe.nothing()));
+      assertThat(Maybe.fromLazyOption(Eval.later(()->Option.none())),equalTo(Maybe.nothing()));
     System.out.println(Maybe.of(null).toString());
     System.out.println(Maybe.just(null).toString());
     System.out.println(Either.left(null).toString());
