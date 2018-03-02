@@ -38,7 +38,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void testMapA(){
         assertThat(of(1,2,3).map(i->i*2),equalTo(of(2,4,6)));
-        assertThat(this.<Integer>empty().map(i->i*2),equalTo(Matchers.empty()));
+        assertThat(this.<Integer>empty().map(i->i*2),equalTo(empty()));
     }
 
 
@@ -173,7 +173,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void testFlatMapA(){
         assertThat(of(1,2,3).concatMap(i-> of(i*2)),equalTo(of(2,4,6)));
-        assertThat(this.<Integer>empty().concatMap(i-> of(i*2)),equalTo(Matchers.empty()));
+        assertThat(this.<Integer>empty().concatMap(i-> of(i*2)),equalTo(empty()));
     }
 
 
@@ -183,59 +183,11 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
         assertThat(fromStream(ReactiveSeq.range(0,100_000)).materialize().foldRight(Monoids.intSum),equalTo(704982704));
     }
 
-    /**
-     @Test
-    public void testCycleNoOrd() {
-        assertEquals(asList(1, 2 ),of(1, 2).cycle(3).toListX());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3).cycle(2).toListX());
-    }
 
-    @Test
-    public void testCycleTimesNoOrd() {
-        assertEquals(asList(1, 2),of(1, 2).cycle(3).toListX());
-    }
-    **/
 
 
     int count =0;
-    /**
-    @Test
-    public void testCycleWhileNoOrd() {
-        count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleWhile(next->count++<6).toListX());
 
-    }
-    @Test
-    public void testCycleUntilNoOrd() {
-        count =0;
-        assertEquals(asList(1, 2,3),of(1, 2, 3).cycleUntil(next->count++==6).toListX());
-    }
-    @Test
-    public void testCycleUntil() {
-        count =0;
-        System.out.println("List " + of(1, 2, 3).peek(System.out::println).cycleUntil(next->count++==6).toListX());
-        count =0;
-        assertEquals(3,of(1, 2, 3).cycleUntil(next->count++==6).toListX().size());
-
-    }
-    @Test
-    public void testCycleWhile() {
-        count =0;
-        assertEquals(3,of(1, 2, 3).cycleWhile(next->count++<6).toListX().size());
-
-    }
-
-    @Test
-    public void testCycleTimesNoOrder() {
-        assertEquals(2,of(1, 2).cycle(3).toListX().size());
-    }
-
-    @Test
-    public void testCycleNoOrder() {
-        assertEquals(2,of(1, 2).cycle(3).toListX().size());
-        assertEquals(3, of(1, 2, 3).cycle(2).toListX().size());
-    }
-     **/
     @Test
     public void take2Reversed(){
         range(0,10).reverse().limit(2).printOut();
@@ -325,7 +277,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
                 .toList().size(),equalTo(2));
         assertTrue(of(1,2,3,4,5,6)
                 .groupedUntil(i->i%3==0,()->Vector.empty())
-                .toList().contains(ListX.of(1,2,3)));
+                .toList().contains(Vector.of(1,2,3)));
     }
     @Test
     public void batchBySizeSet(){
