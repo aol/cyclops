@@ -170,3 +170,8 @@ new LazyReact(100,100).generate(()->"data") //100 active tasks, 100 threads
 * [Applying Backpressure across Streams](https://medium.com/@johnmcclean/applying-back-pressure-across-streams-f8185ad57f3a#.szymzi9nj)
 
 
+# Articles
+
+* [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
+* [Articles on medium](https://medium.com/search?q=simplereact)
+

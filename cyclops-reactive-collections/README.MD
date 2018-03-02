@@ -68,3 +68,7 @@ Eval<Integer> lazyResult = ListX.of(1,2,3,4)
                                  .foldLazy(s->s
                                  .reduce( 50,(acc,next) -> acc+next));
 ```
+
+# Articles
+
+* [JDK Collection eXtensions](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks)

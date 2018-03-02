@@ -29,83 +29,28 @@ This is the 10.x branch for 2.x branch click the link below
 - Light weight dependencies : reactive-streams API & Agrona
 
 
-# Documentation
-
-* [User Guide](https://github.com/aol/cyclops-react/wiki) Primarily tailored for 1.x still.
-* [javadoc](http://www.javadoc.io/doc/com.aol.simplereact/cyclops-react/)
-
-## Latest Articles
-
-* [DSLs with the Free Monad in Java 8 : Part I](https://medium.com/@johnmcclean/dsls-with-the-free-monad-in-java-8-part-i-701408e874f8)
-* [Cross Library Stream Benchmarking : Playing Scrabble with Shakespeare](https://medium.com/@johnmcclean/cross-library-stream-benchmarking-playing-scrabble-with-shakespeare-8dd1d1654717)
 
 ## Gradle
 
 where x.y.z represents the latest version
 
 ```groovy
-compile 'com.aol.simplereact:cyclops-react:x.y.z'
+compile 'com.oath.cyclops:cyclops:x.y.z'
 ```
 
 ## Maven
 
 ```xml
 <dependency>
-    <groupId>com.aol.simplereact</groupId>
-    <artifactId>cyclops-react</artifactId>
+    <groupId>com.oath.cyclops</groupId>
+    <artifactId>cyclops</artifactId>
     <version>x.y.z</version>
 </dependency>
 ```
-# Features
 
-* Deep consistent and integrated API across a broad range of key functional types
-* ReactiveSeq extends JDK Stream and offers multiple modes of execution - synchonous, asynchronous,
-   asynchronous with backpressure, parallel and more.
-* Fast Lazy Collection types for efficient functional transformations
-* FutureStreams for parallel I/O
-* Core components for building asynchronous applications
-* Advanced functional features such as for comprehensions and pattern matching integrated into the API
-* Clean simulated Higher Kinded Types via Witness Types
-* Extensions for JDK types : Optional, CompletableFutures and Streams
-
-* Third party integrations via cyclops modules (including Scala, JavasLang, FunctionalJava, Reactor and RxJava)
-
-
-
-
-
-
-
-
-
-## Higher level abstractions
-
-
-
-# Articles
-
-* [Reactive programming with Java 8 and simple-react: The Tutorial](https://medium.com/@johnmcclean/reactive-programming-with-java-8-and-simple-react-the-tutorial-3634f512eeb1)
-* [JDK Collection eXtensions](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks)
-* [Awesome Fluent Functions](https://medium.com/@johnmcclean/can-we-make-working-with-functions-easier-in-java-8-81ed9d1050f2#.apum92khr)
-* [Articles on medium](https://medium.com/search?q=simplereact)
-* [Introducting the Cyclops Monad API](https://medium.com/@johnmcclean/introducing-the-cyclops-monad-api-a7a6b7967f4d)
-* [Easier Try with Cyclops](http://rdafbn.blogspot.com/2015/06/java-8-easier-with-cyclops-try.html)
-* [4 flavors of Java 8 Functions](https://medium.com/@johnmcclean/4-flavours-of-java-8-functions-6cafbcf5bb4f)
-* [Memoise Functions in Java 8](http://rdafbn.blogspot.com/2015/06/memoize-functions-in-java-8.html)
-* [Strategy Pattern in Java 8 ](http://rdafbn.blogspot.com/2015/06/startegy-pattern-in-java-8.html)
-* [Straightfoward structural Pattern Matching in Java 8](https://medium.com/about-java/straightforward-structural-pattern-matching-d77155bac8da#.ogdrhsyfe)
-* [Functional Feature Toggling](https://medium.com/@johnmcclean/feature-toggling-with-cyclops-a29d1eead62c)
-* [Dependency injection using the Reader Monad in Java8](https://medium.com/@johnmcclean/dependency-injection-using-the-reader-monad-in-java8-9056d9501c75)
-* [Scheduling a Stream](https://medium.com/@johnmcclean/how-to-schedule-emission-from-a-stream-in-java-aa2dafda7c07#.pi12so6zn)
-* [Neophytes guide to Java 8 : Welcome to the Future](https://medium.com/@johnmcclean/neophytes-guide-to-java-8-welcome-to-the-future-83f432ce82a9#.jb5s9qop8)
-* [JDBC Processing Options with cyclops-react](https://medium.com/@johnmcclean/jdbc-processing-options-with-cyclops-react-49d62b02f775#.1dh1ziaxv)
-* [Deterministic and Non-Deterministic Finite State Machines with Cyclops](http://sebastian-millies.blogspot.de/2015/11/deterministic-and-non-deterministic.html)
-
-
-[OSCON 2016 slides](http://cdn.oreillystatic.com/en/assets/1/event/154/AOL_s%20return%20to%20open%20source_%20An%20overview%20of%20Java%208%20library%20cyclops-react%20Presentation.pdf)
 
 # License
 
-cyclops-react is licensed under the Apache 2.0 license.		
+cyclops is licensed under the Apache 2.0 license.		
 
 http://www.apache.org/licenses/LICENSE-2.0

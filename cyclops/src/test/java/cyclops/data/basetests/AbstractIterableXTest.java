@@ -2454,7 +2454,7 @@ public abstract class AbstractIterableXTest {
                 .peek(System.out::println)
                 .toList();
         System.out.println("time = " +(System.currentTimeMillis()-start));
-        assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1600);
+        assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1000);
 
     }
 
