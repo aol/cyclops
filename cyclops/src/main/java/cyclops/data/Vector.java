@@ -5,8 +5,6 @@ import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -704,7 +702,7 @@ public class Vector<T> implements ImmutableList<T>,
             Vector<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = res.appendAll(n);
+                res = Vector.this.append(n);
             }
             v=res;
         }
@@ -786,8 +784,7 @@ public class Vector<T> implements ImmutableList<T>,
         return unitStream(stream().prependAll(value));
     }
 
-    @Override
-    public Vector<T> appendAll(T value) {
+    public Vector<T> append(T value) {
         return plus(value);
     }
 
@@ -925,7 +922,7 @@ public class Vector<T> implements ImmutableList<T>,
         }
 
         @Override
-        public ImmutableList<T> appendAll(T value) {
+        public ImmutableList<T> append(T value) {
             return empty();
         }
 

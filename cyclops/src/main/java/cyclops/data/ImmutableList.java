@@ -166,7 +166,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
 
-    ImmutableList<T> appendAll(T value);
+    ImmutableList<T> append(T value);
     ImmutableList<T> appendAll(Iterable<? extends T> value);
 
     ImmutableList<T> reverse();
@@ -746,7 +746,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     default ImmutableList<T> appendAll(T... values) {
         ImmutableList<T> res = this;
         for(T t : values){
-            res = res.appendAll(t);
+            res = this.append(t);
         }
         return res;
     }

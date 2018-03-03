@@ -2,13 +2,10 @@ package com.oath.cyclops.reactor.adapter;
 
 import com.oath.anym.AnyMValue;
 import com.oath.anym.extensability.ValueAdapter;
-import com.oath.cyclops.types.anyM.AnyMValue;
-import com.oath.cyclops.types.extensability.ValueAdapter;
 import cyclops.companion.reactor.Monos;
 import cyclops.control.Future;
 import cyclops.control.Option;
 import cyclops.monads.ReactorWitness.mono;
-import Future;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

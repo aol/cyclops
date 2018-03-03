@@ -34,7 +34,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
     @Override
     default ImmutableSortedSet<T> plus(T e){
-        return appendAll(e);
+        return append(e);
     }
 
     @Override
@@ -494,8 +494,8 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> appendAll(T value) {
-        return unitStream(stream().appendAll(value),comparator());
+    default ImmutableSortedSet<T> append(T value) {
+        return unitStream(stream().append(value),comparator());
     }
 
     @Override

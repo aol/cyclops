@@ -4,8 +4,6 @@ package cyclops.reactive.collections.immutable;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.ReactiveReducers;
 import cyclops.data.Comparators;
 import cyclops.data.Seq;
@@ -1038,8 +1036,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default OrderedSetX<T> appendAll(T value) {
-        return (OrderedSetX<T>)LazyCollectionX.super.appendAll(value);
+    default OrderedSetX<T> append(T value) {
+        return (OrderedSetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

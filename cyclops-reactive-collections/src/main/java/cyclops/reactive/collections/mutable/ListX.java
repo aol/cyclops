@@ -8,8 +8,6 @@ import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.data.collections.extensions.standard.MutableSequenceX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.control.*;
@@ -20,7 +18,6 @@ import com.oath.cyclops.types.foldable.To;
 
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -1216,8 +1213,8 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> appendAll(T value) {
-        return (ListX<T>)LazyCollectionX.super.appendAll(value);
+    default ListX<T> append(T value) {
+        return (ListX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

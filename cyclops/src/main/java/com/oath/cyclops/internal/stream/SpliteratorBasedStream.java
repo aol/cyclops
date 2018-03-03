@@ -536,13 +536,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public ReactiveSeq<T> appendStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
-    public ReactiveSeq<T> append(final Iterable<? extends T> other) {
+    public ReactiveSeq<T> appendAll(final Iterable<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
 
     //TODO use spliterators and createSeq
     @Override
-    public ReactiveSeq<T> appendAll(final T other) {
+    public ReactiveSeq<T> append(final T other) {
         return ReactiveSeq.concat(get(),new SingleSpliterator<T>(other));
     }
 

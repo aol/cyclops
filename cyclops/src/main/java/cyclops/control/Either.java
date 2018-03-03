@@ -474,7 +474,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
 
     Either<L, Stream<T>> identity = Either.right(ReactiveSeq.empty());
 
-    BiFunction<Either<L,Stream<T>>,Either<L,T>,Either<L,Stream<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->ReactiveSeq.fromStream(a).appendAll(b));
+    BiFunction<Either<L,Stream<T>>,Either<L,T>,Either<L,Stream<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->ReactiveSeq.fromStream(a).append(b));
 
     BinaryOperator<Either<L,Stream<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->ReactiveSeq.fromStream(z1).appendStream(z2));
 

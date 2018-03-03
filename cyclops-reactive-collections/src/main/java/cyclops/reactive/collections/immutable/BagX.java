@@ -9,8 +9,6 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
 
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Future;
 import cyclops.companion.Reducers;
@@ -1043,8 +1041,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     }
 
     @Override
-    default BagX<T> appendAll(T value) {
-        return (BagX<T>)LazyCollectionX.super.appendAll(value);
+    default BagX<T> append(T value) {
+        return (BagX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

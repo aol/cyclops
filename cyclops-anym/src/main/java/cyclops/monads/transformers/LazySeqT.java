@@ -634,8 +634,8 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
     }
 
     @Override
-    public LazySeqT<W,T> appendAll(T value) {
-        return (LazySeqT) FoldableTransformerSeq.super.appendAll(value);
+    public LazySeqT<W,T> append(T value) {
+        return (LazySeqT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

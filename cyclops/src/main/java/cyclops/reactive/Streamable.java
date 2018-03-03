@@ -1746,8 +1746,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     @Override
-    default Streamable<T> appendAll(T value){
-        return fromStream(this.stream().appendAll(value));
+    default Streamable<T> append(T value){
+        return fromStream(this.stream().append(value));
     }
 
     @Override
@@ -2278,11 +2278,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     default Streamable<T> concat(final Streamable<T> other) {
-        return fromStream(this.stream().append(other));
+        return fromStream(this.stream().appendAll(other));
     }
 
     default Streamable<T> concat(final T other) {
-        return fromStream(this.stream().appendAll(other));
+        return fromStream(this.stream().append(other));
     }
 
     default Streamable<T> concat(final T... other) {

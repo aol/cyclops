@@ -432,12 +432,12 @@ Higher<mono, Integer> higher = mono;
 We can use the Traverse and Applicative typeclasses to sequence a Mono with a Maybe into a Maybe with a Mono.
 ```java
 Traverse<mono> traverse = Monos.Instances.traverse();
-Applicative<Maybe.µ> applicative = Maybe.Instances.applicative();
+Applicative<Maybe.µ> applicative = MaybeInstances.applicative();
 ```
 
 ```java
 Traverse<mono> traverse = Monos.Instances.traverse();        
-Applicative<Maybe.µ> applicative = Maybe.Instances.applicative();
+Applicative<Maybe.µ> applicative = MaybeInstances.applicative();
         
 Higher<Maybe.µ, Higher<mono, Integer>> result = traverse.sequenceA(applicative, MonoKind.widen(Mono.just(Maybe.just(1))));
 ```

@@ -115,8 +115,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> appendAll(U value){
-        return fromStream(stream().appendAll(value));
+    default FutureStream<U> append(U value){
+        return fromStream(stream().append(value));
     }
 
     @Override
@@ -320,8 +320,8 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
      */
     @Override
-    default FutureStream<U> append(Iterable<? extends U> other) {
-        return fromStream(ReactiveSeq.oneShotStream(stream()).append(other));
+    default FutureStream<U> appendAll(Iterable<? extends U> other) {
+        return fromStream(ReactiveSeq.oneShotStream(stream()).appendAll(other));
     }
 
 

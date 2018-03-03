@@ -4,7 +4,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
@@ -313,7 +312,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     Eval<ReactiveSeq<T>> identity = Eval.now(ReactiveSeq.empty());
 
-    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 

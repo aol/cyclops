@@ -25,8 +25,6 @@ import cyclops.monads.WitnessType;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -987,8 +985,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
     @Override
-    default AnyMSeq<W,T> appendAll(T value) {
-        return fromIterable(IterableX.super.appendAll(value));
+    default AnyMSeq<W,T> append(T value) {
+        return fromIterable(IterableX.super.append(value));
     }
 
     @Override

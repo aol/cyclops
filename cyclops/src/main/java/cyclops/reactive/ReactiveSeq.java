@@ -136,7 +136,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> plus(T value) {
-        return appendAll(value);
+        return append(value);
     }
 
 
@@ -2736,7 +2736,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> appendAll(T... values);
 
 
-    ReactiveSeq<T> appendAll(T value);
+    ReactiveSeq<T> append(T value);
 
 
     ReactiveSeq<T> prepend(T value);
@@ -4508,11 +4508,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with Stream appended
      */
      ReactiveSeq<T> appendStream(Stream<? extends T> other);
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
-     */
 
-    ReactiveSeq<T> append(Iterable<? extends T> other);
+
 
     @Override
     default ReactiveSeq<T> appendAll(Iterable<? extends T> value){
