@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
-import cyclops.collections.mutable.SetX;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.collections.mutable.SetX;
 import org.junit.Test;
 
 

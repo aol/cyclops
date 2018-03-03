@@ -316,7 +316,7 @@ public class IterableInstances {
 
       Higher<C2,ReactiveSeq<T>> identity = ap.unit(ReactiveSeq.empty());
 
-      BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.appendAll(b); return a;}),acc,next);
+      BiFunction<Higher<C2,ReactiveSeq<T>>,Higher<C2,T>,Higher<C2,ReactiveSeq<T>>> combineToList =   (acc,next) -> ap.apBiFn(ap.unit((a,b) -> { a.append(b); return a;}),acc,next);
 
       BinaryOperator<Higher<C2,ReactiveSeq<T>>> combineLists = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> { l1.appendStream(l2); return l1;}),a,b); ;
 

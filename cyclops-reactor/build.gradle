@@ -43,7 +43,6 @@ configurations {
 
 dependencies {
     compile project(':cyclops')
-    compile project(':cyclops-pure')
     compile project(':cyclops-anym')
     compile project(':cyclops-futurestream')
     compile project(':cyclops-reactive-collections')

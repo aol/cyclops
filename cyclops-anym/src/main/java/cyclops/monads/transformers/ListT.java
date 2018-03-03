@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.Function3;
@@ -822,8 +821,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
     }
 
     @Override
-    public ListT<W,T> appendAll(T value) {
-        return (ListT) FoldableTransformerSeq.super.appendAll(value);
+    public ListT<W,T> append(T value) {
+        return (ListT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

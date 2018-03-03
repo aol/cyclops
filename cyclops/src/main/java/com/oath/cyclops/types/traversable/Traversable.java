@@ -1014,8 +1014,8 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
 
-    default Traversable<T> appendAll(T value){
-        return traversable().appendAll(value);
+    default Traversable<T> append(T value){
+        return traversable().append(value);
     }
 
 

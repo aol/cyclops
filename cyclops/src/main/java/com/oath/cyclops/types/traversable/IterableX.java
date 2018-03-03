@@ -620,14 +620,14 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     default IterableX<T> plusAll(Iterable<? extends T> list){
         IterableX<T> res = this;
         for(T next : list){
-            res = res.appendAll(next);
+            res = res.append(next);
         }
         return res;
     }
 
 
     default IterableX<T> plus(T value){
-        return appendAll(value);
+        return append(value);
     }
 
 
@@ -654,8 +654,8 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
     }
 
     @Override
-    default IterableX<T> appendAll(T value) {
-        return (IterableX<T>)ExtendedTraversable.super.appendAll(value);
+    default IterableX<T> append(T value) {
+        return (IterableX<T>)ExtendedTraversable.super.append(value);
     }
     @Override
     default IterableX<T> appendAll(Iterable<? extends T> value){

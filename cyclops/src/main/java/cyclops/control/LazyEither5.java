@@ -8,7 +8,6 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
@@ -296,7 +295,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>>,LazyEither5<L1, L2, L3, L4, T>,LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>>,LazyEither5<L1, L2, L3, L4, T>,LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 

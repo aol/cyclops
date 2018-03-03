@@ -213,8 +213,8 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public FutureStream<U> appendAll(final U value) {
-        return fromStream(stream().appendAll(value));
+    public FutureStream<U> append(final U value) {
+        return fromStream(stream().append(value));
     }
 
     @Override

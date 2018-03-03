@@ -38,7 +38,6 @@ import cyclops.data.HashMap;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.*;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.Maybe;
@@ -69,14 +68,14 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
    // prependS, append,append,prependAll,prependAll,insertAt,deleteBetween,insertAtS,recover
     @Test
     public void prependAppend(){
-               assertThat(of(1).prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
+               assertThat(of(1).prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)
                 .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));
     }
     @Test
     public void prependAppendUpdate(){
 
 
-        assertThat(of(1).prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6).prependAll(7,8)
+        assertThat(of(1).prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6).prependAll(7,8)
                 .insertAt(4,9)
                     .updateAt(4,10)
                 .deleteBetween(1,2)
@@ -85,7 +84,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
     @Test
     public void prependAppendInsertAt(){
 
-        assertThat(of(1).prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6).prependAll(7,8)
+        assertThat(of(1).prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6).prependAll(7,8)
                     .insertAt(4,9,10)
                     .deleteBetween(1,2)
                 .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(11L));
@@ -93,7 +92,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
     @Test
     public void prependAppendInsertAtAll(){
 
-        assertThat(of(1).prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,Arrays.asList(9,10)).deleteBetween(1,2)
+        assertThat(of(1).prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,Arrays.asList(9,10)).deleteBetween(1,2)
                 .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(11L));
     }
     @Test

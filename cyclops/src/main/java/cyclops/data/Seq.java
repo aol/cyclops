@@ -263,7 +263,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         return l.visit(c->c.head,n->alt.get());
     }
-    default Seq<T> appendAll(T value){
+    default Seq<T> append(T value){
         return Seq.of(value).prependAll(this);
     }
     default Seq<T> appendAll(Iterable<? extends T> it){

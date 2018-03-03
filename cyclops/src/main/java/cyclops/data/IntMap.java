@@ -5,8 +5,6 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.intMap;
@@ -168,8 +166,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return unitStream(stream().prependAll(value));
     }
 
-    @Override
-    public IntMap<T> appendAll(T value) {
+    public IntMap<T> append(T value) {
         return this.plus(value);
     }
 
@@ -807,7 +804,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         }
 
         @Override
-        public ImmutableList<T> appendAll(T value) {
+        public ImmutableList<T> append(T value) {
             return empty();
         }
 
@@ -950,7 +947,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             IntMap<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = res.appendAll(n);
+                res = IntMap.this.append(n);
             }
             v=res;
         }

@@ -241,7 +241,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     }
 
 
-    public TrieSet<T> appendAll(T append) {
+    public TrieSet<T> append(T append) {
         return add(append);
     }
 

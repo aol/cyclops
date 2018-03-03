@@ -195,7 +195,7 @@ public class Topic<T> implements Adapter<T> {
 
         @Synchronized("lock")
         public void addQueue(final Queue<T> q) {
-            subscribers = subscribers.appendAll(q);
+            subscribers = subscribers.append(q);
         }
 
         @Synchronized("lock")

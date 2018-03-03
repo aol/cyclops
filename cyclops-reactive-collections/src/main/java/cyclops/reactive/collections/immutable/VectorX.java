@@ -10,8 +10,6 @@ import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPVectorX;
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.ReactiveReducers;
 import cyclops.control.Future;
@@ -1148,8 +1146,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default VectorX<T> appendAll(T value) {
-        return (VectorX<T>)LazyCollectionX.super.appendAll(value);
+    default VectorX<T> append(T value) {
+        return (VectorX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

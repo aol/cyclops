@@ -8,8 +8,6 @@ import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.anym.transformers.FoldableTransformerSeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -796,8 +794,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> appendAll(T value) {
-        return (StreamT) FoldableTransformerSeq.super.appendAll(value);
+    public StreamT<W,T> append(T value) {
+        return (StreamT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

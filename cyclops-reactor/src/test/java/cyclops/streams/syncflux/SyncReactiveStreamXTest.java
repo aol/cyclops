@@ -20,9 +20,6 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.LockSupport;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -380,7 +377,7 @@ public  class SyncReactiveStreamXTest {
 	}
 	@Test
 	public void append(){
-		List<String> result = 	of(1,2,3).append(100,200,300)
+		List<String> result = 	of(1,2,3).appendAll(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 		assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));

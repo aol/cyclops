@@ -1,18 +1,15 @@
 package com.oath.cyclops.reactor.adapter;
 
-import com.oath.cyclops.types.anyM.AnyMSeq;
+
 import com.oath.cyclops.types.stream.HeadAndTail;
 
-import cyclops.collections.immutable.VectorX;
-import cyclops.collections.mutable.ListX;
 import cyclops.control.*;
 
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness.reactiveSeq;
 import cyclops.monads.Witness.stream;
-import cyclops.monads.transformers.ListT;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
@@ -68,9 +65,9 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U, R> ReactiveSeq<R> zipS(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ReactiveSeq<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
         if(other instanceof Publisher){
-            return zipP((Publisher<U>)other,zipper);
+            return zip(zipper,(Publisher<U>)other);
         }
         return flux(flux.zipWithIterable(ReactiveSeq.fromStream((Stream<U>)other),zipper));
     }
@@ -81,12 +78,12 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U, R> ReactiveSeq<R> zipP(Publisher<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
+    public <U, R> ReactiveSeq<R> zip(BiFunction<? super T, ? super U, ? extends R> zipper,Publisher<? extends U> other) {
         return flux(flux.zipWith(other,zipper));
     }
 
     @Override
-    public <U> ReactiveSeq<Tuple2<T, U>> zipP(Publisher<? extends U> other) {
+    public <U> ReactiveSeq<Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {
         return flux(flux.zipWith(other,Tuple::tuple));
     }
 
@@ -146,11 +143,11 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U> ReactiveSeq<Tuple2<T, U>> zipS(Stream<? extends U> other) {
+    public <U> ReactiveSeq<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
         if(other instanceof Publisher){
-            return zipP((Publisher<U>)other);
+            return zipWithPublisher((Publisher<U>)other);
         }
-        return zipS(other,Tuple::tuple);
+        return zipWithStream(other,Tuple::tuple);
     }
 
     @Override
@@ -405,13 +402,9 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
         return Spouts.from(flux).reduce(identity, accumulator, combiner);
     }
 
-    @Override
-    public ListX<T> reduce(Stream<? extends Monoid<T>> reducers) {
-        return Spouts.from(flux).reduce(reducers);
-    }
 
     @Override
-    public ListX<T> reduce(Iterable<? extends Monoid<T>> reducers) {
+    public Seq<T> reduce(Iterable<? extends Monoid<T>> reducers) {
         return Spouts.from(flux).reduce(reducers);
     }
 
@@ -450,10 +443,7 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
         return Spouts.from(flux).startsWith(stream);
     }
 
-    @Override
-    public AnyMSeq<reactiveSeq, T> anyM() {
-        return AnyM.fromStream(this);
-    }
+
 
     @Override
     public <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn) {
@@ -480,25 +470,22 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
         return Spouts.from(flux).flatMapToDouble(mapper);
     }
 
-    @Override
-    public <R> ReactiveSeq<R> flatMapAnyM(Function<? super T, AnyM<stream, ? extends R>> fn) {
-        return flux(flux.flatMap(fn));
-    }
+
 
     @Override
-    public <R> ReactiveSeq<R> flatMapI(Function<? super T, ? extends Iterable<? extends R>> fn) {
+    public <R> ReactiveSeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
         return flux(flux.flatMapIterable(fn));
     }
 
 
 
     @Override
-    public <R> ReactiveSeq<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public <R> ReactiveSeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return flux(flux.flatMap(fn));
     }
 
     @Override
-    public <R> ReactiveSeq<R> flatMapP(int maxConcurrency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+    public <R> ReactiveSeq<R> mergeMap(int maxConcurrency, Function<? super T, ? extends Publisher<? extends R>> fn) {
         return flux(flux.flatMap(fn,maxConcurrency));
     }
 
@@ -559,18 +546,18 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> prependS(Stream<? extends T> stream) {
-        return flux(Spouts.from(flux).prependS(stream));
+    public ReactiveSeq<T> prependStream(Stream<? extends T> stream) {
+        return flux(Spouts.from(flux).prependStream(stream));
     }
 
     @Override
-    public ReactiveSeq<T> append(T... values) {
-        return flux(Spouts.from(flux).append(values));
+    public ReactiveSeq<T> appendAll(T... values) {
+        return flux(this.appendAll(values));
     }
 
     @Override
     public ReactiveSeq<T> append(T value) {
-        return flux(Spouts.from(flux).append(value));
+        return flux(this.append(value));
     }
 
     @Override
@@ -686,18 +673,18 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> appendS(Stream<? extends T> other) {
-        return flux(Spouts.from(flux).appendS(other));
+    public ReactiveSeq<T> appendStream(Stream<? extends T> other) {
+        return flux(Spouts.from(flux).appendStream(other));
     }
 
     @Override
-    public ReactiveSeq<T> append(Iterable<? extends T> other) {
-        return  flux(Spouts.from(flux).append(other));
+    public ReactiveSeq<T> appendAll(Iterable<? extends T> other) {
+        return  flux(Spouts.from(flux).appendAll(other));
     }
 
     @Override
-    public ReactiveSeq<T> prepend(Iterable<? extends T> other) {
-        return flux(Spouts.from(flux).prepend(other));
+    public ReactiveSeq<T> prependAll(Iterable<? extends T> other) {
+        return flux(Spouts.from(flux).prependAll(other));
     }
 
     @Override
@@ -805,36 +792,6 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
                          Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
         return reactiveStreams.apply(this);
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> groupedT(int groupSize) {
-        return ListT.fromStream(grouped(groupSize));
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> slidingT(int windowSize, int increment) {
-        return ListT.fromStream(sliding(windowSize,increment));
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> slidingT(int windowSize) {
-        return ListT.fromStream(sliding(windowSize));
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> groupedUntilT(Predicate<? super T> predicate) {
-        return ListT.fromStream(groupedUntil(predicate));
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> groupedStatefullyUntilT(BiPredicate<ListX<? super T>, ? super T> predicate) {
-        return ListT.fromStream(groupedStatefullyWhile(predicate));
-    }
-
-    @Override
-    public ListT<reactiveSeq, T> groupedWhileT(Predicate<? super T> predicate) {
-        return ListT.fromStream(groupedWhile(predicate));
     }
 
 

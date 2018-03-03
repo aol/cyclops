@@ -1,6 +1,5 @@
 package com.oath.anym.transformers;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +20,6 @@ import cyclops.function.Function4;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
-import cyclops.reactive.collections.immutable.VectorX;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -29,7 +27,6 @@ import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.WitnessType;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
@@ -59,8 +56,8 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
     @Override
-    default TransformerSeq<W,T> appendAll(T value){
-        return unitAnyM(transformerStream().map(s -> s.appendAll(value)));
+    default TransformerSeq<W,T> append(T value){
+        return unitAnyM(transformerStream().map(s -> s.append(value)));
     }
 
     @Override

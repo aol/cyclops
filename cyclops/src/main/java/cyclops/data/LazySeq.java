@@ -474,7 +474,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                         cons.foldRight(this,(a,b)->b.prepend(a))
                 ,nil->this);
     }
-    default LazySeq<T> appendAll(T append) {
+    default LazySeq<T> append(T append) {
         return appendAll(LazySeq.of(append));
 
     }

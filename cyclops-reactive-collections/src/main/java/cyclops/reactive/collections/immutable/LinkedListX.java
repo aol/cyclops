@@ -7,8 +7,6 @@ import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyLinkedLis
 import com.oath.cyclops.data.collections.extensions.standard.LazyCollectionX;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.ReactiveReducers;
 import cyclops.control.Future;
@@ -1171,8 +1169,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default LinkedListX<T> appendAll(T value) {
-        return (LinkedListX<T>)LazyCollectionX.super.appendAll(value);
+    default LinkedListX<T> append(T value) {
+        return (LinkedListX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

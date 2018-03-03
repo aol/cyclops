@@ -351,7 +351,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
 
-    public TreeSet<T> appendAll(T append) {
+    public TreeSet<T> append(T append) {
         return add(append);
     }
 

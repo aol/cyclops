@@ -633,8 +633,8 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     }
 
     @Override
-    public SeqT<W,T> appendAll(T value) {
-        return (SeqT) FoldableTransformerSeq.super.appendAll(value);
+    public SeqT<W,T> append(T value) {
+        return (SeqT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override
