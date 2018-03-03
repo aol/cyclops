@@ -8,7 +8,7 @@
 * [Javadoc for cyclops-reactive-collections](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-reactive-collections)
 
 
-## Enhanced performance
+## Enhanced performance via laziness
 
 Chaining combinator operations on traditional functional datastructures such as the core persistent data structures provided in cyclops.data (or in Vavr or the Scala SDK) results in traversing the datastructure multiple times, once per combinator operation.
 
