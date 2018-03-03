@@ -2,7 +2,7 @@ package com.oath.anym.internal.adapters;
 
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Option;
@@ -14,14 +14,13 @@ import cyclops.monads.Witness.lazyEither3;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static cyclops.monads.Witness.lazyEither3;
 
 @AllArgsConstructor
-public class LazyEither3Adapter extends AbstractFunctionalAdapter<lazyEither3> implements ValueAdapter<lazyEither3> {
+public class LazyEither3Adapter extends AbstractMonadAdapter<lazyEither3> implements ValueAdapter<lazyEither3> {
 
 
 

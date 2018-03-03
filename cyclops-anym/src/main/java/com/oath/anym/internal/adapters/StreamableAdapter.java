@@ -13,12 +13,12 @@ import cyclops.monads.AnyM;
 import cyclops.reactive.Streamable;
 import cyclops.monads.Witness;
 
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class StreamableAdapter extends AbstractFunctionalAdapter<streamable> {
+public class StreamableAdapter extends AbstractMonadAdapter<streamable> {
 
     private final Supplier<Streamable<?>> empty;
     private final Function<?,Streamable<?>> unit;

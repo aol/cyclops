@@ -16,10 +16,10 @@ import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 import cyclops.monads.Witness;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 
 
-public class StreamAdapter<W extends Witness.StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
+public class StreamAdapter<W extends Witness.StreamWitness<W>> extends AbstractMonadAdapter<W> {
 
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;

@@ -2,7 +2,7 @@ package com.oath.anym.internal.adapters;
 
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Ior;
@@ -13,12 +13,11 @@ import cyclops.monads.Witness.ior;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 @AllArgsConstructor
-public class IorAdapter extends AbstractFunctionalAdapter<ior> implements ValueAdapter<ior> {
+public class IorAdapter extends AbstractMonadAdapter<ior> implements ValueAdapter<ior> {
 
 
 

@@ -7,7 +7,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 
 
-public abstract class  AbstractFunctionalAdapter<W extends WitnessType<W>>  implements MonadAdapter<W> {
+public abstract class AbstractMonadAdapter<W extends WitnessType<W>>  implements MonadAdapter<W> {
 
     @Override
     public abstract <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T,? extends R>> fn, AnyM<W, T> apply);
