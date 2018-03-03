@@ -1,7 +1,7 @@
 package com.oath.anym.internal.adapters;
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Option;
@@ -12,7 +12,6 @@ import cyclops.monads.Witness.either;
 import lombok.AllArgsConstructor;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -20,7 +19,7 @@ import static cyclops.monads.AnyM.fromEither;
 import static cyclops.monads.Witness.either;
 
 @AllArgsConstructor
-public class EitherAdapter extends AbstractFunctionalAdapter<either> implements ValueAdapter<either> {
+public class EitherAdapter extends AbstractMonadAdapter<either> implements ValueAdapter<either> {
 
 
   @Override

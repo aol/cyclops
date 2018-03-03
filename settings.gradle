@@ -4,4 +4,5 @@ include ':cyclops-anym'
 include 'cyclops-futurestream'
 include 'cyclops-pure'
 include 'cyclops-reactive-collections'
+include 'cyclops-reactor'
 

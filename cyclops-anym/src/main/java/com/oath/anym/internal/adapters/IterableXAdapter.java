@@ -13,12 +13,12 @@ import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.monads.AnyM;
 
 import cyclops.monads.Witness;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends AbstractFunctionalAdapter<W> {
+public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends AbstractMonadAdapter<W> {
 
     private final Supplier<IterableX<?>> empty;
     private final Function<?,IterableX<?>> unit;

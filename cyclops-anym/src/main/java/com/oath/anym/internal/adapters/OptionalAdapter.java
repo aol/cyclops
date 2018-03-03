@@ -5,7 +5,6 @@ import static cyclops.monads.Witness.optional;
 
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -16,14 +15,14 @@ import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
 import cyclops.monads.Witness;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.companion.Optionals;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class OptionalAdapter extends AbstractFunctionalAdapter<optional> implements ValueAdapter<optional> {
+public class OptionalAdapter extends AbstractMonadAdapter<optional> implements ValueAdapter<optional> {
 
     private final Supplier<Optional<?>> empty;
     private final Function<?,Optional<?>> unit;

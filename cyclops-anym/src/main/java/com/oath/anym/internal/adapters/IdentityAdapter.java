@@ -1,22 +1,20 @@
 package com.oath.anym.internal.adapters;
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Identity;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.identity;
 
 import java.util.Iterator;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import static cyclops.monads.Witness.identity;
 
 
-public class IdentityAdapter extends AbstractFunctionalAdapter<identity> implements ValueAdapter<identity> {
+public class IdentityAdapter extends AbstractMonadAdapter<identity> implements ValueAdapter<identity> {
 
     @Override
     public <T, R> AnyM<identity, R> map(AnyM<identity, T> t, Function<? super T, ? extends R> fn) {

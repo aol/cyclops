@@ -15,14 +15,14 @@ import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.control.Future;
 import cyclops.monads.Witness;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.companion.CompletableFutures;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class FutureAdapter extends AbstractFunctionalAdapter<completableFuture> implements ValueAdapter<completableFuture> {
+public class FutureAdapter extends AbstractMonadAdapter<completableFuture> implements ValueAdapter<completableFuture> {
 
     private final Supplier<CompletableFuture<?>> empty;
     private final Function<?,CompletableFuture<?>> unit;

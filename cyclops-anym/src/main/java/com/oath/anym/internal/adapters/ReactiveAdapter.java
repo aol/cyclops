@@ -1,7 +1,7 @@
 package com.oath.anym.internal.adapters;
 
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.StreamWitness;
@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import static cyclops.monads.AnyM.fromStream;
 
 @AllArgsConstructor
-public class ReactiveAdapter<W extends StreamWitness<W>> extends  AbstractFunctionalAdapter<W> {
+public class ReactiveAdapter<W extends StreamWitness<W>> extends AbstractMonadAdapter<W> {
 
     private final Supplier<Stream<?>> empty;
     private final Function<?,Stream<?>> unit;

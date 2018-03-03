@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 import com.oath.anym.AnyMValue;
 import com.oath.cyclops.types.MonadicValue;
 
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
@@ -22,7 +22,7 @@ import com.oath.anym.extensability.ValueAdapter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> extends AbstractFunctionalAdapter<W> implements ValueAdapter<W> {
+public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> extends AbstractMonadAdapter<W> implements ValueAdapter<W> {
 
     private final Supplier<MonadicValue<?>> empty;
     private final Function<?,MonadicValue<?>> unit;

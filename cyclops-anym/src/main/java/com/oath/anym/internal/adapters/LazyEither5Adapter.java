@@ -2,7 +2,7 @@ package com.oath.anym.internal.adapters;
 
 
 import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.AbstractFunctionalAdapter;
+import com.oath.anym.extensability.AbstractMonadAdapter;
 import com.oath.anym.extensability.MonadAdapter;
 import com.oath.anym.extensability.ValueAdapter;
 import cyclops.control.Option;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @AllArgsConstructor
-public class LazyEither5Adapter extends AbstractFunctionalAdapter<lazyEither5> implements ValueAdapter<lazyEither5> {
+public class LazyEither5Adapter extends AbstractMonadAdapter<lazyEither5> implements ValueAdapter<lazyEither5> {
 
 
 
