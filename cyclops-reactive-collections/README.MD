@@ -33,10 +33,12 @@ VectorX.of(1,2,3)
 ```
 VectorX in contrast to a raw Vector traverses the underlying data structure just once.
 
-### Performance improvement for Vavr's Vector when using Cyclops VectorX
+### Performance improvement for Vavr's Vector when used with Cyclops VectorX
 
 Lower score is better
 
+Raw Vavr Vector is on the left.
+Vavr Vector with Cyclops VectorX is on the right.
 <img width="553" alt="screen shot 2018-03-01 at 15 14 43" src="https://user-images.githubusercontent.com/9964792/36852335-4e02c0a2-1d63-11e8-9a81-ec600ee39c30.png">
 
 
