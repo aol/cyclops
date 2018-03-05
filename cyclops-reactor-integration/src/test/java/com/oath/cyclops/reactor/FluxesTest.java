@@ -1,28 +1,25 @@
 package com.oath.cyclops.reactor;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
 import com.oath.cyclops.reactor.adapter.FluxReactiveSeq;
-import cyclops.collections.mutable.ListX;
 import cyclops.companion.reactor.Fluxs;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.monads.AnyM;
+import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.StreamT;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
-
-
-
 import reactor.core.publisher.Flux;
 
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class FluxesTest {
 
@@ -33,7 +30,7 @@ public class FluxesTest {
     @Test
     public void fluxifyTest(){
 
-        StreamT<optional,Integer> streamT = ReactiveSeq.of(1,2,3).liftM(optional.INSTANCE);
+        StreamT<optional,Integer> streamT = AnyMs.liftM(ReactiveSeq.of(1,2,3),optional.INSTANCE);
         StreamT<optional,Integer> fluxes = Fluxs.fluxify(streamT);
         AnyM<optional, Stream<Integer>> anyM = fluxes.unwrap();
         Optional<Stream<Integer>> opt = Witness.optional(anyM);

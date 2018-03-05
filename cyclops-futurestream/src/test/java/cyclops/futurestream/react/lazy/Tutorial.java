@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.react.threads.SequentialElasticPools;
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.data.HashMap;
 import cyclops.data.Seq;

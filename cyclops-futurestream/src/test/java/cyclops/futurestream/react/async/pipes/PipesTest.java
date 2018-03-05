@@ -16,14 +16,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 import com.oath.cyclops.types.reactive.QueueBasedSubscriber;
-import cyclops.control.Future;
+import cyclops.control.*;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.Pipes;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.control.Maybe;
-import cyclops.control.Option;
-import cyclops.control.Try;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
