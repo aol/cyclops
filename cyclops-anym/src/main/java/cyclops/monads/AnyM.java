@@ -35,7 +35,6 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.companion.Streams;
 import cyclops.control.*;
 import cyclops.data.*;
 import cyclops.data.HashSet;
@@ -621,7 +620,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         if(stream instanceof ReactiveStreamX) {
             return AnyMFactory.instance.seq(stream, reactiveSeq.REACTIVE);
         }else{
-            return AnyMFactory.instance.seq(stream, reactiveSeq.CO_REACTIVE);
+            return AnyMFactory.instance.seq(stream, reactiveSeq.ITERATIVE);
         }
 
     }

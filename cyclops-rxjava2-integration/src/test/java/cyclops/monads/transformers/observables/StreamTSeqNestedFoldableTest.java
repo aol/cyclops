@@ -1,8 +1,9 @@
 package cyclops.monads.transformers.observables;
 
 
-import com.oath.cyclops.types.anyM.transformers.FoldableTransformerSeq;
+import com.oath.anym.transformers.FoldableTransformerSeq;
 import cyclops.companion.rx2.Observables;
+import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import cyclops.monads.transformers.AbstractNestedFoldableTest;
 
@@ -11,12 +12,12 @@ public class StreamTSeqNestedFoldableTest extends AbstractNestedFoldableTest<Wit
 
     @Override
     public <T> FoldableTransformerSeq<Witness.list,T> of(T... elements) {
-        return  Observables.just(elements).liftM(Witness.list.INSTANCE);
+        return  AnyMs.liftM(Observables.just(elements),Witness.list.INSTANCE);
     }
 
     @Override
     public <T> FoldableTransformerSeq<Witness.list,T> empty() {
-        return  Observables.<T>empty().liftM(Witness.list.INSTANCE);
+        return  AnyMs.liftM(Observables.<T>empty(),Witness.list.INSTANCE);
     }
 
 }

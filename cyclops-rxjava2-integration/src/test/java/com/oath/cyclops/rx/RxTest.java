@@ -1,26 +1,22 @@
 package com.oath.cyclops.rx;
 
-import static cyclops.collections.mutable.ListX.listX;
-import static cyclops.companion.rx2.Observables.reactiveSeq;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import com.oath.cyclops.types.anyM.AnyMSeq;
-import cyclops.monads.Rx2Witness.observable;
-
-import cyclops.collections.mutable.ListX;
+import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.rx2.Observables;
+import cyclops.monads.Rx2Witness.observable;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.mutable.ListX;
 import io.reactivex.Observable;
 import org.junit.Test;
-
-
-
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
+
+import static cyclops.companion.rx2.Observables.reactiveSeq;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 public class RxTest {
     @Test
@@ -36,9 +32,9 @@ public class RxTest {
 
 
         Observable<Integer> async =  Observables.fromStream(Spouts.async(Stream.of(100,200,300), Executors.newFixedThreadPool(1)))
-                                                .doOnComplete(()->complete.set(true));
+            .doOnComplete(()->complete.set(true));
 
-        ListX<Integer> asyncList = listX(reactiveSeq(async))
+        ListX<Integer> asyncList = ListX.listX(reactiveSeq(async))
                                         .map(i->i+1);
 
         System.out.println("Blocked? " + complete.get());
@@ -76,7 +72,7 @@ public class RxTest {
     @Test
     public void observable() {
         assertThat(Observables.anyM(Observable.just(1, 2, 3))
-                            .toListX(),
+                              .to(ReactiveConvertableSequence::converter).listX(),
                    equalTo(ListX.of(1, 2, 3)));
     }
 
@@ -84,7 +80,7 @@ public class RxTest {
     public void observableFlatMap() {
         assertThat(Observables.anyM(Observable.just(1, 2, 3))
                             .flatMap(a -> Observables.anyM(Observable.just(a + 10)))
-                            .toListX(),
+                            .to(ReactiveConvertableSequence::converter).listX(),
                    equalTo(ListX.of(11, 12, 13)));
     }
 
