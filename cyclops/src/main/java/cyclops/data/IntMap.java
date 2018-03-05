@@ -166,9 +166,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return unitStream(stream().prependAll(value));
     }
 
-    public IntMap<T> append(T value) {
-        return this.plus(value);
-    }
+
 
     @Override
     public IntMap<T> appendAll(Iterable<? extends T> value) {
@@ -795,7 +793,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
         @Override
         public ImmutableList<T> append(T value) {
-            return plus(value);
+            return of(value);
         }
 
         @Override
@@ -803,10 +801,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             return empty();
         }
 
-        @Override
-        public ImmutableList<T> append(T value) {
-            return empty();
-        }
+
 
         @Override
         public ImmutableList<T> appendAll(Iterable<? extends T> value) {
@@ -947,7 +942,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             IntMap<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = IntMap.this.append(n);
+                res =  res.append(n);
             }
             v=res;
         }

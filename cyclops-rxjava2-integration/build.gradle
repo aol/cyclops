@@ -1,0 +1,115 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'maven-publish'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+
+    }
+}
+
+sourceCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Cyclops Rx Java 2', 'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+
+}
+
+configurations {
+    provided
+}
+
+dependencies {
+    compile project(':cyclops')
+    compile project(':cyclops-anym')
+    compile project(':cyclops-futurestream')
+    compile project(':cyclops-reactive-collections')
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'
+    provided group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+
+    testCompile 'io.projectreactor:reactor-core:' + reactorVersion
+    testCompile 'commons-io:commons-io:2.4'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+    testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
+    testCompile 'org.assertj:assertj-core:3.2.0'
+    testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
+}
+
+sourceSets {
+    main.compileClasspath += [configurations.provided]
+    test.compileClasspath += [configurations.provided]
+    test.runtimeClasspath += [configurations.provided]
+}
+
+eclipse.classpath.plusConfigurations += [configurations.provided]  // Eclipse users only
+
+test {
+    systemProperties 'property': 'value'
+    forkEvery = 1
+    //maxParallelForks = Runtime.runtime.availableProcessors()
+    testLogging {
+        events "started", "passed", "skipped", "failed"//, "standardOut", "standardError"
+    }
+}
+
+modifyPom {
+    project {
+        name 'cyclops-rxjava2'
+        description 'Cyclops integration with RxJava 2'
+        url 'https://github.com/oath/cyclops'
+        inceptionYear '2017'
+
+        groupId 'com.oath.cyclops'
+        artifactId 'cyclops-rx2-integration'
+        version "$version"
+
+        scm {
+            url 'ssh://git@github.com:aol/cyclops.git'
+            connection 'ssh://git@github.com:aol/cyclops.git'
+            developerConnection 'ssh://git@github.com:aol/cyclops.git'
+        }
+
+        licenses {
+            license {
+                name 'The MIT License (MIT)'
+                url 'https://github.com/aol/cyclops/blob/master/licence.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'johnmcclean'
+                name 'John McClean'
+                email 'john.mcclean@oath.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    tests = true
+    javadoc = true
+}
+
+nexus {
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots'
+}

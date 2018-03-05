@@ -3128,10 +3128,10 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                      .groupedUntil(predicate));
     }
     @Override
-    default <C extends PersistentCollection<U>,R> FutureStream<R> groupedStatefullyUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
-                                                                      Function<? super C, ? extends R> finalizer){
+    default <C extends PersistentCollection<U>,R> FutureStream<R> groupedUntil(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
+                                                                               Function<? super C, ? extends R> finalizer){
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                .groupedStatefullyUntil(predicate,factory,finalizer));
+                .groupedUntil(predicate,factory,finalizer));
 
     }
     default FutureStream<Vector<U>> groupedWhile(final BiPredicate<Vector<? super U>, ? super U> predicate) {
@@ -3142,7 +3142,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     default <C extends PersistentCollection<U>,R> FutureStream<R> groupedWhile(final BiPredicate<C, ? super U> predicate, final Supplier<C> factory,
                                                                                Function<? super C, ? extends R> finalizer){
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                .groupedStatefullyUntil(predicate,factory,finalizer));
+                .groupedUntil(predicate,factory,finalizer));
 
     }
     /*

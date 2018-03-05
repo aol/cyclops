@@ -434,9 +434,6 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return fromLazySeq(string.prependAll(value)) ;
     }
 
-    public LazyString append(Character value) {
-        return fromLazySeq(this.append(value)) ;
-    }
 
     @Override
     public LazyString appendAll(Iterable<? extends Character> value) {
