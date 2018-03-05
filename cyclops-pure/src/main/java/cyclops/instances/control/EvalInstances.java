@@ -5,6 +5,7 @@ import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Function3;

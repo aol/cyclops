@@ -5,6 +5,7 @@ import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.Value;
 import cyclops.companion.Futures;
 import cyclops.control.Either;
+import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;

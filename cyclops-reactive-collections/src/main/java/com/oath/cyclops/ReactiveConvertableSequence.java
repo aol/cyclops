@@ -6,6 +6,7 @@ import com.oath.cyclops.types.Value;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.companion.Streams;
+import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;

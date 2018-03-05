@@ -1,6 +1,7 @@
 package cyclops.monads.anym;
 
 import cyclops.companion.Optionals;
+import cyclops.control.Eval;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.*;
 import static org.hamcrest.Matchers.equalTo;
