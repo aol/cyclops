@@ -684,11 +684,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 evaluate = Trampoline.more(()->Trampoline.done(memo.get()));
             }
 
-
+            @Override
+            public <R> Eval<R> map(Function<? super T, ? extends R> mapper) {
+                return flatMap(i->Eval.later(()-> mapper.apply(i)));
+            }
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                Rec<T, R> rec = new Rec<T, R>(this, mapper);
+                Function<? super T, ? extends MonadicValue<? extends R>> memod = Memoize.memoizeFunction(mapper);
+                Rec<T, R> rec = new Rec<T, R>(this, memod);
                 return new Later<R>(
                     rec);
             }
