@@ -681,7 +681,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
             Later(Supplier<T> s){
                 memo = Memoize.memoizeSupplier(s);
-                evaluate = Trampoline.more(()->Trampoline.done(s.get()));
+                evaluate = Trampoline.more(()->Trampoline.done(memo.get()));
             }
 
 
