@@ -36,7 +36,7 @@ public class StreamAdapter<W extends Witness.StreamWitness<W>> extends AbstractM
 
     public final static StreamAdapter stream = new StreamAdapter( ()->Stream.of(), t->Stream.of(t), it-> (Stream)Streams.stream(()->(Iterator)it),Witness.stream.INSTANCE);
 
-    public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.CO_REACTIVE);
+    public final static StreamAdapter reactiveSeq = new StreamAdapter(()->ReactiveSeq.of(),t->ReactiveSeq.of(t),it->(Stream)ReactiveSeq.fromIterator((Iterator)it),Witness.reactiveSeq.ITERATIVE);
 
     public final static StreamAdapter futureStream = new StreamAdapter(()->FutureStream.builder().of(),t->FutureStream.builder().of(t),it->(Stream)FutureStream.builder().from((Iterator)it),Witness.futureStream.INSTANCE);
 

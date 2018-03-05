@@ -1,33 +1,28 @@
 package cyclops.monads.transformers;
 
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.mixins.Printable;
-
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.collections.immutable.LinkedListX;
-import cyclops.collections.mutable.ListX;
+import cyclops.ReactiveReducers;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-
 import cyclops.control.Trampoline;
-import cyclops.control.Try;
-import cyclops.control.Either;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.rx2.MaybeT;
-import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.ListX;
 import io.reactivex.Maybe;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static cyclops.control.Option.some;
@@ -107,8 +102,8 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testStream() {
-		assertThat(just.stream().toListX(),equalTo(ListX.of(10)));
-		assertThat(none.stream().toListX(),equalTo(ListX.of()));
+		assertThat(just.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(10)));
+		assertThat(none.stream().to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of()));
 	}
 
 	@Test
@@ -179,7 +174,7 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.mapReduce(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
@@ -208,14 +203,8 @@ public class MaybeTTest implements Printable {
 	}
 
 	@Test
-	public void testReduceStreamOfQextendsMonoidOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Stream.of(Reducers.toCountInt(), Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
-	}
-
-	@Test
 	public void testReduceIterableOfReducerOfT() {
-		ListX<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
+		Seq<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
 	}
 
@@ -233,7 +222,7 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(Reducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldRightMapToType(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 

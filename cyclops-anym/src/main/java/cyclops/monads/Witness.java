@@ -175,7 +175,7 @@ public interface Witness {
     }
     public static enum reactiveSeq implements StreamWitness<reactiveSeq>{
 
-        REACTIVE,CO_REACTIVE;
+        REACTIVE, ITERATIVE;
 
         @Override
         public MonadAdapter<reactiveSeq> adapter() {

@@ -80,7 +80,7 @@ public class ReactiveAdapter<W extends StreamWitness<W>> extends AbstractMonadAd
     public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
 
         if(it instanceof ReactiveSeq){
-            W witnessToUse = it instanceof ReactiveStreamX ? witness : (W)Witness.reactiveSeq.CO_REACTIVE;
+            W witnessToUse = it instanceof ReactiveStreamX ? witness : (W)Witness.reactiveSeq.ITERATIVE;
             return fromStream((ReactiveSeq<T>)it,witnessToUse);
         }
         if(it instanceof Publisher){
