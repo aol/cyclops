@@ -139,8 +139,14 @@ public class ActiveTest {
         Higher<option, Higher<list, Integer>> res = active
                 .<option,Integer>flatTraverse(applicative(), t->Maybe.just(ListX.of(t*2)));
 
+        System.out.println(active);
+        System.out.println(res);
+        System.out.println(res);
+        System.out.println(res);
+
         Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)
-                                       .map(ListX::narrowK);
+            .map(ListX::narrowK);
+        System.out.println(raw);
         assertThat(raw,equalTo(Maybe.just(ListX.of(2,4,6))));
     }
 
