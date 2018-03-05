@@ -722,10 +722,6 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     public ListX<T> subList(int start, int end);
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#plus(java.lang.Object)
-     */
-    @Override
     default ListX<T> plus(final T e) {
         add(e);
         return this;

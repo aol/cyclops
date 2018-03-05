@@ -3,6 +3,7 @@ package cyclops.reactive.collections.standard;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.control.Maybe;
 import cyclops.reactive.collections.CollectionXTestsWithNulls;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -37,6 +38,14 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertEquals(of("x", "b", "c"), ListX.of("a", "b", "c").updateAt(0, "x"));
         assertEquals(of("a", "x", "c"), ListX.of("a", "b", "c").updateAt(1, "x"));
         assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").updateAt(2, "x"));
+    }
+
+    @Test
+    public void maybe() {
+        Maybe<ListX<Integer>> m = Maybe.just(ListX.of(1, 2, 3));
+        m = m.flatMap(l->Maybe.just(l.concatMap(i->ListX.of(i*2))));
+        System.out.println(m);
+        System.out.println(m);
     }
 
     int times =0;

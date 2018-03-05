@@ -689,7 +689,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
                 Rec<T, R> rec = new Rec<T, R>(this, mapper);
-                return new Always<R>(
+                return new Later<R>(
                     rec);
             }
             @Override
