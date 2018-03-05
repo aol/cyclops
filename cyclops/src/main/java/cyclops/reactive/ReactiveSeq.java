@@ -1422,7 +1422,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *    ReactiveSeq.of(1,2,3,4,5,6)
-     *               .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
+     *               .groupedUntil((s,i)-> s.contains(4) ? true : false)
      *               .toList()
      *               .size()
      *     //5
@@ -1435,7 +1435,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     ReactiveSeq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate);
-    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                       Function<? super C, ? extends R> finalizer);
     ReactiveSeq<Vector<T>> groupedWhile(BiPredicate<Vector<? super T>, ? super T> predicate);
     <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,

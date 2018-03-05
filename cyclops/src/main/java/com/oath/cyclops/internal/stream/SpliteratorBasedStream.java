@@ -194,8 +194,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate.negate()), this.reversible);
     }
     @Override
-    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
-                                                        Function<? super C, ? extends R> finalizer) {
+    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                                             Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate.negate()), this.reversible);
     }
 

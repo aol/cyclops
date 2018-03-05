@@ -702,7 +702,7 @@ public class Vector<T> implements ImmutableList<T>,
             Vector<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = Vector.this.append(n);
+                res = res.append(n);
             }
             v=res;
         }
@@ -774,10 +774,6 @@ public class Vector<T> implements ImmutableList<T>,
         return unitStream(stream().prepend(value));
     }
 
-    @Override
-    public Vector<T> append(T value) {
-        return plus(value);
-    }
 
     @Override
     public Vector<T> prependAll(Iterable<? extends T> value) {
@@ -921,10 +917,7 @@ public class Vector<T> implements ImmutableList<T>,
             return empty();
         }
 
-        @Override
-        public ImmutableList<T> append(T value) {
-            return empty();
-        }
+
 
         @Override
         public ImmutableList<T> appendAll(Iterable<? extends T> value) {

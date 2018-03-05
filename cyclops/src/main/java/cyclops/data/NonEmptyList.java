@@ -127,10 +127,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return cons(value, lazySeq());
     }
 
-    @Override
-    public NonEmptyList<T> append(T value) {
-        return insertAt(Math.max(0, size()),value);
-    }
 
     @Override
     public NonEmptyList<T> replaceFirst(T currentElement, T newElement){
@@ -176,8 +172,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public ImmutableList<T> append(T value) {
-        return of(head, this.append(value));
+    public NonEmptyList<T> append(T value) {
+        return of(head, tail.append(value));
     }
 
     @Override
