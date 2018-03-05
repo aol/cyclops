@@ -1340,7 +1340,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * 		FutureStream.of(1,1,1,1,1,1)
-     * 						.grouped(3,()->new TreeSet<>())
+     * 						.grouped(3,()->TreeSet.empty())
      * 						.toList()
      *
      *   //[[1],[1]]
@@ -1512,7 +1512,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * <pre>
      * {@code
      * List <TreeSet<Integer>> set = FutureStream.ofThread(1,1,1,1,1,1)
-     *                                               .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+     *                                               .groupByTime(1500,TimeUnit.MICROSECONDS,()->TreeSet.empty())
      *                                               .block();
 
             assertThat(set.getValue(0).size(),is(1));

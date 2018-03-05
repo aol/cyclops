@@ -41,7 +41,7 @@ public class SyncRSExtensionOperatorsTest {
     public void combine(){
         assertThat(of(1,1,2,3)
                    .combine((a, b)->a.equals(b), Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3)));
+                   .to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(4,3)));
 
     }
 	@Test
@@ -326,8 +326,8 @@ public class SyncRSExtensionOperatorsTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
 	@Test
@@ -336,8 +336,8 @@ public class SyncRSExtensionOperatorsTest {
 												.map(i->i*2).to()
 												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	@Test
 	public void splitBy(){
@@ -416,7 +416,7 @@ public class SyncRSExtensionOperatorsTest {
 	}
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

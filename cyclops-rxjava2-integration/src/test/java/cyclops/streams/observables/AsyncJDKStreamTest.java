@@ -1,9 +1,10 @@
 package cyclops.streams.observables;
 
-import cyclops.collections.mutable.ListX;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.rx2.Observables;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
@@ -55,9 +56,9 @@ public class AsyncJDKStreamTest {
 
             assertThat(ListX.of(5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7, 5, 6, 7).size(),
                     equalTo(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
-                            .flatMapP(2,x -> rs(5, 6, 7)))
-                    .toListX().size()));
+                    .mergeMap(i -> of(i, i * 2, i * 4)
+                            .mergeMap(2,x -> rs(5, 6, 7)))
+                    .to(ReactiveConvertableSequence::converter).listX().size()));
 
         }
     }
@@ -69,9 +70,9 @@ public class AsyncJDKStreamTest {
             System.out.println("************Iteration " + l);
 
            System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> of(i, i * 2, i * 4)
-                            .flatMapP(x -> rs(5, 6, 7)))
-                    .toListX());
+                    .mergeMap(i -> of(i, i * 2, i * 4)
+                            .mergeMap(x -> rs(5, 6, 7)))
+                    .to(ReactiveConvertableSequence::converter).listX());
 
         }
     }
@@ -82,18 +83,18 @@ public class AsyncJDKStreamTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.rs(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-                    .flatMapP(i -> rs(i, i * 2, i * 4)
-                            .flatMapP(x -> rs(5, 6, 7)))
-                    .toListX());
+                    .mergeMap(i -> rs(i, i * 2, i * 4)
+                            .mergeMap(x -> rs(5, 6, 7)))
+                    .to(ReactiveConvertableSequence::converter).listX());
         }
     }
     @Test
     public void flatMapP3(){
         System.out.println(this.rs(1,2)
-                .flatMapP(i->rs(i,i*2,i*4)
-                        .flatMapP(x->rs(5,6,7)
-                        .flatMapP(y->rs(2,3,4))))
-                .toListX());
+                .mergeMap(i->rs(i,i*2,i*4)
+                        .mergeMap(x->rs(5,6,7)
+                        .mergeMap(y->rs(2,3,4))))
+                .to(ReactiveConvertableSequence::converter).listX());
     }
     @Test
     public void flatMapP2(){
@@ -102,9 +103,9 @@ public class AsyncJDKStreamTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.rs("1", "2")
-                    .flatMapP(i -> rs(1, 2,3))
-                      .flatMapP(x -> rs('a','b'))
-                    .toListX());
+                    .mergeMap(i -> rs(1, 2,3))
+                      .mergeMap(x -> rs('a','b'))
+                    .to(ReactiveConvertableSequence::converter).listX());
         }
     }
     @Test
@@ -114,9 +115,9 @@ public class AsyncJDKStreamTest {
             System.out.println("************Iteration " + l);
             System.out.println("************Iteration " + l);
             System.out.println(this.rs("1", "2","3")
-                    .flatMapP(i -> rs(1, 2,3,4,5))
-                    .flatMapP(x -> rs('a','b'))
-                    .toListX());
+                    .mergeMap(i -> rs(1, 2,3,4,5))
+                    .mergeMap(x -> rs('a','b'))
+                    .to(ReactiveConvertableSequence::converter).listX());
         }
     }
     @Test
