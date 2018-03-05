@@ -10,7 +10,6 @@ import cyclops.control.Future;
 import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;

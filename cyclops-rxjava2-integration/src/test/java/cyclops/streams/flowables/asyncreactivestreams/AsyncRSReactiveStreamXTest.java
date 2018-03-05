@@ -1,11 +1,12 @@
 package cyclops.streams.flowables.asyncreactivestreams;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 
 import cyclops.companion.rx2.Flowables;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -491,20 +492,15 @@ public  class AsyncRSReactiveStreamXTest {
 
 
 
-	    @Test
-	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
-
-	        assertEquals(2, map1.size());
+    @Test
+    public void testGroupByEager() {
+        cyclops.data.HashMap<Integer, cyclops.data.Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(cyclops.data.Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
+        assertEquals(2, map1.size());
 
 
-	    }
-
+    }
 
 	    @Test
 	    public void testJoin() {

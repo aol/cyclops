@@ -2,7 +2,6 @@ package cyclops.monads.transformers;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
-import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.reactive.collections.mutable.ListX;
 import com.oath.anym.transformers.ValueTransformer;

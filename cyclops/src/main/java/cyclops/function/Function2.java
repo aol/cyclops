@@ -7,14 +7,10 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.oath.cyclops.types.foldable.To;
-import cyclops.control.Option;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
+import cyclops.control.*;
 
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
-import cyclops.control.Future;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 
@@ -32,10 +28,6 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
     }
 
     public R apply(T1 a, T2 b);
-
-
-
-
 
     default Function2<T1, T2,  Maybe<R>> lift(){
         Function2<T1, T2,  R> host = this;

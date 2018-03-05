@@ -8,8 +8,8 @@ import cyclops.companion.Semigroups;
 
 
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
-import cyclops.control.Future;
 import cyclops.control.Eval;
+import cyclops.control.Future;
 import cyclops.data.Bag;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

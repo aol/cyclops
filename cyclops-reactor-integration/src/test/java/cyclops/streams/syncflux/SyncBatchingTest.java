@@ -1,5 +1,6 @@
 package cyclops.streams.syncflux;
 
+import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.data.TreeSet;
@@ -360,7 +361,7 @@ public class SyncBatchingTest {
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
+		assertThat(this.<Integer>of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){

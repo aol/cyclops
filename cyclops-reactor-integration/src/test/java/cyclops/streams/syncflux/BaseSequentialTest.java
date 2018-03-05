@@ -1,19 +1,20 @@
 package cyclops.streams.syncflux;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.async.QueueFactories;
-import cyclops.async.adapters.Queue;
-import cyclops.async.adapters.Topic;
-import cyclops.collections.mutable.ListX;
-import cyclops.collections.mutable.SetX;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Queue;
+
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.companion.Semigroups;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 
 import cyclops.control.Option;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
+import cyclops.reactive.collections.mutable.SetX;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -241,7 +242,7 @@ public class BaseSequentialTest {
     public void publishToAndMerge() {
         for (int k = 0; k < ITERATIONS; k++) {
             System.out.println("Publish toNested and product iteration " + k);
-            cyclops.async.adapters.Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
+            Queue<Integer> queue = QueueFactories.<Integer>boundedNonBlockingQueue(10)
                     .build();
 
             Thread t = new Thread(() -> {
@@ -1004,9 +1005,9 @@ public class BaseSequentialTest {
 
     @Test
     public void testGroupByEager() {
-        Map<Integer, ListX<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
-        assertEquals(asList(2, 4), map1.get(0));
-        assertEquals(asList(1, 3), map1.get(1));
+        cyclops.data.HashMap<Integer, cyclops.data.Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(cyclops.data.Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
         assertEquals(2, map1.size());
 
 

@@ -1,16 +1,17 @@
 package cyclops.streams.syncflux;
 
 
-import cyclops.async.adapters.Topic;
-import cyclops.collections.mutable.ListX;
+import com.oath.cyclops.ReactiveConvertableSequence;
+import com.oath.cyclops.async.adapters.Topic;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
-import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Streamable;
+import cyclops.reactive.collections.mutable.ListX;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
@@ -141,7 +142,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
 
     @Test
     public void multicast(){
-        final ListX<ReactiveSeq<Integer>> t = of(1,2,3,4,5,6,7,8).multicast(2);
+        final ListX<ReactiveSeq<Integer>> t = of(1,2,3,4,5,6,7,8).multicast(2).to(ReactiveConvertableSequence::converter).listX();
 
 //        t._1().forEach(e->System.out.println("First " + e));
         //       t._2().printOut();

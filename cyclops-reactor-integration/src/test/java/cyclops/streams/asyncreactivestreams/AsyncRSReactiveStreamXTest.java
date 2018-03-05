@@ -1,18 +1,19 @@
 package cyclops.streams.asyncreactivestreams;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.collections.mutable.ListX;
 import cyclops.companion.Streams;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple2;
+import cyclops.data.tuple.Tuple3;
+import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
 import org.hamcrest.Matchers;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
 import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -487,20 +488,15 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 
 
-
-	    @Test
-	    public void testGroupByEager() {
-	        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-
-	        assertThat(map1.get(0),hasItem(2));
-	        assertThat(map1.get(0),hasItem(4));
-	        assertThat(map1.get(1),hasItem(1));
-	        assertThat(map1.get(1),hasItem(3));
-
-	        assertEquals(2, map1.size());
+    @Test
+    public void testGroupByEager() {
+        cyclops.data.HashMap<Integer, cyclops.data.Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(cyclops.data.Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
+        assertEquals(2, map1.size());
 
 
-	    }
+    }
 
 
 	    @Test

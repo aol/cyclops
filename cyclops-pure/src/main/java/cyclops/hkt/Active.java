@@ -8,7 +8,6 @@ import com.oath.cyclops.types.functor.Transformable;
 import cyclops.arrow.*;
 import cyclops.data.LazySeq;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
