@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.FutureStream;
 import cyclops.data.tuple.Tuple2;
@@ -106,7 +107,7 @@ public class OperationsOnFuturesTest {
 		}
 		@Test
 		public void prepend(){
-		List<String> result = 	of(1,2,3).actOnFutures().prepend(100,200,300)
+		List<String> result = 	of(1,2,3).actOnFutures().prependAll(100,200,300)
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -114,7 +115,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void append(){
 			List<String> result = 	of(1,2,3).actOnFutures()
-											 .append(100,200,300)
+											 .appendAll(100,200,300)
 											 .map(it ->it+"!!")
 											 .collect(Collectors.toList());
 
@@ -123,7 +124,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void appendFutures(){
 			List<String> result = 	of(1,2,3).actOnFutures()
-											 .appendFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
+											 .appendAllFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
 											 .map(it ->it+"!!")
 											 .collect(Collectors.toList());
 
@@ -161,7 +162,7 @@ public class OperationsOnFuturesTest {
 		public void prependFutures(){
 
 			List<String> result = 	of(1,2,3).actOnFutures()
-											.prependFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
+											.prependAllFutures(CompletableFuture.completedFuture(100),CompletableFuture.completedFuture(200),CompletableFuture.completedFuture(300))
 											.map(it ->it+"!!")
 											.collect(Collectors.toList());
 
@@ -254,7 +255,7 @@ public class OperationsOnFuturesTest {
 
 		@Test
 		public void sliding(){
-			List<List<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(2)
+			List<Seq<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(2)
 										.collect(Collectors.toList());
 
 
@@ -263,7 +264,7 @@ public class OperationsOnFuturesTest {
 		}
 		@Test
 		public void slidingInc(){
-			List<List<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(3,2)
+			List<Seq<Integer>> list = of(1,2,3,4,5,6).actOnFutures().sliding(3,2)
 										.collect(Collectors.toList());
 
 
@@ -290,7 +291,7 @@ public class OperationsOnFuturesTest {
 		@Test
 		public void zipLfs(){
 			List<Tuple2<Integer,Integer>> list =
-					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400))
+					of(1,2,3,4,5,6).actOnFutures().zipWithFutureStream(of(100,200,300,400))
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 
 			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());
@@ -309,7 +310,7 @@ public class OperationsOnFuturesTest {
 			 BiFunction<CompletableFuture<Integer>,CompletableFuture<Integer>,CompletableFuture<Tuple2<Integer,Integer>>> combiner =
 					 			(cf1,cf2)->cf1.<Integer,Tuple2<Integer,Integer>>thenCombine(cf2, (v1,v2)-> tuple(v1,v2));
 			List<Tuple2<Integer,Integer>> list =
-					of(1,2,3,4,5,6).actOnFutures().zipLfs(of(100,200,300,400), combiner)
+					of(1,2,3,4,5,6).actOnFutures().zipWithFutureStream(of(100,200,300,400), combiner)
 													.peek(it -> System.out.println(it)).collect(Collectors.toList());
 
 			List<Integer> right = list.stream().map(t -> t._2()).collect(Collectors.toList());

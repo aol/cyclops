@@ -1,21 +1,21 @@
 package cyclops.streams;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.async.LazyReact;
-import cyclops.collections.mutable.ListX;
-
 import cyclops.control.Option;
+import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple2;
 import cyclops.futurestream.FutureStream;
 import cyclops.futurestream.LazyReact;
-import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -399,16 +399,15 @@ public class BaseSequentialTest {
 
 
 
-		    @Test
-		    public void testGroupByEager() {
-		        Map<Integer, ListX<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
-		        assertEquals(asList(2, 4), map1.get(0));
-		        assertEquals(asList(1, 3), map1.get(1));
-		        assertEquals(2, map1.size());
+    @Test
+    public void testGroupByEager() {
+        cyclops.data.HashMap<Integer, cyclops.data.Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(cyclops.data.Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
+        assertEquals(2, map1.size());
 
 
-		    }
-
+    }
 
 		    @Test
 		    public void testJoin() {

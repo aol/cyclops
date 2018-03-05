@@ -10,6 +10,7 @@ import cyclops.control.Either;
 import cyclops.control.Maybe;
 
 import cyclops.control.Option;
+import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
@@ -1003,9 +1004,9 @@ public class BaseSequentialTest {
 
     @Test
     public void testGroupByEager() {
-        Map<Integer, ListX<Integer>> map1 = of(1, 2, 3, 4).groupBy(i -> i % 2);
-        assertEquals(asList(2, 4), map1.get(0));
-        assertEquals(asList(1, 3), map1.get(1));
+        cyclops.data.HashMap<Integer, cyclops.data.Vector<Integer>> map1 =of(1, 2, 3, 4).groupBy(i -> i % 2);
+        assertEquals(Option.some(cyclops.data.Vector.of(2, 4)), map1.get(0));
+        assertEquals(Option.some(Vector.of(1, 3)), map1.get(1));
         assertEquals(2, map1.size());
 
 

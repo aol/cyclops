@@ -3,7 +3,6 @@ package cyclops.free;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
-import cyclops.control.Eval;
 
 import com.oath.cyclops.hkt.DataWitness.cofree;
 import com.oath.cyclops.hkt.DataWitness.eval;

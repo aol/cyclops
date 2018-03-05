@@ -21,7 +21,6 @@ import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.Pipes;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Try;

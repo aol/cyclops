@@ -358,7 +358,7 @@ public class BatchingRSTest {
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(of().grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(0));
+		assertThat(Fluxs.<Integer>of().grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){

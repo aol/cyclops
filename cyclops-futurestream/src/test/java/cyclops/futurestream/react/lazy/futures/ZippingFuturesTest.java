@@ -80,7 +80,7 @@ public class ZippingFuturesTest {
 	@Test
 	public void zip3Lfs(){
 		List<Tuple3<Integer,Integer,Character>> list =
-				DuplicationTest.of(1,2,3,4,5,6).actOnFutures().zip3Lfs(DuplicationTest.of(100,200,300,400), DuplicationTest.of('a','b','c'))
+				DuplicationTest.of(1,2,3,4,5,6).actOnFutures().zip3WithFutureStream(DuplicationTest.of(100,200,300,400), DuplicationTest.of('a','b','c'))
 												.peek(it -> System.out.println(it))
 
 												.collect(Collectors.toList());
@@ -127,7 +127,7 @@ public class ZippingFuturesTest {
 	@Test
 	public void zip4Lfs(){
 		List<Tuple4<Integer,Integer,Character,String>> list =
-				DuplicationTest.of(1,2,3,4,5,6).actOnFutures().zip4Lfs(DuplicationTest.of(100,200,300,400), DuplicationTest.of('a','b','c'), DuplicationTest.of("hello","world"))
+				DuplicationTest.of(1,2,3,4,5,6).actOnFutures().zip4WithFutureStream(DuplicationTest.of(100,200,300,400), DuplicationTest.of('a','b','c'), DuplicationTest.of("hello","world"))
 												.peek(it -> System.out.println(it))
 
 												.collect(Collectors.toList());
@@ -203,7 +203,7 @@ public class ZippingFuturesTest {
 
 	@Test
 	public void testZipDifferingLengthStream() {
-		List<Tuple2<Integer, String>> list = DuplicationTest.of(1, 2).actOnFutures().zipLfs(DuplicationTest.of("a", "b", "c", "d")).toList();
+		List<Tuple2<Integer, String>> list = DuplicationTest.of(1, 2).actOnFutures().zipWithFutureStream(DuplicationTest.of("a", "b", "c", "d")).toList();
 
 		assertEquals(2, list.size());
 		assertTrue(asList(1, 2).contains(list.get(0)._1()));

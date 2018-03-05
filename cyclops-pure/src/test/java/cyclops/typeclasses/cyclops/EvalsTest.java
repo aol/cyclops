@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Either;
 import cyclops.control.LazyEither;

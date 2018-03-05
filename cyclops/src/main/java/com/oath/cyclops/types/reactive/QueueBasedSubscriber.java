@@ -1,7 +1,6 @@
 package com.oath.cyclops.types.reactive;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -10,17 +9,14 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
 
-import cyclops.data.BankersQueue;
-import cyclops.data.ImmutableQueue;
+import cyclops.control.Eval;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;

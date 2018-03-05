@@ -2,7 +2,6 @@ package cyclops.typeclasses.monad;
 
 
 import com.oath.cyclops.hkt.Higher;
-import cyclops.control.Eval;
 import cyclops.control.Either;
 import cyclops.control.LazyEither;
 import cyclops.function.Function0;

@@ -4,12 +4,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
-import cyclops.control.Future;
-
-import cyclops.control.Option;
-import cyclops.control.Eval;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
+import cyclops.control.*;
 
 @FunctionalInterface
 public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Function1<S3,R>>> {

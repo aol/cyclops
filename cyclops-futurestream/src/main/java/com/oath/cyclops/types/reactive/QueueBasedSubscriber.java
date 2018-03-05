@@ -7,7 +7,6 @@ import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.control.Eval;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import lombok.Getter;

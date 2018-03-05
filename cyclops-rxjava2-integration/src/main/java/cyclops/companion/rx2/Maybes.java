@@ -7,7 +7,6 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
 import cyclops.companion.Futures;
 import cyclops.control.Either;
-import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.control.LazyEither;
 import cyclops.data.Seq;

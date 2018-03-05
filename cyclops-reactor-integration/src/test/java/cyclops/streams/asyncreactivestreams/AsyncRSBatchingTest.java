@@ -365,7 +365,7 @@ public class AsyncRSBatchingTest {
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
+		assertThat(this.<Integer>of().grouped(3,()->TreeSet.empty()).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){

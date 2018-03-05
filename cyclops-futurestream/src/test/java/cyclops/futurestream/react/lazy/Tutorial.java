@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.oath.cyclops.async.adapters.Queue;
-import cyclops.control.Eval;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Ignore;
 import org.junit.Test;

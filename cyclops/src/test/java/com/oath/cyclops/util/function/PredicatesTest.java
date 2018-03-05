@@ -20,10 +20,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Eval;
 import cyclops.function.Predicates;
 import org.junit.Test;
 
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 public class PredicatesTest {

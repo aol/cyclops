@@ -10,10 +10,10 @@ import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
+import cyclops.control.Eval;
 import cyclops.data.Seq;
 
 import cyclops.companion.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
 import cyclops.data.Vector;
