@@ -1842,7 +1842,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code
      * List<String> result = 	Streamable.of(1,2,3)
-     * 									 .insertAtS(1,of(100,200,300))
+     * 									 .insertAt(1,of(100,200,300))
     									 .map(it ->it+"!!")
     									 .collect(CyclopsCollectors.toList());
 
@@ -2403,8 +2403,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  Batch elements by size into a toX created by the supplied factory
      * <pre>
      * {@code
-     * List<ArrayList<Integer>> list = of(1,2,3,4,5,6)
-    				.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->new ArrayList<>())
+     * List<Vector<Integer>> list = of(1,2,3,4,5,6)
+    				.batchBySizeAndTime(10,1,TimeUnit.MICROSECONDS,()->Vector.empty())
     				.toList();
      * }
      * </pre>
@@ -2443,7 +2443,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * <pre>
      * {@code
      *   assertThat(Streamable.of(1,1,1,1,1,1)
-     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()->TreeSet.empty())
      *                       .toList()
      *                       .getValue(0)
      *                       .size(),is(1));

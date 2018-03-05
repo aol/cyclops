@@ -1516,7 +1516,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
-     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()->TreeSet.empty())
      *                       .toList()
      *                       .getValue(0)
      *                       .size(),is(1));
@@ -2883,7 +2883,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }

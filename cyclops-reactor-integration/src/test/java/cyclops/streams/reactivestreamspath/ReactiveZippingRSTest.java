@@ -268,7 +268,7 @@ public class ReactiveZippingRSTest {
 		final ReactiveSeq<Integer> second = of(1, 2, 3, 4);
 
 
-		final ReactiveSeq<String> zipped = first.zipS(second, (a, b) -> a + b);
+		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),is(3));
 	}
@@ -277,7 +277,7 @@ public class ReactiveZippingRSTest {
 	public void shouldTrimFirstFixedSeqIfLongerStream() throws Exception {
 		final ReactiveSeq<String> first = of("A", "B", "C","D");
 		final ReactiveSeq<Integer> second = of(1, 2, 3);
-		final ReactiveSeq<String> zipped = first.zipS(second, (a, b) -> a + b);
+		final ReactiveSeq<String> zipped = first.zipWithStream(second, (a, b) -> a + b);
 
 
 		assertThat(zipped.to(Streamable::fromStream).collect(Collectors.toList()).size(),equalTo(3));

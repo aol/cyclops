@@ -1,12 +1,16 @@
 package cyclops.streams;
 
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.async.LazyReact;
 import cyclops.collections.mutable.ListX;
 
 import cyclops.control.Option;
+import cyclops.futurestream.FutureStream;
+import cyclops.futurestream.LazyReact;
 import cyclops.reactive.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
@@ -94,29 +99,53 @@ public class BaseSequentialTest {
 	        assertThat(of().takeWhile(p->true).toList(),equalTo(Arrays.asList()));
 	    }
 
-	@Test
-	public void presentConvert(){
+    @Test
+    public void presentConvert(){
 
-		assertTrue(of(1).to().optional().isPresent());
-		assertTrue(of(1).toListX().size()>0);
-		assertTrue(of(1).to().dequeX().size()>0);
-		assertTrue(of(1).to().linkedListX().size()>0);
-		assertTrue(of(1).to().queueX().size()>0);
-		assertTrue(of(1).to().vectorX().size()>0);
-		assertTrue(of(1).to().persistentQueueX().size()>0);
-		assertTrue(of(1).toSetX().size()>0);
-		assertTrue(of(1).to().sortedSetX().size()>0);
-		assertTrue(of(1).to().orderedSetX().size()>0);
-		assertTrue(of(1).to().bagX().size()>0);
-		assertTrue(of(1).to().persistentMapX(t->t, t->t).size()>0);
-		assertTrue(of(1).to().mapX(t->t,t->t).size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).optional().isPresent());
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).listX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).dequeX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).linkedListX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).queueX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).vectorX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).persistentQueueX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).setX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).sortedSetX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).orderedSetX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).bagX().size()>0);
+        assertTrue(of(1).to(ReactiveConvertableSequence::converter).mapX(t->t,t->t).size()>0);
 
-		assertTrue(of(1).toSet().size()>0);
-		assertTrue(of(1).toList().size()>0);
-		assertTrue(of(1).to().streamable().size()>0);
+        assertTrue(of(1).toSet().size()>0);
+        assertTrue(of(1).toList().size()>0);
+        assertTrue(of(1).to().streamable().size()>0);
 
 
-	}
+    }
+    @Test
+    public void presentConvert2() {
+
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).optional().isPresent());
+        Optional<ListX<Integer>> opt = of(1, 2).to(ReactiveConvertableSequence::converter).optional();
+        assertThat(opt, equalTo(Optional.of(ListX.of(1, 2))));
+
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).listX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).dequeX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).linkedListX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).queueX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).vectorX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).persistentQueueX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).setX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).sortedSetX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).orderedSetX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).bagX().size() == 2);
+        assertTrue(of(1, 2).to(ReactiveConvertableSequence::converter).mapX(t -> t, t -> t).size() == 2);
+
+        assertTrue(of(1, 2).toSet().size() == 2);
+        assertTrue(of(1, 2).toList().size() == 2);
+        assertTrue(of(1, 2).to().streamable().size() == 2);
+
+
+    }
 	Integer value2() {
 		return 5;
 	}
@@ -160,7 +189,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void concatStreams(){
-		List<String> result = 	of(1,2,3).appendS(of(100,200,300))
+		List<String> result = 	of(1,2,3).appendStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","2!!","3!!","100!!","200!!","300!!")));
@@ -168,7 +197,7 @@ public class BaseSequentialTest {
 
 		@Test
 		public void prependStreams(){
-		List<String> result = 	of(1,2,3).prependS(of(100,200,300))
+		List<String> result = 	of(1,2,3).prependStream(of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
@@ -182,7 +211,7 @@ public class BaseSequentialTest {
 		}
 		@Test
 		public void insertAtStream(){
-		List<String> result = 	of(1,2,3).insertAtS(1,of(100,200,300))
+		List<String> result = 	of(1,2,3).insertAt(1,of(100,200,300))
 				.map(it ->it+"!!").collect(Collectors.toList());
 
 			assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));

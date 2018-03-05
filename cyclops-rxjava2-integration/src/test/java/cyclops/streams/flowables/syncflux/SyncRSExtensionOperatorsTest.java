@@ -1,7 +1,7 @@
 package cyclops.streams.flowables.syncflux;
 
 
-import cyclops.collections.mutable.ListX;
+import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.companion.rx2.Flowables;
@@ -10,6 +10,7 @@ import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
+import cyclops.reactive.collections.mutable.ListX;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -40,7 +41,7 @@ public class SyncRSExtensionOperatorsTest {
     public void combine(){
         assertThat(of(1,1,2,3)
                    .combine((a, b)->a.equals(b), Semigroups.intSum)
-                   .toListX(),equalTo(ListX.of(4,3)));
+                   .to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(4,3)));
 
     }
 	@Test
@@ -316,32 +317,18 @@ public class SyncRSExtensionOperatorsTest {
 		assertTrue(Spouts.<Integer>of()
 				.endsWith(Stream.of()));
 	}
-	@Test
-	public void anyMTest(){
-		List<Integer> list = of(1,2,3,4,5,6)
-								.anyM().filter(i->i>3).stream().toList();
 
-		assertThat(list,equalTo(Arrays.asList(4,5,6)));
-	}
 	@Test
 	public void streamable(){
 		Streamable<Integer> repeat = of(1,2,3,4,5,6)
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
-	@Test
-	public void concurrentLazyStreamable(){
-		Streamable<Integer> repeat = of(1,2,3,4,5,6)
-												.map(i->i*2).to()
-												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-	}
 	@Test
 	public void splitBy(){
 		assertThat( of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
@@ -356,15 +343,7 @@ public class SyncRSExtensionOperatorsTest {
 		col.forEach(System.out::println);
 		assertThat(col.size(),equalTo(5));
 	}
-	@Test
-	public void testLazyCollection(){
-		Collection<Integer> col = of(1,2,3,4,5)
-											.peek(System.out::println).to()
-											.lazyCollectionSynchronized();
-		System.out.println("first!");
-		col.forEach(System.out::println);
-		assertThat(col.size(),equalTo(5));
-	}
+
 	int peek = 0;
 	@Test
 	public void testPeek() {
@@ -410,15 +389,10 @@ public class SyncRSExtensionOperatorsTest {
 
 	}
 
-	@Test
-	public void flatMapCompletableFuture(){
-		assertThat(of(1,2,3).flatMapAnyM(i-> AnyM.fromArray(i+2))
-				  								.collect(Collectors.toList()),
-				  								equalTo(Arrays.asList(3,4,5)));
-	}
+
 	@Test
 	public void flatMapMaybe(){
-		assertThat(of(1,2,3).flatMapI(Maybe::ofNullable)
+		assertThat(of(1,2,3).concatMap(Maybe::ofNullable)
 			      										.collect(Collectors.toList()),
 			      										equalTo(Arrays.asList(1,2,3)));
 	}

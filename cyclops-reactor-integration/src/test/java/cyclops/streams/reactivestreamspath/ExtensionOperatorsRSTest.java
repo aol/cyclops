@@ -35,7 +35,7 @@ public class ExtensionOperatorsRSTest {
     public void combine(){
         assertThat(Fluxs.of(1,1,2,3)
                    .combine((a, b)->a.equals(b), Semigroups.intSum)
-                   .to(Streamable::fromStream).toListX(),equalTo(ListX.of(4,3)));
+                   .to(Streamable::fromStream).to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(4,3)));
 
     }
 	@Test
@@ -320,8 +320,8 @@ public class ExtensionOperatorsRSTest {
 												.map(i->i*2).to()
 												.streamable();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 
 	@Test
@@ -330,8 +330,8 @@ public class ExtensionOperatorsRSTest {
 												.map(i->i*2).to()
 												.lazyStreamableSynchronized();
 
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
-		assertThat(repeat.reactiveSeq().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
+		assertThat(repeat.stream().toList(),equalTo(Arrays.asList(2,4,6,8,10,12)));
 	}
 	@Test
 	public void splitBy(){

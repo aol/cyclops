@@ -1,10 +1,11 @@
 package cyclops.streams.observables;
 
-import cyclops.collections.mutable.ListX;
+
 import cyclops.companion.rx2.Observables;
+import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.data.tuple.Tuple2;
+import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
@@ -36,7 +37,7 @@ public class AsyncCycle {
     @Test
     public void testCycleAsync() {
         //  of(1, 2).collectStream(CyclopsCollectors.listX())
-        //        .flatMapI(i->i.cycle(3)).printOut();
+        //        .concatMap(i->i.cycle(3)).printOut();
 
         // of(1, 2).cycle().limit(6).forEach(n->System.out.println("Next " + n));
 

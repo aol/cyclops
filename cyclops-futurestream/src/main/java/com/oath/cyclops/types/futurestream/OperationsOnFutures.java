@@ -928,7 +928,7 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code
      *   List<String> result = 	of(1,2,3).actOnFutures()
-    									.insertAtS(1,of(100,200,300))
+    									.insertAt(1,of(100,200,300))
     									.map(it ->it+"!!")
     									.collect(CyclopsCollectors.toList());
 
