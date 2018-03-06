@@ -110,3 +110,4 @@ Eval<Integer> lazyResult = ListX.of(1,2,3,4)
 # Articles
 
 * [JDK Collection eXtensions](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks)
+* [Faster Purely Data Structures For Java](https://medium.com/@johnmcclean/the-rise-and-rise-of-java-functional-data-structures-63782436f93b)
