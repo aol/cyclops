@@ -38,7 +38,7 @@ public class AsyncRSBatchingTest {
 				.toList().size(),equalTo(2));
 		assertThat(of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
@@ -48,7 +48,7 @@ public class AsyncRSBatchingTest {
 				.size(),equalTo(2));
 		assertThat(of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
@@ -57,7 +57,7 @@ public class AsyncRSBatchingTest {
 				.toList().size(),equalTo(2));
 		assertThat(of(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->Vector.empty())
-				.toList().get(0),equalTo(Arrays.asList(1,2,3)));
+				.toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
@@ -69,7 +69,7 @@ public class AsyncRSBatchingTest {
 				.toList().size(),equalTo(2));
 		assertThat(of(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->Vector.empty())
-				.toList(),equalTo(Arrays.asList(Arrays.asList(1,2,3),Arrays.asList(4,5,6))));
+				.toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchByTime2(){

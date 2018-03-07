@@ -31,10 +31,7 @@ public class AsyncRSExtensionOperatorsTest {
 
 
     protected <U> ReactiveSeq<U> of(U... array){
-
         return Fluxs.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
-
-
     }
     @Test
     public void flatMapStreamFilterSimple(){

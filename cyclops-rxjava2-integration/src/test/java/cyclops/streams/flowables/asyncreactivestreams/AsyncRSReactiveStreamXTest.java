@@ -159,11 +159,12 @@ public  class AsyncRSReactiveStreamXTest {
 	}
     @Test
     public void cycleIterateStream(){
-        Iterator<Integer> it = of(1).stream().cycle(2).iterator();
-        List<Integer> list2 = new ArrayList<>();
-        while(it.hasNext())
-            list2.add(it.next());
-        assertThat(list2,equalTo(ListX.of(1,1)));
+            Iterator<Integer> it = of(1).stream().cycle(2).iterator();
+            List<Integer> list2 = new ArrayList<>();
+            while (it.hasNext())
+                list2.add(it.next());
+            assertThat(list2, equalTo(ListX.of(1, 1)));
+
     }
 	@Test
 	public void cycleIterate2(){
