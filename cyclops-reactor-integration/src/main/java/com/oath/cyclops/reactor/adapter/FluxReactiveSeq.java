@@ -550,12 +550,12 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
 
     @Override
     public ReactiveSeq<T> appendAll(T... values) {
-        return flux(this.appendAll(values));
+        return flux(Spouts.from(flux).appendAll(values));
     }
 
     @Override
     public ReactiveSeq<T> append(T value) {
-        return flux(this.append(value));
+        return flux(Spouts.from(flux).append(value));
     }
 
     @Override

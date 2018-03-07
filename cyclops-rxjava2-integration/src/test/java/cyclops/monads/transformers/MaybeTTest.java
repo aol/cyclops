@@ -205,7 +205,7 @@ public class MaybeTTest implements Printable {
 	@Test
 	public void testReduceIterableOfReducerOfT() {
 		Seq<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
-		assertThat(countAndTotal,equalTo(ListX.of(1,10)));
+		assertThat(countAndTotal,equalTo(Seq.of(1,10)));
 	}
 
 

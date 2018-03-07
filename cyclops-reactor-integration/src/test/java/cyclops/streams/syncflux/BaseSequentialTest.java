@@ -386,7 +386,8 @@ public class BaseSequentialTest {
                 .collect(Collectors.toList()), Matchers.equalTo(ListX.of(4, 100, 8, 300)));
 
         assertThat(of(1, 2, 3, 4)
-                .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 2 == 0).map(i -> i * 2),
+                .parallelFanOutZipIn(ForkJoinPool.commonPool(), s1 -> s1.filter(i -> i % 2 == 0)
+                        .map(i -> i * 2),
                         s2 -> s2.filter(i -> i % 2 != 0).map(i -> i * 100), (a, b) -> a + b)
                 .to(ReactiveConvertableSequence::converter).listX(), Matchers.equalTo(ListX.of(104, 308)));
 
@@ -809,7 +810,7 @@ public class BaseSequentialTest {
     @Test
     public void insertAtStreamEmpty() {
         for(int k=0;k<ITERATIONS;k++) {
-            List<String> result = of().insertAt(0, Stream.of(100, 200, 300))
+            List<String> result = of().insertAt(0, ReactiveSeq.of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 
             assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!")));
@@ -818,7 +819,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStreamOutOfRangeEmpty() {
-        List<String> result = of().insertAt(1, Stream.of(100, 200, 300))
+        List<String> result = of().insertAt(1, ReactiveSeq.of(100, 200, 300))
                 .map(it -> it + "!!").collect(Collectors.toList());
 
         assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!")));

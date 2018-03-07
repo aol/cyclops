@@ -691,10 +691,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                Function<? super T, ? extends MonadicValue<? extends R>> memod = Memoize.memoizeFunction(mapper);
-                Rec<T, R> rec = new Rec<T, R>(this, memod);
-                return new Later<R>(
-                    rec);
+                return new Later<R>( new Rec<T, R>(this, Memoize.memoizeFunction(mapper)));
             }
             @Override
             public Trampoline<T> toTrampoline(){
@@ -707,9 +704,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                 return memo.get();
             }
 
-            /* (non-Javadoc)
-             * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
-             */
+
             @Override
             public <T> Eval<T> unit(final T unit) {
                 return Eval.later(() -> unit);
