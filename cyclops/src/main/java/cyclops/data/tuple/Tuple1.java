@@ -9,7 +9,7 @@ import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
-import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
@@ -157,24 +157,30 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     }
 
     @Override
-    public Maybe<T> filter(Predicate<? super T> predicate) {
-        return predicate.test(_1()) ? Maybe.just(_1()) :  Maybe.nothing();
+    public Option<T> filter(Predicate<? super T> predicate) {
+        return predicate.test(_1()) ? Option.some(_1()) :  Option.none();
     }
 
     @Override
-    public <U> Maybe<U> ofType(Class<? extends U> type) {
-        return (Maybe<U>)Filters.super.ofType(type);
+    public <U> Option<U> ofType(Class<? extends U> type) {
+        return (Option<U>)Filters.super.ofType(type);
     }
 
     @Override
-    public Maybe<T> filterNot(Predicate<? super T> predicate) {
-        return (Maybe<T>)Filters.super.filterNot(predicate);
+    public Option<T> filterNot(Predicate<? super T> predicate) {
+        return (Option<T>)Filters.super.filterNot(predicate);
     }
 
     @Override
-    public Maybe<T> notNull() {
-        return (Maybe<T>)Filters.super.notNull();
+    public Option<T> notNull() {
+        return (Option<T>)Filters.super.notNull();
     }
+
+
+    public final Object[] toArray() {
+        return new Object[] { _1() };
+    }
+
 
 
 

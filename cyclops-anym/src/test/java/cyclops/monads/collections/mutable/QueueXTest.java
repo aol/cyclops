@@ -1,7 +1,7 @@
 package cyclops.monads.collections.mutable;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness.queue;

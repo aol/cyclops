@@ -227,4 +227,8 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
         }
         return result;
     }
+
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3(),_4() };
+    }
 }

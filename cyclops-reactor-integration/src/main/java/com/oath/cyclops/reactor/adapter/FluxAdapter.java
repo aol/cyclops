@@ -3,7 +3,7 @@ package com.oath.cyclops.reactor.adapter;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.monads.ReactorWitness;
 import cyclops.monads.ReactorWitness.flux;
-import com.oath.anym.extensability.AbstractMonadAdapter;
+import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;

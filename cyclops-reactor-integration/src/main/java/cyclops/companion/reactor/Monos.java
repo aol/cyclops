@@ -1,6 +1,6 @@
 package cyclops.companion.reactor;
 
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.Value;
 import cyclops.companion.Futures;

@@ -8,7 +8,7 @@ import java.util.SortedSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import com.oath.anym.internal.adapters.*;
+import com.oath.cyclops.anym.internal.adapters.*;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.*;
 import cyclops.control.Future;
@@ -23,7 +23,7 @@ import cyclops.reactive.collections.mutable.QueueX;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.reactive.collections.mutable.SortedSetX;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.anym.extensability.MonadAdapter;
+import com.oath.cyclops.anym.extensability.MonadAdapter;
 
 public interface Witness {
    static interface MonadicValueWitness<W extends MonadicValueWitness<W>>  extends WitnessType<W>{

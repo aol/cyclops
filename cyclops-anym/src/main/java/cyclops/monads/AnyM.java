@@ -18,11 +18,11 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.oath.anym.AnyMSeq;
-import com.oath.anym.AnyMValue;
-import com.oath.anym.AnyMValue2;
-import com.oath.anym.internal.adapters.StreamAdapter;
-import com.oath.anym.internal.monads.AnyMValue2Impl;
+import com.oath.cyclops.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue2;
+import com.oath.cyclops.anym.internal.adapters.StreamAdapter;
+import com.oath.cyclops.anym.internal.monads.AnyMValue2Impl;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.types.Filters;
@@ -55,8 +55,8 @@ import cyclops.reactive.collections.mutable.*;
 import org.reactivestreams.Publisher;
 
 import com.oath.cyclops.data.collections.extensions.CollectionX;
-import com.oath.anym.internal.monads.AnyMSeqImpl;
-import com.oath.anym.internal.monads.AnyMValueImpl;
+import com.oath.cyclops.anym.internal.monads.AnyMSeqImpl;
+import com.oath.cyclops.anym.internal.monads.AnyMValueImpl;
 
 
 import cyclops.monads.Witness.completableFuture;
@@ -73,7 +73,7 @@ import cyclops.monads.Witness.tryType;
 import cyclops.monads.Witness.either;
 import cyclops.monads.Witness.*;
 import cyclops.monads.Witness.future;
-import com.oath.anym.extensability.MonadAdapter;
+import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.companion.Optionals;
 

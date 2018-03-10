@@ -1,7 +1,7 @@
 package cyclops.monads.collections.persistent;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.reactive.collections.immutable.BagX;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;

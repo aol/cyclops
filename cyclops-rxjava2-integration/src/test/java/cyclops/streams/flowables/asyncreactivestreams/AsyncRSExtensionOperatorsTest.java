@@ -206,11 +206,12 @@ public class AsyncRSExtensionOperatorsTest {
         assertThat(result,equalTo(Arrays.asList()));
     }
     @Test
-    public void skipTime(){
+    public void skipTime() throws InterruptedException {
+        Thread.sleep(100);
         List<Integer> result = of(1,2,3,4,5,6)
-                .peek(i->sleep(i*100))
-                .skip(1000,TimeUnit.MILLISECONDS)
-                .toList();
+                                        .peek(i->sleep(i*100))
+                                        .skip(1000,TimeUnit.MILLISECONDS)
+                                        .toList();
 
 
         assertThat(result,equalTo(Arrays.asList(4,5,6)));

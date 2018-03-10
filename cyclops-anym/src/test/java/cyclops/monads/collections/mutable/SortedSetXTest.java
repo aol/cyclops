@@ -1,7 +1,7 @@
 package cyclops.monads.collections.mutable;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.reactive.collections.mutable.SortedSetX;
 import cyclops.monads.AnyM;

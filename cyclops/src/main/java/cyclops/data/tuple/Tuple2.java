@@ -1,23 +1,23 @@
 package cyclops.data.tuple;
 
 
+import com.oath.cyclops.hkt.DataWitness.tuple2;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
-import cyclops.control.Maybe;
 import cyclops.control.Either;
-import cyclops.control.Option;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.tuple2;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /*
   A Tuple implementation that can be either eager / strict or lazy
@@ -181,6 +181,9 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         }
         return result;
     }
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2() };
+    }
 
     public static <K, V> Tuple2< K, V> narrow(Tuple2<? extends K, ? extends V> t) {
         return (Tuple2<K,V>)t;
@@ -188,5 +191,6 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     public static <T1,T2> Higher2<tuple2,T1, T2> widen(Tuple2<T1,T2> narrow) {
     return narrow;
   }
+
 
 }

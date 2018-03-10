@@ -1,6 +1,6 @@
 package cyclops.companion.rx2;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.rx2.adapter.FlowableReactiveSeq;
 import cyclops.control.Either;
 import cyclops.function.Function3;

@@ -233,4 +233,8 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3(), _4(), _5());
     }
+
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3(),_4(),_5() };
+    }
 }

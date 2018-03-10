@@ -1,7 +1,7 @@
 package cyclops.monads;
 
 
-import com.oath.anym.extensability.MonadAdapter;
+import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.reactor.adapter.FluxAdapter;
 import com.oath.cyclops.reactor.adapter.MonoAdapter;
 import reactor.core.publisher.Flux;

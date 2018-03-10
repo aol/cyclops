@@ -24,7 +24,7 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.monads.WitnessType;

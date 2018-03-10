@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Eval;

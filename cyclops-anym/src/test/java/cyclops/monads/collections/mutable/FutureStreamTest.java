@@ -1,6 +1,6 @@
 package cyclops.monads.collections.mutable;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.Monoids;
 import cyclops.monads.Witness.*;
