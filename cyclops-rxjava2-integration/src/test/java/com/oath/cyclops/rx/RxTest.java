@@ -1,6 +1,6 @@
 package com.oath.cyclops.rx;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.rx2.Observables;
 import cyclops.monads.Rx2Witness.observable;

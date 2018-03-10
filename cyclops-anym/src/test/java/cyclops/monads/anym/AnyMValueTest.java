@@ -1,6 +1,6 @@
 package cyclops.monads.anym;
 
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.monads.Matchers;
 import cyclops.monads.Witness;

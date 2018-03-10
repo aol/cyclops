@@ -1,7 +1,7 @@
 package com.oath.cyclops.reactor.adapter;
 
-import com.oath.anym.AnyMValue;
-import com.oath.anym.extensability.ValueAdapter;
+import com.oath.cyclops.anym.AnyMValue;
+import com.oath.cyclops.anym.extensability.ValueAdapter;
 import cyclops.companion.reactor.Monos;
 import cyclops.control.Future;
 import cyclops.control.Option;

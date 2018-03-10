@@ -1,6 +1,6 @@
 package cyclops.monads.collections.mutable;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.data.tuple.Tuple2;

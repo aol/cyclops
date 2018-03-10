@@ -1,7 +1,7 @@
 package cyclops.monads.collections.persistent;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.reactive.collections.immutable.OrderedSetX;
 import cyclops.monads.AnyM;
 import cyclops.data.Comparators;

@@ -1,7 +1,7 @@
 package cyclops.companion.rx2;
 
 
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;

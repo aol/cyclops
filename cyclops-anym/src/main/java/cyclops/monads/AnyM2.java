@@ -1,12 +1,12 @@
 package cyclops.monads;
 
-import com.oath.anym.AnyMSeq;
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
 
-import com.oath.anym.extensability.MonadAdapter;
+import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;

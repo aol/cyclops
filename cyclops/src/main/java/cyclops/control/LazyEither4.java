@@ -3,6 +3,7 @@ package cyclops.control;
 import com.oath.cyclops.hkt.DataWitness.lazyEither4;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher4;
+import com.oath.cyclops.matching.Sealed4;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.factory.Unit;
@@ -51,6 +52,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                                                       BiTransformable<LT3, RT>,
                                                       To<LazyEither4<LT1, LT2,LT3, RT>>,
                                                       OrElseValue<RT,LazyEither4<LT1,LT2,LT3,RT>>,
+                                                      Sealed4<LT1,LT2,LT3,RT>,
                                                       Unit<RT>{
 
 
@@ -108,6 +110,11 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
     default LazyEither4<LT1,LT2,LT3, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
       return flatMap(e->test.test(e) ? LazyEither4.right(e) : LazyEither4.left1(rightToLeft.apply(e)));
+    }
+
+    @Override
+    default <R> R fold(Function<? super LT1, ? extends R> fn1, Function<? super LT2, ? extends R> fn2, Function<? super LT3, ? extends R> fn3, Function<? super RT, ? extends R> fn4){
+        return visit(fn1,fn2,fn3,fn4);
     }
 
     @AllArgsConstructor

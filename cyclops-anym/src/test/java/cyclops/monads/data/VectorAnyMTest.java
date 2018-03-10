@@ -1,11 +1,8 @@
 package cyclops.monads.data;
 
-import com.oath.anym.AnyMSeq;
-import cyclops.data.Seq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.data.Vector;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
-import cyclops.monads.Witness.seq;
 import cyclops.monads.Witness.vector;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Ignore;

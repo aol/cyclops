@@ -268,4 +268,7 @@ public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3(), _4(), _5(), _6());
     }
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3(),_4(),_5(),_6() };
+    }
 }

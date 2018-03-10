@@ -1,7 +1,7 @@
 package com.oath.cyclops.rx2.adapter;
 
 
-import com.oath.anym.extensability.AbstractMonadAdapter;
+import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
 import cyclops.companion.rx2.Flowables;
 import cyclops.monads.AnyM;
 

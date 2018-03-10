@@ -186,4 +186,8 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
         }
         return result;
     }
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3() };
+    }
+
 }

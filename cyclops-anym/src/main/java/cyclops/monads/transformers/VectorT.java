@@ -31,7 +31,7 @@ import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
-import com.oath.anym.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 import org.reactivestreams.Publisher;
 
 
