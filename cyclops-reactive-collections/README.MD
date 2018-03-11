@@ -54,8 +54,8 @@ AtomicBoolean complete = new AtomicBoolean(false);
 
 ReactiveSeq<Integer> async =  Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1));
 
-ListX<Integer> asyncList = listX(reactiveSeq(async))
-                                      .map(i->i+1);
+ListX<Integer> asyncList = ListX.listX(async)
+                                .map(i->i+1);
 
 System.out.println("Blocked? " + complete.get());
 
