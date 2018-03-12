@@ -181,7 +181,70 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return new Object[] { _1() };
     }
 
+    public  <T2> Tuple2<T, T2> concat(Tuple1<T2> tuple) {
+        return Tuple.tuple(_1(),tuple._1());
+    }
+    public  <T2,T3> Tuple3<T, T2,T3> concat(Tuple2<T2,T3> tuple) {
+        return Tuple.tuple(_1(),tuple._1(),tuple._2());
+    }
 
+
+    public  <T2, T3, T4> Tuple4<T, T2, T3, T4> concat(Tuple3<T2, T3, T4> tuple) {
+        return Tuple.tuple(_1(), tuple._1(), tuple._2(), tuple._3());
+    }
+
+
+    public  <T2, T3, T4, T5> Tuple5<T, T2, T3, T4, T5> concat(Tuple4<T2, T3, T4, T5> tuple) {
+        return Tuple.tuple(_1(), tuple._1(), tuple._2(), tuple._3(), tuple._4());
+    }
+
+
+    public  <T2, T3, T4, T5, T6> Tuple6<T, T2, T3, T4, T5, T6> concat(Tuple5<T2, T3, T4, T5, T6> tuple) {
+        return Tuple.tuple(_1(), tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5());
+    }
+
+
+    public  <T2, T3, T4, T5, T6, T7> Tuple7<T, T2, T3, T4, T5, T6, T7> concat(Tuple6<T2, T3, T4, T5, T6, T7> tuple) {
+        return Tuple.tuple(_1(),tuple._1(), tuple._2(),tuple._3(), tuple._4(),tuple._5(), tuple._6());
+    }
+
+
+    public  <T2, T3, T4, T5, T6, T7, T8> Tuple8<T, T2, T3, T4, T5, T6, T7, T8> concat(Tuple7<T2, T3, T4, T5, T6, T7, T8> tuple) {
+        return Tuple.tuple(_1(), tuple._1(),tuple._2(), tuple._3(), tuple._4(), tuple._5(),tuple._6(), tuple._7());
+    }
+
+
+    public  <T2> Tuple2<T, T2> lazyConcat(Tuple1<T2> tuple) {
+        return Tuple2.lazy(()->_1(),()->tuple._1());
+    }
+    public  <T2,T3> Tuple3<T, T2,T3> lazyConcat(Tuple2<T2,T3> tuple) {
+        return Tuple3.lazy(()->_1(),()->tuple._1(),()->tuple._2());
+    }
+
+
+    public  <T2, T3, T4> Tuple4<T, T2, T3, T4> lazyConcat(Tuple3<T2, T3, T4> tuple) {
+        return Tuple4.lazy(()->_1(), ()->tuple._1(), ()->tuple._2(), ()->tuple._3());
+    }
+
+
+    public  <T2, T3, T4, T5> Tuple5<T, T2, T3, T4, T5> lazyConcat(Tuple4<T2, T3, T4, T5> tuple) {
+        return Tuple5.lazy(()->_1(), ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4());
+    }
+
+
+    public  <T2, T3, T4, T5, T6> Tuple6<T, T2, T3, T4, T5, T6> lazyConcat(Tuple5<T2, T3, T4, T5, T6> tuple) {
+        return Tuple6.lazy(()->_1(), ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4(), ()->tuple._5());
+    }
+
+
+    public  <T2, T3, T4, T5, T6, T7> Tuple7<T, T2, T3, T4, T5, T6, T7> lazyConcat(Tuple6<T2, T3, T4, T5, T6, T7> tuple) {
+        return Tuple7.lazy(()->_1(),()->tuple._1(), ()->tuple._2(),()-> tuple._3(), ()->tuple._4(),()-> tuple._5(), ()->tuple._6());
+    }
+
+
+    public  <T2, T3, T4, T5, T6, T7, T8> Tuple8<T, T2, T3, T4, T5, T6, T7, T8> lazyConcat(Tuple7<T2, T3, T4, T5, T6, T7, T8> tuple) {
+        return Tuple8.lazy(()->_1(), ()->tuple._1(),()-> tuple._2(), ()->tuple._3(), ()->tuple._4(), ()->tuple._5(), ()->tuple._6(), ()->tuple._7());
+    }
 
 
 
