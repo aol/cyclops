@@ -279,5 +279,13 @@ public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
         return  Tuple.tuple(_1(),_2(),_3(),_4(),_5(),_6(),tuple._1(),tuple._2());
     }
 
+    public  <T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> lazyConcat(Tuple1<T7> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->_4,()->_5,()->_6,()->tuple._1());
+    }
+    public  < T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> lazyConcat(Tuple2<T7,T8> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->_4,()->_5,()->_6,()->tuple._1(),()->tuple._2());
+    }
+
+
 
 }
