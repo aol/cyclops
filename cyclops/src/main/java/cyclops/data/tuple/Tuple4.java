@@ -231,4 +231,24 @@ public class Tuple4<T1,T2,T3,T4> implements To<Tuple4<T1,T2,T3,T4>>,
     public final Object[] toArray() {
         return new Object[] { _1(),_2(),_3(),_4() };
     }
+
+    public  <  T5> Tuple5<T1, T2, T3, T4, T5>  concat(Tuple1<T5> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(),_4(),tuple._1());
+    }
+    public  <T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> concat(Tuple2<T5,T6> tuple) {
+        return  Tuple.tuple(_1(),_2(),_3(),_4(),tuple._1(),tuple._2());
+    }
+
+
+    public  <T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple3<T5, T6, T7> tuple) {
+        return  Tuple.tuple(_1(),_2(),_3(),_4(),tuple._1(), tuple._2(), tuple._3());
+    }
+
+
+    public  <T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>  concat(Tuple4<T5, T6, T7, T8> tuple) {
+        return  Tuple.tuple(_1(),_2(),_3(),_4(), tuple._1(), tuple._2(), tuple._3(), tuple._4());
+    }
+
+
+
 }
