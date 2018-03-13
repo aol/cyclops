@@ -36,7 +36,7 @@ dependencies {
     compile project(':cyclops-anym')
     compile project(':cyclops-futurestream')
     compile project(':cyclops-reactive-collections')
-    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: rxJava2Version
     provided group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testCompile project(':cyclops-anym').sourceSets.test.output
     testCompile project(':cyclops').sourceSets.test.output
