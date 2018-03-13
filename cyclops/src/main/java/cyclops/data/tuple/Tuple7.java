@@ -229,6 +229,7 @@ public class Tuple7<T1,T2,T3,T4,T5,T6,T7> implements To<Tuple7<T1,T2,T3,T4,T5,T6
         return lazy(()->(fn1.apply(_1())),()->fn2.apply(_2()),()->fn3.apply(_3()),()->fn4.apply(_4()),
                 ()->fn5.apply(_5()),()->fn6.apply(_6()),()->fn7.apply(_7()));
     }
+
     public <R> Tuple7<R, T2,T3,T4,T5,T6,T7> map1(Function<? super T1, ? extends R> fn) {
         return of(fn.apply(_1()), _2(),_3(),_4(),_5(),_6(),_7());
     }

@@ -93,6 +93,20 @@ public abstract class AbstractIterableXTest {
       assertThat(of(1,2,3).indexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
     }
     @Test
+    public void indexOfSlize(){
+        assertThat(empty().indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        assertThat(of(1).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(0,1,2,3).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(1l)));
+    }
+    @Test
+    public void lastIndexOfSlize(){
+        assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        assertThat(of(1).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(0,1,2,3,4,5,6,1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(7l)));
+    }
+    @Test
     public void lastIndexOf(){
       assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
       assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
