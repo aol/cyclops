@@ -1,9 +1,11 @@
 package cyclops.data;
 
+import cyclops.control.Maybe;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
+import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -251,7 +253,13 @@ public class VectorTest extends BaseImmutableListTest {
         }
 
     }
-
+    @Test
+    public void lastIndexOfSlize(){
+        MatcherAssert.assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        MatcherAssert.assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        MatcherAssert.assertThat(of(1).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        MatcherAssert.assertThat(of(0,1,2,3,4,5,6,1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+    }
 
 
 

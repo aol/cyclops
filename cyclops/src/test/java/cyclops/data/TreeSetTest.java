@@ -110,4 +110,11 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     MatcherAssert.assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),
       equalTo(of(1,2,3,2).indexOf(e->Objects.equals(2,e))));
   }
+    @Test
+    public void lastIndexOfSlize(){
+        MatcherAssert.assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        MatcherAssert.assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        MatcherAssert.assertThat(of(1).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        MatcherAssert.assertThat(of(0,1,2,3,4,5,6,1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+    }
 }
