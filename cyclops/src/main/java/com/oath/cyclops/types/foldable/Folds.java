@@ -241,6 +241,7 @@ public interface Folds<T> extends Iterable<T>  {
                 .elementAt(0l)
                 .toOptional();
     }
+
     default int sumInt(ToIntFunction<T> fn){
         return stream().mapToInt(fn).sum();
     }
