@@ -519,8 +519,9 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().grouped(size,supplier));
     }
 
+
     @Override
-    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableQueue<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
