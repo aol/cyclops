@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Eval;
@@ -33,8 +33,8 @@ import java.util.function.*;
  */
 public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                        implements To<EvalT<W,T>>,
-        Transformable<T>,
-  Filters<T> {
+                                                                  Transformable<T>,
+                                                                  Filters<T> {
 
     private final AnyM<W,Eval<T>> run;
 

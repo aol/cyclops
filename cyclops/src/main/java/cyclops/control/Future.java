@@ -8,7 +8,6 @@ import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -486,7 +485,7 @@ public class Future<T> implements To<Future<T>>,
 
     Future<ReactiveSeq<T>> identity = Future.ofResult(ReactiveSeq.empty());
 
-    BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<Future<ReactiveSeq<T>>,Future<T>,Future<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<Future<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 

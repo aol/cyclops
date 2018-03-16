@@ -41,19 +41,19 @@ public class ZipAsyncTest {
         /**
         nextAsync().printOut();
         Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync()).printOut();
+                .zipWithStream(nextAsync()).printOut();
         Spouts.of(1,2,3,4,5)
-                .zipS(Spouts.of(1,2)).printOut();
+                .zipWithStream(Spouts.of(1,2)).printOut();
 **/
         /**
         Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync()).forEach(System.out::println,
+                .zipWithStream(nextAsync()).forEach(System.out::println,
                 System.err::println);
 **/
 
         /**
         Spouts.of(1,2,3,4,5)
-                .zipS(nextAsync())
+                .zipWithStream(nextAsync())
                 .listX()
                 .printOut();
 **/

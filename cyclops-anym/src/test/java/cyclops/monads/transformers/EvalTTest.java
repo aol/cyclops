@@ -14,7 +14,6 @@ import com.oath.cyclops.util.box.Mutable;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;

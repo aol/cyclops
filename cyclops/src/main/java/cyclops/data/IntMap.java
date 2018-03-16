@@ -5,12 +5,10 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.control.Eval;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.intMap;
-import cyclops.control.Eval;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -168,10 +166,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return unitStream(stream().prependAll(value));
     }
 
-    @Override
-    public IntMap<T> appendAll(T value) {
-        return this.plus(value);
-    }
+
 
     @Override
     public IntMap<T> appendAll(Iterable<? extends T> value) {
@@ -798,7 +793,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
         @Override
         public ImmutableList<T> append(T value) {
-            return plus(value);
+            return of(value);
         }
 
         @Override
@@ -806,10 +801,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             return empty();
         }
 
-        @Override
-        public ImmutableList<T> appendAll(T value) {
-            return empty();
-        }
+
 
         @Override
         public ImmutableList<T> appendAll(Iterable<? extends T> value) {
@@ -950,7 +942,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
             IntMap<T> res = empty();
             for (int i = 0; i < size; i++) {
                 T n = (T) s.readObject();
-                res = res.appendAll(n);
+                res =  res.append(n);
             }
             v=res;
         }

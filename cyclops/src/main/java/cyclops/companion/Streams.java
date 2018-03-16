@@ -1042,7 +1042,7 @@ public class Streams {
      * Insert a Stream into the middle of this stream at the specified position
      * <pre>
      * {@code
-     * List<String> result = 	Streams.insertAtS(Stream.of(1,2,3),1,of(100,200,300))
+     * List<String> result = 	Streams.insertAt(Stream.of(1,2,3),1,of(100,200,300))
     										.map(it ->it+"!!")
     										.collect(CyclopsCollectors.toList());
 

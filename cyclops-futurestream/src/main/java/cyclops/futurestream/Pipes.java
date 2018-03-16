@@ -11,7 +11,6 @@ import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple0;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

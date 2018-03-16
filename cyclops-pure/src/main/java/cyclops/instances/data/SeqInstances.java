@@ -188,17 +188,10 @@ public class SeqInstances {
     BiFunction<Applicative<C2>,Seq<Higher<C2, T>>,Higher<C2, Seq<T>>> sequenceFn = (ap, list) -> {
 
       Higher<C2,Seq<T>> identity = ap.unit(Seq.empty());
+       BiFunction<Higher<C2,T>,Higher<C2,Seq<T>>,Higher<C2,Seq<T>>> combineToPStack =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),next,acc);
 
-      BiFunction<Higher<C2,Seq<T>>,Higher<C2,T>,Higher<C2,Seq<T>>> combineToPStack =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),acc,next);
+       return list.foldRight(identity,combineToPStack);
 
-      BinaryOperator<Higher<C2,Seq<T>>> combinePStacks = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
-
-
-      return list.stream()
-        .reverse()
-        .reduce(identity,
-          combineToPStack,
-          combinePStacks);
 
 
     };

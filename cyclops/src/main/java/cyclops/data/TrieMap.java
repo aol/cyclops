@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple2;
 
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -39,6 +40,13 @@ public final class TrieMap<K,V> implements  ImmutableMap<K,V>,
     public static <K,V> TrieMap<K,V> of(K k1,V v1,K k2, V v2){
         TrieMap<K,V> res = empty();
         return res.put(k1,v1).put(k2,v2);
+    }
+    public static <K,V> TrieMap<K,V> fromMap(java.util.Map<K,V> source){
+        TrieMap<K,V> res = empty();
+        for(Map.Entry<K,V> entry : source.entrySet()){
+            res = res.put(entry.getKey(),entry.getValue());
+        }
+        return res;
     }
 
     public static <K,V> TrieMap<K,V> empty(){

@@ -1,6 +1,6 @@
 package cyclops.monads.data;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.companion.Reducers;
 import cyclops.data.HashSet;
 import cyclops.monads.AnyM;

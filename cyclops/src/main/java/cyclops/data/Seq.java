@@ -65,11 +65,6 @@ public interface Seq<T> extends ImmutableList<T>,
     }
 
     @Override
-    default Seq<T> append(T value){
-        return insertAt(Math.max(0, size()),value);
-    }
-
-    @Override
     default<R> Seq<R> unitIterable(Iterable<R> it){
         if(it instanceof Seq){
             return (Seq<R>)it;
@@ -263,7 +258,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         return l.visit(c->c.head,n->alt.get());
     }
-    default Seq<T> appendAll(T value){
+    default Seq<T> append(T value){
         return Seq.of(value).prependAll(this);
     }
     default Seq<T> appendAll(Iterable<? extends T> it){

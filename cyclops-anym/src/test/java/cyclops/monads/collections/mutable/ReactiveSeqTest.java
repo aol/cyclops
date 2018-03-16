@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.Vector;
 import cyclops.monads.Witness.reactiveSeq;

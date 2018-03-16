@@ -1,6 +1,6 @@
 package cyclops.monads.transformers;
 
-import com.oath.anym.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
@@ -633,8 +633,8 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     }
 
     @Override
-    public SeqT<W,T> appendAll(T value) {
-        return (SeqT) FoldableTransformerSeq.super.appendAll(value);
+    public SeqT<W,T> append(T value) {
+        return (SeqT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

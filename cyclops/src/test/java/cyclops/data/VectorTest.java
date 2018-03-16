@@ -1,9 +1,11 @@
 package cyclops.data;
 
+import cyclops.control.Maybe;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
+import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -251,7 +253,6 @@ public class VectorTest extends BaseImmutableListTest {
         }
 
     }
-
 
 
 

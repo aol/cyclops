@@ -186,4 +186,53 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
         }
         return result;
     }
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3() };
+    }
+
+    public  < T4> Tuple4<T1, T2, T3, T4>  concat(Tuple1<T4> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(),tuple._1());
+    }
+    public  <T4, T5> Tuple5<T1, T2, T3, T4, T5> concat(Tuple2<T4,T5> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(),tuple._1(),tuple._2());
+    }
+
+
+    public  <T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6>  concat(Tuple3<T4, T5, T6> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(),tuple._1(), tuple._2(), tuple._3());
+    }
+
+
+    public  <T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple4<T4, T5, T6, T7> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(), tuple._1(), tuple._2(), tuple._3(), tuple._4());
+    }
+
+
+    public  < T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>  concat(Tuple5<T4, T5, T6, T7, T8> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(), tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5());
+    }
+
+    public  <T4> Tuple4<T1, T2, T3, T4>  lazyConcat(Tuple1<T4> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->tuple._1());
+    }
+    public  <T4, T5> Tuple5<T1, T2, T3, T4, T5> lazyConcat(Tuple2<T4,T5> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->tuple._1(),()->tuple._2());
+    }
+
+
+    public  <T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> lazyConcat(Tuple3<T4, T5, T6> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3, ()->tuple._1(), ()->tuple._2(), ()->tuple._3());
+    }
+
+
+    public  <T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> lazyConcat(Tuple4<T4, T5, T6, T7> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3, ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4());
+    }
+
+
+    public  <T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> lazyConcat(Tuple5<T4, T5, T6, T7, T8> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3, ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4(), ()->tuple._5());
+    }
+
+
 }

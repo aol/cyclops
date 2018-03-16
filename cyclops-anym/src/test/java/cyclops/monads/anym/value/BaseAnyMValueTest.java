@@ -1,8 +1,8 @@
 package cyclops.monads.anym.value;
 
 
-import com.oath.anym.AnyMValue;
-import com.oath.anym.AnyMValue2;
+import com.oath.cyclops.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue2;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.util.box.Mutable;
 import cyclops.companion.Semigroups;
@@ -10,7 +10,6 @@ import cyclops.control.Future;
 import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.function.Monoid;

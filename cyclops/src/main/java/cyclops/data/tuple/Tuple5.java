@@ -233,4 +233,34 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
     public int hashCode() {
         return Objects.hash(_1(), _2(), _3(), _4(), _5());
     }
+
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2(),_3(),_4(),_5() };
+    }
+
+    public  <   T6> Tuple6<T1, T2, T3, T4, T5, T6>  concat(Tuple1<T6> tuple) {
+        return Tuple.tuple(_1(),_2(),_3(),_4(),_5(),tuple._1());
+    }
+    public  <T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> concat(Tuple2<T6,T7> tuple) {
+        return  Tuple.tuple(_1(),_2(),_3(),_4(),_5(),tuple._1(),tuple._2());
+    }
+
+
+    public  <T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8>  concat(Tuple3<T6, T7, T8> tuple) {
+        return  Tuple.tuple(_1(),_2(),_3(),_4(),_5(),tuple._1(), tuple._2(), tuple._3());
+    }
+
+    public  <T6> Tuple6<T1, T2, T3, T4, T5, T6>  lazyConcat(Tuple1<T6> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->_4,()->_5,()->tuple._1());
+    }
+    public  <T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7> lazyConcat(Tuple2<T6,T7> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->_4,()->_5,()->tuple._1(),()->tuple._2());
+    }
+
+
+    public  <T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> lazyConcat(Tuple3<T6, T7, T8> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->_3,()->_4,()->_5, ()->tuple._1(), ()->tuple._2(), ()->tuple._3());
+    }
+
+
 }

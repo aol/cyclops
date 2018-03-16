@@ -1,6 +1,6 @@
 package cyclops.monads.transformers;
 
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.ReactiveReducers;
 import cyclops.companion.*;

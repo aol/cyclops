@@ -2,12 +2,12 @@ package com.oath.cyclops.types.reactive;
 
 import com.oath.cyclops.react.async.subscription.Continueable;
 import com.oath.cyclops.types.futurestream.Continuation;
+import cyclops.control.Eval;
 import cyclops.futurestream.LazyReact;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.async.adapters.Queue.ClosedQueueException;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import cyclops.reactive.collections.mutable.QueueX;
-import cyclops.control.Eval;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
 import lombok.Getter;

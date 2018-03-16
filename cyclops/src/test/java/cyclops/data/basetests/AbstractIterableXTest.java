@@ -93,6 +93,20 @@ public abstract class AbstractIterableXTest {
       assertThat(of(1,2,3).indexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(1l)));
     }
     @Test
+    public void indexOfSlize(){
+        assertThat(empty().indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        assertThat(of(1).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(0,1,2,3).indexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(1l)));
+    }
+    @Test
+    public void lastIndexOfSlize(){
+        assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        assertThat(of(1).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(0,1,2,3,4,5,6,1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(7l)));
+    }
+    @Test
     public void lastIndexOf(){
       assertThat(empty().lastIndexOf(e->true),equalTo(Maybe.nothing()));
       assertThat(of(1).lastIndexOf(e->true),equalTo(Maybe.just(0l)));
@@ -2287,10 +2301,27 @@ public abstract class AbstractIterableXTest {
         assertThat(empty().plus(1).plus(2).plus(3)
                 .plus(4).plus(5).size(),equalTo(5));
     }
+
+    @Test
+    public void append(){
+        assertThat(of(1).append(2).size(),equalTo(2));
+        assertThat(of().append(2).size(),equalTo(1));
+    }
+    @Test
+    public void appendMultiple(){
+        assertThat(of(1).appendAll(2,3).size(),equalTo(3));
+        assertThat(of(1).appendAll(2,3,4).size(),equalTo(4));
+        assertThat(of().appendAll(2,3,4).size(),equalTo(3));
+    }
     @Test
     public void prependAppend(){
+        System.out.println(of(1)
+            .prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6)
+            .prependAll(7,8)
+            .insertAt(4,9).deleteBetween(1,2)
+            .insertStreamAt(5,Stream.of(11,12)));
         assertThat(of(1)
-                    .prependStream(Stream.of(2)).appendAll(3).prepend(4).appendAll(5,6)
+                    .prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6)
                     .prependAll(7,8)
                     .insertAt(4,9).deleteBetween(1,2)
                 .insertStreamAt(5,Stream.of(11,12)).stream().count(),equalTo(10L));

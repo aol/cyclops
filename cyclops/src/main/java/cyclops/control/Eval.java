@@ -4,7 +4,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Vector;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
@@ -71,7 +70,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval ->
-                eval.visit(s->tailRec(s,fn),p->Eval.now(p)));
+                eval.visit(s->tailRec(s,fn),p-> Eval.now(p)));
     }
     public static <T> Higher<eval, T> widen(Eval<T> narrow) {
     return narrow;
@@ -145,7 +144,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     @AllArgsConstructor
     static class CompletableEval<ORG,T2> implements Eval<T2>, Completable<ORG>{
-        public final Completable.CompletablePublisher<ORG> complete;
+        public final CompletablePublisher<ORG> complete;
         public final Eval<T2> lazy;
 
         @Override
@@ -209,6 +208,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return Eval created from Publisher
      */
     public static <T> Eval<T> fromIterable(final Iterable<T> iterable) {
+        if(iterable instanceof Eval)
+            return (Eval<T>)iterable;
         final Iterator<T> it = iterable.iterator();
         return Eval.later(() -> it.hasNext() ? it.next() : null);
     }
@@ -247,11 +248,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     public static <T> Eval<T> later(final Supplier<T> value) {
         return new Module.Later<T>(
-                                   in -> value == null ? null : value.get());
+            () -> value == null ? null : value.get());
     }
     public static <T> Eval<T> defer(final Supplier<Eval<T>> value) {
         return new Module.Later<T>(
-                in -> value == null || value.get() == null ? null : value.get().get());
+            () -> value == null || value.get() == null ? null : value.get().get());
     }
 
     /**
@@ -270,7 +271,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     public static <T> Eval<T> always(final Supplier<T> value) {
         return new Module.Always<T>(
-                                    in -> value == null ? null : value.get());
+            () -> value == null ? null : value.get());
     }
 
     /**
@@ -313,13 +314,13 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     Eval<ReactiveSeq<T>> identity = Eval.now(ReactiveSeq.empty());
 
-    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc, next) ->acc.zip(next,(a, b)->a.append(b));
 
-    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
+    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a, b)-> a.zip(b,(z1, z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
-  public static <T,R> Eval<ReactiveSeq<R>> traverse(Function<? super T,? extends R> fn,ReactiveSeq<Eval<T>> stream) {
+  public static <T,R> Eval<ReactiveSeq<R>> traverse(Function<? super T, ? extends R> fn, ReactiveSeq<Eval<T>> stream) {
     ReactiveSeq<Eval<R>> s = stream.map(h -> h.map(fn));
     return sequence(s);
   }
@@ -338,12 +339,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @param reducer Reducer to fold nest values into
      * @return Eval with a value
      */
-    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Reducer<R,T> reducer) {
+    public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Reducer<R, T> reducer) {
         return sequence(evals).map(s -> s.mapReduce(reducer));
     }
 
     /**
-     * Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
+     * Sequence and reduce an Iterable of Evals into an Eval with a reduced value
      *
      * <pre>
      * {@code
@@ -364,23 +365,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
                                           );
     }
 
-    /**
-     *  Sequence and reduce a CollectionX of Evals into an Eval with a reduced value
-     *
-     * <pre>
-     * {@code
-     *   Eval<Integer> maybes =Eval.accumulate(Monoids.intSum,Seq.of(just,Eval.now(1)));
-         //Eval.now(11)
-     *
-     * }
-     * </pre>
-     *
-     *
-     * @param evals Collection of Evals to accumulate
-     * @param reducer Combiner function to applyHKT to converted values
-     * @return Eval with a value
-     */
-    public static <T> Eval<T> accumulate(final Monoid<T> reducer,final Iterable<Eval<T>> evals) {
+
+    public static <T> Eval<T> accumulate(final Monoid<T> reducer, final Iterable<Eval<T>> evals) {
         return sequence(evals).map(s -> s.reduce(reducer));
     }
 
@@ -399,16 +385,16 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     @Override
-    public <R> Eval<R> map(Function<? super T, ? extends R> mapper);
+    default <R> Eval<R> map(Function<? super T, ? extends R> mapper){
+        return flatMap(i->Eval.now(mapper.apply(i)));
+    }
 
 
     @Override
-    public <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
+    <R> Eval<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
 
-    default Vector<Function<Object, Object>> steps() {
-        return Vector.of(__ -> get());
-    }
+
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
@@ -603,9 +589,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, yieldingFunction);
     }
 
@@ -614,10 +600,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <T2, R1, R2, R3, R> Eval<R> forEach4(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
-            Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
-            Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
+                                                 BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                                 Function3<? super T, ? super R1, ? super R2, ? extends MonadicValue<R3>> value3,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, Boolean> filterFunction,
+                                                 Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach4(value1, value2, value3, filterFunction, yieldingFunction);
     }
@@ -627,8 +613,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, yieldingFunction);
     }
@@ -638,9 +624,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <T2, R1, R2, R> Eval<R> forEach3(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
-            Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
-            Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
+                                             BiFunction<? super T, ? super R1, ? extends MonadicValue<R2>> value2,
+                                             Function3<? super T, ? super R1, ? super R2, Boolean> filterFunction,
+                                             Function3<? super T, ? super R1, ? super R2, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach3(value1, value2, filterFunction, yieldingFunction);
     }
@@ -650,7 +636,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+                                     BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
 
         return (Eval<R>)MonadicValue.super.forEach2(value1, yieldingFunction);
     }
@@ -660,8 +646,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      */
     @Override
     default <R1, R> Eval<R> forEach2(Function<? super T, ? extends MonadicValue<R1>> value1,
-            BiFunction<? super T, ? super R1, Boolean> filterFunction,
-            BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
+                                     BiFunction<? super T, ? super R1, Boolean> filterFunction,
+                                     BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
         return (Eval<R>)MonadicValue.super.forEach2(value1, filterFunction, yieldingFunction);
     }
 
@@ -683,40 +669,42 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             return Eval.now(value.orElse(null));
         }
 
-        public static class Later<T> extends Rec<T> implements Eval<T> {
+        public static class Later<T> implements Eval<T> {
 
-            Later(final Function<Object, ? extends T> s) {
-                super(Vector.of(Rec.raw(Memoize.memoizeFunction(s))));
+
+            private final Supplier<T> memo;
+            private final Trampoline<T> evaluate;
+            Later(Rec<?, T> in) {
+                memo = Memoize.memoizeSupplier(()->in.toTrampoline().get());
+                evaluate = in.toTrampoline();
             }
 
-            Later(final Vector<Function<Object, Object>> s) {
-                super(s);
-
+            Later(Supplier<T> s){
+                memo = Memoize.memoizeSupplier(s);
+                evaluate = Trampoline.more(()->Trampoline.done(memo.get()));
             }
 
             @Override
-            public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
-
-                return new Later<R>(
-                                    super.fns.plus(Rec.raw(Memoize.memoizeFunction(mapper))));
+            public <R> Eval<R> map(Function<? super T, ? extends R> mapper) {
+                return flatMap(i->Eval.later(()-> mapper.apply(i)));
             }
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                final RecFunction s = __ -> asEval(mapper.apply(super.applyRec())).steps();
-
-                return new Later<R>(Vector.of(s));
-
+                return new Later<R>( new Rec<T, R>(this, Memoize.memoizeFunction(mapper)));
             }
+            @Override
+            public Trampoline<T> toTrampoline(){
+                return evaluate;
+            }
+
 
             @Override
             public T get() {
-                return super.get();
+                return memo.get();
             }
 
-            /* (non-Javadoc)
-             * @see com.oath.cyclops.lambda.monads.Pure#unit(java.lang.Object)
-             */
+
             @Override
             public <T> Eval<T> unit(final T unit) {
                 return Eval.later(() -> unit);
@@ -750,42 +738,38 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         }
 
 
-        public static class Always<T> extends Rec<T> implements Eval<T> {
+        public static class Always<T>  implements Eval<T> {
 
-            Always(final Function<Object, ? extends T> s) {
-                super(Vector.of(Rec.raw(s)));
+            private final Trampoline<T> evaluate;
+
+            Always(Rec<?, T> in) {
+                evaluate =  in.toTrampoline();
             }
-
-            Always(final Vector<Function<Object, Object>> s) {
-                super(s);
-
+            Always(Supplier<T> in) {
+                evaluate = Trampoline.more(()->Trampoline.done(in.get()));
             }
-
 
             public Maybe<T> filter(Predicate<? super T> predicate ){
                 return Maybe.fromEval(this).filter(predicate);
             }
 
-            @Override
-            public <R> Eval<R> map(final Function<? super T, ? extends R> mapper) {
-
-                return new Always<R>(
-                                     fns.plus(Rec.raw(mapper)));
-
-            }
 
             @Override
             public <R> Eval<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
-                final RecFunction s = __ -> asEval(mapper.apply(apply())).steps();
-
+                Rec<T, R> rec = new Rec<T, R>(this, mapper);
                 return new Always<R>(
-                                     Vector.of(s));
+                                     rec);
             }
 
             @Override
             public T get() {
-                return super.get();
+                return evaluate.get();
             }
+            @Override
+            public Trampoline<T> toTrampoline(){
+                return evaluate;
+            }
+
 
             @Override
             public <T> Eval<T> unit(final T unit) {
@@ -970,88 +954,21 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
         }
 
-        private static class Rec<T> {
-            final Vector<Function<Object, Object>> fns;
-            private final static Object VOID = new Object();
-
-            Rec(final Vector<Function<Object, Object>> s) {
-                fns = s;
-            }
+        @AllArgsConstructor
+        private static class Rec<T,R> {
+            private final Eval<T> eval;
+            private final Function<? super T,? extends  MonadicValue<? extends R>> fn;
 
 
-
-            private static Function<Object, Object> raw(final Function<?, ?> fn) {
-                return (Function<Object, Object>) fn;
-            }
-
-            static interface RecFunction extends Function<Object, Object> {
-
-            }
-
-            public  Vector<Function<Object, Object>> steps() {
-                return fns;
-            }
-            public Trampoline<T> toTrampoline(){
-                return new Trampoline<T>() {
-                    @Override
-                    public T get() {
-                        return Rec.this.get();
-                    }
-
-                    @Override
-                    public boolean complete(){
-                        return false;
-                    }
-
-                    public Trampoline<T> bounce() {
-                        Object input = init();
-                        for (int i=0; i< fns.size();i++) {
-
-                                final Function<Object, Object> next = fns.getOrElse(i,null);
-                                if (next instanceof RecFunction) {
-                                    Vector<Function<Object, Object>> remaining = fns.subList(i+1,fns.size());
-                                    Vector<Function<Object, Object>> nextSteps = (Vector) ((RecFunction) next).apply(VOID);
-                                    nextSteps.appendAll(remaining);
-                                   return new Later(nextSteps).toTrampoline();
-                                } else {
-                                    input = next.apply(input);
-
-
-                                }
-
-
-                        }
-                        return Trampoline.done((T) input);
-
-                    }
-                };
-            }
-
-
-            public Object init(){
-                return VOID;
-            }
-            T applyRec() {
-                Object input = init();
-                for (final Function<Object, Object> n : fns) {
-                    final Deque<Function<Object, Object>> newFns = new ArrayDeque();
-                    newFns.add(n);
-                    while (newFns.size() > 0) {
-                        final Function<Object, Object> next = newFns.pop();
-                        if (next instanceof RecFunction) {
-                            Vector v = (Vector) ((RecFunction) next).apply(VOID);
-                            for(Object t : v)
-                                newFns.add((Function)t);
-                        } else
-                            input = next.apply(input);
-
-                    }
-                }
-                return (T) input;
-            }
-
-            public T get() {
-                return applyRec();
+            public Trampoline<R> toTrampoline() {
+                Trampoline<? extends R> x = Trampoline.more(() -> {
+                    Trampoline<? extends R> t = eval.toTrampoline().flatMap(v -> {
+                        Trampoline<? extends R> t2 = Eval.fromIterable(fn.apply(v)).toTrampoline();
+                        return t2;
+                    });
+                    return t;
+                });
+                return Trampoline.narrow(x);
             }
 
         }
@@ -1062,13 +979,13 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> Eval<R7> forEach(Eval<T> eval,
-                                                                        Function<? super T, ? extends Eval<R1>> value2,
-                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
-                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
-                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
-                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
-                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7,
-                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Eval<R7>> value8
+                                                                Function<? super T, ? extends Eval<R1>> value2,
+                                                                Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                                Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                                Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                                Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
+                                                                Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7,
+                                                                Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends Eval<R7>> value8
     ) {
 
       return eval.flatMap(in -> {
@@ -1107,12 +1024,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
     public static <T,F,R1, R2, R3,R4,R5,R6> Eval<R6> forEach(Eval<T> eval,
-                                                                     Function<? super T, ? extends Eval<R1>> value2,
-                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
-                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
-                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
-                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
-                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7
+                                                             Function<? super T, ? extends Eval<R1>> value2,
+                                                             Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                             Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                             Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                             Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6,
+                                                             Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends Eval<R6>> value7
     ) {
 
       return eval.flatMap(in -> {
@@ -1147,11 +1064,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
     public static <T,F,R1, R2, R3,R4,R5> Eval<R5> forEach(Eval<T> eval,
-                                                                  Function<? super T, ? extends Eval<R1>> value2,
-                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
-                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
-                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
-                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6
+                                                          Function<? super T, ? extends Eval<R1>> value2,
+                                                          Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                          Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                          Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5,
+                                                          Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends Eval<R5>> value6
     ) {
 
       return eval.flatMap(in -> {
@@ -1181,10 +1098,10 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
     public static <T,F,R1, R2, R3,R4> Eval<R4> forEach(Eval<T> eval,
-                                                               Function<? super T, ? extends Eval<R1>> value2,
-                                                               Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
-                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
-                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5
+                                                       Function<? super T, ? extends Eval<R1>> value2,
+                                                       Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                       Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4,
+                                                       Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends Eval<R4>> value5
 
     ) {
 
@@ -1212,9 +1129,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
     public static <T,F,R1, R2, R3> Eval<R3> forEach(Eval<T> eval,
-                                                            Function<? super T, ? extends Eval<R1>> value2,
-                                                            Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
-                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4
+                                                    Function<? super T, ? extends Eval<R1>> value2,
+                                                    Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3,
+                                                    Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends Eval<R3>> value4
 
     ) {
 
@@ -1239,8 +1156,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
     public static <T,F,R1, R2> Eval<R2> forEach(Eval<T> eval,
-                                                        Function<? super T, ? extends Eval<R1>> value2,
-                                                        Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3
+                                                Function<? super T, ? extends Eval<R1>> value2,
+                                                Function<? super Tuple2<? super T,? super R1>, ? extends Eval<R2>> value3
 
     ) {
 
@@ -1259,7 +1176,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
     public static <T,F,R1> Eval<R1> forEach(Eval<T> eval,
-                                                    Function<? super T, ? extends Eval<R1>> value2
+                                            Function<? super T, ? extends Eval<R1>> value2
 
 
     ) {

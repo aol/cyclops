@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
@@ -34,7 +34,7 @@ public class AnyMSeqTest {
         AnyMSeq<list,ListX<Integer>> test2 = AnyM.fromList(ListX.of(ListX.of(10,1)));
         System.out.println(test1.equals(test2));
         assertThat(test1,equalTo(test2));
-        test1.appendAll(ListX.of(1,2,3)).printOut();
+        test1.append(ListX.of(1,2,3)).printOut();
         test1.cycle(200).sliding(3).deleteBetween(5,10).combinations();
     }
     @Test

@@ -10,11 +10,8 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.data.Seq;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
@@ -1019,8 +1016,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default SetX<T> appendAll(T value) {
-        return (SetX<T>)LazyCollectionX.super.appendAll(value);
+    default SetX<T> append(T value) {
+        return (SetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override
