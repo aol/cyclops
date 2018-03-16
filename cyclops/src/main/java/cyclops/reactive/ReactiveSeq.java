@@ -136,7 +136,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     @Override
     default ReactiveSeq<T> plus(T value) {
-        return appendAll(value);
+        return append(value);
     }
 
 
@@ -1422,7 +1422,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *    ReactiveSeq.of(1,2,3,4,5,6)
-     *               .groupedStatefullyUntil((s,i)-> s.contains(4) ? true : false)
+     *               .groupedUntil((s,i)-> s.contains(4) ? true : false)
      *               .toList()
      *               .size()
      *     //5
@@ -1435,7 +1435,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     ReactiveSeq<Vector<T>> groupedUntil(BiPredicate<Vector<? super T>, ? super T> predicate);
-    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+    <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                       Function<? super C, ? extends R> finalizer);
     ReactiveSeq<Vector<T>> groupedWhile(BiPredicate<Vector<? super T>, ? super T> predicate);
     <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedWhile(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
@@ -1516,7 +1516,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
      *   assertThat(ReactiveSeq.of(1,1,1,1,1,1)
-     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()-> new TreeSet<>())
+     *                       .batchByTime(1500,TimeUnit.MICROSECONDS,()->TreeSet.empty())
      *                       .toList()
      *                       .getValue(0)
      *                       .size(),is(1));
@@ -2736,7 +2736,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> appendAll(T... values);
 
 
-    ReactiveSeq<T> appendAll(T value);
+    ReactiveSeq<T> append(T value);
 
 
     ReactiveSeq<T> prepend(T value);
@@ -2883,7 +2883,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAtS(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
      *
      *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
@@ -4508,11 +4508,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return ReactiveSeq with Stream appended
      */
      ReactiveSeq<T> appendStream(Stream<? extends T> other);
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
-     */
 
-    ReactiveSeq<T> append(Iterable<? extends T> other);
+
 
     @Override
     default ReactiveSeq<T> appendAll(Iterable<? extends T> value){

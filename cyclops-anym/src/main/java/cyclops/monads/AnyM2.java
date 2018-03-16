@@ -1,22 +1,20 @@
 package cyclops.monads;
 
-import com.oath.anym.AnyMSeq;
-import com.oath.anym.AnyMValue;
+import com.oath.cyclops.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
 import com.oath.cyclops.types.Unwrapable;
 
-import com.oath.anym.extensability.MonadAdapter;
+import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.stream.ToStream;
-import cyclops.companion.Streams;
 import cyclops.control.Future;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.function.*;
 import cyclops.monads.function.AnyMFunction1;

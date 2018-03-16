@@ -181,4 +181,11 @@ public class BagTest extends BaseImmutableSetTest {
       assertThat(of(1,2,3).lastIndexOf(e-> Objects.equals(2,e)),equalTo(Maybe.just(1l)));
       assertThat(of(1,2,3,2).lastIndexOf(e->Objects.equals(2,e)),equalTo(Maybe.just(2l)));
     }
+    @Test
+    public void lastIndexOfSlize(){
+        assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+        assertThat(of(1).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(0,1,2,3,4,5,6,1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+    }
 }

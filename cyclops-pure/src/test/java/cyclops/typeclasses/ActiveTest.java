@@ -1,8 +1,14 @@
 package cyclops.typeclasses;
 
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.lazySeq;
+import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.instances.data.LazySeqInstances;
+import cyclops.instances.data.SeqInstances;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.companion.Monoids;
@@ -29,8 +35,8 @@ import static org.junit.Assert.*;
  */
 public class ActiveTest {
     Active<list,Integer> active = Active.of(ListX.of(1,2,3), ListXInstances.definitions());
-
-
+    Active<seq,Integer> activeSeq = Active.of(Seq.of(1,2,3), SeqInstances.definitions());
+    Active<lazySeq,Integer> activeLazySeq = Active.of(LazySeq.of(1,2,3), LazySeqInstances.definitions());
     @Test
     public void toList(){
         assertThat(ListXInstances.allTypeclasses(ListX.of(1,2,3)).toLazySeq(),equalTo(LazySeq.of(1,2,3)));
@@ -135,13 +141,42 @@ public class ActiveTest {
     }
     @Test
     public void traverse(){
-
+        System.out.println(active);
         Higher<option, Higher<list, Integer>> res = active
                 .<option,Integer>flatTraverse(applicative(), t->Maybe.just(ListX.of(t*2)));
 
-        Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)
+        System.out.println(active);
+        System.out.println(res);
+        System.out.println(res);
+        System.out.println(res);
+
+       Maybe<ListX<Integer>> raw = res.convert(Maybe::narrowK)
                                        .map(ListX::narrowK);
+        System.out.println(raw);
         assertThat(raw,equalTo(Maybe.just(ListX.of(2,4,6))));
+    }
+    @Test
+    public void traverseSeq(){
+
+
+        Higher<option, Higher<seq, Integer>> res = activeSeq
+            .<option,Integer>flatTraverse(applicative(), t->Maybe.just(Seq.of(t*2)));
+
+        System.out.println(res);
+        Maybe<Seq<Integer>> raw = res.convert(Maybe::narrowK)
+            .map(Seq::narrowK);
+        assertThat(raw,equalTo(Maybe.just(Seq.of(2,4,6))));
+    }
+    @Test
+    public void traverseLazySeq(){
+
+        Higher<option, Higher<lazySeq, Integer>> res = activeLazySeq
+            .<option,Integer>flatTraverse(applicative(), t->Maybe.just(LazySeq.of(t*2)));
+
+        System.out.println(res);
+        Maybe<LazySeq<Integer>> raw = res.convert(Maybe::narrowK)
+            .map(LazySeq::narrowK);
+        assertThat(raw,equalTo(Maybe.just(Seq.of(2,4,6))));
     }
 
     @Test

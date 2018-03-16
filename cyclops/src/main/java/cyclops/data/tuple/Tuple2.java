@@ -1,23 +1,23 @@
 package cyclops.data.tuple;
 
 
+import com.oath.cyclops.hkt.DataWitness.tuple2;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
-import cyclops.control.Maybe;
 import cyclops.control.Either;
-import cyclops.control.Option;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
-import com.oath.cyclops.hkt.DataWitness.tuple2;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /*
   A Tuple implementation that can be either eager / strict or lazy
@@ -181,6 +181,9 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         }
         return result;
     }
+    public final Object[] toArray() {
+        return new Object[] { _1(),_2() };
+    }
 
     public static <K, V> Tuple2< K, V> narrow(Tuple2<? extends K, ? extends V> t) {
         return (Tuple2<K,V>)t;
@@ -188,5 +191,68 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
     public static <T1,T2> Higher2<tuple2,T1, T2> widen(Tuple2<T1,T2> narrow) {
     return narrow;
   }
+
+    public  <T3> Tuple3<T1, T2,T3>  concat(Tuple1<T3> tuple) {
+        return Tuple.tuple(_1(),_2(),tuple._1());
+    }
+    public  <T3, T4> Tuple4<T1, T2, T3, T4> concat(Tuple2<T3,T4> tuple) {
+        return Tuple.tuple(_1(),_2(),tuple._1(),tuple._2());
+    }
+
+
+    public  <T3, T4, T5> Tuple5<T1, T2, T3, T4, T5>  concat(Tuple3<T3, T4, T5> tuple) {
+        return Tuple.tuple(_1(), _2(),tuple._1(), tuple._2(), tuple._3());
+    }
+
+
+    public  <T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6> concat(Tuple4<T3, T4, T5, T6> tuple) {
+        return Tuple.tuple(_1(), _2(), tuple._1(), tuple._2(), tuple._3(), tuple._4());
+    }
+
+
+    public  < T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7>  concat(Tuple5<T3, T4, T5, T6, T7> tuple) {
+        return Tuple.tuple(_1(), _2(), tuple._1(), tuple._2(), tuple._3(), tuple._4(), tuple._5());
+    }
+
+
+    public  <T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> concat(Tuple6<T3, T4, T5, T6, T7, T8> tuple) {
+        return Tuple.tuple(_1(), _2(),tuple._1(), tuple._2(),tuple._3(), tuple._4(),tuple._5(), tuple._6());
+    }
+
+
+
+
+
+    public  <T3> Tuple3<T1, T2,T3>  lazyConcat(Tuple1<T3> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->tuple._1());
+    }
+    public  <T3, T4> Tuple4<T1, T2, T3, T4> lazyConcat(Tuple2<T3,T4> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->tuple._1(),()->tuple._2());
+    }
+
+
+    public  <T3, T4, T5> Tuple5<T1, T2, T3, T4, T5> lazyConcat(Tuple3<T3, T4, T5> tuple) {
+        return Tuple.lazy(()->_1(),()->_2, ()->tuple._1(), ()->tuple._2(), ()->tuple._3());
+    }
+
+
+    public  <T3, T4, T5, T6> Tuple6<T1, T2, T3, T4, T5, T6>lazyConcat(Tuple4<T3, T4, T5, T6> tuple) {
+        return Tuple.lazy(()->_1(),()->_2, ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4());
+    }
+
+
+    public  <T3, T4, T5, T6, T7> Tuple7<T1, T2, T3, T4, T5, T6, T7>lazyConcat(Tuple5<T3, T4, T5, T6, T7> tuple) {
+        return Tuple.lazy(()->_1(),()->_2, ()->tuple._1(), ()->tuple._2(), ()->tuple._3(), ()->tuple._4(), ()->tuple._5());
+    }
+
+
+    public  < T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> lazyConcat(Tuple6<T3, T4, T5, T6, T7, T8> tuple) {
+        return Tuple.lazy(()->_1(),()->_2,()->tuple._1(), ()->tuple._2(),()-> tuple._3(), ()->tuple._4(),()-> tuple._5(), ()->tuple._6());
+    }
+
+
+
+
+
 
 }

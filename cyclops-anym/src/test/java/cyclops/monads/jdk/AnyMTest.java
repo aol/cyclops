@@ -18,11 +18,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.monads.Witness.optional;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.monads.Witness;
 import cyclops.monads.function.AnyMFunction1;
 import cyclops.monads.function.AnyMFunction2;
@@ -33,9 +32,6 @@ import cyclops.function.Monoid;
 import cyclops.companion.Reducers;
 import cyclops.monads.AnyM;
 import cyclops.control.Maybe;
-
-
-import lombok.val;
 
 
 public class AnyMTest {

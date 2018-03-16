@@ -12,6 +12,7 @@ import lombok.experimental.Wither;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.function.BooleanSupplier;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -78,6 +79,10 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
     public ConvertableSequence<T> to(){
         return new ConvertableSequence(this);
+    }
+
+    public <R> R to(Function<? super Iterable<? super T>,? extends R> reduce){
+        return reduce.apply(this);
     }
 
     Ior<T,Generator<T>> proceed() {

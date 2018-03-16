@@ -15,6 +15,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
@@ -36,6 +37,13 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
     public static <K,V> LinkedMap<K,V> of(K k1,V v1,K k2, V v2){
         LinkedMap<K,V> res = empty();
         return res.put(k1,v1).put(k2,v2);
+    }
+    public static <K,V> LinkedMap<K,V> fromMap(java.util.Map<K,V> source){
+        LinkedMap<K,V> res = empty();
+        for(Map.Entry<K,V> entry : source.entrySet()){
+            res = res.put(entry.getKey(),entry.getValue());
+        }
+        return res;
     }
 
     public static <K,V> LinkedMap<K,V> fromStream(Stream<Tuple2<K,V>> stream){

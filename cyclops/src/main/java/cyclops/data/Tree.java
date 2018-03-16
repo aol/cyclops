@@ -3,6 +3,7 @@ package cyclops.data;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import com.oath.cyclops.hkt.DataWitness.tree;
+import cyclops.function.Memoize;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,16 +11,21 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
 import java.util.function.Function;
+import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Tree<T> implements Deconstruct2<T,LazySeq<Tree<T>>>,Higher<tree,T> {
 
     public final T head;
     private final LazySeq<Tree<T>> subForest;
+    private final Supplier<Integer> size;
 
-
+    private Tree(T head, LazySeq<Tree<T>> subForest) {
+        this.head = head;
+        this.subForest = subForest;
+        this.size = Memoize.memoizeSupplier(()->1+subForest.size());
+    }
 
     public static <T> Tree<T> of(T head, LazySeq<Tree<T>> subForest) {
         return new Tree<>(head,subForest);
@@ -69,6 +75,13 @@ public class Tree<T> implements Deconstruct2<T,LazySeq<Tree<T>>>,Higher<tree,T> 
 
     public LazySeq<Tree<T>> subForest() {
         return subForest;
+    }
+    public T head(){
+        return head;
+    }
+
+    public int size(){
+        return size.get();
     }
 }
 

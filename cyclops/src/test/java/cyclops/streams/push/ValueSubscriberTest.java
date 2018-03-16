@@ -3,7 +3,6 @@ package cyclops.streams.push;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.control.Future;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;

@@ -1,7 +1,7 @@
 package cyclops.monads.data;
 
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.data.BankersQueue;
 import cyclops.monads.AnyM;

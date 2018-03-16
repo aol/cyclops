@@ -1,13 +1,10 @@
 package cyclops.monads.data;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import cyclops.companion.Reducers;
 import cyclops.data.LazySeq;
-import cyclops.data.Seq;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.lazySeq;
-import cyclops.monads.Witness.seq;
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Ignore;
 import org.junit.Test;

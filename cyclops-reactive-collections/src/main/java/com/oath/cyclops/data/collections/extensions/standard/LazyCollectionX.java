@@ -1,6 +1,5 @@
 package com.oath.cyclops.data.collections.extensions.standard;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -12,16 +11,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.function.Function3;
@@ -711,8 +705,8 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
     @Override
-    default LazyCollectionX<T> appendAll(T value){
-        return fromStream(stream().appendAll(value));
+    default LazyCollectionX<T> append(T value){
+        return fromStream(stream().append(value));
     }
 
     @Override

@@ -1,22 +1,16 @@
 package cyclops.monads.transformers;
+import cyclops.control.Eval;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
-import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.reactive.collections.mutable.ListX;
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import org.junit.Test;
 
 public class TransformersValuesTest {
 
-  //  OptionalTValue<Integer> opt = OptionalT.fromValue(Maybe.just(Optional.of(10)));
-  //  MaybeTValue<Integer> maybe = MaybeT.fromValue(Eval.now(Maybe.of(10)));
-  //  EvalTValue<Integer> eval = EvalT.fromValue(Eval.now(Eval.later(()->10)));
-  //  CompletableFutureTValue<Integer> cf = CompletableFutureT.fromValue(Eval.now(CompletableFuture.completedFuture(10)));
     FutureT<Witness.eval,Integer> future = FutureT.of(AnyM.fromEval(Eval.now(Future.ofResult(10))));
-  //  TryTValue<Integer,Throwable> recover = TryT.fromValue(Eval.now(Try.success(10)));
-   // XorTValue<Throwable,Integer> lazy = XorT.fromValue(Eval.now(Xor.lazyRight(10)));
 
     ListX<ValueTransformer<?,Integer>> all = ListX.of(future);// ListX.of(opt,maybe,eval,cf,future,recover,lazy);
 

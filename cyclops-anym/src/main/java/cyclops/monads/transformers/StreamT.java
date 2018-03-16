@@ -5,11 +5,10 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
-import com.oath.anym.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
+import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
-import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -154,23 +153,12 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
 
-    /**
-     * Construct an ListT from an AnyM that contains a monad type that contains type other than List
-     * The values in the underlying monad will be mapped to List<A>
-     *
-     * @param anyM AnyM that doesn't contain a monad wrapping an List
-     * @return ListT
-     */
+
     public static <W extends WitnessType<W>,A> StreamT<W,A> fromAnyM(final AnyM<W,A> anyM) {
         return of(anyM.map(ReactiveSeq::of));
     }
 
-    /**
-     * Construct an ListT from an AnyM that wraps a monad containing  Lists
-     *
-     * @param monads AnyM that contains a monad wrapping an List
-     * @return ListT
-     */
+
     public static <W extends WitnessType<W>,A> StreamT<W,A> of(final AnyM<W,? extends Stream<A>> monads) {
         return new StreamT<>(
                               monads);
@@ -188,6 +176,9 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     public static <A> StreamT<Witness.optional,A> fromOptional(final Optional<? extends Stream<A>> nested) {
         return of(AnyM.fromOptional(nested));
     }
+    public static <A> StreamT<Witness.option,A> fromOption(final Option<? extends Stream<A>> nested) {
+        return of(AnyM.fromOption(nested));
+    }
     public static <A> StreamT<Witness.maybe,A> fromMaybe(final Maybe<? extends Stream<A>> nested) {
         return of(AnyM.fromMaybe(nested));
     }
@@ -198,20 +189,14 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return of(AnyM.fromSet(nested));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return String.format("ListT[%s]",  run.unwrap().toString());
 
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
-     */
+
     public <T> StreamT<W,T> unit(final T unit) {
         return of(run.unit(ReactiveSeq.of(unit)));
     }
@@ -227,13 +212,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return stream().iterator();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.stream.CyclopsCollectable#collectors()
 
-    @Override
-    public Collectable<T> collectors() {
-       return this;
-    } */
     @Override
     public <R> StreamT<W,R> unitIterator(final Iterator<R> it) {
         return of(run.unitIterator(it)
@@ -278,9 +257,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return !run.isEmpty();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#combine(java.util.function.BiPredicate, java.util.function.BinaryOperator)
-     */
+
     @Override
     public StreamT<W,T> combine(final BiPredicate<? super T, ? super T> predicate, final BinaryOperator<T> op) {
 
@@ -290,54 +267,42 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     public StreamT<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {
         return (StreamT<W,T>)FoldableTransformerSeq.super.combine(op,predicate);
     }
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#cycle(int)
-     */
+
     @Override
     public StreamT<W,T> cycle(final long times) {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.cycle(times);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#cycle(cyclops2.function.Monoid, int)
-     */
+
     @Override
     public StreamT<W,T> cycle(final Monoid<T> m, final long times) {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.cycle(m, times);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#cycleWhile(java.util.function.Predicate)
-     */
+
     @Override
     public StreamT<W,T> cycleWhile(final Predicate<? super T> predicate) {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.cycleWhile(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#cycleUntil(java.util.function.Predicate)
-     */
+
     @Override
     public StreamT<W,T> cycleUntil(final Predicate<? super T> predicate) {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.cycleUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+
     @Override
     public <U, R> StreamT<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
         return (StreamT<W,R>) FoldableTransformerSeq.super.zip(other, zipper);
     }
 
-    /* (non-Javadoc)
-     * @see ListT#zip(java.util.stream.Stream, java.util.function.BiFunction)
-     */
+
     @Override
     public <U, R> StreamT<W,R> zipWithStream(final Stream<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
@@ -361,18 +326,14 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip3(java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     public <S, U> StreamT<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return (StreamT) FoldableTransformerSeq.super.zip3(second, third);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     public <T2, T3, T4> StreamT<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                                               final Iterable<? extends T4> fourth) {
@@ -380,9 +341,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT) FoldableTransformerSeq.super.zip4(second, third, fourth);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#zipWithIndex()
-     */
+
     @Override
     public StreamT<W,Tuple2<T, Long>> zipWithIndex() {
 
@@ -438,9 +397,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,C>) FoldableTransformerSeq.super.groupedWhile(predicate, factory);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
     public <C extends PersistentCollection<? super T>> StreamT<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
@@ -467,36 +424,28 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,T>) FoldableTransformerSeq.super.scanLeft(monoid);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     public <U> StreamT<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         return (StreamT<W,U>) FoldableTransformerSeq.super.scanLeft(seed, function);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#scanRight(cyclops2.function.Monoid)
-     */
+
     @Override
     public StreamT<W,T> scanRight(final Monoid<T> monoid) {
 
         return (StreamT<W,T>) FoldableTransformerSeq.super.scanRight(monoid);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#scanRight(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     public <U> StreamT<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
         return (StreamT<W,U>) FoldableTransformerSeq.super.scanRight(identity, combiner);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#sorted()
-     */
+
     @Override
     public StreamT<W,T> sorted() {
 
@@ -796,8 +745,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
     }
 
     @Override
-    public StreamT<W,T> appendAll(T value) {
-        return (StreamT) FoldableTransformerSeq.super.appendAll(value);
+    public StreamT<W,T> append(T value) {
+        return (StreamT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

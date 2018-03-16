@@ -18,9 +18,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
-import com.oath.anym.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.ReactiveReducers;

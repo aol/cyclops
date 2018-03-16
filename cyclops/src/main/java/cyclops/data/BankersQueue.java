@@ -159,7 +159,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> appendAll(T value) {
+    default BankersQueue<T> append(T value) {
         return enqueue(value);
     }
 

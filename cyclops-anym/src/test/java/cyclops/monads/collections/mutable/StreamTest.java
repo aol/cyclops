@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.stream.Stream;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.monads.Witness.stream;

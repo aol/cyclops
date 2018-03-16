@@ -15,7 +15,6 @@ import cyclops.instances.data.SeqInstances;
 import cyclops.instances.data.VectorInstances;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
@@ -29,9 +28,6 @@ import cyclops.instances.jdk.CompletableFutureInstances;
 import cyclops.instances.jdk.OptionalInstances;
 import cyclops.instances.jdk.StreamInstances;
 import cyclops.instances.reactive.PublisherInstances;
-import cyclops.instances.reactive.collections.immutable.LinkedListXInstances;
-import cyclops.instances.reactive.collections.immutable.VectorXInstances;
-import cyclops.instances.reactive.collections.mutable.ListXInstances;
 import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
@@ -52,7 +48,6 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
 
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;

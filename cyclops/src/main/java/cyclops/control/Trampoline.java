@@ -88,6 +88,9 @@ import static cyclops.data.tuple.Tuple.tuple;
 @FunctionalInterface
 public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> {
 
+    public static <T> Trampoline<T> narrow(Trampoline<? extends T> broad){
+        return (Trampoline<T>)broad;
+    }
     default <R> R visit(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
         return complete() ? done.apply(get()) : more.apply(this.bounce());
     }

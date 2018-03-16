@@ -53,7 +53,7 @@ dependencies {
 
     compile 'org.agrona:Agrona:0.9.1'
     compile 'org.reactivestreams:reactive-streams:1.0.0'
-    compile 'io.kindedj:kindedj:1.1.0'
+    compile 'io.kindedj:kindedj:'+kindedJVersion
     provided 'org.projectlombok:lombok:1.16.20'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
     testCompile 'io.projectreactor:reactor-core:3.0.7.RELEASE'

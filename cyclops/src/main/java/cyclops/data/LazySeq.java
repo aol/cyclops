@@ -411,10 +411,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
 
-    @Override
-    default LazySeq<T> append(T value){
-        return insertAt(Math.max(0, size()),value);
-    }
 
     default Option<T> get(int pos){
         if(pos<0)
@@ -474,7 +470,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                         cons.foldRight(this,(a,b)->b.prepend(a))
                 ,nil->this);
     }
-    default LazySeq<T> appendAll(T append) {
+    default LazySeq<T> append(T append) {
         return appendAll(LazySeq.of(append));
 
     }

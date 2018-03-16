@@ -4,11 +4,7 @@ package cyclops.function;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import cyclops.control.Option;
-import cyclops.control.Eval;
-import cyclops.control.Future;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
+import cyclops.control.*;
 
 public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, Function1<T2, Function1<T3,Function1<T4,Function1<T5,Function1<T6, Function1<T7,R>>>>>>> {
     /**
@@ -19,7 +15,7 @@ public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, 
      * <pre>{@code
      *      val fn  = λ((Integer a)-> (Integer b)-> a+b+)
      * }</pre>
-     * @param quadFunc
+     * @param func7
      * @return supplied function
      */
     public static <T1, T2, T3, T4, T5, T6,T7,R> Function7<T1,T2,T3, T4, T5,T6,T7,R> λ(final Function7<T1,T2,T3,T4,T5,T6,T7, R> func7) {

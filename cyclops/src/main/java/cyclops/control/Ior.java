@@ -10,7 +10,6 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.ValueSubscriber;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.*;
 import com.oath.cyclops.hkt.DataWitness.ior;
 import cyclops.reactive.ReactiveSeq;
@@ -534,7 +533,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
     Ior<L, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<Ior<L,ReactiveSeq<T>>,Ior<L,T>,Ior<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<Ior<L,ReactiveSeq<T>>,Ior<L,T>,Ior<L,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<Ior<L,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 

@@ -1053,8 +1053,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default SortedSetX<T> appendAll(T value) {
-        return (SortedSetX<T>)LazyCollectionX.super.appendAll(value);
+    default SortedSetX<T> append(T value) {
+        return (SortedSetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

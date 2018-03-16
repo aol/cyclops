@@ -39,7 +39,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
 
     @Override
     default ImmutableSet<T> plus(T e){
-        return appendAll(e);
+        return append(e);
     }
 
     @Override
@@ -556,8 +556,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> appendAll(T value) {
-        return unitStream(stream().appendAll(value));
+    default ImmutableSet<T> append(T value) {
+        return unitStream(stream().append(value));
     }
 
     @Override
