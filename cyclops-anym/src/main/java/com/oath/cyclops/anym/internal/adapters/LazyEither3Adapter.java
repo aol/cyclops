@@ -1,13 +1,11 @@
 package com.oath.cyclops.anym.internal.adapters;
 
-
 import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
 import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.anym.extensability.ValueAdapter;
-import cyclops.control.Option;
-import cyclops.control.Either;
 import cyclops.control.LazyEither3;
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.lazyEither3;
@@ -22,18 +20,15 @@ import static cyclops.monads.Witness.lazyEither3;
 @AllArgsConstructor
 public class LazyEither3Adapter extends AbstractMonadAdapter<lazyEither3> implements ValueAdapter<lazyEither3> {
 
-
-
     @Override
     public boolean isFilterable(){
         return false;
     }
 
-
-
-  public <T> Option<T> get(AnyMValue<lazyEither3,T> t){
+    public <T> Option<T> get(AnyMValue<lazyEither3,T> t){
         return either3(t).toOption();
     }
+
     @Override
     public <T> Iterable<T> toIterable(AnyM<lazyEither3, T> t) {
         return either3(t);
@@ -43,9 +38,10 @@ public class LazyEither3Adapter extends AbstractMonadAdapter<lazyEither3> implem
         return fn2.apply(this);
     }
 
-    public <T> Either<?,T> either3(AnyM<lazyEither3, T> t){
-        return (Either<?,T>)t.unwrap();
+    public <T> LazyEither3<?, ?, T> either3(AnyM<lazyEither3, T> t){
+        return (LazyEither3<?, ?, T>)t.unwrap();
     }
+
     @Override
     public <T> AnyM<lazyEither3, T> filter(AnyM<lazyEither3, T> t, Predicate<? super T> fn) {
         return t;
@@ -87,8 +83,7 @@ public class LazyEither3Adapter extends AbstractMonadAdapter<lazyEither3> implem
         return AnyM.fromEither3(LazyEither3.right(o));
     }
 
-
-   private static <ST, ST2, T> LazyEither3<ST,ST2, T> fromIterable(final Iterable<T> iterable) {
+    private static <ST, ST2, T> LazyEither3<ST,ST2, T> fromIterable(final Iterable<T> iterable) {
 
         final Iterator<T> it = iterable.iterator();
         return it.hasNext() ? LazyEither3.right( it.next()) : LazyEither3.left1(null);
