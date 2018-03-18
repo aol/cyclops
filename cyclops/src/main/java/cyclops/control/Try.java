@@ -82,9 +82,9 @@ import org.reactivestreams.Subscription;
  * {@code
  *
  * Try.withCatch(()-> exceptional2())
-.map(i->i+" woo!")
-.onFail(System.out::println)
-.orElse("public");
+      .map(i->i+" woo!")
+      .onFail(System.out::println)
+      .orElse("public");
 
  *  //"hello world woo!"
  *
@@ -102,11 +102,11 @@ return "hello world";
  *  //Only catch IOExceptions
  *
  *  Try.runWithCatch(this::exceptional,IOException.class)
-.onFail(System.err::println);
+       .onFail(System.err::println);
 
-private void exceptional() throws IOException{
-throw new IOException();
-}
+    private void exceptional() throws IOException{
+      throw new IOException();
+   }
  *
  * }
  * </pre>
@@ -116,10 +116,10 @@ throw new IOException();
  * {@code
  *
  *   Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
-this::read,
-FileNotFoundException.class,IOException.class)
-.map(this::processData)
-.recover(e->"public);
+                        this::read,
+                        FileNotFoundException.class,IOException.class)
+                        .map(this::processData)
+                        .recover(e->"public);
  *
  * }
  * </pre>
@@ -128,9 +128,9 @@ FileNotFoundException.class,IOException.class)
  * <pre>
  * {@code
  *  Try.of(2, RuntimeException.class)
-.map(i->{throw new RuntimeException();});
+       .map(i->{throw new RuntimeException();});
 
-//Failure[RuntimeException]
+       //Failure[RuntimeException]
  *
  * }
  * </pre>
