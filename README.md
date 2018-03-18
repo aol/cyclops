@@ -10,7 +10,7 @@ This is the 10.x branch for 2.x branch click the link below
 
 # Getting Cyclops X
 
-* The latest version is [cyclops:10.0.0-M6](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M5)
+* The latest version is [cyclops:10.0.0-M7](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M7)
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
