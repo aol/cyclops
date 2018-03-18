@@ -4,8 +4,8 @@
 ## Get cyclops-rxjava2
 
 
-* [![Maven Central : cyclops-rxjava2](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-rxjava2/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-rxjava2)   
-* [Javadoc for cyclops-rxjava2](http://www.javadoc.io/doc/com.aol.cyclops/cyclops-rxjava2)
+* [![Maven Central : cyclops-rxjava2](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-rxjava2-integration/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops-rxjava2-integration)   
+* [Javadoc for cyclops-rxjava2](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-rxjava2-integration)
 
 
 # cyclops-rxjava2 features include
