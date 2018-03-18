@@ -1,13 +1,11 @@
 package com.oath.cyclops.anym.internal.adapters;
 
-
 import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
 import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.anym.extensability.ValueAdapter;
-import cyclops.control.Option;
-import cyclops.control.Either;
 import cyclops.control.LazyEither5;
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.lazyEither5;
@@ -20,19 +18,15 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public class LazyEither5Adapter extends AbstractMonadAdapter<lazyEither5> implements ValueAdapter<lazyEither5> {
 
-
-
-
-
     @Override
     public boolean isFilterable(){
         return false;
     }
 
-
     public <T> Option<T> get(AnyMValue<lazyEither5,T> t){
         return either5(t).toOption();
     }
+
     @Override
     public <T> Iterable<T> toIterable(AnyM<lazyEither5, T> t) {
         return either5(t);
@@ -42,8 +36,8 @@ public class LazyEither5Adapter extends AbstractMonadAdapter<lazyEither5> implem
         return fn2.apply(this);
     }
 
-    public <T> Either<?,T> either5(AnyM<lazyEither5, T> t){
-        return (Either<?,T>)t.unwrap();
+    public <T> LazyEither5<?, ?, ?, ?, T> either5(AnyM<lazyEither5, T> t){
+        return (LazyEither5<?, ?, ?, ?, T>)t.unwrap();
     }
     @Override
     public <T> AnyM<lazyEither5, T> filter(AnyM<lazyEither5, T> t, Predicate<? super T> fn) {
@@ -86,8 +80,7 @@ public class LazyEither5Adapter extends AbstractMonadAdapter<lazyEither5> implem
         return AnyM.fromEither5(LazyEither5.right(o));
     }
 
-
-   private static <ST, ST2, ST3, ST4, T> LazyEither5<ST,ST2,ST3,ST4,T> fromIterable(final Iterable<T> iterable) {
+    private static <ST, ST2, ST3, ST4, T> LazyEither5<ST,ST2,ST3,ST4,T> fromIterable(final Iterable<T> iterable) {
 
         final Iterator<T> it = iterable.iterator();
         return it.hasNext() ? LazyEither5.right( it.next()) : LazyEither5.left1(null);
