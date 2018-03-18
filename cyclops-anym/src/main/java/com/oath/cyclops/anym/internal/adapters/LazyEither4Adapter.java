@@ -1,13 +1,11 @@
 package com.oath.cyclops.anym.internal.adapters;
 
-
 import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
 import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.anym.extensability.ValueAdapter;
-import cyclops.control.Option;
-import cyclops.control.Either;
 import cyclops.control.LazyEither4;
+import cyclops.control.Option;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.lazyEither4;
@@ -20,17 +18,15 @@ import java.util.function.Predicate;
 @AllArgsConstructor
 public class LazyEither4Adapter extends AbstractMonadAdapter<lazyEither4> implements ValueAdapter<lazyEither4> {
 
-
     @Override
     public boolean isFilterable(){
         return false;
     }
 
-
-
     public <T> Option<T> get(AnyMValue<lazyEither4,T> t){
         return either4(t).toOption();
     }
+
     @Override
     public <T> Iterable<T> toIterable(AnyM<lazyEither4, T> t) {
         return either4(t);
@@ -40,9 +36,10 @@ public class LazyEither4Adapter extends AbstractMonadAdapter<lazyEither4> implem
         return fn2.apply(this);
     }
 
-    public <T> Either<?,T> either4(AnyM<lazyEither4, T> t){
-        return (Either<?,T>)t.unwrap();
+    public <T> LazyEither4<?, ?, ?, T> either4(AnyM<lazyEither4, T> t){
+        return (LazyEither4<?, ?, ?, T>)t.unwrap();
     }
+
     @Override
     public <T> AnyM<lazyEither4, T> filter(AnyM<lazyEither4, T> t, Predicate<? super T> fn) {
         return t;
@@ -84,8 +81,7 @@ public class LazyEither4Adapter extends AbstractMonadAdapter<lazyEither4> implem
         return AnyM.fromEither4(LazyEither4.right(o));
     }
 
-
-   private static <ST, ST2, ST3,T> LazyEither4<ST,ST2,ST3, T> fromIterable(final Iterable<T> iterable) {
+    private static <ST, ST2, ST3,T> LazyEither4<ST,ST2,ST3, T> fromIterable(final Iterable<T> iterable) {
 
         final Iterator<T> it = iterable.iterator();
         return it.hasNext() ? LazyEither4.right( it.next()) : LazyEither4.left1(null);
