@@ -1,10 +1,9 @@
 package cyclops.monads.collections;
 
-import com.oath.anym.AnyMSeq;
+import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.Semigroups;
 import cyclops.data.Seq;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;

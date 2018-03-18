@@ -11,12 +11,9 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Future;
@@ -1180,8 +1177,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
     }
 
     @Override
-    default DequeX<T> appendAll(T value) {
-        return (DequeX<T>)LazyCollectionX.super.appendAll(value);
+    default DequeX<T> append(T value) {
+        return (DequeX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

@@ -1,11 +1,10 @@
 package cyclops.monads.transformers;
 
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;

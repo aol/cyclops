@@ -29,10 +29,9 @@ import cyclops.data.tuple.Tuple4;
 
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.traversable.Traversable;
-import com.oath.anym.transformers.FoldableTransformerSeq;
+import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 import org.reactivestreams.Publisher;
 
 
@@ -641,8 +640,8 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
     }
 
     @Override
-    public VectorT<W,T> appendAll(T value) {
-        return (VectorT) FoldableTransformerSeq.super.appendAll(value);
+    public VectorT<W,T> append(T value) {
+        return (VectorT) FoldableTransformerSeq.super.append(value);
     }
 
     @Override

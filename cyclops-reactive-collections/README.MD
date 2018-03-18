@@ -8,7 +8,7 @@
 * [Javadoc for cyclops-reactive-collections](http://www.javadoc.io/doc/com.oath.cyclops/cyclops-reactive-collections)
 
 
-## Enhanced performance
+## Enhanced performance via laziness
 
 Chaining combinator operations on traditional functional datastructures such as the core persistent data structures provided in cyclops.data (or in Vavr or the Scala SDK) results in traversing the datastructure multiple times, once per combinator operation.
 
@@ -33,10 +33,12 @@ VectorX.of(1,2,3)
 ```
 VectorX in contrast to a raw Vector traverses the underlying data structure just once.
 
-### Performance improvement for Vavr's Vector when using Cyclops VectorX
+### Performance improvement for Vavr's Vector when used with Cyclops VectorX
 
 Lower score is better
 
+* Raw Vavr Vector is on the Right.
+* Vavr Vector with Cyclops VectorX is on the left.
 <img width="553" alt="screen shot 2018-03-01 at 15 14 43" src="https://user-images.githubusercontent.com/9964792/36852335-4e02c0a2-1d63-11e8-9a81-ec600ee39c30.png">
 
 
@@ -52,8 +54,8 @@ AtomicBoolean complete = new AtomicBoolean(false);
 
 ReactiveSeq<Integer> async =  Spouts.async(ReactiveSeq.of(1,2,3),Executors.newFixedThreadPool(1));
 
-ListX<Integer> asyncList = listX(reactiveSeq(async))
-                                      .map(i->i+1);
+ListX<Integer> asyncList = ListX.listX(async)
+                                .map(i->i+1);
 
 System.out.println("Blocked? " + complete.get());
 
@@ -108,3 +110,4 @@ Eval<Integer> lazyResult = ListX.of(1,2,3,4)
 # Articles
 
 * [JDK Collection eXtensions](https://medium.com/@johnmcclean/extending-jdk-8-collections-8ae8d43dd75e#.tn7ctbaks)
+* [Faster Purely Data Structures For Java](https://medium.com/@johnmcclean/the-rise-and-rise-of-java-functional-data-structures-63782436f93b)

@@ -312,7 +312,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+    public <C extends PersistentCollection<T>, R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
                                                                               Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullyOperator<>(source, factory, finalizer, predicate.negate()));
     }
@@ -711,13 +711,13 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         return Spouts.concat(this, (Stream<T>) other);
     }
 
-    public ReactiveSeq<T> append(final Iterable<? extends T> other) {
+    public ReactiveSeq<T> appendAll(final Iterable<? extends T> other) {
         return Spouts.concat(this, (Stream<T>) Spouts.fromIterable(other));
     }
 
     //TODO use spliterators and createSeq
     @Override
-    public ReactiveSeq<T> appendAll(final T other) {
+    public ReactiveSeq<T> append(final T other) {
         return Spouts.concat(this, Spouts.of(other));
     }
 

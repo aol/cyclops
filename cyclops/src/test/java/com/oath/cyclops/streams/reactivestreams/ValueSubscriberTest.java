@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 
 import com.oath.cyclops.types.reactive.ValueSubscriber;
 import cyclops.control.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import org.junit.Test;
 

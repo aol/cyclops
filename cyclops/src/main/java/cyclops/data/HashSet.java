@@ -300,7 +300,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       }
 
 
-      public HashSet<T> appendAll(T append) {
+      public HashSet<T> append(T append) {
           return add(append);
       }
 

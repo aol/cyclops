@@ -1,5 +1,7 @@
 package cyclops.control;
 
+import com.oath.cyclops.matching.Sealed4;
+import com.oath.cyclops.matching.Sealed5;
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.Value;
@@ -8,7 +10,6 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.reactive.Completable;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
@@ -47,6 +48,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
                                                         To<LazyEither5<LT1, LT2,LT3, LT4,RT>>,
                                                         OrElseValue<RT,LazyEither5<LT1,LT2,LT3,LT4,RT>>,
                                                         Unit<RT>,
+                                                        Sealed5<LT1,LT2,LT3,LT4,RT>,
                                                         Value<RT> {
 
 
@@ -100,6 +102,12 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
     default LazyEither5<LT1,LT2,LT3, LT4, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
       return flatMap(e->test.test(e) ? LazyEither5.right(e) : LazyEither5.left1(rightToLeft.apply(e)));
     }
+
+    @Override
+    default <R> R fold(Function<? super LT1, ? extends R> fn1, Function<? super LT2, ? extends R> fn2, Function<? super LT3, ? extends R> fn3, Function<? super LT4, ? extends R> fn4, Function<? super RT, ? extends R> fn5){
+        return visit(fn1,fn2,fn3,fn4,fn5);
+    }
+
     @AllArgsConstructor
     static class CompletableEither5<ORG,LT1,LT2,LT3,RT> implements LazyEither5<Throwable,LT1,LT2,LT3,RT>, Completable<ORG> {
 
@@ -296,7 +304,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
 
     LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>> identity = right(ReactiveSeq.empty());
 
-    BiFunction<LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>>,LazyEither5<L1, L2, L3, L4, T>,LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.appendAll(b));
+    BiFunction<LazyEither5<L1, L2, L3, L4, ReactiveSeq<T>>,LazyEither5<L1, L2, L3, L4, T>,LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineToStream = (acc,next) ->acc.zip(next,(a,b)->a.append(b));
 
     BinaryOperator<LazyEither5<L1, L2, L3, L4,ReactiveSeq<T>>> combineStreams = (a,b)-> a.zip(b,(z1,z2)->z1.appendStream(z2));
 

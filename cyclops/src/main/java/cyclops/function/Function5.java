@@ -4,11 +4,7 @@ package cyclops.function;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
-import cyclops.control.Option;
-import cyclops.control.Eval;
-import cyclops.control.Future;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
+import cyclops.control.*;
 
 public interface Function5<T1, T2, T3, T4, T5, R> extends Function1<T1, Function1<T2, Function1<T3,Function1<T4,Function1<T5, R>>>>> {
 

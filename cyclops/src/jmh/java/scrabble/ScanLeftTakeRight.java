@@ -145,7 +145,7 @@ public class ScanLeftTakeRight extends ShakespearePlaysScrabble {
                 word ->
                         score2.apply(word).map(v -> v * 2)
                                 .appendStream(bonusForDoubleLetter.apply(word).map(v -> v * 2))
-                                .appendAll(word.length() == 7 ? 50 : 0)
+                                .append(word.length() == 7 ? 50 : 0)
                                 .scanLeft(0, (a, b) -> a + b)
                                 .takeRight(1);
 

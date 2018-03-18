@@ -372,7 +372,7 @@ public interface CollectionX<T> extends IterableX<T>,
     <R> CollectionX<R> map(Function<? super T, ? extends R> mapper);
 
     /**
-     * Perform a flatMap operation on this toX. Results from the returned Iterables (from the
+     * Perform a flatMap operation on this CollectionX. Results from the returned Iterables (from the
      * provided transformation function) are flattened into the resulting toX.
      *
      * @param mapper Transformation function to be applied (and flattened)

@@ -23,7 +23,7 @@ import cyclops.monads.WitnessType;
 import org.reactivestreams.Publisher;
 
 import cyclops.reactive.ReactiveSeq;
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import cyclops.function.Function4;
 import cyclops.function.Function3;
 

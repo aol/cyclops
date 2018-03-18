@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import cyclops.control.*;
 
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;

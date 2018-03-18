@@ -5,12 +5,9 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
 import cyclops.control.Trampoline;
-import cyclops.data.tuple.Tuple3;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -130,10 +127,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return cons(value, lazySeq());
     }
 
-    @Override
-    public NonEmptyList<T> append(T value) {
-        return insertAt(Math.max(0, size()),value);
-    }
 
     @Override
     public NonEmptyList<T> replaceFirst(T currentElement, T newElement){
@@ -179,8 +172,8 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     }
 
     @Override
-    public ImmutableList<T> appendAll(T value) {
-        return of(head,tail.appendAll(value));
+    public NonEmptyList<T> append(T value) {
+        return of(head, tail.append(value));
     }
 
     @Override

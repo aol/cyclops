@@ -10,12 +10,9 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
@@ -1058,8 +1055,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default QueueX<T> appendAll(T value) {
-        return (QueueX<T>)LazyCollectionX.super.appendAll(value);
+    default QueueX<T> append(T value) {
+        return (QueueX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

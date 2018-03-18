@@ -2,7 +2,7 @@ package cyclops.monads.transformers;
 
 import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.anym.transformers.ValueTransformer;
+import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Maybe;
@@ -20,7 +20,6 @@ import org.reactivestreams.Publisher;
 
 import java.util.Iterator;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 
 public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>

@@ -4,8 +4,6 @@ import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.ReactiveWitness.persistentSetX;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.ReactiveReducers;
 import cyclops.control.*;
 import cyclops.data.HashSet;
@@ -1035,8 +1033,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default PersistentSetX<T> appendAll(T value) {
-        return (PersistentSetX<T>)LazyCollectionX.super.appendAll(value);
+    default PersistentSetX<T> append(T value) {
+        return (PersistentSetX<T>)LazyCollectionX.super.append(value);
     }
 
     @Override

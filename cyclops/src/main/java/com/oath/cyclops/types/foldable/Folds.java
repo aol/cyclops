@@ -241,6 +241,7 @@ public interface Folds<T> extends Iterable<T>  {
                 .elementAt(0l)
                 .toOptional();
     }
+
     default int sumInt(ToIntFunction<T> fn){
         return stream().mapToInt(fn).sum();
     }
@@ -863,7 +864,18 @@ public interface Folds<T> extends Iterable<T>  {
                      .takeOne()
                      .map(v->v._2());
     }
+    default Maybe<Long> indexOfSlice(Iterable<? extends T> slice){
+        LazySeq<? extends T> ls = LazySeq.fromIterable(slice);
+        Predicate<? super Seq<? super T>> pred = in -> in.equals(ls);
+        return stream().sliding(ls.size(),1).indexOf(pred);
+    }
+    default Maybe<Long> lastIndexOfSlice(Iterable<? extends T> slice){
+        LazySeq<? extends T> ls = LazySeq.fromIterable(slice);
+        Predicate<? super Seq<? super T>> pred = in -> in.equals(ls);
+        return stream().sliding(ls.size(),1).lastIndexOf(pred);
+    }
     /**
+     *
      * Execute this Stream on a schedule
      *
      * <pre>

@@ -40,7 +40,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default ImmutableQueue<T> plus(T e){
-        return appendAll(e);
+        return append(e);
     }
 
     @Override
@@ -148,7 +148,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     ImmutableQueue<T> prepend(T value);
     ImmutableQueue<T> prependAll(Iterable<? extends T> value);
 
-    ImmutableQueue<T> appendAll(T value);
+    ImmutableQueue<T> append(T value);
     ImmutableQueue<T> appendAll(Iterable<? extends T> value);
 
     ImmutableQueue<T> reverse();
@@ -519,8 +519,9 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().grouped(size,supplier));
     }
 
+
     @Override
-    default IterableX<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
+    default ImmutableQueue<Vector<T>> groupedUntil(Predicate<? super T> predicate) {
         return unitStream(stream().groupedUntil(predicate));
     }
 
@@ -712,7 +713,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         if(pos==0)
             return prependAll(values);
         if(pos>=size())
-            return appendAll(values);
+            return append(values);
         return unitStream(stream().insertAt(pos,values));
     }
 
@@ -720,7 +721,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     default ImmutableQueue<T> appendAll(T... values) {
         ImmutableQueue<T> res = this;
         for(T t : values){
-            res = res.appendAll(t);
+            res = res.append(t);
         }
         return res;
     }

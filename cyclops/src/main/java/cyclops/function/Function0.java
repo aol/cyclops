@@ -8,20 +8,13 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
+import cyclops.control.*;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
-
-import cyclops.control.Option;
 
 
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
-
-
-import cyclops.control.Eval;
-import cyclops.control.Future;
-import cyclops.control.Maybe;
-import cyclops.control.Try;
 
 @FunctionalInterface
 public interface Function0<R> extends Supplier<R> {

@@ -10,10 +10,10 @@ import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Signal;
+import cyclops.control.Eval;
 import cyclops.data.Seq;
 
 import cyclops.companion.*;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.LazyEither;
 import cyclops.data.Vector;
@@ -194,8 +194,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         return createSeq(new GroupedStatefullySpliterator<>(get(),()->Vector.empty(),Function.identity(), predicate.negate()), this.reversible);
     }
     @Override
-    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedStatefullyUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
-                                                        Function<? super C, ? extends R> finalizer) {
+    public <C extends PersistentCollection<T>,R> ReactiveSeq<R> groupedUntil(final BiPredicate<C, ? super T> predicate, final Supplier<C> factory,
+                                                                             Function<? super C, ? extends R> finalizer) {
         return this.<R>createSeq(new GroupedStatefullySpliterator<T,C,R>(get(),factory,finalizer, predicate.negate()), this.reversible);
     }
 
@@ -536,13 +536,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public ReactiveSeq<T> appendStream(final Stream<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
-    public ReactiveSeq<T> append(final Iterable<? extends T> other) {
+    public ReactiveSeq<T> appendAll(final Iterable<? extends T> other) {
         return ReactiveSeq.concat(get(),avoidCopy(other));
     }
 
     //TODO use spliterators and createSeq
     @Override
-    public ReactiveSeq<T> appendAll(final T other) {
+    public ReactiveSeq<T> append(final T other) {
         return ReactiveSeq.concat(get(),new SingleSpliterator<T>(other));
     }
 
