@@ -1,4 +1,4 @@
-# Getting Cyclops X
+# Getting Cyclops X (10)
 
 * The latest version is [cyclops:10.0.0-M7](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M7)
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
@@ -6,6 +6,8 @@
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
 
 # What's new in Cyclops X (cyclops 10.0.0)
+
+![cyclops-data-types](https://user-images.githubusercontent.com/9964792/37656704-b4266d7a-2c40-11e8-84d9-23a4a77e0341.jpeg)
 
 - Fast purely functional datastructures (Vector, Seq / List, LazySeq / LazyList, NonEmptyList, HashSet, TreeSet, TrieSet, HashMap, LinkedMap, MultiMap, TreeMap, BankersQueue, LazyString, Discrete Interval Encoded Tree, Zipper, Range, Tree, DifferenceList, HList, Dependent Map )
 - Structural Pattern Matching API (deconstruct algebraic product and sum types)
