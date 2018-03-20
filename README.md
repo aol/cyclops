@@ -22,10 +22,10 @@
 
 ## Modules
 
-* [Cyclops](https://github.com/aol/cyclops-react/tree/master/cyclops) - Persistent data structures and control types
+* [cyclops](https://github.com/aol/cyclops-react/tree/master/cyclops) - Persistent data structures and control types
 * [cyclops-futurestream](https://github.com/aol/cyclops-react/tree/master/cyclops-futurestream) - Parrallel asynchronous streaming
 * [cyclops-reactive-collections](https://github.com/aol/cyclops-react/tree/master/cyclops-reactive-collections) - Fast, non-blocking, asynchronous extensions for JDK and Persistent Collections
-* [cyclops-any](https://github.com/aol/cyclops-react/tree/master/cyclops-anym) - Higher kinded abstractions for working with any Java Monad type.
+* [cyclops-anyM](https://github.com/aol/cyclops-react/tree/master/cyclops-anym) - Higher kinded abstractions for working with any Java Monad type.
 * [cyclops-pure](https://github.com/aol/cyclops-react/tree/master/cyclops-pure) - Higher kinded type classes for pure functional programming in Java
 * [cyclops-reactor-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-reactor-integration) - Reactive collections and AnyM integrations with Reactor.
 * [cyclops-rxjava2-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-rxjava2-integration) - Reactive collections and AnyM integrations with Rx Java 2.
