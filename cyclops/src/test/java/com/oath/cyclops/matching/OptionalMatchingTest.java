@@ -29,7 +29,7 @@ public class OptionalMatchingTest {
 
     int defaultValue =-1;
     Option<Integer> empty = Option.none();
-    int res  = MatchType(empty).of(Case(value->value),Case(nil->defaultValue));
+    int res  = MatchType(empty).with(Case(value->value),Case(nil->defaultValue));
 
     //res is -1
 
@@ -45,7 +45,7 @@ public class OptionalMatchingTest {
   public void matchList(){
 
     Seq<Integer> list = Seq.of(1,2,3);
-    int first = MatchType(list).of(Case(nel->nel.head()),Case(empty->-1));
+    int first = MatchType(list).with(Case(nel->nel.head()),Case(empty->-1));
 
     int first2 = list.fold(s->s.head(),e->-1);
 
