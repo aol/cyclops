@@ -27,7 +27,7 @@ import static cyclops.matching.Api.Case;
 
 public interface RedBlackTree extends Serializable{
     static <K,V> Tree<K,V> rootIsBlack(Tree<K,V> root){
-        return Api.MatchType(root).of(Case(node->node.withBlack(true)),Case(leaf->leaf));
+        return Api.MatchType(root).with(Case(node->node.withBlack(true)),Case(leaf->leaf));
     }
     public static <K,V> Tree<K,V> fromStream(Comparator<? super K> comp, Stream<? extends Tuple2<? extends K, ? extends V>> stream){
         Tree<K,V> tree[] = new Tree[1];

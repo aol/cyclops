@@ -240,7 +240,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
             @Override
             public T next() {
-               return MatchType(current).of(Case(list->{
+               return MatchType(current).with(Case(list->{
                                                         current = list.tail();
                                                         return list.head();
                                                     }),

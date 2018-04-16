@@ -10,13 +10,13 @@ public class Case0Test {
   @Test
   public void shouldMatchForAllPredicates() {
     String value = "value";
-    assertEquals("case0", new Case.Case0<>((String t1) -> t1.equals("value"), () -> "case0").test(value).orElse(null));
+    assertEquals("case0", new Case.Case0<>((String t1) -> t1.equals("value"), (v) -> "case0").test(value).orElse(null));
   }
 
   @Test
   public void shouldMatchForPartial() {
     String value = "value";
-    assertFalse(new Case.Case0<>((String t1) -> false, () -> "case0").test(value).isPresent());
+    assertFalse(new Case.Case0<>((String t1) -> false, (v) -> "case0").test(value).isPresent());
   }
 
 
