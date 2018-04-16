@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import com.oath.cyclops.matching.sample.Pet.Dog;
 
 import cyclops.control.Option;
-import cyclops.matching.Api;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class ApiTest {
 
   @Test
   public void shouldMatchSimpleObject() {
-    Option<String> of = Match("b").of(
+    Option<String> of = Match("b").with(
         Case(t -> t.equals("a"), () -> "a"),
         Case(t -> t.equals("b"), () -> "b"),
         Case(t -> t.equals("c"), () -> "c")
@@ -34,7 +33,7 @@ public class ApiTest {
 
   @Test
   public void shouldMatchTheAnyOverride() {
-    String of = Match("z").of(
+    String of = Match("z").with(
         Case(t -> t.equals("a"), () -> "a"),
         Case(t -> t.equals("b"), () -> "b"),
         Case(t -> t.equals("c"), () -> "c"),
@@ -45,7 +44,7 @@ public class ApiTest {
 
   @Test
   public void shouldProvideAllOptionalConvenience() {
-    String of = Match("z").of(
+    String of = Match("z").with(
         Case(t -> t.equals("a"), () -> "a"),
         Case(t -> t.equals("b"), () -> "b"),
         Case(t -> t.equals("c"), () -> "c")
@@ -55,7 +54,7 @@ public class ApiTest {
 
   @Test
   public void shouldSupportThirdPartyPredicates() {
-    String of = Match("b").of(
+    String of = Match("b").with(
         Case(eq("a"), () -> "a"),
         Case(eq("b"), () -> "b"),
         Case(eq("c"), () -> "c")
@@ -66,7 +65,7 @@ public class ApiTest {
   @Test
   public void shouldMatchDeconstruct3() {
     Dog dog = new Dog("bob", 3, "M");
-    Long of = Match(dog).of(
+    Long of = Match(dog).with(
         Case(eq("bob"), any(), eq("F"), () -> 1L),
         Case(eq("not_bob"), eq(3), eq("M"), () -> 2L),
         Case(eq("bob"), eq(3), eq("M"), () -> 3L),
@@ -78,7 +77,7 @@ public class ApiTest {
   @Test
   public void shouldSupportAnyForDeconstruct() {
     Dog dog = new Dog("bob", 3, "M");
-    Long of = Match(dog).of(
+    Long of = Match(dog).with(
         Case(eq("bob"), any(), eq("F"), () -> 1L),
         Case(eq("bob"), eq(10), eq("F"), () -> 1L),
         Any(() -> 0L)
@@ -90,12 +89,12 @@ public class ApiTest {
   @Test
   public void shouldSupportPatternDSL() {
     Book book = new Book("Chu's Day", "Neil Gaiman");
-    Long of = Match(book).of(
+    Long with = Match(book).with(
         Case(Name("Chu's Day"), Author("Unknown"), () -> 1L),
         Case(Name("Chu's Day"), () -> 1L),
         Any(() -> 0L)
     );
-    assertEquals((Long) 1L, of);
+    assertEquals((Long) 1L, with);
   }
   **/
 

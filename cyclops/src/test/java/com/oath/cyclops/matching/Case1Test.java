@@ -11,13 +11,13 @@ public class Case1Test {
   @Test
   public void shouldMatchForAllPredicates() {
     Tuple1<String> tuple1 = new Tuple1<>("tuple");
-    assertEquals("tuple1", new Case.Case1<>((String t1) -> t1.equals("tuple"), () -> "tuple1").test(tuple1).orElse(null));
+    assertEquals("tuple1", new Case.Case1<>((String t1) -> t1.equals("tuple"), (value) -> "tuple1").test(tuple1).orElse(null));
   }
 
   @Test
   public void shouldMatchForPartial() {
     Tuple1<String> tuple1 = new Tuple1<>("tuple");
-    assertFalse(new Case.Case1<>((String t1) -> false, () -> "tuple").test(tuple1).isPresent());
+    assertFalse(new Case.Case1<>((String t1) -> false, (value) -> "tuple").test(tuple1).isPresent());
   }
 
 
