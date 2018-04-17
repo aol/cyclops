@@ -6,6 +6,7 @@ import com.oath.cyclops.internal.stream.spliterators.push.*;
 import com.oath.cyclops.types.reactive.BufferOverflowPolicy;
 import com.oath.cyclops.types.reactive.PushSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.*;
 import com.oath.cyclops.internal.stream.ReactiveStreamX;
 import com.oath.cyclops.internal.stream.ReactiveStreamX.Type;
@@ -15,6 +16,7 @@ import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.data.Seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 
+import cyclops.function.checked.CheckedSupplier;
 import org.agrona.concurrent.ManyToManyConcurrentArrayQueue;
 import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
@@ -40,6 +42,10 @@ import java.util.stream.Stream;
 public interface Spouts {
 
 
+
+    static <T> ReactiveSeq<T> once(CheckedSupplier<T> cs){
+        return Spouts.generate(ExceptionSoftener.softenSupplier(cs)).take(1l);
+    }
 
     /**
      * Create an Subscriber for Observable style asynchronous push based Streams.

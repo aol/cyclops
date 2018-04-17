@@ -1,12 +1,12 @@
-package cyclops.control;
+package cyclops.reactive;
 
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
+import cyclops.control.Future;
+import cyclops.control.Try;
 import cyclops.data.tuple.*;
 import cyclops.function.Function3;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -19,11 +19,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
+public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   private final Publisher<T> fn;
 
   public static <T> IO<T> of(Supplier<? extends T> s){
-    return new IO<T>(Eval.narrow(Eval.later(s)));
+    return new IO<T>(ReactiveSeq.narrow(Spouts.generate(s).take(1)));
   }
   public static <T> IO<T> of(Supplier<? extends T> s,Executor ex){
     return new IO<T>(Future.narrow(Future.of(s,ex)));
@@ -34,14 +34,15 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   }
 
   public static <T,X extends Throwable> IO<Try<T,X>> withCatch(final Try.CheckedSupplier<T, X> cf, final Class<? extends X>... classes){
-    return of(()-> Try.withCatch(cf));
+    return of(()-> Try.withCatch(cf,classes));
   }
+
 
   public <R> IO<R> map(Function<? super T, ? extends R> s){
     return fromPublisher(Spouts.from(fn).map(t->s.apply(t)));
   }
 
-  public <R> IO<R> flatMap(Function<? super T, ? extends IO<? extends R>> s){
+  public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s){
      return fromPublisher(Spouts.from(fn).mergeMap(t->s.apply(t).publisher()));
   }
 
@@ -49,7 +50,11 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
      return io.map(t->t.visit(i->i,s));
   }
 
-  public <R> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s){
+  public static <T> IO<T> flatten(IO<IO<T>> io){
+        return io.flatMap(i->i);
+  }
+
+    public <R> IO<Try<R, Throwable>> mapTry(Function<? super T, ? extends R> s){
     return map(t->Try.withCatch(()->s.apply(t)));
   }
   public <R,X extends Throwable> IO<Try<R, X>> mapTry(Function<? super T, ? extends R> s,final Class<? extends X>... classes){
@@ -62,6 +67,10 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
     return  Future.fromPublisher(fn)
                   .get();
   }
+
+    public Future<T> future(){
+        return  Future.fromPublisher(fn);
+    }
 
   public Publisher<T> publisher(){
     return fn;
@@ -80,6 +89,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
               .flatMap(Function.identity());
   }
 
+
   public static <T1,T2,R> IO<R> merge(Publisher<T1> p1, Publisher<T2> p2,BiFunction<? super T1, ? super T2,? extends R> fn2){
     ReactiveSeq<T1> s1 = Spouts.from(p1);
     ReactiveSeq<T2> s2 = Spouts.from(p2);
@@ -91,13 +101,13 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   public static class Comprehensions {
 
     public static <T,F,R1, R2, R3,R4,R5,R6,R7> IO<R7> forEach(IO<T> io,
-                                                                        Function<? super T, ? extends IO<R1>> value2,
-                                                                        Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3,
-                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends IO<R3>> value4,
-                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends IO<R4>> value5,
-                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends IO<R5>> value6,
-                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends IO<R6>> value7,
-                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, ? extends IO<R7>> value8
+                                                                        Function<? super T, IO<R1>> value2,
+                                                                        Function<? super Tuple2<? super T,? super R1>, IO<R2>> value3,
+                                                                        Function<? super Tuple3<? super T,? super R1,? super R2>, IO<R3>> value4,
+                                                                        Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, IO<R4>> value5,
+                                                                        Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, IO<R5>> value6,
+                                                                        Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, IO<R6>> value7,
+                                                                        Function<? super Tuple7<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5, ? super R6>, IO<R7>> value8
     ) {
 
       return io.flatMap(in -> {
@@ -136,12 +146,12 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
 
     }
     public static <T,F,R1, R2, R3,R4,R5,R6> IO<R6> forEach(IO<T> io,
-                                                                     Function<? super T, ? extends IO<R1>> value2,
-                                                                     Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3,
-                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends IO<R3>> value4,
-                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends IO<R4>> value5,
-                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends IO<R5>> value6,
-                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, ? extends IO<R6>> value7
+                                                                     Function<? super T, IO<R1>> value2,
+                                                                     Function<? super Tuple2<? super T,? super R1>, IO<R2>> value3,
+                                                                     Function<? super Tuple3<? super T,? super R1,? super R2>, IO<R3>> value4,
+                                                                     Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, IO<R4>> value5,
+                                                                     Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, IO<R5>> value6,
+                                                                     Function<? super Tuple6<T, ? super R1, ? super R2,? super R3, ? super R4, ? super R5>, IO<R6>> value7
     ) {
 
       return io.flatMap(in -> {
@@ -176,11 +186,11 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
     }
 
     public static <T,F,R1, R2, R3,R4,R5> IO<R5> forEach(IO<T> io,
-                                                                  Function<? super T, ? extends IO<R1>> value2,
-                                                                  Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3,
-                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends IO<R3>> value4,
-                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends IO<R4>> value5,
-                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, ? extends IO<R5>> value6
+                                                                  Function<? super T, IO<R1>> value2,
+                                                                  Function<? super Tuple2<? super T,? super R1>, IO<R2>> value3,
+                                                                  Function<? super Tuple3<? super T,? super R1,? super R2>, IO<R3>> value4,
+                                                                  Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, IO<R4>> value5,
+                                                                  Function<? super Tuple5<T, ? super R1, ? super R2,? super R3, ? super R4>, IO<R5>> value6
     ) {
 
       return io.flatMap(in -> {
@@ -210,10 +220,10 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
 
     }
     public static <T,F,R1, R2, R3,R4> IO<R4> forEach(IO<T> io,
-                                                               Function<? super T, ? extends IO<R1>> value2,
-                                                               Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3,
-                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends IO<R3>> value4,
-                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, ? extends IO<R4>> value5
+                                                               Function<? super T, IO<R1>> value2,
+                                                               Function<? super Tuple2<? super T,? super R1>, IO<R2>> value3,
+                                                               Function<? super Tuple3<? super T,? super R1,? super R2>, IO<R3>> value4,
+                                                               Function<? super Tuple4<? super T, ? super R1, ? super R2,? super R3>, IO<R4>> value5
 
     ) {
 
@@ -241,9 +251,9 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
 
     }
     public static <T,F,R1, R2, R3> IO<R3> forEach(IO<T> io,
-                                                            Function<? super T, ? extends IO<R1>> value2,
-                                                            Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3,
-                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, ? extends IO<R3>> value4
+                                                            Function<? super T, IO<R1>> value2,
+                                                            Function<? super Tuple2<? super T,? super R1>, IO<R2>> value3,
+                                                            Function<? super Tuple3<? super T,? super R1,? super R2>, IO<R3>> value4
 
     ) {
 
@@ -268,8 +278,8 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
 
     }
     public static <T,F,R1, R2> IO<R2> forEach(IO<T> io,
-                                                        Function<? super T, ? extends IO<R1>> value2,
-                                                        Function<? super Tuple2<? super T,? super R1>, ? extends IO<R2>> value3
+                                                        Function<? super T, IO<R1>> value2,
+                                                        Function<? super Tuple2<T,R1>, IO<R2>> value3
 
     ) {
 
@@ -288,7 +298,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
 
     }
     public static <T,F,R1> IO<R1> forEach(IO<T> io,
-                                                    Function<? super T, ? extends IO<R1>> value2
+                                                    Function<? super T, IO<R1>> value2
 
 
     ) {

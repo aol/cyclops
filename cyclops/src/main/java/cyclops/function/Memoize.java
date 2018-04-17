@@ -31,8 +31,8 @@ public class Memoize {
      * @return Memoised Supplier
      */
     public static <T> Function0<T> memoizeSupplier(final Supplier<T> s) {
-        final Map<Object, T> lazy = new ConcurrentHashMap<>();
-        return () -> lazy.computeIfAbsent("k", a -> s.get());
+        final LazyImmutable<T> lazy = LazyImmutable.def();
+        return () -> lazy.computeIfAbsent( s);
     }
 
     /**
