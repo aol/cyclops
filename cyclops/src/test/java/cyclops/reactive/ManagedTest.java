@@ -3,6 +3,8 @@ package cyclops.reactive;
 import cyclops.control.Future;
 import cyclops.control.Try;
 import cyclops.data.Range;
+import cyclops.data.Seq;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.Managed;
 import cyclops.reactive.Spouts;
 import lombok.val;
@@ -27,6 +29,11 @@ public class ManagedTest {
     public void setup(){
         closed = false;
         resource = new Resource();
+    }
+
+    @Test
+    public void sequence(){
+        assertThat(Managed.Comprehensions.forEach(resource(1),t->resource(t.getOrElse(0)+1)).run().map(f->f.orElse(-1)).orElse(-1),equalTo(2));
     }
     @Test
     public void release(){
@@ -103,6 +110,66 @@ public class ManagedTest {
 
             }
          }));
+    }
+    @Test
+    public void traverse(){
+        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a", "b", "c"),this::acquireNamed);
+       // Try<ReactiveSeq<Future<String>>, Throwable> m = writers.run();
+        writers.run();//.stream().forEach(System.out::println);
+    }
+    @Test
+    public void traverse2(){
+        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a"),this::acquireNamed);
+        // Try<ReactiveSeq<Future<String>>, Throwable> m = writers.run();
+        writers.run();//.stream().forEach(System.out::println);
+    }
+
+    @Test
+    public void sequenced(){
+        Managed.sequence(Seq.of(acquireNamed("a"),acquireNamed("c"))).run();
+    }
+    @Test
+    public void traverse3() {
+        acquireNamed("hello").run();
+    }
+    public Managed<Future<String>> acquireNamed(String name){
+        return Managed.managed(Future.of(() -> {
+            System.out.println("Acquiring " + name);
+            return name;
+        }),f->f.peek(r->{
+            try {
+                System.out.println("Releasing "+ name);
+            }catch(Exception e){
+                e.printStackTrace();
+
+            }
+        }));
+    }
+
+    @Test
+    public void zip(){
+        acquireNamed("left").zip(acquireNamed("right"), Tuple::tuple).flatMap(f->acquireNamed(f.toString()+"hello")).zip(acquireNamed("another"),Tuple::tuple).run();
+    }
+    @Test
+    public void zipToList(){
+        acquireNamed("a").map(Seq::of).zip(acquireNamed("b"),(a,b)->a.appendAll(b)).run();
+    }
+    @Test
+    public void flatMap() throws InterruptedException {
+        Try<Future<String>, Throwable> t = acquireNamed("hello").flatMap(i -> acquireNamed(i.getOrElse("")+ " world")).run();
+        System.out.println(t);
+        Thread.sleep(1000);
+    }
+
+    @Test
+    public void flatMap2() throws InterruptedException {
+        Try<Future<String>, Throwable> t = acquireNamed("hello").flatMap(i -> acquireNamed(i.getOrElse("")+ " world").flatMap(f->acquireNamed(f.getOrElse("")+"dude"))).run();
+        System.out.println(t);
+        Thread.sleep(1000);
+    }
+    @Test
+    public void map(){
+        acquireNamed("hello").map(i->i+" world").run();
     }
 
 }

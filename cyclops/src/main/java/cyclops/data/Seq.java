@@ -23,6 +23,7 @@ import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
+import cyclops.reactive.Managed;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -45,7 +46,6 @@ public interface Seq<T> extends ImmutableList<T>,
                                 PersistentList<T>,
                                  Serializable,
                                 Higher<seq,T> {
-
 
     static <T> Collector<T, List<T>, Seq<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();

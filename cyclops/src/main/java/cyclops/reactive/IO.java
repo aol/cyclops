@@ -22,6 +22,9 @@ import java.util.function.Supplier;
 public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   private final Publisher<T> fn;
 
+  public static <T> IO<T> of(T s){
+        return new IO<T>(ReactiveSeq.narrow(Spouts.of(s)));
+  }
   public static <T> IO<T> of(Supplier<? extends T> s){
     return new IO<T>(ReactiveSeq.narrow(Spouts.generate(s).take(1)));
   }
