@@ -75,11 +75,15 @@ public class ConcurrentFlatMapper<T, R> {
     public void onNext(T t) {
         if (!running)
             return;
-
-        Publisher<? extends R> next = mapper.apply(t);
-        ActiveSubscriber inner = new ActiveSubscriber();
-        queueUpdater.getAndUpdate(this, q -> q.plus(inner));
-        next.subscribe(inner);
+        try {
+            Publisher<? extends R> next = mapper.apply(t);
+            ActiveSubscriber inner = new ActiveSubscriber();
+            queueUpdater.getAndUpdate(this, q -> q.plus(inner));
+            next.subscribe(inner);
+        }catch(Throwable e){
+            e.printStackTrace();
+            onError.accept(e);
+        }
 
     }
 

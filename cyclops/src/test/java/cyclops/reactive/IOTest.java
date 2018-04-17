@@ -1,6 +1,10 @@
-package cyclops.control;
+package cyclops.reactive;
 
 
+import cyclops.control.Future;
+import cyclops.control.Try;
+import cyclops.reactive.IO;
+import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -29,7 +33,7 @@ public class IOTest {
 
   @Test
   public void asyncError(){
-    assertThat(IO.fromPublisher(Future.of(()->10, ex))
+    MatcherAssert.assertThat(IO.fromPublisher(Future.of(()->10, ex))
       .map(i->{throw re;})
       .run(),equalTo(Try.failure(re)));
   }

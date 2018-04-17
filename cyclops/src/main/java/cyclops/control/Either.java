@@ -118,9 +118,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                      Higher2<either, LT, RT> {
 
 
-    default Either<LT, RT> accumulate(Either<LT, RT> next, Semigroup<RT> sg){
-        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
-    }
+
     default Either<LT, RT> accumulateRight(Semigroup<RT> sg, Either<LT, RT>... values){
         Either<LT, RT> acc= this;
         for(Either<LT, RT> next : values){

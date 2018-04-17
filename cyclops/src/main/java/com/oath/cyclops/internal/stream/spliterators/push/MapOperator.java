@@ -45,7 +45,6 @@ public class MapOperator<T,R> extends BaseOperator<T,R> {
                     try {
                         onNext.accept(mapper.apply(e));
                     } catch (Throwable t) {
-t.printStackTrace();
                         onError.accept(t);
                     }
                 }

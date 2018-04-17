@@ -17,6 +17,7 @@ import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
 import cyclops.function.Function0;
 import cyclops.function.Monoid;
+import cyclops.reactive.Spouts;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -149,7 +150,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     }
 
     default ReactiveSeq<T> stream() {
-        return ReactiveSeq.fromIterable(this);
+        return Spouts.from(this);
     }
 
 
@@ -244,7 +245,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
      * @param str PrintStream to tell to
      */
     default void print(final PrintStream str) {
-        stream().print(str);
+        Spouts.from(this).print(str);
     }
 
     /**
@@ -253,21 +254,24 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
      * @param writer PrintWriter to tell to
      */
     default void print(final PrintWriter writer) {
-        stream().print(writer);
+        Spouts.from(this).print(writer);
     }
 
     /**
      *  Print each value in this Folds to the console in turn (left-to-right)
      */
     default void printOut() {
-        stream().printOut();
+
+        System.out.println(mkString());
+
     }
 
     /**
      *  Print each value in this Folds to the error console in turn (left-to-right)
      */
     default void printErr() {
-        stream().printErr();
+        Spouts.from(this).forEach(__->{},System.err::println);
+
     }
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
 
