@@ -14,6 +14,7 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.data.tuple.Tuple5;
 import cyclops.data.tuple.Tuple6;
 import cyclops.data.tuple.Tuple7;
+import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
 import lombok.AccessLevel;
@@ -41,13 +42,35 @@ import java.util.function.Supplier;
 
    </pre>
  *
+ * Working with Hibernate
+ *
+ * <pre>
+ *
+  *      SessionFactory factory;
+ *
+ *       Try<String, Throwable> res = Managed.of(factory::openSession)
+                                             .with(Session::beginTransaction)
+                                             .map((session, tx) ->
+
+                                                     deleteFromMyTable(session)
+                                                              .bipeek(success -> tx.commit(),error -> tx.rollback())
+
+
+                                                  )
+                                             .foldRun(Try::flatten);
+
+
+          public Try<String,Throwable> deleteFromMyTable(Session s);
+
+     </pre>
+ *
+ *
  */
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<T>{
+public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<T>{
 
-    private final IO<T> acquire;
-    private final Consumer<T> cleanup;
+
 
     public static <T> Managed<T> managed(T acq, Consumer<T> cleanup){
         return of(IO.of(()->acq),cleanup);
@@ -70,11 +93,28 @@ public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<
 
     public static <T> Managed<T> of(IO<T> acquire, Consumer<T> cleanup){
         System.out.println("Ac " + System.identityHashCode(acquire));
-        return new Managed<T>(acquire,cleanup);
+        return new Managed<T>(){
+            public  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn){
+                IO<R> y = IO.Comprehensions.forEach(acquire, t1 -> {
+                    IO<? extends Try<? extends IO<R>, Throwable>> res1 = IO.withCatch(() -> fn.apply(t1), Throwable.class);
+                    return res1;
+                }, t2 -> {
+
+                    Try<? extends IO<R>, Throwable> tr = t2._2();
+                    IO<R> res = tr.fold(r -> r, e -> IO.fromPublisher(Future.ofError(e)));
+                    cleanup.accept(t2._1());
+
+                    return res;
+                });
+                return y;
+            }
+        };
     }
+
     public static <T extends AutoCloseable> Managed<T> of(IO<T> acquire){
-        return new Managed<T>(acquire,ExceptionSoftener.softenConsumer(c->c.close()));
+        return of(acquire,ExceptionSoftener.softenConsumer(c->c.close()));
     }
+
     public static  <T> Managed<Seq<T>> sequence(Iterable<? extends Managed<T>> all) {
 
         Managed<Seq<T>> acc =null;
@@ -89,6 +129,78 @@ public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<
 
     }
 
+    public <R2> Tupled<T,R2> with(Function<? super T, ? extends R2> fn){
+        return new Tupled<>(map(i->Tuple.tuple(i,fn.apply(i))));
+    }
+    public <R1,R2> Tupled<R1,R2> tupled(Function<? super T, ? extends Tuple2<R1,R2>> fn){
+        return new Tupled<>(map(fn));
+    }
+    public <R1,R2,R3> Tupled3<R1,R2,R3> tupled3(Function<? super T, ? extends Tuple3<R1,R2,R3>> fn){
+        return new Tupled3<>(map(fn));
+    }
+    @AllArgsConstructor(access =  AccessLevel.PRIVATE)
+    public static class Tupled<T1,T2>{
+
+        private final Managed<Tuple2<T1,T2>> managed;
+
+        public <R> Tupled3<T1,T2,R> with(BiFunction<? super T1,? super T2, ? extends R> fn){
+            return new Tupled3(map((a,b)->Tuple.tuple(a,b,fn.apply(a,b))));
+        }
+
+        public final <R> Managed<R> flatMap(BiFunction<? super T1,? super T2, Managed<R>> f) {
+            return managed.flatMap(t2->f.apply(t2._1(),t2._2()));
+        }
+        public final <R> Managed<R> map(BiFunction<? super T1,? super T2, ? extends R> f){
+            return managed.map(t2->f.apply(t2._1(),t2._2()));
+        }
+
+        public <R1,R2> Tupled<R1,R2> mapTupled(BiFunction<? super T1,? super T2, Tuple2<R1,R2>> fn){
+            return new Tupled<>(map(fn));
+        }
+
+
+        public Managed<Tuple2<T1,T2>> managed(){
+            return managed;
+        }
+        public final Try<Tuple2<T1,T2>,Throwable> run() {
+            return  managed.run();
+        }
+        public final <R> R foldRun(Function<? super Try<Tuple2<T1,T2>,Throwable>,? extends R> transform) {
+            return  managed.foldRun(transform);
+        }
+
+
+    }
+    @AllArgsConstructor(access =  AccessLevel.PRIVATE)
+    public static class Tupled3<T1,T2,T3>{
+
+        private final Managed<Tuple3<T1,T2,T3>> managed;
+
+
+        public final <R> Managed<R> flatMap(Function3<? super T1,? super T2,? super T3, Managed<R>> f) {
+            return managed.flatMap(t3->f.apply(t3._1(),t3._2(),t3._3()));
+        }
+        public final <R> Managed<R> map(Function3<? super T1,? super T2,? super T3, ? extends R> f){
+            return managed.map(t3->f.apply(t3._1(),t3._2(),t3._3()));
+        }
+
+        public <R1,R2,R3> Tupled3<R1,R2,R3> mapTupled(Function3<? super T1,? super T2,? super T3,  Tuple3<R1,R2,R3>> fn){
+            return new Tupled3<>(map(fn));
+        }
+
+
+        public Managed<Tuple3<T1,T2,T3>> managed(){
+            return managed;
+        }
+        public final Try<Tuple3<T1,T2,T3>,Throwable> run() {
+            return  managed.run();
+        }
+        public final <R> R foldRun(Function<? super Try<Tuple3<T1,T2,T3>,Throwable>,? extends R> transform) {
+            return  managed.foldRun(transform);
+        }
+
+
+    }
     public static <T,R> Managed<Seq<R>> traverse(Iterable<T> stream,Function<? super T,Managed<? extends R>> fn) {
         Seq<Managed<R>> s = Seq.fromIterable(stream).map(fn.andThen(Managed::narrow));
         return sequence(s);
@@ -105,18 +217,7 @@ public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<
     public final  <T2,R> Managed<R> zip(Managed<T2> b, BiFunction<? super T,? super T2,? extends R> fn){
         return flatMap(t1 -> b.map(t2 -> fn.apply(t1, t2)));
     }
-    public  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn){
-        IO<R> y = IO.Comprehensions.forEach(acquire, t1 -> {
-            IO<? extends Try<? extends IO<R>, Throwable>> res1 = IO.withCatch(() -> fn.apply(t1), Throwable.class);
-            return res1;
-        }, t2 -> {
-            cleanup.accept(t2._1());
-            Try<? extends IO<R>, Throwable> tr = t2._2();
-            IO<R> res = tr.fold(r -> r, e -> IO.fromPublisher(Future.ofError(e)));
-            return res;
-        });
-        return y;
-    }
+    abstract  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn);
 
     public final void forEach(Consumer<? super T> onNext,Consumer<Throwable> errorHandler){
         stream().forEach(onNext,errorHandler);
@@ -125,9 +226,19 @@ public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<
 
     public final Try<T,Throwable> run() {
 
+
       return  getAcquire().run();
     }
+    public final T runAndThrowUnexpected() {
+        return run().fold(t->t,e->{
+            throw ExceptionSoftener.throwSoftenedException(e);
+        });
+    }
 
+    public final <R> R foldRun(Function<? super Try<T,Throwable>,? extends R> transform) {
+
+        return  transform.apply(getAcquire().run());
+    }
     public final Future<T> future(){
         return getAcquire().future();
     }
@@ -143,7 +254,7 @@ public  class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<
     public final <R> Managed<R> flatMap(Function<? super T, Managed<R>> f){
 
        Managed<T> m = this;
-        return new Managed<R>(null,null){
+        return new Managed<R>(){
 
             @Override
             public <R1> IO<R1> apply(Function<? super R, ? extends IO<R1>> fn) {

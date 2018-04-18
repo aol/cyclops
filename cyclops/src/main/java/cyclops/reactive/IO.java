@@ -7,6 +7,7 @@ import cyclops.control.Future;
 import cyclops.control.Try;
 import cyclops.data.tuple.*;
 import cyclops.function.Function3;
+import cyclops.function.Memoize;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -26,7 +27,7 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
         return new IO<T>(ReactiveSeq.narrow(Spouts.of(s)));
   }
   public static <T> IO<T> of(Supplier<? extends T> s){
-    return new IO<T>(ReactiveSeq.narrow(Spouts.generate(s).take(1)));
+    return new IO<T>(ReactiveSeq.narrow(Spouts.generate(Memoize.memoizeSupplier(s)).take(1)));
   }
   public static <T> IO<T> of(Supplier<? extends T> s,Executor ex){
     return new IO<T>(Future.narrow(Future.of(s,ex)));
@@ -68,7 +69,11 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   }
   public Try<T,Throwable> run(){
     return  Future.fromPublisher(fn)
-                  .get();
+                    .get();
+  }
+
+  public <R> R foldRun(Function<? super Try<T,Throwable>, ? extends R> transform){
+      return transform.apply(run());
   }
 
     public Future<T> future(){
