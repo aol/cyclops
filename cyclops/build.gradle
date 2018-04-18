@@ -64,6 +64,9 @@ dependencies {
     testCompile 'org.mockito:mockito-all:1.9.5'
     testCompile 'io.javaslang:javaslang:2.0.2'
     testCompile 'org.assertj:assertj-core:3.8.0'
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: '5.1.0.Final')
+    testCompile (group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.1.0.Final')
+    testCompile group: 'org.hsqldb', name: 'hsqldb', version: '2.0.0'
     jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
 
 }

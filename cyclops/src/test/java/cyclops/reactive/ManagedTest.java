@@ -156,7 +156,11 @@ public class ManagedTest {
     }
     @Test
     public void flatMap() throws InterruptedException {
-        Try<Future<String>, Throwable> t = acquireNamed("hello").flatMap(i -> acquireNamed(i.getOrElse("")+ " world")).run();
+        Try<Future<String>, Throwable> t = acquireNamed("hello")
+                                                .map(a->{System.out.println("UsingX "+a.getOrElse("")); return a;})
+                                                .flatMap(i -> acquireNamed(i.getOrElse("")+ " world")
+                                                .map(b->{System.out.println("UsingY "+b.getOrElse("")); return b;}))
+                                                .run();
         System.out.println(t);
         Thread.sleep(1000);
     }
@@ -166,6 +170,23 @@ public class ManagedTest {
         Try<Future<String>, Throwable> t = acquireNamed("hello").flatMap(i -> acquireNamed(i.getOrElse("")+ " world").flatMap(f->acquireNamed(f.getOrElse("")+"dude"))).run();
         System.out.println(t);
         Thread.sleep(1000);
+    }
+
+    @Test
+    public void checkOpenComp(){
+        Managed.Comprehensions.forEach(Managed.of(()->new Resource()),r-> {
+          if(r.open)
+              return Managed.managed(new Resource());
+            throw new RuntimeException("boo!");
+        }).run().printOut();
+    }
+    @Test
+    public void checkOpenFlatMap(){
+        Managed.of(()->new Resource()).flatMap(r-> {
+            if(r.open)
+                return Managed.managed(new Resource());
+            throw new RuntimeException("boo!");
+        }).run().printOut();
     }
     @Test
     public void map(){
