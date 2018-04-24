@@ -5,6 +5,7 @@ import cyclops.control.Try;
 import cyclops.data.Range;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.Managed;
 import cyclops.reactive.Spouts;
 import lombok.val;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 
 import static cyclops.companion.Monoids.intSum;
 import static cyclops.companion.Monoids.zipFutures;
+import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
@@ -114,19 +116,26 @@ public class ManagedTest {
     @Test
     public void traverse(){
         Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a", "b", "c"),this::acquireNamed);
-       // Try<ReactiveSeq<Future<String>>, Throwable> m = writers.run();
-        writers.run();//.stream().forEach(System.out::println);
+        writers.run();
     }
     @Test
     public void traverse2(){
         Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a"),this::acquireNamed);
-        // Try<ReactiveSeq<Future<String>>, Throwable> m = writers.run();
-        writers.run();//.stream().forEach(System.out::println);
+
+        Try<Seq<Future<String>>, Throwable> t = writers.run();
+        System.out.println(t);
+        assertTrue(t.isSuccess());
+        assertThat(t.orElse(null).map(f->f.orElse("-1")),equalTo(Seq.of("A")));
     }
 
     @Test
     public void sequenced(){
-        Managed.sequence(Seq.of(acquireNamed("a"),acquireNamed("c"))).run();
+        Try<Seq<Future<String>>, Throwable> t = Managed.sequence(Seq.of(acquireNamed("a"), acquireNamed("c"))).run();
+
+        System.out.println(t);
+        assertTrue(t.isSuccess());
+
+        assertThat(t.map(s->s.map(f->f.orElse("-")).join(",")).orElse("-"),equalTo("A,C"));
     }
     @Test
     public void traverse3() {
@@ -135,7 +144,7 @@ public class ManagedTest {
     public Managed<Future<String>> acquireNamed(String name){
         return Managed.managed(Future.of(() -> {
             System.out.println("Acquiring " + name);
-            return name;
+            return name.toUpperCase();
         }),f->f.peek(r->{
             try {
                 System.out.println("Releasing "+ name);
@@ -148,11 +157,24 @@ public class ManagedTest {
 
     @Test
     public void zip(){
-        acquireNamed("left").zip(acquireNamed("right"), Tuple::tuple).flatMap(f->acquireNamed(f.toString()+"hello")).zip(acquireNamed("another"),Tuple::tuple).run();
+        Try<Tuple2<Future<String>, Future<String>>, Throwable> t = acquireNamed("left")
+                                                                            .zip(acquireNamed("right"), Tuple::tuple)
+                                                                            .flatMap(f -> acquireNamed(f.toString() + "hello"))
+                                                                            .zip(acquireNamed("another"), Tuple::tuple)
+                                                                            .run();
+        System.out.println(t);
+        assertTrue(t.isSuccess());
+        Try<Tuple2<String, String>, Throwable> r = t.map(t2 -> tuple(t2._1().orElse(""), t2._2().orElse("")));
+        assertThat(r.orElse(tuple(null,null)),equalTo(tuple("[FUTURE[LEFT],FUTURE[RIGHT]]HELLO","ANOTHER")));
     }
     @Test
     public void zipToList(){
-        acquireNamed("a").map(Seq::of).zip(acquireNamed("b"),(a,b)->a.appendAll(b)).run();
+        Try<Seq<Future<String>>, Throwable> t = acquireNamed("a").map(Seq::of).zip(acquireNamed("b"), (a, b) -> a.appendAll(b)).run();
+
+        System.out.println(t);
+        assertTrue(t.isSuccess());
+        assertThat(t.orElse(Seq.of()).map(f->f.orElse("")),equalTo(Seq.of("A","B")));
+
     }
     @Test
     public void flatMap() throws InterruptedException {
@@ -162,35 +184,43 @@ public class ManagedTest {
                                                 .map(b->{System.out.println("UsingY "+b.getOrElse("")); return b;}))
                                                 .run();
         System.out.println(t);
-        Thread.sleep(1000);
+        assertTrue(t.isSuccess());
+        assertThat(t.orElse(null).orElse("-1"),equalTo("HELLO WORLD"));
+
     }
 
     @Test
     public void flatMap2() throws InterruptedException {
         Try<Future<String>, Throwable> t = acquireNamed("hello").flatMap(i -> acquireNamed(i.getOrElse("")+ " world").flatMap(f->acquireNamed(f.getOrElse("")+"dude"))).run();
-        System.out.println(t);
-        Thread.sleep(1000);
+        assertTrue(t.isSuccess());
+        assertThat(t.orElse(null).orElse("-1"),equalTo("hello worlddude".toUpperCase()));
+
     }
 
     @Test
     public void checkOpenComp(){
-        Managed.Comprehensions.forEach(Managed.of(()->new Resource()),r-> {
-          if(r.open)
-              return Managed.managed(new Resource());
+        Try<Resource, Throwable> t = Managed.Comprehensions.forEach(Managed.of(() -> new Resource()), r -> {
+            if (r.open)
+                return Managed.managed(new Resource());
             throw new RuntimeException("boo!");
-        }).run().printOut();
+        }).run();
+
+        assertTrue(t.isSuccess());
     }
     @Test
     public void checkOpenFlatMap(){
-        Managed.of(()->new Resource()).flatMap(r-> {
-            if(r.open)
+        Try<Resource, Throwable> t = Managed.of(() -> new Resource()).flatMap(r -> {
+            if (r.open)
                 return Managed.managed(new Resource());
             throw new RuntimeException("boo!");
-        }).run().printOut();
+        }).run();
+
+        assertTrue(t.isSuccess());
     }
     @Test
     public void map(){
-        acquireNamed("hello").map(i->i+" world").run();
+        Try<String, Throwable> t = acquireNamed("hello").map(i -> i.getOrElse("") + " world").run();
+        assertThat(t,equalTo(Try.success("HELLO world")));
     }
 
 }
