@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import static cyclops.companion.Monoids.intSum;
 import static cyclops.companion.Monoids.zipFutures;
@@ -78,10 +79,13 @@ public class ManagedTest {
 
     @Test
     public void acquireFailed(){
-        Managed.of(Spouts.<AutoCloseable>defer(()->{
-            return Spouts.generate(()->{throw new RuntimeException();});
-        })).map(a->"hello").run();
+        Try<String, Throwable> t = Managed.of(Spouts.<AutoCloseable>defer(() -> {
+            return Spouts.generate(() -> {
+                throw new RuntimeException();
+            });
+        })).map(a -> "hello").run();
 
+        assertFalse(t.isSuccess());
         Managed.of(Spouts.<AutoCloseable>generate(() -> {
             throw new RuntimeException();
         })).map(a -> "hello").run().printErr();
@@ -90,14 +94,14 @@ public class ManagedTest {
 
     @Test
     public void test() throws InterruptedException {
-       val squashed =  Range.range(1,5).lazySeq().map(this::resource).foldLeft(Managed.monoid(zipFutures(intSum)));
-       val sum = squashed.map(s -> Future.of(()->{
-           System.out.println("Got "+s);
-           return s;
-       }));
-       sum.runAsync(Executors.newFixedThreadPool(1));
+        Managed<Future<Integer>> squashed = Range.range(1, 5).lazySeq().map(this::resource).foldLeft(Managed.monoid(zipFutures(intSum)));
+        Managed<Future<Future<Integer>>> sum = squashed.map(s -> Future.of(() -> {
+            System.out.println("Got " + s);
+            return s;
+        }));
+       Try<Future<Future<Integer>>, Throwable> t = sum.runAsync(Executors.newFixedThreadPool(1));
        Thread.sleep(1000);
-
+       assertThat(t.map(f->f.flatMap(Function.identity())).map(f->f.orElse(-1)).orElse(-1),equalTo(15));
     }
 
 
@@ -116,7 +120,10 @@ public class ManagedTest {
     @Test
     public void traverse(){
         Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a", "b", "c"),this::acquireNamed);
-        writers.run();
+        Try<Seq<Future<String>>, Throwable> t = writers.run();
+
+        assertTrue(t.isSuccess());
+        assertThat(t.map(s->s.map(f->f.orElse("-1")).join(",")).orElse("-"),equalTo("A,B,C"));
     }
     @Test
     public void traverse2(){
@@ -139,7 +146,9 @@ public class ManagedTest {
     }
     @Test
     public void traverse3() {
-        acquireNamed("hello").run();
+        Try<Future<String>, Throwable> t = acquireNamed("hello").run();
+        assertThat(t.isSuccess(), equalTo(true));
+        assertThat(t.map(f->f.orElse("world")).orElse("world"),equalTo("HELLO"));
     }
     public Managed<Future<String>> acquireNamed(String name){
         return Managed.managed(Future.of(() -> {
