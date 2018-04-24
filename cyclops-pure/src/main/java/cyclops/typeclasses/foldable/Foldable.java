@@ -6,6 +6,7 @@ import cyclops.data.Seq;
 import cyclops.companion.Monoids;
 import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.function.Ordering;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.arrow.MonoidK;
 
@@ -74,6 +75,7 @@ public interface Foldable<CRE> {
     default <C2,T,R> Higher<C2,T> foldK(MonoidK<C2> monoid, Higher<CRE,Higher<C2,T>> ds) {
         return foldLeft(monoid.asMonoid(), ds);
     }
+    
 
     default <T> long size(Higher<CRE, T> ds) {
         return foldMap(Monoids.longSum, __ -> 1l, ds);
