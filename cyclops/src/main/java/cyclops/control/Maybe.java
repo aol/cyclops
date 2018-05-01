@@ -331,7 +331,7 @@ public interface Maybe<T> extends Option<T> {
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    default <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> Maybe<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
             return Maybe.fromPublisher(publisher);
@@ -725,10 +725,7 @@ public interface Maybe<T> extends Option<T> {
         return (Maybe<R>)Option.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    default <R> Maybe<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return (Maybe<R>)Option.super.flatMapS(mapper);
-    }
+
 
     /* (non-Javadoc)
          * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
@@ -958,18 +955,6 @@ public interface Maybe<T> extends Option<T> {
         return (Maybe<T>) Option.super.peek(c);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
-     * Function)
-     */
-    @Override
-    default <R> Maybe<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Maybe<R>) Option.super.trampoline(mapper);
-    }
-
 
 
 
@@ -1083,8 +1068,8 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            final Maybe<R> m = Maybe.super.flatMapP(mapper);
+        public <R> Maybe<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            final Maybe<R> m = Maybe.super.mergeMap(mapper);
             return m;
         }
 
@@ -1321,8 +1306,8 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Maybe<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-            return Maybe.fromLazy(lazy.map(m->m.flatMapP(mapper)));
+        public <R> Maybe<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+            return Maybe.fromLazy(lazy.map(m->m.mergeMap(mapper)));
 
         }
 
@@ -1423,7 +1408,7 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> Nothing<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        public <R> Nothing<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return (Nothing<R>) EMPTY;
         }
         @Override

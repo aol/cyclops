@@ -312,10 +312,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    public <R> IntMap<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (IntMap<R>)ImmutableList.super.trampoline(mapper);
-    }
 
     @Override
     public IntMap<T> removeStream(Stream<? extends T> stream) {

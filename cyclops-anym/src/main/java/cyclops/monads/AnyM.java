@@ -1526,8 +1526,4 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
 
 
-    @Override
-    default <R> AnyM<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (AnyM<W, R>) Transformable.super.trampoline(mapper);
-    }
 }

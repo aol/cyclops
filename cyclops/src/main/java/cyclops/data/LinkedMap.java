@@ -212,11 +212,6 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
   }
 
   @Override
-  public <R> LinkedMap<K, R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-    return (LinkedMap<K, R>)ImmutableMap.super.trampoline(mapper);
-  }
-
-  @Override
   public <R> LinkedMap<K, R> retry(Function<? super V, ? extends R> fn) {
     return (LinkedMap<K, R>)ImmutableMap.super.retry(fn);
   }

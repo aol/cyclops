@@ -283,10 +283,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return (TrieSet<T>)ImmutableSet.super.peek(c);
     }
 
-    @Override
-    public <R> TrieSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (TrieSet<R>)ImmutableSet.super.trampoline(mapper);
-    }
+
 
     @Override
     public TrieSet<T> removeStream(Stream<? extends T> stream) {

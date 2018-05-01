@@ -211,11 +211,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    @Override
-    default <R> TransformerSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.trampoline(mapper));
-        return unitAnyM(zipped);
-    }
+
 
     @Override
     default <R> TransformerSeq<W,R> retry(final Function<? super T, ? extends R> fn) {

@@ -80,10 +80,6 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         return (Tuple1<T>)Transformable.super.peek(c);
     }
 
-    @Override
-    public <R> Tuple1<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Tuple1<R>)Transformable.super.trampoline(mapper);
-    }
 
     @Override
     public <R> Tuple1<R> retry(Function<? super T, ? extends R> fn) {

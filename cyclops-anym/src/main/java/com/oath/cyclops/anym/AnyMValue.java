@@ -89,10 +89,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
 
-  @Override
-    default int arity() {
-        return 1;
-    }
+
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
      */
@@ -186,14 +183,6 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMValue<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (AnyMValue<W,R>) AnyM.super.trampoline(mapper);
-    }
 
 
     /* (non-Javadoc)
@@ -266,12 +255,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     default <R> AnyMValue<W,R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.concatMap(fn);
     }
-    default <R> AnyMValue<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapP(fn);
+    default <R> AnyMValue<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.mergeMap(fn);
     }
-    default <R> AnyMValue<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapS(fn);
-    }
+
 
     @Override
     default <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){

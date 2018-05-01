@@ -585,10 +585,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<T>)ImmutableQueue.super.peek(c);
     }
 
-    @Override
-    default <R> BankersQueue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (BankersQueue<R>)ImmutableQueue.super.trampoline(mapper);
-    }
+
 
     @Override
     default BankersQueue<T> removeStream(Stream<? extends T> stream) {

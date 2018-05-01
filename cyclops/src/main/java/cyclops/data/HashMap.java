@@ -266,10 +266,7 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
     return (HashMap<K, V>)ImmutableMap.super.peek(c);
   }
 
-  @Override
-  public <R> HashMap<K, R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-    return (HashMap<K, R>)ImmutableMap.super.trampoline(mapper);
-  }
+
 
   @Override
   public <R> HashMap<K, R> retry(Function<? super V, ? extends R> fn) {

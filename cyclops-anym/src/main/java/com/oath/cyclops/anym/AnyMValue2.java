@@ -138,14 +138,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMValue2<W,T2,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (AnyMValue2<W,T2,R>) AnyMValue.super.trampoline(mapper);
-    }
 
 
     /* (non-Javadoc)
@@ -183,10 +176,6 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     default AnyMValue2<W,T2,T> peek(Consumer<? super T> c){
         return (AnyMValue2<W,T2,T>)AnyM2.super.peek(c);
     }
-    @Override
-    default int arity() {
-        return 1;
-    }
 
     @Override
     default boolean isPresent() {
@@ -221,12 +210,10 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     default <R> AnyMValue2<W,T2,R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn){
         return (AnyMValue2<W,T2,R>)AnyMValue.super.concatMap(fn);
     }
-    default <R> AnyMValue2<W,T2,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return (AnyMValue2<W,T2,R>)AnyMValue.super.flatMapP(fn);
+    default <R> AnyMValue2<W,T2,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return (AnyMValue2<W,T2,R>)AnyMValue.super.mergeMap(fn);
     }
-    default <R> AnyMValue2<W,T2,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
-        return (AnyMValue2<W,T2,R>)AnyMValue.super.flatMapS(fn);
-    }
+
 
     @Override
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {

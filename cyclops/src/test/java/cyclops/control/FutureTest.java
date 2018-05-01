@@ -6,7 +6,6 @@ import com.oath.cyclops.util.box.Mutable;
 
 import cyclops.companion.*;
 import cyclops.data.HashSet;
-import cyclops.data.Seq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -605,7 +604,7 @@ public class FutureTest {
 
     @Test
     public void testFlatMapPublisher() {
-        Future<Integer> f = just.flatMapP(i -> Flux.just(100, i));
+        Future<Integer> f = just.mergeMap(i -> Flux.just(100, i));
         assertThat(f.get(), equalTo(Try.success(100)));
     }
 

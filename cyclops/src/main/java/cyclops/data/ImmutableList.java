@@ -208,10 +208,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return (ImmutableList<T>)IterableX.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableList<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableList<R>)IterableX.super.trampoline(mapper);
-    }
+
 
     @Override
     default <R> ImmutableList<R> retry(Function<? super T, ? extends R> fn) {

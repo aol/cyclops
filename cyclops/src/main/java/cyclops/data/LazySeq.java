@@ -562,10 +562,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    default <R> LazySeq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (LazySeq<R>)ImmutableList.super.trampoline(mapper);
-    }
 
     @Override
     default LazySeq<T> removeStream(Stream<? extends T> stream) {

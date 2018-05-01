@@ -708,10 +708,6 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
         return (IterableX<T>)ExtendedTraversable.super.peek(c);
     }
 
-    @Override
-    default <R> IterableX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (IterableX<R>)ExtendedTraversable.super.trampoline(mapper);
-    }
 
     @Override
     default <R> IterableX<R> retry(final Function<? super T, ? extends R> fn) {

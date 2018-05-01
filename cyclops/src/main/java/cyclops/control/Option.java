@@ -118,7 +118,7 @@ public interface Option<T> extends To<Option<T>>,
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    default <R> Option<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> Option<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
             return Option.fromPublisher(publisher);
@@ -465,10 +465,7 @@ public interface Option<T> extends To<Option<T>>,
         return (Option<R>)Zippable.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    default <R> Option<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return (Option<R>)MonadicValue.super.flatMapS(mapper);
-    }
+
 
     /* (non-Javadoc)
          * @see com.oath.cyclops.types.MonadicValue#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
@@ -696,17 +693,6 @@ public interface Option<T> extends To<Option<T>>,
         return Option.none();
     }
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
-         * Function)
-         */
-    @Override
-    default <R> Option<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Option<R>) MonadicValue.super.trampoline(mapper);
-    }
 
     public static <T> Option<T> fromNullable(T t) {
         if(t==null)
@@ -900,7 +886,7 @@ public interface Option<T> extends To<Option<T>>,
         }
 
         @Override
-        public <R> None<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        public <R> None<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
             return NOTHING_EAGER;
         }
         @Override

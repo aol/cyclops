@@ -391,15 +391,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (AnyMSeq<W,R>) AnyM.super.trampoline(mapper);
-    }
-
 
 
     /* (non-Javadoc)

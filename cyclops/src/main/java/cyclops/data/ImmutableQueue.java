@@ -193,10 +193,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return (ImmutableQueue<T>)IterableX.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableQueue<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableQueue<R>)IterableX.super.trampoline(mapper);
-    }
+
 
     @Override
     default <R> ImmutableQueue<R> retry(Function<? super T, ? extends R> fn) {

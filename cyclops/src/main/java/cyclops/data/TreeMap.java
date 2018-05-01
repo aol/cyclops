@@ -257,10 +257,7 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
     return (TreeMap<K, V>)ImmutableMap.super.peek(c);
   }
 
-  @Override
-  public <R> TreeMap<K, R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-    return (TreeMap<K, R>)ImmutableMap.super.trampoline(mapper);
-  }
+
 
   @Override
   public <R> TreeMap<K, R> retry(Function<? super V, ? extends R> fn) {

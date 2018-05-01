@@ -515,10 +515,6 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
         return (OptionalT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> OptionalT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (OptionalT<W,R>)super.trampoline(mapper);
-    }
 
    @Override
    public <U> OptionalT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

@@ -147,7 +147,7 @@ public class AnyMTest {
     public void flatMapValueFirstFlux(){
 
         Maybe l= AnyM.fromMaybe(Maybe.of(1))
-            .flatMapP(i->Flux.just(10,i))
+            .mergeMap(i->Flux.just(10,i))
             .unwrap();
         assertThat(l,equalTo(Maybe.of(10)));
     }

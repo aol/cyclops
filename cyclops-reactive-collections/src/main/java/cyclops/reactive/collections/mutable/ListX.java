@@ -628,13 +628,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> ListX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ListX<R>) LazyCollectionX.super.<R> trampoline(mapper);
-    }
+
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#slice(long, long)

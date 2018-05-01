@@ -425,7 +425,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    default <R> Eval<R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> Eval<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
             return Eval.fromPublisher(publisher);
@@ -491,14 +491,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<T>) MonadicValue.super.peek(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> Eval<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Eval<R>) MonadicValue.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
@@ -578,10 +571,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval<R>)Zippable.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    default <R> Eval<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return (Eval<R>)MonadicValue.super.flatMapS(mapper);
-    }
+
 
 
     /* (non-Javadoc)

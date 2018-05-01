@@ -342,10 +342,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
           return (HashSet<T>)ImmutableSet.super.peek(c);
       }
 
-      @Override
-      public <R> HashSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-          return (HashSet<R>)ImmutableSet.super.trampoline(mapper);
-      }
+
 
       @Override
       public HashSet<T> removeStream(Stream<? extends T> stream) {

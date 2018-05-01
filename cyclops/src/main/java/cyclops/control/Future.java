@@ -1045,17 +1045,7 @@ public class Future<T> implements To<Future<T>>,
         return (Future<T>) MonadicValue.super.peek(c);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.
-     * Function)
-     */
-    @Override
-    public <R> Future<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Future<R>) MonadicValue.super.trampoline(mapper);
-    }
 
     /*
      * (non-Javadoc)
@@ -1272,8 +1262,8 @@ public class Future<T> implements To<Future<T>>,
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Future<R>) MonadicValue.super.flatMapP(mapper);
+    public <R> Future<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return (Future<R>) MonadicValue.super.mergeMap(mapper);
     }
 
 

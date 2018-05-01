@@ -169,13 +169,10 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
     @Override
     public String toString() {
-        return "Coproduct["+ run.toString()+"]";
+        return "Product["+ run.toString()+"]";
     }
 
-    @Override
-    public <R> Product<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Product<W1,W2,R>)Transformable.super.trampoline(mapper);
-    }
+
 
     @Override
     public <R> Product<W1,W2,R> retry(Function<? super T, ? extends R> fn) {

@@ -176,10 +176,6 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
         return "Coproduct["+xor.toString()+"]";
     }
 
-    @Override
-    public <R>  Coproduct<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Coproduct<W1,W2,R>)Transformable.super.trampoline(mapper);
-    }
 
     @Override
     public <R>  Coproduct<W1,W2,R> retry(Function<? super T, ? extends R> fn) {

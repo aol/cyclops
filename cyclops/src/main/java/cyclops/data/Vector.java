@@ -285,10 +285,6 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    public <R> Vector<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Vector<R>)ImmutableList.super.trampoline(mapper);
-    }
 
     @Override
     public Vector<T> removeStream(Stream<? extends T> stream) {

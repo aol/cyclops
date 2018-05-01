@@ -855,15 +855,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> Either<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Either<LT, R>) Transformable.super.trampoline(mapper);
-    }
-
     Ior<LT, RT> toIor();
 
     default Trampoline<Either<LT, RT>> toTrampoline() {

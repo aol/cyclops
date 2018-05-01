@@ -179,10 +179,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
         return (HashMap<K,V>)Transformable.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableMap<K,R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableMap<K,R>)Transformable.super.trampoline(mapper);
-    }
+
 
     @Override
     default <R> ImmutableMap<K,R> retry(Function<? super V, ? extends R> fn) {
