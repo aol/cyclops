@@ -252,10 +252,6 @@ public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T
     return stream().findAny().orElseGet((Supplier<T>)s);
   }
 
-     @Override
-     public <R> SingleT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (SingleT<W,R>)Transformable.super.trampoline(mapper);
-     }
 
      @Override
      public <R> SingleT<W,R> retry(Function<? super T, ? extends R> fn) {

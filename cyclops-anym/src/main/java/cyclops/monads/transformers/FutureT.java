@@ -522,10 +522,7 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (FutureT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> FutureT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (FutureT<W,R>)super.trampoline(mapper);
-    }
+
 
   @Override
     public <U> FutureT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

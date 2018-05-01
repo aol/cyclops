@@ -48,12 +48,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         return x.flatMap(a->a.toTry());
     }
 
-    default int arity(){
-        return 1;
-    }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
-     */
+
     @Override
     MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
@@ -392,17 +387,12 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         });
     }
 
-    default <R> MonadicValue<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return this.flatMap(a -> {
-            return Maybe.fromStream(mapper.apply(a));
-        });
-    }
 
     /**
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code
-     *   Future.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
+     *   Future.ofResult(1).map(i->i+2).mergeMap(i->Flux.just(()->i*3,20);
      *   //Future[9]
      *
      * }</pre>
@@ -410,7 +400,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param mapper transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> MonadicValue<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
@@ -425,17 +415,6 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     }
 
-    static interface ZippableValue<T> {
-       <T2,R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T,? super T2, ? extends R> fn);
-    }
 
-    default ZippableValue<T> zippableValue(){
-      return new ZippableValue<T>() {
-        @Override
-        public <T2, R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T, ? super T2, ? extends R> fn) {
-          return flatMap(a->mv.map(b->fn.apply(a,b)));
-        }
-      };
-    }
 
 }

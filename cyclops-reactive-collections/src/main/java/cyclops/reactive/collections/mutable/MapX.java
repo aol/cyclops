@@ -294,14 +294,7 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return (MapX<K, V>) Transformable.super.peek(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> MapX<K, R> trampoline(final Function<? super V, ? extends Trampoline<? extends R>> mapper) {
 
-        return (MapX<K, R>) Transformable.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.Predicate)

@@ -648,15 +648,6 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> Ior<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Ior<LT, R>) Transformable.super.trampoline(mapper);
-    }
-
-    /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override

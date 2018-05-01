@@ -361,10 +361,6 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
         return (MaybeT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> MaybeT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (MaybeT<W,R>)super.trampoline(mapper);
-    }
 
   @Override
     public <U> MaybeT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

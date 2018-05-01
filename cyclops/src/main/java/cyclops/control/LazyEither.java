@@ -992,17 +992,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.
-     * Function)
-     */
-    @Override
-    default <R> LazyEither<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
-
-        return (LazyEither<LT, R>) Either.super.trampoline(mapper);
-    }
 
     static <ST, PT> LazyEither<ST, PT> narrow(final LazyEither<? extends ST, ? extends PT> broad) {
         return (LazyEither<ST, PT>) broad;

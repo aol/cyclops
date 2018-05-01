@@ -590,11 +590,7 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     CollectionX<T> notNull();
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
+
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams

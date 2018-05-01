@@ -771,17 +771,7 @@ public interface LazyEither5<LT1, LT2,LT3, LT4,RT> extends Transformable<RT>,
         return (LazyEither5<LT1, LT2, LT3, LT4, RT>) Transformable.super.peek(c);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> LazyEither5<LT1, LT2, LT3,LT4, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LazyEither5<LT1, LT2, LT3,LT4, R>) Transformable.super.trampoline(mapper);
-    }
 
 
 

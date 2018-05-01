@@ -513,10 +513,6 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
         return (EvalT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> EvalT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (EvalT<W,R>)super.trampoline(mapper);
-    }
 
   @Override
     public <U> EvalT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

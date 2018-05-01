@@ -605,7 +605,7 @@ public class CompletableMaybeTest implements Printable {
 
 	@Test
 	public void testFlatMapPublisher() {
-		Maybe<Integer> maybe = Maybe.of(100).flatMapP(i -> Flux.just(10, i));
+		Maybe<Integer> maybe = Maybe.of(100).mergeMap(i -> Flux.just(10, i));
 		assertThat(maybe.orElse(500), equalTo(10));
 	}
 }

@@ -247,10 +247,6 @@ public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>
   public T orElseGet(Supplier<? super T> s){
     return stream().findAny().orElseGet((Supplier<T>)s);
   }
-  @Override
-  public <R> MaybeT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-    return (MaybeT<W,R>)Transformable.super.trampoline(mapper);
-  }
 
   @Override
   public <R> MaybeT<W,R> retry(Function<? super T, ? extends R> fn) {

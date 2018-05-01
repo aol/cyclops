@@ -502,7 +502,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapPublisher() {
-        Option<Integer> maybe = Option.some(100).flatMapP(i -> Flux.just(10, i));
+        Option<Integer> maybe = Option.some(100).mergeMap(i -> Flux.just(10, i));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

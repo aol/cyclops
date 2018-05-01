@@ -81,10 +81,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return (ImmutableSortedSet<T>)ImmutableSet.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableSortedSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableSortedSet<R>)ImmutableSet.super.trampoline(mapper);
-    }
+
 
     @Override
     default <R> ImmutableSortedSet<R> retry(Function<? super T, ? extends R> fn) {

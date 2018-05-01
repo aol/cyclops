@@ -530,10 +530,7 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return (CompletableFutureT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> CompletableFutureT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (CompletableFutureT<W,R>)super.trampoline(mapper);
-    }
+
 
   @Override
     public <U> CompletableFutureT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

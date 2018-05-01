@@ -616,13 +616,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    public <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Try<R, X>) Transformable.super.trampoline(mapper);
-    }
 
     @Override
     public <U> Option<U> ofType(final Class<? extends U> type) {

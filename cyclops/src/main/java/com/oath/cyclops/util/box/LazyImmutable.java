@@ -199,14 +199,7 @@ public class LazyImmutable<T> implements To<LazyImmutable<T>>,Supplier<T>, Consu
         return (LazyImmutable<T>) Transformable.super.peek(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    public <R> LazyImmutable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LazyImmutable<R>) Transformable.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()

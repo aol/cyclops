@@ -63,43 +63,7 @@ public interface Transformable<T> {
         });
     }
 
-    /**
-      * Performs a transform operation that can call a recursive method without running out of stack space
-      * <pre>
-      * {@code
-      * ReactiveSeq.of(10,20,30,40)
-    			 .trampoline(i-> fibonacci(i))
-    			 .forEach(System.out::println);
 
-    	Trampoline<Long> fibonacci(int i){
-    		return fibonacci(i,1,0);
-    	}
-    	Trampoline<Long> fibonacci(int n, long a, long b) {
-        	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-    	}
-
-      * 55
-    	6765
-    	832040
-    	102334155
-      *
-      *
-      * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
-    			 .trampoline(i-> fibonacci(i))
-    			 .forEach(System.out::println);
-
-
-      * completes successfully
-      * }
-      * </pre>
-      *
-     * @param mapper TCO Transformation function
-     * @return Transformable transformed by the supplied transformation function
-     */
-    default <R> Transformable<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return map(in -> mapper.apply(in)
-                               .result());
-    }
 
     /**
      * Retry a transformation if it fails. Default settings are to retry up to 7

@@ -34,11 +34,6 @@ public class DifferenceList<T> implements Folds<T>,
     }
 
     @Override
-    public <R> DifferenceList<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (DifferenceList<R>)Transformable.super.trampoline(mapper);
-    }
-
-    @Override
     public <R> DifferenceList<R> retry(Function<? super T, ? extends R> fn) {
         return (DifferenceList<R>)Transformable.super.retry(fn);
     }

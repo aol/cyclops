@@ -556,13 +556,6 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         return (OrderedSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> OrderedSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (OrderedSetX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)

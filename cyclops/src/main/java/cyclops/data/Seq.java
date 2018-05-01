@@ -346,10 +346,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    default <R> Seq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Seq<R>)ImmutableList.super.trampoline(mapper);
-    }
+
     public static <T> Seq<T> narrowK(final Higher<seq, T> list) {
       return (Seq<T>)list;
     }

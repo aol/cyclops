@@ -393,10 +393,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         return (TreeSet<T>)ImmutableSortedSet.super.peek(c);
     }
 
-    @Override
-    public <R> TreeSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (TreeSet<R>)ImmutableSortedSet.super.trampoline(mapper);
-    }
+
 
     @Override
     public TreeSet<T> removeStream(Stream<? extends T> stream) {

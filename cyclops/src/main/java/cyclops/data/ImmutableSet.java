@@ -71,10 +71,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return (ImmutableSet<T>)IterableX.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableSet<R>)IterableX.super.trampoline(mapper);
-    }
+
 
     @Override
     default <R> ImmutableSet<R> retry(Function<? super T, ? extends R> fn) {

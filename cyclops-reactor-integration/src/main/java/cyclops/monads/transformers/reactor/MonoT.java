@@ -307,10 +307,7 @@ public final class MonoT<W extends WitnessType<W>,T> implements To<MonoT<W,T>>, 
         return (MonoT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-  public <R> MonoT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-    return (MonoT<W,R>)Transformable.super.trampoline(mapper);
-  }
+
 
   @Override
   public <R> MonoT<W,R> retry(Function<? super T, ? extends R> fn) {
