@@ -145,6 +145,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     default boolean isEmpty(){
         return stream().isEmpty();
     }
+    default boolean isPresent(){
+        return !stream().isEmpty();
+    }
     @Override
     default Iterator<T> iterator() {
 
