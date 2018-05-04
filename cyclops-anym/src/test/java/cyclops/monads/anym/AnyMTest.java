@@ -116,7 +116,7 @@ public class AnyMTest {
     public void flatMapFirstFlux(){
 
        List l= AnyM.fromList(ListX.of(1,2,3))
-                   .flatMapP(i->Flux.just(10,i)).unwrap();
+                   .mergeMap(i->Flux.just(10,i)).unwrap();
        assertThat(l,equalTo(ListX.of(10, 1, 10, 2, 10, 3)));
     }
     @Test

@@ -267,17 +267,6 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
   }
 
 
-
-  @Override
-  public <R> HashMap<K, R> retry(Function<? super V, ? extends R> fn) {
-    return (HashMap<K, R>)ImmutableMap.super.retry(fn);
-  }
-
-  @Override
-  public <R> HashMap<K, R> retry(Function<? super V, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-    return (HashMap<K, R>)ImmutableMap.super.retry(fn,retries,delay,timeUnit);
-  }
-
   @Override
   public HashMap<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
     return (HashMap<K, V>)ImmutableMap.super.bipeek(c1,c2);
@@ -285,10 +274,6 @@ public final class HashMap<K,V> implements ImmutableMap<K,V>,PersistentMap<K,V>,
 
 
 
-  @Override
-  public <R1, R2> HashMap<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1, Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
-    return (HashMap<R1, R2>)ImmutableMap.super.bitrampoline(mapper1,mapper2);
-  }
 
   @Override
   public HashMap<K, V> onEmpty(Tuple2<K, V> value) {

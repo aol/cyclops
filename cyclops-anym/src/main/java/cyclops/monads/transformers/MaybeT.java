@@ -6,7 +6,6 @@ import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
@@ -271,16 +270,16 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
 
     @Override
-    public <R> MaybeT<W, R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> MaybeT<W, R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (MaybeT<W, R>)super.concatMapterable(mapper);
+        return (MaybeT<W, R>)super.concatMap(mapper);
     }
 
 
     @Override
-    public <R> MaybeT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> MaybeT<W, R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-        return (MaybeT<W, R>)super.flatMapPublisher(mapper);
+        return (MaybeT<W, R>)super.mergeMap(mapper);
     }
     public <T2, R1, R2, R3, R> MaybeT<W,R> forEach4M(Function<? super T, ? extends MaybeT<W,R1>> value1,
                                                      BiFunction<? super T, ? super R1, ? extends MaybeT<W,R2>> value2,

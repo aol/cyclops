@@ -210,15 +210,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
 
-    @Override
-    default <R> ImmutableList<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableList<R>)IterableX.super.retry(fn);
-    }
 
-    @Override
-    default <R> ImmutableList<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableList<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
-    }
 
     <R> ImmutableList<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn);
 

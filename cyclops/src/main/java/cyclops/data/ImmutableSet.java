@@ -73,17 +73,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
 
 
 
-    @Override
-    default <R> ImmutableSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableSet<R>)IterableX.super.retry(fn);
-    }
-
-    @Override
-    default <R> ImmutableSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableSet<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
     boolean containsValue(T value);
     int size();
     ImmutableSet<T> add(T value);

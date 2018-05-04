@@ -59,15 +59,6 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
 
 
 
-    @Override
-    default <R> Validated<E,R> retry(final Function<? super T, ? extends R> fn) {
-        return (Validated<E,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    default <R> Validated<E,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Validated<E,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
 
     default Validated<E,T> combine(Semigroup<T> st, Validated<E,T> b){
         return fold(iv -> {

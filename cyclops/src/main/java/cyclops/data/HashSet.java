@@ -671,15 +671,6 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
           return stream().join(",","[","]");
       }
 
-      @Override
-      public <R> HashSet<R> retry(Function<? super T, ? extends R> fn) {
-          return (HashSet<R>) ImmutableSet.super.retry(fn);
-      }
-
-      @Override
-      public <R> HashSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-          return (HashSet<R>) ImmutableSet.super.retry(fn,retries,delay,timeUnit);
-      }
 
       @Override
       public HashSet<T> onEmpty(T value) {

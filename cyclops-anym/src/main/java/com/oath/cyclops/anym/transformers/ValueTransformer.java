@@ -173,11 +173,9 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
         return unitAnyM(this.transformerStream().map(v->v.forEach2(value1, filterFunction, yieldingFunction)));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
-     */
 
-    public <R> ValueTransformer<W,R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+
+    public <R> ValueTransformer<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
         return unitAnyM(this.transformerStream().map(v->v.concatMap(mapper)));
     }
@@ -185,7 +183,7 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
 
-    public <R> ValueTransformer<W,R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> ValueTransformer<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return unitAnyM(this.transformerStream().map(v->v.mergeMap(mapper)));
     }
 

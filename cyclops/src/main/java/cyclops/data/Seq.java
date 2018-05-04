@@ -763,15 +763,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return empty();
     }
 
-    @Override
-    default <R> Seq<R> retry(Function<? super T, ? extends R> fn) {
-        return (Seq<R>) ImmutableList.super.retry(fn);
-    }
-
-    @Override
-    default <R> Seq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Seq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
-    }
 
 
   @Override

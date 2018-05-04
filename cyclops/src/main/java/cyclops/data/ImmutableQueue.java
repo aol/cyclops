@@ -195,16 +195,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
 
 
-    @Override
-    default <R> ImmutableQueue<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableQueue<R>)IterableX.super.retry(fn);
-    }
-
-    @Override
-    default <R> ImmutableQueue<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableQueue<R>)IterableX.super.retry(fn,retries,delay,timeUnit);
-    }
-
     <R> ImmutableQueue<R> flatMap(Function<? super T, ? extends ImmutableQueue<? extends R>> fn);
     <R> ImmutableQueue<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
     @Override

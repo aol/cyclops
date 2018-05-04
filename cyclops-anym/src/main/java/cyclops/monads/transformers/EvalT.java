@@ -6,7 +6,6 @@ import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Eval;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
@@ -421,18 +420,18 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
      * @see cyclops2.monads.transformers.values.ValueTransformer#concatMap(java.util.function.Function)
      */
     @Override
-    public <R> EvalT<W, R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> EvalT<W, R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (EvalT<W, R>)super.concatMapterable(mapper);
+        return (EvalT<W, R>)super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
      */
     @Override
-    public <R> EvalT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> EvalT<W, R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-        return (EvalT<W, R>)super.flatMapPublisher(mapper);
+        return (EvalT<W, R>)super.mergeMap(mapper);
     }
     public <T2, R1, R2, R3, R> EvalT<W,R> forEach4M(Function<? super T, ? extends EvalT<W,R1>> value1,
                                                     BiFunction<? super T, ? super R1, ? extends EvalT<W,R2>> value2,

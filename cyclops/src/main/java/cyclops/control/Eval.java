@@ -396,13 +396,6 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    default <R> Eval<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Eval<R>) MonadicValue.super.coflatMap(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.types.MonadicValue#combineEager(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue)
@@ -433,13 +426,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-  /* (non-Javadoc)
-   * @see com.oath.cyclops.types.MonadicValue#nest()
-   */
-    @Override
-    default Eval<MonadicValue<T>> nest() {
-        return (Eval<MonadicValue<T>>) MonadicValue.super.nest();
-    }
+
 
     /* (non-Javadoc)
      * @see java.util.function.Supplier#getValue()
@@ -536,20 +523,13 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
         return (Eval) Zippable.super.zip(other);
     }
 
-  @Override
-    default <R> Eval<R> retry(final Function<? super T, ? extends R> fn) {
-        return (Eval<R>)MonadicValue.super.retry(fn);
-    }
+
 
     @Override
     default <U> Eval<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
         return (Eval)Zippable.super.zipWithPublisher(other);
     }
 
-    @Override
-    default <R> Eval<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Eval<R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     default <S, U> Eval<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {

@@ -119,16 +119,6 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
 
 
     @Override
-    public <R>  XorM<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
-        return of(xor.map(m->m.retry(fn)).mapLeft(m->m.retry(fn)));
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return of(xor.map(m->m.retry(fn,retries,delay,timeUnit)).mapLeft(m->m.retry(fn,retries,delay,timeUnit)));
-    }
-
-    @Override
     public ReactiveSeq<T> stream() {
         return xor.visit(a->a.stream(),b->b.stream());
     }

@@ -113,18 +113,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
   public static <ST,T> LazyEither<ST,T> narrowK(final Higher<Higher<either, ST>,T> xor) {
     return fromEither(Either.narrowK(xor));
   }
-    default LazyEither<LT,RT> accumulate(Either<LT,RT> next, Semigroup<RT> sg){
-        return flatMap(s1->next.map(s2->sg.apply(s1,s2)));
-    }
-    default LazyEither<LT,RT> accumulateRight(Semigroup<RT> sg, Either<LT,RT>... values){
-        return (LazyEither<LT,RT>)Either.super.accumulateRight(sg,values);
-    }
-    default LazyEither<LT,RT> accumulate(Semigroup<LT> sg, Either<LT,RT> next){
-        return flatMapLeft(s1->next.mapLeft(s2->sg.apply(s1,s2)));
-    }
-    default LazyEither<LT,RT> accumulate(Semigroup<LT> sg, Either<LT,RT>... values){
-        return (LazyEither<LT,RT>)Either.super.accumulate(sg,values);
-    }
+
     public static  <L,T,R> LazyEither<L,R> tailRec(T initial, Function<? super T, ? extends LazyEither<L,? extends Either<T, R>>> fn){
         LazyEither<L,? extends Either<T, R>> next[] = new LazyEither[1];
         next[0] = LazyEither.right(Either.left(initial));
@@ -138,6 +127,9 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return next[0].map(x->x.orElse(null));
     }
 
+    default int arity(){
+        return 2;
+    }
 
     static <RT> LazyEither<Throwable,RT> async(final Executor ex, final Supplier<RT> s){
         return fromFuture(Future.of(s,ex));
@@ -736,19 +728,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     LazyEither<LT, RT> peek(Consumer<? super RT> action);
 
 
-
-    @Override
-    default <R> LazyEither<LT,R> retry(final Function<? super RT, ? extends R> fn) {
-        return (LazyEither<LT,R>)Either.super.retry(fn);
-    }
-
-
-    @Override
-    default <R> LazyEither<LT,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (LazyEither<LT,R>)Either.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
     /**
      * Swap types so operations directly affect the current (pre-swap) Left type
      *<pre>
@@ -862,21 +841,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return (LazyEither<LT, RT>) Either.super.bipeek(c1, c2);
     }
 
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
-     * java.util.function.Function)
-     */
-    @Override
-    default <R1, R2> LazyEither<R1, R2> bitrampoline(Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
-                                                     Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
-
-        return (LazyEither<R1, R2>) Either.super.bitrampoline(mapper1, mapper2);
-    }
 
 
 

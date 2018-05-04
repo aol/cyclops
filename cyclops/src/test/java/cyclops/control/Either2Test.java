@@ -412,10 +412,6 @@ public class Either2Test {
 	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Either.right(65)));
-	}
 
 
 

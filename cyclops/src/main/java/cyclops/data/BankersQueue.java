@@ -914,16 +914,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return stream().join(",","[","]");
     }
 
-    @Override
-    default <R> BankersQueue<R> retry(Function<? super T, ? extends R> fn) {
-        return (BankersQueue<R>) ImmutableQueue.super.retry(fn);
-    }
-
-    @Override
-    default <R> BankersQueue<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (BankersQueue<R>) ImmutableQueue.super.retry(fn,retries,delay,timeUnit);
-    }
-
 
   @Override
   default <R1, R2, R3, R> BankersQueue<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {

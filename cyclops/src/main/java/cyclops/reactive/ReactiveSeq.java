@@ -6,6 +6,7 @@ import com.oath.cyclops.internal.stream.spliterators.*;
 
 
 import com.oath.cyclops.types.foldable.Contains;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
 import cyclops.control.*;
@@ -110,6 +111,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         IterableX<T>,
                                         Contains<T>,
                                         Unit<T>,
+                                        ReactiveTransformable<T>,
                                         Higher<reactiveSeq,T> {
 
     @Override
@@ -3846,17 +3848,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.applyHKT(anyInt())).willThrow(
-     * 				new RuntimeException(new SocketException("First")),
-     * 				new RuntimeException(new IOException("Second"))).willReturn(
-     * 				"42");
+     *
      *
      *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
-     * 				.retry(serviceMock)
+     * 				.retry(this::makeIOCall, 7, 2, TimeUnit.SECONDS)
      * 				.firstValue();
      *
-     * 		//result = 42
+     * 		//result = [service call result]
      * }
      * </pre>
      *
@@ -3875,17 +3874,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.applyHKT(anyInt())).willThrow(
-     * 				new RuntimeException(new SocketException("First")),
-     * 				new RuntimeException(new IOException("Second"))).willReturn(
-     * 				"42");
+     *
      *
      *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
-     * 				.retry(serviceMock, 7, 2, TimeUnit.SECONDS)
+     * 				.retry(this::makeIOCall, 7, 2, TimeUnit.SECONDS)
      * 				.firstValue();
      *
-     * 		//result = 42
+     * 		//result = [service call result]
      * }
      * </pre>
      *
@@ -3899,7 +3895,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ReactiveSeq) IterableX.super.retry(fn, retries, delay, timeUnit);
+        return (ReactiveSeq) ReactiveTransformable.super.retry(fn, retries, delay, timeUnit);
     }
 
     /**
