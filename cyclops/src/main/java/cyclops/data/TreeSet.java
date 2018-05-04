@@ -720,15 +720,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     public String mkString(){
         return stream().join(",","[","]");
     }
-    @Override
-    public <R> TreeSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (TreeSet<R>) ImmutableSortedSet.super.retry(fn);
-    }
 
-    @Override
-    public <R> TreeSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (TreeSet<R>) ImmutableSortedSet.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     public TreeSet<T> onEmpty(T value) {

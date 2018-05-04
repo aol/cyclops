@@ -41,14 +41,6 @@ public class CompletableEvalTest {
 		none = now(null);
 	}
 
-
-
-    @Test
-    public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(10)));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(50)));
-
-    }
     @Test
     public void combine(){
 
@@ -451,12 +443,6 @@ public class CompletableEvalTest {
 	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(CompletableEvalTest.now(65)));
-	}
-
-
 
 	@Test
 	public void testUnitT1() {

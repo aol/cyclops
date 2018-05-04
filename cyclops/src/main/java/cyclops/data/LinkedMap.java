@@ -211,15 +211,7 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
     return (LinkedMap<K, V>)ImmutableMap.super.peek(c);
   }
 
-  @Override
-  public <R> LinkedMap<K, R> retry(Function<? super V, ? extends R> fn) {
-    return (LinkedMap<K, R>)ImmutableMap.super.retry(fn);
-  }
 
-  @Override
-  public <R> LinkedMap<K, R> retry(Function<? super V, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-    return (LinkedMap<K, R>)ImmutableMap.super.retry(fn,retries,delay,timeUnit);
-  }
 
   @Override
   public LinkedMap<K, V> bipeek(Consumer<? super K> c1, Consumer<? super V> c2) {
@@ -228,10 +220,6 @@ public final class LinkedMap<K,V> implements ImmutableMap<K,V>, Higher2<linkedHa
 
 
 
-  @Override
-  public <R1, R2> LinkedMap<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1, Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
-    return (LinkedMap<R1, R2>)ImmutableMap.super.bitrampoline(mapper1,mapper2);
-  }
 
   @Override
   public LinkedMap<K, V> onEmpty(Tuple2<K, V> value) {

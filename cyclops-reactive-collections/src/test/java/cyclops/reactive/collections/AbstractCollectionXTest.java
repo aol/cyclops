@@ -12,10 +12,15 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.TreeSet;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import java.io.IOException;
+import java.net.SocketException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -23,9 +28,12 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.junit.Assert.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyInt;
 
 public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 	public abstract <T> FluentCollectionX<T> empty();
@@ -52,6 +60,76 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 
 
     }
+    @Mock
+    Function<Integer, String> serviceMock;
+
+    Throwable error;
+
+
+
+
+    private CompletableFuture<String> failedAsync(Throwable throwable) {
+        final CompletableFuture<String> future = new CompletableFuture<>();
+        future.completeExceptionally(throwable);
+        return future;
+    }
+
+    @Test
+    public void shouldSucceedAfterFewAsynchronousRetries() throws Exception {
+
+        given(serviceMock.apply(anyInt())).willThrow(
+            new RuntimeException(new SocketException("First")),
+            new RuntimeException(new IOException("Second"))).willReturn(
+            "42");
+
+        long start = System.currentTimeMillis();
+        String result = of( 1,  2, 3)
+            .retry(serviceMock)
+            .firstValue(null);
+
+        assertThat((Long)System.currentTimeMillis()-start ,greaterThan(2000l));
+        assertThat(result, is("42"));
+    }
+
+
+    @Test
+    public void retryShouldNotThrowNPEIfRetryIsZero() {
+        Function<Integer, Integer> fn = i -> 2 * i;
+
+        int result = of(1)
+            .retry(fn, 0, 1, TimeUnit.SECONDS)
+            .firstValue(null);
+
+        assertEquals(2, result);
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void retryShouldExecuteFnEvenIfRetryIsZero() {
+        Function<Integer, Integer> fn = i -> i / 0;
+
+        of(1)
+            .retry(fn, 0, 1, TimeUnit.MILLISECONDS)
+            .firstValue(null);
+
+        fail();
+    }
+
+    @Test
+    public void retryShouldWaitOnlyAfterFailure() {
+        final long[] timings = {System.currentTimeMillis(), Long.MAX_VALUE};
+        Function<Integer, Integer> fn = i -> {
+            timings[1] = System.currentTimeMillis();
+            return 2 * i;
+        };
+
+        of(1)
+            .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
+            .firstValue(null);
+
+        assertTrue(timings[1] - timings[0] < 5000);
+    }
+
+
     @Test
     public void isLazy(){
         of(1,2,3).filterNot(i->{

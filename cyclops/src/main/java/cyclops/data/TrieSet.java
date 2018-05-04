@@ -609,15 +609,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     public String mkString(){
         return stream().join(",","[","]");
     }
-    @Override
-    public <R> TrieSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (TrieSet<R>) ImmutableSet.super.retry(fn);
-    }
 
-    @Override
-    public <R> TrieSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (TrieSet<R>) ImmutableSet.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     public TrieSet<T> onEmpty(T value) {

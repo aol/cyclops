@@ -430,20 +430,12 @@ public interface Option<T> extends To<Option<T>>,
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
-  @Override
-    default <R> Option<R> retry(final Function<? super T, ? extends R> fn) {
-        return (Option<R>)MonadicValue.super.retry(fn);
-    }
 
     @Override
     default <U> Option<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
         return (Option)Zippable.super.zipWithPublisher(other);
     }
 
-    @Override
-    default <R> Option<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Option<R>)MonadicValue.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     default <S, U> Option<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
@@ -569,26 +561,8 @@ public interface Option<T> extends To<Option<T>>,
         return Option.of(unit);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    default <R> Option<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Option<R>) MonadicValue.super.coflatMap(mapper);
-    }
 
-    /*
-     * cojoin (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue#nest()
-     */
-    @Override
-    default Option<MonadicValue<T>> nest() {
-        return (Option<MonadicValue<T>>) MonadicValue.super.nest();
-    }
+
 
   /*
    * (non-Javadoc)
@@ -676,12 +650,6 @@ public interface Option<T> extends To<Option<T>>,
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
-     */
     @Override
     default Option<T> peek(final Consumer<? super T> c) {
 

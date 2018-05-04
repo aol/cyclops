@@ -493,15 +493,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         };
     }
 
-    @Override
-    default <R> LazySeq<R> retry(Function<? super T, ? extends R> fn) {
-        return (LazySeq<R>) ImmutableList.super.retry(fn);
-    }
-
-    @Override
-    default <R> LazySeq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (LazySeq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
-    }
 
   @Override
   <R> LazySeq<R> map(Function<? super T, ? extends R> fn);

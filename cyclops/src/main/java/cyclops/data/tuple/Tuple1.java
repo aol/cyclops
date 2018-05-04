@@ -81,18 +81,11 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     }
 
 
-    @Override
-    public <R> Tuple1<R> retry(Function<? super T, ? extends R> fn) {
-        return (Tuple1<R>)Transformable.super.retry(fn);
-    }
 
     public Tuple1<T> eager(){
         return of(_1());
     }
-    @Override
-    public <R> Tuple1<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Tuple1<R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
+
 
     @Override
     public boolean equals(Object o) {

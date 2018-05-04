@@ -530,17 +530,6 @@ public class Active<W,T> implements Filters<T>,
     }
 
 
-    @Override
-    public <R> Active<W,R> retry(Function<? super T, ? extends R> fn) {
-        return (Active<W,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    public <R> Active<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Active<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
     public <T2, R1, R2, R3, R> Active<W,R> forEach4(final Function<? super T, ? extends Higher<W,R1>> value1, final BiFunction<? super T, ? super R1, ? extends Higher<W,R2>> value2, final Function3<? super T, ? super R1, ? super R2, ? extends Higher<W,R3>> value3,
                                                     final Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
         return of(Comprehensions.of(def1.monad()).forEach4(this.single,value1,value2,value3,yieldingFunction),def1);

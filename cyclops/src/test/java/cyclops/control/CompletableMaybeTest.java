@@ -165,11 +165,7 @@ public class CompletableMaybeTest implements Printable {
         return n == 0 ? b : fib(n - 1, a + b, a);
     }
 
-    @Test
-    public void nest() {
-        assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(Maybe.just(10)));
-        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(Maybe.nothing()));
-    }
+
 
 
     @Test
@@ -587,10 +583,6 @@ public class CompletableMaybeTest implements Printable {
         return times == 0 ? Trampoline.done(sum) : Trampoline.more(() -> sum(times - 1, sum + times));
     }
 
-    @Test
-    public void testTrampoline() {
-        assertThat(just.trampoline(n -> sum(10, n)), equalTo(Maybe.of(65)));
-    }
 
     @Test
     public void testUnitT1() {

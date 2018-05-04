@@ -195,22 +195,6 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         return n == 0 ? b : fib(n - 1, a + b, a);
     }
 
-    @Test
-    public void nest() {
-        assertThat(just.nest().map(m -> m.toOptional().get()), equalTo(just));
-        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(none));
-    }
-
-    @Test
-    public void coFlatMap() {
-
-        Maybe.nothing().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
-
-        // Maybe[10]
-
-        assertThat(just.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(just));
-        assertThat(none.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(Maybe.of(50)));
-    }
 
     @Test
     public void combine() {
@@ -621,10 +605,6 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         return times == 0 ? Trampoline.done(sum) : Trampoline.more(() -> sum(times - 1, sum + times));
     }
 
-    @Test
-    public void testTrampoline() {
-        assertThat(just.trampoline(n -> sum(10, n)), equalTo(Maybe.of(65)));
-    }
 
     @Test
     public void testUnitT1() {

@@ -98,6 +98,7 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
     }
 
+
     @Override
     public <T, R> AnyM<W, R> flatMap(AnyM<W, T> t,
             Function<? super T, ? extends AnyM<W, ? extends R>> fn) {

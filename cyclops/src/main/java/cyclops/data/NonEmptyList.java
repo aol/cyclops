@@ -216,16 +216,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
 
     @Override
-    public <R> NonEmptyList<R> retry(Function<? super T, ? extends R> fn) {
-        return (NonEmptyList<R>)ImmutableList.Some.super.retry(fn);
-    }
-
-    @Override
-    public <R> NonEmptyList<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (NonEmptyList<R>)ImmutableList.Some.super.retry(fn,retries,delay,timeUnit);
-    }
-
-    @Override
     public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
         return fn1.apply(this);
     }

@@ -4,13 +4,14 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.anym.transformers.ValueTransformer;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Future;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
+import cyclops.monads.transformers.FutureT;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -22,6 +23,7 @@ import java.util.Iterator;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /**
@@ -36,8 +38,9 @@ import java.util.function.*;
  */
 public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueTransformer<W,T>
                                                                   implements To<CompletableFutureT<W,T>>,
+                                                                             ReactiveTransformable<T>,
                                                                              Transformable<T>,
-  Filters<T> {
+                                                                             Filters<T> {
 
     private final AnyM<W,CompletableFuture<T>> run;
 
@@ -51,7 +54,15 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
         return run.stream().map(CompletableFuture::join);
     }
 
+    @Override
+    public <R> CompletableFutureT<W,R> retry(Function<? super T, ? extends R> fn) {
+        return (CompletableFutureT<W,R>)ReactiveTransformable.super.retry(fn);
+    }
 
+    @Override
+    public <R> CompletableFutureT<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (CompletableFutureT<W,R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
+    }
 
     /**
      * @return The wrapped AnyM
@@ -438,18 +449,18 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
      * @see cyclops2.monads.transformers.values.ValueTransformer#concatMap(java.util.function.Function)
      */
     @Override
-    public <R> CompletableFutureT<W, R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> CompletableFutureT<W, R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (CompletableFutureT<W, R>)super.concatMapterable(mapper);
+        return (CompletableFutureT<W, R>)super.concatMap(mapper);
     }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ValueTransformer#flatMapP(java.util.function.Function)
      */
     @Override
-    public <R> CompletableFutureT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> CompletableFutureT<W, R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-        return (CompletableFutureT<W, R>)super.flatMapPublisher(mapper);
+        return (CompletableFutureT<W, R>)super.mergeMap(mapper);
     }
     public <T2, R1, R2, R3, R> CompletableFutureT<W,R> forEach4M(Function<? super T, ? extends CompletableFutureT<W,R1>> value1,
                                                                  BiFunction<? super T, ? super R1, ? extends CompletableFutureT<W,R2>> value2,

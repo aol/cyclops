@@ -527,7 +527,7 @@ public interface Maybe<T> extends Option<T> {
 
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * Only successes are retained. By constrast with {@link Maybe#sequence(IterableX)} Maybe#zero/ None types are
+     * Only successes are retained. By constrast with {@link Maybe#sequence(Iterable)} Maybe#zero/ None types are
      * tolerated and ignored.
      *
      * <pre>
@@ -563,7 +563,7 @@ public interface Maybe<T> extends Option<T> {
   }
     /**
      * Sequence operation, take a Collection of Maybes and turn it into a Maybe with a Collection
-     * By constrast with {@link Maybe#sequenceJust(IterableX)} if any Maybe types are None / zero
+     * By constrast with {@link Maybe#sequenceJust(Iterable)} if any Maybe types are None / zero
      * the return type will be an zero Maybe / None
      *
      * <pre>
@@ -589,7 +589,7 @@ public interface Maybe<T> extends Option<T> {
 
     /**
      * Sequence operation, take a Stream of Maybes and turn it into a Maybe with a Stream
-     * By constrast with {@link Maybe#sequenceJust(IterableX)} Maybe#zero/ None types are
+     * By constrast with {@link Maybe#sequenceJust(Iterable)} Maybe#zero/ None types are
      * result in the returned Maybe being Maybe.zero / None
      *
      *
@@ -690,19 +690,11 @@ public interface Maybe<T> extends Option<T> {
         return sequenceJust(maybes).map(s -> s.reduce(reducer));
     }
 
-  @Override
-    default <R> Maybe<R> retry(final Function<? super T, ? extends R> fn) {
-        return (Maybe<R>)Option.super.retry(fn);
-    }
+
 
     @Override
     default <U> Maybe<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
         return (Maybe)Option.super.zipWithPublisher(other);
-    }
-
-    @Override
-    default <R> Maybe<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Maybe<R>)Option.super.retry(fn,retries,delay,timeUnit);
     }
 
     @Override
@@ -831,26 +823,9 @@ public interface Maybe<T> extends Option<T> {
         return Maybe.of(unit);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    default <R> Maybe<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Maybe<R>) Option.super.coflatMap(mapper);
-    }
 
-    /*
-     * cojoin (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue#nest()
-     */
-    @Override
-    default Maybe<MonadicValue<T>> nest() {
-        return (Maybe<MonadicValue<T>>) Option.super.nest();
-    }
+
+
 
   /*
    * (non-Javadoc)

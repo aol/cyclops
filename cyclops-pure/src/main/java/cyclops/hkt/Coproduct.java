@@ -177,17 +177,6 @@ public class Coproduct<W1,W2,T> implements  Filters<T>,Higher3<coproduct,W1,W2,T
     }
 
 
-    @Override
-    public <R>  Coproduct<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
-        return (Coproduct<W1,W2,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    public <R>  Coproduct<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Coproduct<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
 
     public <R> R visit(Function<? super Higher<W1,? super T>, ? extends R> left,Function<? super Higher<W2,? super T>, ? extends R> right ){
         return xor.visit(left,right);

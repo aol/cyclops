@@ -5,6 +5,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.companion.rx2.Functions;
 import cyclops.companion.rx2.Singles;
@@ -23,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 
-public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T>>,  Transformable<T>, Filters<T>, Folds<T> {
+public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T>>,  ReactiveTransformable<T>, Filters<T>, Folds<T> {
 
     private final AnyM<W,Single<T>> run;
 
@@ -255,11 +256,11 @@ public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T
 
      @Override
      public <R> SingleT<W,R> retry(Function<? super T, ? extends R> fn) {
-        return (SingleT<W,R>)Transformable.super.retry(fn);
+        return (SingleT<W,R>)ReactiveTransformable.super.retry(fn);
      }
 
      @Override
      public <R> SingleT<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (SingleT<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+        return (SingleT<W,R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
      }
 }

@@ -84,20 +84,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
 
     @Override
-    default <R> ImmutableSortedSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (ImmutableSortedSet<R>)ImmutableSet.super.retry(fn);
-    }
-
-    @Override
-    default <R> ImmutableSortedSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableSortedSet<R>)ImmutableSet.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
-
-
-
-    @Override
     ImmutableSortedSet<T> add(T value);
 
     @Override
