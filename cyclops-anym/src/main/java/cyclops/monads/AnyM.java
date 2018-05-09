@@ -759,11 +759,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(xor);
         return AnyMFactory.instance.value2(xor, either.INSTANCE);
     }
-    public static <ST,T> AnyMValue2<either,ST,T> lazyRight(final T p) {
+    public static <ST,T> AnyMValue2<either,ST,T> right(final T p) {
         Objects.requireNonNull(p);
         return fromEither(Either.right(p));
     }
-    public static <ST,T> AnyMValue2<either,ST,T> lazyLeft(final ST s) {
+    public static <ST,T> AnyMValue2<either,ST,T> left(final ST s) {
         Objects.requireNonNull(s);
         return fromEither(Either.left(s));
     }
@@ -778,11 +778,11 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         Objects.requireNonNull(xor);
         return AnyMFactory.instance.value2(xor, lazyEither.INSTANCE);
     }
-    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> right(final T right) {
+    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> lazyRight(final T right) {
         Objects.requireNonNull(right);
         return fromLazyEither(LazyEither.right(right));
     }
-    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> left(final LT1 left) {
+    public static <LT1,T> AnyMValue2<lazyEither,LT1,T> lazyLeft(final LT1 left) {
         Objects.requireNonNull(left);
         return fromLazyEither(LazyEither.left(left));
     }
