@@ -11,6 +11,7 @@ import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.Recoverable;
 import cyclops.companion.Semigroups;
+import cyclops.data.LazySeq;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
@@ -18,11 +19,14 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
+import cyclops.function.Monoid;
+import cyclops.function.Reducer;
 import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
@@ -33,21 +37,22 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformable<T>, Recoverable<T>, Iterable<T>,
+public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformable<T>, Iterable<T>,
                                         OrElseValue<T,Validated<E,T>>,
                                         Higher<validated,T>, Value<T>,
                                         Serializable {
 
 
     <R> Validated<E,R> map(Function<? super T, ? extends R> f);
+
     <RE,R> Validated<RE,R> bimap(Function<? super E,? extends RE> e,Function<? super T, ? extends R> f);
     boolean isValid();
 
-
-    @Override
-    default Validated<E,T> recover(Supplier<? extends T> value){
-        return isValid() ? this : Validated.<E,T>valid(value.get());
+    default boolean isInvalid(){
+        return !isValid();
     }
+
+
 
     @Override
     default  Validated<E,T> peek(final Consumer<? super T> c) {
@@ -76,15 +81,21 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         });
     }
 
-    default Validated<E,Seq<T>> sequence(Iterable<? extends Validated<E,T>> seq){
+    default Validated<E,Seq<T>> sequence(Iterable<Validated<E,T>> seq){
 
         return ReactiveSeq.fromIterable(seq)
+                          .prepend(this)
                           .foldLeft(Validated.<E,Seq<T>>valid(Seq.<T>empty()),(a, b)-> a.combine(Semigroups.<T>seqConcat(),b.map(Seq::of)));
     }
 
-    default <R> Validated<E,Seq<R>> traverse(Iterable<? extends Validated<E,T>> seq,Function<? super T,? extends R> fn){
+    default <R> Validated<E,Seq<R>> traverse(Iterable<Validated<E,T>> seq,Function<? super T,? extends R> fn){
         return ReactiveSeq.fromIterable(seq)
-            .foldLeft(Validated.<E,Seq<R>>valid(Seq.<R>empty()),(a, b)-> a.combine(Semigroups.<R>seqConcat(),b.map(v->Seq.of(fn.apply(v)))));
+                          .prepend(this)
+                          .foldLeft(Validated.<E,Seq<R>>valid(Seq.<R>empty()),(a, b)-> a.combine(Semigroups.<R>seqConcat(),b.map(v->Seq.of(fn.apply(v)))));
+    }
+
+    default NonEmptyList<E> orElseInvalid(E alt){
+        return fold(t->t,a->NonEmptyList.of(alt));
     }
     default  Validated<E,T> orElseUseAccumulating(Supplier<Validated<E, T>> alt) {
         return fold(
@@ -103,6 +114,7 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
             it -> valid(it));
     }
 
+
     public static <E,T> Validated<E,T> valid(T t){
         return new Valid<>(Either.right(t));
     }
@@ -113,15 +125,24 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
     public static <E,T> Validated<E,T> invalid(NonEmptyList<E> nel){
         return new Invalid<>(Either.left(nel));
     }
+
     public static <T> Validated<Throwable,T> fromPublisher(Publisher<T> pub){
-        return new Async<>(Either.fromPublisher(pub).mapLeft(NonEmptyList::of));
+        return new Async<>(LazyEither.fromPublisher(pub).mapLeft(NonEmptyList::of));
     }
 
     Either<NonEmptyList<E>,T> toEither();
 
+    default <R> R foldInvalidLeft(R zero, BiFunction<R,? super E,R> fold){
+        return toEither().mapLeft(l->l.foldLeft(zero,fold)).swap().orElse(zero);
+    }
+    default E foldInvalidLeft(Monoid<E> reducer){
+        return toEither().mapLeft(l->l.foldLeft(reducer.zero(),reducer)).swap().orElse(reducer.zero());
+    }
+
+
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public final class Async<E,T> implements Validated<E,T>{
-        private final Either<NonEmptyList<E>,T> either;
+        private final LazyEither<NonEmptyList<E>,T> either;
 
 
         @Override
@@ -154,9 +175,13 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
             return either.visit(present,absent);
         }
+        public String toString(){
+            return "Validated[Async]";
+        }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @EqualsAndHashCode
     public final class Valid<E,T> implements Validated<E,T>{
 
         private final Either<NonEmptyList<E>,T> either;
@@ -166,6 +191,8 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         public <R> Validated<E, R> map(Function<? super T, ? extends R> f) {
             return new Valid<>(either.map(f));
         }
+
+
 
         @Override
         public <RE, R> Validated<RE, R> bimap(Function<? super E, ? extends RE> e, Function<? super T, ? extends R> f) {
@@ -191,8 +218,12 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
             return either.visit(present,absent);
         }
+        public String toString(){
+            return "Valid["+either.orElse(null)+"]";
+        }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    @EqualsAndHashCode
     public final class Invalid<E,T> implements Validated<E,T>{
         private final Either<NonEmptyList<E>,T> either;
 
@@ -225,6 +256,10 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         @Override
         public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
             return either.visit(present,absent);
+        }
+        public String toString(){
+            String str = either.mapLeft(l -> l.join(",")).swap().orElse( "");
+            return "Invalid["+str+"]";
         }
     }
 }

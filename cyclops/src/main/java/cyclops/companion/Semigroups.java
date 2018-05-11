@@ -414,6 +414,8 @@ public interface Semigroups {
      * String concatenation
      */
     static Semigroup<String> stringConcat = (a, b) -> a + b;
+
+
     /**
      * StringBuffer concatenation
      */
