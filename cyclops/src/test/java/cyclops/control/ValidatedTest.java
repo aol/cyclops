@@ -129,7 +129,7 @@ public class ValidatedTest {
 
         assertThat(v2.orElse(-1),equalTo(110));
     }
-    
+
     @Test
     public void visit(){
         assertThat(valid.visit(i->i,()->-1),equalTo(10));
