@@ -276,10 +276,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return either.leftOrElse(alt);
         }
 
-        @Override
-        public Option<Throwable> leftOption() {
-            return either.leftOption();
-        }
+
 
         @Override
         public ReactiveSeq<java.lang.Throwable> leftToStream() {
@@ -305,11 +302,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
 
-
-        @Override
-        public void peek(Consumer<? super Throwable> stAction, Consumer<? super RT> ptAction) {
-            either.peek(stAction,ptAction);
-        }
 
         @Override
         public LazyEither<Throwable, RT> flatMapLeftToRight(Function<? super Throwable, ? extends Either<Throwable, RT>> fn) {
@@ -860,10 +852,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     Option<LT> getLeft();
 
-    /**
-     * @return The Left value wrapped in an Optional if present, otherwise an zero Optional
-     */
-    Option<LT> leftOption();
+
 
     /**
      * @return A Stream containing the left value if present, otherwise an zero Stream
@@ -893,8 +882,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     LazyEither<LT, RT> flatMapLeftToRight(Function<? super LT, ? extends Either<LT, RT>> fn);
 
-    @Deprecated // use bipeek
-    void peek(Consumer<? super LT> stAction, Consumer<? super RT> ptAction);
 
     /**
      * @return True if this is a right Either
@@ -1233,16 +1220,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return trampoline().leftOrElse(alt);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#leftOption()
-         */
-        @Override
-        public Option<ST> leftOption() {
-            return trampoline()
-                       .leftOption();
-        }
+
 
         /*
          * (non-Javadoc)
@@ -1281,19 +1259,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return lazy(Eval.later(() -> resolve().flatMapLeftToRight(fn)));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#peek(java.util.function.Consumer,
-         * java.util.function.Consumer)
-         */
-        @Override
-        public void peek(Consumer<? super ST> stAction, Consumer<? super PT> ptAction) {
-            trampoline()
-                .peek(stAction, ptAction);
-
-        }
 
         /*
          * (non-Javadoc)
@@ -1439,10 +1404,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return alt;
         }
 
-        @Override
-        public Option<ST> leftOption() {
-            return Option.none();
-        }
+
 
         @Override
         public ReactiveSeq<ST> leftToStream() {
@@ -1472,10 +1434,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return this;
         }
 
-        @Override
-        public void peek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
-            ptAction.accept(value.get());
-        }
 
         @Override
         public boolean isRight() {
@@ -1648,14 +1606,11 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return value.get();
         }
 
-        @Override
-        public Option<ST> leftOption() {
-            return Option.some(value.get());
-        }
+
 
         @Override
         public ReactiveSeq<ST> leftToStream() {
-            return ReactiveSeq.fromIterable(leftOption());
+            return ReactiveSeq.fromIterable(getLeft());
         }
 
         @Override
@@ -1680,12 +1635,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         public LazyEither<ST, PT> flatMapLeftToRight(final Function<? super ST, ? extends Either<ST, PT>> fn) {
             return new Lazy<ST, PT>(
                     Eval.now(this)).flatMapLeftToRight(fn);
-        }
-
-        @Override
-        public void peek(final Consumer<? super ST> stAction, final Consumer<? super PT> ptAction) {
-            stAction.accept(value.get());
-
         }
 
         @Override

@@ -3,6 +3,7 @@ package cyclops.control;
 import cyclops.companion.Monoids;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
+import cyclops.reactive.Spouts;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -14,17 +15,20 @@ public class ValidatedTest {
 
     Validated<String,Integer> valid = Validated.valid(10);
     Validated<String,Integer> invalid = Validated.invalid("failed");
+    Validated<Throwable,Integer> async = Validated.fromPublisher(Spouts.of(10));
 
     Integer v = 0;
     @Test
     public void map(){
         assertThat(valid.map(i->i+1),equalTo(Validated.valid(11)));
         assertThat(invalid.map(i->i+1),equalTo(Validated.invalid("failed")));
+        assertThat(async.map(i->i+1),equalTo(Validated.valid(11)));
     }
     @Test
     public void bimap(){
         assertThat(valid.bimap(s->s,i->i+1),equalTo(Validated.valid(11)));
         assertThat(invalid.bimap(s->s+"hello",i->i+1),equalTo(Validated.invalid("failedhello")));
+        assertThat(async.bimap(s->s,i->i+1),equalTo(Validated.valid(11)));
     }
 
     @Test
@@ -33,6 +37,8 @@ public class ValidatedTest {
         assertThat(invalid.toString(),equalTo("Invalid[failed]"));
 
         assertThat(invalid.sequence(Seq.of(Validated.invalid("boo!"))).toString(),equalTo("Invalid[failed,boo!]"));
+
+        assertThat(Validated.fromPublisher(Future.ofResult(10)).toString(),equalTo("Valid[10]"));
     }
 
 
@@ -44,6 +50,11 @@ public class ValidatedTest {
         v= 0;
         invalid.peek(a->v=a).isValid();
         assertThat(v,equalTo(0));
+
+        async.peek(a->v=a).isValid();
+        assertThat(v,equalTo(10));
+
+        v= 0;
     }
 
 
@@ -54,12 +65,19 @@ public class ValidatedTest {
         assertThat(valid.combine((a,b)->a+b,invalid).orElseInvalid("boo!"),equalTo(NonEmptyList.of("failed")));
         assertThat(invalid.combine((a,b)->a+b,Validated.valid(100)).orElseInvalid("boo!"),equalTo(NonEmptyList.of("failed")));
         assertThat(invalid.combine((a,b)->a+b,Validated.invalid("boo!")).orElseInvalid("oops!"),equalTo(NonEmptyList.of("failed","boo!")));
+        assertThat(async.combine((a,b)->a+b,Validated.valid(100)).orElse(-1),equalTo(110));
     }
 
     @Test
     public void foldInvalid(){
         String result = invalid.foldInvalidLeft("",(a,b)->a+b);
         assertThat(result,equalTo("failed"));
+
+        String result2 = valid.foldInvalidLeft("",(a,b)->a+b);
+        assertThat(result2,equalTo(""));
+
+        String result3 = async.foldInvalidLeft("",(a,b)->a+b);
+        assertThat(result3,equalTo(""));
     }
 
     @Test
@@ -110,6 +128,13 @@ public class ValidatedTest {
         }).start();
 
         assertThat(v2.orElse(-1),equalTo(110));
+    }
+    
+    @Test
+    public void visit(){
+        assertThat(valid.visit(i->i,()->-1),equalTo(10));
+        assertThat(async.visit(i->i,()->-1),equalTo(10));
+        assertThat(invalid.visit(i->i,()->-1),equalTo(-1));
     }
 
 }
