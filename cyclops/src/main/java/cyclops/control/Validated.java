@@ -30,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -176,12 +177,25 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
             return either.visit(present,absent);
         }
         public String toString(){
-            return "Validated[Async]";
+            return either.visit(nl->Validated.invalid(nl).toString(),i->Validated.valid(i).toString());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null) return false;
+            Validated<?, ?> async = (Validated<?, ?>) o;
+            return Objects.equals(either, async.toEither());
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(either);
         }
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
-    @EqualsAndHashCode
     public final class Valid<E,T> implements Validated<E,T>{
 
         private final Either<NonEmptyList<E>,T> either;
@@ -220,6 +234,20 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         }
         public String toString(){
             return "Valid["+either.orElse(null)+"]";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null) return false;
+            Validated<?, ?> valid = (Validated<?, ?>) o;
+            return Objects.equals(either, valid.toEither());
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(either);
         }
     }
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -260,6 +288,19 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         public String toString(){
             String str = either.mapLeft(l -> l.join(",")).swap().orElse( "");
             return "Invalid["+str+"]";
+        }
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null) return false;
+            Validated<?, ?> invalid = (Validated<?, ?>) o;
+            return Objects.equals(either, invalid.toEither());
+        }
+
+        @Override
+        public int hashCode() {
+
+            return Objects.hash(either);
         }
     }
 }
