@@ -32,19 +32,19 @@ import java.util.stream.*;
 
 
 @AllArgsConstructor
-public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
+public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Wither
     @Getter
     Flux<T> flux;
 
-    public <R> FluxReactiveSeq<R> flux(Flux<R> flux){
-        return new FluxReactiveSeq<>(flux);
+    public <R> FluxReactiveSeqImpl<R> flux(Flux<R> flux){
+        return new FluxReactiveSeqImpl<>(flux);
     }
-    public <R> FluxReactiveSeq<R> flux(ReactiveSeq<R> flux){
-        if(flux instanceof FluxReactiveSeq){
-            return  (FluxReactiveSeq)flux;
+    public <R> FluxReactiveSeqImpl<R> flux(ReactiveSeq<R> flux){
+        if(flux instanceof FluxReactiveSeqImpl){
+            return  (FluxReactiveSeqImpl)flux;
         }
-        return new FluxReactiveSeq<>(Flux.from(flux));
+        return new FluxReactiveSeqImpl<>(Flux.from(flux));
     }
 
     @Override
@@ -427,8 +427,8 @@ public class FluxReactiveSeq<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U> FluxReactiveSeq<U> unitIterator(Iterator<U> U) {
-        return new FluxReactiveSeq<>(Flux.fromIterable(()->U));
+    public <U> FluxReactiveSeqImpl<U> unitIterator(Iterator<U> U) {
+        return new FluxReactiveSeqImpl<>(Flux.fromIterable(()->U));
     }
 
     @Override

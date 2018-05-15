@@ -41,7 +41,7 @@ public class ObservableAdapter extends AbstractMonadAdapter<observable> {
     }
 
     <T> Observable<T> observable(AnyM<observable,T> anyM){
-        ObservableReactiveSeq<T> seq = anyM.unwrap();
+        ObservableReactiveSeqImpl<T> seq = anyM.unwrap();
         return seq.observable;
     }
 

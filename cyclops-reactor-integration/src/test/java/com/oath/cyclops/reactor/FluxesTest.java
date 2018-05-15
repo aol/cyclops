@@ -1,6 +1,6 @@
 package com.oath.cyclops.reactor;
 
-import com.oath.cyclops.reactor.adapter.FluxReactiveSeq;
+import com.oath.cyclops.reactor.adapter.FluxReactiveSeqImpl;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -35,8 +35,8 @@ public class FluxesTest {
         AnyM<optional, Stream<Integer>> anyM = fluxes.unwrap();
         Optional<Stream<Integer>> opt = Witness.optional(anyM);
         Stream<Integer> stream = opt.get();
-        assertTrue(stream instanceof FluxReactiveSeq);
-        FluxReactiveSeq<Integer> f = (FluxReactiveSeq)stream;
+        assertTrue(stream instanceof FluxReactiveSeqImpl);
+        FluxReactiveSeqImpl<Integer> f = (FluxReactiveSeqImpl)stream;
         assertTrue(f.getFlux() instanceof Flux);
     }
     @Test

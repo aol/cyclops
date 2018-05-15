@@ -1,6 +1,7 @@
 package cyclops.streams.flowables.reactivestreamspath;
 
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static cyclops.companion.rx2.Flowables.of;
+import static cyclops.reactive.FlowableReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static cyclops.data.tuple.Tuple.tuple;
@@ -27,8 +28,8 @@ public class ReactiveZippingRSTest {
 
 	@Before
 	public void setup(){
-		empty = Flowables.of();
-		nonEmpty = Flowables.of(1);
+		empty = FlowableReactiveSeq.of();
+		nonEmpty = FlowableReactiveSeq.of(1);
 	}
 
 	@Test

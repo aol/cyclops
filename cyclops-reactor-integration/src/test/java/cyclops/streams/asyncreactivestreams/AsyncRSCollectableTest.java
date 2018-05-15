@@ -1,6 +1,7 @@
 package cyclops.streams.asyncreactivestreams;
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.streams.CollectableTest;
 import reactor.core.publisher.Flux;
@@ -13,7 +14,7 @@ public class AsyncRSCollectableTest extends CollectableTest {
 
     public <T> ReactiveSeq<T> of(T... values){
 
-        return Fluxs.reactiveSeq(Flux.just(values)
+        return FluxReactiveSeq.reactiveSeq(Flux.just(values)
                 .subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
     }
 

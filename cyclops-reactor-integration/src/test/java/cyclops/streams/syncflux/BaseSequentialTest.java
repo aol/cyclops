@@ -12,6 +12,7 @@ import cyclops.control.Maybe;
 
 import cyclops.control.Option;
 import cyclops.data.Vector;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
@@ -42,7 +43,7 @@ public class BaseSequentialTest {
     public static final int ITERATIONS = 1;
 
     protected <U> ReactiveSeq<U> of(U... array) {
-        return Fluxs.from(ReactiveSeq.of(array));
+        return FluxReactiveSeq.from(ReactiveSeq.of(array));
     }
 
 

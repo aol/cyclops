@@ -7,6 +7,7 @@ import cyclops.companion.Streams;
 import cyclops.companion.rx2.Flowables;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -33,7 +34,7 @@ public class AsyncRSExtensionOperatorsTest {
 
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+        return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 
     }

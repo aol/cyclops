@@ -1,7 +1,7 @@
 package cyclops.companion.rx2;
 
 import com.oath.cyclops.anym.AnyMSeq;
-import com.oath.cyclops.rx2.adapter.FlowableReactiveSeq;
+import com.oath.cyclops.rx2.adapter.FlowableReactiveSeqImpl;
 import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -11,6 +11,7 @@ import cyclops.monads.Rx2Witness.flowable;
 import cyclops.monads.WitnessType;
 import cyclops.monads.XorM;
 import cyclops.monads.transformers.StreamT;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -60,12 +61,15 @@ public class Flowables {
     public static <T> Flowable<T> raw(AnyM<flowable,T> anyM){
         return flowable(anyM);
     }
+
     public static <T,W extends WitnessType<W>> AnyM<W,Flowable<T>> fromStream(AnyM<W,Stream<T>> anyM){
         return anyM.map(s->flowableFrom(ReactiveSeq.fromStream(s)));
     }
+
     public static <T> Flowable<T> narrow(Flowable<? extends T> observable) {
         return (Flowable<T>)observable;
     }
+
     public static  <T> Flowable<T> flowableFrom(ReactiveSeq<T> stream){
 
         return stream.visit(sync->Flowable.fromIterable(stream),
@@ -75,18 +79,24 @@ public class Flowables {
 
     }
 
+    public static  <T> Flowable<T> fromStream(Stream<T> stream){
+
+        return flowableFrom(ReactiveSeq.fromStream(stream));
+    }
+
+
     public static <W extends WitnessType<W>,T> StreamT<W,T> flowablify(StreamT<W,T> nested){
         AnyM<W, Stream<T>> anyM = nested.unwrap();
         AnyM<W, ReactiveSeq<T>> flowableM = anyM.map(s -> {
-            if (s instanceof FlowableReactiveSeq) {
-                return (FlowableReactiveSeq)s;
+            if (s instanceof FlowableReactiveSeqImpl) {
+                return (FlowableReactiveSeqImpl)s;
             }
             if(s instanceof ReactiveSeq){
-            return ((ReactiveSeq<T>)s).visit(sync->new FlowableReactiveSeq<T>(Flowable.fromIterable(sync)),
-                            rs->new FlowableReactiveSeq<T>(Flowable.fromPublisher(rs)),
-                            async ->new FlowableReactiveSeq<T>(Observables.fromStream(async).toFlowable(BackpressureStrategy.BUFFER)));
+            return ((ReactiveSeq<T>)s).visit(sync->new FlowableReactiveSeqImpl<T>(Flowable.fromIterable(sync)),
+                            rs->new FlowableReactiveSeqImpl<T>(Flowable.fromPublisher(rs)),
+                            async ->new FlowableReactiveSeqImpl<T>(Observables.fromStream(async).toFlowable(BackpressureStrategy.BUFFER)));
             }
-             return new FlowableReactiveSeq<T>(Flowable.fromIterable(ReactiveSeq.fromStream(s)));
+             return new FlowableReactiveSeqImpl<T>(Flowable.fromIterable(ReactiveSeq.fromStream(s)));
         });
         StreamT<W, T> res = StreamT.of(flowableM);
         return res;
@@ -98,8 +108,8 @@ public class Flowables {
     public static <W extends WitnessType<W>,T> AnyM<W,Flowable<T>> nestedFlowable(StreamT<W,T> nested){
         AnyM<W, Stream<T>> anyM = nested.unwrap();
         return anyM.map(s->{
-            if(s instanceof FlowableReactiveSeq){
-                return ((FlowableReactiveSeq)s).getFlowable();
+            if(s instanceof FlowableReactiveSeqImpl){
+                return ((FlowableReactiveSeqImpl)s).getFlowable();
             }
             if(s instanceof ReactiveSeq){
                 ReactiveSeq<T> r = (ReactiveSeq<T>)s;
@@ -114,82 +124,11 @@ public class Flowables {
     }
 
     public static <W extends WitnessType<W>,T> StreamT<W,T> liftM(AnyM<W,Flowable<T>> nested){
-        AnyM<W, ReactiveSeq<T>> monad = nested.map(s -> new FlowableReactiveSeq<T>(s));
+        AnyM<W, ReactiveSeq<T>> monad = nested.map(s -> new FlowableReactiveSeqImpl<T>(s));
         return StreamT.of(monad);
     }
 
-    public static <T> ReactiveSeq<T> reactiveSeq(Flowable<T> flowable){
-        return new FlowableReactiveSeq<>(flowable);
-    }
 
-    public static <T> ReactiveSeq<T> reactiveSeq(Publisher<T> flowable){
-        return new FlowableReactiveSeq<>(Flowable.fromPublisher(flowable));
-    }
-
-    public static ReactiveSeq<Integer> range(int start, int end){
-       return reactiveSeq(Flowable.range(start,end));
-    }
-    public static <T> ReactiveSeq<T> of(T... data) {
-        return reactiveSeq(Flowable.fromArray(data));
-    }
-    public static  <T> ReactiveSeq<T> of(T value){
-        return reactiveSeq(Flowable.just(value));
-    }
-
-    public static <T> ReactiveSeq<T> ofNullable(T nullable){
-        if(nullable==null){
-            return empty();
-        }
-        return of(nullable);
-    }
-
-
-
-    public static <T> ReactiveSeq<T> empty() {
-        return reactiveSeq(Flowable.empty());
-    }
-
-
-    public static <T> ReactiveSeq<T> error(Throwable error) {
-        return reactiveSeq(Flowable.error(error));
-    }
-
-
-
-
-
-
-
-    public static <T> ReactiveSeq<T> from(Publisher<? extends T> source) {
-       return reactiveSeq(Flowable.fromPublisher(source));
-    }
-
-
-    public static <T> ReactiveSeq<T> fromIterable(Iterable<? extends T> it) {
-        return reactiveSeq(Flowable.fromIterable(it));
-    }
-
-
-    public static <T> ReactiveSeq<T> fromStream(Stream<? extends T> s) {
-        return reactiveSeq(flowableFrom(ReactiveSeq.fromStream((Stream<T>)s)));
-    }
-
-
-
-
-
-
-
-
-    @SafeVarargs
-    public static <T> ReactiveSeq<T> just(T... data) {
-        return reactiveSeq(Flowable.fromArray(data));
-    }
-
-
-    public static <T> ReactiveSeq<T> just(T data) {
-        return reactiveSeq(Flowable.just(data));
-    }
 
 
     /**
@@ -210,12 +149,12 @@ public class Flowables {
      * @return AnyMSeq wrapping a flowable
      */
     public static <T> AnyMSeq<flowable,T> anyM(Flowable<T> flowable) {
-        return AnyM.ofSeq(reactiveSeq(flowable), Rx2Witness.flowable.INSTANCE);
+        return AnyM.ofSeq(FlowableReactiveSeq.reactiveSeq(flowable), Rx2Witness.flowable.INSTANCE);
     }
 
     public static <T> Flowable<T> flowable(AnyM<flowable,T> flowable) {
 
-        FlowableReactiveSeq<T> flowableSeq = flowable.unwrap();
+        FlowableReactiveSeqImpl<T> flowableSeq = flowable.unwrap();
         return flowableSeq.getFlowable();
     }
 

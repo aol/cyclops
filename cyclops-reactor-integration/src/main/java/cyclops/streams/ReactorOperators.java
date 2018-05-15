@@ -5,6 +5,7 @@ import cyclops.companion.reactor.Fluxs;
 import cyclops.companion.reactor.Monos;
 
 import cyclops.control.Future;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 
 import cyclops.reactive.Spouts;
@@ -31,7 +32,7 @@ public class ReactorOperators {
 
 
     public static <T,R> Function<ReactiveSeq<T>,ReactiveSeq<R>> flux(final Function<? super Flux<? super T>,? extends Flux<? extends R>> fn){
-        return s-> Fluxs.<R>reactiveSeq(Fluxs.narrow(fn.apply(Fluxs.fluxFrom(s))));
+        return s-> FluxReactiveSeq.<R>reactiveSeq(Fluxs.narrow(fn.apply(Fluxs.fluxFrom(s))));
     }
     public static <T,R> Function<Flux<T>,Flux<R>> seq(final Function<? super ReactiveSeq<? super T>,? extends ReactiveSeq<? extends R>> fn){
         return s-> Flux.from(fn.apply(Spouts.from(s)));
