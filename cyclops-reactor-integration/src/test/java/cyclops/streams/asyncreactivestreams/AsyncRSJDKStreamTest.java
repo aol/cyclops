@@ -1,6 +1,7 @@
 package cyclops.streams.asyncreactivestreams;
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertThat;
 
 public class AsyncRSJDKStreamTest {
 	protected <U> ReactiveSeq<U> of(U... array){
-		return Fluxs.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 	@Test

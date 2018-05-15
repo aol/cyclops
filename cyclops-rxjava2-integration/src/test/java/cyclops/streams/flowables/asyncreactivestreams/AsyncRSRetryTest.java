@@ -3,6 +3,7 @@ package cyclops.streams.flowables.asyncreactivestreams;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -44,7 +45,7 @@ public class AsyncRSRetryTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 

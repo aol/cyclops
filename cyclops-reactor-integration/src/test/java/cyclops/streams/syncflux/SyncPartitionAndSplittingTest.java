@@ -2,6 +2,7 @@ package cyclops.streams.syncflux;
 
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Option;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
@@ -19,7 +20,7 @@ import static org.junit.Assert.*;
 public class SyncPartitionAndSplittingTest {
 	protected <U> ReactiveSeq<U> of(U... array) {
 
-		return Fluxs.reactiveSeq(Flux.just(array));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	@Test
 	public void testSplitBy() {

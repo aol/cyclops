@@ -8,6 +8,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.Vector;
 import cyclops.function.Monoid;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
@@ -49,7 +50,7 @@ public  class AsyncRSReactiveStreamXTest {
 	}
 
 	protected <U> ReactiveSeq<U> of(U... array){
-		return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 

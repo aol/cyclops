@@ -5,6 +5,7 @@ import com.oath.cyclops.util.SimpleTimer;
 import cyclops.companion.rx2.Flowables;
 import cyclops.data.TreeSet;
 import cyclops.data.Vector;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import io.reactivex.Flowable;
@@ -28,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 public class AsyncRSBatchingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
-	    return Flowables.reactiveSeq(Flowable.fromPublisher(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))));
+	    return FlowableReactiveSeq.reactiveSeq(Flowable.fromPublisher(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool()))));
 	}
 
 	@Test

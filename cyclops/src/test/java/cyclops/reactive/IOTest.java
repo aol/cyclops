@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class IOTest {
@@ -24,6 +26,50 @@ public class IOTest {
                  .map(i->i+1)
                  .run().orElse(-1),equalTo(11));
   }
+
+  boolean closed = false;
+  class MyCloseable implements AutoCloseable{
+
+      @Override
+      public void close() throws Exception {
+          closed = true;
+      }
+  }
+
+  @Test
+  public void bracket(){
+      assertFalse(closed);
+      IO.of(()->10)
+          .bracket(i-> new MyCloseable())
+          .run();
+
+      assertTrue(closed);
+  }
+    @Test
+    public void bracketCons(){
+        assertFalse(closed);
+        IO.of(()->10)
+            .bracket(i-> new MyCloseable(),b->{
+                try {
+                    b.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            })
+            .run();
+
+        assertTrue(closed);
+    }
+    @Test
+    public void bracketThenMap(){
+        assertFalse(closed);
+        IO.of(()->10)
+            .bracket(i-> new MyCloseable())
+            .map(x->100)
+            .run();
+
+        assertTrue(closed);
+    }
   @Test
   public void async(){
     assertThat(IO.fromPublisher(Future.of(()->10, ex))

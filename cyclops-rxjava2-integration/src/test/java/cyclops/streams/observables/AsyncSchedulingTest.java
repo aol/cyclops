@@ -1,6 +1,7 @@
 package cyclops.streams.observables;
 
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class AsyncSchedulingTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);

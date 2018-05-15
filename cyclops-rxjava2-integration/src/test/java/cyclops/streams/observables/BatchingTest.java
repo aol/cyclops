@@ -5,6 +5,7 @@ import cyclops.data.Vector;
 import cyclops.data.TreeSet;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.Value;
@@ -33,7 +34,7 @@ public class BatchingTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 	@Test
 	public void batchUntil(){

@@ -4,6 +4,8 @@ import cyclops.companion.rx2.Flowables;
 import cyclops.companion.rx2.Maybes;
 import cyclops.companion.rx2.Observables;
 import cyclops.control.Future;
+import cyclops.reactive.FlowableReactiveSeq;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.*;
 
@@ -34,19 +36,19 @@ public class Rx2Operators {
 
     public static <T,R> Function<ReactiveSeq<T>,ReactiveSeq<R>> lift(final ObservableOperator<? extends R, ? super T> operator){
 
-        return s->Observables.reactiveSeq(Observables.observableFrom(s).lift(operator));
+        return s-> ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(s).lift(operator));
     }
     public static <T,R> Function<ReactiveSeq<T>,ReactiveSeq<R>> observable(final Function<? super Observable<? super T>,? extends Observable<? extends R>> fn){
-        return s->Observables.<R>reactiveSeq(Observables.narrow(fn.apply(Observables.observableFrom(s))));
+        return s->ObservableReactiveSeq.<R>reactiveSeq(Observables.narrow(fn.apply(Observables.observableFrom(s))));
     }
     public static <T,R> Function<ReactiveSeq<T>,ReactiveSeq<R>> flowable(final Function<? super Flowable<? super T>,? extends Flowable<? extends R>> fn){
-        return s->Flowables.<R>reactiveSeq(Flowables.narrow(fn.apply(Flowables.flowableFrom(s))));
+        return s-> FlowableReactiveSeq.<R>reactiveSeq(Flowables.narrow(fn.apply(Flowables.flowableFrom(s))));
     }
     public static <T,R> Function<Observable<T>,Observable<R>> seq(final Function<? super ReactiveSeq<? super T>,? extends ReactiveSeq<? extends R>> fn){
-        return s-> Observables.observableFrom((ReactiveSeq<R>)fn.apply(Observables.reactiveSeq(s)));
+        return s-> Observables.observableFrom((ReactiveSeq<R>)fn.apply(ObservableReactiveSeq.reactiveSeq(s)));
     }
     public static <T,R> Function<Flowable<T>,Flowable<R>> reactiveSeq(final Function<? super ReactiveSeq<? super T>,? extends ReactiveSeq<? extends R>> fn){
-        return s-> Flowables.flowableFrom((ReactiveSeq<R>)fn.apply(Flowables.reactiveSeq(s)));
+        return s-> Flowables.flowableFrom((ReactiveSeq<R>)fn.apply(FlowableReactiveSeq.reactiveSeq(s)));
     }
     public static <T,R> Function<Future<T>,Future<R>> single(final Function<? super Single<? super T>,? extends Single<? extends R>> fn){
 

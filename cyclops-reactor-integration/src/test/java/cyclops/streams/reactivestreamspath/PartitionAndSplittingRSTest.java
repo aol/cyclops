@@ -2,13 +2,14 @@ package cyclops.streams.reactivestreamspath;
 
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Option;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static cyclops.companion.reactor.Fluxs.of;
+import static cyclops.reactive.FluxReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -29,7 +30,7 @@ public class PartitionAndSplittingRSTest {
 
 	@Test
 	public void testPartition() {
-		Supplier<ReactiveSeq<Integer>> s = () -> Fluxs.of(1, 2, 3, 4, 5, 6);
+		Supplier<ReactiveSeq<Integer>> s = () -> FluxReactiveSeq.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0)._1().toList());
 		assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0)._2().toList());
@@ -48,7 +49,7 @@ public class PartitionAndSplittingRSTest {
 	}
 	@Test
 	public void testPartitionSequence() {
-		Supplier<ReactiveSeq<Integer>> s = () -> Fluxs.of(1, 2, 3, 4, 5, 6);
+		Supplier<ReactiveSeq<Integer>> s = () -> FluxReactiveSeq.of(1, 2, 3, 4, 5, 6);
 
 		assertEquals(asList(1, 3, 5), s.get().partition(i -> i % 2 != 0)._1().toList());
 		assertEquals(asList(2, 4, 6), s.get().partition(i -> i % 2 != 0)._2().toList());
@@ -93,43 +94,43 @@ public class PartitionAndSplittingRSTest {
 	@Test
 	public void testSplitAtHead() {
 
-		assertEquals(asList(), Fluxs.of(1).splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of(1).splitAtHead()._2().toList());
 
 		assertEquals(Option.none(), of().splitAtHead()._1());
-		assertEquals(asList(), Fluxs.of().splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of().splitAtHead()._2().toList());
 
-		assertEquals(Option.of(1), Fluxs.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1).splitAtHead()._1());
 
-		assertEquals(Option.of(1), Fluxs.of(1, 2).splitAtHead()._1());
-		assertEquals(asList(2), Fluxs.of(1, 2).splitAtHead()._2().toList());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1, 2).splitAtHead()._1());
+		assertEquals(asList(2), FluxReactiveSeq.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Option.of(1), Fluxs.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Option.of(2), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Option.of(3), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
-		assertEquals(asList(2, 3), Fluxs.of(1, 2, 3).splitAtHead()._2().toList());
-		assertEquals(asList(3), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
-		assertEquals(asList(), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(asList(2, 3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().toList());
+		assertEquals(asList(3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
 	}
 
 	@Test
 	public void testSplitSequenceAtHead() {
 
-		assertEquals(asList(), Fluxs.of(1).splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of(1).splitAtHead()._2().toList());
 
 		assertEquals(Option.none(), of().splitAtHead()._1());
-		assertEquals(asList(), Fluxs.of().splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of().splitAtHead()._2().toList());
 
-		assertEquals(Option.of(1), Fluxs.of(1).splitAtHead()._1());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1).splitAtHead()._1());
 
-		assertEquals(Option.of(1), Fluxs.of(1, 2).splitAtHead()._1());
-		assertEquals(asList(2), Fluxs.of(1, 2).splitAtHead()._2().toList());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1, 2).splitAtHead()._1());
+		assertEquals(asList(2), FluxReactiveSeq.of(1, 2).splitAtHead()._2().toList());
 
-		assertEquals(Option.of(1), Fluxs.of(1, 2, 3).splitAtHead()._1());
-		assertEquals(Option.of(2), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
-		assertEquals(Option.of(3), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
-		assertEquals(asList(2, 3), Fluxs.of(1, 2, 3).splitAtHead()._2().toList());
-		assertEquals(asList(3), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
-		assertEquals(asList(), Fluxs.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
+		assertEquals(Option.of(1), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._1());
+		assertEquals(Option.of(2), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._1());
+		assertEquals(Option.of(3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._1());
+		assertEquals(asList(2, 3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().toList());
+		assertEquals(asList(3), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().toList());
+		assertEquals(asList(), FluxReactiveSeq.of(1, 2, 3).splitAtHead()._2().splitAtHead()._2().splitAtHead()._2().toList());
 	}
 
 }

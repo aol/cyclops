@@ -9,6 +9,7 @@ import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.reactor.MonoT;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class StreamTTest {
 
     @Test
     public void types2(){
-        ReactiveSeq<Integer> reactive = Fluxs.just(1,2,3);
+        ReactiveSeq<Integer> reactive = FluxReactiveSeq.just(1,2,3);
         StreamT<optional,Integer> transformer = AnyMs.liftM(reactive,optional.INSTANCE);
     }
     @Test
@@ -48,14 +49,14 @@ public class StreamTTest {
 
     @Test
     public void extract(){
-        StreamT<list,Integer> trans = AnyMs.liftM(Fluxs.just(1,2,3),list.INSTANCE);
+        StreamT<list,Integer> trans = AnyMs.liftM(FluxReactiveSeq.just(1,2,3),list.INSTANCE);
 
         AnyM<list,Flux<Integer>> anyM = trans.unwrapTo(Fluxs::fromStream);
         System.out.println(anyM);
     }
     @Test
     public void moreExtract(){
-        StreamT<list,Integer> trans = AnyMs.liftM(Fluxs.just(1,2,3),list.INSTANCE);
+        StreamT<list,Integer> trans = AnyMs.liftM(FluxReactiveSeq.just(1,2,3),list.INSTANCE);
 
         ListX<Flux<Integer>> listObs = Witness.list(trans.unwrapTo(Fluxs::fromStream));
         System.out.println(listObs);

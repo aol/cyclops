@@ -11,6 +11,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.futurestream.LazyReact;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
@@ -48,7 +49,7 @@ public  class SyncReactiveStreamXTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 
 

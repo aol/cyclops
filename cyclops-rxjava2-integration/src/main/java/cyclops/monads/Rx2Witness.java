@@ -29,7 +29,7 @@ public interface Rx2Witness {
     }
 
     public static <T> Flowable<T> flowable(AnyM<flowable, ? extends T> anyM){
-        FlowableReactiveSeq<T> obs = anyM.unwrap();
+        FlowableReactiveSeqImpl<T> obs = anyM.unwrap();
         return obs.getFlowable();
     }
 
@@ -65,7 +65,7 @@ public interface Rx2Witness {
 
 
     public static <T> Observable<T> observable(AnyM<observable, ? extends T> anyM){
-        ObservableReactiveSeq<T> obs = anyM.unwrap();
+        ObservableReactiveSeqImpl<T> obs = anyM.unwrap();
         return obs.getObservable();
     }
 

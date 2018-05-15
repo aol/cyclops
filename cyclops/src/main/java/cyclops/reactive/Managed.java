@@ -24,7 +24,6 @@ import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -92,7 +91,7 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     }
 
     public static <T> Managed<T> of(IO<T> acquire, Consumer<T> cleanup){
-        System.out.println("Ac " + System.identityHashCode(acquire));
+
         return new Managed<T>(){
             public  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn){
                 IO<R> y = IO.Comprehensions.forEach(acquire, t1 -> {
@@ -227,7 +226,7 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public final Try<T,Throwable> run() {
 
 
-      return  getAcquire().run();
+      return  io().run();
     }
     public final T runAndThrowUnexpected() {
         return run().fold(t->t,e->{
@@ -237,17 +236,21 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
 
     public final <R> R foldRun(Function<? super Try<T,Throwable>,? extends R> transform) {
 
-        return  transform.apply(getAcquire().run());
+        return  transform.apply(io().run());
     }
+
     public final Future<T> future(){
-        return getAcquire().future();
+        return io().future();
     }
+
     public final Try<T,Throwable> runAsync(Executor ex) {
-        return  getAcquire().runAsync(ex);
+        return  io().runAsync(ex);
     }
+
     public ReactiveSeq<T> stream(){
-        return getAcquire().stream();
+        return io().stream();
     }
+
     public final <R> Managed<R> map(Function<? super T, ? extends R> mapper){
         return of(apply(mapper.andThen(IO::of)),__->{});
     }
@@ -282,7 +285,7 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         stream().subscribe(s);
     }
 
-    private IO<T> getAcquire() {
+    public IO<T> io() {
         return apply(IO::of);
     }
 

@@ -1,6 +1,7 @@
 package cyclops.streams.flowables.syncflux;
 
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertThat;
 public class SyncJDKStreamTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	@Test
 	public void testAnyMatch(){
