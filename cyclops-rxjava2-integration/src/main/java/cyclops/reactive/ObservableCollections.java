@@ -18,45 +18,45 @@ import io.reactivex.Observable;
  */
 public interface ObservableCollections {
 
-    static <T> LinkedListX<T> linkedListX(Observable<T> flowable){
-        return LinkedListX.linkedListX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> LinkedListX<T> linkedListX(Observable<T> observable){
+        return LinkedListX.linkedListX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> VectorX<T> vectorX(Observable<T> flowable){
-        return VectorX.vectorX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> VectorX<T> vectorX(Observable<T> observable){
+        return VectorX.vectorX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> PersistentSetX<T> persistentSetX(Observable<T> flowable){
-        return PersistentSetX.persistentSetX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> PersistentSetX<T> persistentSetX(Observable<T> observable){
+        return PersistentSetX.persistentSetX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
-    static <T> OrderedSetX<T> orderedSetX(Observable<T> flowable){
-        return OrderedSetX.orderedSetX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> OrderedSetX<T> orderedSetX(Observable<T> observable){
+        return OrderedSetX.orderedSetX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
-    static <T> BagX<T> bagX(Observable<T> flowable){
-        return BagX.bagX(ObservableReactiveSeq.reactiveSeq(flowable));
-    }
-
-    static <T> PersistentQueueX<T> persistentQueueX(Observable<T> flowable){
-        return PersistentQueueX.persistentQueueX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> BagX<T> bagX(Observable<T> observable){
+        return BagX.bagX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> ListX<T> listX(Observable<T> flowable){
-        return ListX.listX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> PersistentQueueX<T> persistentQueueX(Observable<T> observable){
+        return PersistentQueueX.persistentQueueX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> DequeX<T> dequeX(Observable<T> flowable){
-        return DequeX.dequeX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> ListX<T> listX(Observable<T> observable){
+        return ListX.listX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> SetX<T> setX(Observable<T> flowable){
-        return SetX.setX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> DequeX<T> dequeX(Observable<T> observable){
+        return DequeX.dequeX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> SortedSetX<T> sortedSetX(Observable<T> flowable){
-        return SortedSetX.sortedSetX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> SetX<T> setX(Observable<T> observable){
+        return SetX.setX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 
-    static <T> QueueX<T> queueX(Observable<T> flowable){
-        return QueueX.queueX(ObservableReactiveSeq.reactiveSeq(flowable));
+    static <T> SortedSetX<T> sortedSetX(Observable<T> observable){
+        return SortedSetX.sortedSetX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
+    }
+
+    static <T> QueueX<T> queueX(Observable<T> observable){
+        return QueueX.queueX(ObservableReactiveSeq.reactiveSeq(observable)).materialize();
     }
 }
