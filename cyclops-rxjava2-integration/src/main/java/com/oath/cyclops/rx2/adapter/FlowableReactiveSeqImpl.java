@@ -723,6 +723,12 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
+    public <R> ReactiveSeq<R> reduceAll(R identity, BiFunction<R, ? super T, R>  accumulator) {
+        Single<R> inter = flowable.reduce(identity,(a,b)->accumulator.apply(a,b));
+        return flux(inter.toFlowable());
+    }
+
+    @Override
     public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector) {
 
           Single<A> inter = flowable.collect(()->collector.supplier().get(), (a,b)->collector.accumulator().accept(a,b));

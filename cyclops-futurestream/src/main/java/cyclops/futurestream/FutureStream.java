@@ -105,7 +105,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> reduceAll(U identity, BinaryOperator<U> accumulator) {
+    default <R> FutureStream<R> reduceAll(R identity, BiFunction<R, ? super U, R>  accumulator) {
         return fromStream(stream().reduceAll(identity,accumulator));
     }
 

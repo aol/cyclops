@@ -20,7 +20,7 @@ public interface FlowableCollections {
 
     static <T> LinkedListX<T> linkedListX(Flowable<T> flowable){
         return LinkedListX.linkedListX(FlowableReactiveSeq.reactiveSeq(flowable))
-                          .materialize();
+                            .materialize();
     }
 
     static <T> VectorX<T> vectorX(Flowable<T> flowable){

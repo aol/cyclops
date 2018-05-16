@@ -2283,8 +2283,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     T reduce(T identity, BinaryOperator<T> accumulator);
 
-    default ReactiveSeq<T> reduceAll(T identity, BinaryOperator<T> accumulator){
-        return coflatMap(s->s.reduce(identity,accumulator));
+    default <R> ReactiveSeq<R> reduceAll(R identity, BiFunction<R, ? super T, R>  accumulator){
+        return coflatMap(s->s.foldLeft(identity,accumulator));
     }
     /*
      * (non-Javadoc)

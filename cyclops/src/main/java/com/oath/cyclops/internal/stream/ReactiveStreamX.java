@@ -99,7 +99,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> reduceAll(T identity, BinaryOperator<T> accumulator) {
+    public <R> ReactiveSeq<R> reduceAll(R identity, BiFunction<R, ? super T, R>  accumulator){
         return createSeq(new ReduceAllOperator<>(source, identity, accumulator));
     }
 

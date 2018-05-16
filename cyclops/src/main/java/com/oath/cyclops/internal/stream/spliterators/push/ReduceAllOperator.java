@@ -1,18 +1,19 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 
 /**
  * Created by johnmcclean on 12/01/2017.
  */
-public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
+public class ReduceAllOperator<T,A,R> extends BaseOperator<T,R> {
 
 
-    private final T identity;
-    private final BinaryOperator<T> accumulator;
+    private final R identity;
+    private final BiFunction<R, ? super T, R> accumulator;
 
-    public ReduceAllOperator(Operator<T> source, T identity,BinaryOperator<T> accumulator){
+    public ReduceAllOperator(Operator<T> source, R identity,BiFunction<R, ? super T, R>  accumulator){
         super(source);
         this.identity = identity;
         this.accumulator = accumulator;
@@ -21,7 +22,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
 
 
     @Override
-    public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
+    public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         Object[] current = {identity};
         StreamSubscription[] upstream = {null};
         StreamSubscription sub = new StreamSubscription(){
@@ -49,7 +50,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
         };
         upstream[0] = source.subscribe(e-> {
                     try {
-                        current[0]= accumulator.apply((T)current[0],e);
+                        current[0]= accumulator.apply((R)current[0],e);
 
 
                         upstream[0].request(1l);
@@ -65,7 +66,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
                      upstream[0].request(1);
                 },()->{
                     try {
-                        onNext.accept((T) current[0]);
+                        onNext.accept((R) current[0]);
                     }catch (Throwable t) {
 
                         onError.accept(t);
@@ -76,11 +77,11 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
     }
 
     @Override
-    public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
+    public void subscribeAll(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         Object[] current = {identity};
         source.subscribeAll(e-> {
                     try {
-                        current[0]= accumulator.apply((T)current[0],e);
+                        current[0]= accumulator.apply((R)current[0],e);
 
                     } catch (Throwable t) {
 
@@ -89,7 +90,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,T> {
                 }
                 ,onError,()->{
                     try {
-                        onNext.accept((T) current[0]);
+                        onNext.accept((R) current[0]);
                     } catch (Throwable t) {
 
                         onError.accept(t);

@@ -60,13 +60,17 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
 
+                System.out.println("Triggered by GET!");
                 try{
 
                     ReactiveSeq<T> toUse = seq.get();
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
 
 
-                        list = toUse.visit(s->toUse.collect(collectorInternal),
+                        list = toUse.visit(s->{
+                            System.out.println("Sync  path");
+                            return toUse.collect(collectorInternal);
+                            },
                                             r->fn.apply(toUse.collectAll(collectorInternal)),
                                                     a->fn.apply(toUse.collectAll(collectorInternal)));
                         seq.set(null);

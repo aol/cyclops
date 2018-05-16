@@ -44,7 +44,7 @@ public class LazyPBagX<T> extends AbstractLazyPersistentCollection<T,PersistentB
 
     public static final <T> Function<ReactiveSeq<PersistentBag<T>>, PersistentBag<T>> asyncBag() {
         return r -> {
-            CompletableBagX<T> res = new CompletableBagX<>();
+            CompletableBagX<T> res = BagX.completable();
             r.forEachAsync(l -> res.complete(l));
             return res.asBagX();
         };

@@ -16,6 +16,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
@@ -731,6 +732,11 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Override
     public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector) {
         return observable(Observables.connectToReactiveSeq(observable).collectAll(collector));
+    }
+    @Override
+    public <R> ReactiveSeq<R> reduceAll(R identity, BiFunction<R, ? super T, R>  accumulator) {
+        Single<R> inter = observable.reduce(identity,(a, b)->accumulator.apply(a,b));
+        return observable(inter.toObservable());
     }
 
     @Override

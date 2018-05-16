@@ -95,7 +95,7 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
     @Override
     public <X> LazyQueueX<X> fromStream(ReactiveSeq<X> stream) {
 
-        return new LazyQueueX<X>((Deque)getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal(), evaluation());
+        return new LazyQueueX(getList(),ReactiveSeq.fromStream(stream),(Collector)this.getCollectorInternal(), evaluation());
     }
 
     @Override
