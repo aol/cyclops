@@ -24,15 +24,9 @@ public interface ObservableReactiveSeq {
         return reactiveSeq(Observable.error(exception));
     }
 
-
-
-
-
-
     public static <T> ReactiveSeq<T> from(Iterable<? extends T> iterable) {
         return reactiveSeq(Observable.fromIterable(iterable));
     }
-
 
 
     public static ReactiveSeq<Long> interval(long interval, TimeUnit unit) {
