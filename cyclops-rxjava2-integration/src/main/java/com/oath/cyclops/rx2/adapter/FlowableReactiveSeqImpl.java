@@ -734,7 +734,7 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
           Single<A> inter = flowable.collect(()->collector.supplier().get(), (a,b)->collector.accumulator().accept(a,b));
           Single<R> res = inter.map(Functions.rxFunction(collector.finisher()));
           return flux(res.toFlowable());
-    //     return flux(inter.toFlowable().map(Functions.rxFunction(collector.finisher())));
+
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.*;
@@ -723,6 +724,13 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
         return flux.toStream().collect(supplier,accumulator,combiner);
     }
+
+    @Override
+    public <R> ReactiveSeq<R> reduceAll(R identity, BiFunction<R, ? super T, R>  accumulator) {
+        Mono<R> inter = flux.reduce(identity,accumulator);
+        return flux(inter.flux());
+    }
+
 
     @Override
     public <R, A> ReactiveSeq<R> collectAll(Collector<? super T, A, R> collector) {

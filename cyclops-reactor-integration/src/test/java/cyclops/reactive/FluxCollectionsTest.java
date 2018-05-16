@@ -73,7 +73,7 @@ public class FluxCollectionsTest {
     @Test
     public void listX2(){
 
-        FluxCollections.listX(Flux.interval(Duration.ofMillis(5), Schedulers.single()).doOnNext(System.out::println).take(2)
+        FluxCollections.listX(Flux.interval(Duration.ofSeconds(5), Schedulers.single()).doOnNext(System.out::println).take(2)
             .doOnComplete(()->complete.set(true)));
 
         System.out.println("Blocked? " + complete.get());
