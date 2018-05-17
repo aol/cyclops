@@ -1,6 +1,7 @@
 package com.oath.cyclops.reactor.adapter;
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.monads.FluxAnyM;
 import cyclops.monads.ReactorWitness;
 import cyclops.monads.ReactorWitness.flux;
 import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
@@ -32,13 +33,13 @@ public class FluxAdapter extends AbstractMonadAdapter<flux> {
         Flux<T> f = stream(apply);
         Flux<? extends Function<? super T, ? extends R>> fnF = stream(fn);
         Flux<R> res = fnF.zipWith(f, (a, b) -> a.apply(b));
-        return Fluxs.anyM(res);
+        return FluxAnyM.anyM(res);
 
     }
 
     @Override
     public <T> AnyM<flux, T> filter(AnyM<flux, T> t, Predicate<? super T> fn) {
-        return Fluxs.anyM(stream(t).filter(fn));
+        return FluxAnyM.anyM(stream(t).filter(fn));
     }
 
     <T> Flux<T> stream(AnyM<flux,T> anyM){
@@ -47,7 +48,7 @@ public class FluxAdapter extends AbstractMonadAdapter<flux> {
 
     @Override
     public <T> AnyM<flux, T> empty() {
-        return Fluxs.anyM(Flux.empty());
+        return FluxAnyM.anyM(Flux.empty());
     }
 
 
@@ -55,18 +56,18 @@ public class FluxAdapter extends AbstractMonadAdapter<flux> {
     @Override
     public <T, R> AnyM<flux, R> flatMap(AnyM<flux, T> t,
                                      Function<? super T, ? extends AnyM<flux, ? extends R>> fn) {
-        return Fluxs.anyM(stream(t).flatMap(fn.andThen(a->stream(a))));
+        return FluxAnyM.anyM(stream(t).flatMap(fn.andThen(a->stream(a))));
 
     }
 
     @Override
     public <T> AnyM<flux, T> unitIterable(Iterable<T> it)  {
-        return Fluxs.anyM(Flux.fromIterable(it));
+        return FluxAnyM.anyM(Flux.fromIterable(it));
     }
 
     @Override
     public <T> AnyM<flux, T> unit(T o) {
-        return Fluxs.anyM(Flux.just(o));
+        return FluxAnyM.anyM(Flux.just(o));
     }
 
     @Override
@@ -76,6 +77,6 @@ public class FluxAdapter extends AbstractMonadAdapter<flux> {
 
     @Override
     public <T, R> AnyM<flux, R> map(AnyM<flux, T> t, Function<? super T, ? extends R> fn) {
-        return Fluxs.anyM(stream(t).map(fn));
+        return FluxAnyM.anyM(stream(t).map(fn));
     }
 }

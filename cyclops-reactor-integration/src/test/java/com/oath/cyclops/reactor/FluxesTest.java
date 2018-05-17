@@ -6,6 +6,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
+import cyclops.monads.FluxAnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.StreamT;
@@ -31,7 +32,7 @@ public class FluxesTest {
     public void fluxifyTest(){
 
         StreamT<optional,Integer> streamT = AnyMs.liftM(ReactiveSeq.of(1,2,3),optional.INSTANCE);
-        StreamT<optional,Integer> fluxes = Fluxs.fluxify(streamT);
+        StreamT<optional,Integer> fluxes = FluxAnyM.fluxify(streamT);
         AnyM<optional, Stream<Integer>> anyM = fluxes.unwrap();
         Optional<Stream<Integer>> opt = Witness.optional(anyM);
         Stream<Integer> stream = opt.get();
