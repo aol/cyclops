@@ -5,6 +5,7 @@ import cyclops.companion.reactor.Fluxs;
 import cyclops.companion.reactor.Monos;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
+import cyclops.monads.FluxAnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
@@ -30,7 +31,7 @@ public class StreamTTest {
     @Test
     public void types(){
         ListX<Flux<Integer>> nested = ListX.of(Flux.just(10));
-        StreamT<list,Integer> listOfFluxs = Fluxs.liftM(AnyM.fromList(nested));
+        StreamT<list,Integer> listOfFluxs = FluxAnyM.liftM(AnyM.fromList(nested));
         StreamT<list,Integer> doubled = listOfFluxs.map(i->i*2);
     }
 
@@ -51,14 +52,14 @@ public class StreamTTest {
     public void extract(){
         StreamT<list,Integer> trans = AnyMs.liftM(FluxReactiveSeq.just(1,2,3),list.INSTANCE);
 
-        AnyM<list,Flux<Integer>> anyM = trans.unwrapTo(Fluxs::fromStream);
+        AnyM<list,Flux<Integer>> anyM = trans.unwrapTo(FluxAnyM::fromStream);
         System.out.println(anyM);
     }
     @Test
     public void moreExtract(){
         StreamT<list,Integer> trans = AnyMs.liftM(FluxReactiveSeq.just(1,2,3),list.INSTANCE);
 
-        ListX<Flux<Integer>> listObs = Witness.list(trans.unwrapTo(Fluxs::fromStream));
+        ListX<Flux<Integer>> listObs = Witness.list(trans.unwrapTo(FluxAnyM::fromStream));
         System.out.println(listObs);
     }
 }
