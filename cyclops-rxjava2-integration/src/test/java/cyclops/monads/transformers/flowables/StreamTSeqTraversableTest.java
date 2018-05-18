@@ -4,6 +4,7 @@ import com.oath.cyclops.types.AbstractTraversableTest;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.companion.rx2.Flowables;
 import cyclops.monads.AnyMs;
+import cyclops.monads.FlowableAnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.transformers.StreamT;
@@ -30,7 +31,7 @@ public class StreamTSeqTraversableTest extends AbstractTraversableTest {
     public void conversion(){
         StreamT<list,Integer> trans = AnyMs.liftM(FlowableReactiveSeq.just(1,2,3),list.INSTANCE);
 
-        ListX<Flowable<Integer>> listObs = Witness.list(trans.unwrapTo(Flowables::fromStream));
+        ListX<Flowable<Integer>> listObs = Witness.list(trans.unwrapTo(FlowableAnyM::fromStream));
 
     }
 

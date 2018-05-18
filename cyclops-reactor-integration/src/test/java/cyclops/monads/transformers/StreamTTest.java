@@ -6,6 +6,7 @@ import cyclops.companion.reactor.Monos;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
 import cyclops.monads.FluxAnyM;
+import cyclops.monads.MonoAnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.list;
 import cyclops.monads.Witness.optional;
@@ -17,6 +18,8 @@ import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static cyclops.monads.MonoAnyM.liftM;
+
 /**
  * Created by johnmcclean on 09/06/2017.
  */
@@ -25,7 +28,7 @@ public class StreamTTest {
     @Test
     public void monoTypes(){
         ListX<Mono<Integer>> nested = ListX.of(Mono.just(10));
-        MonoT<list,Integer> listOfMonos = Monos.liftM(AnyM.fromList(nested));
+        MonoT<list,Integer> listOfMonos = liftM(AnyM.fromList(nested));
         MonoT<list,Integer> doubled = listOfMonos.map(i->i*2);
     }
     @Test
@@ -42,7 +45,7 @@ public class StreamTTest {
     }
     @Test
     public void extractMono(){
-        MonoT<list,Integer> trans = Monos.liftM(AnyM.fromList(ListX.of(Mono.just(1))));
+        MonoT<list,Integer> trans = liftM(AnyM.fromList(ListX.of(Mono.just(1))));
 
         AnyM<list,Mono<Integer>> anyM = trans.unwrap();
         System.out.println(anyM);
