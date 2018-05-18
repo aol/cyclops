@@ -6,6 +6,7 @@ import cyclops.companion.rx2.Functions;
 import cyclops.companion.rx2.Maybes;
 import cyclops.control.Future;
 import cyclops.monads.AnyM;
+import cyclops.monads.MaybeAnyM;
 import cyclops.monads.Rx2Witness.maybe;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.Maybe;
@@ -33,14 +34,14 @@ public class MaybeAdapter extends AbstractMonadAdapter<maybe> {
         Future<? extends Function<? super T, ? extends R>> crFnF = Future.fromPublisher(fnF.toFlowable());
 
         Maybe<R> res = Maybes.fromPublisher(crF1.zip(crFnF,(a,b)->b.apply(a)));
-        return Maybes.anyM(res);
+        return MaybeAnyM.anyM(res);
 
     }
 
     @Override
     public <T> AnyM<maybe, T> filter(AnyM<maybe, T> t, Predicate<? super T> fn) {
 
-        return Maybes.anyM(future(t).filter(Functions.rxPredicate(fn)));
+        return MaybeAnyM.anyM(future(t).filter(Functions.rxPredicate(fn)));
     }
 
     <T> Maybe<T> future(AnyM<maybe,T> anyM){
@@ -52,7 +53,7 @@ public class MaybeAdapter extends AbstractMonadAdapter<maybe> {
 
     @Override
     public <T> AnyM<maybe, T> empty() {
-        return Maybes.anyM(Maybe.empty());
+        return MaybeAnyM.anyM(Maybe.empty());
     }
 
 
@@ -60,18 +61,18 @@ public class MaybeAdapter extends AbstractMonadAdapter<maybe> {
     @Override
     public <T, R> AnyM<maybe, R> flatMap(AnyM<maybe, T> t,
                                      Function<? super T, ? extends AnyM<maybe, ? extends R>> fn) {
-        return Maybes.anyM(Maybes.fromPublisher(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
+        return MaybeAnyM.anyM(Maybes.fromPublisher(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
 
     }
 
     @Override
     public <T> AnyM<maybe, T> unitIterable(Iterable<T> it)  {
-        return Maybes.anyM(Maybes.fromPublisher(Future.fromIterable(it)));
+        return MaybeAnyM.anyM(Maybes.fromPublisher(Future.fromIterable(it)));
     }
 
     @Override
     public <T> AnyM<maybe, T> unit(T o) {
-        return Maybes.anyM(Maybe.just(o));
+        return MaybeAnyM.anyM(Maybe.just(o));
     }
 
     @Override
@@ -81,6 +82,6 @@ public class MaybeAdapter extends AbstractMonadAdapter<maybe> {
 
     @Override
     public <T, R> AnyM<maybe, R> map(AnyM<maybe, T> t, Function<? super T, ? extends R> fn) {
-        return Maybes.anyM(future(t).map(x->fn.apply(x)));
+        return MaybeAnyM.anyM(future(t).map(x->fn.apply(x)));
     }
 }

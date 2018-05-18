@@ -5,6 +5,7 @@ import com.oath.cyclops.anym.extensability.ValueAdapter;
 import cyclops.companion.reactor.Monos;
 import cyclops.control.Future;
 import cyclops.control.Option;
+import cyclops.monads.MonoAnyM;
 import cyclops.monads.ReactorWitness.mono;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
@@ -32,13 +33,13 @@ public class MonoAdapter implements ValueAdapter<mono> {
         Mono<T> f = future(apply);
         Mono<? extends Function<? super T, ? extends R>> fnF = future(fn);
         Mono<R> res = Mono.fromFuture(fnF.toFuture().thenCombine(f.toFuture(), (a, b) -> a.apply(b)));
-        return Monos.anyM(res);
+        return MonoAnyM.anyM(res);
 
     }
 
     @Override
     public <T> AnyM<mono, T> filter(AnyM<mono, T> t, Predicate<? super T> fn) {
-        return Monos.anyM(future(t).filter(fn));
+        return MonoAnyM.anyM(future(t).filter(fn));
     }
 
     <T> Mono<T> future(AnyM<mono,T> anyM){
@@ -50,7 +51,7 @@ public class MonoAdapter implements ValueAdapter<mono> {
 
     @Override
     public <T> AnyM<mono, T> empty() {
-        return Monos.anyM(Mono.empty());
+        return MonoAnyM.anyM(Mono.empty());
     }
 
 
@@ -58,18 +59,18 @@ public class MonoAdapter implements ValueAdapter<mono> {
     @Override
     public <T, R> AnyM<mono, R> flatMap(AnyM<mono, T> t,
                                      Function<? super T, ? extends AnyM<mono, ? extends R>> fn) {
-        return Monos.anyM(Mono.from(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
+        return MonoAnyM.anyM(Mono.from(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
 
     }
 
     @Override
     public <T> AnyM<mono, T> unitIterable(Iterable<T> it)  {
-        return Monos.anyM(Mono.from(Future.fromIterable(it)));
+        return MonoAnyM.anyM(Mono.from(Future.fromIterable(it)));
     }
 
     @Override
     public <T> AnyM<mono, T> unit(T o) {
-        return Monos.anyM(Mono.just(o));
+        return MonoAnyM.anyM(Mono.just(o));
     }
 
     @Override
@@ -79,7 +80,7 @@ public class MonoAdapter implements ValueAdapter<mono> {
 
     @Override
     public <T, R> AnyM<mono, R> map(AnyM<mono, T> t, Function<? super T, ? extends R> fn) {
-        return Monos.anyM(future(t).map(fn));
+        return MonoAnyM.anyM(future(t).map(fn));
     }
 
     @Override

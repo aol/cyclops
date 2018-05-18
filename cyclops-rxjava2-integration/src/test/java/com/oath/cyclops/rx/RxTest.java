@@ -4,6 +4,7 @@ import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.rx2.Flowables;
 import cyclops.companion.rx2.Observables;
+import cyclops.monads.ObservableAnyM;
 import cyclops.monads.Rx2Witness.observable;
 import cyclops.reactive.FlowableCollections;
 import cyclops.reactive.FlowableReactiveSeq;
@@ -131,7 +132,7 @@ public class RxTest {
             Thread.yield();
         }
 
-        Observable<Integer> converted = Observables.raw(monad);
+        Observable<Integer> converted = ObservableAnyM.raw(monad);
     }
     @Test
     public void observable() {
