@@ -60,7 +60,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
         if (seq.get() != null) {
             if(updating.compareAndSet(false, true)) { //check if can materialize
 
-                System.out.println("Triggered by GET!");
+
                 try{
 
                     ReactiveSeq<T> toUse = seq.get();
@@ -68,7 +68,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
 
 
                         list = toUse.visit(s->{
-                            System.out.println("Sync  path");
+
                             return toUse.collect(collectorInternal);
                             },
                                             r->fn.apply(toUse.collectAll(collectorInternal)),
