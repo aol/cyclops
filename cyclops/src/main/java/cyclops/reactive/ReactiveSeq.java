@@ -2794,7 +2794,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                         return ReactiveSeq.concat(ReactiveSeq.of(values),ReactiveSeq.of(t._1()));
                     }
                     return Stream.of(t._1());
-                }),ReactiveSeq.of(values).limitWhile(p->added[0]==false));
+                }),ReactiveSeq.deferFromStream(()-> {
+                return !added[0] ? ReactiveSeq.of(values) : ReactiveSeq.empty();
+            }
+        ));
 
 
 
@@ -2816,7 +2819,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 return ReactiveSeq.concat(ReactiveSeq.fromIterable(values), ReactiveSeq.of(t._1()));
             }
             return Stream.of(t._1());
-        }), ReactiveSeq.fromIterable(values).limitWhile(p -> added[0] == false));
+        }), ReactiveSeq.deferFromStream(()-> {
+                return !added[0] ? ReactiveSeq.fromIterable(values) : ReactiveSeq.empty();
+            }
+        ));
 
 
 
@@ -2827,17 +2833,20 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
         long check =  new Long(pos);
         boolean added[] = {false};
-
+       // AtomicBoolean added = new AtomicBoolean(false);
 
         return  ReactiveSeq.<T>concat(zipWithIndex().flatMap(t -> {
             if (t._2() < check && !added[0])
                 return ReactiveSeq.of(t._1());
             if (!added[0]) {
-                added[0] = true;
+                added[0]=true;
                 return ReactiveSeq.concat(values, ReactiveSeq.of(t._1()));
             }
             return Stream.of(t._1());
-        }), values.limitWhile(p -> added[0] == false));
+        }), ReactiveSeq.deferFromStream(()-> {
+            return !added[0] ? values : ReactiveSeq.empty();
+            }
+        ));
 
 
 

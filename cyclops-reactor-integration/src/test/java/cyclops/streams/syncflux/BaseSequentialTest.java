@@ -800,7 +800,7 @@ public class BaseSequentialTest {
 
     @Test
     public void insertAtStream() {
-        for(int k=0;k<ITERATIONS;k++) {
+        for(int k=0;k<ITERATIONS*100;k++) {
             List<String> result = of(1, 2, 3).insertAt(1, of(100, 200, 300))
                     .map(it -> it + "!!").collect(Collectors.toList());
 

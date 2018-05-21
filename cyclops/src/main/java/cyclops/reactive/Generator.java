@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  *
  * <pre>
  *     {@code
- *      import static cyclops.stream.Generator.*;
+ *      import static cyclops.reactive.Generator.*;
  *     int i = 100;
         ReactiveSeq.generate(suspend(infinitely(),s->s.yield(i++)))
                    .take(6)
