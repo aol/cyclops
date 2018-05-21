@@ -124,7 +124,8 @@ public class BatchingTest {
 				.peek(System.out::println)
 				.toList();
 
-	 assertTrue(System.currentTimeMillis()-start>1900);
+				long time = System.currentTimeMillis()-start;
+	 assertTrue("Time taken is" +time,time>1900);
 
 	}
 	@Test
