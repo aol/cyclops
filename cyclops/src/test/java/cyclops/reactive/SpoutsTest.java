@@ -132,7 +132,7 @@ public class SpoutsTest {
         sub.request(30);
 
 
-        assertThat(i,equalTo(30));
+        assertThat(counter.get(),equalTo(30));
         assertThat(count,equalTo(18));
     }
     @Test
