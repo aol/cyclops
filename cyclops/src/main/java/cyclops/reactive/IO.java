@@ -3,13 +3,10 @@ package cyclops.reactive;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
-<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
 import cyclops.control.Future;
 import cyclops.control.Try;
-=======
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.functor.Transformable;
->>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 import cyclops.data.tuple.*;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
@@ -26,16 +23,11 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
-public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
-  private final Publisher<T> fn;
-=======
 public class IO<T> implements To<IO<T>>, Higher<io,T>, ReactiveTransformable<T> ,Publisher<T> {
 
     private final Publisher<T> fn;
 
 
->>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 
   public static <T> IO<T> of(T s){
         return new IO<T>(ReactiveSeq.narrow(Spouts.of(s)));
@@ -103,7 +95,7 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, ReactiveTransformable<T> 
                     .get();
   }
 
-<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
+
   public <R> R foldRun(Function<? super Try<T,Throwable>, ? extends R> transform){
       return transform.apply(run());
   }
@@ -111,13 +103,10 @@ public class IO<T> implements To<IO<T>>, Higher<io,T>, ReactiveTransformable<T> 
     public Future<T> future(){
         return  Future.fromPublisher(fn);
     }
-=======
   public String toString(){
       return "IO["+ run().toString() + "]";
   }
 
-
->>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 
   public Publisher<T> publisher(){
     return fn;

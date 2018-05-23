@@ -118,28 +118,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                      Higher2<either, LT, RT> {
 
 
-<<<<<<< HEAD
-
-    default Either<LT, RT> accumulateRight(Semigroup<RT> sg, Either<LT, RT>... values){
-        Either<LT, RT> acc= this;
-        for(Either<LT, RT> next : values){
-            acc = acc.accumulateRight(sg,next);
-        }
-        return acc;
-    }
-    default Either<LT, RT> accumulate(Semigroup<LT> sg, Either<LT, RT> next){
-        return flatMapLeft(s1->next.mapLeft(s2->sg.apply(s1,s2)));
-    }
-    default Either<LT, RT> accumulate(Semigroup<LT> sg, Either<LT, RT>... values){
-        Either<LT, RT> acc= this;
-        for(Either<LT, RT> next : values){
-            acc = acc.accumulate(sg,next);
-        }
-        return acc;
-    }
-=======
->>>>>>> master
-
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
         Either<L,? extends Either<T, R>> next[] = new Either[1];
         next[0] = Either.right(Either.left(initial));
