@@ -3,6 +3,7 @@ package cyclops.futurestream.react.stream.pushable;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -285,4 +286,29 @@ public class PushableStreamTest {
 		assertThat(pushable.getStream().collect(Collectors.toList()),
 				hasItem(100));
 	}
+
+	int i =0;
+	@Test
+    public void stackoverflow(){
+        Queue<String> queue = QueueFactories.<String>unboundedQueue().build();
+
+
+
+
+        new Thread(() -> {
+            for(int i=0;i<2000;i++) {
+                queue.add("New message " + System.currentTimeMillis());
+            }
+            queue.close();
+        }).start();
+
+        System.out.println("setup ");
+        queue.stream().forEach(e -> {
+            if(i++%1000==0)
+             System.out.println(e);
+
+        });
+        if(queue.isOpen())
+         fail("Should block!");
+    }
 }

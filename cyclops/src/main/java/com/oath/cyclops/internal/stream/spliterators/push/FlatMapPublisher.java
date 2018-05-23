@@ -46,8 +46,17 @@ public class FlatMapPublisher<T, R> extends BaseOperator<T, R> {
 
             }
         };
-       sub[0] = source.subscribe(n ->
-                ref[0].onNext(n), e -> ref[0].onError(e), () -> ref[0].onComplete());
+       sub[0] = source.subscribe(
+                 n -> ref[0].onNext(n),
+                e -> {if(ref[0]!=null)
+                        ref[0].onError(e);
+                else  onError.accept(e);},
+               () -> {
+                   if (ref[0] != null)
+                       ref[0].onComplete();
+                   else
+                       onComplete.run();
+               });
         ref[0] = new ConcurrentFlatMapper<T, R>(sub[0], onNext, onError, onComplete,
                 mapper,
                 maxConcurrency);

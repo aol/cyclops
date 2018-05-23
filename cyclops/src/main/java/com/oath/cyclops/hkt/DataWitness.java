@@ -61,6 +61,7 @@ public interface DataWitness {
 
   public static enum reader {}
   public static enum io {}
+  public static enum managed {}
 
   public static enum supplier {}
   public static enum yoneda {}

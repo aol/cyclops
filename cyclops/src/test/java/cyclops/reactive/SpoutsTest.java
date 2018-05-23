@@ -46,7 +46,23 @@ public class SpoutsTest {
     public void setup(){
         i=0;
         count=0;
+        err = null;
     }
+    Throwable err;
+
+    @Test
+    public void generateErrorTest(){
+        Spouts.generate(()->{throw new RuntimeException();}).forEach(System.out::println,t->err=t);
+        assertNotNull(err);
+
+    }
+
+    @Test
+    public void deferErrorTest(){
+        Spouts.defer(()->{throw new RuntimeException();}).forEach(System.out::println,t->err=t);
+        assertNotNull(err);
+    }
+
     @Test
     public void reactiveBuffer() throws InterruptedException {
 
