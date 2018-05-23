@@ -6,7 +6,6 @@ import com.oath.cyclops.util.box.Mutable;
 
 import cyclops.companion.*;
 import cyclops.data.HashSet;
-import cyclops.data.Seq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -183,17 +182,6 @@ public class FutureTest {
 
     }
 
-
-    @Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()).get(),equalTo(just.get()));
-       assertThat(none.nest().map(m->m.toOptional().get()).isPresent(),equalTo(false));
-    }
-    @Test
-    public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(just.get()));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50).get(),equalTo(Try.success(50)));
-    }
 
     @Test
     public void combine2(){
@@ -577,10 +565,6 @@ public class FutureTest {
     private Trampoline<Integer> sum(int times, int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
-    @Test
-    public void testTrampoline() {
-        assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(Either.right(65).toTry()));
-    }
 
 
     @Test
@@ -605,7 +589,7 @@ public class FutureTest {
 
     @Test
     public void testFlatMapPublisher() {
-        Future<Integer> f = just.flatMapP(i -> Flux.just(100, i));
+        Future<Integer> f = just.mergeMap(i -> Flux.just(100, i));
         assertThat(f.get(), equalTo(Try.success(100)));
     }
 

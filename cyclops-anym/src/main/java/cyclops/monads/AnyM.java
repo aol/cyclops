@@ -117,12 +117,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
                                                             ToStream<T>,
                                                             Publisher<T>,
                                                             Filters<T> {
-    /**
-    @Override
-    default ReactiveSeq<T> stream() {
-        return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
-    }
-    **/
+
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -150,6 +145,9 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     default boolean isEmpty(){
         return stream().isEmpty();
     }
+    default boolean isPresent(){
+        return !stream().isEmpty();
+    }
     @Override
     default Iterator<T> iterator() {
 
@@ -157,13 +155,13 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
     }
 
-    default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
-        return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
+    default <U> AnyM<W,U> unitIterator(Iterator<U> U){
+        return (AnyM<W,U>)adapter().unitIterable(()->U);
     }
 
     <R> AnyM<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
-    <R> AnyM<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> AnyM<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
+    <R> AnyM<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
     default <R> AnyM<W,R> flatMapA(Function<? super T, ? extends AnyM<W,? extends R>> fn){
         return adapter().flatMap(this, fn);
     }
@@ -174,15 +172,6 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         return  (AnyM<W,T>)adapter().unitIterable(t);
     }
 
-  @Override
-    default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyM<W,R>)Transformable.super.retry(fn);
-    }
-
-  @Override
-  default <R> AnyM<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-    return (AnyM<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-  }
 
   /**
      * Construct a new instanceof AnyM using the type of the underlying wrapped monad
@@ -266,12 +255,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
 
-    default <R> AnyM<W,R> coflatMapA(final Function<? super AnyM<W,T>, R> mapper) {
+    default <R> AnyM<W,R> coflatMap(final Function<? super AnyM<W,T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }
 
 
-    default AnyM<W,AnyM<W,T>> nestA() {
+    default AnyM<W,AnyM<W,T>> nest() {
         return unit(this);
     }
 
@@ -372,9 +361,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
     static <W extends WitnessType<W>,T1> AnyM<W,T1> flatten(AnyM<W,? extends AnyM<W,T1>> nested){
         return nested.flatMapA(Function.identity());
     }
-    static <W extends WitnessType<W>,T1> AnyM<W,T1> flattenI(AnyM<W,? extends Iterable<T1>> nested){
-        return nested.concatMap(Function.identity());
-    }
+
 
 
     /**
@@ -399,11 +386,12 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * @param next Monad to aggregate content with
      * @return Aggregated Monad
      */
-    default AnyM<W,List<T>> aggregate(AnyM<W,T> next){
-        return unit(Stream.concat(matchable().visit(value -> value.stream(), seq -> seq.stream()), next.matchable()
-                                  .visit(value -> value.stream(),
-                                         seq -> seq.stream()))
-                    .collect(Collectors.toList()));
+    default AnyM<W,Seq<T>> aggregate(AnyM<W,T> next){
+        ReactiveSeq<T> s = matchable().visit(value -> value.stream(), seq -> seq.stream());
+        ReactiveSeq<T> s2 = next.matchable().visit(value -> value.stream(), seq -> seq.stream());
+        Seq<T> ag = ReactiveSeq.concat(s, s2)
+            .toSeq();
+        return unit(ag);
     }
 
 
@@ -1526,8 +1514,4 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
 
 
-    @Override
-    default <R> AnyM<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (AnyM<W, R>) Transformable.super.trampoline(mapper);
-    }
 }

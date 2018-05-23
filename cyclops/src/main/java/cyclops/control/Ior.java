@@ -51,6 +51,9 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     Ior<LT,RT> recover(RT value);
     Ior<LT,RT> recoverWith(Supplier<? extends Ior<LT,RT>> fn);
 
+    default int arity(){
+        return 2;
+    }
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)
@@ -648,15 +651,6 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> Ior<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Ior<LT, R>) Transformable.super.trampoline(mapper);
-    }
-
-    /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.BiTransformable#bipeek(java.util.function.Consumer, java.util.function.Consumer)
      */
     @Override
@@ -666,15 +660,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    default <R1, R2> Ior<R1, R2> bitrampoline(final Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
-            final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (Ior<R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
-    }
 
     default <T2, R> Ior<LT, R> zip(final Ior<LT,? extends T2> app, final BiFunction<? super RT, ? super T2, ? extends R> fn){
         return flatMap(t->app.map(t2->fn.apply(t,t2)));

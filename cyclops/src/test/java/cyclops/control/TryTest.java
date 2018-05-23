@@ -38,8 +38,7 @@ public class TryTest {
 	@Test
     public void recover(){
         final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
-                .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored")
-                        .retry(i->"retry"))
+                                .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored"))
                 .orElse("boo!");
         Try.withCatch(() -> "hello", RuntimeException.class)
            .recover(()->"world");
@@ -49,12 +48,7 @@ public class TryTest {
 
 
 
-	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
-       assertThat(none.nest().map(m->m.get()),equalTo(none));
-    }
-    @Test
+   @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Try.success(50)));
@@ -376,12 +370,6 @@ public class TryTest {
 	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).toEither(),equalTo(Either.right(65)));
-	}
-
-
 
 	@Test
 	public void testUnitT1() {

@@ -77,9 +77,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
     default <V> Function2<T1, T2, V> andThen(Function<? super R, ? extends V> after) {
         return (t1,t2)-> after.apply(apply(t1,t2));
     }
-    default <V> Function2<T1,T2, V> apply(final BiFunction<? super T1,? super T2,? extends Function<? super R,? extends V>> applicative) {
-      return (a,b) -> applicative.apply(a,b).apply(this.apply(a,b));
-    }
+
 
     default <R1> Function2<T1,T2, R1> mapFn(final Function<? super R, ? extends R1> f2) {
       return andThen(f2);
@@ -96,7 +94,9 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
 
 
 
-
+        default <V> Function2<T1,T2, V> apply(final BiFunction<? super T1,? super T2,? extends Function<? super R,? extends V>> applicative) {
+            return (a,b) -> applicative.apply(a,b).apply(this.apply(a,b));
+        }
 
         default Function2<ReactiveSeq<T1>,ReactiveSeq<T2>, ReactiveSeq<R>> streamZip() {
             return (a,b) -> a.zip(b,this);

@@ -117,21 +117,6 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
         return "XorM["+xor.toString()+"]";
     }
 
-    @Override
-    public <R>  XorM<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        Either<? extends AnyM<W1, ? extends R>, ? extends AnyM<W2, ? extends R>> x = xor.map(m -> m.trampoline(mapper)).mapLeft(m -> m.trampoline(mapper));
-        return of(x);
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
-        return of(xor.map(m->m.retry(fn)).mapLeft(m->m.retry(fn)));
-    }
-
-    @Override
-    public <R>  XorM<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return of(xor.map(m->m.retry(fn,retries,delay,timeUnit)).mapLeft(m->m.retry(fn,retries,delay,timeUnit)));
-    }
 
     @Override
     public ReactiveSeq<T> stream() {

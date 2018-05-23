@@ -19,6 +19,7 @@ import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
 
 import com.oath.cyclops.anym.extensability.ValueAdapter;
+import cyclops.typeclasses.monad.Monad;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -61,9 +62,20 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
   @Override
   public <T, T2, R> AnyM<W, R> zip(AnyM<W, ? extends T> t, AnyM<W, ? extends T2> t2, BiFunction<? super T, ? super T2, ? extends R> fn) {
-    return fromMonadicValue(monadicValue(t).zippableValue().zip(monadicValue(t2),fn),witness);
+    return fromMonadicValue(zippableValue(monadicValue(t)).zip(monadicValue(t2),fn),witness);
   }
+    static interface ZippableValue<T> {
+        <T2,R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T,? super T2, ? extends R> fn);
+    }
 
+    public static <T> ZippableValue<T> zippableValue(MonadicValue<T> ma){
+        return new ZippableValue<T>() {
+            @Override
+            public <T2, R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T, ? super T2, ? extends R> fn) {
+                return ma.flatMap(a->mv.map(b->fn.apply(a,b)));
+            }
+        };
+    }
   @Override
     public <T> AnyM<W, T> filter(AnyM<W, T> t, Predicate<? super T> fn) {
         if(filter)
@@ -80,11 +92,12 @@ public class MonadicValueAdapter<W extends Witness.MonadicValueWitness<W>> exten
 
     @Override
     public <T, R> AnyM<W, R> ap(AnyM<W,? extends Function<? super T, ? extends R>> fn, AnyM<W, T> apply) {
-         return fromMonadicValue(monadicValue(apply).zippableValue()
+         return fromMonadicValue(zippableValue(monadicValue(apply))
                                                     .zip(monadicValue(fn),
                                                       (a,b)->b.apply(a)),witness);
 
     }
+
 
     @Override
     public <T, R> AnyM<W, R> flatMap(AnyM<W, T> t,

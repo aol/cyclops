@@ -3,6 +3,8 @@ package com.oath.cyclops.data.collections.extensions;
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Evaluation;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
+import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.Unwrapable;
@@ -25,6 +27,7 @@ import cyclops.reactive.collections.mutable.SetX;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -38,6 +41,7 @@ import java.util.stream.Stream;
 public interface CollectionX<T> extends IterableX<T>,
                                         Collection<T> ,
                                         Unwrapable,
+                                        ReactiveTransformable<T>,
                                         Unit<T> {
 
     boolean isLazy();
@@ -46,7 +50,12 @@ public interface CollectionX<T> extends IterableX<T>,
 
     CollectionX<T> lazy();
     CollectionX<T> eager();
-
+    default <R> CollectionX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (CollectionX<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
+    }
+    default <R> CollectionX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (CollectionX<R>)ReactiveTransformable.super.retry(fn, 7, 2, TimeUnit.SECONDS);
+    }
     @Override
     default ReactiveConvertableSequence<T> to(){
         return new ReactiveConvertableSequence<>(this);
@@ -590,11 +599,7 @@ public interface CollectionX<T> extends IterableX<T>,
     @Override
     CollectionX<T> notNull();
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    <R> CollectionX<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper);
+
     /**
      * Perform a three level nested internal iteration over this Stream and the
      * supplied streams

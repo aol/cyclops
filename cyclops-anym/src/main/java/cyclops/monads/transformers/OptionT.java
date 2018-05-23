@@ -6,7 +6,6 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -271,16 +270,16 @@ public final class OptionT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
     @Override
-    public <R> OptionT<W, R> concatMapterable(Function<? super T, ? extends Iterable<? extends R>> mapper) {
+    public <R> OptionT<W, R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
-        return (OptionT<W, R>)super.concatMapterable(mapper);
+        return (OptionT<W, R>)super.concatMap(mapper);
     }
 
 
     @Override
-    public <R> OptionT<W, R> flatMapPublisher(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    public <R> OptionT<W, R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
-        return (OptionT<W, R>)super.flatMapPublisher(mapper);
+        return (OptionT<W, R>)super.mergeMap(mapper);
     }
     public <T2, R1, R2, R3, R> OptionT<W,R> forEach4M(Function<? super T, ? extends OptionT<W,R1>> value1,
                                                       BiFunction<? super T, ? super R1, ? extends OptionT<W,R2>> value2,
@@ -361,10 +360,6 @@ public final class OptionT<W extends WitnessType<W>,T> extends ValueTransformer<
         return (OptionT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-    public <R> OptionT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (OptionT<W,R>)super.trampoline(mapper);
-    }
 
   @Override
     public <U> OptionT<W,Tuple2<T, U>> zipWithPublisher(Publisher<? extends U> other) {

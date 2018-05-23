@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 
 import cyclops.control.Future;
@@ -38,7 +39,7 @@ import reactor.core.publisher.Mono;
  *
  * @param <T> Type of data stored inside the nested Mono(s)
  */
-public final class MonoT<W extends WitnessType<W>,T> implements To<MonoT<W,T>>, Transformable<T>, Filters<T>, Folds<T> {
+public final class MonoT<W extends WitnessType<W>,T> implements To<MonoT<W,T>>, ReactiveTransformable<T>, Filters<T>, Folds<T> {
 
     private final AnyM<W,Mono<T>> run;
 
@@ -307,19 +308,16 @@ public final class MonoT<W extends WitnessType<W>,T> implements To<MonoT<W,T>>, 
         return (MonoT<W,T>)Filters.super.notNull();
     }
 
-  @Override
-  public <R> MonoT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-    return (MonoT<W,R>)Transformable.super.trampoline(mapper);
-  }
+
 
   @Override
   public <R> MonoT<W,R> retry(Function<? super T, ? extends R> fn) {
-    return (MonoT<W,R>)Transformable.super.retry(fn);
+    return (MonoT<W,R>)ReactiveTransformable.super.retry(fn);
   }
 
   @Override
   public <R> MonoT<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-    return (MonoT<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    return (MonoT<W,R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
   }
 
 

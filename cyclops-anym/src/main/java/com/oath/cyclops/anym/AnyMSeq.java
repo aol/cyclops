@@ -51,7 +51,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     default <R> AnyMSeq<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
     }
-    default <R> AnyMSeq<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
+    default <R> AnyMSeq<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
         return this.flatMap(fn.andThen(i->unitIterator(ReactiveSeq.fromPublisher(i).iterator())));
     }
     default <R> AnyMSeq<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
@@ -196,8 +196,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction){
 
        return this.flatMapA(in-> {
-
-
            AnyM<W,R1> b = monad.apply(in);
            return b.filter(in2-> filterFunction.apply(in,in2))
                    .map(in2->yieldingFunction.apply(in, in2));
@@ -297,9 +295,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
                          .test(this);
     }
 
-    /* (non-Javadoc)
-     * @see AnyM#collect(java.util.stream.Collector)
-     */
+
     @Override
     default <R, A> R collect(final Collector<? super T, A, R> collector) {
         return stream().collect(collector);
@@ -307,9 +303,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#traversable()
-     */
+
     @Override
     default Traversable<T> traversable() {
         final Object o = unwrap();
@@ -321,63 +315,50 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#limit(long)
-     */
+
     @Override
     default AnyMSeq<W,T> limit(final long num) {
 
         return fromIterable(IterableX.super.limit(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#limitWhile(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> limitWhile(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.limitWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#limitUntil(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> limitUntil(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.limitUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#limitLast(int)
-     */
+
     @Override
     default AnyMSeq<W,T> limitLast(final int num) {
 
         return fromIterable(IterableX.super.limitLast(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#onEmpty(java.lang.Object)
-     */
+
     @Override
     default AnyMSeq<W,T> onEmpty(final T value) {
         return fromIterable(IterableX.super.onEmpty(value));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     default AnyMSeq<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
 
         return fromIterable(IterableX.super.onEmptyGet(supplier));
     }
+
     MonadAdapter<W> adapter();
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#forEachAsync(org.reactivestreams.Subscriber)
-     */
+
     @Override
     default void subscribe(final Subscriber<? super T> sub) {
         if (unwrap() instanceof Publisher) {
@@ -390,48 +371,31 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (AnyMSeq<W,R>) AnyM.super.trampoline(mapper);
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#cycle(int)
-     */
     @Override
     default AnyMSeq<W,T> cycle(final long times) {
 
         return fromIterable(IterableX.super.cycle(times));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#cycle(cyclops2.function.Monoid, int)
-     */
+
     @Override
     default AnyMSeq<W,T> cycle(final Monoid<T> m, final long times) {
 
         return fromIterable(IterableX.super.cycle(m, times));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#cycleWhile(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> cycleWhile(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.cycleWhile(predicate));
     }
+
     @Override
     default Either<AnyMValue<W,T>, AnyMSeq<W,T>> matchable() {
         return Either.right(this);
     }
+
     @Override
     default <T> AnyMSeq<W,T> fromIterable(Iterable<T> t){
 
@@ -443,18 +407,14 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return  (AnyMSeq<W,T>)adapter().unitIterable(t);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#cycleUntil(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> cycleUntil(final Predicate<? super T> predicate) {
 
         return fromIterable(IterableX.super.cycleUntil(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+
     @Override
     default <U, R> AnyMSeq<W,R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
@@ -474,9 +434,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.zipWithStream(other));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(java.lang.Iterable)
-     */
+
     @Override
     default <U> AnyMSeq<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
@@ -484,19 +442,13 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
-     */
     @Override
     default <S, U> AnyMSeq<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return fromIterable(IterableX.super.zip3(second, third));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     default <T2, T3, T4> AnyMSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
@@ -504,9 +456,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.zip4(second, third, fourth));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zipWithIndex()
-     */
+
     @Override
     default AnyMSeq<W,Tuple2<T, Long>> zipWithIndex() {
 
@@ -571,9 +521,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.groupedWhile(predicate, factory));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#groupedUntil(java.util.function.Predicate, java.util.function.Supplier)
-     */
+
     @Override
     default <C extends PersistentCollection<? super T>> AnyMSeq<W,C> groupedUntil(final Predicate<? super T> predicate, final Supplier<C> factory) {
 
@@ -588,243 +536,184 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> takeWhile(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.takeWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> dropWhile(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.dropWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> takeUntil(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.takeUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> dropUntil(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.dropUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
-     */
+
     @Override
     default AnyMSeq<W,T> dropRight(final int num) {
 
         return fromIterable(IterableX.super.dropRight(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
-     */
     @Override
     default AnyMSeq<W,T> takeRight(final int num) {
 
         return fromIterable(IterableX.super.takeRight(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#reverse()
-     */
+
     @Override
     default AnyMSeq<W,T> reverse() {
 
         return fromIterable(IterableX.super.reverse());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#shuffle()
-     */
+
     @Override
     default AnyMSeq<W,T> shuffle() {
 
         return fromIterable(IterableX.super.shuffle());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#shuffle(java.util.Random)
-     */
+
     @Override
     default AnyMSeq<W,T> shuffle(final Random random) {
 
         return fromIterable(IterableX.super.shuffle(random));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#distinct()
-     */
+
     @Override
     default AnyMSeq<W,T> distinct() {
 
         return fromIterable(IterableX.super.distinct());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(cyclops2.function.Monoid)
-     */
+
     @Override
     default AnyMSeq<W,T> scanLeft(final Monoid<T> monoid) {
 
         return fromIterable(IterableX.super.scanLeft(monoid));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#scanLeft(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> AnyMSeq<W,U> scanLeft(final U seed, final BiFunction<? super U, ? super T, ? extends U> function) {
 
         return fromIterable(IterableX.super.scanLeft(seed, function));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#scanRight(cyclops2.function.Monoid)
-     */
+
     @Override
     default AnyMSeq<W,T> scanRight(final Monoid<T> monoid) {
 
         return fromIterable(IterableX.super.scanRight(monoid));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#scanRight(java.lang.Object, java.util.function.BiFunction)
-     */
     @Override
     default <U> AnyMSeq<W,U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
 
         return fromIterable(IterableX.super.scanRight(identity, combiner));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sorted()
-     */
+
     @Override
     default AnyMSeq<W,T> sorted() {
 
         return fromIterable(IterableX.super.sorted());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.Comparator)
-     */
+
     @Override
     default AnyMSeq<W,T> sorted(final Comparator<? super T> c) {
 
         return fromIterable(IterableX.super.sorted(c));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#skip(long)
-     */
+
     @Override
     default AnyMSeq<W,T> skip(final long num) {
 
         return fromIterable(IterableX.super.skip(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#skipWhile(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> skipWhile(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.skipWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#skipUntil(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMSeq<W,T> skipUntil(final Predicate<? super T> p) {
 
         return fromIterable(IterableX.super.skipUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#intersperse(java.lang.Object)
-     */
+
     @Override
     default AnyMSeq<W,T> intersperse(final T value) {
 
         return fromIterable(IterableX.super.intersperse(value));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#skipLast(int)
-     */
+
     @Override
     default AnyMSeq<W,T> skipLast(final int num) {
 
         return fromIterable(IterableX.super.skipLast(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#slice(long, long)
-     */
+
     @Override
     default AnyMSeq<W,T> slice(final long from, final long to) {
 
         return fromIterable(IterableX.super.slice(from, to));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> AnyMSeq<W,T> sorted(final Function<? super T, ? extends U> function) {
 
         return fromIterable(IterableX.super.sorted(function));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#permutations()
-     */
+
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> permutations() {
 
         return fromIterable(IterableX.super.permutations());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#combinations(int)
-     */
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> combinations(final int size) {
 
         return fromIterable(IterableX.super.combinations(size));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.ExtendedTraversable#combinations()
-     */
     @Override
     default AnyMSeq<W,ReactiveSeq<T>> combinations() {
 
         return fromIterable(IterableX.super.combinations());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
-     */
     @Override
     default <U> AnyMSeq<W,U> ofType(final Class<? extends U> type) {
 
@@ -836,62 +725,43 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return (AnyMSeq<W,T>) AnyM.super.notNull();
     }
 
-    /* (non-Javadoc)
-         * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
-         */
     @Override
     default AnyMSeq<W,T> filterNot(final Predicate<? super T> fn) {
         return (AnyMSeq<W,T>) AnyM.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
-     */
+
     @Override
     default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
         return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.factory.EmptyUnit#emptyUnit()
-     */
+
     @Override
     default <T> AnyMSeq<W,T> emptyUnit(){
         return (AnyMSeq<W,T> )empty();
     }
 
 
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#filter(java.util.function.Predicate)
-     */
     @Override
     default AnyMSeq<W,T> filter(Predicate<? super T> p){
         return (AnyMSeq<W,T>)AnyM.super.filter(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#transform(java.util.function.Function)
-     */
+
     @Override
     default <R> AnyMSeq<W,R> map(Function<? super T, ? extends R> fn){
         return (AnyMSeq<W,R>)AnyM.super.map(fn);
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer)
-     */
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
         return this.stream()
                    .forEach(numberOfElements, consumer);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer)
-     */
+
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                        final Consumer<? super Throwable> consumerError) {
@@ -899,9 +769,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
                    .forEach(numberOfElements, consumer, consumerError);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(long, java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
-     */
+
     @Override
     default <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                        final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
@@ -909,9 +777,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
                    .forEach(numberOfElements, consumer, consumerError, onComplete);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer)
-     */
+
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError) {
         this.stream()
@@ -919,9 +785,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations#forEach(java.util.function.Consumer, java.util.function.Consumer, java.lang.Runnable)
-     */
+
     @Override
     default <X extends Throwable> void forEach(final Consumer<? super T> consumerElement, final Consumer<? super Throwable> consumerError,
                                                final Runnable onComplete) {
@@ -931,9 +795,7 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
     }
 
 
-    /* (non-Javadoc)
-         * @see com.oath.cyclops.monad.AnyM#peek(java.util.function.Consumer)
-         */
+
     @Override
     default AnyMSeq<W,T> peek(final Consumer<? super T> c) {
         return map(i -> {
@@ -942,20 +804,14 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         });
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#flatten()
-     */
 
     static <W extends WitnessType<W>,T1> AnyMSeq<W,T1> flatten(AnyMSeq<W,AnyMSeq<W,T1>> nested){
         return nested.flatMap(Function.identity());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#aggregate(com.oath.cyclops.monad.AnyM)
-     */
     @Override
-    default AnyMSeq<W,List<T>> aggregate(AnyM<W,T> next){
-        return (AnyMSeq<W,List<T>>)AnyM.super.aggregate(next);
+    default AnyMSeq<W,Seq<T>> aggregate(AnyM<W,T> next){
+        return (AnyMSeq<W,Seq<T>>)AnyM.super.aggregate(next);
     }
 
 
@@ -965,15 +821,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return (AnyMSeq<W,R>)AnyM.super.flatMapA(fn);
     }
 
-    @Override
-    default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyMSeq<W,R>)AnyM.super.retry(fn);
-    }
-
-    @Override
-    default <R> AnyMSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyMSeq<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
-    }
     @Override
     default AnyMSeq<W,T> prependStream(Stream<? extends T> stream) {
         return fromIterable(IterableX.super.prependStream(stream));
@@ -1024,20 +871,12 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
         return fromIterable(IterableX.super.recover(exceptionClass,fn));
     }
 
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#unit(java.lang.Object)
-     */
     @Override
     default <T> AnyMSeq<W,T> unit(T value){
         return (AnyMSeq<W,T>)AnyM.super.unit(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#zero()
-     */
+
     @Override
     default <T> AnyMSeq<W,T> empty(){
         return (AnyMSeq<W,T>)AnyM.super.empty();

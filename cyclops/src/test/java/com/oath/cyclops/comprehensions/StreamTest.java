@@ -15,18 +15,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 
 public class StreamTest {
-	@Test
-	public void trampoline2Test(){
-		ReactiveSeq.of(10,20,30,40)
-				 .trampoline(i-> fibonacci(i))
-				 .forEach(System.out::println);
-	}
-	@Test
-	public void trampolineTest(){
-		ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
-				 .trampoline(i-> fibonacci(i))
-				 .forEach(System.out::println);
-	}
+
 	Trampoline<Long> fibonacci(int i){
 		return fibonacci(i,1,0);
 	}

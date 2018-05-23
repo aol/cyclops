@@ -40,10 +40,6 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
         this.run = AnyM.narrow(run);
     }
 
-
-
-
-
     public AnyM<W,LazySeq<T>> unwrap() {
         return run;
     }
@@ -734,20 +730,6 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
     public LazySeqT<W,T> retainAll(final T... values) {
         return (LazySeqT) FoldableTransformerSeq.super.retainAll(values);
     }
-
-
-
-
-    @Override
-    public <R> LazySeqT<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (LazySeqT) FoldableTransformerSeq.super.retry(fn);
-    }
-
-    @Override
-    public <R> LazySeqT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (LazySeqT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
-    }
-
 
 
     @Override
