@@ -130,6 +130,9 @@ public interface Monoids {
         return Monoid.of(Spouts.empty(), Semigroups.ambReactiveSeq());
     }
 
+    static <T> Monoid<ReactiveSeq<T>> zipReactiveSeq(Monoid<T> m){
+        return Monoid.of(Spouts.of(m.zero()),Semigroups.zipReactiveSeq(m));
+    }
 
     /**
      * @return Combination of two Stream's : b is appended to a
@@ -170,6 +173,9 @@ public interface Monoids {
        return Monoid.of(Future.future(), Semigroups.firstCompleteFuture());
     }
 
+    static <T> Monoid<Future<T>> zipFutures(Monoid<T> m){
+        return Monoid.of(Future.ofResult(m.zero()),Semigroups.zippedFutures(m));
+    }
 
     /**
      * @return Combine two Future's by taking the first successful

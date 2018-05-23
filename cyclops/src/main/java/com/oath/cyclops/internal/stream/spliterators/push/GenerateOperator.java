@@ -23,7 +23,7 @@ public class GenerateOperator<T> implements Operator<T> {
         boolean[] sent = {false};
         StreamSubscription sub = new StreamSubscription(){
             LongConsumer work = n->{
-
+            try {
                 long reqs = n;
                 long delivered = 0;
                 do {
@@ -37,13 +37,16 @@ public class GenerateOperator<T> implements Operator<T> {
 
 
                     reqs = requested.get();
-                    if(reqs==delivered) {
+                    if (reqs == delivered) {
                         reqs = requested.accumulateAndGet(delivered, (a, b) -> a - b);
-                        if(reqs==0)
+                        if (reqs == 0)
                             return;
-                        delivered=0;
+                        delivered = 0;
                     }
-                }while(true);
+                } while (true);
+            }catch(Throwable t){
+                onError.accept(t);
+            }
 
 
             };

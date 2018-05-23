@@ -155,6 +155,10 @@ public interface Semigroups {
 
     }
 
+    static <T> Semigroup<ReactiveSeq<T>> zipReactiveSeq(Semigroup<T> s) {
+        return (a, b) -> a.zip(s,b);
+    }
+
 
 
     /**
@@ -197,6 +201,10 @@ public interface Semigroups {
         return (a, b) -> Future.anyOf(a,b);
     }
 
+
+    static <T> Semigroup<Future<T>> zippedFutures(Semigroup<T> s){
+        return (a,b) ->a.zip(s,b);
+    }
 
     /**
      * @return Combine two Future's by taking the first successful

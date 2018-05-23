@@ -4911,4 +4911,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         }
         return Either.sequenceRight(next).orElse(ReactiveSeq.empty());
     }
+
+    static <T> ReactiveSeq<T> narrow(ReactiveSeq<? extends T> broad) {
+        return (ReactiveSeq<T>)broad;
+    }
 }

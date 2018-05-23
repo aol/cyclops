@@ -435,6 +435,7 @@ public interface Folds<T> extends Iterable<T>  {
     default T foldLeft(final Monoid<T> reducer) {
         return reduce(reducer);
     }
+
     /**
      * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
      *

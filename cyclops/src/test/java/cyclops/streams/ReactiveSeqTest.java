@@ -15,6 +15,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
 import cyclops.data.EnumerationTest.Days;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -41,14 +42,24 @@ import static cyclops.reactive.ReactiveSeq.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ReactiveSeqTest {
     AtomicBoolean active = new AtomicBoolean(true);
+    @Before
+    public void setup(){
+
+        err = null;
+    }
+    Throwable err;
+
+    @Test
+    public void generateReplay(){
+        ReactiveSeq<String> s =  ReactiveSeq.generate(()->"hello").take(1);
+        assertThat(s.toList().size(),equalTo(1));
+        assertThat(s.toList().size(),equalTo(1));
+
+    }
     @Test
     public void prependAppend(){
 

@@ -22,6 +22,7 @@ import com.oath.cyclops.types.Value;
 
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import com.oath.cyclops.types.traversable.IterableX;
@@ -136,6 +137,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                      Sealed2<T,X>,
                                                      OrElseValue<T,Try<T,X>>,
                                                      Higher2<tryType,X,T> {
+
 
 
     public final int arity(){
@@ -930,6 +932,18 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     @Override
     public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
         return xor.visit(present,absent);
+    }
+
+
+    public Try<T, X> bipeek(Consumer<? super T> c1, Consumer<? super X> c2) {
+        return fold(t->{
+            c1.accept(t);
+            return this;
+        },t2->{
+            c2.accept(t2);
+            return this;
+        });
+
     }
 
 

@@ -1,9 +1,12 @@
 package cyclops.data;
 
+import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
+import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
+import io.kindedj.Hk;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,6 +33,8 @@ public class NonEmptyListTest extends BaseImmutableListTest {
 
     @Override
     public <T> ImmutableList<T> of(T... values) {
+
+
         if(values.length==0)
             return empty();
         if(values.length==1)

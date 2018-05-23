@@ -7,7 +7,14 @@ import java.util.Arrays;
 
 import com.oath.cyclops.data.ReactiveWitness;
 import com.oath.cyclops.data.ReactiveWitness.list;
+import com.oath.cyclops.hkt.DataWitness;
+import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.data.NonEmptyList;
+import cyclops.data.Seq;
+import cyclops.data.Vector;
+import cyclops.instances.data.VectorInstances;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Maybe;
 import cyclops.function.Function1;
@@ -22,6 +29,12 @@ import org.junit.Test;
 
 public class ListsTest {
 
+    @Test
+    public void nelTest(){
+        Higher<vector, Seq<Integer>> hktInts = Vector.of(Seq.of(10));
+        Functor<vector> functor = VectorInstances.functor();
+        Higher<vector, Seq<String>> hktStrings = functor.map(s -> s.map(i -> i.toString()),hktInts);
+      }
     @Test
     public void unit(){
 

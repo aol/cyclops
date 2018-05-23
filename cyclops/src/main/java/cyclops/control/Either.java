@@ -118,7 +118,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                      Higher2<either, LT, RT> {
 
 
-
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
         Either<L,? extends Either<T, R>> next[] = new Either[1];
         next[0] = Either.right(Either.left(initial));

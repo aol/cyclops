@@ -1,10 +1,11 @@
-package cyclops.control;
+package cyclops.reactive;
 
 
-import cyclops.reactive.Spouts;
+import cyclops.control.Future;
+import cyclops.control.Try;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Matchers;
@@ -13,8 +14,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -46,7 +45,7 @@ public class IOTest {
 
   @Test
   public void asyncError(){
-    assertThat(IO.fromPublisher(Future.of(()->10, ex))
+    MatcherAssert.assertThat(IO.fromPublisher(Future.of(()->10, ex))
       .map(i->{throw re;})
       .run(),equalTo(Try.failure(re)));
   }
