@@ -1,17 +1,11 @@
 package cyclops.reactive;
 
 
-<<<<<<< HEAD:cyclops/src/test/java/cyclops/reactive/IOTest.java
 import cyclops.control.Future;
 import cyclops.control.Try;
-import cyclops.reactive.IO;
 import org.hamcrest.MatcherAssert;
-=======
-import cyclops.reactive.Spouts;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
->>>>>>> master:cyclops-pure/src/test/java/cyclops/control/IOTest.java
 import org.junit.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Matchers;
@@ -20,8 +14,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
