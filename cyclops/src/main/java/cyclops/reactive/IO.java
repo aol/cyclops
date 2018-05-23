@@ -14,6 +14,9 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.data.tuple.Tuple5;
 import cyclops.data.tuple.Tuple6;
 import cyclops.data.tuple.Tuple7;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+import cyclops.data.tuple.*;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -22,16 +25,37 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public interface IO<T> extends To<IO<T>>,Higher<io,T>,Publisher<T> {
+
+public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,Publisher<T> {
 
     public static <T> IO<T> of(T s) {
         return ReactiveSeqIO.of(s);
     }
+
+
+
+
+
+
+
+    @Override
+    default <R> IO<R> retry(Function<? super T, ? extends R> fn) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn);
+    }
+
+    @Override
+    default <R> IO<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
+
+
 
     public static <T> IO<T> of(Supplier<? extends T> s) {
         return ReactiveSeqIO.of(s);
@@ -456,5 +480,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,Publisher<T> {
             return Try.fromPublisher(Future.of(() -> run(), e))
                 .flatMap(Function.identity());
         }
+
+        public String toString(){
+         return "IO["+ run().toString() + "]";
+        }
+
     }
 }

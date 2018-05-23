@@ -536,21 +536,6 @@ public class Nested<W1,W2,T> implements Transformable<T>,
         return "Nested["+nested.toString()+"]";
     }
 
-    @Override
-    public <R> Nested<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Nested<W1,W2,R>)Transformable.super.trampoline(mapper);
-    }
-
-    @Override
-    public <R> Nested<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
-        return (Nested<W1,W2,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    public <R> Nested<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Nested<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
-
 
     public static <T> Nested<completableFuture,stream,T> completableFutureStream(CompletableFuture<? extends Stream<T>> optionalList){
         CompletableFutureKind<StreamKind<T>> opt = CompletableFutureKind.widen(optionalList.thenApply(StreamKind::widen));

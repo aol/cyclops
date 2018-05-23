@@ -266,10 +266,6 @@ public final class ReaderT<W extends WitnessType<W>,T,R>  implements To<ReaderT<
     }
 
 
-    @Override
-    public <R2> ReaderT<W,T,R2> trampoline(Function<? super R, ? extends Trampoline<? extends R2>> mapper) {
-        return (ReaderT<W,T,R2>)Transformable.super.trampoline(mapper);
-    }
 
 
     @Override

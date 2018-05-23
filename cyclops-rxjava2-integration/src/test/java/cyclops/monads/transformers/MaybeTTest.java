@@ -286,13 +286,6 @@ public class MaybeTTest implements Printable {
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times, int sum){
-		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
-	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).get(),equalTo(some(65)));
-	}
 
 
 

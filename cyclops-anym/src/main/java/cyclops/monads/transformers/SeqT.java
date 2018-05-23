@@ -735,20 +735,6 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     }
 
 
-
-
-    @Override
-    public <R> SeqT<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (SeqT) FoldableTransformerSeq.super.retry(fn);
-    }
-
-    @Override
-    public <R> SeqT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (SeqT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
-
     @Override
     public SeqT<W,T> drop(final long num) {
         return skip(num);

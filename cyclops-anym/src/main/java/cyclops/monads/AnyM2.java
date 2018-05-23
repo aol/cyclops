@@ -13,6 +13,8 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.stream.ToStream;
 import cyclops.control.Future;
+import cyclops.data.Seq;
+import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.*;
 import cyclops.control.Maybe;
@@ -71,12 +73,36 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
                                                                 Transformable<T>,
                                                                 ToStream<T>,
                                                                 Publisher<T> {
-    /**
+
     @Override
-    default ReactiveSeq<T> stream() {
-        return Streams.oneShotStream(StreamSupport.stream(this.spliterator(),false));
+    default AnyM2<W, T2,Seq<T>> aggregate(AnyM<W, T> next) {
+        return (AnyM2<W, T2,Seq<T>>)AnyM.super.aggregate(next);
     }
-    **/
+
+    @Override
+    default <U> AnyM2<W, T2, U> ofType(final Class<? extends U> type) {
+        return (AnyM2<W, T2, U>)AnyM.super.ofType(type);
+    }
+
+    @Override
+    default AnyM2<W, T2, T> filterNot(final Predicate<? super T> predicate) {
+        return (AnyM2<W, T2, T>)AnyM.super.filterNot(predicate);
+    }
+
+    @Override
+    default AnyM2<W, T2,T> notNull() {
+        return (AnyM2<W, T2, T>)AnyM.super.notNull();
+    }
+
+    @Override
+    default <T2, R> AnyM2<W, T2, R> zip(final AnyM<W, ? extends T2> anyM, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+        return (AnyM2<W, T2, R>)AnyM.super.zip(anyM,fn);
+    }
+
+    @Override
+    default <U> AnyM2<W, T2,Tuple2<T, U>> zip(final AnyM<W, ? extends U> other) {
+        return (AnyM2)AnyM.super.zip(other);
+    }
 
     /**
      * Collect the contents of the monad wrapped by this AnyM into supplied collector
@@ -107,13 +133,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     }
 
-    default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
-        return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
+    default <U> AnyM<W,U> unitIterator(Iterator<U> U){
+        return (AnyM<W,U>)adapter().unitIterable(()->U);
     }
 
     <R> AnyM2<W,T2,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);
-    <R> AnyM2<W,T2,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn);
-    <R> AnyM2<W,T2,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn);
+    <R> AnyM2<W,T2,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn);
+
     default <R> AnyM2<W,T2,R> flatMapA(Function<? super T, ? extends AnyM<W, ? extends R>> fn){
         return (AnyM2<W,T2,R>)adapter().flatMap(this, fn);
     }
@@ -124,15 +150,7 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
         return  (AnyM2<W,T2,T>)adapter().unitIterable(t);
     }
 
-    @Override
-    default <R> AnyM2<W,T2,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyM2<W,T2,R>)AnyM.super.retry(fn);
-    }
 
-    @Override
-    default <R> AnyM2<W,T2,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyM2<W,T2,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
-    }
 
 
 
@@ -218,12 +236,13 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
     }
 
 
-    default <R> AnyM2<W,T2,R> coflatMapA(final Function<? super AnyM<W, T>, R> mapper) {
+    default <R> AnyM2<W,T2,R> coflatMap(final Function<? super AnyM<W, T>, R> mapper) {
         return unit(Lambda.λ(()->mapper.apply(this))).map(Supplier::get);
     }
 
 
-    default AnyM2<W,T2,AnyM<W,T>> nestA() {
+
+    default AnyM2<W,T2,AnyM<W,T>> nest() {
         return unit(this);
     }
 

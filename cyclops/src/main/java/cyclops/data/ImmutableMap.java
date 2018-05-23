@@ -179,20 +179,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
         return (HashMap<K,V>)Transformable.super.peek(c);
     }
 
-    @Override
-    default <R> ImmutableMap<K,R> trampoline(Function<? super V, ? extends Trampoline<? extends R>> mapper) {
-        return (ImmutableMap<K,R>)Transformable.super.trampoline(mapper);
-    }
 
-    @Override
-    default <R> ImmutableMap<K,R> retry(Function<? super V, ? extends R> fn) {
-        return (ImmutableMap<K,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    default <R> ImmutableMap<K,R> retry(Function<? super V, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (ImmutableMap<K,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     <R1, R2> ImmutableMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2);
@@ -204,10 +191,6 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
 
 
-    @Override
-    default <R1, R2> ImmutableMap<R1, R2> bitrampoline(Function<? super K, ? extends Trampoline<? extends R1>> mapper1, Function<? super V, ? extends Trampoline<? extends R2>> mapper2) {
-        return (ImmutableMap<R1,R2>)BiTransformable.super.bitrampoline(mapper1,mapper2);
-    }
 
     @Override
     default ImmutableMap<K, V> onEmpty(Tuple2<K, V> value){

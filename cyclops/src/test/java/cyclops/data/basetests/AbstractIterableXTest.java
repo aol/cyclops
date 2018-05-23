@@ -661,7 +661,7 @@ public abstract class AbstractIterableXTest {
 	}
 
 
-
+    Throwable error;
 
 	IterableX<Integer> empty;
     IterableX<Integer> nonEmpty;
@@ -1877,18 +1877,7 @@ public abstract class AbstractIterableXTest {
 	        }
 	        return i;
 	    }
-	    @Test
-	    public void trampoline2Test(){
-	        of(10,20,30,40)
-	                 .trampoline(i-> fibonacci(i))
-	                 .forEach(System.out::println);
-	    }
-	    @Test
-	    public void trampolineTest(){
-	        of(10_000,200_000,3_000_000,40_000_000)
-	                 .trampoline(i-> fibonacci(i))
-	                 .forEach(System.out::println);
-	    }
+
 	    Trampoline<Long> fibonacci(int i){
 	        return fibonacci(i,1,0);
 	    }
@@ -2202,11 +2191,7 @@ public abstract class AbstractIterableXTest {
     private Trampoline<Integer> sum(int times,int sum){
         return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
     }
-    @Test
-    public void testTrampolineNoOrd() {
 
-        assertThat(of(10).trampoline(n ->sum(10_000,n)).findFirst().get(),greaterThan(0));
-    }
 
     @Test
     public void plus(){
@@ -2816,73 +2801,9 @@ public abstract class AbstractIterableXTest {
                 .recover(IllegalStateException.class,e->"hello")
                 .firstValue(null),equalTo("hello"));
     }
-    @Mock
-    Function<Integer, String> serviceMock;
-
-    Throwable error;
-
-
-    @Test
-    public void shouldSucceedAfterFewAsynchronousRetries() throws Exception {
-
-        given(serviceMock.apply(anyInt())).willThrow(
-                new RuntimeException(new SocketException("First")),
-                new RuntimeException(new IOException("Second"))).willReturn(
-                "42");
-
-        long start = System.currentTimeMillis();
-        String result = of( 1,  2, 3)
-                .retry(serviceMock)
-                .firstValue(null);
-
-        assertThat((Long)System.currentTimeMillis()-start ,greaterThan(2000l));
-        assertThat(result, is("42"));
-    }
-
-    private CompletableFuture<String> failedAsync(Throwable throwable) {
-        final CompletableFuture<String> future = new CompletableFuture<>();
-        future.completeExceptionally(throwable);
-        return future;
-    }
 
 
 
-    @Test
-    public void retryShouldNotThrowNPEIfRetryIsZero() {
-        Function<Integer, Integer> fn = i -> 2 * i;
-
-        int result = of(1)
-                .retry(fn, 0, 1, TimeUnit.SECONDS)
-                .firstValue(null);
-
-        assertEquals(2, result);
-    }
-
-    @Test(expected = ArithmeticException.class)
-    public void retryShouldExecuteFnEvenIfRetryIsZero() {
-        Function<Integer, Integer> fn = i -> i / 0;
-
-        of(1)
-                .retry(fn, 0, 1, TimeUnit.MILLISECONDS)
-                .firstValue(null);
-
-        fail();
-    }
-
-    @Test
-    public void retryShouldWaitOnlyAfterFailure() {
-        final long[] timings = {System.currentTimeMillis(), Long.MAX_VALUE};
-        Function<Integer, Integer> fn = i -> {
-            timings[1] = System.currentTimeMillis();
-            return 2 * i;
-        };
-
-        of(1)
-                .retry(fn, 3, 10000, TimeUnit.MILLISECONDS)
-                .firstValue(null);
-
-        assertTrue(timings[1] - timings[0] < 5000);
-    }
 
 
     @Test

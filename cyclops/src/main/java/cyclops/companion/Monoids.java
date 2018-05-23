@@ -389,6 +389,7 @@ public interface Monoids {
      * String concatenation
      */
     static Monoid<String> stringConcat = Monoid.of("", Semigroups.stringConcat);
+
     /**
      * StringBuffer concatenation
      */

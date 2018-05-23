@@ -215,10 +215,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return intMap.stream();
     }
 
-    @Override
-    public <R> IntMap<R> retry(Function<? super T, ? extends R> fn) {
-        return (IntMap<R>) ImmutableList.super.retry(fn);
-    }
   @Override
   public <R1, R2, R3, R> IntMap<R> forEach4(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, ? extends Iterable<R2>> iterable2, Function3<? super T, ? super R1, ? super R2, ? extends Iterable<R3>> iterable3, Function4<? super T, ? super R1, ? super R2, ? super R3, ? extends R> yieldingFunction) {
     return (IntMap< R>) ImmutableList.super.forEach4(iterable1,iterable2,iterable3,yieldingFunction);
@@ -248,10 +244,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
   public <R1, R> IntMap<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
     return (IntMap< R>) ImmutableList.super.forEach2(iterable1,filterFunction,yieldingFunction);
   }
-    @Override
-    public <R> IntMap<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (IntMap<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
-    }
+
     @Override
     public IntMap<T> filter(Predicate<? super T> fn) {
         return unitStream(stream().filter(fn));
@@ -312,10 +305,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    public <R> IntMap<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (IntMap<R>)ImmutableList.super.trampoline(mapper);
-    }
 
     @Override
     public IntMap<T> removeStream(Stream<? extends T> stream) {

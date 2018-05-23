@@ -77,22 +77,6 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         return n == 0 ? b : fib(n - 1, a + b, a);
     }
 
-    @Test
-    public void nest() {
-        assertThat(eager.nest().map(m -> m.toOptional().get()), equalTo(eager));
-        assertThat(none.nest().map(m -> m.toOptional().get()), equalTo(none));
-    }
-
-    @Test
-    public void coFlatMap() {
-
-        Option.none().coflatMap(m -> m.isPresent() ? m.toOptional().get() : 10);
-
-        // Maybe[10]
-
-        assertThat(eager.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(eager));
-        assertThat(none.coflatMap(m -> m.isPresent() ? m.toOptional().get() : 50), equalTo(Option.some(50)));
-    }
 
     @Test
     public void combine() {
@@ -484,10 +468,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         return times == 0 ? Trampoline.done(sum) : Trampoline.more(() -> sum(times - 1, sum + times));
     }
 
-    @Test
-    public void testTrampoline() {
-        assertThat(eager.trampoline(n -> sum(10, n)), equalTo(Option.some(65)));
-    }
+
 
     @Test
     public void testUnitT1() {
@@ -502,7 +483,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
 	@Test
 	public void testFlatMapPublisher() {
-        Option<Integer> maybe = Option.some(100).flatMapP(i -> Flux.just(10, i));
+        Option<Integer> maybe = Option.some(100).mergeMap(i -> Flux.just(10, i));
 		assertThat(maybe.toOptional().get(), equalTo(10));
 	}
 

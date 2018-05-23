@@ -49,8 +49,5 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<orderedSetX> {
     public void testRecover2(){
         assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello"));
     }
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
+
 }

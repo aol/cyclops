@@ -114,7 +114,7 @@ public class StreamTest {
   @Test
   public void comonad(){
     AnyM.fromOptional(Optional.of(1))
-      .coflatMap(v->v.isPresent()?v.toOptional().get() : 10);
+      .coflatMap(v->v.takeOne().orElse(10));
 
   }
   public int loadData(int size){
