@@ -37,7 +37,6 @@ public class TryTest {
 
 	@Test
     public void recover(){
-
         final String result = Try.withCatch(() -> "takeOne", RuntimeException.class)
                                 .recoverFlatMap(__ -> Try.<String,RuntimeException>success("ignored"))
                 .orElse("boo!");
@@ -49,12 +48,7 @@ public class TryTest {
 
 
 
-	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
-       assertThat(none.nest().map(m->m.get()),equalTo(none));
-    }
-    @Test
+   @Test
     public void coFlatMap(){
         assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
         assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Try.success(50)));

@@ -39,26 +39,15 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 /**
- * Light weight Try Monad
+ * Success biased Try monad.
  *
- * Fail fast behaviour with more explicit declararions required compared to
- *  with scala.util.Try and javaslang.monad.Try. This is probably closer
- *  to how most Java devs currently handle exceptions.
+ * Key features
  *
- * Goals / features
- *
- * Support for init block / try block  / finally block
- * Try with resources
- * Try with multiple resources
- * Does not automatically catch exceptions in combinators
- * Can target specific exception types
- * Exception types to be caught can be specified in xxxWithCatch methods
- * Handle exceptions conciously, not coding bugs
- * Fluent step builders
- * Fail fast
- * Support eager, lazy and reactive execution modes
- *
- * Examples :
+ * 1. Lazy / Eager / Reactive operational modes
+ * 2. Illegal states are unrepresentable
+ * 3. Exception types are explicitly declared
+ * 4. Exceptions during execution are not caught be default
+ * 5. To handle exceptions during operations provide the Exception classes explicitly on initiatialization
  *
  * Create a 'successful' value
  * <pre>
@@ -127,7 +116,7 @@ return "hello world";
  * By public Try does not catch exception within it's operators such as transform / flatMap, to catch Exceptions in ongoing operations use @see {@link Try#success(Object, Class...)}
  * <pre>
  * {@code
- *  Try.of(2, RuntimeException.class)
+ *  Try.success(2, RuntimeException.class)
        .map(i->{throw new RuntimeException();});
 
        //Failure[RuntimeException]
@@ -142,11 +131,11 @@ return "hello world";
  */
 @AllArgsConstructor(access=AccessLevel.PRIVATE)
 public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
-    RecoverableFrom<X,T>,Value<T>,
-    Unit<T>, Transformable<T>, Filters<T>,
-    Sealed2<T,X>,
-    OrElseValue<T,Try<T,X>>,
-    Higher2<tryType,X,T> {
+                                                     RecoverableFrom<X,T>,Value<T>,
+                                                     Unit<T>, Transformable<T>, Filters<T>,
+                                                     Sealed2<T,X>,
+                                                     OrElseValue<T,Try<T,X>>,
+                                                     Higher2<tryType,X,T> {
 
 
     public final int arity(){
@@ -281,8 +270,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-
-
     public Try<T,X> recover(Supplier<? extends T> s){
         return recover(t->s.get());
     }
@@ -296,11 +283,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * of the provided types
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  Spouts.of(1,2,3);
 
-    Try<Integer,Throwable> recover = Try.fromPublisher(stream, RuntimeException.class);
+        Try<Integer,Throwable> recover = Try.fromPublisher(stream, RuntimeException.class);
 
-    //Try[1]
+        //Try[1]
      *
      * }
      * </pre>
@@ -328,11 +315,11 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      *
      * <pre>
      * {@code
-     *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
+     *   ReactiveSeq<Integer> stream =  Spouts.of(1,2,3);
 
-    Try<Integer,Throwable> recover = Try.fromPublisher(stream);
+         Try<Integer,Throwable> recover = Try.fromPublisher(stream);
 
-    //Try[1]
+        //Try[1]
      *
      * }
      * </pre>
@@ -352,9 +339,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
      * {@code
      *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-    Try<Integer,Throwable> recover = Try.fromIterable(stream);
+        Try<Integer,Throwable> recover = Try.fromIterable(stream);
 
-    //Try[1]
+         //Try[1]
      *
      * }
      * </pre>
@@ -424,9 +411,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#toTry()
-     */
+
     @Override
     public Try<T, Throwable> toTry() {
         return (Try<T, Throwable>) this;
@@ -436,23 +421,17 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-    /**
-     * @return The exception returned in the Failure case, Implementations should throw NoSuchElementException if no failure is present
-     */
+
     public Option<X> failureGet(){
         return xor.getLeft();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#toLazyEither()
-     */
+
     public Either<X, T> toEither(){
         return xor;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Value#toIor()
-     */
+
     public Ior<X, T> toIor(){
         return xor.toIor();
     }
@@ -461,10 +440,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     public <R> Try<R, X> coflatMap(final Function<? super Try<T,X>, R> mapper) {
         return mapper.andThen(r -> unit(r))
             .apply(this);
-    }
-
-    public Try<Try<T,X>, X> nest() {
-        return this.map(t -> unit(t));
     }
 
 
@@ -527,16 +502,12 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
             value),classes);
     }
 
-    /**
-     * @return Convert this Try to an Xor with the error type as the left value
-     */
+
     public Either<X, T> toEitherWithError() {
         return xor;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
-     */
+
     @Override
     public <T> Try<T, X> unit(final T value) {
         return success(value);
@@ -574,30 +545,17 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-
-    /**
-     * @param value Return value supplied if Failure, otherwise return Success value
-     * @return Success value or supplied value
-     */
     @Override
     public T orElse(T value){
         return xor.orElse(value);
     }
 
-    /**
-     *
-     * @param value from supplied Supplier if Failure otherwise return Success value
-     * @return Success value
-     */
+
     @Override
     public T orElseGet(Supplier<? extends T> value){
         return xor.orElseGet(value);
     }
 
-    /**
-     * @param fn Map success value from T to R. Do nothing if Failure (return this)
-     * @return New Try with mapped value (Success) or this (Failure)
-     */
 
     @Override
     public <R> Try<R, X> map(Function<? super T, ? extends R> fn){
@@ -625,7 +583,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @param fn FlatMap success value or Do nothing if Failure (return this)
+     * @param fn FlatMap success value or do nothing if Failure (return this)
      * @return Try returned from FlatMap fn
      */
     public <R> Try<R, X> flatMap(Function<? super T, ? extends Try<? extends R,X>> fn){
@@ -668,7 +626,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @param t Class type of fold Exception against
+     * @param t Class type of Exception to handle
      * @param consumer Accept Exception if present (Failure) and if class types fold
      * @return this
      */
@@ -807,7 +765,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
     /**
-     * @return Optional present if Success, Optional zero if failure
+     * @return Optional present if Success, Optional empty if failure
      */
     @Override
     public Optional<T> toOptional(){
@@ -823,7 +781,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     /**
-     * @return Optional present if Failure (with Exception), Optional zero if Success
+     * @return Optional present if Failure (with Exception), Optional empty if Success
      */
     public Optional<X> toFailedOptional(){
         return xor.swap().toOptional();
