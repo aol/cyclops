@@ -182,7 +182,8 @@ public class LazyReact implements ReactBuilder {
 
         this.executor = executor;
         async = true;
-        this.maxActive = MaxActive.IO;
+        this.maxActive = new MaxActive(
+            maxActive, maxActive);
 
         streamOfFutures = false;
         poolingActive = false;
