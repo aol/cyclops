@@ -45,10 +45,7 @@ public class PersistentSetXTest extends AbstractAnyMSeqTest<Witness.persistentSe
 		assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello"));
 	}
 
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
+
     @Test @Ignore
     public void testSorted() {
 

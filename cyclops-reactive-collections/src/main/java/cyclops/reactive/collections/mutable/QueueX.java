@@ -566,14 +566,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> QueueX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (QueueX<R>) LazyCollectionX.super.<R> trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#slice(long, long)

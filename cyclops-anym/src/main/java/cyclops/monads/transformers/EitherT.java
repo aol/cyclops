@@ -330,11 +330,6 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     }
 
 
-    @Override
-    public <R> EitherT<W,ST,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (EitherT<W,ST,R>)super.trampoline(mapper);
-    }
-
 
 
 }

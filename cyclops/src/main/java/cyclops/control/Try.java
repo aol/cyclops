@@ -138,6 +138,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                                                      Higher2<tryType,X,T> {
 
 
+    public final int arity(){
+        return 2;
+    }
     final Either<X,T> xor;
     @Wither(AccessLevel.PRIVATE)
     private final Class<? extends Throwable>[] classes;
@@ -172,6 +175,56 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
+    /**
+     * Retry a transformation if it fails. Default settings are to retry up to 7
+     * times, with an doubling backoff period starting @ 2 seconds delay before
+     * retry.
+     *
+     *
+     * @param fn
+     *            Function to retry if fails
+     *
+     */
+    public <R> Try<R,Throwable> retry(final Function<? super T, ? extends R> fn) {
+        return retry(fn, 7, 2, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Retry a transformation if it fails. Retries up to <b>retries</b>
+     * times, with an doubling backoff period starting @ <b>delay</b> TimeUnits delay before
+     * retry.
+     *
+     *
+     * @param fn
+     *            Function to retry if fails
+     * @param retries
+     *            Number of retries
+     * @param delay
+     *            Delay in TimeUnits
+     * @param timeUnit
+     *            TimeUnit to use for delay
+     */
+    public <R> Try<R,Throwable> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        Try<T,Throwable> narrow = this.mapFailure(x->x);
+        final Function<T, Try<R,Throwable>> retry = t -> {
+            final long[] sleep = { timeUnit.toMillis(delay) };
+            Throwable exception = null;
+            for (int count = retries; count >=0; count--) {
+                try {
+                    return Try.success(fn.apply(t));
+                } catch (final Throwable e) {
+                    exception = e;
+                    ExceptionSoftener.softenRunnable(() -> Thread.sleep(sleep[0]))
+                        .run();
+                    sleep[0] = sleep[0] * 2;
+                }
+            }
+            return Try.failure(exception);
+
+
+        };
+        return narrow.flatMap(retry);
+    }
     @Override
     public void subscribe(Subscriber<? super T> sub) {
 
@@ -213,49 +266,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
                 }
             }
         });
-    }
-
-
-
-    public static <ST extends Throwable, PT> Either<PT, ReactiveSeq<ST>> sequenceFailures(final Iterable<Try<PT,ST>> xors) {
-        return Either.sequenceLeft(ReactiveSeq.fromIterable(xors).map(t->t.xor));
-    }
-
-    public static <ST extends Throwable, PT, R> Either<PT, R> accumulateFailures(final Iterable<Try<PT,ST>> xors, final Reducer<R,ST> reducer) {
-
-        return sequenceFailures(xors).map(r -> r.mapReduce(reducer));
-    }
-
-    public static <ST extends Throwable, PT, R> Either<?, R> accumulateFailures(final Iterable<Try<PT,ST>> xors, final Function<? super ST, R> mapper,
-                                                                                final Monoid<R> reducer) {
-        return sequenceFailures(xors).map(s -> s.map(mapper)
-            .reduce(reducer));
-    }
-
-
-
-    public static <ST extends Throwable, PT> Either<ST, ReactiveSeq<PT>> sequenceSuccess(final Iterable<Try<PT,ST>> xors) {
-        return Either.sequenceRight(ReactiveSeq.fromIterable(xors).map(t->t.xor));
-    }
-
-    public static <ST extends Throwable, PT, R> Either<ST, R> accumulateSuccesses(final Iterable<Try<PT,ST>> xors, final Reducer<R,PT> reducer) {
-        return sequenceSuccess(xors).map(s -> s.mapReduce(reducer));
-    }
-
-
-    public static <ST extends Throwable, PT, R> Either<ST, R> accumulateSuccesses(final Iterable<Try<PT,ST>> xors, final Function<? super PT, R> mapper,
-                                                                                  final Monoid<R> reducer) {
-        return sequenceSuccess(xors).map(s -> s.map(mapper)
-            .reduce(reducer));
-    }
-
-    public static <ST extends Throwable, PT> Either<ST, PT> accumulateSuccesses(final Monoid<PT> reducer, final Iterable<Try<PT,ST>> xors) {
-        return sequenceSuccess(xors).map(s -> s.reduce(reducer));
-    }
-
-
-    public static <ST extends Throwable, PT> Either<PT, ST> accumulateFailures(final Monoid<ST> reducer, final Iterable<Try<PT,ST>> xors) {
-        return sequenceFailures(xors).map(s -> s.reduce(reducer));
     }
 
 
@@ -348,17 +358,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-    @Override
-    public <R> Try<R,X> retry(final Function<? super T, ? extends R> fn) {
-        return (Try<R,X>)Transformable.super.retry(fn);
-    }
-
-
-
-    @Override
-    public <R> Try<R,X> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (Try<R,X>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
 
 
 
@@ -444,16 +443,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
 
-    public Try<Try<T,X>, X> nest() {
-        return this.map(t -> unit(t));
-    }
-
-
-
-    @Override
-    public <R> Try<R, X> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Try<R, X>) Transformable.super.trampoline(mapper);
-    }
 
     @Override
     public <U> Option<U> ofType(final Class<? extends U> type) {

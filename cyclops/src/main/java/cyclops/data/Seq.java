@@ -346,10 +346,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    default <R> Seq<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Seq<R>)ImmutableList.super.trampoline(mapper);
-    }
+
     public static <T> Seq<T> narrowK(final Higher<seq, T> list) {
       return (Seq<T>)list;
     }
@@ -766,15 +763,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return empty();
     }
 
-    @Override
-    default <R> Seq<R> retry(Function<? super T, ? extends R> fn) {
-        return (Seq<R>) ImmutableList.super.retry(fn);
-    }
-
-    @Override
-    default <R> Seq<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Seq<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
-    }
 
 
   @Override

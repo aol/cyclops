@@ -169,23 +169,10 @@ public class Product<W1,W2,T> implements  Filters<T>,
 
     @Override
     public String toString() {
-        return "Coproduct["+ run.toString()+"]";
+        return "Product["+ run.toString()+"]";
     }
 
-    @Override
-    public <R> Product<W1,W2,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Product<W1,W2,R>)Transformable.super.trampoline(mapper);
-    }
 
-    @Override
-    public <R> Product<W1,W2,R> retry(Function<? super T, ? extends R> fn) {
-        return (Product<W1,W2,R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    public <R> Product<W1,W2,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Product<W1,W2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
 
     public <R> Active<W1, R> tailRec1(T initial,Function<? super T,? extends Higher<W1, ? extends Either<T, R>>> fn){
         return asActiveTuple()._1().tailRec(initial, fn);

@@ -71,8 +71,5 @@ public class SetXTest extends AbstractAnyMSeqTest<set> {
 
     }
 
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
+
 }

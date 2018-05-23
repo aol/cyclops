@@ -202,14 +202,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().skipUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> LazyCollectionX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return fromStream(stream().trampoline(mapper));
-    }
 
     /*
      * (non-Javadoc)

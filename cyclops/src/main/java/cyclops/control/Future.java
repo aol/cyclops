@@ -6,6 +6,7 @@ import com.oath.cyclops.hkt.Higher;
 
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
 import cyclops.data.tuple.Tuple;
@@ -71,6 +72,7 @@ public class Future<T> implements To<Future<T>>,
                                   Higher<future,T>,
                                   RecoverableFrom<Throwable,T>,
                                   Zippable<T>,
+                                  ReactiveTransformable<T>,
                                   OrElseValue<T,Future<T>> {
 
 
@@ -763,26 +765,6 @@ public class Future<T> implements To<Future<T>>,
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    public <R> Future<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return (Future<R>) MonadicValue.super.coflatMap(mapper);
-    }
-
-    /*
-     * cojoin (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.MonadicValue#nest()
-     */
-    @Override
-    public Future<MonadicValue<T>> nest() {
-        return (Future<MonadicValue<T>>) MonadicValue.super.nest();
-    }
 
   /*
    * (non-Javadoc)
@@ -1045,17 +1027,7 @@ public class Future<T> implements To<Future<T>>,
         return (Future<T>) MonadicValue.super.peek(c);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Transformable#trampoline(java.util.function.
-     * Function)
-     */
-    @Override
-    public <R> Future<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
 
-        return (Future<R>) MonadicValue.super.trampoline(mapper);
-    }
 
     /*
      * (non-Javadoc)
@@ -1272,8 +1244,8 @@ public class Future<T> implements To<Future<T>>,
      * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
      */
     @Override
-    public <R> Future<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
-        return (Future<R>) MonadicValue.super.flatMapP(mapper);
+    public <R> Future<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+        return (Future<R>) MonadicValue.super.mergeMap(mapper);
     }
 
 

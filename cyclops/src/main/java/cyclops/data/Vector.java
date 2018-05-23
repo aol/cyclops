@@ -103,15 +103,6 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public <R> Vector<R> retry(Function<? super T, ? extends R> fn) {
-        return (Vector<R>) ImmutableList.super.retry(fn);
-    }
-
-    @Override
-    public <R> Vector<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (Vector<R>) ImmutableList.super.retry(fn,retries,delay,timeUnit);
-    }
-    @Override
     public Vector<T> removeValue(T e) {
         return removeFirst(i-> Objects.equals(i,e));
     }
@@ -285,10 +276,6 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<T>)ImmutableList.super.peek(c);
     }
 
-    @Override
-    public <R> Vector<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (Vector<R>)ImmutableList.super.trampoline(mapper);
-    }
 
     @Override
     public Vector<T> removeStream(Stream<? extends T> stream) {

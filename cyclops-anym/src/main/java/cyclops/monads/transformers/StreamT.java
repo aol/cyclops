@@ -1,6 +1,7 @@
 package cyclops.monads.transformers;
 
 
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nest  Streams
  */
 public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
+                                                            ReactiveTransformable<T>,
                                                           FoldableTransformerSeq<W,T> {
 
     final AnyM<W,Stream<T>> run;
@@ -851,12 +853,12 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     @Override
     public <R> StreamT<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (StreamT) FoldableTransformerSeq.super.retry(fn);
+        return (StreamT) ReactiveTransformable.super.retry(fn);
     }
 
     @Override
     public <R> StreamT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (StreamT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
+        return (StreamT) ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
     }
 
 

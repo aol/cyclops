@@ -3,6 +3,8 @@ package com.oath.cyclops.types;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.control.Option;
 import cyclops.control.Try;
@@ -14,6 +16,7 @@ import org.reactivestreams.Publisher;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -38,6 +41,16 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         Try<R,Throwable> t = mapTry(fn);
         return t.toOption();
     }
+
+    default <R> Try<R,Throwable> mapRetry(final Function<? super T, ? extends R> fn) {
+        return mapRetry(fn,7, 2, TimeUnit.SECONDS);
+    }
+
+    default <R> Try<R,Throwable> mapRetry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return this.toTry().retry(fn,retries,delay,timeUnit);
+    }
+
+
     default <X extends Throwable,R> Try<R,X> mapTry(Function<? super T,? extends R> fn, Class<X>... exceptionTypes){
         Try<? extends MonadicValue<? extends R>, X> x = Try.withCatch(() -> map(fn),exceptionTypes);
         return x.flatMap(a->a.toTry(exceptionTypes));
@@ -48,12 +61,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         return x.flatMap(a->a.toTry());
     }
 
-    default int arity(){
-        return 1;
-    }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
-     */
+
     @Override
     MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
@@ -74,34 +82,10 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
 
 
-    /**
-     * Perform a coflatMap operation. The mapping function accepts this MonadicValue and returns
-     * a single value to be wrapped inside a Monad.
-     *
-     * <pre>
-     * {@code
-     *   Maybe.none().coflatMap(m -> m.isPresent() ? m.getValue() : 10);
-     *   //Maybe[10]
-     * }
-     * </pre>
-     *
-     * @param mapper Mapping / transformation function
-     * @return MonadicValue wrapping return value from transformation function applied to the value inside this MonadicValue
-     */
-    default <R> MonadicValue<R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return mapper.andThen(r -> unit(r))
-                     .apply(this);
+    default int arity(){
+        return 1;
     }
 
-    //cojoin
-    /**
-     * cojoin pattern. Nests this Monad inside another.
-     *
-     * @return Nested Monad
-     */
-    default MonadicValue<MonadicValue<T>> nest() {
-        return this.map(t -> unit(t));
-    }
     /**
      * A flattening transformation operation (@see {@link java.util.Optional#flatMap(Function)}
      *
@@ -392,17 +376,12 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
         });
     }
 
-    default <R> MonadicValue<R> flatMapS(final Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return this.flatMap(a -> {
-            return Maybe.fromStream(mapper.apply(a));
-        });
-    }
 
     /**
      * A flattening transformation operation that takes the first value from the returned Publisher.
      * <pre>
      * {@code
-     *   Future.ofResult(1).map(i->i+2).flatMapP(i->Flux.just(()->i*3,20);
+     *   Future.ofResult(1).map(i->i+2).mergeMap(i->Flux.just(()->i*3,20);
      *   //Future[9]
      *
      * }</pre>
@@ -410,7 +389,7 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
      * @param mapper transformation function
      * @return  MonadicValue
      */
-    default <R> MonadicValue<R> flatMapP(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
+    default <R> MonadicValue<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
 
         return this.flatMap(a -> {
             final Publisher<? extends R> publisher = mapper.apply(a);
@@ -425,17 +404,6 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
 
     }
 
-    static interface ZippableValue<T> {
-       <T2,R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T,? super T2, ? extends R> fn);
-    }
 
-    default ZippableValue<T> zippableValue(){
-      return new ZippableValue<T>() {
-        @Override
-        public <T2, R> MonadicValue<R> zip(MonadicValue<? extends T2> mv, BiFunction<? super T, ? super T2, ? extends R> fn) {
-          return flatMap(a->mv.map(b->fn.apply(a,b)));
-        }
-      };
-    }
 
 }

@@ -59,19 +59,4 @@ public interface BiTransformable<T1, T2> {
 
 
 
-    /**
-     * Perform a tail-call optimized recursive transformation operation across two data points simultaneously
-     *
-     * @param mapper1 transformation function for the first type
-     * @param mapper2 transformation function for the second type
-     * @return New BiTransformable containing transformed data
-     */
-    default <R1, R2> BiTransformable<R1, R2> bitrampoline(final Function<? super T1, ? extends Trampoline<? extends R1>> mapper1,
-                                                          final Function<? super T2, ? extends Trampoline<? extends R2>> mapper2) {
-        return bimap(in -> mapper1.apply(in)
-                                  .result(),
-                     in -> mapper2.apply(in)
-                                  .result());
-    }
-
 }

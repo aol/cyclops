@@ -568,13 +568,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> BagX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (BagX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
+
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)

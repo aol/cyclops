@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -56,6 +57,7 @@ import org.reactivestreams.Publisher;
  * @param <T> Type of data stored inside the nest Lists
  */
 public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
+                                                            ReactiveTransformable<T>,
                                                           FoldableTransformerSeq<W,T> {
 
     final AnyM<W,IndexedSequenceX<T>> run;
@@ -927,12 +929,12 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     @Override
     public <R> ListT<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (ListT) FoldableTransformerSeq.super.retry(fn);
+        return (ListT) ReactiveTransformable.super.retry(fn);
     }
 
     @Override
     public <R> ListT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ListT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
+        return (ListT) ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
     }
 
 
