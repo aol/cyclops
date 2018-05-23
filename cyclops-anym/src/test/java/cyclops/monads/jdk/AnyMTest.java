@@ -206,13 +206,6 @@ public class AnyMTest {
 		List<Integer> list = intM.stream().toList();
 		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
 	}
-	@Test
-	public void testBind(){
-		AnyM<Witness.stream,List<Integer>> m  = fromStream(Stream.of(Arrays.asList(1,2,3),Arrays.asList(1,2,3)));
-		AnyM<Witness.stream,Integer> intM = m.flatMapS(Collection::stream);
-		List<Integer> list = intM.stream().toList();
-		assertThat(list,equalTo(Arrays.asList(1, 2, 3, 1, 2, 3)));
-	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -323,19 +316,19 @@ public class AnyMTest {
 		List<Integer> result = fromStream(Stream.of(1,2,3,4))
 								.aggregate(AnyM.fromArray(5))
 								.stream()
-							    .flatMap(List::stream)
+							    .concatMap(Seq::stream)
 								.toList();
 
 		assertThat(result,equalTo(Arrays.asList(1,2,3,4,5)));
 	}
 	@Test
 	public void aggregate2(){
-		List<Integer> result = AnyM.fromOptional(Optional.of(1))
+		Seq<Integer> result = AnyM.fromOptional(Optional.of(1))
 								.aggregate(AnyM.ofNullable(2))
 								.stream()
 								.toList().get(0);
 
-		assertThat(result,equalTo(Arrays.asList(1,2)));
+		assertThat(result,equalTo(Seq.of(1,2)));
 	}
 
 

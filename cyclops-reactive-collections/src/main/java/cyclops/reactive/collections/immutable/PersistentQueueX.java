@@ -643,17 +643,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> PersistentQueueX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (PersistentQueueX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
+
 
     /*
      * (non-Javadoc)

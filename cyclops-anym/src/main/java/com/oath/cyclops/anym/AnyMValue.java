@@ -2,13 +2,13 @@ package com.oath.cyclops.anym;
 
 import com.oath.cyclops.types.Filters;
 import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 /**
  * Wrapper around 'Any' scalar 'M'onad
@@ -89,35 +88,14 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
 
-  @Override
-    default int arity() {
-        return 1;
-    }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#coflatMap(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMValue<W,R> coflatMap(final Function<? super MonadicValue<T>, R> mapper) {
-        return mapper.andThen(r -> unit(r))
-                     .apply(this);
-    }
 
-    /* cojoin
-     * (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#nest()
-     */
-    @Override
-    default AnyMValue<W,MonadicValue<T>> nest() {
-        return unit(this);
-    }
+
 
     default <R> R print(R r){
         System.out.println(r);
         return r;
     }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue2#combine(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue2)
-     */
+
     default AnyMValue<W,T> combineEager(final Monoid<T> monoid, final AnyMValue<W,? extends T> v2) {
         return unit(this.<T> flatMap(t1 -> print(v2.map(t2 -> monoid.apply(t1, t2))))
                         .orElseGet(() -> orElseGet(() -> monoid.zero())));
@@ -133,51 +111,26 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     }
 
-    /* (non-Javadoc)
-         * @see com.oath.cyclops.types.Value#mkString()
-         */
     @Override
     default String mkString() {
         return visit(s->"AnyMValue[" + s + "]",()->"AnyMValue[]");
 
     }
 
-  @Override
-    default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (AnyMValue<W,R>)AnyM.super.retry(fn);
-    }
 
-
-    @Override
-    default <R> AnyMValue<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (AnyMValue<W,R>)AnyM.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
-     */
     @Override
     default <U> AnyMValue<W,U> ofType(final Class<? extends U> type) {
 
         return (AnyMValue<W,U>) AnyM.super.ofType(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
-     */
     @Override
     default AnyMValue<W,T> filterNot(final Predicate<? super T> fn) {
 
         return (AnyMValue<W,T>) AnyM.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#notNull()
-     */
+
     @Override
     default AnyMValue<W,T> notNull() {
 
@@ -185,20 +138,6 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> AnyMValue<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-
-        return (AnyMValue<W,R>) AnyM.super.trampoline(mapper);
-    }
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.EmptyUnit#emptyUnit()
-     */
     @Override
     default <T> AnyMValue<W,T> emptyUnit(){
         return empty();
@@ -208,25 +147,19 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#filter(java.util.function.Predicate)
-     */
+
     @Override
     default AnyMValue<W,T> filter(Predicate<? super T> p){
         return (AnyMValue<W,T>)AnyM.super.filter(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#transform(java.util.function.Function)
-     */
+
     @Override
     default <R> AnyMValue<W,R> map(Function<? super T, ? extends R> fn){
         return (AnyMValue<W,R>)AnyM.super.map(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#peek(java.util.function.Consumer)
-     */
+
     @Override
     default AnyMValue<W,T> peek(Consumer<? super T> c){
         return (AnyMValue<W,T>)AnyM.super.peek(c);
@@ -248,12 +181,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.monad.AnyM#aggregate(com.oath.cyclops.monad.AnyM)
-     */
+
     @Override
-    default AnyMValue<W,List<T>> aggregate(AnyM<W,T> next){
-        return (AnyMValue<W,List<T>>)AnyM.super.aggregate(next);
+    default AnyMValue<W,Seq<T>> aggregate(AnyM<W,T> next){
+        return (AnyMValue<W,Seq<T>>)AnyM.super.aggregate(next);
     }
 
 
@@ -266,12 +197,10 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     default <R> AnyMValue<W,R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn){
         return (AnyMValue<W,R>)MonadicValue.super.concatMap(fn);
     }
-    default <R> AnyMValue<W,R> flatMapP(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapP(fn);
+    default <R> AnyMValue<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
+        return (AnyMValue<W,R>)MonadicValue.super.mergeMap(fn);
     }
-    default <R> AnyMValue<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
-        return (AnyMValue<W,R>)MonadicValue.super.flatMapS(fn);
-    }
+
 
     @Override
     default <R> AnyMValue<W,R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> fn){

@@ -5,6 +5,7 @@ import com.oath.cyclops.types.Filters;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.companion.rx2.Functions;
 import cyclops.companion.rx2.Maybes;
@@ -22,7 +23,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
-public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>, Transformable<T>,Filters<T>, Folds<T> {
+public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>, ReactiveTransformable<T>,Filters<T>, Folds<T> {
 
     private final AnyM<W,Maybe<T>> run;
 
@@ -247,18 +248,14 @@ public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>
   public T orElseGet(Supplier<? super T> s){
     return stream().findAny().orElseGet((Supplier<T>)s);
   }
-  @Override
-  public <R> MaybeT<W,R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-    return (MaybeT<W,R>)Transformable.super.trampoline(mapper);
-  }
 
   @Override
   public <R> MaybeT<W,R> retry(Function<? super T, ? extends R> fn) {
-    return (MaybeT<W,R>)Transformable.super.retry(fn);
+    return (MaybeT<W,R>)ReactiveTransformable.super.retry(fn);
   }
 
   @Override
   public <R> MaybeT<W,R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-    return (MaybeT<W,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
+    return (MaybeT<W,R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
   }
 }

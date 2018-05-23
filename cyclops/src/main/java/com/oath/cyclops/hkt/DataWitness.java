@@ -54,6 +54,7 @@ public interface DataWitness {
   public static enum either {}
   public static enum eval {}
   public static enum option {}
+  public static enum validated {}
   public static enum future{}
   public static enum completableFuture {}
   public static enum optional {}

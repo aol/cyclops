@@ -47,9 +47,6 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
     }
 
 
-
-
-
     public AnyM<W,Vector<T>> unwrap() {
         return run;
     }
@@ -740,21 +737,6 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
     public VectorT<W,T> retainAll(final T... values) {
         return (VectorT) FoldableTransformerSeq.super.retainAll(values);
     }
-
-
-
-
-    @Override
-    public <R> VectorT<W,R> retry(final Function<? super T, ? extends R> fn) {
-        return (VectorT) FoldableTransformerSeq.super.retry(fn);
-    }
-
-    @Override
-    public <R> VectorT<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (VectorT) FoldableTransformerSeq.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
 
     @Override
     public VectorT<W,T> drop(final long num) {
