@@ -645,13 +645,6 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return (VectorX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> VectorX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (VectorX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)

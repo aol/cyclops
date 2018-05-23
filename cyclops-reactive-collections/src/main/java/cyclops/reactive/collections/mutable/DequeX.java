@@ -642,14 +642,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    default <R> DequeX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (DequeX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
+
 
 
     @Override

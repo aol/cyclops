@@ -69,8 +69,5 @@ public class SortedSetXTest extends AbstractAnyMSeqTest<sortedSet> {
 
     }
 
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
+
 }

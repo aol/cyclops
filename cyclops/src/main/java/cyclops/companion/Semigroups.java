@@ -55,6 +55,9 @@ public interface Semigroups {
         return (C a, C b) -> (C)a.appendAll(b);
     }
 
+    static <T> Semigroup<NonEmptyList<T>> nonEmptyListConcat() {
+        return Semigroups.immutableListConcat();
+    }
     static <T> Semigroup<LazySeq<T>> lazySeqConcat() {
         return Semigroups.immutableListConcat();
     }
@@ -419,6 +422,8 @@ public interface Semigroups {
      * String concatenation
      */
     static Semigroup<String> stringConcat = (a, b) -> a + b;
+
+
     /**
      * StringBuffer concatenation
      */

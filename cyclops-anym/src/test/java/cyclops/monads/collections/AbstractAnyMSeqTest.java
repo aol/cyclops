@@ -104,14 +104,6 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         assertThat(of(1,2,3).map(e->{throw new RuntimeException();}).recover(RuntimeException.class,e->"hello").join(" "),equalTo("hello hello hello"));
     }
 
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
-    @Test
-    public void testRetryTime(){
-        of(1,2,3).retry(i->i+2,3,1,TimeUnit.DAYS).printOut();
-    }
 
     @Test
     public void stream(){
@@ -1315,23 +1307,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
             }
             return i;
         }
-        @Test
-        public void trampoline2Test(){
-            of(10,20,30,40)
-                     .trampoline(i-> fibonacci(i))
-                     .forEach(System.out::println);
-        }
-        @Test
-        public void trampolineTest(){
-            of(10_000,200_000,3_000_000,40_000_000)
-                     .trampoline(i-> fibonacci(i))
-                     .forEach(System.out::println);
-        }
-        Trampoline<Long> fibonacci(int i){
-            return fibonacci(i,1,0);
-        }
-        Trampoline<Long> fibonacci(int n, long a, long b) {
-            return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-        }
+
+
 
 }

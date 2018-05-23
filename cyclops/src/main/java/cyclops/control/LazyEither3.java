@@ -533,18 +533,6 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
 
 
 
-    @Override
-    default <R> LazyEither3<LT1,LT2,R> retry(final Function<? super RT, ? extends R> fn) {
-        return (LazyEither3<LT1,LT2,R>)Transformable.super.retry(fn);
-    }
-
-
-    @Override
-    default <R> LazyEither3<LT1,LT2,R> retry(final Function<? super RT, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (LazyEither3<LT1,LT2,R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
     default <R> LazyEither3<LT1,LT2,R> coflatMap(Function<? super LazyEither3<LT1,LT2,RT>, R> mapper) {
 
         return mapper.andThen(r -> unit(r))
@@ -645,20 +633,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         return (LazyEither3<LT1, LT2, RT>) BiTransformable.super.bipeek(c1, c2);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function,
-     * java.util.function.Function)
-     */
-    @Override
-    default <R1, R2> LazyEither3<LT1, R1, R2> bitrampoline(
-            final Function<? super LT2, ? extends Trampoline<? extends R1>> mapper1,
-            final Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
 
-        return (LazyEither3<LT1, R1, R2>) BiTransformable.super.bitrampoline(mapper1, mapper2);
-    }
 
 
     /*
@@ -672,17 +647,7 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
         return (LazyEither3<LT1, LT2, RT>) Transformable.super.peek(c);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> LazyEither3<LT1, LT2, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
 
-        return (LazyEither3<LT1, LT2, R>) Transformable.super.trampoline(mapper);
-    }
 
 
 

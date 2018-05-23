@@ -33,20 +33,7 @@ public class DifferenceList<T> implements Folds<T>,
         return (DifferenceList<T>)Transformable.super.peek(c);
     }
 
-    @Override
-    public <R> DifferenceList<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (DifferenceList<R>)Transformable.super.trampoline(mapper);
-    }
 
-    @Override
-    public <R> DifferenceList<R> retry(Function<? super T, ? extends R> fn) {
-        return (DifferenceList<R>)Transformable.super.retry(fn);
-    }
-
-    @Override
-    public <R> DifferenceList<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (DifferenceList<R>)Transformable.super.retry(fn,retries,delay,timeUnit);
-    }
 
     public <R> DifferenceList<R> flatMap(Function<? super T, ? extends DifferenceList<? extends R>> fn){
         return new DifferenceList<>(l-> Trampoline.done(run().flatMap(fn.andThen(DifferenceList::run))));

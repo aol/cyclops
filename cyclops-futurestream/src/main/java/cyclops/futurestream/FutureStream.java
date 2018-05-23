@@ -425,11 +425,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return (FutureStream<U>) ReactiveSeq.super.notNull();
     }
 
-    @Override
-    default <R> FutureStream<R> trampoline(final Function<? super U, ? extends Trampoline<? extends R>> mapper) {
 
-        return (FutureStream<R>) ReactiveSeq.super.trampoline(mapper);
-    }
 
     @Override
     default <R> R foldRight(final R identity, final BiFunction<? super U, ? super R, ? extends R> accumulator) {

@@ -47,27 +47,10 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 		assertThat(none.toMaybe(),equalTo(Maybe.nothing()));
 	}
 
-	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.orElse(-2000)), Matchers.equivalent(just));
-
-    }
-    @Test
-    public void coFlatMap(){
-
-        assertThat(just.coflatMap(m-> m.isPresent()? m.orElse(-4000) : 50), Matchers.equivalent(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.orElse(-5000) : just.orElse(-4000)), Matchers.equivalent(just));
-    }
     @Test
     public void combine(){
 
         Monoid<Integer> add = Monoid.of(0, Semigroups.intSum);
-/**
-        assertThat(none.combineEager(add,just).toTry(),equalTo(Try.success(0)));
-        assertThat(none.combineEager(add,none).toTry(),equalTo(Try.success(0)));
-        assertThat(just.combineEager(add,just).toTry(),equalTo(Try.success(20)));
- **/
-          //  just.combineEager(add,none).printOut();
         System.out.println("None " + none);
 	    assertThat(just.combineEager(add,none), Matchers.equivalent(just));
 
@@ -450,13 +433,6 @@ public abstract class BaseAnyMValueTest<W extends WitnessType<W>> {
 		assertThat(capture.get(),equalTo(10));
 	}
 
-	private Trampoline<Integer> sum(int times, int sum){
-		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
-	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)).toMaybe(),equalTo(Maybe.of(65)));
-	}
 
 
 

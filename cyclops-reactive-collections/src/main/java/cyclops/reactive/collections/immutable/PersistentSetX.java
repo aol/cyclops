@@ -551,13 +551,6 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         return (PersistentSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> PersistentSetX<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (PersistentSetX<R>) LazyCollectionX.super.trampoline(mapper);
-    }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)

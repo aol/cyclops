@@ -2640,32 +2640,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
 
     }
 
-    /**
-     * Retry a transformation if it fails. Default settings are to retry up to 7 times, with an doubling
-     * backoff period starting @ 2 seconds delay before retry.
-     *
-     * <pre>
-     * {@code
-     * given(serviceMock.applyHKT(anyInt())).willThrow(
-    			new RuntimeException(new SocketException("First")),
-    			new RuntimeException(new IOException("Second"))).willReturn(
-    			"42");
 
-
-    	String result = Streamable.of( 1,  2, 3)
-    			.retry(serviceMock)
-    			.firstValue();
-
-    	assertThat(result, is("42"));
-     * }
-     * </pre>
-     * @param fn Function to retry if fails
-     *
-     */
-    @Override
-    default <R> Streamable<R> retry(final Function<? super T,? extends  R> fn) {
-        return fromStream(this.stream().retry(fn));
-    }
 
     /**
      * True if a streamable contains element t

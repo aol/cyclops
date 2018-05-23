@@ -288,7 +288,7 @@ Backpressure free : Event Driven Push based Streams
  Executor execA = Executors.newFixedThreadPool(1);
  Executor execB = Executors.newFixedThreadPool(1);
  Maybe<Integer> resultOrError =    Spouts.observeOn(ReactiveSeq.of(1,2,3,4,5),execA)
-                                         .zipP(Spouts.observeOn(ReactiveSeq.of(100,200),execB, (a,b)->a+b)
+                                         .zip(Spouts.observeOn(ReactiveSeq.of(100,200),execB, (a,b)->a+b)
                                          .findOne();
 ```
 The Spouts observeOn and async operators create event driven Streams that do not have the overhead of managing backpressure. In the above example the first result is pushed asynchronously into the reactive Maybe type.
