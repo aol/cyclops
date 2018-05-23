@@ -40,10 +40,6 @@ public class BagXTest extends AbstractAnyMSeqTest<bagX> {
 
     }
 
-    @Test
-    public void testRetry(){
-        of(1,2,3).retry(i->i+2).printOut();
-    }
 
 	@Test @Ignore
 	public void testSorted() {

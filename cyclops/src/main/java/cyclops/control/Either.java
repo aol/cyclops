@@ -118,6 +118,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
                                      Higher2<either, LT, RT> {
 
 
+<<<<<<< HEAD
 
     default Either<LT, RT> accumulateRight(Semigroup<RT> sg, Either<LT, RT>... values){
         Either<LT, RT> acc= this;
@@ -136,6 +137,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         }
         return acc;
     }
+=======
+>>>>>>> master
 
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
         Either<L,? extends Either<T, R>> next[] = new Either[1];
@@ -155,6 +158,9 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         return narrow;
     }
 
+    default int arity(){
+        return 2;
+    }
 
 
     default Eval<Either<LT, RT>> nestedEval(){
@@ -707,15 +713,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.BiTransformable#bitrampoline(java.util.function.Function, java.util.function.Function)
-     */
-    @Override
-    default <R1, R2> Either<R1, R2> bitrampoline(Function<? super LT, ? extends Trampoline<? extends R1>> mapper1,
-                                                 Function<? super RT, ? extends Trampoline<? extends R2>> mapper2) {
-
-        return  (Either<R1, R2>)BiTransformable.super.bitrampoline(mapper1, mapper2);
-    }
 
 
 
@@ -852,15 +849,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
     }
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Functor#trampoline(java.util.function.Function)
-     */
-    @Override
-    default <R> Either<LT, R> trampoline(final Function<? super RT, ? extends Trampoline<? extends R>> mapper) {
-
-        return (Either<LT, R>) Transformable.super.trampoline(mapper);
-    }
 
     Ior<LT, RT> toIor();
 

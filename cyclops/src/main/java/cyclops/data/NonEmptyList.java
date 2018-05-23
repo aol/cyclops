@@ -214,20 +214,6 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return (NonEmptyList<T>)ImmutableList.Some.super.peek(c);
     }
 
-    @Override
-    public <R> NonEmptyList<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (NonEmptyList<R>)ImmutableList.Some.super.trampoline(mapper);
-    }
-
-    @Override
-    public <R> NonEmptyList<R> retry(Function<? super T, ? extends R> fn) {
-        return (NonEmptyList<R>)ImmutableList.Some.super.retry(fn);
-    }
-
-    @Override
-    public <R> NonEmptyList<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (NonEmptyList<R>)ImmutableList.Some.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {

@@ -393,10 +393,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         return (TreeSet<T>)ImmutableSortedSet.super.peek(c);
     }
 
-    @Override
-    public <R> TreeSet<R> trampoline(Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return (TreeSet<R>)ImmutableSortedSet.super.trampoline(mapper);
-    }
+
 
     @Override
     public TreeSet<T> removeStream(Stream<? extends T> stream) {
@@ -723,15 +720,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     public String mkString(){
         return stream().join(",","[","]");
     }
-    @Override
-    public <R> TreeSet<R> retry(Function<? super T, ? extends R> fn) {
-        return (TreeSet<R>) ImmutableSortedSet.super.retry(fn);
-    }
 
-    @Override
-    public <R> TreeSet<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (TreeSet<R>) ImmutableSortedSet.super.retry(fn,retries,delay,timeUnit);
-    }
 
     @Override
     public TreeSet<T> onEmpty(T value) {

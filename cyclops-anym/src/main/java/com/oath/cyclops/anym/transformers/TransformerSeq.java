@@ -211,23 +211,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    @Override
-    default <R> TransformerSeq<W,R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.trampoline(mapper));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <R> TransformerSeq<W,R> retry(final Function<? super T, ? extends R> fn) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.retry(fn));
-        return unitAnyM(zipped);
-    }
-
-    @Override
-    default <R> TransformerSeq<W,R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        AnyM<W, Traversable<R>> zipped = transformerStream().map(s -> (Traversable)s.retry(fn,retries,delay,timeUnit));
-        return unitAnyM(zipped);
-    }
 
     @Override
     default TransformerSeq<W,T> combine(final Monoid<T> op, final BiPredicate<? super T, ? super T> predicate) {

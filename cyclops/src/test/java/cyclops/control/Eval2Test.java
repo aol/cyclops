@@ -46,17 +46,7 @@ public class Eval2Test {
 	    assertFalse(Eval.always(()->10).equals(Eval.later(()->null)));
 	    assertFalse(Eval.always(()->null).equals(Eval.later(()->10)));
 	}
-	@Test
-    public void nest(){
-       assertThat(just.nest().map(m->m.toOptional().get()),equalTo(just));
 
-    }
-    @Test
-    public void coFlatMap(){
-        assertThat(just.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(just));
-        assertThat(none.coflatMap(m-> m.isPresent()? m.toOptional().get() : 50),equalTo(Eval.now(50)));
-
-    }
     @Test
     public void combine(){
 
@@ -461,10 +451,7 @@ public class Eval2Test {
 	private Trampoline<Integer> sum(int times, int sum){
 		return times ==0 ?  Trampoline.done(sum) : Trampoline.more(()->sum(times-1,sum+times));
 	}
-	@Test
-	public void testTrampoline() {
-		assertThat(just.trampoline(n ->sum(10,n)),equalTo(Eval.now(65)));
-	}
+
 
 
 

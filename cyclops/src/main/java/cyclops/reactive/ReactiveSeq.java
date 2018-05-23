@@ -6,6 +6,7 @@ import com.oath.cyclops.internal.stream.spliterators.*;
 
 
 import com.oath.cyclops.types.foldable.Contains;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
 import cyclops.control.*;
@@ -110,6 +111,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         IterableX<T>,
                                         Contains<T>,
                                         Unit<T>,
+                                        ReactiveTransformable<T>,
                                         Higher<reactiveSeq,T> {
 
     @Override
@@ -2161,44 +2163,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Optional<T> findAny();
 
     /**
-     * Performs a transform operation that can call a recursive method without running out of stack space
-     * <pre>
-     * {@code
-     * ReactiveSeq.of(10,20,30,40)
-    		 .trampoline(i-> fibonacci(i))
-    		 .forEach(System.out::println);
-
-    Trampoline<Long> fibonacci(int i){
-    	return fibonacci(i,1,0);
-    }
-    Trampoline<Long> fibonacci(int n, long a, long b) {
-       	return n == 0 ? Trampoline.done(b) : Trampoline.more( ()->fibonacci(n-1, a+b, a));
-    }
-
-     * 55
-    6765
-    832040
-    102334155
-     *
-     *
-     * ReactiveSeq.of(10_000,200_000,3_000_000,40_000_000)
-    		 .trampoline(i-> fibonacci(i))
-    		 .forEach(System.out::println);
-
-
-     * completes successfully
-     * }
-     *
-    * @param mapper
-    * @return
-    */
-    @Override
-    default <R> ReactiveSeq<R> trampoline(final Function<? super T, ? extends Trampoline<? extends R>> mapper) {
-        return map(in -> mapper.apply(in)
-                               .result());
-    }
-
-    /**
      * Attempt to transform this Sequence to the same type as the supplied Monoid
      * (Reducer) Then use Monoid to reduce values
      *
@@ -3884,17 +3848,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.applyHKT(anyInt())).willThrow(
-     * 				new RuntimeException(new SocketException("First")),
-     * 				new RuntimeException(new IOException("Second"))).willReturn(
-     * 				"42");
+     *
      *
      *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
-     * 				.retry(serviceMock)
+     * 				.retry(this::makeIOCall, 7, 2, TimeUnit.SECONDS)
      * 				.firstValue();
      *
-     * 		//result = 42
+     * 		//result = [service call result]
      * }
      * </pre>
      *
@@ -3913,17 +3874,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     * given(serviceMock.applyHKT(anyInt())).willThrow(
-     * 				new RuntimeException(new SocketException("First")),
-     * 				new RuntimeException(new IOException("Second"))).willReturn(
-     * 				"42");
+     *
      *
      *
      * 		String result = ReactiveSeq.of( 1,  2, 3)
-     * 				.retry(serviceMock, 7, 2, TimeUnit.SECONDS)
+     * 				.retry(this::makeIOCall, 7, 2, TimeUnit.SECONDS)
      * 				.firstValue();
      *
-     * 		//result = 42
+     * 		//result = [service call result]
      * }
      * </pre>
      *
@@ -3937,7 +3895,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            TimeUnit to use for delay
      */
     default <R> ReactiveSeq<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
-        return (ReactiveSeq) IterableX.super.retry(fn, retries, delay, timeUnit);
+        return (ReactiveSeq) ReactiveTransformable.super.retry(fn, retries, delay, timeUnit);
     }
 
     /**

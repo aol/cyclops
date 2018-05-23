@@ -3,8 +3,13 @@ package cyclops.reactive;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
+<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
 import cyclops.control.Future;
 import cyclops.control.Try;
+=======
+import com.oath.cyclops.types.functor.ReactiveTransformable;
+import com.oath.cyclops.types.functor.Transformable;
+>>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 import cyclops.data.tuple.*;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
@@ -14,14 +19,23 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
 public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   private final Publisher<T> fn;
+=======
+public class IO<T> implements To<IO<T>>, Higher<io,T>, ReactiveTransformable<T> ,Publisher<T> {
+
+    private final Publisher<T> fn;
+
+
+>>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 
   public static <T> IO<T> of(T s){
         return new IO<T>(ReactiveSeq.narrow(Spouts.of(s)));
@@ -50,6 +64,7 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
      return fromPublisher(Spouts.from(fn).mergeMap(t->s.apply(t).publisher()));
   }
 
+
   public static <T,X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s){
      return io.map(t->t.visit(i->i,s));
   }
@@ -64,7 +79,23 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
   public <R,X extends Throwable> IO<Try<R, X>> mapTry(Function<? super T, ? extends R> s,final Class<? extends X>... classes){
     return map(t->Try.withCatch(()->s.apply(t),classes));
   }
-  public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
+
+    @Override
+    public <R> IO<R> retry(Function<? super T, ? extends R> fn) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn);
+    }
+
+    @Override
+    public <R> IO<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
+    @Override
+    public IO<T> peek(Consumer<? super T> c) {
+        return (IO<T>)ReactiveTransformable.super.peek(c);
+    }
+
+    public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete){
     Spouts.from(fn).forEach(consumerElement,consumerError,onComplete);
   }
   public Try<T,Throwable> run(){
@@ -72,6 +103,7 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
                     .get();
   }
 
+<<<<<<< HEAD:cyclops/src/main/java/cyclops/reactive/IO.java
   public <R> R foldRun(Function<? super Try<T,Throwable>, ? extends R> transform){
       return transform.apply(run());
   }
@@ -79,6 +111,13 @@ public final class IO<T> implements To<IO<T>>, Higher<io,T>, Publisher<T> {
     public Future<T> future(){
         return  Future.fromPublisher(fn);
     }
+=======
+  public String toString(){
+      return "IO["+ run().toString() + "]";
+  }
+
+
+>>>>>>> master:cyclops-pure/src/main/java/cyclops/control/IO.java
 
   public Publisher<T> publisher(){
     return fn;
