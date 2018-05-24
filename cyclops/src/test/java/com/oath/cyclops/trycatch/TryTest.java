@@ -85,7 +85,7 @@ public class TryTest {
 
 		assertThat(Try.withResources(() -> new BufferedReader(new FileReader("file.txt")),
       this::read,
-      IOException.class,NullPointerException.class, FileNotFoundException.class).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
+      IOException.class,NullPointerException.class, FileNotFoundException.class).toFailedOption().orElse(null),instanceOf((Class)FileNotFoundException.class));
 
 
 
