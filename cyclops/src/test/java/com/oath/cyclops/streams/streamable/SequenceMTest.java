@@ -1,7 +1,6 @@
 package com.oath.cyclops.streams.streamable;
 
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
@@ -23,7 +22,7 @@ import cyclops.control.Option;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 public class SequenceMTest {
 

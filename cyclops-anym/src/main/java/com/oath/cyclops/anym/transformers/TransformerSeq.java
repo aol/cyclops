@@ -2,7 +2,6 @@ package com.oath.cyclops.anym.transformers;
 
 import java.util.Comparator;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -12,7 +11,6 @@ import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.types.Unwrapable;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
-import cyclops.control.Trampoline;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Function3;
@@ -26,7 +24,7 @@ import org.reactivestreams.Subscriber;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.monads.WitnessType;
 
 public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,

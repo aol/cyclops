@@ -1,9 +1,9 @@
 package com.oath.cyclops.streams.streamable;
 
 
-import static cyclops.reactive.Streamable.fromIntStream;
-import static cyclops.reactive.Streamable.iterate;
-import static cyclops.reactive.Streamable.of;
+import static cyclops.companion.Streamable.fromIntStream;
+import static cyclops.companion.Streamable.iterate;
+import static cyclops.companion.Streamable.of;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -19,20 +19,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.data.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import com.oath.cyclops.util.SimpleTimer;
 
 import lombok.Value;

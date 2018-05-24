@@ -1,13 +1,12 @@
 package cyclops.streams.push.reactivestreamspath;
 
-import cyclops.data.*;
 import com.oath.cyclops.util.SimpleTimer;
 
 import cyclops.data.TreeSet;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import lombok.Value;
 import org.junit.Test;
 

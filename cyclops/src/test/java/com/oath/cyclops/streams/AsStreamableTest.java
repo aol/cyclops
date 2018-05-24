@@ -6,14 +6,12 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.junit.Test;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 import lombok.val;
 

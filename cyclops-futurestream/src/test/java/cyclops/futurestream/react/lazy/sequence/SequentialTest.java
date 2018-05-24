@@ -12,7 +12,6 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +28,7 @@ import org.junit.Test;
 import cyclops.control.Maybe;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 
 public class SequentialTest {

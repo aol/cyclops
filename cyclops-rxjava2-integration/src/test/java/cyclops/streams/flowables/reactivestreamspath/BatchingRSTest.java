@@ -4,10 +4,9 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.data.Vector;
 import cyclops.data.TreeSet;
-import cyclops.companion.rx2.Flowables;
 import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import lombok.Value;
 import org.junit.Test;
 

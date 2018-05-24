@@ -9,6 +9,7 @@ import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
+import cyclops.companion.Streamable;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;

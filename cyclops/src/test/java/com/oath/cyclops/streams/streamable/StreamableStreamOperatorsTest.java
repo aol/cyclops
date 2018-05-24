@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 public class StreamableStreamOperatorsTest {
 	 public static <U> Streamable<U> of(U... array){
 		 return Streamable.of(array);

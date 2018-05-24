@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import cyclops.control.Maybe;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.junit.Test;
 
 import cyclops.companion.Semigroups;
