@@ -2,6 +2,7 @@ package cyclops.streams.syncflux;
 
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.companion.reactor.Fluxs;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -41,7 +42,7 @@ public class SyncRetryTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Fluxs.reactiveSeq(Flux.just(array));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 
 	@Test

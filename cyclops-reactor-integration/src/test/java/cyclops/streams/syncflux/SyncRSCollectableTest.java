@@ -2,6 +2,7 @@ package cyclops.streams.syncflux;
 
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.streams.CollectableTest;
 
@@ -11,7 +12,7 @@ public class SyncRSCollectableTest extends CollectableTest {
 
 
     public <T> ReactiveSeq<T> of(T... values){
-        return Fluxs.reactiveSeq(Flux.just(values));
+        return FluxReactiveSeq.reactiveSeq(Flux.just(values));
     }
 
 }

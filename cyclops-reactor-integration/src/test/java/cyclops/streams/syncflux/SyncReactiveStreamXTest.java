@@ -11,6 +11,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.futurestream.LazyReact;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
@@ -48,7 +49,7 @@ public  class SyncReactiveStreamXTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Fluxs.reactiveSeq(Flux.just(array));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 
 
@@ -206,6 +207,8 @@ public  class SyncReactiveStreamXTest {
 
 	}
 	private int sleep(Integer i) {
+	    if(i==0)
+	        return i;
 		try {
 			Thread.currentThread().sleep(i);
 		} catch (InterruptedException e) {
@@ -215,7 +218,7 @@ public  class SyncReactiveStreamXTest {
 	}
 	@Test
 	public void skipTime(){
-		List<Integer> result = of(1,2,3,4,5,6)
+		List<Integer> result = of(2,2,3,4,5,6)
 				.peek(i->sleep(i*100))
 				.skip(1000,TimeUnit.MILLISECONDS)
 				.toList();

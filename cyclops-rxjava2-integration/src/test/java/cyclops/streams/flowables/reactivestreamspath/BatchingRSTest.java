@@ -5,6 +5,7 @@ import com.oath.cyclops.util.SimpleTimer;
 import cyclops.data.Vector;
 import cyclops.data.TreeSet;
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import lombok.Value;
@@ -16,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static cyclops.companion.rx2.Flowables.just;
-import static cyclops.companion.rx2.Flowables.of;
+import static cyclops.reactive.FlowableReactiveSeq.just;
+import static cyclops.reactive.FlowableReactiveSeq.of;
 import static cyclops.reactive.Spouts.iterate;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -27,41 +28,41 @@ public class BatchingRSTest {
 
 	@Test
 	public void batchUntil(){
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0)
 				.to(Streamable::fromStream).toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhile(){
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.to(Streamable::fromStream).toList()
 				.size(),equalTo(2));
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0)
 				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
 	@Test
 	public void batchUntilCollection(){
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedUntil(i->i%3==0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().get(0),equalTo(Vector.of(1,2,3)));
 	}
 	@Test
 	public void batchWhileCollection(){
-		System.out.println("*"+ Flowables.just(1,2,3,4,5,6)
+		System.out.println("*"+ just(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList());
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList().size(),equalTo(2));
-		assertThat(Flowables.just(1,2,3,4,5,6)
+		assertThat(just(1,2,3,4,5,6)
 				.groupedWhile(i->i%3!=0,()->Vector.empty())
 				.to(Streamable::fromStream).toList(),equalTo(Arrays.asList(Vector.of(1,2,3),Vector.of(4,5,6))));
 	}
@@ -69,7 +70,7 @@ public class BatchingRSTest {
 	public void batchByTime2(){
 		for(int i=0;i<5;i++){
 			System.out.println(i);
-			assertThat(Flowables.of(1,2,3,4,5, 6)
+			assertThat(of(1,2,3,4,5, 6)
 							.map(n-> n==6? sleep(1) : n)
 							.groupedByTime(10,TimeUnit.MICROSECONDS)
 							.to(Streamable::fromStream).toList()
@@ -101,7 +102,7 @@ public class BatchingRSTest {
 	@Test
 	public void jitter() {
 
-		Flowables.range(0, 1000)
+		FlowableReactiveSeq.range(0, 1000)
 				.map(it -> it * 100)
 				.jitter(100l)
 				.peek(System.out::println)
@@ -111,7 +112,7 @@ public class BatchingRSTest {
 	@Test
 	public void fixedDelay2() {
 
-		Flowables.range(0, 1000)
+		FlowableReactiveSeq.range(0, 1000)
 				.fixedDelay(1l, TimeUnit.MICROSECONDS).peek(System.out::println)
 				.forEach(a->{});
 	}
@@ -359,7 +360,7 @@ public class BatchingRSTest {
 	@Test
 	public void batchBySizeSetEmpty(){
 
-		assertThat(Flowables.<Integer>of().grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(0));
+		assertThat(FlowableReactiveSeq.<Integer>of().grouped(3,()->TreeSet.empty()).to(Streamable::fromStream).toList().size(),is(0));
 	}
 	@Test
 	public void batchBySizeInternalSize(){

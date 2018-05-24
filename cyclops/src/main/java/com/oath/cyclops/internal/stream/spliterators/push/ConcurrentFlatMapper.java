@@ -81,7 +81,6 @@ public class ConcurrentFlatMapper<T, R> {
             queueUpdater.getAndUpdate(this, q -> q.plus(inner));
             next.subscribe(inner);
         }catch(Throwable e){
-            e.printStackTrace();
             onError.accept(e);
         }
 

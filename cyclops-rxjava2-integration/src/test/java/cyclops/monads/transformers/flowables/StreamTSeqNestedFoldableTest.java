@@ -6,18 +6,19 @@ import cyclops.companion.rx2.Flowables;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness;
 import cyclops.monads.transformers.AbstractNestedFoldableTest;
+import cyclops.reactive.FlowableReactiveSeq;
 
 
 public class StreamTSeqNestedFoldableTest extends AbstractNestedFoldableTest<Witness.list> {
 
     @Override
     public <T> FoldableTransformerSeq<Witness.list,T> of(T... elements) {
-        return AnyMs.liftM(Flowables.just(elements),Witness.list.INSTANCE);
+        return AnyMs.liftM(FlowableReactiveSeq.just(elements),Witness.list.INSTANCE);
     }
 
     @Override
     public <T> FoldableTransformerSeq<Witness.list,T> empty() {
-        return  AnyMs.liftM(Flowables.<T>empty(),Witness.list.INSTANCE);
+        return  AnyMs.liftM(FlowableReactiveSeq.<T>empty(),Witness.list.INSTANCE);
     }
 
 }

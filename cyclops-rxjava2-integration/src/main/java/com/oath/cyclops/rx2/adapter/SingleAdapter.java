@@ -8,6 +8,7 @@ import cyclops.companion.rx2.Singles;
 import cyclops.control.Future;
 import cyclops.monads.AnyM;
 import cyclops.monads.Rx2Witness.single;
+import cyclops.monads.SingleAnyM;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.Single;
 import lombok.AllArgsConstructor;
@@ -37,14 +38,14 @@ public class SingleAdapter extends AbstractMonadAdapter<single> {
         Future<? extends Function<? super T, ? extends R>> crFnF = Future.fromPublisher(fnF.toFlowable());
 
         Single<R> res = Single.fromPublisher(crF1.zip(crFnF,(a,b)->b.apply(a)));
-        return Singles.anyM(res);
+        return SingleAnyM.anyM(res);
 
     }
 
     @Override
     public <T> AnyM<single, T> filter(AnyM<single, T> t, Predicate<? super T> fn) {
 
-        return Singles.anyM(future(t).filter(Functions.rxPredicate(fn)).toSingle());
+        return SingleAnyM.anyM(future(t).filter(Functions.rxPredicate(fn)).toSingle());
     }
 
     <T> Single<T> future(AnyM<single,T> anyM){
@@ -56,7 +57,7 @@ public class SingleAdapter extends AbstractMonadAdapter<single> {
 
     @Override
     public <T> AnyM<single, T> empty() {
-        return Singles.anyM(Single.never());
+        return SingleAnyM.anyM(Single.never());
     }
 
 
@@ -64,18 +65,18 @@ public class SingleAdapter extends AbstractMonadAdapter<single> {
     @Override
     public <T, R> AnyM<single, R> flatMap(AnyM<single, T> t,
                                      Function<? super T, ? extends AnyM<single, ? extends R>> fn) {
-        return Singles.anyM(Single.fromPublisher(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
+        return SingleAnyM.anyM(Single.fromPublisher(futureW(t).flatMap(fn.andThen(a-> futureW(a)))));
 
     }
 
     @Override
     public <T> AnyM<single, T> unitIterable(Iterable<T> it)  {
-        return Singles.anyM(Single.fromPublisher(Future.fromIterable(it)));
+        return SingleAnyM.anyM(Single.fromPublisher(Future.fromIterable(it)));
     }
 
     @Override
     public <T> AnyM<single, T> unit(T o) {
-        return Singles.anyM(Single.just(o));
+        return SingleAnyM.anyM(Single.just(o));
     }
 
     @Override
@@ -85,6 +86,6 @@ public class SingleAdapter extends AbstractMonadAdapter<single> {
 
     @Override
     public <T, R> AnyM<single, R> map(AnyM<single, T> t, Function<? super T, ? extends R> fn) {
-        return Singles.anyM(future(t).map(x->fn.apply(x)));
+        return SingleAnyM.anyM(future(t).map(x->fn.apply(x)));
     }
 }

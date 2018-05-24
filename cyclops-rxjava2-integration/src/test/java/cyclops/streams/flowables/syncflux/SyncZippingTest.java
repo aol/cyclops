@@ -1,6 +1,7 @@
 package cyclops.streams.flowables.syncflux;
 
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -31,7 +32,7 @@ public class SyncZippingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	@Test
 	public void zipInOrderNoLimit(){

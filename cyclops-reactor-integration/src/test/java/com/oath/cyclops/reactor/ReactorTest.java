@@ -9,6 +9,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.monads.FluxAnyM;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.SetX;
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class ReactorTest {
     public void anyMTest(){
         System.out.println("Start");
         //Flux.just(1,2,3,4,5).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())).subscribe(System.out::println);
-        Fluxs.anyM(Flux.just(1,2,3,4,5).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())))
+        FluxAnyM.anyM(Flux.just(1,2,3,4,5).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())))
                 .forEach(System.out::println,System.err::println);
         System.out.println("Set up");
 

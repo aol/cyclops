@@ -37,20 +37,12 @@ import java.util.function.Predicate;
 public class Singles {
 
 
-    public static  <W1 extends WitnessType<W1>,T> XorM<W1,single,T> xorM(Single<T> type){
-        return XorM.right(anyM(type));
-    }
-    public static <T> Single<T> raw(AnyM<single,T> anyM){
-        return Rx2Witness.single(anyM);
-    }
 
     public static <T> Single<T> fromValue(MonadicValue<T> future){
         return Single.fromPublisher(future);
     }
 
-    public static <W extends WitnessType<W>,T> SingleT<W,T> liftM(AnyM<W,Single<T>> nested){
-        return SingleT.of(nested);
-    }
+
     public static <T, R> Single< R> tailRec(T initial, Function<? super T, ? extends Single<? extends Either<T, R>>> fn) {
         Single<? extends Either<T, R>> next[] = new Single[1];
         next[0] = Single.just(Either.left(initial));
@@ -88,26 +80,7 @@ public class Singles {
         return Eval.fromFuture(future(opt));
     }
 
-    /**
-     * Construct an AnyM type from a Single. This allows the Single to be manipulated according to a standard interface
-     * along with a vast array of other Java Monad implementations
-     *
-     * <pre>
-     * {@code
-     *
-     *    AnyMSeq<Integer> single = Fluxs.anyM(Single.just(1,2,3));
-     *    AnyMSeq<Integer> transformedSingle = myGenericOperation(single);
-     *
-     *    public AnyMSeq<Integer> myGenericOperation(AnyMSeq<Integer> monad);
-     * }
-     * </pre>
-     *
-     * @param single To wrap inside an AnyM
-     * @return AnyMSeq wrapping a Single
-     */
-    public static <T> AnyMValue<single,T> anyM(Single<T> single) {
-        return AnyM.ofValue(single, Rx2Witness.single.INSTANCE);
-    }
+
 
 
 

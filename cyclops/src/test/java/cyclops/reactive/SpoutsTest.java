@@ -18,6 +18,7 @@ import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +41,8 @@ import static org.junit.Assert.*;
 public class SpoutsTest {
 
     int i=0;
+
+    Executor ex = Executors.newFixedThreadPool(5);
 
     int count = 0;
     @Before
@@ -98,20 +101,22 @@ public class SpoutsTest {
         assertThat(i,equalTo(30));
         assertThat(count,equalTo(18));
     }
+    AtomicInteger counter;
     @Test
     public void reactiveBufferCycle() throws InterruptedException {
+        counter = new AtomicInteger(0);
 
         Subscription sub = Spouts.reactiveBuffer(10, s -> {
 
             s.onSubscribe(new Subscription() {
                 @Override
                 public void request(long n) {
-                    if(i==0) {
+                    if(counter.get()==0) {
                         Effect e = () -> {
 
-                            s.onNext("hello " + i++);
+                            s.onNext("hello " +counter.incrementAndGet());
                         };
-                        e.cycleAsync(30,Executors.newFixedThreadPool(10)).run();
+                        e.cycleAsync(30,ex).run();
                     }
                 }
 
@@ -127,7 +132,7 @@ public class SpoutsTest {
         sub.request(30);
 
 
-        assertThat(i,equalTo(30));
+        assertThat(counter.get(),equalTo(30));
         assertThat(count,equalTo(18));
     }
     @Test

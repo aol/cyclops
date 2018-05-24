@@ -8,6 +8,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
@@ -35,7 +36,7 @@ public class SyncSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Fluxs.reactiveSeq(Flux.just(array));
+        return FluxReactiveSeq.reactiveSeq(Flux.just(array));
     }
     @Test
     public void flatMapStream() {

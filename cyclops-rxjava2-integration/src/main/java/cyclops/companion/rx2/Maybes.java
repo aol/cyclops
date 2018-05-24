@@ -41,11 +41,6 @@ import java.util.function.Predicate;
 public class Maybes {
 
 
-    public static  <W1 extends WitnessType<W1>,T> XorM<W1,maybe,T> xorM(Maybe<T> type){
-        return XorM.right(anyM(type));
-    }
-
-
     public static <T, R> Maybe< R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn) {
         Maybe<? extends Either<T, R>> next[] = new Maybe[1];
         next[0] = Maybe.just(Either.left(initial));
@@ -63,14 +58,7 @@ public class Maybes {
         return Single.fromPublisher(maybe).toMaybe();
     }
 
-    public static <T> Maybe<T> raw(AnyM<maybe,T> anyM){
-        return Rx2Witness.maybe(anyM);
-    }
 
-
-    public static <W extends WitnessType<W>,T> MaybeT<W,T> liftM(AnyM<W,Maybe<T>> nested){
-        return MaybeT.of(nested);
-    }
 
     public static <T> Future[] futures(Maybe<T>... futures){
 
@@ -105,27 +93,6 @@ public class Maybes {
     }
     public static <T> Eval<T> eval(Maybe<T> opt){
         return Eval.fromFuture(future(opt));
-    }
-
-    /**
-     * Construct an AnyM type from a Maybe. This allows the Maybe to be manipulated according to a standard interface
-     * along with a vast array of other Java Monad implementations
-     *
-     * <pre>
-     * {@code
-     *
-     *    AnyMSeq<Integer> maybe = Fluxs.anyM(Maybe.just(1,2,3));
-     *    AnyMSeq<Integer> transformedMaybe = myGenericOperation(maybe);
-     *
-     *    public AnyMSeq<Integer> myGenericOperation(AnyMSeq<Integer> monad);
-     * }
-     * </pre>
-     *
-     * @param maybe To wrap inside an AnyM
-     * @return AnyMSeq wrapping a Maybe
-     */
-    public static <T> AnyMValue<maybe,T> anyM(Maybe<T> maybe) {
-        return AnyM.ofValue(maybe, Rx2Witness.maybe.INSTANCE);
     }
 
 

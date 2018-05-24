@@ -30,6 +30,9 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import com.oath.cyclops.types.persistent.PersistentBag;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -78,12 +81,11 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return new CompletableBagX<>();
     }
 
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     static class CompletableBagX<T> implements InvocationHandler {
-        Future<BagX<T>> future = Future.future();
+        private final Future<BagX<T>> future = Future.future();
 
-        public CompletableBagX(){
-            new Exception().printStackTrace();
-        }
+
         public boolean complete(PersistentBag<T> result){
             return future.complete(BagX.fromIterable(result));
         }

@@ -3,6 +3,7 @@ package cyclops.streams.flowables.asyncreactivestreams;
 
 import cyclops.companion.rx2.Flowables;
 import cyclops.control.Option;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -18,7 +19,7 @@ import static org.junit.Assert.*;
 
 public class AsyncRSPartitionAndSplittingTest {
 	protected <U> ReactiveSeq<U> of(U... array){
-		return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
 	@Test

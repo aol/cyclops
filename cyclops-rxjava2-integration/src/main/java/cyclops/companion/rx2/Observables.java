@@ -1,7 +1,7 @@
 package cyclops.companion.rx2;
 
 import com.oath.cyclops.anym.AnyMSeq;
-import com.oath.cyclops.rx2.adapter.ObservableReactiveSeq;
+import com.oath.cyclops.rx2.adapter.ObservableReactiveSeqImpl;
 import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -11,6 +11,7 @@ import cyclops.monads.Rx2Witness.observable;
 import cyclops.monads.WitnessType;
 import cyclops.monads.XorM;
 import cyclops.monads.transformers.StreamT;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import io.reactivex.*;
@@ -34,12 +35,7 @@ import java.util.stream.Stream;
 public class Observables {
 
 
-    public static  <W1 extends WitnessType<W1>,T> XorM<W1,observable,T> xorM(Observable<T> type){
-        return XorM.right(anyM(type));
-    }
-    public static <T,W extends WitnessType<W>> AnyM<W,Observable<T>> fromStream(AnyM<W,Stream<T>> anyM){
-        return anyM.map(s->fromStream(s));
-    }
+
 
     public static  <T,R> Observable<R> tailRec(T initial, Function<? super T, ? extends Observable<? extends Either<T, R>>> fn) {
         Observable<Either<T, R>> next = Observable.just(Either.left(initial));
@@ -61,15 +57,11 @@ public class Observables {
 
         return next.filter(Either::isRight).map(e->e.orElse(null));
     }
-    public static <T> Observable<T> raw(AnyM<observable,T> anyM){
-        return Rx2Witness.observable(anyM);
-    }
+
     public static <T> Observable<T> narrow(Observable<? extends T> observable) {
         return (Observable<T>)observable;
     }
-    public static <T> ReactiveSeq<T> reactiveSeq(Observable<T> observable) {
-        return new ObservableReactiveSeq<>(observable);
-    }
+
     public static  <T> Observable<T> observableFrom(ReactiveSeq<T> stream){
         return stream.visit(sync->fromStream(stream),
                 rs->observable(stream),
@@ -100,48 +92,7 @@ public class Observables {
         }
         return Observable.fromIterable(ReactiveSeq.fromStream(s));
     }
-    public static <W extends WitnessType<W>,T> StreamT<W,T> observablify(StreamT<W,T> nested){
-        AnyM<W, Stream<T>> anyM = nested.unwrap();
-        AnyM<W, ReactiveSeq<T>> fluxM = anyM.map(s -> {
-            if (s instanceof ObservableReactiveSeq) {
-                return (ObservableReactiveSeq)s;
-            }
-            if(s instanceof ReactiveSeq){
-                return new ObservableReactiveSeq<T>(Observables.observableFrom((ReactiveSeq<T>) s));
-            }
-            if (s instanceof Publisher) {
-                return new ObservableReactiveSeq<T>(Observables.observable((Publisher) s));
-            }
-            return new ObservableReactiveSeq<T>(fromStream(s));
-        });
-        StreamT<W, T> res = StreamT.of(fluxM);
-        return res;
-    }
 
-    public static <W extends WitnessType<W>,T,R> R nestedObservable(StreamT<W,T> nested, Function<? super AnyM<W,Observable<T>>,? extends R> mapper){
-        return mapper.apply(nestedObservable(nested));
-    }
-    public static <W extends WitnessType<W>,T> AnyM<W,Observable<T>> nestedObservable(StreamT<W,T> nested){
-        AnyM<W, Stream<T>> anyM = nested.unwrap();
-        return anyM.map((Stream<T> s)->{
-            if(s instanceof ObservableReactiveSeq){
-                return ((ObservableReactiveSeq)s).getObservable();
-            }
-            if(s instanceof ReactiveSeq){
-                return Observables.observableFrom((ReactiveSeq<T>) s);
-            }
-            if (s instanceof Publisher) {
-                return Observables.observable((Publisher) s);
-            }
-            return Observables.fromStream(s);
-        });
-    }
-
-    public static <W extends WitnessType<W>,T> StreamT<W,T> liftM(AnyM<W,Observable<T>> nested){
-
-        AnyM<W, ReactiveSeq<T>> monad = nested.map(s -> new ObservableReactiveSeq<T>(s));
-        return StreamT.of(monad);
-    }
     /**
      * Convert an Observable to a reactive-streams Publisher
      *
@@ -186,133 +137,6 @@ public class Observables {
 
 
 
-    public static <T> ReactiveSeq<T> empty() {
-        return reactiveSeq(Observable.empty());
-    }
-
-    public static <T> ReactiveSeq<T> error(Throwable exception) {
-        return reactiveSeq(Observable.error(exception));
-    }
-
-
-
-
-
-
-    public static <T> ReactiveSeq<T> from(Iterable<? extends T> iterable) {
-        return reactiveSeq(Observable.fromIterable(iterable));
-    }
-
-
-
-    public static ReactiveSeq<Long> interval(long interval, TimeUnit unit) {
-        return interval(interval, interval, unit, Schedulers.computation());
-    }
-
-
-    public static ReactiveSeq<Long> interval(long interval, TimeUnit unit, Scheduler scheduler) {
-        return interval(interval, interval, unit, scheduler);
-    }
-
-
-    public static ReactiveSeq<Long> interval(long initialDelay, long period, TimeUnit unit) {
-        return interval(initialDelay, period, unit, Schedulers.computation());
-    }
-
-
-    public static ReactiveSeq<Long> interval(long initialDelay, long period, TimeUnit unit, Scheduler scheduler) {
-        return reactiveSeq(Observable.interval(initialDelay,period,unit,scheduler));
-    }
-
-
-    public static <T> ReactiveSeq<T> just(final T value) {
-        return reactiveSeq(Observable.just(value));
-    }
-    @SafeVarargs
-    public static <T> ReactiveSeq<T> just(final T... values) {
-        T[] array = values;
-        return reactiveSeq(Observable.fromArray(array));
-    }
-    public static <T> ReactiveSeq<T> of(final T value) {
-        return just(value);
-    }
-    @SafeVarargs
-    public static <T> ReactiveSeq<T> of(final T... values) {
-        return just(values);
-    }
-
-
-    public static <T> ReactiveSeq<T> merge(Iterable<? extends Observable<? extends T>> sequences) {
-        return merge(from(sequences));
-    }
-
-
-    public static <T> ReactiveSeq<T> merge(Iterable<? extends Observable<? extends T>> sequences, int maxConcurrent) {
-        return merge(from(sequences), maxConcurrent);
-    }
-
-    public static <T> ReactiveSeq<T> merge(Observable<? extends Observable<? extends T>> source) {
-        return reactiveSeq(Observable.merge(source));
-    }
-
-
-    public static <T> ReactiveSeq<T> merge(Observable<? extends Observable<? extends T>> source, int maxConcurrent) {
-       return reactiveSeq(Observable.merge(source,maxConcurrent));
-    }
-
-    public static <T> ReactiveSeq<T> mergeDelayError(Observable<? extends Observable<? extends T>> source) {
-        return reactiveSeq(Observable.mergeDelayError(source));
-    }
-
-    public static <T> ReactiveSeq<T> mergeDelayError(Observable<? extends Observable<? extends T>> source, int maxConcurrent) {
-        return reactiveSeq(Observable.mergeDelayError(source,maxConcurrent));
-    }
-
-    public static <T> ReactiveSeq<T> mergeDelayError(Iterable<? extends Observable<? extends T>> sequences) {
-        return mergeDelayError(from(sequences));
-    }
-
-    public static <T> ReactiveSeq<T> mergeDelayError(Iterable<? extends Observable<? extends T>> sequences, int maxConcurrent) {
-        return mergeDelayError(from(sequences), maxConcurrent);
-    }
-
-
-
-    public static <T> ReactiveSeq<T> never() {
-        return reactiveSeq(Observable.never());
-    }
-
-    public static ReactiveSeq<Integer> range(int start, int count) {
-       return reactiveSeq(Observable.range(start,count));
-    }
-
-
-
-    public static <T> ReactiveSeq<T> switchOnNext(Observable<? extends Observable<? extends T>> sequenceOfSequences) {
-        return reactiveSeq(Observable.switchOnNext(sequenceOfSequences));
-    }
-
-
-    public static <T> ReactiveSeq<T> switchOnNextDelayError(Observable<? extends Observable<? extends T>> sequenceOfSequences) {
-        return reactiveSeq(Observable.switchOnNext(sequenceOfSequences));
-    }
-
-
-    public static ReactiveSeq<Long> timer(long initialDelay, long period, TimeUnit unit) {
-        return interval(initialDelay, period, unit, Schedulers.computation());
-    }
-
-
-    public static ReactiveSeq<Long> timer(long delay, TimeUnit unit) {
-        return timer(delay, unit, Schedulers.computation());
-    }
-
-
-    public static ReactiveSeq<Long> timer(long delay, TimeUnit unit, Scheduler scheduler) {
-        return reactiveSeq(Observable.timer(delay,unit,scheduler));
-    }
-
-
 
 
     /**
@@ -333,7 +157,7 @@ public class Observables {
      * @return AnyMSeq wrapping an Observable
      */
     public static <T> AnyMSeq<observable,T> anyM(Observable<T> obs) {
-        return AnyM.ofSeq(reactiveSeq(obs), observable.INSTANCE);
+        return AnyM.ofSeq(ObservableReactiveSeq.reactiveSeq(obs), observable.INSTANCE);
     }
 
     /**
