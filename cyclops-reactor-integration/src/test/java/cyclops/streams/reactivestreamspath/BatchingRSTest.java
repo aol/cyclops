@@ -2,12 +2,11 @@ package cyclops.streams.reactivestreamspath;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.util.SimpleTimer;
-import cyclops.companion.reactor.Fluxs;
 import cyclops.data.TreeSet;
 import cyclops.data.Vector;
 import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import lombok.Value;
 import org.junit.Test;
 

@@ -13,7 +13,7 @@ import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import org.junit.Test;
 
 import cyclops.monads.AnyM;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 public class StreamableTest extends AbstractAnyMSeqOrderedDependentTest<Witness.streamable> {
 

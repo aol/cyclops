@@ -16,7 +16,7 @@ import cyclops.data.Seq;
 import cyclops.control.Future;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

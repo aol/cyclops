@@ -10,7 +10,7 @@ import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.*;
 

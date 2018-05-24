@@ -3,7 +3,7 @@ package cyclops.streams.push;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 

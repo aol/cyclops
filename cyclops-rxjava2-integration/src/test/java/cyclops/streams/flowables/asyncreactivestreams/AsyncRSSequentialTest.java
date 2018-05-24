@@ -2,14 +2,13 @@ package cyclops.streams.flowables.asyncreactivestreams;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.companion.rx2.Flowables;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.streams.flowables.syncflux.BaseSequentialTest;
 import org.hamcrest.Matchers;

@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 public class SeqUtils {
     /**

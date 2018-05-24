@@ -1,4 +1,4 @@
-package cyclops.reactive;
+package cyclops.companion;
 
 
 import com.oath.cyclops.internal.stream.StreamableImpl;
@@ -9,7 +9,6 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.companion.Streams;
 import cyclops.data.Seq;
 
 import cyclops.data.HashMap;
@@ -20,6 +19,8 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;

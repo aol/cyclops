@@ -3,14 +3,13 @@ package cyclops.streams.syncflux;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
 import org.hamcrest.Matchers;
 import org.junit.Test;

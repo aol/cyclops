@@ -3,7 +3,7 @@ package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.junit.Test;
 
 import java.util.ArrayList;

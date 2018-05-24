@@ -3,7 +3,7 @@ package cyclops.streams.push.reactivestreamspath;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
