@@ -218,7 +218,7 @@ public  class SyncReactiveStreamXTest {
 	}
 	@Test
 	public void skipTime(){
-		List<Integer> result = of(0,2,3,4,5,6)
+		List<Integer> result = of(2,2,3,4,5,6)
 				.peek(i->sleep(i*100))
 				.skip(1000,TimeUnit.MILLISECONDS)
 				.toList();
