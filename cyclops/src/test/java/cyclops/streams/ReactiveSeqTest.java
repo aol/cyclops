@@ -13,7 +13,7 @@ import cyclops.control.Future;
 import cyclops.data.Bag;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.data.EnumerationTest.Days;
 import org.junit.Before;
 import org.junit.Ignore;

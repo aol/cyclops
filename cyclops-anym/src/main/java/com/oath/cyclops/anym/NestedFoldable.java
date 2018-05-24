@@ -17,11 +17,7 @@ import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.monads.transformers.SeqT;
-import cyclops.monads.transformers.VectorT;
-import cyclops.reactive.Streamable;
-import cyclops.monads.transformers.ListT;
-import cyclops.reactive.collections.mutable.ListX;
-import cyclops.reactive.collections.mutable.MapX;
+import cyclops.companion.Streamable;
 import com.oath.cyclops.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 

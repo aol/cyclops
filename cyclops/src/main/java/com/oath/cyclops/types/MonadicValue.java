@@ -65,18 +65,14 @@ public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Fi
     @Override
     MonadicValue<T> filter(Predicate<? super T> predicate) ;
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Pure#unit(java.lang.Object)
-     */
+
     @Override
     public <T> MonadicValue<T> unit(T unit);
 
     @Override
     <T> MonadicValue<T> emptyUnit();
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.functor.Transformable#transform(java.util.function.Function)
-     */
+
     @Override
     <R> MonadicValue<R> map(Function<? super T, ? extends R> fn);
 

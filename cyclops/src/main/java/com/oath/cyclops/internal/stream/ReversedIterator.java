@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 import lombok.AllArgsConstructor;
 

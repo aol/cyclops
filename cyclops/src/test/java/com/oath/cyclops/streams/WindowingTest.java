@@ -1,13 +1,11 @@
 package com.oath.cyclops.streams;
 
 import static cyclops.reactive.ReactiveSeq.of;
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 public class WindowingTest {
 	ReactiveSeq<Integer> empty;

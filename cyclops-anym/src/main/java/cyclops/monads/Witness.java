@@ -15,7 +15,7 @@ import cyclops.control.Future;
 import cyclops.data.*;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.reactive.collections.mutable.ListX;

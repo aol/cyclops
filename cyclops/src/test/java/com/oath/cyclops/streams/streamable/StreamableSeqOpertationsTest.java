@@ -12,25 +12,21 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.internal.stream.OneShotStreamX;
 import cyclops.control.Option;
 import cyclops.data.HashMap;
-import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 public class StreamableSeqOpertationsTest {
 
 	<U> Streamable<U> of(U... array){

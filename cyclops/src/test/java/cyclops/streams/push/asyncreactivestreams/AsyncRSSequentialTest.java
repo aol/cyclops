@@ -9,7 +9,7 @@ import cyclops.data.LazySeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;

@@ -13,7 +13,7 @@ import cyclops.monads.AnyM;
 import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
 import org.hamcrest.Matchers;
 import cyclops.data.tuple.Tuple;
