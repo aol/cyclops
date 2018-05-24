@@ -27,20 +27,17 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.reactivestreams.Subscription;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.SocketException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -60,8 +57,6 @@ import static java.util.Comparator.comparing;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Matchers.anyInt;
 
 public abstract class AbstractIterableXTest {
 	public abstract <T> IterableX<T> empty();

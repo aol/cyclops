@@ -41,12 +41,11 @@ import cyclops.data.tuple.Tuple;
 import cyclops.companion.*;
 import cyclops.futurestream.LazyReact;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;

@@ -1,7 +1,7 @@
 package cyclops.reactiveSeq;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.openjdk.jmh.annotations.*;
 
 import java.util.ArrayList;

@@ -25,13 +25,12 @@ import cyclops.monads.transformers.ListT;
 import cyclops.monads.transformers.FutureT;
 import cyclops.futurestream.FutureStream;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 

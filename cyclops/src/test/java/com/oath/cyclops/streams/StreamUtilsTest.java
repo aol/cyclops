@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
@@ -32,7 +31,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 import lombok.val;
 public class StreamUtilsTest {

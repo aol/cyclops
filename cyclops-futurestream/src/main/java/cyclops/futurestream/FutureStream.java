@@ -35,7 +35,7 @@ import cyclops.function.Lambda;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
 import lombok.val;
 import cyclops.data.tuple.Tuple2;

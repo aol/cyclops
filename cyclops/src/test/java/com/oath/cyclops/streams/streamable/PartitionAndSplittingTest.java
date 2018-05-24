@@ -1,20 +1,19 @@
 package com.oath.cyclops.streams.streamable;
 
 
-import static cyclops.reactive.Streamable.of;
+import static cyclops.companion.Streamable.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import cyclops.control.Option;
 import org.junit.Test;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 
 public class PartitionAndSplittingTest {
 	@Test

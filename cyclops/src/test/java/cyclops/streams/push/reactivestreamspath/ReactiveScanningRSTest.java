@@ -2,7 +2,7 @@ package cyclops.streams.push.reactivestreamspath;
 
 import cyclops.companion.Reducers;
 
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.junit.Test;
 
 import java.util.Arrays;

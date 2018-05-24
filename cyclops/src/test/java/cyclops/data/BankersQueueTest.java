@@ -7,7 +7,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -16,7 +16,6 @@ import cyclops.data.Vector;
 import cyclops.function.*;
 
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
 import com.oath.cyclops.util.box.Mutable;
 
 import com.oath.cyclops.types.stream.HeadAndTail;

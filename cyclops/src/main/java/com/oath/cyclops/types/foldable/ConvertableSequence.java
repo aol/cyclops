@@ -8,7 +8,7 @@ import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
+import cyclops.companion.Streamable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
