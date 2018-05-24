@@ -32,7 +32,7 @@ import cyclops.companion.Streams;
 import cyclops.reactive.Streamable;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 
-public class SequenceMTest {
+public class SequentialTest {
 	@Test
 	public void startsWith(){
 		assertTrue(LazyReact.sequentialBuilder().of(1,2,3,4)
@@ -132,7 +132,8 @@ public class SequenceMTest {
 										.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
+		assertThat(result,hasItems(1,2));
+        assertThat(result,not(hasItems(4,5,6)));
 	}
 	@Test
 	public void limitTimeEmpty(){
