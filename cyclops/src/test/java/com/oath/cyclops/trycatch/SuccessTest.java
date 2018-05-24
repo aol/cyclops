@@ -170,9 +170,9 @@ public class SuccessTest {
 
 
 	@Test
-	public void testToFailedOptional() {
+	public void testToFailedOption() {
 
-		assertThat(success.toFailedOptional(),is(Optional.empty()));
+		assertThat(success.toFailedOption(),is(Optional.empty()));
 	}
 
 	@Test

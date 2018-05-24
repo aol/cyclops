@@ -782,11 +782,9 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         return xor.stream();
     }
 
-    /**
-     * @return Optional present if Failure (with Exception), Optional empty if Success
-     */
-    public Optional<X> toFailedOptional(){
-        return xor.swap().toOptional();
+
+    public Option<X> toFailedOption(){
+        return xor.swap().toOption();
     }
 
     /**

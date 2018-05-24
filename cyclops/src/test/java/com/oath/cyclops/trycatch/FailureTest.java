@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -172,7 +173,7 @@ public class FailureTest {
 
 	@Test
 	public void testToFailedOptional() {
-		assertThat(failure.toFailedOptional(),equalTo(Optional.of(error)));
+		assertThat(failure.toFailedOption(),equalTo(Option.of(error)));
 	}
 
 	@Test
