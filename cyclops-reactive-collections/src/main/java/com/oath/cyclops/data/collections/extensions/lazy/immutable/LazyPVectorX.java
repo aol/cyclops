@@ -124,12 +124,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,Persiste
         return from(get().insertAt(i,e));
     }
 
-    /**
-    @Override
-    public VectorX<T> insertAt(int i, Iterable<? extends T> list) {
-        return from(getValue().insertAt(i,list));
-    }
-**/
+
     @Override
     public VectorX<T> removeAt(int i) {
         return from(get().removeAt(i));
@@ -140,57 +135,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,Persiste
         return from(get().updateAt(i,e));
     }
 
-    /**
-    @Override
-    public VectorX<T> subList(int start, int end) {
-        return from(get().subList(start,end));
-    }
 
-    @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
-        return getValue().addAll(index,c);
-    }
-
-    @Override
-    public T getValue(int index) {
-        return getValue().getValue(index);
-    }
-
-    @Override
-    public T set(int index, T element) {
-        return getValue().set(index,element);
-    }
-
-    @Override
-    public void add(int index, T element) {
-         getValue().add(index,element);
-    }
-
-    @Override
-    public T removeValue(int index) {
-        return getValue().removeValue(index);
-    }
-
-    @Override
-    public int indexOf(Object o) {
-        return getValue().indexOf(o);
-    }
-
-    @Override
-    public int lastIndexOf(Object o) {
-        return getValue().lastIndexOf(o);
-    }
-
-    @Override
-    public ListIterator<T> listIterator() {
-        return getValue().listIterator();
-    }
-
-    @Override
-    public ListIterator<T> listIterator(int index) {
-        return getValue().listIterator(index);
-    }
-**/
 
 
     @Override

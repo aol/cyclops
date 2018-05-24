@@ -1,6 +1,7 @@
 package cyclops.streams.syncflux;
 
 import cyclops.companion.reactor.Fluxs;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
@@ -18,7 +19,7 @@ public class SyncSchedulingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Fluxs.reactiveSeq(Flux.just(array));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	ScheduledExecutorService ex =Executors.newScheduledThreadPool(1);
 	AtomicInteger count = new AtomicInteger(0);

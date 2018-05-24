@@ -2,6 +2,7 @@ package cyclops.streams.observables;
 
 
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 
@@ -21,7 +22,7 @@ public class AsyncCollectableTest extends CollectableTest {
             t.start();
         });
 
-        return Observables.reactiveSeq(Observables.observableFrom(seq));
+        return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
     }
 
 }

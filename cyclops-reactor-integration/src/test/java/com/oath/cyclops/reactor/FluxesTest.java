@@ -1,11 +1,12 @@
 package com.oath.cyclops.reactor;
 
-import com.oath.cyclops.reactor.adapter.FluxReactiveSeq;
+import com.oath.cyclops.reactor.adapter.FluxReactiveSeqImpl;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.monads.AnyM;
 import cyclops.monads.AnyMs;
+import cyclops.monads.FluxAnyM;
 import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.StreamT;
@@ -31,12 +32,12 @@ public class FluxesTest {
     public void fluxifyTest(){
 
         StreamT<optional,Integer> streamT = AnyMs.liftM(ReactiveSeq.of(1,2,3),optional.INSTANCE);
-        StreamT<optional,Integer> fluxes = Fluxs.fluxify(streamT);
+        StreamT<optional,Integer> fluxes = FluxAnyM.fluxify(streamT);
         AnyM<optional, Stream<Integer>> anyM = fluxes.unwrap();
         Optional<Stream<Integer>> opt = Witness.optional(anyM);
         Stream<Integer> stream = opt.get();
-        assertTrue(stream instanceof FluxReactiveSeq);
-        FluxReactiveSeq<Integer> f = (FluxReactiveSeq)stream;
+        assertTrue(stream instanceof FluxReactiveSeqImpl);
+        FluxReactiveSeqImpl<Integer> f = (FluxReactiveSeqImpl)stream;
         assertTrue(f.getFlux() instanceof Flux);
     }
     @Test

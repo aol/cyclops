@@ -2,6 +2,7 @@ package cyclops.streams.observables;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
@@ -32,7 +33,7 @@ public class AsyncJDKStreamTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
     protected <U> ReactiveSeq<U> rs(U... array){
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));

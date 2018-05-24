@@ -7,6 +7,7 @@ import cyclops.companion.Streams;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Maybe;
 import cyclops.monads.AnyM;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -29,7 +30,7 @@ import static org.junit.Assert.*;
 public class SyncRSExtensionOperatorsTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Fluxs.reactiveSeq(Flux.just(array));
+		return FluxReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	@Test
 	public void flatMapStreamFilterSimple(){

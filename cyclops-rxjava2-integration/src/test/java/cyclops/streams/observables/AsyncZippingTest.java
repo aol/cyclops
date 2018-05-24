@@ -1,6 +1,7 @@
 package cyclops.streams.observables;
 
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple;
@@ -41,7 +42,7 @@ public class AsyncZippingTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 	@Test
 	public void zipLatest(){

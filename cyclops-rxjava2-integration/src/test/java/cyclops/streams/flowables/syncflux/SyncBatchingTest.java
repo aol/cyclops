@@ -5,6 +5,7 @@ import com.oath.cyclops.util.SimpleTimer;
 import cyclops.companion.rx2.Flowables;
 import cyclops.data.TreeSet;
 import cyclops.data.Vector;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.Value;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 public class SyncBatchingTest {
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array));
 	}
 	@Test
 	public void batchUntil(){
@@ -128,7 +129,7 @@ public class SyncBatchingTest {
 				.peek(System.out::println)
 				.toList();
 
-	 assertTrue(System.currentTimeMillis()-start>1900);
+        assertThat(System.currentTimeMillis()-start,greaterThan(1900L));
 
 	}
 	@Test

@@ -2,11 +2,17 @@ package com.oath.cyclops.rx;
 
 import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.companion.rx2.Flowables;
 import cyclops.companion.rx2.Observables;
+import cyclops.monads.ObservableAnyM;
 import cyclops.monads.Rx2Witness.observable;
+import cyclops.reactive.FlowableCollections;
+import cyclops.reactive.FlowableReactiveSeq;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import org.junit.Test;
 
@@ -14,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-import static cyclops.companion.rx2.Observables.reactiveSeq;
+import static cyclops.reactive.ObservableReactiveSeq.reactiveSeq;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -36,6 +42,65 @@ public class RxTest {
 
         ListX<Integer> asyncList = ListX.listX(reactiveSeq(async))
                                         .map(i->i+1);
+
+
+
+        System.out.println("Blocked? " + complete.get());
+
+        System.out.println("First value is "  + asyncList.get(0));
+
+        System.out.println("Blocked? " + complete.get());
+
+
+
+
+    }
+    @Test
+    public void asyncFlowableList(){
+
+        AtomicBoolean complete = new AtomicBoolean(false);
+
+
+        Flowable<Integer> async =  Flowable.fromPublisher(Spouts.reactive(Stream.of(100,200,300), Executors.newFixedThreadPool(1)))
+            .map(i->{
+                Thread.sleep(5000);
+                return i;
+            })
+            .doOnComplete(()->complete.set(true));
+
+        ListX<Integer> asyncList = ListX.listX(FlowableReactiveSeq.reactiveSeq(async))
+                                        .map(i->i+1);
+
+
+        System.out.println("Calling materialize!");
+        asyncList.materialize();
+        System.out.println("Blocked? " + complete.get());
+
+        System.out.println("First value is "  + asyncList.get(0));
+
+        System.out.println("Blocked? " + complete.get());
+
+
+
+
+    }
+    @Test
+    public void asyncFlowableList2(){
+
+        AtomicBoolean complete = new AtomicBoolean(false);
+
+
+        Flowable<Integer> async =  Flowable.fromPublisher(Spouts.reactive(Stream.of(100,200,300), Executors.newFixedThreadPool(1)))
+            .map(i->{
+                Thread.sleep(100);
+                return i;
+            })
+            .doOnComplete(()->complete.set(true));
+
+        System.out.println("Initializing!");
+        ListX<Integer> asyncList = FlowableCollections.listX(async)
+                                                      .map(i->i+1);
+
 
         System.out.println("Blocked? " + complete.get());
 
@@ -67,7 +132,7 @@ public class RxTest {
             Thread.yield();
         }
 
-        Observable<Integer> converted = Observables.raw(monad);
+        Observable<Integer> converted = ObservableAnyM.raw(monad);
     }
     @Test
     public void observable() {

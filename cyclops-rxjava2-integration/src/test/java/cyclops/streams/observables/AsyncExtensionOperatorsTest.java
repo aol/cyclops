@@ -10,6 +10,7 @@ import cyclops.companion.rx2.Observables;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -42,7 +43,7 @@ public class AsyncExtensionOperatorsTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 
 	@Test

@@ -2,9 +2,9 @@ package com.oath.cyclops.rx2.adapter;
 
 
 import com.oath.cyclops.anym.extensability.AbstractMonadAdapter;
-import cyclops.companion.rx2.Flowables;
 import cyclops.monads.AnyM;
 
+import cyclops.monads.FlowableAnyM;
 import cyclops.monads.Rx2Witness;
 import cyclops.monads.Rx2Witness.flowable;
 import cyclops.reactive.ReactiveSeq;
@@ -33,13 +33,13 @@ public class FlowableAdapter extends AbstractMonadAdapter<flowable> {
         Flowable<T> f = stream(apply);
         Flowable<? extends Function<? super T, ? extends R>> fnF = stream(fn);
         Flowable<R> res = fnF.zipWith(f, (a, b) -> a.apply(b));
-        return Flowables.anyM(res);
+        return FlowableAnyM.anyM(res);
 
     }
 
     @Override
     public <T> AnyM<flowable, T> filter(AnyM<flowable, T> t, Predicate<? super T> fn) {
-        return Flowables.anyM(stream(t).filter(i->fn.test(i)));
+        return FlowableAnyM.anyM(stream(t).filter(i->fn.test(i)));
     }
 
     <T> Flowable<T> stream(AnyM<flowable,T> anyM){
@@ -48,7 +48,7 @@ public class FlowableAdapter extends AbstractMonadAdapter<flowable> {
 
     @Override
     public <T> AnyM<flowable, T> empty() {
-        return Flowables.anyM(Flowable.empty());
+        return FlowableAnyM.anyM(Flowable.empty());
     }
 
 
@@ -56,18 +56,18 @@ public class FlowableAdapter extends AbstractMonadAdapter<flowable> {
     @Override
     public <T, R> AnyM<flowable, R> flatMap(AnyM<flowable, T> t,
                                      Function<? super T, ? extends AnyM<flowable, ? extends R>> fn) {
-        return Flowables.anyM(stream(t).flatMap(i->fn.andThen(a->stream(a)).apply(i)));
+        return FlowableAnyM.anyM(stream(t).flatMap(i->fn.andThen(a->stream(a)).apply(i)));
 
     }
 
     @Override
     public <T> AnyM<flowable, T> unitIterable(Iterable<T> it)  {
-        return Flowables.anyM(Flowable.fromIterable(it));
+        return FlowableAnyM.anyM(Flowable.fromIterable(it));
     }
 
     @Override
     public <T> AnyM<flowable, T> unit(T o) {
-        return Flowables.anyM(Flowable.just(o));
+        return FlowableAnyM.anyM(Flowable.just(o));
     }
 
     @Override
@@ -77,6 +77,6 @@ public class FlowableAdapter extends AbstractMonadAdapter<flowable> {
 
     @Override
     public <T, R> AnyM<flowable, R> map(AnyM<flowable, T> t, Function<? super T, ? extends R> fn) {
-        return Flowables.anyM(stream(t).map(i->fn.apply(i)));
+        return FlowableAnyM.anyM(stream(t).map(i->fn.apply(i)));
     }
 }

@@ -2,6 +2,7 @@ package cyclops.streams.observables;
 
 import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
@@ -36,7 +37,7 @@ public class AsyncHotStreamTest {
 			});
 			t.start();
 		});
-		return Observables.reactiveSeq(Observables.observableFrom(seq));
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 	protected ReactiveSeq<Integer> range(int start, int end){
 

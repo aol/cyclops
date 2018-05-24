@@ -14,6 +14,7 @@ import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.monads.Witness;
+import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.reactor.MonoT;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -33,9 +34,9 @@ import static org.junit.Assert.*;
 
 public class MonoTTest implements Printable {
 
-	MonoT<Witness.optional,Integer> just;
-	MonoT<Witness.optional,Integer> none;
-	MonoT<Witness.optional,Integer> one;
+	MonoT<optional,Integer> just;
+	MonoT<optional,Integer> none;
+	MonoT<optional,Integer> one;
 	@Before
 	public void setUp() throws Exception {
 

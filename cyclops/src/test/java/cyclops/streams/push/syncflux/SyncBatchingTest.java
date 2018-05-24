@@ -128,7 +128,7 @@ public class SyncBatchingTest {
 				.peek(System.out::println)
 				.toList();
 
-	 assertTrue(System.currentTimeMillis()-start>1900);
+        assertThat(System.currentTimeMillis()-start,greaterThan(1900L));
 
 	}
 	@Test

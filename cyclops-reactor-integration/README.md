@@ -32,7 +32,7 @@ The ListX only blocks on first access to the data.
 
 ```java
 import static cyclops.collections.mutable.ListX.listX;
-import static cyclops.companion.rx.Observables.reactiveSeq;
+import static cyclops.companion.rx.ObservableReactiveSeq.reactiveSeq;
 AtomicBoolean complete = new AtomicBoolean(false);
 
 
@@ -88,15 +88,15 @@ Use the Fluxs companion class to create Flux backed ReactiveSeqs
 
 Create an Flux-backed ReactiveSeq directly or from an Observable
 ```java
-ReactiveSeq<Integer> seq = Fluxs.just(1,2,3);
-ReactiveSeq<Integer> seq2 = Fluxs.reactiveSeq(Fluxs.just(1,2,3));
+ReactiveSeq<Integer> seq = FluxReactiveSeq.just(1,2,3);
+ReactiveSeq<Integer> seq2 = FluxReactiveSeq.reactiveSeq(FluxReactiveSeq.just(1,2,3));
 ```
 
 With an Flux-back ReactiveSeq we can create Reactive Xtended Collections e.g. an extended j.u.List
 
 ```java
 import static cyclops.collections.mutable.ListX.listX;
-import static cyclops.companion.reactor.Fluxs.reactiveSeq;
+import static cyclops.companion.reactor.FluxReactiveSeq.reactiveSeq;
 
 ListX<Integer> asyncList = listX(reactiveSeq(flux))
                                         .map(i->i+1);
@@ -106,7 +106,7 @@ Or a reactive Cyclops Vector
 
 ```java
 
-import static cyclops.companion.reactor.Fluxs.reactiveSeq;
+import static cyclops.companion.reactor.FluxReactiveSeq.reactiveSeq;
 
 VectorX<Integer> asyncList = VectorX.vectorX(reactiveSeq(flux))
                                     .map(i->i+1);
@@ -134,7 +134,7 @@ For FluxReactiveSeq the visit method always executes the #2 function
 
 ```java
 
-ReactiveSeq<Integer> seq = Fluxs.just(1,2,3);
+ReactiveSeq<Integer> seq = FluxReactiveSeq.just(1,2,3);
 
 String type = seq.visit(sync->"synchronous",rs->"reactive-streams",async->"pure async");
 //"reactive-streams"
@@ -148,7 +148,7 @@ Use Reactor to extend cyclops-react's array of operations for and from Flux
 ```java
 import static cyclops.streams.ReactorOperators.flux;
 
-ReactiveSeq<List<Integer>> seq = Fluxs.of(1,2,3)
+ReactiveSeq<List<Integer>> seq = FluxReactiveSeq.of(1,2,3)
                                       .map(i->i+1)
                                       .to(flux(o->o.buffer(10)));
 ```
@@ -246,7 +246,7 @@ Blocked? false
 
 Fluxs can also be defined as part of the reactiveSeq family of types inside AnyM - ```AnyM<reactiveSeq,Integer>``` 
 ```java
-AnyM<reactiveSeq,Integer> anyM = Fluxs.just(1,2,3)
+AnyM<reactiveSeq,Integer> anyM = FluxReactiveSeq.just(1,2,3)
                                             .anyM();
 
 ReactiveSeq<Integer> seq = Witness.reactiveSeq(anyM);
@@ -270,7 +270,7 @@ StreamT<list,Integer> doubled = listOfFluxs.map(i->i*2);
 Via Flux backed ReactiveSeq
 
 ```java
-ReactiveSeq<Integer> reactive = Fluxs.just(1,2,3);
+ReactiveSeq<Integer> reactive = FluxReactiveSeq.just(1,2,3);
 StreamT<optional,Integer> transformer = reactive.liftM(Witness.optional.INSTANCE);
 ```
 
@@ -278,7 +278,7 @@ Extacting Flux from StreamT
 
 Use the unwrapTo method in conjunction with Fluxs::fromStream to get an 
 ```java 
-StreamT<list,Integer> trans = Fluxs.just(1,2,3).liftM(list.INSTANCE);
+StreamT<list,Integer> trans = FluxReactiveSeq.just(1,2,3).liftM(list.INSTANCE);
 
 AnyM<list,Flux<T>> anyM = trans.unwrapTo(Fluxs::fromStream);
 ```
@@ -286,7 +286,7 @@ AnyM<list,Flux<T>> anyM = trans.unwrapTo(Fluxs::fromStream);
 Use Witness.list to convert to a List
 
 ```java
-StreamT<list,Integer> trans = Fluxs.just(1,2,3).liftM(list.INSTANCE);
+StreamT<list,Integer> trans = FluxReactiveSeq.just(1,2,3).liftM(list.INSTANCE);
 
 ListX<Flux<Integer>> listObs = Witness.list(trans.unwrapTo(Fluxs::fromStream));
 ```

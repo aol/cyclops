@@ -259,11 +259,7 @@ public interface CollectionX<T> extends IterableX<T>,
         return this;
 
     }
-    default CollectionX<T> materializeReversed(){
 
-        return reverse().materialize();
-
-    }
 
 
 

@@ -1,6 +1,7 @@
 package cyclops.streams.observables;
 
 import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.junit.Before;
@@ -43,7 +44,7 @@ public class AsyncForEachSequenceMTest {
 			});
 			t.start();
 		});
-        return Observables.reactiveSeq(Observables.observableFrom(seq));
+        return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
 	@Test
 	public void onComplete(){

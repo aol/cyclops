@@ -6,6 +6,7 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import cyclops.companion.reactor.Fluxs;
 import cyclops.monads.AnyMs;
 import cyclops.monads.Witness.list;
+import cyclops.reactive.FluxReactiveSeq;
 
 
 public class StreamTSeqConvertableSequenceTest extends AbstractConvertableSequenceTest {
@@ -13,13 +14,13 @@ public class StreamTSeqConvertableSequenceTest extends AbstractConvertableSequen
     @Override
     public <T> ConvertableSequence<T> of(T... elements) {
 
-        return AnyMs.liftM(Fluxs.of(elements), list.INSTANCE).to();
+        return AnyMs.liftM(FluxReactiveSeq.of(elements), list.INSTANCE).to();
     }
 
     @Override
     public <T> ConvertableSequence<T> empty() {
 
-        return AnyMs.liftM(Fluxs.<T>empty(),list.INSTANCE).to();
+        return AnyMs.liftM(FluxReactiveSeq.<T>empty(),list.INSTANCE).to();
     }
 
 }

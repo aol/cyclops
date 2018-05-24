@@ -8,6 +8,7 @@ import cyclops.companion.reactor.Fluxs;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.monads.AnyM;
+import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
@@ -31,43 +32,43 @@ public class ExtensionOperatorsRSTest {
 
 	@Test
 	public void flatMapStreamFilterSimple(){
-		assertThat(Fluxs.of(1,2).flatMap(i-> ReactiveSeq.of(i).filter(x->x<2))
+		assertThat(FluxReactiveSeq.of(1,2).flatMap(i-> ReactiveSeq.of(i).filter(x->x<2))
 						.to(Streamable::fromStream).collect(Collectors.toList()),
 				Matchers.equalTo(Arrays.asList(1)));
 	}
     @Test
     public void combine(){
-        assertThat(Fluxs.of(1,1,2,3)
+        assertThat(FluxReactiveSeq.of(1,1,2,3)
                    .combine((a, b)->a.equals(b), Semigroups.intSum)
                    .to(Streamable::fromStream).to(ReactiveConvertableSequence::converter).listX(),equalTo(ListX.of(4,3)));
 
     }
 	@Test
 	public void subStream(){
-		List<Integer> list = Fluxs.of(1,2,3,4,5,6).subStream(1,3).toList();
+		List<Integer> list = FluxReactiveSeq.of(1,2,3,4,5,6).subStream(1,3).toList();
 		assertThat(list,equalTo(Arrays.asList(2,3)));
 	}
 	@Test
     public void emptyPermutations() {
-        assertThat(Fluxs.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
+        assertThat(FluxReactiveSeq.of().permutations().map(s->s.toList()).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void permuations3() {
-    	System.out.println(Fluxs.of(1, 2, 3).permutations().map(s->s.toList()).toList());
-        assertThat(Fluxs.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
-        		equalTo(Fluxs.of(Fluxs.of(1, 2, 3),
-        		Fluxs.of(1, 3, 2), Fluxs.of(2, 1, 3), Fluxs.of(2, 3, 1), Fluxs.of(3, 1, 2), Fluxs.of(3, 2, 1)).map(s->s.toList()).toList()));
+    	System.out.println(FluxReactiveSeq.of(1, 2, 3).permutations().map(s->s.toList()).toList());
+        assertThat(FluxReactiveSeq.of(1, 2, 3).permutations().map(s->s.toList()).toList(),
+        		equalTo(FluxReactiveSeq.of(FluxReactiveSeq.of(1, 2, 3),
+        		FluxReactiveSeq.of(1, 3, 2), FluxReactiveSeq.of(2, 1, 3), FluxReactiveSeq.of(2, 3, 1), FluxReactiveSeq.of(3, 1, 2), FluxReactiveSeq.of(3, 2, 1)).map(s->s.toList()).toList()));
     }
 
     @Test
     public void emptyAllCombinations() {
-        assertThat(Fluxs.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
+        assertThat(FluxReactiveSeq.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
     }
 
     @Test
     public void allCombinations3() {
-        assertThat(Fluxs.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
+        assertThat(FluxReactiveSeq.of(1, 2, 3).combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList(), Arrays.asList(1), Arrays.asList(2),
         		Arrays.asList(3), Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3), Arrays.asList(1, 2, 3))));
     }
 
@@ -75,26 +76,26 @@ public class ExtensionOperatorsRSTest {
 
     @Test
     public void emptyCombinations() {
-        assertThat(Fluxs.of().combinations(2).toList(),equalTo(Arrays.asList()));
+        assertThat(FluxReactiveSeq.of().combinations(2).toList(),equalTo(Arrays.asList()));
     }
 
     @Test
     public void combinations2() {
-        assertThat(Fluxs.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
+        assertThat(FluxReactiveSeq.of(1, 2, 3).combinations(2).map(s->s.toList()).toList(),
                 equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
 	@Test
 	public void onEmptySwitchEmpty(){
-		assertThat(Fluxs.of()
-							.onEmptySwitch(()-> Fluxs.of(1,2,3))
+		assertThat(FluxReactiveSeq.of()
+							.onEmptySwitch(()-> FluxReactiveSeq.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(1,2,3)));
 
 	}
 	@Test
 	public void onEmptySwitch(){
-		assertThat(Fluxs.of(4,5,6)
-							.onEmptySwitch(()-> Fluxs.of(1,2,3))
+		assertThat(FluxReactiveSeq.of(4,5,6)
+							.onEmptySwitch(()-> FluxReactiveSeq.of(1,2,3))
 							.toList(),
 							equalTo(Arrays.asList(4,5,6)));
 
@@ -104,13 +105,13 @@ public class ExtensionOperatorsRSTest {
 	public void elapsedIsPositive(){
 
 
-		assertTrue(Fluxs.of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5).elapsed().noneMatch(t->t._2()<0));
 	}
 	@Test
 	public void timeStamp(){
 
 
-		assertTrue(Fluxs.of(1,2,3,4,5)
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5)
 							.timestamp()
 							.allMatch(t-> t._2() <= System.currentTimeMillis()));
 
@@ -118,64 +119,64 @@ public class ExtensionOperatorsRSTest {
 	}
 	@Test
 	public void elementAt0(){
-		assertThat(Fluxs.of(1).elementAt(0),equalTo(Option.some(1)));
+		assertThat(FluxReactiveSeq.of(1).elementAt(0),equalTo(Option.some(1)));
 	}
 	@Test
 	public void getMultple(){
-		assertThat(Fluxs.of(1,2,3,4,5).elementAt(2),equalTo(Maybe.just(3)));
+		assertThat(FluxReactiveSeq.of(1,2,3,4,5).elementAt(2),equalTo(Maybe.just(3)));
 	}
 
 	@Test
 	public void getMultiple1(){
-		assertFalse(Fluxs.of(1).elementAt(1).isPresent());
+		assertFalse(FluxReactiveSeq.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void getEmpty(){
-    assertFalse(Fluxs.of().elementAt(0).isPresent());
+    assertFalse(FluxReactiveSeq.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void get0(){
-		assertTrue(Fluxs.of(1).elementAt(0).isPresent());
+		assertTrue(FluxReactiveSeq.of(1).elementAt(0).isPresent());
 	}
 	@Test
 	public void getAtMultple(){
-		assertThat(Fluxs.of(1,2,3,4,5).elementAt(2).orElse(-1),equalTo(3));
+		assertThat(FluxReactiveSeq.of(1,2,3,4,5).elementAt(2).orElse(-1),equalTo(3));
 	}
 	@Test
 	public void getAt1(){
-		assertFalse(Fluxs.of(1).elementAt(1).isPresent());
+		assertFalse(FluxReactiveSeq.of(1).elementAt(1).isPresent());
 	}
 	@Test
 	public void elementAtEmpty(){
-		assertFalse(Fluxs.of().elementAt(0).isPresent());
+		assertFalse(FluxReactiveSeq.of().elementAt(0).isPresent());
 	}
 	@Test
 	public void singleTest(){
-		assertThat(Fluxs.of(1).single().orElse(null),equalTo(1));
+		assertThat(FluxReactiveSeq.of(1).single().orElse(null),equalTo(1));
 	}
 	@Test
 	public void singleEmpty(){
-		assertNull(Fluxs.of().single().orElse(null));
+		assertNull(FluxReactiveSeq.of().single().orElse(null));
 	}
 	@Test
 	public void single2(){
-		assertNull(Fluxs.of(1,2).single().orElse(null));
+		assertNull(FluxReactiveSeq.of(1,2).single().orElse(null));
 	}
 	@Test
 	public void singleOptionalTest(){
-		assertThat(Fluxs.of(1).single().orElse(null),equalTo(1));
+		assertThat(FluxReactiveSeq.of(1).single().orElse(null),equalTo(1));
 	}
 	@Test
 	public void singleOptionalEmpty(){
-		assertFalse(Fluxs.of().single().isPresent());
+		assertFalse(FluxReactiveSeq.of().single().isPresent());
 	}
 	@Test
 	public void singleOptonal2(){
-		assertFalse(Fluxs.of(1,2).single().isPresent());
+		assertFalse(FluxReactiveSeq.of(1,2).single().isPresent());
 	}
 	@Test
 	public void limitTime(){
-		List<Integer> result = Fluxs.of(1,2,3,4,5,6)
+		List<Integer> result = FluxReactiveSeq.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -185,7 +186,7 @@ public class ExtensionOperatorsRSTest {
 	}
 	@Test
 	public void limitTimeEmpty(){
-		List<Integer> result = Fluxs.<Integer>of()
+		List<Integer> result = FluxReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
 										.limit(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -195,7 +196,7 @@ public class ExtensionOperatorsRSTest {
 	}
 	@Test
 	public void skipTime(){
-		List<Integer> result = Fluxs.of(1,2,3,4,5,6)
+		List<Integer> result = FluxReactiveSeq.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
@@ -223,98 +224,98 @@ public class ExtensionOperatorsRSTest {
 	}
 	@Test
 	public void testSkipLast(){
-		assertThat(Fluxs.of(1,2,3,4,5)
+		assertThat(FluxReactiveSeq.of(1,2,3,4,5)
 							.skipLast(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
-		assertThat(Fluxs.of()
+		assertThat(FluxReactiveSeq.of()
 							.skipLast(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
-		assertThat(Fluxs.of(1,2,3,4,5)
+		assertThat(FluxReactiveSeq.of(1,2,3,4,5)
 							.limitLast(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLast1(){
-		assertThat(Fluxs.of(1,2,3,4,5)
+		assertThat(FluxReactiveSeq.of(1,2,3,4,5)
 				.limitLast(1)
 				.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
-		assertThat(Fluxs.of()
+		assertThat(FluxReactiveSeq.of()
 							.limitLast(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void endsWith(){
-		assertTrue(Fluxs.of(1,2,3,4,5,6)
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWithIterable(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
-		assertFalse(Fluxs.of(1,2,3,4,5,6)
+		assertFalse(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWithIterable(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
-		assertFalse(Fluxs.of(1,2,3,4,5,6)
+		assertFalse(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
-		assertTrue(Fluxs.of(1,2,3,4,5,6)
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
-		assertFalse(Fluxs.of()
+		assertFalse(FluxReactiveSeq.of()
 				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
-		assertTrue(Fluxs.<Integer>of()
+		assertTrue(FluxReactiveSeq.<Integer>of()
 				.endsWithIterable(Arrays.asList()));
 	}
 	@Test
 	public void endsWithStream(){
-		assertTrue(Fluxs.of(1,2,3,4,5,6)
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(5,6)));
 	}
 	@Test
 	public void endsWithFalseStream(){
-		assertFalse(Fluxs.of(1,2,3,4,5,6)
+		assertFalse(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(5,6,7)));
 	}
 	@Test
 	public void endsWithToLongStream(){
-		assertFalse(Fluxs.of(1,2,3,4,5,6)
+		assertFalse(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWith(Stream.of(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmptyStream(){
-		assertTrue(Fluxs.of(1,2,3,4,5,6)
+		assertTrue(FluxReactiveSeq.of(1,2,3,4,5,6)
 				.endsWith(Stream.of()));
 	}
 	@Test
 	public void endsWithWhenEmptyStream(){
-		assertFalse(Fluxs.of()
+		assertFalse(FluxReactiveSeq.of()
 				.endsWith(Stream.of(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmptyStream(){
-		assertTrue(Fluxs.<Integer>of()
+		assertTrue(FluxReactiveSeq.<Integer>of()
 				.endsWith(Stream.of()));
 	}
 
 	@Test
 	public void streamable(){
-		Streamable<Integer> repeat = Fluxs.of(1,2,3,4,5,6)
+		Streamable<Integer> repeat = FluxReactiveSeq.of(1,2,3,4,5,6)
 												.map(i->i*2).to()
 												.streamable();
 
@@ -325,12 +326,12 @@ public class ExtensionOperatorsRSTest {
 
 	@Test
 	public void splitBy(){
-		assertThat( Fluxs.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
-		assertThat( Fluxs.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
+		assertThat( FluxReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._1().toList(),equalTo(Arrays.asList(1,2,3)));
+		assertThat( FluxReactiveSeq.of(1, 2, 3, 4, 5, 6).splitBy(i->i<4)._2().toList(),equalTo(Arrays.asList(4,5,6)));
 	}
 	@Test
 	public void testLazy(){
-		Collection<Integer> col = Fluxs.of(1,2,3,4,5)
+		Collection<Integer> col = FluxReactiveSeq.of(1,2,3,4,5)
 											.peek(System.out::println).to()
 											.lazyCollection();
 		System.out.println("first!");
@@ -373,11 +374,11 @@ public class ExtensionOperatorsRSTest {
 
 
 
-		assertThat(Fluxs.of(1, "a", 2, "b", 3).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
+		assertThat(FluxReactiveSeq.of(1, "a", 2, "b", 3).ofType(Integer.class).toList(),containsInAnyOrder(1, 2, 3));
 
-		assertThat(Fluxs.of(1, "a", 2, "b", 3).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
+		assertThat(FluxReactiveSeq.of(1, "a", 2, "b", 3).ofType(Integer.class).toList(),not(containsInAnyOrder("a", "b",null)));
 
-		assertThat(Fluxs.of(1, "a", 2, "b", 3)
+		assertThat(FluxReactiveSeq.of(1, "a", 2, "b", 3)
 
 				.ofType(Serializable.class).toList(),containsInAnyOrder(1, "a", 2, "b", 3));
 
@@ -388,7 +389,7 @@ public class ExtensionOperatorsRSTest {
 	@Test
 	public void testIntersperse() {
 
-		assertThat(Fluxs.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
+		assertThat(FluxReactiveSeq.of(1,2,3).intersperse(0).toList(),equalTo(Arrays.asList(1,0,2,0,3)));
 
 
 
@@ -397,7 +398,7 @@ public class ExtensionOperatorsRSTest {
 
 	@Test
 	public void xMatch(){
-		assertTrue(Fluxs.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
+		assertTrue(FluxReactiveSeq.of(1,2,3,5,6,7).xMatch(3, i-> i>4 ));
 	}
 
 

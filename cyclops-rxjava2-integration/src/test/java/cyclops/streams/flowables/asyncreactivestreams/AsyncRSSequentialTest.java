@@ -7,6 +7,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
@@ -38,7 +39,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     @Override
     protected <U> ReactiveSeq<U> of(U... array){
 
-        return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+        return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
     }
     @Test

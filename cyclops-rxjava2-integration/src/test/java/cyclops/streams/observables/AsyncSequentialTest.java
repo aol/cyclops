@@ -9,6 +9,7 @@ import cyclops.control.Either;
 import cyclops.control.Maybe;
 
 import cyclops.control.Option;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.reactive.Streamable;
@@ -57,7 +58,7 @@ public class AsyncSequentialTest extends BaseSequentialTest {
             }).start();
 
         });
-        return Observables.reactiveSeq(Observables.observableFrom(seq));
+        return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
     }
     @Test
     public void testCycle() {

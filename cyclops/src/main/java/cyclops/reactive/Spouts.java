@@ -211,7 +211,7 @@ public interface Spouts {
 
             return null;
         });
-        return new ReactiveStreamX<T>(new PublisherToOperator<T>(new Publisher<T>() {
+        return reactiveStream(new PublisherToOperator<T>(new Publisher<T>() {
 
 
             @Override
@@ -247,36 +247,36 @@ public interface Spouts {
         return reactive.reactiveStream();
     }
     static <T> ReactiveSeq<T> reactiveStream(Operator<T> s){
-        return new ReactiveStreamX<>(s).withAsync(Type.BACKPRESSURE);
+        return new ReactiveStreamX<>(s,Type.BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> asyncStream(Operator<T> s){
-        return new ReactiveStreamX<>(s).withAsync(Type.NO_BACKPRESSURE);
+        return new ReactiveStreamX<>(s,Type.NO_BACKPRESSURE);
     }
     static <T> ReactiveSeq<T> syncStream(Operator<T> s){
         return new ReactiveStreamX<>(s);
     }
 
     static <T> ReactiveSeq<T> iterate(final T seed, final UnaryOperator<T> f) {
-        return new ReactiveStreamX(new IterateOperator<T>(seed,f));
+        return syncStream(new IterateOperator<T>(seed,f));
     }
     static <T> ReactiveSeq<T> iterate(final T seed, Predicate<? super T> pred, final UnaryOperator<T> f) {
-        return new ReactiveStreamX(new IteratePredicateOperator<T>(seed,f,pred));
+        return syncStream(new IteratePredicateOperator<T>(seed,f,pred));
 
     }
     public static ReactiveSeq<Integer> range(int start, int end){
         if(start<end)
-            return new ReactiveStreamX<Integer>(new RangeIntOperator(start,end));
+            return syncStream(new RangeIntOperator(start,end));
         else
-            return new ReactiveStreamX<Integer>(new RangeIntOperator(end,start));
+            return syncStream(new RangeIntOperator(end,start));
     }
     public static  ReactiveSeq<Long> rangeLong(long start, long end){
         if(start<end)
-            return new ReactiveStreamX<>(new RangeLongOperator(start,end));
+            return syncStream(new RangeLongOperator(start,end));
         else
-            return new ReactiveStreamX<>(new RangeLongOperator(end,start));
+            return syncStream(new RangeLongOperator(end,start));
     }
     public static  <T> ReactiveSeq<T> of(T value){
-        return new ReactiveStreamX<>(new SingleValueOperator<T>(value));
+        return syncStream(new SingleValueOperator<T>(value));
     }
 
     public static <T> ReactiveSeq<T> ofNullable(T nullable){
@@ -290,27 +290,27 @@ public interface Spouts {
     }
 
     public static  <T> ReactiveSeq<T> of(T... values){
-        return new ReactiveStreamX<>(new ArrayOfValuesOperator<T>(values));
+        return syncStream(new ArrayOfValuesOperator<T>(values));
     }
     public static  <T> ReactiveSeq<T> fromIterable(Iterable<T> iterable){
         if(iterable instanceof ReactiveStreamX)
             return (ReactiveSeq<T>)iterable;
-        return new ReactiveStreamX<>(new IterableSourceOperator<T>(iterable));
+        return syncStream(new IterableSourceOperator<T>(iterable));
     }
     public static  <T> ReactiveSeq<T> fromSpliterator(Spliterator<T> spliterator){
-        return new ReactiveStreamX<>(new SpliteratorToOperator<T>(spliterator));
+        return syncStream(new SpliteratorToOperator<T>(spliterator));
     }
     /**
      * @see Stream#generate(Supplier)
      */
     static <T> ReactiveSeq<T> generate(final Supplier<T> s) {
-        return new ReactiveStreamX<>(new GenerateOperator<T>(s));
+        return syncStream(new GenerateOperator<T>(s));
 
     }
     static <T> ReactiveSeq<T> from(Publisher<? extends T> pub){
         if(pub instanceof ReactiveSeq)
             return (ReactiveSeq<T>)pub;
-        return new ReactiveStreamX<T>(new PublisherToOperator<T>((Publisher<T>)pub), Type.BACKPRESSURE);
+        return reactiveStream(new PublisherToOperator<T>((Publisher<T>)pub));
     }
     static <T> ReactiveSeq<T> merge(Publisher<? extends Publisher<T>> publisher){
         return mergeLatest((Publisher[])Spouts.from(publisher).toArray());
@@ -339,7 +339,7 @@ public interface Spouts {
                 op[i] = new PublisherToOperator<T>(array[i]);
             }
         }
-        return new ReactiveStreamX<T>(new MergeLatestOperator<T>(op), Type.BACKPRESSURE);
+        return reactiveStream(new MergeLatestOperator<T>(op));
 
 
     }
@@ -540,12 +540,12 @@ public interface Spouts {
     }
     public static  <T> ReactiveSeq<T> concat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new ArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
+        return reactiveStream(new ArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> lazyConcat(Publisher<Publisher<T>> pubs){
 
-        return new ReactiveStreamX<>(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
+        return reactiveStream(new LazyArrayConcatonatingOperator<T>(Spouts.from(pubs).seq()
                 .map(p->new PublisherToOperator<T>(p))));
     }
     public static  <T> ReactiveSeq<T> concat(Stream<? extends T>... streams){

@@ -2,6 +2,7 @@ package cyclops.streams.flowables.asyncreactivestreams;
 
 
 import cyclops.companion.rx2.Flowables;
+import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple;
@@ -36,7 +37,7 @@ public class AsyncRSZippingTest {
 
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Flowables.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+		return FlowableReactiveSeq.reactiveSeq(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
 	}
     protected <U> Flux<U> flux(U... array){

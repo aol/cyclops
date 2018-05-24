@@ -5,7 +5,7 @@ import cyclops.reactive.Streamable;
 import cyclops.reactive.collections.mutable.ListX;
 import org.junit.Test;
 
-import static cyclops.companion.rx2.Flowables.of;
+import static cyclops.reactive.FlowableReactiveSeq.of;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.is;

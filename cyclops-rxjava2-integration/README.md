@@ -35,7 +35,7 @@ The ListX only blocks on first access to the data.
 
 ```java
 import static cyclops.collections.mutable.ListX.listX;
-import static cyclops.companion.rx2.Flowables.reactiveSeq;
+import static cyclops.reactive.ObservableReactiveSeq.reactiveSeq;
 AtomicBoolean complete = new AtomicBoolean(false);
 
 
@@ -93,21 +93,21 @@ Use the Observables companion class to create Observable backed ReactiveSeqs
 Create an Observable-backed ReactiveSeq directly or from an Observable
 ```java
 ReactiveSeq<Integer> seq = Observables.just(1,2,3);
-ReactiveSeq<Integer> seq2 = Observables.reactiveSeq(Observable.just(1,2,3));
+ReactiveSeq<Integer> seq2 = ObservableReactiveSeq.reactiveSeq(Observable.just(1,2,3));
 ```
 
 And for Flowables
 
 ```java
 ReactiveSeq<Integer> seq = Flowables.just(1,2,3);
-ReactiveSeq<Integer> seq2 = Flowables.reactiveSeq(Flowable.just(1,2,3));
+ReactiveSeq<Integer> seq2 = FlowableReactiveSeq.reactiveSeq(Flowable.just(1,2,3));
 ```
 
 With an Observable-back ReactiveSeq we can create Reactive Xtended Collections e.g. an extended j.u.List
 
 ```java
 import static cyclops.collections.mutable.ListX.listX;
-import static cyclops.companion.rx2.Observables.reactiveSeq
+import static cyclops.companion.rx2.ObservableReactiveSeq.reactiveSeq
 
 ListX<Integer> asyncList = listX(reactiveSeq(observable))
                                         .map(i->i+1);
@@ -117,7 +117,7 @@ Or a reactive Vavr Vector
 
 ```java
 import static cyclops.collections.vavr.VavrVectorX;
-import static cyclops.companion.rx2.Flowables.reactiveSeq;
+import static cyclops.companion.rx2.FlowableReactiveSeq.reactiveSeq;
 
 VectorX<Integer> asyncList = vectorX(reactiveSeq(flowable))
                                         .map(i->i+1);
