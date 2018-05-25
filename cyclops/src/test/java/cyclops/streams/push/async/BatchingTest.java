@@ -413,7 +413,6 @@ public class BatchingTest {
 	@Test
 	public void xPer(){
 		SimpleTimer timer = new SimpleTimer();
-		System.out.println(of(1,2,3,4,5,6).xPer(6,1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
 		assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
 	}
