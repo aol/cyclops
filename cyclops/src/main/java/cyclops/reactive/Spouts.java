@@ -384,6 +384,7 @@ public interface Spouts {
                         winner[0] = subs[index];
                         sub.onNext(t);
                         won = true;
+                        first.get();//make sure won is visible across all threads
                     }
 
                 }
