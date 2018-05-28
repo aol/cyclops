@@ -33,7 +33,7 @@ public class StreamTest {
 
 
 		assertThat(Try.withResources(()->new BufferedReader(new FileReader("file.txt")),
-      this::read,FileNotFoundException.class,IOException.class).toFailedOptional().get(),instanceOf((Class)FileNotFoundException.class));
+      this::read,FileNotFoundException.class,IOException.class).toFailedOption().orElse(null),instanceOf((Class)FileNotFoundException.class));
 
 
 

@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -170,9 +171,9 @@ public class SuccessTest {
 
 
 	@Test
-	public void testToFailedOptional() {
+	public void testToFailedOption() {
 
-		assertThat(success.toFailedOptional(),is(Optional.empty()));
+		assertThat(success.toFailedOption(),is(Option.none()));
 	}
 
 	@Test
