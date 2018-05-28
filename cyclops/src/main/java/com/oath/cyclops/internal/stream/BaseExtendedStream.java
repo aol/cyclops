@@ -296,13 +296,13 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
     @Override
     public ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
-        final long next = t.toMillis(time);
+        final long next = t.toNanos(time);
         Supplier<Function<? super T, ? extends T>> lazy = ()-> {
 
             long[] last = {System.nanoTime()};
             int[] count = {0};
             return a-> {
-                if (++count[0] <= x) {
+                if (++count[0] < x) {
                     last[0] = System.nanoTime();
                     return a;
                 }
@@ -333,7 +333,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final long next = t.toNanos(time);
         Supplier<Function<? super T, ? extends T>> lazy = ()-> {
 
-            long[] last = {-1};
+            long[] last = {System.nanoTime()};
             return a-> {
                 final long sleepFor = next - (System.nanoTime() - last[0]);
 
