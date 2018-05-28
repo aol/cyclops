@@ -302,11 +302,12 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             long[] last = {System.nanoTime()};
             int[] count = {0};
             return a-> {
-                if (++count[0] < x) {
+                if (count[0] < x) {
                     last[0] = System.nanoTime();
+                    count[0]++;
                     return a;
                 }
-                count[0] = 0;
+                count[0] = 1;
 
                 long since = System.nanoTime() - last[0];
                 final long sleepFor = next - since;
