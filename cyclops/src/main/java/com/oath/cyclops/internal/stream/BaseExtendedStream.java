@@ -14,6 +14,7 @@ import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.*;
@@ -298,15 +299,21 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final long next = t.toNanos(time);
         Supplier<Function<? super T, ? extends T>> lazy = ()-> {
 
-            long[] last = {-1};
+            long[] last = {System.nanoTime()};
             int[] count = {0};
             return a-> {
-                if (++count[0] < x)
+                if (count[0] < x) {
+                    last[0] = System.nanoTime();
+                    count[0]++;
                     return a;
-                count[0] = 0;
-                final long sleepFor = next - (System.nanoTime() - last[0]);
+                }
+                count[0] = 1;
 
-                LockSupport.parkNanos(sleepFor);
+                long since = System.nanoTime() - last[0];
+                final long sleepFor = next - since;
+
+                if(sleepFor>0)
+                      LockSupport.parkNanos(sleepFor);
 
                 last[0] = System.nanoTime();
                 return a;
@@ -327,7 +334,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         final long next = t.toNanos(time);
         Supplier<Function<? super T, ? extends T>> lazy = ()-> {
 
-            long[] last = {-1};
+            long[] last = {System.nanoTime()};
             return a-> {
                 final long sleepFor = next - (System.nanoTime() - last[0]);
 

@@ -1,9 +1,7 @@
 package com.oath.cyclops.streams;
 
 
-import static cyclops.reactive.ReactiveSeq.fromIntStream;
-import static cyclops.reactive.ReactiveSeq.iterate;
-import static cyclops.reactive.ReactiveSeq.of;
+import static cyclops.reactive.ReactiveSeq.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
@@ -135,18 +133,20 @@ public class BatchingTest {
 	}
 	@Test
 	public void xPerSecond() throws InterruptedException {
-	    Thread.sleep(500);
-		long start = System.currentTimeMillis();
-				iterate(1, it -> it + 1)
-				.xPer(1,1, TimeUnit.SECONDS)
-				.limit(3)
-				.map(seconds -> "hello!")
-				.peek(System.out::println)
-				.toList();
-	 System.out.println("time = " +(System.currentTimeMillis()-start));
-	 assertTrue("failed time was " + (System.currentTimeMillis()-start),System.currentTimeMillis()-start>1600);
 
-	}
+        for (int i = 0; i < 5; i++) {
+            long start = System.currentTimeMillis();
+            List<String> list = iterate(1, it -> it + 1)
+                .xPer(1, 1, TimeUnit.SECONDS)
+                .limit(3)
+                .map(seconds -> "hello!")
+                .peek(System.out::println)
+                .toList();
+            System.out.println("time = " + (System.currentTimeMillis() - start));
+            assertTrue("failed time was " + (System.currentTimeMillis() - start) + " list " + list.size(), System.currentTimeMillis() - start > 1600);
+        }
+
+    }
 
 	@Value
 	static class Status{
@@ -404,8 +404,9 @@ public class BatchingTest {
 	}
 	@Test
 	public void xPer(){
-		SimpleTimer timer = new SimpleTimer();
+
 		System.out.println(of(1,2,3,4,5,6).xPer(6,1000,TimeUnit.NANOSECONDS).collect(Collectors.toList()));
+        SimpleTimer timer = new SimpleTimer();
 		assertThat(of(1,2,3,4,5,6).xPer(6,100000000,TimeUnit.NANOSECONDS).collect(Collectors.toList()).size(),is(6));
 		assertThat(timer.getElapsedNanoseconds(),lessThan(60000000l));
 	}
