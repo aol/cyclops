@@ -75,7 +75,7 @@ public interface Witness {
     public static <T> VectorX<T> vectorX(AnyM<vectorX,? extends T> anyM){
         return anyM.unwrap();
     }
-    public static <T> PersistentQueueX<T> persistentQueueX(AnyM<persistentSetX,? extends T> anyM){
+    public static <T> PersistentQueueX<T> persistentQueueX(AnyM<persistentQueueX,? extends T> anyM){
         return anyM.unwrap();
     }
     public static <T> PersistentSetX<T> persistentSetX(AnyM<persistentSetX,? extends T> anyM){
