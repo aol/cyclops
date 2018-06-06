@@ -25,13 +25,13 @@ import cyclops.data.tuple.Tuple4;
 @FunctionalInterface
 public interface Function1<T,  R> extends Function<T,R>{
 
-    public static <T1,  T3,R> Function1<T1, R> of(final Function<T1, R> triFunc){
+    public static <T1, R> Function1<T1, R> of(final Function<T1, R> triFunc){
     return a->triFunc.apply(a);
   }
-    public static <T1,  T3,R> Function1<T1, R> λ(final Function1<T1, R> triFunc){
+    public static <T1,  R> Function1<T1, R> λ(final Function1<T1, R> triFunc){
         return triFunc;
     }
-    public static <T1,  T3,R> Function1<? super T1,? extends R> λv(final Function1<? super T1,? extends R> triFunc){
+    public static <T1,  R> Function1<? super T1,? extends R> λv(final Function1<? super T1,? extends R> triFunc){
         return triFunc;
     }
 
