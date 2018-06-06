@@ -8,6 +8,7 @@ import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,6 +28,45 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
     @Override
     public abstract <T> ImmutableList<T> of(T... values);
     public abstract <T> ImmutableList<T> empty();
+
+    @Test
+    public void visit(){
+
+        String res= of(1,2,3).fold((x,xs)-> xs.join(x>2? "hello" : "world"),
+            ()->"boo!");
+
+        MatcherAssert.assertThat(res,equalTo("2world3"));
+    }
+
+    @Test
+    public void when2(){
+
+        Integer res =   of(1,2,3).fold((x,xs)->x,()->10);
+        System.out.println(res);
+    }
+    @Test
+    public void whenNilOrNot(){
+        String res1=    of(1,2,3).fold((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
+    }
+
+
+    //make not order dep
+
+    @Test
+    public void whenNilOrNotJoinWithFirstElementNoOrd(){
+
+
+        String res= of(1,2,3).fold((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
+        MatcherAssert.assertThat(res,equalTo("2world3"));
+    }
+    @Test
+    public void whenGreaterThan2NoOrd() {
+        String res = of(5, 2, 3).fold((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
+
+        MatcherAssert.assertThat(res, equalTo("2hello3"));
+    }
+
+
     @Test
     public void emptyUnit(){
         assertTrue(of(1,2,3).emptyUnit().isEmpty());

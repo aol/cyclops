@@ -27,38 +27,7 @@ public class ReactiveSeqTest extends AbstractAnyMSeqOrderedDependentTest<reactiv
 	public <T> AnyMSeq<reactiveSeq,T> empty() {
 		return AnyM.fromStream(ReactiveSeq.empty());
 	}
-	@Test
-    public void when(){
 
-        String res= AnyM.fromStream(ReactiveSeq.of(1,2,3)).visit((x,xs)->
-                                xs.join(x>2? "hello" : "world"),()->"boo!");
-
-        assertThat(res,equalTo("2world3"));
-    }
-	@Test
-    public void whenGreaterThan2(){
-        String res= of(5,2,3).visit((x,xs)->
-                                xs.join(x>2? "hello" : "world"),()->"boo!");
-
-        assertThat(res,equalTo("2hello3"));
-    }
-    @Test
-    public void when2(){
-
-        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
-        System.out.println(res);
-    }
-    @Test
-    public void whenNilOrNot(){
-        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-    }
-    @Test
-    public void whenNilOrNotJoinWithFirstElement(){
-
-
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
-        assertThat(res,equalTo("2world3"));
-    }
 
     @Test
   public void vector(){

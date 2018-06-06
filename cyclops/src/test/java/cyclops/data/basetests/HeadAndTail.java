@@ -1,4 +1,5 @@
-package com.oath.cyclops.types.stream;
+package cyclops.data.basetests;
+
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -25,6 +26,9 @@ public class HeadAndTail<T> {
     private final Supplier<ReactiveSeq<T>> tail;
     private final Supplier<Boolean> isHead;
 
+    public static <T> HeadAndTail<T> headAndTail(Iterable<T> it){
+        return new HeadAndTail<>(it.iterator());
+    }
     /**
      * Construct a HeadAndTail from an Iterator
      *
@@ -82,8 +86,8 @@ public class HeadAndTail<T> {
      */
     public ReactiveSeq<T> headStream() {
         return isHeadPresent() ? ReactiveSeq.of(head)
-                                            .map(Supplier::get)
-                : ReactiveSeq.empty();
+            .map(Supplier::get)
+            : ReactiveSeq.empty();
     }
 
     /**

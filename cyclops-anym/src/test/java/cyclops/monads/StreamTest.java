@@ -2,13 +2,11 @@ package cyclops.monads;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.IndexedSequenceX;
-import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.companion.Semigroups;
 import cyclops.control.Future;
 import cyclops.data.Seq;
 import cyclops.futurestream.LazyReact;
 import cyclops.monads.transformers.VectorT;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.monads.Witness.reactiveSeq;
@@ -176,18 +174,7 @@ public class StreamTest {
     f = just.concatMap(i -> AnyM.fromStream(ReactiveSeq.of(20, i, 30)));
     assertThat(f.orElse(-50), equalTo(20));
   }
-  @Test
-  public void headTailReplay(){
 
-    ReactiveSeq<String> helloWorld = AnyM.streamOf("hello","world","last").stream();
-    HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-    String head = headAndTail.head();
-    assertThat(head,equalTo("hello"));
-
-    ReactiveSeq<String> tail =  headAndTail.tail();
-    assertThat(tail.headAndTail().head(),equalTo("world"));
-
-  }
   @Test
   public void zipOptional(){
     Stream<List<Integer>> zipped = AnyMs.zipAnyM(Stream.of(1,2,3)

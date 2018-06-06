@@ -294,34 +294,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return of();
     }
 
-    /**
-     * <pre>
-     * {@code
-     *   Streamable.of(1,2,3,4,5).tail()
-     *
-     *   //Streamable[2,3,4,5]
-     * }</pre>
-     *
-     * @return The tail of this Streamable
-     */
-    default Streamable<T> tail() {
-        return Streamable.fromStream(this.stream().headAndTail()
-                                                  .tail());
-    }
 
-    /**
-     * <pre>
-     * {@code
-     * Streamable.of(1,2,3,4,5).head()
-     *
-     *  //1
-     * }</pre>
-     * @return The head of this Streamable
-     */
-    default T head() {
-        return this.stream().headAndTail()
-                            .head();
-    }
+
+
 
     /**
      * Create a new Streamablw with all elements in this Streamable followed by the elements in the provided Streamable
@@ -573,21 +548,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *
      */
     default Streamable<ReactiveSeq<T>> permutations() {
-        if (isEmpty()) {
-            return Streamable.empty();
-        } else {
-            final Streamable<T> tail = tail();
-            if (tail.isEmpty()) {
-                return Streamable.of(this.stream());
-            } else {
-                final Streamable<ReactiveSeq<T>> zero = Streamable.empty();
-                return distinct().foldLeft(zero, (xs, x) -> {
-                    final Function<ReactiveSeq<T>, ReactiveSeq<T>> prepend = l -> l.prepend(x);
-                    return xs.appendAll(removeValue(x).permutations()
-                                                 .map(prepend));
-                });
-            }
-        }
+       return Streamable.fromStream(stream().permutations());
     }
 
     /**
@@ -1359,40 +1320,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
 
-    /**
-     * @return First matching element in sequential order
-     * <pre>
-     * {@code
-     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
-     *
-     * //3
-     * }
-     * </pre>
-     * (deterministic)
-     *
-     */
-    @Override
-    default Optional<T> findFirst() {
-        return this.stream().findFirst();
-    }
 
-    /**
-     * @return first matching element,  but order is not guaranteed
-     * <pre>
-     * {@code
-     * Streamable.of(1,2,3,4,5).filter(it -> it <3).findAny().getValue();
-     *
-     * //3
-     * }
-     * </pre>
-     *
-     *
-     * (non-deterministic)
-     */
-    @Override
-    default Optional<T> findAny() {
-        return this.stream().findAny();
-    }
 
     /**
      * Attempt to transform this Sequence to the same type as the supplied Monoid (Reducer)

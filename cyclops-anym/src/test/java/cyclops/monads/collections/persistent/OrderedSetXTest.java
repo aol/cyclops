@@ -21,21 +21,12 @@ public class OrderedSetXTest extends AbstractAnyMSeqTest<orderedSetX> {
 		return AnyM.fromOrderedSetX(OrderedSetX.of(Comparators.naturalOrderIdentityComparator(),values));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
-	 */
+
 	@Override
 	public <T> AnyMSeq<orderedSetX,T> empty() {
 		return AnyM.fromOrderedSetX(OrderedSetX.empty(Comparators.naturalOrderIdentityComparator()));
 	}
-	 /* (non-Javadoc)
-     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
-     */
-    @Override
-    @Test
-    public void whenGreaterThan2() {
 
-    }
 	@Test
 	public void prependAppend(){
 		assertThat(of(1).prependStream(Stream.of(2)).append(3).prepend(4).appendAll(5,6).prependAll(7,8).insertAt(4,9).deleteBetween(1,2)

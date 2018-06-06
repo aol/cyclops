@@ -1,10 +1,7 @@
 package com.oath.cyclops.rx2.adapter;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.HeadAndTail;
-import cyclops.companion.rx2.Flowables;
 import cyclops.companion.rx2.Functions;
-import cyclops.companion.rx2.Observables;
 import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -349,10 +346,6 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
         return Spouts.from(flowable).join(sep,start,end);
     }
 
-    @Override
-    public HeadAndTail<T> headAndTail() {
-        return Spouts.from(flowable).headAndTail();
-    }
 
     @Override
     public Optional<T> findFirst() {

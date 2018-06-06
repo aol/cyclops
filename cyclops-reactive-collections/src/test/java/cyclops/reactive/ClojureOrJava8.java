@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.mutable.MapX;
 import cyclops.reactive.companion.MapXs;
 import org.junit.Test;
@@ -101,16 +103,15 @@ public class ClojureOrJava8 {
      }
     @Test
     public void listToString(){
-        assertThat(listToString(ListX.of("a","b","c")),equalTo("a b c "));
+        assertThat(listToString(Seq.of("a","b","c")),equalTo("a b c "));
     }
 
 
 
 
-    public String listToString(ListX<String> list){
+    public String listToString(ImmutableList<String> list){
 
-        return list.visit(((x,xs)->x+" "+listToString(xs.to(ReactiveConvertableSequence::converter)
-                                                    .listX())),()->"");
+        return list.fold(((x,xs)->x+" "+listToString(xs)),()->"");
 
     }
 
