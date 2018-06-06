@@ -636,42 +636,7 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().headOption();
     }
 
-    /**
-     * @return First matching element in sequential order
-     *
-     * <pre>
-     * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
-     *
-     * //3
-     * }
-     * </pre>
-     *
-     *         (deterministic)
-     *
 
-    default Optional<T> findFirst() {
-        return stream().findFirst();
-    }
-     */
-    /**
-     * @return first matching element, but order is not guaranteed
-     *
-     *         <pre>
-     * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findAny().getValue();
-     *
-     * //3
-     * }
-     * </pre>
-     *
-     *
-     *         (non-deterministic)
-
-    default Optional<T> findAny() {
-        return stream().findAny();
-    }
-     */
 
     /**
      *
