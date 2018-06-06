@@ -63,11 +63,11 @@ public class StreamableStreamOperatorsTest {
 	}
 	@Test
 	public void testFindFirst(){
-		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findFirst().get()));
+		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).headOption().orElse(-1)));
 	}
 	@Test
 	public void testFindAny(){
-		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findAny().get()));
+		assertThat(Arrays.asList(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).headOption().orElse(-1)));
 	}
 	@Test
 	public void testDistinct(){

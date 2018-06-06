@@ -219,7 +219,7 @@ public abstract class AbstractFoldableTest {
 
 
     }
-
+/**
     @Test
     public void findAny(){
         assertThat(of(1,2,3,4,5).findAny().get(),lessThan(6));
@@ -228,6 +228,7 @@ public abstract class AbstractFoldableTest {
     public void findFirst(){
         assertThat(of(1,2,3,4,5).findFirst().get(),lessThan(6));
     }
+
     @Test
     public void visit(){
 
@@ -261,7 +262,7 @@ public abstract class AbstractFoldableTest {
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
-
+**/
     @Test
     public void testCollectable(){
         assertThat(of(1,2,3).stream().anyMatch(i->i==2),equalTo(true));

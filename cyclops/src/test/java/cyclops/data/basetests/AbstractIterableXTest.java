@@ -3,7 +3,6 @@ package cyclops.data.basetests;
 
 
 
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
 import com.oath.cyclops.util.SimpleTimer;
@@ -50,6 +49,7 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
+import static cyclops.data.basetests.HeadAndTail.headAndTail;
 import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static java.util.Arrays.asList;
@@ -432,6 +432,7 @@ public abstract class AbstractIterableXTest {
                 (acc, next) -> acc+next,
                 Integer::sum),is(1500));
     }
+    /**
     @Test
     public void testFindFirst(){
         assertThat(of(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findFirst().get()));
@@ -440,7 +441,8 @@ public abstract class AbstractIterableXTest {
     public void testFindAny(){
         assertThat(of(1,2,3),hasItem(of(1,2,3,4,5).filter(it -> it <3).findAny().get()));
     }
-    @Test
+    **/
+     @Test
     public void testDistinct(){
         assertThat(of(1,1,1,2,1).distinct().collect(Collectors.toList()).size(),is(2));
         assertThat(of(1,1,1,2,1).distinct().collect(Collectors.toList()),hasItem(1));
@@ -574,25 +576,7 @@ public abstract class AbstractIterableXTest {
         assertEquals(asList(2), of(2).onEmptyGet(() -> 1).toList());
 
     }
-    @Test
-    public void visit(){
 
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),
-                                                              ()->"boo!");
-
-        assertThat(res,equalTo("2world3"));
-    }
-
-    @Test
-    public void when2(){
-
-        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
-        System.out.println(res);
-    }
-    @Test
-    public void whenNilOrNot(){
-        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-    }
 
 
 	@Test
@@ -646,6 +630,8 @@ public abstract class AbstractIterableXTest {
 	public void filter(){
 		assertThat(of(1,2,3,4,5).filter(i->i<3).toList(),hasItems(1,2));
 	}
+
+	/**
 	@Test
 	public void findAny(){
 		assertThat(of(1,2,3,4,5).findAny().get(),lessThan(6));
@@ -654,7 +640,7 @@ public abstract class AbstractIterableXTest {
 	public void findFirst(){
 		assertThat(of(1,2,3,4,5).findFirst().get(),lessThan(6));
 	}
-
+**/
 
     Throwable error;
 
@@ -1409,7 +1395,7 @@ public abstract class AbstractIterableXTest {
 		assertEquals(asList(), of().zipWithIndex().toList());
 
         of("a").zipWithIndex().map(t -> t._2()).printOut();
-		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
+		assertThat(of("a").zipWithIndex().map(t -> t._2()).headOption().orElse(-1l), is(0l));
 		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().toList());
 
 	}
@@ -1612,36 +1598,6 @@ public abstract class AbstractIterableXTest {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-	        @Test
-	        public void testSplitAtHead() {
-	            assertEquals(Optional.empty(), of().headAndTail().headOptional());
-	            assertEquals(asList(), of().headAndTail().tail().toList());
-
-	            assertEquals(Optional.of(1), of(1).headAndTail().headOptional());
-	            assertEquals(asList(), of(1).headAndTail().tail().toList());
-
-	            assertEquals(Maybe.of(1), of(1, 2).headAndTail().headMaybe());
-	            assertEquals(asList(2), of(1, 2).headAndTail().tail().toList());
-
-	            assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().headStream().toList());
-	            assertEquals((Integer)2, of(1, 2, 3).headAndTail().tail().headAndTail().head());
-	            assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().headOptional());
-	            assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().tail().toList());
-	            assertEquals(asList(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().toList());
-	            assertEquals(asList(), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().tail().toList());
-	        }
 
 	        @Test
 	        public void testMinByMaxBy2() {
@@ -1913,15 +1869,7 @@ public abstract class AbstractIterableXTest {
 
 
 
-	    //make not order dep
 
-    @Test
-    public void whenNilOrNotJoinWithFirstElementNoOrd(){
-
-
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
-        assertThat(res,equalTo("2world3"));
-    }
     @Test
     public void sortedComparatorNoOrd() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1),is(of(5,4,3,2,1)));
@@ -2125,25 +2073,9 @@ public abstract class AbstractIterableXTest {
                 equalTo(of(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
     }
 
-    @Test
-    public void whenGreaterThan2NoOrd() {
-        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
 
-        assertThat(res, equalTo("2hello3"));
-    }
 
-    @Test
-    public void headTailReplayNoOrd() {
 
-        IterableX<String> helloWorld = of("hello", "world", "last");
-        HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-        String head = headAndTail.head();
-        assertThat(head, isOneOf("world","last","hello"));
-
-        ReactiveSeq<String> tail = headAndTail.tail();
-        assertThat(tail.headAndTail().head(), isOneOf("world","last","hello"));
-
-    }
     @Test
     public void testScanLeftStringConcatNoOrd() {
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),

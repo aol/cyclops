@@ -26,7 +26,6 @@ import cyclops.data.tuple.Tuple4;
 
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.internal.react.stream.LazyStreamWrapper;
-import com.oath.cyclops.types.stream.HeadAndTail;
 
 public interface OperationsOnFutures<T> {
     // Handle case where input is a FutureStream (zip, append, concat,
@@ -605,33 +604,6 @@ public interface OperationsOnFutures<T> {
         return this.withLastActive(limited);
     }
 
-    /**
-     * extract head and tail together, where head is expected to be present
-     *
-     * <pre>
-     * {@code
-     * FutureStream<String> helloWorld = FutureStream.of("hello",
-    			"world", "last");
-    	HeadAndTail<String> headAndTail = helloWorld.actOnFutures()
-    			.headAndTail();
-    	String head = headAndTail.head();
-    	assertThat(head, equalTo("hello"));
-
-    	ReactiveSeq<String> tail = headAndTail.tail();
-    	assertThat(tail.headAndTail().head(), equalTo("world"));
-     *
-     * }
-     * </pre>
-     *
-     * @return
-     */
-    default HeadAndTail<T> headAndTail() {
-        return this.getLastActive()
-                   .injectFuturesSeq()
-                   .map(f -> safeJoin(f))
-                   .headAndTail();
-
-    }
 
     /**
      * Returns a stream with a given value interspersed between any two values

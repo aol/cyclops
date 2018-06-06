@@ -114,50 +114,11 @@ public class ReactiveStreamXTest extends AbstractAnyMSeqOrderedDependentTest<rea
 	public <T> AnyMSeq<reactiveSeq,T> of(T... values) {
 		return AnyM.fromStream(Spouts.of(values));
 	}
-	/* (non-Javadoc)
-	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
-	 */
+
 	@Override
 	public <T> AnyMSeq<reactiveSeq,T> empty() {
 		return AnyM.fromStream(Spouts.empty());
 	}
-	@Test
-    public void when(){
-
-        String res= AnyM.fromStream(ReactiveSeq.of(1,2,3)).visit((x,xs)->
-                                xs.join(x>2? "hello" : "world"),()->"boo!");
-
-        assertThat(res,equalTo("2world3"));
-    }
-	@Test
-    public void whenGreaterThan2(){
-        System.out.println("Value = "+Spouts.of(5,2,3).visit((x,xs)->{
-            System.out.println("X is " + x);
-            System.out.println("XS " + xs.toList());
-                  return   xs.join(x>2? "hello" : "world");
-        },()->"boo!") );
-        String res= of(5,2,3).visit((x,xs)->
-                                xs.join(x>2? "hello" : "world"),()->"boo!");
-
-        assertThat(res,equalTo("2hello3"));
-    }
-    @Test
-    public void when2(){
-
-        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
-        System.out.println(res);
-    }
-    @Test
-    public void whenNilOrNot(){
-        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-    }
-    @Test
-    public void whenNilOrNotJoinWithFirstElement(){
-
-
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
-        assertThat(res,equalTo("2world3"));
-    }
 
     public static class BooleanProxy {
         public boolean value;

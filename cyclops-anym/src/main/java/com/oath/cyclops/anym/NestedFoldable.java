@@ -11,6 +11,7 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.stream.HotStream;
 import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
@@ -314,22 +315,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     }
 
 
-    /**
-     * @return First matching element in sequential order
-     *
-     *         <pre>
-     * {@code
-     * ReactiveSeq.of(1,2,3,4,5).filter(it -> it <3).findFirst().getValue();
-     *
-     * //3
-     * }
-     * </pre>
-     *
-     *         (deterministic)
-     *
-     */
-    default AnyM<W,Optional<T>> findFirst() {
-        return nestedFoldables().map(s -> s.findFirst());
+
+    default AnyM<W,Option<T>> headOption() {
+        return nestedFoldables().map(s -> s.headOption());
 
     }
 

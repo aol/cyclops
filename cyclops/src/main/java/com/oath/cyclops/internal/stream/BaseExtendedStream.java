@@ -2,7 +2,6 @@ package com.oath.cyclops.internal.stream;
 
 import com.oath.cyclops.types.Unwrapable;
 
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import cyclops.companion.Streams;
@@ -14,7 +13,6 @@ import cyclops.reactive.ReactiveSeq;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
 import java.util.stream.*;
@@ -69,37 +67,19 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return Streams.join(this, sep, start, end);
     }
 
-/**
-    public final <U extends Comparable<? super U>> Optional<T> minBy(final Function<? super T, ? extends U> function) {
 
-        return Streams.minBy(this, function);
-    }
-**/
     @Override
     public final Optional<T> min(final Comparator<? super T> comparator) {
         return Streams.min(this, comparator);
     }
 
-/**
-    public final <C extends Comparable<? super C>> Option<T> maxBy(final Function<? super T, ? extends C> f) {
-        return foldLeft(BinaryOperator.maxBy(new Comparator<T>() {
-            @Override
-            public int compare(T o1, T o2) {
-                return Comparator.<C>naturalOrder().compare(f.apply(o1),f.apply(o2));
-            }
-        }));
-    }
- **/
 
     @Override
     public final Optional<T> max(final Comparator<? super T> comparator) {
         return Streams.max(this, comparator);
     }
 
-    @Override
-    public final HeadAndTail<T> headAndTail() {
-        return Streams.headAndTail(this);
-    }
+
     @Override
     public final Optional<T> findAny() {
         return findFirst();

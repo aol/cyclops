@@ -1,6 +1,5 @@
 package cyclops.data;
 
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
@@ -89,17 +88,7 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
         assertThat(setA.toList(),containsInAnyOrder(1, 2, 3));
 
     }
-    @Test
-    public void headTailReplayNoOrd() {
 
-        IterableX<String> helloWorld = of("hello", "world", "last");
-        HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-        String head = headAndTail.head();
-        assertThat(head, isOneOf("hello","world","last"));
-
-
-
-    }
   @Test
   public void lastIndexOf(){
 

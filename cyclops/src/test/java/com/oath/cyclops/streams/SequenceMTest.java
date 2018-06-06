@@ -58,6 +58,14 @@ public class SequenceMTest {
     }
 
     @Test
+    public void permuations4() {
+
+        assertThat(ReactiveSeq.of(3, 2, 1).permutations().map(s->s.toList()).toList(),
+            equalTo(ReactiveSeq.of(ReactiveSeq.of(1, 2, 3),
+                ReactiveSeq.of(1, 3, 2), ReactiveSeq.of(2, 1, 3), ReactiveSeq.of(2, 3, 1), ReactiveSeq.of(3, 1, 2), ReactiveSeq.of(3, 2, 1)).reverse().map(s->s.toList()).toList()));
+    }
+
+    @Test
     public void emptyAllCombinations() {
         assertThat(ReactiveSeq.of().combinations().map(s->s.toList()).toList(),equalTo(Arrays.asList(Arrays.asList())));
     }

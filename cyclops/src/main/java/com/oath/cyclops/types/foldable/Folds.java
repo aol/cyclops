@@ -631,6 +631,11 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().groupBy(classifier);
     }
 
+
+    default Option<T> headOption(){
+        return stream().headOption();
+    }
+
     /**
      * @return First matching element in sequential order
      *
@@ -644,11 +649,11 @@ public interface Folds<T> extends Iterable<T>  {
      *
      *         (deterministic)
      *
-     */
+
     default Optional<T> findFirst() {
         return stream().findFirst();
     }
-
+     */
     /**
      * @return first matching element, but order is not guaranteed
      *
@@ -662,10 +667,11 @@ public interface Folds<T> extends Iterable<T>  {
      *
      *
      *         (non-deterministic)
-     */
+
     default Optional<T> findAny() {
         return stream().findAny();
     }
+     */
 
     /**
      *
@@ -789,7 +795,7 @@ public interface Folds<T> extends Iterable<T>  {
      * }
      * </pre>
      *
-     * @return An Optional with single value if this Stream has exactly one
+     * @return A Maybe with single value if this Stream has exactly one
      *         element, otherwise Optional Empty
      */
     default Maybe<T> single() {

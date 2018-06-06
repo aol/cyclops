@@ -21,21 +21,11 @@ public class HashSetAnyMTest extends AbstractAnyMSeqTest<hashSet> {
 		return AnyM.fromHashSet(HashSet.of(values));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
-	 */
 	@Override
 	public <T> AnyMSeq<Witness.hashSet,T> empty() {
 		return AnyM.fromHashSet(HashSet.empty());
 	}
-	 /* (non-Javadoc)
-     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
-     */
-    @Override
-    @Test
-    public void whenGreaterThan2() {
 
-    }
 
 	@Test @Ignore //lazy data structures only
 	public void testRecover1(){

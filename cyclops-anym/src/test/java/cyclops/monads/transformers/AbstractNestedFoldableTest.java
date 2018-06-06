@@ -46,35 +46,6 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     public abstract <T> FoldableTransformerSeq<W,T> empty();
 
 
-
-    @Test
-    public void visitPresent() {
-
-        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello" ).singleOrElse(null),equalTo("world"));
-    }
-    @Test
-    public void visitEmpty() {
-        System.out.println(empty().visit((a, b)->"world",()->"hello" ));
-        assertThat(empty().visit((a, b)->"world",()->"hello" ).singleOrElse(null),equalTo("hello"));
-    }
-    @Test
-    public void visitPresentHead() {
-        assertThat(of(1,2,3,4).visit((a, b)->a,()->-1 ).singleOrElse(null),equalTo(1));
-    }
-    @Test
-    public void visitPresentTail() {
-        assertThat(of(1,2,3,4).visit((a, b)->b.toList().size(),()->Arrays.asList().size()).singleOrElse(null),equalTo(3));
-    }
-    @Test
-    public void visitMaybe() {
-        assertThat(of(1,2,3,4).visit((a, b)->"world",()->"hello").singleOrElse(null),equalTo("world"));
-    }
-    @Test
-    public void visitMaybeEmpty() {
-        assertThat(this.<Integer>empty().visit((a, b)->a,()->10).singleOrElse(null),equalTo(10));
-    }
-
-
     @Test
     public void mapReduce() {
         assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()).singleOrElse(null),equalTo(4));
@@ -224,28 +195,10 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
         assertEquals(2, map1.size());
     }
 
-    @Test
-    public void testHeadAndTail() {
-        assertEquals(Optional.empty(), of().headAndTail().singleOrElse(null).headOptional());
-        assertEquals(asList(), of().headAndTail().singleOrElse(null).tail().toList());
-
-        assertEquals(Optional.of(1), of(1).headAndTail().singleOrElse(null).headOptional());
-        assertEquals(asList(), of(1).headAndTail().singleOrElse(null).tail().toList());
-
-        assertEquals(Maybe.of(1), of(1, 2).headAndTail().singleOrElse(null).headMaybe());
-        assertEquals(asList(2), of(1, 2).headAndTail().singleOrElse(null).tail().toList());
-
-        assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().singleOrElse(null).headStream().toList());
-        assertEquals((Integer)2, of(1, 2, 3).headAndTail().singleOrElse(null).tail().headAndTail().head());
-        assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().singleOrElse(null).tail().headAndTail().tail().headAndTail().headOptional());
-        assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().singleOrElse(null).tail().toList());
-        assertEquals(asList(3), of(1, 2, 3).headAndTail().singleOrElse(null).tail().headAndTail().tail().toList());
-        assertEquals(asList(), of(1, 2, 3).headAndTail().singleOrElse(null).tail().headAndTail().tail().headAndTail().tail().toList());
-    }
 
     @Test
     public void testFindFirst() {
-        assertThat(of(1,2,3,4,5).findFirst().stream().singleOrElse(null).get(),lessThan(6));
+        assertThat(of(1,2,3,4,5).headOption().stream().singleOrElse(null).orElse(-1),lessThan(6));
     }
 
     @Test

@@ -178,7 +178,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         return ListX.empty();
     }
 
-
+/**
     @Test
     public void when(){
 
@@ -212,7 +212,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
-
+**/
     /**
      *
      * Eval e; //int cost = ReactiveSeq.of(1,2).when((head,tail)-> head.when(h->

@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.data.Seq;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import org.junit.Test;
@@ -30,7 +29,6 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.control.Trampoline;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import cyclops.reactive.collections.mutable.ListX;
-import com.oath.cyclops.types.stream.HeadAndTail;
 
 public abstract class AbstractOrderDependentCollectionXTest extends AbstractCollectionXTest {
 
@@ -50,7 +48,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toListX(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
     }
-
+/**
     @Test
     public void whenNilOrNotJoinWithFirstElement(){
 
@@ -58,6 +56,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
         assertThat(res,equalTo("2world3"));
     }
+ **/
     @Test
     public void sortedComparator() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
@@ -276,7 +275,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 	        assertThat(of(1, 2, 3).combinations(2).map(s->s.to(ReactiveConvertableSequence::converter).listX()).toListX(),
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }
-
+/**
     @Test
     public void whenGreaterThan2() {
         String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
@@ -284,18 +283,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         assertThat(res, equalTo("2hello3"));
     }
 
-	@Test
-	public void headTailReplay() {
-
-		CollectionX<String> helloWorld = of("hello", "world", "last");
-		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-		String head = headAndTail.head();
-		assertThat(head, equalTo("hello"));
-
-		ReactiveSeq<String> tail = headAndTail.tail();
-		assertThat(tail.headAndTail().head(), equalTo("world"));
-
-	}
+	**/
 	@Test
     public void testScanLeftStringConcat() {
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toListX().size(),
