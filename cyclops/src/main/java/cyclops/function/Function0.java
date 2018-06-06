@@ -19,14 +19,14 @@ import cyclops.reactive.ReactiveSeq;
 @FunctionalInterface
 public interface Function0<R> extends Supplier<R> {
 
-    public static <  T3,R> Function0< R> λ(final Supplier<R> triFunc){
+    public static <R> Function0< R> λ(final Supplier<R> triFunc){
     return ()->triFunc.get();
   }
 
-    public static <  T3,R> Function0< R> λ(final Function0<R> triFunc){
+    public static <R> Function0< R> λ(final Function0<R> triFunc){
         return triFunc;
     }
-    public static <  T3,R> Function0<? extends R> λv(final Function0<? extends R> triFunc){
+    public static <R> Function0<? extends R> λv(final Function0<? extends R> triFunc){
         return triFunc;
     }
 
