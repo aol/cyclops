@@ -17,13 +17,13 @@ import cyclops.reactive.ReactiveSeq;
 @FunctionalInterface
 public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<T1,T2,R>> {
 
-    public static <T1, T2, T3,R> Function2<T1,T2, R> of(final BiFunction<T1,T2, R> triFunc){
+    public static <T1, T2, R> Function2<T1,T2, R> of(final BiFunction<T1,T2, R> triFunc){
     return (a,b)->triFunc.apply(a,b);
   }
-    public static <T1, T2, T3,R> Function2<T1,T2, R> λ(final Function2<T1,T2, R> triFunc){
+    public static <T1, T2, R> Function2<T1,T2, R> λ(final Function2<T1,T2, R> triFunc){
         return triFunc;
     }
-    public static <T1, T2, T3,R> Function2<? super T1,? super T2,? extends R> λv(final Function2<? super T1,? super T2,? extends R> triFunc){
+    public static <T1, T2, R> Function2<? super T1,? super T2,? extends R> λv(final Function2<? super T1,? super T2,? extends R> triFunc){
         return triFunc;
     }
 
