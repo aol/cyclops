@@ -239,6 +239,10 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         };
     }
 
+    default <R>  R fold(BiFunction<? super T, ? super ImmutableList<T>, ? extends R> fn, Supplier<? extends R> alt){
+        return fold(s->fn.apply(s.head(),s.tail()),n->alt.get());
+    }
+
     @Override
     ImmutableList<T> onEmpty(T value);
 

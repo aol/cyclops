@@ -8,6 +8,9 @@ import com.oath.cyclops.internal.stream.operators.RecoverOperator;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.Traversable;
+import cyclops.control.Eval;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.control.Either;
 
@@ -18,7 +21,6 @@ import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.util.box.Mutable;
 
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.NonPausableHotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
@@ -96,6 +98,87 @@ public class Streams {
 
                 return ReactiveSeq.fromList(result);
             }
+        };
+
+        return ReactiveSeq.fromIterator(iter);
+    }
+    public static <T> ReactiveSeq<ReactiveSeq<T>> permutations(Object[] a){
+
+
+
+        final Iterator<ReactiveSeq<T>> iter = new Iterator<ReactiveSeq<T>>() {
+            private final int[] indices = IntStream.range(0, a.length).toArray();
+            private Option<ReactiveSeq<T>> next = Maybe.fromEval(Eval.later(this::first)).flatMap(i->i);
+
+            @Override
+            public boolean hasNext() {
+                return next.isPresent();
+            }
+
+            @Override
+            public ReactiveSeq<T> next() {
+                ReactiveSeq<T> res = next.orElse(null);
+                next = Maybe.fromEval(Eval.later(this::genNext)).flatMap(i->i);
+                return res;
+            }
+            private Option<ReactiveSeq<T>> first(){
+                return indices.length>0 ? Option.some(ReactiveSeq.fromList(buildList())) : Option.none();
+            }
+            private Option<ReactiveSeq<T>> genNext() {
+               return gen(findNextIndexByOrder());
+            }
+
+            private Option<ReactiveSeq<T>> gen(int next) {
+                return next<0 ? Option.none() : Option.some(ReactiveSeq.fromList(buildAndSwap(next)));
+
+            }
+            private void swapIndices(int i) {
+                swap(i++,findMinIndex(i-1));
+                for (int j = indices.length - 1 ;i < j;i++,j--) {
+                    swap(i,j);
+                }
+            }
+
+            private int findNextIndexByOrder(){
+                int i = indices.length - 2;
+                for (;i >= 0 && indices[i] > indices[i + 1];--i) {
+
+                }
+                return i;
+            }
+            private int findMinIndex(int startIdx){
+                int idx = startIdx + 1;
+                int currentMinValue = indices[idx];
+                int minIndex = idx;
+                for(;idx<indices.length;idx++){
+                    if (indices[startIdx] < indices[idx] && indices[idx] < currentMinValue) {
+                        currentMinValue = indices[idx];
+                        minIndex = idx;
+                    }
+
+                }
+                return minIndex;
+            }
+
+
+            private List<T> buildAndSwap(int next) {
+                swapIndices(next);
+                return buildList();
+            }
+            private List<T> buildList() {
+                final List<T> result = new ArrayList<>(indices.length);
+                for (int idx : indices) {
+                    result.add((T)a[idx]);
+                }
+                return result;
+            }
+
+            private  void swap(int a, int b) {
+                int temp = indices[a];
+                indices[a] = indices[b];
+                indices[b] = temp;
+            }
+
         };
 
         return ReactiveSeq.fromIterator(iter);
@@ -1060,29 +1143,6 @@ public class Streams {
     }
 
 
-
-    /**
-     * extract head and tail together
-     *
-     * <pre>
-     * {@code
-     *  Stream<String> helloWorld = Stream.of("hello","world","last");
-    	HeadAndTail<String> headAndTail = Streams.headAndTail(helloWorld);
-    	 String head = headAndTail.head();
-    	 assertThat(head,equalTo("hello"));
-
-    	ReactiveSeq<String> tail =  headAndTail.tail();
-    	assertThat(tail.headAndTail().head(),equalTo("world"));
-     * }
-     * </pre>
-     *
-     * @return
-     */
-    public final static <T> HeadAndTail<T> headAndTail(final Stream<T> stream) {
-        final Iterator<T> it = stream.iterator();
-        return new HeadAndTail<>(
-                                 it);
-    }
 
     /**
      * skip elements in Stream until Predicate holds true

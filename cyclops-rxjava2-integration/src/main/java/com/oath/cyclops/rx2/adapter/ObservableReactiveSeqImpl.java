@@ -1,7 +1,6 @@
 package com.oath.cyclops.rx2.adapter;
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.companion.rx2.Observables;
 import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
@@ -355,10 +354,6 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
         return Observables.connectToReactiveSeq(observable).join(sep,start,end);
     }
 
-    @Override
-    public HeadAndTail<T> headAndTail() {
-        return Observables.connectToReactiveSeq(observable).headAndTail();
-    }
 
     @Override
     public Optional<T> findFirst() {

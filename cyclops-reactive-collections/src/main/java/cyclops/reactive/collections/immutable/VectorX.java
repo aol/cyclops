@@ -73,15 +73,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return LazyCollectionX.super.stream();
     }
 
-    default Maybe<T> headMaybe(){
-        return headAndTail().headMaybe();
-    }
-    default T head(){
-        return headAndTail().head();
-    }
-    default VectorX<T> tail(){
-        return headAndTail().tail().to(ReactiveConvertableSequence::converter).vectorX(Evaluation.LAZY);
-    }
+
     VectorX<T> lazy();
     VectorX<T> eager();
     static <T> CompletableVectorX<T> completable(){

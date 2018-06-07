@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.control.Option;
 import cyclops.data.HashMap;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -121,38 +122,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
         }
     }
 
-    @Test
-    public void visit(){
 
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),
-                                                              ()->"boo!");
-
-        assertThat(res,equalTo("2world3"));
-    }
-    @Test
-    public void whenGreaterThan2(){
-        String res= of(5,2,3).visit((x,xs)->
-                                xs.join(x>2? "hello" : "world"),()->"boo!");
-
-        assertThat(res,equalTo("2hello3"));
-    }
-    @Test
-    public void when2(){
-
-        Integer res =   of(1,2,3).visit((x,xs)->x,()->10);
-        System.out.println(res);
-    }
-    @Test
-    public void whenNilOrNot(){
-        String res1=    of(1,2,3).visit((x,xs)-> x>2? "hello" : "world",()->"EMPTY");
-    }
-    @Test
-    public void whenNilOrNotJoinWithFirstElement(){
-
-
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
-        assertThat(res,equalTo("2world3"));
-    }
 
 	@Test
 	public void testCollectable(){
@@ -190,11 +160,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	}
 	@Test
 	public void findAny(){
-		assertThat(of(1,2,3,4,5).findAny().get(),lessThan(6));
-	}
-	@Test
-	public void findFirst(){
-		assertThat(of(1,2,3,4,5).findFirst().get(),lessThan(6));
+		assertThat(of(1,2,3,4,5).headOption().orElse(-1),lessThan(6));
 	}
 
 
@@ -890,7 +856,7 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().to(ReactiveConvertableSequence::converter).listX());
 
-		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
+		assertThat(of("a").zipWithIndex().map(t -> t._2()).headOption().orElse(-1l), is(0l));
 		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().to(ReactiveConvertableSequence::converter).listX());
 
 	}
@@ -1043,24 +1009,6 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
         }
 
-            @Test
-            public void testSplitAtHead() {
-                assertEquals(Optional.empty(), of().headAndTail().headOptional());
-                assertEquals(asList(), of().headAndTail().tail().toList());
-
-                assertEquals(Optional.of(1), of(1).headAndTail().headOptional());
-                assertEquals(asList(), of(1).headAndTail().tail().toList());
-
-                assertEquals(Maybe.of(1), of(1, 2).headAndTail().headMaybe());
-                assertEquals(asList(2), of(1, 2).headAndTail().tail().toList());
-
-                assertEquals(Arrays.asList(1), of(1, 2, 3).headAndTail().headStream().toList());
-                assertEquals((Integer)2, of(1, 2, 3).headAndTail().tail().headAndTail().head());
-                assertEquals(Optional.of(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().headOptional());
-                assertEquals(asList(2, 3), of(1, 2, 3).headAndTail().tail().toList());
-                assertEquals(asList(3), of(1, 2, 3).headAndTail().tail().headAndTail().tail().toList());
-                assertEquals(asList(), of(1, 2, 3).headAndTail().tail().headAndTail().tail().headAndTail().tail().toList());
-            }
 
             @Test
             public void testMinByMaxBy2() {

@@ -62,14 +62,7 @@ public class SetXTest extends AbstractAnyMSeqTest<set> {
 	public <T> AnyMSeq<set,T> empty() {
 		return AnyM.fromSet(SetX.empty());
 	}
-	 /* (non-Javadoc)
-     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
-     */
-    @Override
-    @Test
-    public void whenGreaterThan2() {
 
-    }
 
 
 }

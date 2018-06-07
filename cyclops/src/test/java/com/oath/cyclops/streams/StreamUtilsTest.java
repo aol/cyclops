@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.ThreadPools;
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -73,18 +72,7 @@ utilResultList:[1]
                 .schedule("* * * * * ?", ThreadPools.getStandardSchedular());
     System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toList() );
     }
-	@Test
-	public void headTailReplay(){
 
-		Stream<String> helloWorld = Stream.of("hello","world","last");
-		HeadAndTail<String> headAndTail = Streams.headAndTail(helloWorld);
-		 String head = headAndTail.head();
-		 assertThat(head,equalTo("hello"));
-
-		ReactiveSeq<String> tail =  headAndTail.tail();
-		assertThat(tail.headAndTail().head(),equalTo("world"));
-
-	}
 
 	@Test
 	public void testToLazyCollection(){

@@ -4,19 +4,14 @@ import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
-import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.stream.HeadAndTail;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.control.Maybe;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -262,23 +257,6 @@ public interface CollectionX<T> extends IterableX<T>,
 
 
 
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Folds#headAndTail()
-     */
-    @Override
-    default HeadAndTail<T> headAndTail() {
-        return new HeadAndTail<>(
-                                 iterator());
-    }
-
-    /**
-     * @return The head of this toX
-     */
-    default T head() {
-        return iterator().next();
-    }
-
     /**
      * Conctruct an Extended Collection from a standard Collection
      *
@@ -331,21 +309,6 @@ public interface CollectionX<T> extends IterableX<T>,
         return stream().takeOne();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Folds#findFirst()
-     */
-    @Override
-    default Optional<T> findFirst() {
-        return stream().findFirst();
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Folds#findAny()
-     */
-    @Override
-    default Optional<T> findAny() {
-        return stream().findAny();
-    }
 
 
     @Override

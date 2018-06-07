@@ -1,6 +1,8 @@
 package cyclops.reactive.collections;
 
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import org.junit.Test;
 
@@ -20,14 +22,14 @@ public class NQueensPStackTest {
     }
     @Test
     public void run(){
-        LinkedListX<LinkedListX<Integer>> queens = placeQueens(num);
+        Seq<Seq<Integer>> queens = placeQueens(num);
         assertThat(queens.size(),equalTo(92));
         show(placeQueens(num));
     }
 
-    public LinkedListX<LinkedListX<Integer>> placeQueens(int k) {
+    public Seq<Seq<Integer>> placeQueens(int k) {
         if (k == 0)
-            return LinkedListX.of(LinkedListX.empty());
+            return Seq.of(Seq.empty());
         else {
             return placeQueens(k - 1).forEach2(queens -> range(1, num+1 ),
                                                (queens, column) -> isSafe(column, queens, 1),
@@ -36,8 +38,8 @@ public class NQueensPStackTest {
     }
 
 
-    public Boolean isSafe(int column, IterableX<Integer> queens, int delta){
-       return  queens.visit((c, rest)-> c != column &&
+    public Boolean isSafe(int column, ImmutableList<Integer> queens, int delta){
+       return  queens.fold((c, rest)-> c != column &&
                                            Math.abs(c - column) != delta &&
                                            isSafe(column, rest, delta + 1) ,
                             ()->true);
@@ -45,7 +47,7 @@ public class NQueensPStackTest {
 
 
 
-    public void show(LinkedListX<LinkedListX<Integer>> solutions){
+    public void show(Seq<Seq<Integer>> solutions){
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{
