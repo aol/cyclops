@@ -253,63 +253,34 @@ public class ExtensionOperatorsRSTest {
 	@Test
 	public void endsWith(){
 		assertTrue(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6)));
+				.endsWith(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6,7)));
+				.endsWith(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList()));
+				.endsWith(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(FlowableReactiveSeq.of()
-				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(FlowableReactiveSeq.<Integer>of()
-				.endsWithIterable(Arrays.asList()));
+				.endsWith(Arrays.asList()));
 	}
-	@Test
-	public void endsWithStream(){
-		assertTrue(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6)));
-	}
-	@Test
-	public void endsWithFalseStream(){
-		assertFalse(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6,7)));
-	}
-	@Test
-	public void endsWithToLongStream(){
-		assertFalse(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(0,1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithEmptyStream(){
-		assertTrue(FlowableReactiveSeq.of(1,2,3,4,5,6)
-				.endsWith(Stream.of()));
-	}
-	@Test
-	public void endsWithWhenEmptyStream(){
-		assertFalse(FlowableReactiveSeq.of()
-				.endsWith(Stream.of(1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithBothEmptyStream(){
-		assertTrue(FlowableReactiveSeq.<Integer>of()
-				.endsWith(Stream.of()));
-	}
+
 
 	@Test
 	public void streamable(){

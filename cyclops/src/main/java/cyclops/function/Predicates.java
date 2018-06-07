@@ -414,7 +414,7 @@ public class Predicates {
 @SafeVarargs
 public static <T1> Predicate<Iterable<? super T1>> startsWith(final T1... items) {
     return test -> ReactiveSeq.fromIterable(test)
-                              .startsWithIterable(ReactiveSeq.of(items));
+                              .startsWith(ReactiveSeq.of(items));
 
 }
 
@@ -422,7 +422,7 @@ public static <T1> Predicate<Iterable<? super T1>> startsWith(final T1... items)
 public static <T1> Predicate<Iterable<? super T1>> endsWith(final T1... items) {
 
     return test -> ReactiveSeq.fromIterable(test)
-                              .endsWithIterable(ReactiveSeq.of(items));
+                              .endsWith(ReactiveSeq.of(items));
 
 }
 
