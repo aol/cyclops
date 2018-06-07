@@ -433,7 +433,7 @@ public class Optionals {
      * @return Optional with reduced value
      */
     public static <T, R> Optional<R> accumulatePresent(final IterableX<Optional<T>> optionals, final Reducer<R,T> reducer) {
-        return sequencePresent(optionals).map(s -> s.mapReduce(reducer));
+        return sequencePresent(optionals).map(s -> s.foldMap(reducer));
     }
     /**
      * Accumulate the results only from those Optionals which have a value present, using the supplied mapping function to

@@ -4,7 +4,6 @@ package cyclops.control;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.tuple.*;
 import cyclops.function.checked.CheckedSupplier;
 import cyclops.reactive.Spouts;
@@ -27,7 +26,6 @@ import java.io.InvalidObjectException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -635,7 +633,7 @@ public interface Maybe<T> extends Option<T> {
      * @return Maybe with reduced value
      */
     public static <T, R> Maybe<R> accumulateJust(final Iterable<Maybe<T>> maybes, final Reducer<R,T> reducer) {
-        return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
+        return sequenceJust(maybes).map(s -> s.foldMap(reducer));
     }
 
     /**

@@ -45,28 +45,28 @@ public  interface Converters {
     }
     public static <T> PersistentBag<T> PBag(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentBag.class,
-            ()-> Reducers.<T>toPersistentBag().mapReduce(vec.stream()));
+            ()-> Reducers.<T>toPersistentBag().foldMap(vec.stream()));
     }
 
     public static <T> PersistentSortedSet<T> POrderedSet(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-            ()->Reducers.<T>toPersistentSortedSet().mapReduce(vec.stream()));
+            ()->Reducers.<T>toPersistentSortedSet().foldMap(vec.stream()));
     }
     public static <T> PersistentQueue<T> PQueue(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-            ()->Reducers.<T>toPersistentQueue().mapReduce(vec.stream()));
+            ()->Reducers.<T>toPersistentQueue().foldMap(vec.stream()));
     }
     public static <T> PersistentSet<T> PSet(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-            ()->Reducers.<T>toPersistentSet().mapReduce(vec.stream()));
+            ()->Reducers.<T>toPersistentSet().foldMap(vec.stream()));
     }
     public static <T> PersistentList<T> PStack(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-            ()->Reducers.<T>toPersistentList().mapReduce(vec.stream()));
+            ()->Reducers.<T>toPersistentList().foldMap(vec.stream()));
     }
     public static <T> PersistentList<T> PVector(CollectionX<T> vec){
         return vec.unwrapIfInstance(PersistentList.class,
-            ()-> Reducers.<T>toPersistentList().mapReduce(vec.stream()));
+            ()-> Reducers.<T>toPersistentList().foldMap(vec.stream()));
     }
     public static <T> LinkedList<T> LinkedList(CollectionX<T> vec){
 

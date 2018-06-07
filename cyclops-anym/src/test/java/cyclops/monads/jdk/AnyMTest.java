@@ -11,7 +11,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -182,7 +181,7 @@ public class AnyMTest {
         assertThat("cba",equalTo( s.get().stream().foldRight(Reducers.toString(""))));
         assertThat("abc",equalTo( s.get().stream().reduce(Reducers.toString(""))));
         assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().foldRightMapToType(Reducers.toCountInt())));
-        assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().mapReduce(Reducers.toCountInt())));
+        assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().foldMap(Reducers.toCountInt())));
 
     }
 

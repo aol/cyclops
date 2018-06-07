@@ -376,13 +376,13 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <R> R mapReduce(Reducer<R,T> reducer) {
-        return Observables.connectToReactiveSeq(observable).mapReduce(reducer);
+    public <R> R foldMap(Reducer<R,T> reducer) {
+        return Observables.connectToReactiveSeq(observable).foldMap(reducer);
     }
 
     @Override
-    public <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
-        return Observables.connectToReactiveSeq(observable).mapReduce(mapper,reducer);
+    public <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        return Observables.connectToReactiveSeq(observable).foldMap(mapper,reducer);
     }
 
     @Override

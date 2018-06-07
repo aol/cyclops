@@ -540,7 +540,7 @@ public class Future<T> implements To<Future<T>>,
      * @return Future asynchronously populated with the accumulate success operation
      */
     public static <T, R> Future<R> accumulate(final Iterable<Future<T>> fts, final Reducer<R,T> reducer) {
-        return sequence(fts).map(s -> s.mapReduce(reducer));
+        return sequence(fts).map(s -> s.foldMap(reducer));
     }
     /**
      * Asynchronously accumulate the results only from those Futures which have completed successfully, using the supplied mapping function to

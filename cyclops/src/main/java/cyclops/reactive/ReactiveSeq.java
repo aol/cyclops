@@ -2163,12 +2163,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Optional<T> findAny();
 
     /**
-     * Attempt to transform this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * ReactiveSeq.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -2179,16 +2177,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      */
     @Override
-    <R> R mapReduce(Reducer<R,T> reducer);
+    <R> R foldMap(Reducer<R,T> reducer);
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
      *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -2213,7 +2209,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      */
     @Override
-    <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
+    <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
 
     /**
      * <pre>

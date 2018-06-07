@@ -49,7 +49,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import static cyclops.data.basetests.HeadAndTail.headAndTail;
 import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static java.util.Arrays.asList;
@@ -2735,12 +2734,12 @@ public abstract class AbstractIterableXTest {
     @Test
     public void reduceWithMonoid(){
 
-        assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()),equalTo(4));
+        assertThat(of("hello","2","world","4").foldMap(Reducers.toCountInt()),equalTo(4));
     }
     @Test
     public void reduceWithMonoid2(){
 
-        assertThat(of("replaceWith","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()),
+        assertThat(of("replaceWith","two","three","four").foldMap(this::toInt,Reducers.toTotalInt()),
                 equalTo(10));
     }
 

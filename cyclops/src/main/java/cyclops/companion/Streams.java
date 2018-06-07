@@ -1930,25 +1930,25 @@ public class Streams {
     }
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid (using mapToType on the monoid interface)
+     * Attempt to transform this Stream to the same type as the supplied Monoid (using mapToType on the monoid interface)
      * Then use Monoid to reduce values
      *
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T, R> R mapReduce(final Stream<T> stream, final Reducer<R,T> reducer) {
-        return reducer.mapReduce(stream);
+    public final static <T, R> R foldMap(final Stream<T> stream, final Reducer<R,T> reducer) {
+        return reducer.foldMap(stream);
     }
 
     /**
-     *  Attempt to transform this Monad to the same type as the supplied Monoid, using supplied function
+     *  Attempt to transform this Stream to the same type as the supplied Monoid, using supplied function
      *  Then use Monoid to reduce values
      *
      * @param mapper Function to transform Monad type
      * @param reducer Monoid to reduce values
      * @return Reduce result
      */
-    public final static <T, R> R mapReduce(final Stream<T> stream, final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+    public final static <T, R> R foldMap(final Stream<T> stream, final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
         return reducer.foldLeft(stream.map(mapper));
     }
 
@@ -1970,7 +1970,7 @@ public class Streams {
      * @return Reduce result
      */
     public final static <R,T> R foldLeftMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
-        return reducer.mapReduce(stream);
+        return reducer.foldMap(stream);
     }
 
     /**
@@ -1991,7 +1991,7 @@ public class Streams {
      * @return Reduce result
      */
     public final static <R,T> R foldRightMapToType(final Stream<T> stream, final Reducer<R,T> reducer) {
-        return reducer.mapReduce(Streams.reverse(stream));
+        return reducer.foldMap(Streams.reverse(stream));
     }
 
     /**
