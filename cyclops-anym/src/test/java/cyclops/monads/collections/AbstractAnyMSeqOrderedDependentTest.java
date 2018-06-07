@@ -8,7 +8,6 @@ import cyclops.monads.WitnessType;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
 
-import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.reactive.Spouts;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -289,25 +288,7 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 	                equalTo(Arrays.asList(Arrays.asList(1, 2), Arrays.asList(1, 3), Arrays.asList(2, 3))));
 	    }
 
-    @Test
-    public void whenGreaterThan2() {
-        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "world"), () -> "boo!");
 
-        assertThat(res, equalTo("2hello3"));
-    }
-
-	@Test
-	public void headTailReplay() {
-
-		AnyMSeq<W,String> helloWorld = of("hello", "world", "last");
-		HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-		String head = headAndTail.head();
-		assertThat(head, equalTo("hello"));
-
-		ReactiveSeq<String> tail = headAndTail.tail();
-		assertThat(tail.headAndTail().head(), equalTo("world"));
-
-	}
 	@Test
     public void testScanLeftStringConcat() {
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),

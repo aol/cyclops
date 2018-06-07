@@ -58,17 +58,6 @@ public interface ListX<T> extends To<ListX<T>>,
                                   Higher<list,T> {
 
 
-    default Maybe<T> headMaybe(){
-        return headAndTail().headMaybe();
-    }
-    default T head(){
-        return headAndTail().head();
-    }
-    default ListX<T> tail(){
-        return headAndTail().tail()
-                            .to(ReactiveConvertableSequence::converter)
-                            .listX(Evaluation.LAZY);
-    }
 
     @Override
     default Object[] toArray(){

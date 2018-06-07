@@ -1,6 +1,8 @@
 package cyclops.reactive.collections;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
+import cyclops.data.ImmutableList;
+import cyclops.data.Seq;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.reactive.collections.immutable.VectorX;
 import org.junit.Test;
@@ -13,9 +15,9 @@ public class NQueens {
         show(placeQueens(num));
     }
 
-    public LinkedListX<LinkedListX<Integer>> placeQueens(int k){
+    public Seq<Seq<Integer>> placeQueens(int k){
         if (k == 0)
-            return LinkedListX.of(LinkedListX.empty());
+            return Seq.of(Seq.empty());
         else{
             return placeQueens(k - 1).forEach2(
                          queens -> LinkedListX.range(1, num),
@@ -27,17 +29,16 @@ public class NQueens {
     }
 
 
-    public Boolean isSafe(int column, LinkedListX<Integer> queens, int delta){
-       return  queens.visit((c, rest)-> c != column &&
+    public Boolean isSafe(int column, ImmutableList<Integer> queens, int delta){
+       return  queens.fold((c, rest)-> c != column &&
                                            Math.abs(c - column) != delta &&
-                                           isSafe(column, rest.to(ReactiveConvertableSequence::converter)
-                                                .linkedListX(), delta + 1) ,
+                                           isSafe(column, rest, delta + 1) ,
                             ()->true);
     }
 
 
 
-    public void show(LinkedListX<LinkedListX<Integer>> solutions){
+    public void show(Seq<Seq<Integer>> solutions){
         solutions.forEach(solution->{
             System.out.println("----Solution----");
             solution.forEach(col->{

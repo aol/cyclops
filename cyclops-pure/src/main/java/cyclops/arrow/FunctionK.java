@@ -51,18 +51,14 @@ public class FunctionK<W1,W2,T> implements Function1<Higher<W1,T>,Higher<W2,T>> 
     }
 
     static <T> FunctionK<reactiveSeq,option,T> streamMaybe(){
-        return of(i -> ReactiveSeq.narrowK(i).headAndTail().headMaybe(), MaybeInstances.definitions());
+        return of(i -> ReactiveSeq.narrowK(i).headOption(), MaybeInstances.definitions());
     }
-    static <T> FunctionK<reactiveSeq,optional,T> streamOptionals(){
-        return of(i -> OptionalKind.widen(ReactiveSeq.narrowK(i).headAndTail().headOptional()), OptionalInstances.definitions());
-    }
+
     static <T> FunctionK<seq,reactiveSeq,T> listStream(){
         return of(i -> Seq.narrowK(i).stream(), PublisherInstances.definitions());
     }
     static <T> FunctionK<seq,option,T> listMaybe(){
-        return of(i -> Seq.narrowK(i).headAndTail().headMaybe(), MaybeInstances.definitions());
+        return of(i -> Seq.narrowK(i).headOption(), MaybeInstances.definitions());
     }
-    static <T> FunctionK<seq,optional,T> listOptional(){
-        return of(i -> OptionalKind.widen(Seq.narrowK(i).headAndTail().headOptional()),OptionalInstances.definitions());
-    }
+
 }

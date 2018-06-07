@@ -46,11 +46,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     public void sortedComparatorNoOrd() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),hasItems(5,4,3,2,1));
     }
-    @Test
-    public void whenGreaterThan2NoOrd() {
-        String res = of(5, 2, 3).visit((x, xs) -> xs.join(x > 2 ? "hello" : "hello"), () -> "boo!");
-        assertThat(res, containsString("hello"));
-    }
+
     @Test
     public void testSorted() {
 

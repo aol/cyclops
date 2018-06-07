@@ -4,7 +4,6 @@ import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
-import com.oath.cyclops.types.stream.HeadAndTail;
 import cyclops.control.Eval;
 import cyclops.data.Seq;
 import cyclops.data.HashSet;
@@ -13,7 +12,6 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.control.Future;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -25,7 +23,6 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -168,60 +165,7 @@ public interface IterableX<T> extends ExtendedTraversable<T>,
 
 
 
-    /**
-     * Destructures this Traversable into it's head and tail. If the traversable instance is not a SequenceM or Stream type,
-     * whenStream may be more efficient (as it is guaranteed to be maybe).
-     *
-     * <pre>
-     * {@code
-     * Seq.of(1,2,3,4,5,6,7,8,9)
-    .dropRight(5)
-    .plus(10)
-    .visit((x,xs) ->
-    xs.join(x.>2?"hello":"world")),()->"NIL"
-    );
-     *
-     * }
-     * //2world3world4
-     *
-     * </pre>
-     *
-     *
-     * @param match
-     * @return
-     */
-    default <R> R visit(final BiFunction<? super T, ? super ReactiveSeq<T>, ? extends R> match, final Supplier<? extends R> ifEmpty) {
-        final HeadAndTail<T> ht = stream().headAndTail();
-        if (ht.isHeadPresent())
-            return match.apply(ht.head(), ht.tail());
-        return ifEmpty.get();
 
-    }
-
-
-    /**
-     * extract head and tail together, where head is expected to be present
-     * Example :
-     *
-     * <pre>
-     * {@code
-     *  ReactiveSeq<String> helloWorld = ReactiveSeq.Of("hello","world","last");
-    HeadAndTail<String> headAndTail = helloWorld.headAndTail();
-    String head = headAndTail.head();
-
-    //head == "hello"
-
-    ReactiveSeq<String> tail =  headAndTail.tail();
-    //["world","last]
-
-    }
-     *  </pre>
-     *
-     * @return
-     */
-    default HeadAndTail<T> headAndTail() {
-        return stream().headAndTail();
-    }
     @Override
     default <X extends Throwable> Subscription forEachSubscribe(Consumer<? super T> consumer){
         Subscription result = ReactiveStreamsTerminalOperations.super.forEachSubscribe(consumer, e->e.printStackTrace(),()->{});

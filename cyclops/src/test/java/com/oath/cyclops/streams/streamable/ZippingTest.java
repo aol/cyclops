@@ -273,7 +273,7 @@ public class ZippingTest {
 	public void testZipWithIndex() {
 		assertEquals(asList(), of().zipWithIndex().toList());
 
-		assertThat(of("a").zipWithIndex().map(t -> t._2()).findFirst().get(), is(0l));
+		assertThat(of("a").zipWithIndex().map(t -> t._2()).headOption().orElse(-1l), is(0l));
 		assertEquals(asList(Tuple.tuple("a", 0L)), of("a").zipWithIndex().toList());
 
 	}

@@ -22,7 +22,6 @@ import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import com.oath.cyclops.react.threads.ReactPool;
-import com.oath.cyclops.types.stream.HeadAndTail;
 import com.oath.cyclops.types.stream.HotStream;
 import com.oath.cyclops.types.stream.PausableHotStream;
 import cyclops.companion.Streams;
@@ -351,12 +350,5 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
         return Streams.join(this, sep, start, end);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.stream.ReactiveSeq#headAndTail()
-     */
-    @Override
-    public HeadAndTail<U> headAndTail() {
-        return Streams.headAndTail(this);
-    }
 
 }

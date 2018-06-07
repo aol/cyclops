@@ -2,7 +2,6 @@ package com.oath.cyclops.reactor.adapter;
 
 
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.HeadAndTail;
 
 import cyclops.control.*;
 
@@ -343,11 +342,6 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     @Override
     public String join(String sep, String start, String end) {
         return Spouts.from(flux).join(sep,start,end);
-    }
-
-    @Override
-    public HeadAndTail<T> headAndTail() {
-        return Spouts.from(flux).headAndTail();
     }
 
     @Override

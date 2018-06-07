@@ -2105,8 +2105,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     String join(String sep, String start, String end);
 
 
-    @Override
-    HeadAndTail<T> headAndTail();
+
 
 
     /**
@@ -3194,6 +3193,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
+    /*
+     Eagerly extract the first value if present into an Option
+     */
+    @Override
+    default Option<T> headOption(){
+        return take(1).foldLeft((a,b)->a);
+    }
+
 
     /**
      * Return the elementAt index or Optional.empty
@@ -3941,9 +3948,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<ReactiveSeq<T>> permutations() {
-        final Streamable<ReactiveSeq<T>> streamable = Streamable.fromStream(this)
-                                                               .permutations();
-        return streamable.stream();
+        return Streams.permutations(toArray());
     }
 
 

@@ -31,14 +31,7 @@ public class BagXTest extends AbstractAnyMSeqTest<bagX> {
 	public <T> AnyMSeq<bagX,T> empty() {
 		return AnyM.fromBagX(BagX.empty());
 	}
-	 /* (non-Javadoc)
-     * @see com.oath.cyclops.function.collections.extensions.AbstractAnyMSeqTest#whenGreaterThan2()
-     */
-    @Override
-    @Test
-    public void whenGreaterThan2() {
 
-    }
 
 
 	@Test @Ignore
