@@ -649,21 +649,11 @@ public interface Folds<T> extends Iterable<T>  {
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default boolean startsWithIterable(final Iterable<T> iterable) {
-        return stream().startsWithIterable(iterable);
+    default boolean startsWith(final Iterable<T> iterable) {
+        return stream().startsWith(iterable);
     }
 
-    /**
-     * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
-     * </pre>
-     *
-     * @param stream Stream to check if this Folds has the same elements in the same order, at the skip
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    default boolean startsWith(final Stream<T> stream) {
-        return stream().startsWith(stream);
-    }
+
 
     /**
      * <pre>
@@ -677,25 +667,10 @@ public interface Folds<T> extends Iterable<T>  {
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default boolean endsWithIterable(final Iterable<T> iterable) {
-        return stream().endsWithIterable(iterable);
+    default boolean endsWith(final Iterable<T> iterable) {
+        return stream().endsWith(iterable);
     }
 
-    /**
-     * <pre>
-     * {@code
-     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6)));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            Values to check
-     * @return true if SequenceM endswith values in the supplied Stream
-     */
-    default boolean endsWith(final Stream<T> stream) {
-        return stream().endsWith(stream);
-    }
 
 
 
