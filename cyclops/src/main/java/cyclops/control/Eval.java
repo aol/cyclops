@@ -4,7 +4,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Zippable;
-import cyclops.data.Vector;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.util.box.Mutable;
@@ -22,7 +21,6 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -340,7 +338,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return Eval with a value
      */
     public static <T, R> Eval<R> accumulate(final Iterable<Eval<T>> evals, final Reducer<R, T> reducer) {
-        return sequence(evals).map(s -> s.mapReduce(reducer));
+        return sequence(evals).map(s -> s.foldMap(reducer));
     }
 
     /**

@@ -1327,7 +1327,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Then use Monoid to reduce values
      * <pre>
      * {@code
-     * Streamable.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * Streamable.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -1337,8 +1337,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R mapReduce(final Reducer<R,T> reducer) {
-        return this.stream().mapReduce(reducer);
+    default <R> R foldMap(final Reducer<R,T> reducer) {
+        return this.stream().foldMap(reducer);
     }
 
     /**
@@ -1348,7 +1348,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  <pre>
      *  {@code
      *  Streamable.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -1371,8 +1371,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return this.stream().mapReduce(mapper, reducer);
+    default <R> R foldMap(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+        return this.stream().foldMap(mapper, reducer);
     }
 
     /**

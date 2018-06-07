@@ -366,7 +366,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     default <T> VectorX<T> fromStream(final ReactiveSeq<T> stream) {
         return ReactiveReducers.<T>toVectorX()
-                       .mapReduce(stream);
+                       .foldMap(stream);
     }
 
     /**

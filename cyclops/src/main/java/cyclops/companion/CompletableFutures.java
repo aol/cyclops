@@ -265,8 +265,8 @@ public class CompletableFutures {
                                                     .filter(ft->!ft.isCompletedExceptionally())
                                                     .map(CompletableFuture::join);
         CompletableFuture.allOf(ReactiveSeq.fromIterable(fts).toArray(i->new CompletableFuture[i]))
-                        .thenRun(()-> result.complete(reducer.mapReduce(successes)))
-                        .exceptionally(e->{ result.complete(reducer.mapReduce(successes)); return null;});
+                        .thenRun(()-> result.complete(reducer.foldMap(successes)))
+                        .exceptionally(e->{ result.complete(reducer.foldMap(successes)); return null;});
 
         return result;
     }
@@ -347,7 +347,7 @@ public class CompletableFutures {
      * @return Future asynchronously populated with the accumulate success operation
      */
     public static <T, R> CompletableFuture<R> accumulate(final IterableX<CompletableFuture<T>> fts, final Reducer<R,T> reducer) {
-        return sequence(fts).thenApply(s -> s.mapReduce(reducer));
+        return sequence(fts).thenApply(s -> s.foldMap(reducer));
     }
     /**
      * Asynchronously accumulate the results of a batch of Futures which using the supplied mapping function to

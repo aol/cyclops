@@ -366,13 +366,13 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <R> R mapReduce(Reducer<R,T> reducer) {
-        return Spouts.from(flux).mapReduce(reducer);
+    public <R> R foldMap(Reducer<R,T> reducer) {
+        return Spouts.from(flux).foldMap(reducer);
     }
 
     @Override
-    public <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
-        return Spouts.from(flux).mapReduce(mapper,reducer);
+    public <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        return Spouts.from(flux).foldMap(mapper,reducer);
     }
 
     @Override

@@ -256,7 +256,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
     default <T> PersistentSetX<T> fromStream(final ReactiveSeq<T> stream) {
         return ReactiveReducers.<T>toPersistentSetX()
-                       .mapReduce(stream);
+                       .foldMap(stream);
     }
 
     /* (non-Javadoc)
