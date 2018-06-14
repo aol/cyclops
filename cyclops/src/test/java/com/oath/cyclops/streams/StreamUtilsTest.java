@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.react.ThreadPools;
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.companion.Streams;
@@ -67,10 +67,10 @@ utilResultList:[1]
 
     @Test
     public void reactiveSeq(){
-        HotStream<String> hotStream = ReactiveSeq.of("a", "b", "c", "d", "e")
+        Connectable<String> connectable = ReactiveSeq.of("a", "b", "c", "d", "e")
                 .peek(x -> System.out.println("peek1:" + x))
                 .schedule("* * * * * ?", ThreadPools.getStandardSchedular());
-    System.out.println("resultList:" + hotStream.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toList() );
+    System.out.println("resultList:" + connectable.connect().debounce(10, TimeUnit.SECONDS).peek(x->System.out.println("peek2:" + x)).toList() );
     }
 
 

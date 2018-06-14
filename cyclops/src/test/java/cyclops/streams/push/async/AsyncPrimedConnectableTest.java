@@ -1,32 +1,64 @@
-package com.oath.cyclops.streams.hotstream;
+package cyclops.streams.push.async;
+
+import com.oath.cyclops.types.stream.PausableConnectable;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.locks.LockSupport;
-
-import com.oath.cyclops.types.stream.PausableHotStream;
-import org.junit.Test;
-
-import cyclops.reactive.ReactiveSeq;
-
-public class PrimedHotStreamTest {
+@Ignore
+public class AsyncPrimedConnectableTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	volatile Object value;
 
+	protected <U> ReactiveSeq<U> of(U... array){
+
+		return Spouts.async(s->{
+			Thread t = new Thread(()-> {
+				for (U next : array) {
+					s.onNext(next);
+				}
+				s.onComplete();
+			});
+			t.start();
+		});
+	}
+	protected  ReactiveSeq<Integer> range(int start,int end){
+
+		return Spouts.async(s->{
+			Thread t = new Thread(()-> {
+				range(start,end).forEach(s::onNext);
+
+				s.onComplete();
+			});
+			t.start();
+		});
+	}
+    protected  ReactiveSeq<Long> rangeLong(long start,long end){
+
+        return Spouts.async(s->{
+            Thread t = new Thread(()-> {
+                rangeLong(start,end).forEach(s::onNext);
+
+                s.onComplete();
+            });
+            t.start();
+        });
+    }
 	@Test
 	public void hotStream() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		ReactiveSeq.of(1,2,3)
+		of(1,2,3)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.primedHotStream(exec)
@@ -44,7 +76,7 @@ public class PrimedHotStreamTest {
 			System.out.println(i);
 			value= null;
 			CountDownLatch latch = new CountDownLatch(1);
-			ReactiveSeq.range(0,Integer.MAX_VALUE)
+			range(0,Integer.MAX_VALUE)
 					.limit(100)
 					.peek(v->value=v)
 					.peek(v->latch.countDown())
@@ -63,7 +95,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectBlockingQueue() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		ReactiveSeq.range(0,Integer.MAX_VALUE)
+		range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -79,7 +111,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamCapture() throws InterruptedException{
 
 
-		List<Integer> list = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		List<Integer> list = range(0,Integer.MAX_VALUE)
 									 .limit(1000)
 									 .primedHotStream(exec)
 									 .connect()
@@ -89,10 +121,10 @@ public class PrimedHotStreamTest {
 		assertThat(list,equalTo(Arrays.asList(0,1)));
 
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamCaptureLong() throws InterruptedException{
 
-		List<Long> list = ReactiveSeq.rangeLong(0,Long.MAX_VALUE)
+		List<Long> list = rangeLong(0,Long.MAX_VALUE)
 				.limit(1000)
 				.primedHotStream(exec)
 				.connect()
@@ -102,11 +134,11 @@ public class PrimedHotStreamTest {
 		assertThat(list,equalTo(Arrays.asList(0l,1l)));
 
 	}
-	@Test
+	@Test @Ignore
 	public void hotStreamCaptureReversed() throws InterruptedException{
 
 
-		List<Integer> list = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		List<Integer> list = range(0,Integer.MAX_VALUE)
 				.limit(1000)
 				.reverse()
 				.primedHotStream(exec)
@@ -114,7 +146,7 @@ public class PrimedHotStreamTest {
 				.limit(2)
 				.toList();
 
-		assertThat(list,equalTo(Arrays.asList(1000,999)));
+		assertThat(list,equalTo(Arrays.asList(999,998)));
 
 	}
 	volatile boolean active;
@@ -123,7 +155,7 @@ public class PrimedHotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		PausableConnectable<Integer> s = range(0,Integer.MAX_VALUE)
 				.limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
@@ -153,7 +185,7 @@ public class PrimedHotStreamTest {
 	public void hotStreamConnectPausableConnect() throws InterruptedException{
 		value= null;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		PausableConnectable<Integer> s = range(0,Integer.MAX_VALUE)
 				.limit(50000)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

@@ -6,7 +6,7 @@ import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Seq;
@@ -1896,11 +1896,11 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     /**
-     * Turns this Streamable into a HotStream, a connectable Stream, being executed on a thread on the
+     * Turns this Streamable into a Connectable, a connectable Stream, being executed on a thread on the
      * supplied executor, that is producing data
      * <pre>
      * {@code
-     *  HotStream<Integer> ints = Streamable.range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = Streamable.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
 
 
@@ -1911,9 +1911,9 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * }
      * </pre>
      * @param e Executor to execute this Streamable on
-     * @return a Connectable HotStream
+     * @return a Connectable Connectable
      */
-    default HotStream<T> hotStream(final Executor e) {
+    default Connectable<T> hotStream(final Executor e) {
         return this.stream().hotStream(e);
     }
 

@@ -1,6 +1,6 @@
 package cyclops.streams.push.hotstream;
 
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.reactive.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class HotStreamTest {
+public class ConnectableTest {
 	static final Executor exec = Executors.newFixedThreadPool(15);
 	static final Executor exec2 = Executors.newFixedThreadPool(5);
 
@@ -213,7 +213,7 @@ public class HotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream<Integer> s = Spouts.range(0,Integer.MAX_VALUE)
+		PausableConnectable<Integer> s = Spouts.range(0,Integer.MAX_VALUE)
 		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

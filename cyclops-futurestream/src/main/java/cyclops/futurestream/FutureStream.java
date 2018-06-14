@@ -14,7 +14,7 @@ import com.oath.cyclops.types.futurestream.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalFutureOperations;
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Future;
 import com.oath.cyclops.async.QueueFactories;
@@ -1107,11 +1107,11 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     /**
-     * Turns this FutureStream into a HotStream, a connectable Stream, being executed on a thread on the
+     * Turns this FutureStream into a Connectable, a connectable Stream, being executed on a thread on the
      * in it's current task executor, that is producing data
      * <pre>
      * {@code
-     *  HotStream<Integer> ints = new LazyReact().range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = new LazyReact().range(0,Integer.MAX_VALUE)
                                                 .hotStream()
         ints.connect().forEach(System.out::println);
      *  //print out all the ints
@@ -1119,9 +1119,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * }
      * </pre>
-     * @return a Connectable HotStream
+     * @return a Connectable Connectable
      */
-    default HotStream<U> hotStream() {
+    default Connectable<U> hotStream() {
         return Streams.hotStream(this, getTaskExecutor());
 
     }

@@ -1,5 +1,7 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import com.oath.cyclops.internal.stream.publisher.PublisherIterable;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,6 +32,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
     }
 
     public Iterator<T> iterator(){
+
         return new Iterator<T>() {
             boolean active = false;
             final Object UNSET = new Object();
@@ -51,10 +54,7 @@ public class OperatorToIterable<T,R>  implements Iterable<T> {
             });
 
             public void forEachRemaining(Consumer<? super T> action) {
-               // if(async || active)
-                    Iterator.super.forEachRemaining(action);
-               // else
-                 //     source.subscribeAll(action,defaultErrorHandler,()->{});
+                Iterator.super.forEachRemaining(action);
             }
 
 

@@ -4,17 +4,17 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.companion.Eithers;
 import cyclops.function.FluentFunctions;
 
-public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T>implements PausableHotStream<T> {
-    public PausableHotStreamImpl(final Stream<T> stream) {
+public class PausableConnectableImpl<T> extends BaseConnectableImpl<T> implements PausableConnectable<T> {
+    public PausableConnectableImpl(final Stream<T> stream) {
         super(stream);
     }
 
     @Override
-    public PausableHotStream<T> init(final Executor exec) {
+    public PausableConnectable<T> init(final Executor exec) {
         CompletableFuture.runAsync(() -> {
 
             stream.forEach(a -> {
@@ -41,7 +41,7 @@ public class PausableHotStreamImpl<T> extends BaseHotStreamImpl<T>implements Pau
     }
 
     @Override
-    public PausableHotStream<T> paused(final Executor exec) {
+    public PausableConnectable<T> paused(final Executor exec) {
         super.paused(exec);
         return this;
     }
