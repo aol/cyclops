@@ -503,15 +503,45 @@ public interface Spouts {
             }
         });
 
+
         s[0] = ReactiveSeq.iterate(1, a -> a + 1)
                                     .takeWhile(e -> isOpen.get())
                                     .scheduleFixedDelay(millis, exec)
                                     .connect()
                                     .forEach(1, e -> sub.onNext(e));
 
+
         return sub.reactiveStream();
 
     }
+    static  <T> ReactiveSeq<T> schedule(final Stream<T> stream,final String cron,final ScheduledExecutorService exec) {
+        ReactiveSubscriber<T> sub = reactiveSubscriber();
+        AtomicBoolean isOpen = new AtomicBoolean(true);
+        Subscription[] s= {null};
+        sub.onSubscribe(new Subscription() {
+            @Override
+            public void request(long n) {
+                s[0].request(n);
+            }
+
+            @Override
+            public void cancel() {
+                isOpen.set(false);
+            }
+        });
+
+
+        s[0] = ReactiveSeq.fromStream(stream)
+            .takeWhile(e -> isOpen.get())
+            .schedule(cron, exec)
+            .connect()
+            .forEach(1, e -> sub.onNext(e));
+
+
+        return sub.reactiveStream();
+
+    }
+
     static <T> ReactiveSeq<T> defer(final Supplier<? extends Publisher<? extends T>> s){
         return of(s).mergeMap(i->i.get());
     }

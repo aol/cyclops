@@ -7,6 +7,8 @@ import com.oath.cyclops.internal.stream.operators.OnePerOperator;
 import com.oath.cyclops.internal.stream.operators.RecoverOperator;
 import com.oath.cyclops.internal.stream.spliterators.*;
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.stream.Connectable;
+import com.oath.cyclops.types.stream.NonPausableConnectable;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Eval;
 import cyclops.control.Maybe;
@@ -21,9 +23,7 @@ import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.util.box.Mutable;
 
-import com.oath.cyclops.types.stream.HotStream;
-import com.oath.cyclops.types.stream.NonPausableHotStream;
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import lombok.AllArgsConstructor;
@@ -723,7 +723,7 @@ public class Streams {
      *
      * <pre>
      * {@code
-     * HotStream<Data> dataStream = Streams.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
+     * Connectable<Data> dataStream = Streams.schedule(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,"0 20 * * *",Executors.newScheduledThreadPool(1)));
      *
@@ -736,10 +736,10 @@ public class Streams {
      * @param stream the stream to schedule element processing on
      * @param cron Expression that determines when each job will run
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    public static <T> HotStream<T> schedule(final Stream<T> stream, final String cron, final ScheduledExecutorService ex) {
-        return new NonPausableHotStream<>(
+    public static <T> Connectable<T> schedule(final Stream<T> stream, final String cron, final ScheduledExecutorService ex) {
+        return new NonPausableConnectable<>(
                                           stream).schedule(cron, ex);
     }
 
@@ -759,7 +759,7 @@ public class Streams {
      *
      * <pre>
      * {@code
-     * HotStream<Data> dataStream = Streams.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
+     * Connectable<Data> dataStream = Streams.scheduleFixedDelay(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
      *
@@ -772,10 +772,10 @@ public class Streams {
      * @param stream the stream to schedule element processing on
      * @param delay Between last element completes passing through the Stream until the next one starts
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    public static <T> HotStream<T> scheduleFixedDelay(final Stream<T> stream, final long delay, final ScheduledExecutorService ex) {
-        return new NonPausableHotStream<>(
+    public static <T> Connectable<T> scheduleFixedDelay(final Stream<T> stream, final long delay, final ScheduledExecutorService ex) {
+        return new NonPausableConnectable<>(
                                           stream).scheduleFixedDelay(delay, ex);
     }
 
@@ -795,7 +795,7 @@ public class Streams {
      *
      * <pre>
      * {@code
-     * HotStream<Data> dataStream = Streams.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
+     * Connectable<Data> dataStream = Streams.scheduleFixedRate(Stream.generate(()->"next job:"+formatDate(new Date()))
      *            							  .map(this::processJob)
      *            							  ,60_000,Executors.newScheduledThreadPool(1)));
      *
@@ -806,10 +806,10 @@ public class Streams {
      * @param stream the stream to schedule element processing on
      * @param rate Time in millis between job runs
      * @param ex ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    public static <T> HotStream<T> scheduleFixedRate(final Stream<T> stream, final long rate, final ScheduledExecutorService ex) {
-        return new NonPausableHotStream<>(
+    public static <T> Connectable<T> scheduleFixedRate(final Stream<T> stream, final long rate, final ScheduledExecutorService ex) {
+        return new NonPausableConnectable<>(
                                           stream).scheduleFixedRate(rate, ex);
     }
 
@@ -2815,23 +2815,23 @@ public class Streams {
         });
     }
 
-    public final static <T> HotStream<T> hotStream(final Stream<T> stream, final Executor exec) {
-        return new NonPausableHotStream<>(
+    public final static <T> Connectable<T> hotStream(final Stream<T> stream, final Executor exec) {
+        return new NonPausableConnectable<>(
                                           stream).init(exec);
     }
 
-    public final static <T> HotStream<T> primedHotStream(final Stream<T> stream, final Executor exec) {
-        return new NonPausableHotStream<>(
+    public final static <T> Connectable<T> primedHotStream(final Stream<T> stream, final Executor exec) {
+        return new NonPausableConnectable<>(
                                           stream).paused(exec);
     }
 
-    public final static <T> PausableHotStream<T> pausableHotStream(final Stream<T> stream, final Executor exec) {
-        return new PausableHotStreamImpl<>(
+    public final static <T> PausableConnectable<T> pausableHotStream(final Stream<T> stream, final Executor exec) {
+        return new PausableConnectableImpl<>(
                                            stream).init(exec);
     }
 
-    public final static <T> PausableHotStream<T> primedPausableHotStream(final Stream<T> stream, final Executor exec) {
-        return new PausableHotStreamImpl<>(
+    public final static <T> PausableConnectable<T> primedPausableHotStream(final Stream<T> stream, final Executor exec) {
+        return new PausableConnectableImpl<>(
                                            stream).paused(exec);
     }
 

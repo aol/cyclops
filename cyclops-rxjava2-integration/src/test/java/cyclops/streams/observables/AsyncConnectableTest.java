@@ -1,6 +1,8 @@
-package cyclops.streams.push.async;
+package cyclops.streams.observables;
 
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
+import cyclops.companion.rx2.Observables;
+import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
@@ -15,7 +17,7 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class AsyncHotStreamTest {
+public class AsyncConnectableTest {
 	static final Executor exec = Executors.newFixedThreadPool(15);
 	static final Executor exec2 = Executors.newFixedThreadPool(5);
 
@@ -26,7 +28,7 @@ public class AsyncHotStreamTest {
 	long diff;
 	protected <U> ReactiveSeq<U> of(U... array){
 
-		return Spouts.async(s->{
+		ReactiveSeq<U> seq = Spouts.async(s->{
 			Thread t = new Thread(()-> {
 				for (U next : array) {
 					s.onNext(next);
@@ -35,8 +37,9 @@ public class AsyncHotStreamTest {
 			});
 			t.start();
 		});
+		return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
-	protected  ReactiveSeq<Integer> range(int start,int end){
+	protected ReactiveSeq<Integer> range(int start, int end){
 
 		return Spouts.async(s->{
 			Thread t = new Thread(()-> {
@@ -238,7 +241,7 @@ public class AsyncHotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream<Integer> s = range(0,Integer.MAX_VALUE)
+		PausableConnectable<Integer> s = range(0,Integer.MAX_VALUE)
 		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

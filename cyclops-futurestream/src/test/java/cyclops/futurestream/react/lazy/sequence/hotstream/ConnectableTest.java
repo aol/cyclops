@@ -13,7 +13,7 @@ import org.junit.Test;
 import cyclops.futurestream.LazyReact;
 
 
-public class HotStreamTest {
+public class ConnectableTest {
 	static final Executor exec = Executors.newFixedThreadPool(1);
 	volatile Object value;
 	@Test
