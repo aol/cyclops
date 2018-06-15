@@ -2476,18 +2476,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return True if Monad starts with Iterable sequence of data
      */
     @Override
-    boolean startsWithIterable(Iterable<T> iterable);
+    boolean startsWith(Iterable<T> iterable);
 
-    /**
-     * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
-     * </pre>
-     *
-     * @param stream
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    @Override
-    boolean startsWith(Stream<T> stream);
+
 
 
 
@@ -2903,22 +2894,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return true if ReactiveSeq ends with values in the supplied iterable
      */
     @Override
-    boolean endsWithIterable(Iterable<T> iterable);
+    boolean endsWith(Iterable<T> iterable);
 
-    /**
-     * <pre>
-     * {@code
-     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     * 				.endsWith(Stream.of(5,6)));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            Values to check
-     * @return true if ReactiveSeq endswith values in the supplied Stream
-     */
-    @Override
-    boolean endsWith(Stream<T> stream);
+
 
     /**
      * Skip all elements until specified time period has passed

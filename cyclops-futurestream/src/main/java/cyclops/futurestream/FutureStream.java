@@ -2932,46 +2932,27 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#startsWith(java.lang.Iterable)
-     */
+
     @Override
-    default boolean startsWithIterable(final Iterable<U> iterable) {
+    default boolean startsWith(final Iterable<U> iterable) {
         return ReactiveSeq.oneShotStream(stream())
-                          .startsWithIterable(iterable);
+                          .startsWith(iterable);
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#startsWith(java.util.Iterator)
-     */
-    @Override
-    default boolean startsWith(final Stream<U> iterator) {
-        return ReactiveSeq.oneShotStream(stream())
-                          .startsWith(iterator);
-    }
 
     /*
      * @see cyclops2.stream.ReactiveSeq#endsWith(java.lang.Iterable)
      */
     @Override
-    default boolean endsWithIterable(final Iterable<U> iterable) {
+    default boolean endsWith(final Iterable<U> iterable) {
         return ReactiveSeq.oneShotStream(stream())
-                          .endsWithIterable(iterable);
-    }
-
-    /*
-     * @see cyclops2.stream.ReactiveSeq#endsWith(java.util.stream.Stream)
-     */
-    @Override
-    default boolean endsWith(final Stream<U> stream) {
-        return ReactiveSeq.oneShotStream(stream())
-                          .endsWith(stream);
+                          .endsWith(iterable);
     }
 
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#concatMap(java.util.function.Function)
-     */
+
+
+
     @Override
     default <R> FutureStream<R> concatMap(final Function<? super U, ? extends Iterable<? extends R>> fn) {
         return fromStream(ReactiveSeq.oneShotStream(stream())

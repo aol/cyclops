@@ -2,7 +2,6 @@ package com.oath.cyclops.types;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -11,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -82,63 +80,34 @@ public abstract class AbstractFoldableTest {
     @Test
     public void endsWith(){
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(5,6)));
+                .endsWith(Arrays.asList(5,6)));
     }
     @Test
     public void endsWithFalse(){
         assertFalse(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(5,6,7)));
+                .endsWith(Arrays.asList(5,6,7)));
     }
     @Test
     public void endsWithToLong(){
         assertFalse(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
+                .endsWith(Arrays.asList(0,1,2,3,4,5,6)));
     }
     @Test
     public void endsWithEmpty(){
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList()));
+                .endsWith(Arrays.asList()));
     }
     @Test
     public void endsWithWhenEmpty(){
         assertFalse(of()
-                .endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
+                .endsWith(Arrays.asList(1,2,3,4,5,6)));
     }
     @Test
     public void endsWithBothEmpty(){
         assertTrue(ReactiveSeq.<Integer>of()
-                .endsWithIterable(Arrays.asList()));
+                .endsWith(Arrays.asList()));
     }
-    @Test
-    public void endsWithStream(){
-        assertTrue(of(1,2,3,4,5,6)
-                .endsWith(Stream.of(5,6)));
-    }
-    @Test
-    public void endsWithFalseStream(){
-        assertFalse(of(1,2,3,4,5,6)
-                .endsWith(Stream.of(5,6,7)));
-    }
-    @Test
-    public void endsWithToLongStream(){
-        assertFalse(of(1,2,3,4,5,6)
-                .endsWith(Stream.of(0,1,2,3,4,5,6)));
-    }
-    @Test
-    public void endsWithEmptyStream(){
-        assertTrue(of(1,2,3,4,5,6)
-                .endsWith(Stream.of()));
-    }
-    @Test
-    public void endsWithWhenEmptyStream(){
-        assertFalse(of()
-                .endsWith(Stream.of(1,2,3,4,5,6)));
-    }
-    @Test
-    public void endsWithBothEmptyStream(){
-        assertTrue(ReactiveSeq.<Integer>of()
-                .endsWith(Stream.of()));
-    }
+
     @Test
     public void testJoin() {
         assertEquals("123".length(),of(1, 2, 3).join().length());
