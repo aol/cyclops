@@ -276,12 +276,9 @@ public class AnyMTest {
 	public void startsWith(){
 		assertTrue(fromStream(Stream.of(1,2,3,4))
 						.stream()
-						.startsWithIterable(Arrays.asList(1,2,3)));
+						.startsWith(Arrays.asList(1,2,3)));
 	}
-	@Test
-	public void startsWithIterator(){
-		assertTrue(fromStream(Stream.of(1,2,3,4)).stream().startsWith(Arrays.asList(1,2,3).stream()));
-	}
+
 
 	@Test
     public void scanLeft() {

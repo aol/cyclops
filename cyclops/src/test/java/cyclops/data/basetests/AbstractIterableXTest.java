@@ -1004,63 +1004,34 @@ public abstract class AbstractIterableXTest {
 	@Test
 	public void endsWith(){
 		assertTrue(of(1,2,3,4,5,6)
-				.endsWithIterable(of(5,6)));
+				.endsWith(of(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(of(1,2,3,4,5,6)
-				.endsWithIterable(of(5,6,7)));
+				.endsWith(of(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(of(1,2,3,4,5,6)
-				.endsWithIterable(of(0,1,2,3,4,5,6)));
+				.endsWith(of(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(of(1,2,3,4,5,6)
-				.endsWithIterable(of()));
+				.endsWith(of()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(of()
-				.endsWithIterable(of(1,2,3,4,5,6)));
+				.endsWith(of(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWithIterable(of()));
+				.endsWith(of()));
 	}
-	@Test
-	public void endsWithStream(){
-		assertTrue(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6)));
-	}
-	@Test
-	public void endsWithFalseStream(){
-		assertFalse(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6,7)));
-	}
-	@Test
-	public void endsWithToLongStream(){
-		assertFalse(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(0,1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithEmptyStream(){
-		assertTrue(of(1,2,3,4,5,6)
-				.endsWith(Stream.of()));
-	}
-	@Test
-	public void endsWithWhenEmptyStream(){
-		assertFalse(of()
-				.endsWith(Stream.of(1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithBothEmptyStream(){
-		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWith(Stream.of()));
-	}
+
 
 	@Test
 	public void streamable(){

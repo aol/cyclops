@@ -328,22 +328,11 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default AnyM<W,Boolean> startsWithIterable(final Iterable<T> iterable) {
-        return nestedFoldables().map(s -> s.startsWithIterable(iterable));
+    default AnyM<W,Boolean> startsWith(final Iterable<T> iterable) {
+        return nestedFoldables().map(s -> s.startsWith(iterable));
     }
 
-    /**
-     * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
-     * </pre>
-     *
-     * @param stream
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    default AnyM<W,Boolean> startsWith(final Stream<T> stream) {
-        final Streamable<T> streamable = Streamable.fromStream(stream);
-        return nestedFoldables().map(s -> s.startsWith(streamable.stream()));
-    }
+
 
     /**
      * <pre>
@@ -356,25 +345,11 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default AnyM<W,Boolean> endsWithIterable(final Iterable<T> iterable) {
-        return nestedFoldables().map(s -> s.endsWithIterable(iterable));
+    default AnyM<W,Boolean> endsWith(final Iterable<T> iterable) {
+        return nestedFoldables().map(s -> s.endsWith(iterable));
     }
 
-    /**
-     * <pre>
-     * {@code
-     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6)));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            Values to check
-     * @return true if SequenceM endswith values in the supplied Stream
-     */
-    default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
-        return nestedFoldables().map(s -> s.endsWith(stream));
-    }
+
     default <R> AnyM<W,R> toNested(Function<? super ConvertableSequence<T>, ? extends R> fn) {
         return nestedFoldables().map(s -> fn.apply(s.to()));
     }

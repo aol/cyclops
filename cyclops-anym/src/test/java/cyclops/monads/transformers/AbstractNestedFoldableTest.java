@@ -203,25 +203,20 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testStartsWithIterable() {
         assertTrue(of(1,2,3,4)
-                .startsWithIterable(Arrays.asList(1,2,3)).singleOrElse(null));
+                .startsWith(Arrays.asList(1,2,3)).singleOrElse(null));
     }
 
-    @Test
-    public void testStartsWith() {
-        assertTrue(of(1,2,3,4)
-                .startsWith(ReactiveSeq.of(1,2,3)).singleOrElse(null));
-    }
 
     @Test
     public void testEndsWithIterable() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(5,6)).singleOrElse(null));
+                .endsWith(Arrays.asList(5,6)).singleOrElse(null));
     }
 
     @Test
     public void testEndsWith() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(ReactiveSeq.of(5,6)).singleOrElse(null));
+                .endsWith(ReactiveSeq.of(5,6)).singleOrElse(null));
     }
 
     @Test
