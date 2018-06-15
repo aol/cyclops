@@ -429,13 +429,8 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean startsWithIterable(Iterable<T> iterable) {
-        return Spouts.from(flowable).startsWithIterable(iterable);
-    }
-
-    @Override
-    public boolean startsWith(Stream<T> stream) {
-        return Spouts.from(flowable).startsWith(stream);
+    public boolean startsWith(Iterable<T> iterable) {
+        return Spouts.from(flowable).startsWith(iterable);
     }
 
 
@@ -565,14 +560,10 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean endsWithIterable(Iterable<T> iterable) {
-        return Spouts.from(flowable).endsWithIterable(iterable);
+    public boolean endsWith(Iterable<T> iterable) {
+        return Spouts.from(flowable).endsWith(iterable);
     }
 
-    @Override
-    public boolean endsWith(Stream<T> stream) {
-        return Spouts.from(flowable).endsWith(stream);
-    }
 
     @Override
     public ReactiveSeq<T> skip(long time, TimeUnit unit) {

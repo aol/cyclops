@@ -277,62 +277,32 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void endsWith(){
 		assertTrue(Spouts.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6)));
+				.endsWith(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(Spouts.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6,7)));
+				.endsWith(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(Spouts.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(Spouts.of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList()));
+				.endsWith(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(Spouts.of()
-				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(Spouts.<Integer>of()
-				.endsWithIterable(Arrays.asList()));
-	}
-	@Test
-	public void endsWithStream(){
-		assertTrue(Spouts.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6)));
-	}
-	@Test
-	public void endsWithFalseStream(){
-		assertFalse(Spouts.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6,7)));
-	}
-	@Test
-	public void endsWithToLongStream(){
-		assertFalse(Spouts.of(1,2,3,4,5,6)
-				.endsWith(Stream.of(0,1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithEmptyStream(){
-		assertTrue(Spouts.of(1,2,3,4,5,6)
-				.endsWith(Stream.of()));
-	}
-	@Test
-	public void endsWithWhenEmptyStream(){
-		assertFalse(Spouts.of()
-				.endsWith(Stream.of(1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithBothEmptyStream(){
-		assertTrue(Spouts.<Integer>of()
-				.endsWith(Stream.of()));
+				.endsWith(Arrays.asList()));
 	}
 
 	@Test

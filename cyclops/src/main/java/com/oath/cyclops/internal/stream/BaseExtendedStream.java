@@ -29,7 +29,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public boolean endsWithIterable(final Iterable<T> iterable) {
+    public boolean endsWith(final Iterable<T> iterable) {
         return Streams.endsWith(this, iterable);
     }
     @Override
@@ -175,16 +175,11 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final boolean startsWithIterable(final Iterable<T> iterable) {
+    public final boolean startsWith(final Iterable<T> iterable) {
         return Streams.startsWith(this, iterable);
 
     }
 
-    @Override
-    public final boolean startsWith(final Stream<T> stream2) {
-        return Streams.startsWith(this, stream2);
-
-    }
 
     @Override
     public final <R> ReactiveSeq<R> flatMapStream(final Function<? super T, BaseStream<? extends R, ?>> fn) {
@@ -192,9 +187,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
     }
 
-
     protected abstract <R> ReactiveSeq<R> createSeq(Stream<R> rStream);
-
 
 
     @Override
@@ -372,7 +365,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
 
             }
         });
-        //return createSeq(Streams.fixedDelay(this, l, unit), this.reversible,split);
+
     }
 
     @Override
@@ -392,7 +385,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
             }
         });
 
-        // return createSeq(Streams.jitter(this, l), this.reversible,split);
     }
 
     @Override
@@ -400,10 +392,6 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
         return reverse().foldLeft(identity, accumulator);
     }
 
-    @Override
-    public boolean endsWith(final Stream<T> iterable) {
-        return Streams.endsWith(this, () -> iterable.iterator());
-    }
     @Override
     public T firstValue(T alt) {
         return findFirst().get();
