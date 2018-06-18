@@ -263,20 +263,20 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
     @Override
     public <T> T foldRightMapToType(final Reducer<T,U> reducer) {
-        return reducer.mapReduce(reverse());
+        return reducer.foldMap(reverse());
 
     }
 
     @Override
-    public <R> R mapReduce(final Reducer<R,U> reducer) {
-        return reducer.mapReduce(this);
+    public <R> R foldMap(final Reducer<R,U> reducer) {
+        return reducer.foldMap(this);
     }
 
     @Override
-    public <R> R mapReduce(final Function<? super U, ? extends R> mapper, final Monoid<R> reducer) {
+    public <R> R foldMap(final Function<? super U, ? extends R> mapper, final Monoid<R> reducer) {
 
         return Reducer.fromMonoid(reducer,(U a)-> (R)mapper.apply(a))
-                      .mapReduce(this);
+                      .foldMap(this);
     }
 
     @Override

@@ -482,7 +482,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @return Either populated with the accumulate left operation
      */
     public static <LT, RT, R> Either<RT, R> accumulateLeft(final Iterable<Either<LT, RT>> xors, final Reducer<R, LT> reducer) {
-        return sequenceLeft(xors).map(s -> s.mapReduce(reducer));
+        return sequenceLeft(xors).map(s -> s.foldMap(reducer));
     }
     /**
      * Accumulate the results only from those Eithers which have a Left type present, using the supplied mapping function to
@@ -555,7 +555,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @return Either populated with the accumulate right operation
      */
     public static <LT, RT, R> Either<LT, R> accumulateRight(final Iterable<Either<LT, RT>> xors, final Reducer<R,RT> reducer) {
-        return sequenceRight(xors).map(s -> s.mapReduce(reducer));
+        return sequenceRight(xors).map(s -> s.foldMap(reducer));
     }
 
     /**

@@ -308,12 +308,11 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
     /**
-     * Attempt toNePsted transform this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
+     * E.g.
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * ReactiveSeq.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -323,18 +322,17 @@ public interface Folds<T> extends Iterable<T>  {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(final Reducer<R,T> reducer) {
-        return stream().mapReduce(reducer);
+    default <R> R foldMap(final Reducer<R,T> reducer) {
+        return stream().foldMap(reducer);
     }
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
+     *
      *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -358,8 +356,8 @@ public interface Folds<T> extends Iterable<T>  {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return stream().mapReduce(mapper, reducer);
+    default <R> R foldMap(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+        return stream().foldMap(mapper, reducer);
     }
 
     /**

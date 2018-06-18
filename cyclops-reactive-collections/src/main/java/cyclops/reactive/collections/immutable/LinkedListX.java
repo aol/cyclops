@@ -372,7 +372,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
      */
     default <T> LinkedListX<T> fromStream(final ReactiveSeq<T> stream) {
         return ReactiveReducers.<T>toLinkedListX()
-                       .mapReduce(stream);
+                       .foldMap(stream);
     }
 
     @Override

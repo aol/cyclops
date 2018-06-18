@@ -8,7 +8,7 @@ import java.util.stream.Stream;
  * A class that extends Monoid to include a transform operation to transform to the type
  * of the identity element first (to make reduction to immutable collections, for example, easier to
  * work with in Java 8 Streams).
- * 
+ *
  * @author johnmcclean
  *
  * @param <T> Type this Reducer operates on
@@ -22,9 +22,9 @@ public interface Reducer<T,U> extends Monoid<T> {
 
     /**
      * Map this reducer to the supported Type t.
-     * 
+     *
      * Default implementation is a simple cast.
-     * 
+     *
      * @param stream Stream to convert
      * @return Converted Stream
      */
@@ -32,24 +32,8 @@ public interface Reducer<T,U> extends Monoid<T> {
         return stream.map(conversion());
     }
 
-    /**
-     * Map a given Stream to required type (via mapToType method), transform
-     * reduce using this monoid
-     * 
-     * Example of multiple reduction using multiple Monoids and PowerTuples
-     * <pre>{@code 
-     *  Monoid<Integer> sum = Monoid.of(0,(a,b)->a+b);
-     *	Monoid<Integer> mult = Monoid.of(1,(a,b)->a*b);
-     *	<PTuple2<Integer,Integer>> result = PowerTuples.tuple(sum,mult).<PTuple2<Integer,Integer>>asReducer()
-     *										.mapReduce(Stream.of(1,2,3,4));
-     *	 
-     *	assertThat(result,equalTo(tuple(10,24)));
-     *  }</pre>
-     * 
-     * @param toReduce Stream to reduce
-     * @return reduced value
-     */
-    default T mapReduce(final Stream<U> toReduce) {
+
+    default T foldMap(final Stream<U> toReduce) {
         return foldLeft(mapToType(toReduce));
     }
 

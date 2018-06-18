@@ -54,6 +54,6 @@ public class MultiReduceOperator<R> {
 
             }
         };
-        return m.mapReduce(stream);
+        return m.foldMap(stream);
     }
 }
