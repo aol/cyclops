@@ -21,7 +21,7 @@ import java.util.Comparator;
  * <pre>
  * {@code
  * PersistentQueueX<Integer> q = Reducers.<Integer>toPersistentQueueX()
-                                .mapReduce(Stream.of(1,2,3,4));
+                                .foldMap(Stream.of(1,2,3,4));
  *
  * }
  * </pre>
@@ -68,7 +68,7 @@ public class ReactiveReducers {
      * <pre>
      * {@code
      * PersistentMap<Integer,String> q = Reducers.toPersistentMap()
-                                                 .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
+                                                 .foldMap(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
      *
      * }
      * </pre>

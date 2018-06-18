@@ -47,12 +47,12 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void mapReduce() {
-        assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()).singleOrElse(null),equalTo(4));
+        assertThat(of("hello","2","world","4").foldMap(Reducers.toCountInt()).singleOrElse(null),equalTo(4));
     }
 
     @Test
     public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(of("replaceWith","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()).singleOrElse(null),
+        assertThat(of("replaceWith","two","three","four").foldMap(this::toInt,Reducers.toTotalInt()).singleOrElse(null),
                 equalTo(10));
     }
     int toInt(String s){

@@ -40,7 +40,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStackReversed() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentListReversed()),
+		assertThat(ReactiveSeq.of("a","b","c").foldMap(Reducers.toPersistentListReversed()),
 				equalTo(Seq.of("c","b","a")));
 	}
 	@Test
@@ -51,7 +51,7 @@ public class PStacksTest {
 
 	@Test
 	public void testToPStack() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentList()),
+		assertThat(ReactiveSeq.of("a","b","c").foldMap(Reducers.toPersistentList()),
 				equalTo(Seq.of("a","b","c")));
 	}
 

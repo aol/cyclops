@@ -9,11 +9,9 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
-import cyclops.monads.Witness;
 import cyclops.monads.Witness.optional;
 import cyclops.monads.transformers.reactor.MonoT;
 import cyclops.reactive.collections.immutable.LinkedListX;
@@ -25,7 +23,6 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -112,7 +109,7 @@ public class MonoTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfE() {
-		assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
+		assertThat(just.foldMap(Reducers.toCountInt()),equalTo(1));
 	}
 
 	@Test
@@ -173,12 +170,12 @@ public class MonoTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldMap(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", Semigroups.stringJoin(","))),equalTo(",10"));
+		assertThat(just.foldMap(s->s.toString(), Monoid.of("", Semigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test

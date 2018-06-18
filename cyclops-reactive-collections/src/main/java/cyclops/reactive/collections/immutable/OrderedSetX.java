@@ -22,7 +22,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.reactive.collections.mutable.ListX;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.foldable.To;
@@ -238,7 +237,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      */
     default <T> OrderedSetX<T> fromStream(final ReactiveSeq<T> stream) {
         return ReactiveReducers.<T>toOrderedSetX()
-                       .mapReduce(stream);
+                       .foldMap(stream);
     }
 
 
@@ -269,7 +268,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
     public static <T> OrderedSetX<T> toPOrderedSet(final Stream<T> stream) {
         return ReactiveReducers.<T>toOrderedSetX()
-                       .mapReduce(stream);
+                       .foldMap(stream);
     }
 
     @Override

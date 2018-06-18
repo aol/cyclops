@@ -40,12 +40,10 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
     /**
-     * Attempt to transform this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * ReactiveSeq.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -55,18 +53,16 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> mapReduce(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(reducer));
+    default <R> AnyM<W,R> foldMap(final Reducer<R,T> reducer) {
+        return nestedFoldables().map(s -> s.foldMap(reducer));
     }
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
      *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -90,8 +86,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(mapper, reducer));
+    default <R> AnyM<W,R> foldMap(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+        return nestedFoldables().map(s -> s.foldMap(mapper, reducer));
     }
 
     /**
@@ -155,7 +151,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
         return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
     }
     default <R> AnyM<W,R> foldLeftMapToType(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(reducer));
+        return nestedFoldables().map(s -> s.foldMap(reducer));
     }
     /**
      *
