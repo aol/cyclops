@@ -40,7 +40,7 @@ public class PVectorsTest {
 
 	@Test
 	public void testToPVector() {
-		assertThat(ReactiveSeq.of("a","b","c").mapReduce(Reducers.toPersistentVector()),
+		assertThat(ReactiveSeq.of("a","b","c").foldMap(Reducers.toPersistentVector()),
 				equalTo(Vector.of("a","b","c")));
 	}
 

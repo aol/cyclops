@@ -8,7 +8,6 @@ import cyclops.ReactiveReducers;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
-import cyclops.control.Trampoline;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -116,7 +115,7 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfE() {
-		assertThat(just.mapReduce(Reducers.toCountInt()),equalTo(1));
+		assertThat(just.foldMap(Reducers.toCountInt()),equalTo(1));
 	}
 
 	@Test
@@ -174,12 +173,12 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testMapReduceReducerOfR() {
-		assertThat(just.mapReduce(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldMap(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 	@Test
 	public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-		assertThat(just.mapReduce(s->s.toString(), Monoid.of("", Semigroups.stringJoin(","))),equalTo(",10"));
+		assertThat(just.foldMap(s->s.toString(), Monoid.of("", Semigroups.stringJoin(","))),equalTo(",10"));
 	}
 
 	@Test

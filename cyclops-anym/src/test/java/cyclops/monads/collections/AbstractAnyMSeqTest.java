@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -34,14 +33,12 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
-import cyclops.control.Option;
 import cyclops.data.HashMap;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.companion.*;
 import cyclops.futurestream.LazyReact;
-import cyclops.control.Maybe;
 
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
@@ -563,63 +560,34 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	@Test
 	public void endsWith(){
 		assertTrue(of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6)));
+				.endsWith(Arrays.asList(5,6)));
 	}
 	@Test
 	public void endsWithFalse(){
 		assertFalse(of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(5,6,7)));
+				.endsWith(Arrays.asList(5,6,7)));
 	}
 	@Test
 	public void endsWithToLong(){
 		assertFalse(of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList(0,1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(0,1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithEmpty(){
 		assertTrue(of(1,2,3,4,5,6)
-				.endsWithIterable(Arrays.asList()));
+				.endsWith(Arrays.asList()));
 	}
 	@Test
 	public void endsWithWhenEmpty(){
 		assertFalse(of()
-				.endsWithIterable(Arrays.asList(1,2,3,4,5,6)));
+				.endsWith(Arrays.asList(1,2,3,4,5,6)));
 	}
 	@Test
 	public void endsWithBothEmpty(){
 		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWithIterable(Arrays.asList()));
+				.endsWith(Arrays.asList()));
 	}
-	@Test
-	public void endsWithStream(){
-		assertTrue(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6)));
-	}
-	@Test
-	public void endsWithFalseStream(){
-		assertFalse(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(5,6,7)));
-	}
-	@Test
-	public void endsWithToLongStream(){
-		assertFalse(of(1,2,3,4,5,6)
-				.endsWith(Stream.of(0,1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithEmptyStream(){
-		assertTrue(of(1,2,3,4,5,6)
-				.endsWith(Stream.of()));
-	}
-	@Test
-	public void endsWithWhenEmptyStream(){
-		assertFalse(of()
-				.endsWith(Stream.of(1,2,3,4,5,6)));
-	}
-	@Test
-	public void endsWithBothEmptyStream(){
-		assertTrue(ReactiveSeq.<Integer>of()
-				.endsWith(Stream.of()));
-	}
+
 
 	@Test
 	public void streamable(){

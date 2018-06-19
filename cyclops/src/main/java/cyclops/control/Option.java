@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -375,7 +374,7 @@ public interface Option<T> extends To<Option<T>>,
      * @return Maybe with reduced value
      */
     public static <T, R> Option<R> accumulateJust(final Iterable<Option<T>> maybes, final Reducer<R,T> reducer) {
-        return sequenceJust(maybes).map(s -> s.mapReduce(reducer));
+        return sequenceJust(maybes).map(s -> s.foldMap(reducer));
     }
 
     /**

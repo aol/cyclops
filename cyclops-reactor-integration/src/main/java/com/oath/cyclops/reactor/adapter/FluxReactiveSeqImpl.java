@@ -366,13 +366,13 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <R> R mapReduce(Reducer<R,T> reducer) {
-        return Spouts.from(flux).mapReduce(reducer);
+    public <R> R foldMap(Reducer<R,T> reducer) {
+        return Spouts.from(flux).foldMap(reducer);
     }
 
     @Override
-    public <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
-        return Spouts.from(flux).mapReduce(mapper,reducer);
+    public <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        return Spouts.from(flux).foldMap(mapper,reducer);
     }
 
     @Override
@@ -427,15 +427,9 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean startsWithIterable(Iterable<T> iterable) {
-        return Spouts.from(flux).startsWithIterable(iterable);
+    public boolean startsWith(Iterable<T> iterable) {
+        return Spouts.from(flux).startsWith(iterable);
     }
-
-    @Override
-    public boolean startsWith(Stream<T> stream) {
-        return Spouts.from(flux).startsWith(stream);
-    }
-
 
 
     @Override
@@ -564,13 +558,8 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean endsWithIterable(Iterable<T> iterable) {
-        return Spouts.from(flux).endsWithIterable(iterable);
-    }
-
-    @Override
-    public boolean endsWith(Stream<T> stream) {
-        return Spouts.from(flux).endsWith(stream);
+    public boolean endsWith(Iterable<T> iterable) {
+        return Spouts.from(flux).endsWith(iterable);
     }
 
     @Override

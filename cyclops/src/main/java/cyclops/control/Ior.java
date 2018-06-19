@@ -451,7 +451,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @return Ior populated with the accumulate left operation
      */
     public static <ST, PT, R> Ior<PT, R> accumulateLeft(final Iterable<Ior<ST, PT>> iors, final Reducer<R,ST> reducer) {
-        return sequenceLeft(iors).map(s -> s.mapReduce(reducer));
+        return sequenceLeft(iors).map(s -> s.foldMap(reducer));
     }
 
     /**
@@ -563,7 +563,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @return Ior populated with the accumulate right operation
      */
     public static <ST, PT, R> Ior<ST, R> accumulateRight(final Iterable<Ior<ST, PT>> iors, final Reducer<R,PT> reducer) {
-        return sequenceRight(iors).map(s -> s.mapReduce(reducer));
+        return sequenceRight(iors).map(s -> s.foldMap(reducer));
     }
 
     /**
