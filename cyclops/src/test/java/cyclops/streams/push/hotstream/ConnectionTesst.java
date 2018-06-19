@@ -1,6 +1,6 @@
 package cyclops.streams.push.hotstream;
 
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.reactive.Spouts;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class ConnectionTesst {
         value.set(-1);
         active=true;
         CountDownLatch latch = new CountDownLatch(1);
-        PausableHotStream<Integer> s = Spouts.range(0,Integer.MAX_VALUE)
+        PausableConnectable<Integer> s = Spouts.range(0,Integer.MAX_VALUE)
                 .limitWhile(i->active)
                 .peek(v->value.set(v))
                 .peek(v->latch.countDown())

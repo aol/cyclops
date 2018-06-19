@@ -232,7 +232,8 @@ public  class SyncReactiveStreamXTest {
 				.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
+		assertThat(result,hasItems(1,2,3));
+		assertThat(result.size(),lessThanOrEqualTo(4));
 	}
     @Test
 	public void skipUntil(){

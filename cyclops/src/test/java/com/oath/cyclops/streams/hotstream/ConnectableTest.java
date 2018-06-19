@@ -14,13 +14,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import org.agrona.concurrent.ManyToOneConcurrentArrayQueue;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
 
-public class HotStreamTest {
+public class ConnectableTest {
 	static final Executor exec = Executors.newFixedThreadPool(15);
 	static final Executor exec2 = Executors.newFixedThreadPool(5);
 
@@ -220,7 +220,7 @@ public class HotStreamTest {
 		value= null;
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
-		PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+		PausableConnectable<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
 		        .limitWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())

@@ -4,27 +4,27 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.internal.stream.BaseHotStreamImpl;
+import com.oath.cyclops.internal.stream.BaseConnectableImpl;
 import cyclops.companion.Eithers;
 import cyclops.function.FluentFunctions;
 
 /**
- * A HotStream (Stream already emitting data) that can not be paused
+ * A Connectable (Stream already emitting data) that can not be paused
  *
  * @author johnmcclean
  *
  * @param <T>  Data type of elements in the Stream
  */
-public class NonPausableHotStream<T> extends BaseHotStreamImpl<T> {
-    public NonPausableHotStream(final Stream<T> stream) {
+public class NonPausableConnectable<T> extends BaseConnectableImpl<T> {
+    public NonPausableConnectable(final Stream<T> stream) {
         super(stream);
     }
 
     /* (non-Javadoc)
-     * @see com.oath.cyclops.internal.stream.BaseHotStreamImpl#init(java.util.concurrent.Executor)
+     * @see com.oath.cyclops.internal.stream.BaseConnectableImpl#init(java.util.concurrent.Executor)
      */
     @Override
-    public HotStream<T> init(final Executor exec) {
+    public Connectable<T> init(final Executor exec) {
         CompletableFuture.runAsync(() -> {
             pause.get()
                  .join();

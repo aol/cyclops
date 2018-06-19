@@ -48,7 +48,30 @@ public  class AsyncRSReactiveStreamXTest {
 
 	}
 
+    @Test
+    public void iterateCycleStream(){
+        for(int i=0;i<10000l;i++) {
+            System.out.println("Next cycle " + i);
+            Iterator<Integer> it =  of(1).stream().cycle(2).iterator();//of(1).stream().cycle(2).iterator();
+            List<Integer> list2 = new ArrayList<>();
+            while (it.hasNext())
+                list2.add(it.next());
+            assertThat(list2, equalTo(Arrays.asList(1,1)));
+        }
 
+    }
+    @Test
+    public void iterateFlatMapStream(){
+        for(int i=0;i<100000l;i++) {
+            System.out.println("Next cycle " + i);
+            Iterator<Integer> it =  of(1).stream().concatMap(a->ReactiveSeq.of(a*2)).iterator();
+            List<Integer> list2 = new ArrayList<>();
+            while (it.hasNext())
+                list2.add(it.next());
+            assertThat(list2, equalTo(Arrays.asList(2)));
+        }
+
+    }
 
     @Test
     public void flatMapPublisher() throws InterruptedException{

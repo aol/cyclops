@@ -4,7 +4,7 @@ package com.oath.cyclops.internal.stream;
 import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.types.futurestream.Continuation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.util.ExceptionSoftener;
 
 import com.oath.cyclops.internal.stream.spliterators.push.*;
@@ -13,7 +13,6 @@ import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.QueueFactory;
 import com.oath.cyclops.async.adapters.Signal;
 import com.oath.cyclops.async.adapters.Topic;
-import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.companion.Streams;
 import cyclops.control.*;
@@ -405,7 +404,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     @Override
     public final <R> ReactiveSeq<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn) {
 
-        return createSeq(new IterableFlatMapOperator<>(source, fn));
+        return createSeq(new FlatMapOperator<>(source, i->ReactiveSeq.fromIterable(fn.apply(i))));
 
     }
 
@@ -1068,18 +1067,18 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
+    public Connectable<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return Streams.schedule(this, cron, ex);
 
     }
 
     @Override
-    public HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+    public Connectable<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return Streams.scheduleFixedDelay(this, delay, ex);
     }
 
     @Override
-    public HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+    public Connectable<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return Streams.scheduleFixedRate(this, rate, ex);
 
     }

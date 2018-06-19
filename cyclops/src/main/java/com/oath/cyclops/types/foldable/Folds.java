@@ -11,7 +11,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.HashMap;
@@ -26,6 +26,7 @@ import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.Seq;
+import cyclops.reactive.Spouts;
 
 /**
  * Represents a type that may be reducable (foldable) to a single value or toX
@@ -695,10 +696,10 @@ public interface Folds<T> extends Iterable<T>  {
      * {@code
      *
      *    //1
-     *    ReactiveSeq.of(1).single();
+     *    ReactiveSeq.of(1).singleOrElse(-1);
      *
-     *    //UnsupportedOperationException
-     *    ReactiveSeq.of().single();
+     *    //-1
+     *    ReactiveSeq.of().singleOrElse(-1);
      *
      *     //UnsupportedOperationException
      *    ReactiveSeq.of(1,2,3).single();
@@ -760,41 +761,7 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().elementAt(index);
     }
 
-    /**
-     * Execute this Stream on a schedule
-     *
-     * <pre>
-     * {@code
-     *  //run at 8PM every night
-     *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
-     *             .schedule("0 20 * * *",Executors.newScheduledThreadPool(1));
-     * }
-     * </pre>
-     *
-     * Connect to the Scheduled Stream
-     *
-     * <pre>
-     * {@code
-     *
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
-     *          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
-     *
-     *  data.connect().forEach(this::logToDB);
-     * }
-     * </pre>
-     *
-     *
-     *
-     * @param cron
-     *            Expression that determines when each job will run
-     * @param ex
-     *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
-     */
-    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
-        return stream().schedule(cron, ex);
-    }
+
 
     default Maybe<Long> indexOf(Predicate<? super T> pred){
       return stream().zipWithIndex()
@@ -819,74 +786,12 @@ public interface Folds<T> extends Iterable<T>  {
         Predicate<? super Seq<? super T>> pred = in -> in.equals(ls);
         return stream().sliding(ls.size(),1).lastIndexOf(pred);
     }
-    /**
-     *
-     * Execute this Stream on a schedule
-     *
-     * <pre>
-     * {@code
-     *  //run every 60 seconds after last job completes
-     *  ReactiveSeq.generate(()->"next job:"+formatDate(new Date()))
-     *             .map(this::processJob)
-     *             .scheduleFixedDelay(60_000,Executors.newScheduledThreadPool(1));
-     * }
-     * </pre>
-     *
-     * Connect to the Scheduled Stream
-     *
-     * <pre>
-     * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
-     *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
-     *
-     *  data.connect().forEach(this::logToDB);
-     * }
-     * </pre>
-     *
-     *
-     * @param delay
-     *            Between last element completes passing through the Stream
-     *            until the next one starts
-     * @param ex
-     *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
-     */
-    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
-        return stream().scheduleFixedDelay(delay, ex);
-    }
 
-    /**
-     * Execute this Stream on a schedule
-     *
-     * <pre>
-     * {@code
-     *  //run every 60 seconds
-     *  SequenceeM.generate(()->"next job:"+formatDate(new Date()))
-     *            .map(this::processJob)
-     *            .scheduleFixedRate(60_000,Executors.newScheduledThreadPool(1));
-     * }
-     * </pre>
-     *
-     * Connect to the Scheduled Stream
-     *
-     * <pre>
-     * {@code
-     *
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -&gt; "next job:" + formatDate(new Date())).map(this::processJob)
-     *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
-     *
-     *  data.connect().forEach(this::logToDB);
-     * }
-     * </pre>
-     *
-     * @param rate
-     *            Time in millis between job runs
-     * @param ex
-     *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
-     */
-    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
-        return stream().scheduleFixedRate(rate, ex);
+
+
+
+    default ReactiveSeq<T> scheduleStream(final String cron, final ScheduledExecutorService ex) {
+        return Spouts.schedule(stream(),cron,ex);
     }
 
 

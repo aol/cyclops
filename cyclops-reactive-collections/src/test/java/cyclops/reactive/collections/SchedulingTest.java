@@ -22,6 +22,7 @@ public class SchedulingTest {
 		ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
+                .stream()
 				.schedule("* * * * * ?", ex);
 
 		Thread.sleep(5000);
@@ -32,7 +33,8 @@ public class SchedulingTest {
 		assertThat(ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
-				.schedule("* * * * * ?", ex)
+                .stream()
+                .schedule("* * * * * ?", ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
 				.peek(System.out::println)
@@ -45,6 +47,7 @@ public class SchedulingTest {
 		ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
+                 .stream()
 				.scheduleFixedRate(1000, ex)
 				.connect()
                 .forEach(e->System.out.println("Result  " + e));
@@ -53,6 +56,7 @@ public class SchedulingTest {
 		assertThat(ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
+                 .stream()
 				.scheduleFixedRate(1000, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)
@@ -66,6 +70,7 @@ public class SchedulingTest {
 		assertThat(ListX.of(1,2,3,4)
 				.peek(i->count.incrementAndGet())
 				.peek(System.out::println)
+                .stream()
 				.scheduleFixedDelay(1000, ex)
 				.connect()
 				.debounce(1,TimeUnit.DAYS)

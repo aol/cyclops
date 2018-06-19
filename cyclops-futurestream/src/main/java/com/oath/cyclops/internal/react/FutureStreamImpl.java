@@ -22,8 +22,8 @@ import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import com.oath.cyclops.react.threads.ReactPool;
-import com.oath.cyclops.types.stream.HotStream;
-import com.oath.cyclops.types.stream.PausableHotStream;
+import com.oath.cyclops.types.stream.Connectable;
+import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.companion.Streams;
 import cyclops.data.Seq;
 import cyclops.futurestream.FutureStream;
@@ -189,19 +189,19 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public HotStream<U> schedule(final String cron, final ScheduledExecutorService ex) {
+    public Connectable<U> schedule(final String cron, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.stream())
                           .schedule(cron, ex);
     }
 
     @Override
-    public HotStream<U> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+    public Connectable<U> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.stream())
                           .scheduleFixedDelay(delay, ex);
     }
 
     @Override
-    public HotStream<U> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+    public Connectable<U> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return ReactiveSeq.<U> fromStream(this.stream())
                           .scheduleFixedRate(rate, ex);
     }
@@ -228,22 +228,22 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public HotStream<U> hotStream(final Executor e) {
+    public Connectable<U> hotStream(final Executor e) {
         return Streams.hotStream(this, e);
     }
 
     @Override
-    public HotStream<U> primedHotStream(final Executor e) {
+    public Connectable<U> primedHotStream(final Executor e) {
         return Streams.primedHotStream(this, e);
     }
 
     @Override
-    public PausableHotStream<U> pausableHotStream(final Executor e) {
+    public PausableConnectable<U> pausableHotStream(final Executor e) {
         return Streams.pausableHotStream(this, e);
     }
 
     @Override
-    public PausableHotStream<U> primedPausableHotStream(final Executor e) {
+    public PausableConnectable<U> primedPausableHotStream(final Executor e) {
         return Streams.primedPausableHotStream(this, e);
     }
 
