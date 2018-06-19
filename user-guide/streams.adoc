@@ -123,7 +123,7 @@ Executor exec = Executors.newFixedThreadPool(1);
 ReactiveSeq.of(1,2,3)
      .peek(v->v+1)
      .peek(System.out::println)
-     .hotStream(exec);
+     .connectable(exec);
 ```
 
 In this example the Stream will start processing immediately on exec, and we will see
@@ -140,7 +140,7 @@ For a JDK Stream we could rewrite the code above to
 
 ```java
 Executor exec = Executors.newFixedThreadPool(1);
-StreamUtils.hotStream(Stream.of(1,2,3)
+StreamUtils.connectable(Stream.of(1,2,3)
      .peek(v->v+1)
      .peek(System.out::println)
      ,exec);
@@ -163,7 +163,7 @@ In the example below 5,000 entries will be written out on the HotStreams executi
 ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .skip(5000)
                     .peek(System.out::println)
-                    .hotStream(exec)
+                    .connectable(exec)
                     .connect()
                     .skip(100)
                     .forEach(next->System.out.println("Current thread : " + next);
@@ -192,7 +192,7 @@ In the example below 5,000 entries will be written out on the HotStreams executi
 ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .skip(5000)
                     .peek(System.out::println)
-                    .hotStream(exec)
+                    .connectable(exec)
                     .connect()
                     .onePer(1,TimeUnit.SECONDS)
                     .forEach(next->System.out.println("Current thread : " + next);
@@ -203,7 +203,7 @@ Instead we connect and use a BlockingStream as a transfer queue, the producing S
 ReactiveSeq.range(0,Integer.MAX_VALUE)
                     .skip(5000)
                     .peek(System.out::println)
-                    .hotStream(exec)
+                    .connectable(exec)
                     .connect(new BlockingQueue(400))
                     .onePer(1,TimeUnit.SECONDS)
                     .forEach(next->System.out.println("Current thread : " + next);

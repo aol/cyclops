@@ -364,6 +364,7 @@ public class SpoutsTest {
 
     @Test
     public void interval() throws Exception {
+
         assertThat(Spouts.interval(10, Executors.newScheduledThreadPool(1))
                 .limit(4)
                 .collect(Collectors.toList()).size(),greaterThan(0));

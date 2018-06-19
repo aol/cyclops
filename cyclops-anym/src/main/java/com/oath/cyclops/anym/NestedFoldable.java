@@ -8,8 +8,8 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import com.oath.cyclops.types.foldable.ConvertableSequence;
+import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.stream.HotStream;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.Vector;
@@ -454,7 +454,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      *
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      *
      *  data.connect()
@@ -468,9 +468,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    default HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
+    default Connectable<T> schedule(final String cron, final ScheduledExecutorService ex) {
         return stream().schedule(cron, ex);
     }
 
@@ -490,7 +490,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -503,9 +503,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    default HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+    default Connectable<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         return stream().scheduleFixedDelay(delay, ex);
     }
 
@@ -526,7 +526,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * <pre>
      * {@code
      *
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect()
@@ -538,9 +538,9 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    default HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+    default Connectable<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         return stream().scheduleFixedRate(rate, ex);
     }
 

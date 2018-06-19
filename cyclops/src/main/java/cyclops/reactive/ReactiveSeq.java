@@ -9,7 +9,6 @@ import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
-import cyclops.companion.Streamable;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;
@@ -2963,16 +2962,16 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> limitLast(int num);
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being executed on a thread on the
-     * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
+     * Turns this ReactiveSeq into a Connectable, a connectable Stream, being executed on a thread on the
+     * supplied executor, that is producing data. Note this method creates a Connectable that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedHotStream(Executor)}.
-     * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#pausableHotStream(Executor)}.
-     * Turns this ReactiveSeq into a HotStream, a connectable Stream, being
+     * The generated Connectable is not pausable, for a pausable Connectable @see {@link ReactiveSeq#pausableHotStream(Executor)}.
+     * Turns this ReactiveSeq into a Connectable, a connectable Stream, being
      * executed on a thread on the supplied executor, that is producing data
      *
      * <pre>
      * {@code
-     *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
      * 											.hotStream(exec)
      *
      *
@@ -2985,21 +2984,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * @param e
      *            Executor to execute this ReactiveSeq on
-     * @return a Connectable HotStream
+     * @return a Connectable Connectable
      */
-    default HotStream<T> hotStream(final Executor e) {
+    default Connectable<T> hotStream(final Executor e) {
         return Streams.hotStream(this, e);
     }
 
     /**
-     * Return a HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a Connectable that will skip emitting data when the first connecting Stream connects.
+     * Note this method creates a Connectable that starts emitting data only when the first connecting Stream connects.
      *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#hotStream(Executor)}.
-     * The generated HotStream is not pausable, for a pausable HotStream @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
+     * The generated Connectable is not pausable, for a pausable Connectable @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
      * <pre>
       * <pre>
      * {@code
-     *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
 
 
@@ -3012,7 +3011,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param e
      * @return
      */
-    default HotStream<T> primedHotStream(Executor e){
+    default Connectable<T> primedHotStream(Executor e){
         return Streams.primedHotStream(this, e);
     }
 
@@ -3020,13 +3019,13 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Turns this ReactiveSeq into a HotStream, a connectable & pausable Stream, being executed on a thread on the
-     * supplied executor, that is producing data. Note this method creates a HotStream that starts emitting data
+     * Turns this ReactiveSeq into a Connectable, a connectable & pausable Stream, being executed on a thread on the
+     * supplied executor, that is producing data. Note this method creates a Connectable that starts emitting data
      * immediately. For a hotStream that waits until the first user streams connect @see {@link ReactiveSeq#primedPausableHotStream(Executor)}.
-     * The generated HotStream is pausable, for a unpausable HotStream (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
+     * The generated Connectable is pausable, for a unpausable Connectable (slightly faster execution) @see {@link ReactiveSeq#hotStream(Executor)}.
      * <pre>
      * {@code
-     *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
 
 
@@ -3040,21 +3039,21 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * }
      * </pre>
      * @param e Executor to execute this ReactiveSeq on
-     * @return a Connectable HotStream
+     * @return a Connectable Connectable
      */
-    default PausableHotStream<T> pausableHotStream(Executor e){
+    default PausableConnectable<T> pausableHotStream(Executor e){
         return Streams.pausableHotStream(this, e);
     }
 
     /**
-     * Return a pausable HotStream that will skip emitting data when the first connecting Stream connects.
-     * Note this method creates a HotStream that starts emitting data only when the first connecting Stream connects.
+     * Return a pausable Connectable that will skip emitting data when the first connecting Stream connects.
+     * Note this method creates a Connectable that starts emitting data only when the first connecting Stream connects.
      *  For a hotStream that starts to emitted data immediately @see {@link ReactiveSeq#pausableHotStream(Executor)}.
-     * The generated HotStream is pausable, for a unpausable HotStream @see {@link ReactiveSeq#primedHotStream(Executor)}.
+     * The generated Connectable is pausable, for a unpausable Connectable @see {@link ReactiveSeq#primedHotStream(Executor)}.
      * <pre>
       * <pre>
      * {@code
-     *  HotStream<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
+     *  Connectable<Integer> ints = ReactiveSeq.range(0,Integer.MAX_VALUE)
     										.hotStream(exec)
 
 
@@ -3067,7 +3066,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param e
      * @return
      */
-    default PausableHotStream<T> primedPausableHotStream(Executor e){
+    default PausableConnectable<T> primedPausableHotStream(Executor e){
         return Streams.primedPausableHotStream(this, e);
     }
 
@@ -4010,7 +4009,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * <pre>
      * {@code
 
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *                                          .schedule("0 20 * * *", Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4023,10 +4022,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Expression that determines when each job will run
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    @Override
-    default HotStream<T> schedule(String cron, ScheduledExecutorService ex){
+    default Connectable<T> schedule(String cron, ScheduledExecutorService ex){
         return Streams.schedule(this, cron, ex);
 
     }
@@ -4048,7 +4046,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedDelay(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4062,10 +4060,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            until the next one starts
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    @Override
-    default HotStream<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
+    default Connectable<T> scheduleFixedDelay(long delay, ScheduledExecutorService ex){
         return Streams.scheduleFixedDelay(this, delay, ex);
     }
 
@@ -4085,7 +4082,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      * <pre>
      * {@code
-     *  HotStream<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
+     *  Connectable<Data> dataStream = ReactiveSeq.generate(() -> "next job:" + formatDate(new Date())).map(this::processJob)
      *          .scheduleFixedRate(60_000, Executors.newScheduledThreadPool(1));
      *
      *  data.connect().forEach(this::logToDB);
@@ -4096,10 +4093,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Time in millis between job runs
      * @param ex
      *            ScheduledExecutorService
-     * @return Connectable HotStream of emitted from scheduled Stream
+     * @return Connectable Connectable of emitted from scheduled Stream
      */
-    @Override
-    default HotStream<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
+    default Connectable<T> scheduleFixedRate(long rate, ScheduledExecutorService ex){
         return Streams.scheduleFixedRate(this, rate, ex);
     }
 

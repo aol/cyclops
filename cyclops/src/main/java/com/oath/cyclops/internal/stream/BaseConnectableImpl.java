@@ -9,40 +9,40 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.oath.cyclops.internal.stream.spliterators.ClosingSpliterator;
-import com.oath.cyclops.types.stream.HotStream;
+import com.oath.cyclops.types.stream.Connectable;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.companion.Streams;
 
-public abstract class BaseHotStreamImpl<T> extends IteratorHotStream<T>implements HotStream<T> {
+public abstract class BaseConnectableImpl<T> extends IteratorHotStream<T>implements Connectable<T> {
 
     protected final Stream<T> stream;
 
-    public BaseHotStreamImpl(final Stream<T> stream) {
+    public BaseConnectableImpl(final Stream<T> stream) {
         this.stream = stream;
     }
 
-    public HotStream<T> paused(final Executor exec) {
+    public Connectable<T> paused(final Executor exec) {
         pause();
         return init(exec);
     }
 
-    public abstract HotStream<T> init(Executor exec);
+    public abstract Connectable<T> init(Executor exec);
 
-    public HotStream<T> schedule(final String cron, final ScheduledExecutorService ex) {
+    public Connectable<T> schedule(final String cron, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleInternal(it, cron, ex);
         return this;
 
     }
 
-    public HotStream<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
+    public Connectable<T> scheduleFixedDelay(final long delay, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleFixedDelayInternal(it, delay, ex);
         return this;
 
     }
 
-    public HotStream<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
+    public Connectable<T> scheduleFixedRate(final long rate, final ScheduledExecutorService ex) {
         final Iterator<T> it = stream.iterator();
         scheduleFixedRate(it, rate, ex);
         return this;

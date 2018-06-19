@@ -7,10 +7,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.oath.cyclops.types.stream.PausableConnectable;
 import org.junit.Test;
 
 import cyclops.reactive.ReactiveSeq;
-import com.oath.cyclops.types.stream.PausableHotStream;
 
 public class ConnectionTesst {
     volatile boolean active;
@@ -22,7 +22,7 @@ public class ConnectionTesst {
         value.set(-1);
         active=true;
         CountDownLatch latch = new CountDownLatch(1);
-        PausableHotStream<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
+        PausableConnectable<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
                 .limitWhile(i->active)
                 .peek(v->value.set(v))
                 .peek(v->latch.countDown())
