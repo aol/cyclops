@@ -1,6 +1,5 @@
 package cyclops.monads.transformers;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -48,12 +47,12 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void mapReduce() {
-        assertThat(of("hello","2","world","4").mapReduce(Reducers.toCountInt()).singleOrElse(null),equalTo(4));
+        assertThat(of("hello","2","world","4").foldMap(Reducers.toCountInt()).singleOrElse(null),equalTo(4));
     }
 
     @Test
     public void testMapReduceFunctionOfQsuperTQextendsRMonoidOfR() {
-        assertThat(of("replaceWith","two","three","four").mapReduce(this::toInt,Reducers.toTotalInt()).singleOrElse(null),
+        assertThat(of("replaceWith","two","three","four").foldMap(this::toInt,Reducers.toTotalInt()).singleOrElse(null),
                 equalTo(10));
     }
     int toInt(String s){
@@ -204,25 +203,20 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
     @Test
     public void testStartsWithIterable() {
         assertTrue(of(1,2,3,4)
-                .startsWithIterable(Arrays.asList(1,2,3)).singleOrElse(null));
+                .startsWith(Arrays.asList(1,2,3)).singleOrElse(null));
     }
 
-    @Test
-    public void testStartsWith() {
-        assertTrue(of(1,2,3,4)
-                .startsWith(ReactiveSeq.of(1,2,3)).singleOrElse(null));
-    }
 
     @Test
     public void testEndsWithIterable() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(Arrays.asList(5,6)).singleOrElse(null));
+                .endsWith(Arrays.asList(5,6)).singleOrElse(null));
     }
 
     @Test
     public void testEndsWith() {
         assertTrue(of(1,2,3,4,5,6)
-                .endsWithIterable(ReactiveSeq.of(5,6)).singleOrElse(null));
+                .endsWith(ReactiveSeq.of(5,6)).singleOrElse(null));
     }
 
     @Test

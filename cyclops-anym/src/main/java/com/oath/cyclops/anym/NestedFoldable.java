@@ -40,12 +40,10 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
 
 
     /**
-     * Attempt to transform this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * ReactiveSeq.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -55,18 +53,16 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> mapReduce(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(reducer));
+    default <R> AnyM<W,R> foldMap(final Reducer<R,T> reducer) {
+        return nestedFoldables().map(s -> s.foldMap(reducer));
     }
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
      *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -90,8 +86,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(mapper, reducer));
+    default <R> AnyM<W,R> foldMap(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+        return nestedFoldables().map(s -> s.foldMap(mapper, reducer));
     }
 
     /**
@@ -155,7 +151,7 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
         return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
     }
     default <R> AnyM<W,R> foldLeftMapToType(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.mapReduce(reducer));
+        return nestedFoldables().map(s -> s.foldMap(reducer));
     }
     /**
      *
@@ -332,22 +328,11 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param iterable
      * @return True if Monad starts with Iterable sequence of data
      */
-    default AnyM<W,Boolean> startsWithIterable(final Iterable<T> iterable) {
-        return nestedFoldables().map(s -> s.startsWithIterable(iterable));
+    default AnyM<W,Boolean> startsWith(final Iterable<T> iterable) {
+        return nestedFoldables().map(s -> s.startsWith(iterable));
     }
 
-    /**
-     * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Arrays.asList(1,2,3).iterator())) }
-     * </pre>
-     *
-     * @param stream
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    default AnyM<W,Boolean> startsWith(final Stream<T> stream) {
-        final Streamable<T> streamable = Streamable.fromStream(stream);
-        return nestedFoldables().map(s -> s.startsWith(streamable.stream()));
-    }
+
 
     /**
      * <pre>
@@ -360,25 +345,11 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      * @param iterable Values to check
      * @return true if SequenceM ends with values in the supplied iterable
      */
-    default AnyM<W,Boolean> endsWithIterable(final Iterable<T> iterable) {
-        return nestedFoldables().map(s -> s.endsWithIterable(iterable));
+    default AnyM<W,Boolean> endsWith(final Iterable<T> iterable) {
+        return nestedFoldables().map(s -> s.endsWith(iterable));
     }
 
-    /**
-     * <pre>
-     * {@code
-     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     *              .endsWith(Stream.of(5,6)));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            Values to check
-     * @return true if SequenceM endswith values in the supplied Stream
-     */
-    default AnyM<W,Boolean> endsWith(final Stream<T> stream) {
-        return nestedFoldables().map(s -> s.endsWith(stream));
-    }
+
     default <R> AnyM<W,R> toNested(Function<? super ConvertableSequence<T>, ? extends R> fn) {
         return nestedFoldables().map(s -> fn.apply(s.to()));
     }

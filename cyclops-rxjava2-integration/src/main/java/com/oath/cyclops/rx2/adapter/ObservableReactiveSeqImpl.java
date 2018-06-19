@@ -376,13 +376,13 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <R> R mapReduce(Reducer<R,T> reducer) {
-        return Observables.connectToReactiveSeq(observable).mapReduce(reducer);
+    public <R> R foldMap(Reducer<R,T> reducer) {
+        return Observables.connectToReactiveSeq(observable).foldMap(reducer);
     }
 
     @Override
-    public <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
-        return Observables.connectToReactiveSeq(observable).mapReduce(mapper,reducer);
+    public <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer) {
+        return Observables.connectToReactiveSeq(observable).foldMap(mapper,reducer);
     }
 
     @Override
@@ -438,15 +438,9 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean startsWithIterable(Iterable<T> iterable) {
-        return Observables.connectToReactiveSeq(observable).startsWithIterable(iterable);
+    public boolean startsWith(Iterable<T> iterable) {
+        return Observables.connectToReactiveSeq(observable).startsWith(iterable);
     }
-
-    @Override
-    public boolean startsWith(Stream<T> stream) {
-        return Observables.connectToReactiveSeq(observable).startsWith(stream);
-    }
-
 
     @Override
     public <R> ReactiveSeq<R> map(Function<? super T, ? extends R> fn) {
@@ -572,14 +566,11 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public boolean endsWithIterable(Iterable<T> iterable) {
-        return Observables.connectToReactiveSeq(observable).endsWithIterable(iterable);
+    public boolean endsWith(Iterable<T> iterable) {
+        return Observables.connectToReactiveSeq(observable).endsWith(iterable);
     }
 
-    @Override
-    public boolean endsWith(Stream<T> stream) {
-        return Observables.connectToReactiveSeq(observable).endsWith(stream);
-    }
+
 
     @Override
     public ReactiveSeq<T> skip(long time, TimeUnit unit) {

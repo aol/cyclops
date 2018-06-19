@@ -1327,7 +1327,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * Then use Monoid to reduce values
      * <pre>
      * {@code
-     * Streamable.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * Streamable.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -1337,8 +1337,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R mapReduce(final Reducer<R,T> reducer) {
-        return this.stream().mapReduce(reducer);
+    default <R> R foldMap(final Reducer<R,T> reducer) {
+        return this.stream().foldMap(reducer);
     }
 
     /**
@@ -1348,7 +1348,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      *  <pre>
      *  {@code
      *  Streamable.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -1371,8 +1371,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R mapReduce(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
-        return this.stream().mapReduce(mapper, reducer);
+    default <R> R foldMap(final Function<? super T, ? extends R> mapper, final Monoid<R> reducer) {
+        return this.stream().foldMap(mapper, reducer);
     }
 
     /**
@@ -1512,19 +1512,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return True if Monad starts with Iterable sequence of data
      */
     @Override
-    default boolean startsWithIterable(final Iterable<T> iterable) {
-        return this.stream().startsWithIterable(iterable);
-    }
-
-    /**
-     * 	<pre>{@code assertTrue(Streamable.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }</pre>
-
-     * @param iterator
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    @Override
-    default boolean startsWith(final Stream<T> iterator) {
-        return this.stream().startsWith(iterator);
+    default boolean startsWith(final Iterable<T> iterable) {
+        return this.stream().startsWith(iterable);
     }
 
 
@@ -1549,7 +1538,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param fn
      * @return
      */
-    default <R> Streamable<R> concatMapterable(final Function<? super T, ? extends Iterable<? extends R>> fn) {
+    default <R> Streamable<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> fn) {
         return fromStream(this.stream().concatMap(fn));
     }
 
@@ -1800,8 +1789,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return true if Streamable ends with values in the supplied iterable
      */
     @Override
-    default boolean endsWithIterable(final Iterable<T> iterable) {
-        return this.stream().endsWithIterable(iterable);
+    default boolean endsWith(final Iterable<T> iterable) {
+        return this.stream().endsWith(iterable);
     }
 
     /**
@@ -1816,7 +1805,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return true if Streamable endswith values in the supplied Stream
      */
     default boolean endsWith(final Streamable<T> stream) {
-        return this.stream().endsWithIterable(stream);
+        return this.stream().endsWith(stream);
     }
 
     /**

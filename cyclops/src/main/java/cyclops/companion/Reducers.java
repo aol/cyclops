@@ -53,7 +53,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentQueue<Integer> q = Reducers.toPersistentQueue()
-                                            .mapReduce(Stream.of(1,2,3,4));
+                                            .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -66,7 +66,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentSortedSet<Integer> q = Reducers.toPersistentSortedSet()
-                                                .mapReduce(Stream.of(1,2,3,4));
+                                                .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -86,7 +86,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentBag<Integer> q = Reducers.toPersistentBag()
-                                 .mapReduce(Stream.of(1,2,3,4));
+                                 .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -99,7 +99,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentSet<Integer> q = Reducers.toPSet()
-                                          .mapReduce(Stream.of(1,2,3,4));
+                                          .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -112,7 +112,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentList<Integer> q = Reducers.toPersistentVector()
-                                           .mapReduce(Stream.of(1,2,3,4));
+                                           .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -125,7 +125,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentList<Integer> q = Reducers.toPersistentList()
-                                           .mapReduce(Stream.of(1,2,3,4));
+                                           .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -139,7 +139,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentList<Integer> q = Reducers.toPersistentListReversed()
-                                   .mapReduce(Stream.of(1,2,3,4));
+                                   .foldMap(Stream.of(1,2,3,4));
      *
      * }
      * </pre>
@@ -152,7 +152,7 @@ public class Reducers {
      * <pre>
      * {@code
      * PersistentMap<Integer,String> q = Reducers.toPersistentMap()
-                                                 .mapReduce(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
+                                                 .foldMap(Stream.of(Arrays.asList("hello",1),Arrays.asList("world",2)));
      *
      * }
      * </pre>

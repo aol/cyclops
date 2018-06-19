@@ -2162,12 +2162,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     Optional<T> findAny();
 
     /**
-     * Attempt to transform this Sequence to the same type as the supplied Monoid
-     * (Reducer) Then use Monoid to reduce values
      *
      * <pre>
      * {@code
-     * ReactiveSeq.of("hello","2","world","4").mapReduce(Reducers.toCountInt());
+     * ReactiveSeq.of("hello","2","world","4").foldMap(Reducers.toCountInt());
      *
      * //4
      * }
@@ -2178,16 +2176,14 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      */
     @Override
-    <R> R mapReduce(Reducer<R,T> reducer);
+    <R> R foldMap(Reducer<R,T> reducer);
 
     /**
-     * Attempt to transform this Monad to the same type as the supplied Monoid, using
-     * supplied function Then use Monoid to reduce values
      *
      * <pre>
      *  {@code
      *  ReactiveSeq.of("one","two","three","four")
-     *           .mapReduce(this::toInt,Reducers.toTotalInt());
+     *           .foldMap(this::toInt,Reducers.toTotalInt());
      *
      *  //10
      *
@@ -2212,7 +2208,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      */
     @Override
-    <R> R mapReduce(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
+    <R> R foldMap(Function<? super T, ? extends R> mapper, Monoid<R> reducer);
 
     /**
      * <pre>
@@ -2475,18 +2471,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return True if Monad starts with Iterable sequence of data
      */
     @Override
-    boolean startsWithIterable(Iterable<T> iterable);
+    boolean startsWith(Iterable<T> iterable);
 
-    /**
-     * <pre>
-     * {@code assertTrue(ReactiveSeq.of(1,2,3,4).startsWith(Stream.of(1,2,3))) }
-     * </pre>
-     *
-     * @param stream
-     * @return True if Monad starts with Iterators sequence of data
-     */
-    @Override
-    boolean startsWith(Stream<T> stream);
+
 
 
 
@@ -2902,22 +2889,9 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return true if ReactiveSeq ends with values in the supplied iterable
      */
     @Override
-    boolean endsWithIterable(Iterable<T> iterable);
+    boolean endsWith(Iterable<T> iterable);
 
-    /**
-     * <pre>
-     * {@code
-     * assertTrue(ReactiveSeq.of(1,2,3,4,5,6)
-     * 				.endsWith(Stream.of(5,6)));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            Values to check
-     * @return true if ReactiveSeq endswith values in the supplied Stream
-     */
-    @Override
-    boolean endsWith(Stream<T> stream);
+
 
     /**
      * Skip all elements until specified time period has passed
