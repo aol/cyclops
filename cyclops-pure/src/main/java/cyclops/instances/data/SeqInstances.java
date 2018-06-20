@@ -202,7 +202,7 @@ public class SeqInstances {
 
   public static <T,R> Foldable<seq> foldable(){
     BiFunction<Monoid<T>,Higher<seq,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<seq,T>,T> foldLeftFn = (m, l)-> narrowK(l).reduce(m);
+    BiFunction<Monoid<T>,Higher<seq,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
     Function3<Monoid<R>, Function<T, R>, Higher<seq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
 
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);

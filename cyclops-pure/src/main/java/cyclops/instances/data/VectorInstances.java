@@ -209,7 +209,7 @@ public class VectorInstances {
 
   public static <T,R> Foldable<vector> foldable(){
     BiFunction<Monoid<T>,Higher<vector,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<vector,T>,T> foldLeftFn = (m, l)-> narrowK(l).reduce(m);
+    BiFunction<Monoid<T>,Higher<vector,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
     Function3<Monoid<R>, Function<T, R>, Higher<vector, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
 
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);

@@ -186,7 +186,7 @@ public class SyncRSExtensionOperatorsTest {
 										.toList();
 
 
-		assertThat(result,contains(1,2,3));
+		assertThat(result,hasItems(1,2,3));
 		assertThat(result.size(),lessThan(5));
 	}
 	@Test
@@ -207,7 +207,8 @@ public class SyncRSExtensionOperatorsTest {
 										.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+		assertThat(result,hasItems(4,5,6));
+        assertThat(result.size(),greaterThanOrEqualTo(2));
 	}
 	@Test
 	public void skipTimeEmpty(){

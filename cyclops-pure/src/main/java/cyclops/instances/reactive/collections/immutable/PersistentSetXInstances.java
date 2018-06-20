@@ -336,7 +336,7 @@ public class PersistentSetXInstances {
    */
   public static <T,R> Foldable<persistentSetX> foldable(){
     BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldRightFn =  (m, l)-> PersistentSetX.fromIterable(narrow(l)).foldRight(m);
-    BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldLeftFn = (m, l)-> PersistentSetX.fromIterable(narrow(l)).reduce(m);
+    BiFunction<Monoid<T>,Higher<persistentSetX,T>,T> foldLeftFn = (m, l)-> PersistentSetX.fromIterable(narrow(l)).foldLeft(m);
     Function3<Monoid<R>, Function<T, R>, Higher<persistentSetX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
   }

@@ -1313,7 +1313,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                 .flatMap(c->c.stream());
 
     }
-    @Override
+
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
 
         Iterator<T> it = iterator();
@@ -2223,7 +2223,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Use supplied Monoid to reduce values
      * @return reduced values
      */
-    @Override
     T reduce(Monoid<T> reducer);
 
     /*
@@ -2383,7 +2382,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @param reducers
      * @return
      */
-    @Override
     Seq<T> reduce(Iterable<? extends Monoid<T>> reducers);
 
     /**
@@ -2434,7 +2432,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      * @return Reduce result
      **/
     @Override
-    public <R> R foldRightMapToType(Reducer<R,T> reducer);
+    public <R> R foldMapRight(Reducer<R,T> reducer);
 
 
     /**

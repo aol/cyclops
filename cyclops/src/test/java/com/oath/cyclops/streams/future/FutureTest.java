@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import cyclops.control.Future;
+import cyclops.control.Option;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,13 +38,13 @@ public  class FutureTest {
 	@Test
 	public void testMapReduce(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100).foldFuture(exec,s->s
-					.reduce( (acc,next) -> acc+next))
-					.orElse(null),is(Optional.of(1500)));
+					.foldLeft( (acc,next) -> acc+next))
+					.orElse(null),is(Option.of(1500)));
 	}
 	@Test
 	public void testMapReduceSeed(){
 		assertThat(of(1,2,3,4,5).map(it -> it*100)
-				.foldFuture(exec,s->s.reduce( 50,(acc,next) -> acc+next)).get()
+				.foldFuture(exec,s->s.foldLeft( 50,(acc,next) -> acc+next)).get()
 				,is(Future.ofResult(1550).get()));
 	}
 

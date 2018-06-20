@@ -83,15 +83,9 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     default <T2, T3, T4, R> LazyCollectionX<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
         return fromStream(stream().zip4(second,third,fourth,fn));
     }
-    //Add to each collection type
 
-    /* (non-Javadoc)
-             * @see com.oath.cyclops.types.foldable.Folds#reduce(java.lang.Object, java.util.function.BiFunction)
-             */
-    @Override
-    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        return stream().reduce(identity, accumulator);
-    }
+
+
 
     /**
      * @param stream Create a MultableCollectionX from a Stream

@@ -201,7 +201,7 @@ public class LazySeqInstances {
 
   public static <T,R> Foldable<lazySeq> foldable(){
     BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldLeftFn = (m, l)-> narrowK(l).reduce(m);
+    BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
     Function3<Monoid<R>, Function<T, R>, Higher<lazySeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
 
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);

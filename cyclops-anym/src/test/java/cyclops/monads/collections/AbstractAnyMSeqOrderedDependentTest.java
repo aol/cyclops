@@ -320,11 +320,11 @@ public  abstract class AbstractAnyMSeqOrderedDependentTest<W extends WitnessType
 		for (int i = 0; i < 100; i++) {
 			Supplier<AnyMSeq<W,String>> s = () -> of("a", "b", "c");
 
-			assertTrue(s.get().reduce("", String::concat).contains("a"));
-			assertTrue(s.get().reduce("", String::concat).contains("b"));
-			assertTrue(s.get().reduce("", String::concat).contains("c"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 
-			assertEquals(3, (int) s.get().map(str -> str.length()).reduce(0, (u, t) -> u + t));
+			assertEquals(3, (int) s.get().map(str -> str.length()).foldLeft(0, (u, t) -> u + t));
 
 			assertEquals(3, (int) s.get().map(str -> str.length()).foldRight(0, (t, u) -> u + t));
 		}

@@ -150,7 +150,7 @@ public abstract class BaseExtendedStream<T> implements Unwrapable, ReactiveSeq<T
     }
 
     @Override
-    public final <R> R foldRightMapToType(final Reducer<R,T> reducer) {
+    public final <R> R foldMapRight(final Reducer<R,T> reducer) {
         return reducer.foldMap(reverse());
     }
 

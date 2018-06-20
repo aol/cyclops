@@ -81,7 +81,7 @@ public class AnyMTest {
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
-			  .foldLazy(s-> s.reduce(50, (acc, next) -> acc + next));
+			  .foldLazy(s-> s.foldLeft(50, (acc, next) -> acc + next));
 
       assertEquals(200, lazyResult.get().intValue());
     }
@@ -91,7 +91,7 @@ public class AnyMTest {
 
       Eval<Integer> lazyResult = wrapped
               .map(i -> i * 10)
-              .foldLazy(s->s.reduce(50, (acc, next) -> acc + next));
+              .foldLazy(s->s.foldLeft(50, (acc, next) -> acc + next));
 
       assertEquals(200, lazyResult.get().intValue());
     }

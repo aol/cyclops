@@ -8,6 +8,7 @@ import cyclops.ReactiveReducers;
 import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
+import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
@@ -183,27 +184,27 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testReduceMonoidOfT() {
-		assertThat(just.reduce(Monoid.of(1, Semigroups.intMult)),equalTo(10));
+		assertThat(just.foldLeft(Monoid.of(1, Semigroups.intMult)),equalTo(10));
 	}
 
 	@Test
 	public void testReduceBinaryOperatorOfT() {
-		assertThat(just.reduce((a,b)->a+b),equalTo(Optional.of(10)));
+		assertThat(just.foldLeft((a,b)->a+b),equalTo(Option.of(10)));
 	}
 
 	@Test
 	public void testReduceTBinaryOperatorOfT() {
-		assertThat(just.reduce(10,(a,b)->a+b),equalTo(20));
+		assertThat(just.foldLeft(10,(a,b)->a+b),equalTo(20));
 	}
 
 	@Test
 	public void testReduceUBiFunctionOfUQsuperTUBinaryOperatorOfU() {
-		assertThat(just.reduce(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
+		assertThat(just.foldLeft(11,(a,b)->a+b,(a,b)->a*b),equalTo(21));
 	}
 
 	@Test
 	public void testReduceIterableOfReducerOfT() {
-		Seq<Integer> countAndTotal = just.reduce(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
+		Seq<Integer> countAndTotal = just.foldLeft(Arrays.asList(Reducers.toCountInt(), Reducers.toTotalInt()));
 		assertThat(countAndTotal,equalTo(Seq.of(1,10)));
 	}
 
@@ -221,7 +222,7 @@ public class MaybeTTest implements Printable {
 
 	@Test
 	public void testFoldRightMapToType() {
-		assertThat(just.foldRightMapToType(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
+		assertThat(just.foldMapRight(ReactiveReducers.toLinkedListX()),equalTo(LinkedListX.of(10)));
 	}
 
 

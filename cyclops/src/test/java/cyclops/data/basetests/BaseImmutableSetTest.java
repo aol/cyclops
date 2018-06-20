@@ -322,7 +322,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
             assertTrue(s.contains(c));
         });
 
-        String s2 =of("hello","2","world","4").reduce(Reducers.toString(","));
+        String s2 =of("hello","2","world","4").foldLeft(Reducers.toString(","));
         Arrays.asList("hello","2","world","4").forEach(c->{
             assertTrue(s2.contains(c));
         });

@@ -423,8 +423,8 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <T1> T1 foldRightMapToType(Reducer<T1,T> reducer) {
-        return Observables.connectToReactiveSeq(observable).foldRightMapToType(reducer);
+    public <T1> T1 foldMapRight(Reducer<T1,T> reducer) {
+        return Observables.connectToReactiveSeq(observable).foldMapRight(reducer);
     }
 
     @Override

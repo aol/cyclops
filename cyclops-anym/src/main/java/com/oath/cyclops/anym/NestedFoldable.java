@@ -2,23 +2,20 @@ package com.oath.cyclops.anym;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.SeqT;
-import cyclops.companion.Streamable;
 import com.oath.cyclops.types.stream.ToStream;
 import org.reactivestreams.Subscription;
 
@@ -90,56 +87,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
         return nestedFoldables().map(s -> s.foldMap(mapper, reducer));
     }
 
-    /**
-     * <pre>
-     * {@code
-     * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
-     *
-     * //hello,2,world,4
-     * }
-     * </pre>
-     *
-     * @param reducer
-     *            Use supplied Monoid to reduce values
-     * @return reduced values
-     */
-    default AnyM<W,T> reduce(final Monoid<T> reducer) {
-        return nestedFoldables().map(s -> s.reduce(reducer));
-    }
-
-    /*
-     * <pre> {@code assertThat(ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
-     * (acc,next) -> acc+next).getValue(),equalTo(1500)); } </pre>
-     */
-    default AnyM<W,Optional<T>> reduce(final BinaryOperator<T> accumulator) {
-        return nestedFoldables().map(s -> s.reduce(accumulator));
-
-
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
-     * java.util.function.BinaryOperator)
-     */
-    default AnyM<W,T> reduce(final T identity, final BinaryOperator<T> accumulator) {
-        return nestedFoldables().map(s -> s.reduce(identity, accumulator));
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.util.stream.Stream#reduce(java.lang.Object,
-     * java.util.function.BiFunction, java.util.function.BinaryOperator)
-     */
-    default <U> AnyM<W,U> reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
-        return nestedFoldables().map(s -> s.reduce(identity, accumulator, combiner));
-    }
-
-
-    default SeqT<W,T> reduce(final Iterable<? extends Monoid<T>> reducers) {
-        return SeqT.of(nestedFoldables().map(s -> s.reduce(reducers)));
+    default AnyM<W,Seq<T>> foldLeft(final Iterable<? extends Monoid<T>> reducer) {
+        return nestedFoldables().map(s -> s.foldLeft(reducer));
     }
     default AnyM<W,T> foldLeft(final Monoid<T> reducer) {
         return nestedFoldables().map(s -> s.foldLeft(reducer));
@@ -150,9 +99,16 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
     default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
         return nestedFoldables().map(s -> s.foldLeft(identity, accumulator));
     }
-    default <R> AnyM<W,R> foldLeftMapToType(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.foldMap(reducer));
+    default <U> AnyM<W,U> foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
+        return nestedFoldables().map(s -> s.foldLeft(identity, accumulator,combiner));
     }
+
+    default AnyM<W,Option<T>> foldLeft(final BinaryOperator<T> accumulator) {
+        return nestedFoldables().map(s -> s.foldLeft(accumulator));
+
+
+    }
+
     /**
      *
      * <pre>
@@ -222,8 +178,8 @@ public interface NestedFoldable<W extends WitnessType<W>,T> extends ToStream<T> 
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> AnyM<W,R> foldRightMapToType(final Reducer<R,T> reducer) {
-        return nestedFoldables().map(s -> s.foldRightMapToType(reducer));
+    default <R> AnyM<W,R> foldMapRight(final Reducer<R,T> reducer) {
+        return nestedFoldables().map(s -> s.foldMapRight(reducer));
     }
 
     /**

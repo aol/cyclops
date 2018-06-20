@@ -139,11 +139,11 @@ public abstract class AbstractFoldableTest {
         for(int i=0;i<100;i++){
             Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
-            assertTrue(s.get().reduce("", String::concat).contains("a"));
-            assertTrue(s.get().reduce("", String::concat).contains("b"));
-            assertTrue(s.get().reduce("", String::concat).contains("c"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 
-            assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+            assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
 
             assertEquals(3, (int) s.get().foldRight(0, (t, u) -> u + t.length()));
@@ -165,13 +165,13 @@ public abstract class AbstractFoldableTest {
         Supplier<Folds<String>> s = () -> of("a", "b", "c");
 
 
-        assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
-        assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
-        assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
-        assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
+        assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
+        assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
+        assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
+        assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
 
 
-        assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+        assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
 
     }

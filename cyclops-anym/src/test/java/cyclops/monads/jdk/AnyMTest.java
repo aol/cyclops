@@ -180,7 +180,7 @@ public class AnyMTest {
 
         assertThat("cba",equalTo( s.get().stream().foldRight(Reducers.toString(""))));
         assertThat("abc",equalTo( s.get().stream().reduce(Reducers.toString(""))));
-        assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().foldRightMapToType(Reducers.toCountInt())));
+        assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().foldMapRight(Reducers.toCountInt())));
         assertThat( 3,equalTo( s.get().map(i->""+i.length()).stream().foldMap(Reducers.toCountInt())));
 
     }

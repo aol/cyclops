@@ -48,15 +48,7 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
         assertThat(of(1, 2, 3).forEach2(a -> Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10), (a , b) -> a > 2 && b < 8,
                 (a ,b) -> a + b).toListX(), equalTo(Arrays.asList(3, 4, 5, 6, 7, 8, 9, 10)));
     }
-/**
-    @Test
-    public void whenNilOrNotJoinWithFirstElement(){
 
-
-        String res= of(1,2,3).visit((x,xs)-> xs.join(x>2? "hello" : "world"),()->"EMPTY");
-        assertThat(res,equalTo("2world3"));
-    }
- **/
     @Test
     public void sortedComparator() {
         assertThat(of(1,5,3,4,2).sorted((t1,t2) -> t2-t1).collect(Collectors.toList()),is(Arrays.asList(5,4,3,2,1)));
@@ -315,11 +307,11 @@ public abstract class AbstractOrderDependentCollectionXTest extends AbstractColl
 		for (int i = 0; i < 100; i++) {
 			Supplier<CollectionX<String>> s = () -> of("a", "b", "c");
 
-			assertTrue(s.get().reduce("", String::concat).contains("a"));
-			assertTrue(s.get().reduce("", String::concat).contains("b"));
-			assertTrue(s.get().reduce("", String::concat).contains("c"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+			assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 
-			assertEquals(3, (int) s.get().map(str -> str.length()).reduce(0, (u, t) -> u + t));
+			assertEquals(3, (int) s.get().map(str -> str.length()).foldLeft(0, (u, t) -> u + t));
 
 			assertEquals(3, (int) s.get().map(str -> str.length()).foldRight(0, (t, u) -> u + t));
 		}
