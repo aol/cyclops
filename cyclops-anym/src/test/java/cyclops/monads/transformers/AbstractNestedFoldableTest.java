@@ -22,8 +22,11 @@ import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 
 import com.oath.cyclops.ReactiveConvertableSequence;
 import cyclops.ReactiveReducers;
+import cyclops.control.Option;
 import cyclops.data.HashMap;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
 import org.junit.Rule;
 import org.junit.Test;
@@ -69,37 +72,38 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void reduceMonoid() {
-        assertThat(of("hello","2","world","4").reduce(Reducers.toString(",")).singleOrElse(null).length(),
+        assertThat(of("hello","2","world","4").foldLeft(Reducers.toString(",")).singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void reduceBinaryOperator() {
-        assertThat(of(100,200,300,400,500).reduce( (acc,next) -> acc+next).stream().singleOrElse(null),is(Optional.of(1500)));
+        assertThat(of(100,200,300,400,500).foldLeft( (acc,next) -> acc+next).stream().singleOrElse(null),is(Option.of(1500)));
     }
 
     @Test
     public void reduceIdentity() {
-        assertThat(of(100,200,300,400,500).reduce( 0,(acc,next) -> acc+next).stream().singleOrElse(null),is(1500));
+        assertThat(of(100,200,300,400,500).foldLeft( 0,(acc,next) -> acc+next).stream().singleOrElse(null),is(1500));
     }
 
     @Test
     public void reduceCombiner() {
-        assertThat(of(100,200,300,400,500).reduce( 0,
+        assertThat(of(100,200,300,400,500).foldLeft( 0,
                 (acc, next) -> acc+next,
                 Integer::sum).singleOrElse(null),equalTo(1500));
     }
 
     @Test
     public void testReduceStreamOfQextendsMonoidOfT() {
-        assertThat(of("hello","2","world","4").reduce(ListX.of(Reducers.toString(","))).singleOrElse("--").singleOrElse(null).length(),
+
+        assertThat(of("hello","2","world","4").foldLeft(ListX.of(Reducers.toString(","))).singleOrElse(Seq.of("--")).singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
     @Test
     public void testReduceIterableOfQextendsMonoidOfT() {
-        assertThat(of("hello","2","world","4").reduce(ListX.of(Reducers.toString(",")))
-                    .singleOrElse("booo").singleOrElse(null).length(),
+        assertThat(of("hello","2","world","4").foldLeft(ListX.of(Reducers.toString(",")))
+                    .singleOrElse(Seq.of("booo")).singleOrElse(null).length(),
                 equalTo(",hello,2,world,4".length()));
     }
 
@@ -120,7 +124,7 @@ public abstract class AbstractNestedFoldableTest<W extends WitnessType<W>> {
 
     @Test
     public void foldRightMapToType() {
-        assertThat(of(1,2,3,4).foldRightMapToType(ReactiveReducers.toLinkedListX()).singleOrElse(null).size(),
+        assertThat(of(1,2,3,4).foldMapRight(ReactiveReducers.toLinkedListX()).singleOrElse(null).size(),
                 equalTo(4));
     }
 

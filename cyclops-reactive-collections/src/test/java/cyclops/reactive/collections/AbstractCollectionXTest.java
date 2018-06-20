@@ -276,17 +276,17 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 
     @Test
     public void testMapReduce(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),is(1500));
+        assertThat(of(1,2,3,4,5).map(it -> it*100).foldLeft( (acc,next) -> acc+next).orElse(-1),is(1500));
     }
     @Test
     public void testMapReduceSeed(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
+        assertThat(of(1,2,3,4,5).map(it -> it*100).foldLeft( 50,(acc,next) -> acc+next),is(1550));
     }
 
 
     @Test
     public void testMapReduceCombiner(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,
+        assertThat(of(1,2,3,4,5).map(it -> it*100).foldLeft( 0,
                 (acc, next) -> acc+next,
                 Integer::sum),is(1500));
     }

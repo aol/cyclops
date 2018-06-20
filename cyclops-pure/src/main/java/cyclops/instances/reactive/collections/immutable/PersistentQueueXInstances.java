@@ -352,7 +352,7 @@ public class PersistentQueueXInstances {
    */
   public static <T,R> Foldable<persistentQueueX> foldable(){
     BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> narrowK(l).reduce(m);
+    BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
     Function3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
     return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
   }

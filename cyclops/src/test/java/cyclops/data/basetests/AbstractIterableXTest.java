@@ -145,15 +145,15 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void foldFuture(){
-        assertThat(of(1,2,3).foldFuture(ex, l->l.reduce(Monoids.intSum)).get(),equalTo(Try.success(6)));
+        assertThat(of(1,2,3).foldFuture(ex, l->l.foldLeft(Monoids.intSum)).get(),equalTo(Try.success(6)));
     }
     @Test
     public void foldLazy(){
-        assertThat(of(1,2,3).foldLazy(l->l.reduce(Monoids.intSum)).get(),equalTo(6));
+        assertThat(of(1,2,3).foldLazy(l->l.foldLeft(Monoids.intSum)).get(),equalTo(6));
     }
     @Test
     public void foldTry(){
-        assertThat(of(1,2,3).foldTry(l->l.reduce(Monoids.intSum), Throwable.class).get(),equalTo(Option.some(6)));
+        assertThat(of(1,2,3).foldTry(l->l.foldLeft(Monoids.intSum), Throwable.class).get(),equalTo(Option.some(6)));
     }
 
     @Test
@@ -417,17 +417,17 @@ public abstract class AbstractIterableXTest {
 
     @Test
     public void testMapReduce(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( (acc,next) -> acc+next).get(),is(1500));
+        assertThat(of(1,2,3,4,5).map(it -> it*100).stream().reduce( (acc,next) -> acc+next).get(),is(1500));
     }
     @Test
     public void testMapReduceSeed(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 50,(acc,next) -> acc+next),is(1550));
+        assertThat(of(1,2,3,4,5).map(it -> it*100).stream().reduce( 50,(acc,next) -> acc+next),is(1550));
     }
 
 
     @Test
     public void testMapReduceCombiner(){
-        assertThat(of(1,2,3,4,5).map(it -> it*100).reduce( 0,
+        assertThat(of(1,2,3,4,5).map(it -> it*100).stream().reduce( 0,
                 (acc, next) -> acc+next,
                 Integer::sum),is(1500));
     }
@@ -1588,11 +1588,11 @@ public abstract class AbstractIterableXTest {
 	            for(int i=0;i<100;i++){
 	                Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
-	                assertTrue(s.get().reduce("", String::concat).contains("a"));
-	                assertTrue(s.get().reduce("", String::concat).contains("b"));
-	                assertTrue(s.get().reduce("", String::concat).contains("c"));
+	                assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+	                assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+	                assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 
-	                assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+	                assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
 
 	                assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
@@ -1614,13 +1614,13 @@ public abstract class AbstractIterableXTest {
 	            Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
 
-	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
-	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
-	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
-	            assertTrue(s.get().reduce(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
+	            assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("a"));
+	            assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("b"));
+	            assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("c"));
+	            assertTrue(s.get().foldLeft(new StringBuilder(), (u, t) -> u.append("-").append(t)).toString().contains("-"));
 
 
-	            assertEquals(3, (int) s.get().reduce(0, (u, t) -> u + t.length()));
+	            assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
                 assertEquals(3, (int) s.get().foldLeft(0, (u, t) -> u + t.length()));
 
 
@@ -2077,9 +2077,9 @@ public abstract class AbstractIterableXTest {
         for (int i = 0; i < 100; i++) {
             Supplier<IterableX<String>> s = () -> of("a", "b", "c");
 
-            assertTrue(s.get().reduce("", String::concat).contains("a"));
-            assertTrue(s.get().reduce("", String::concat).contains("b"));
-            assertTrue(s.get().reduce("", String::concat).contains("c"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("a"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("b"));
+            assertTrue(s.get().foldLeft("", String::concat).contains("c"));
 
 
         }
@@ -2728,7 +2728,7 @@ public abstract class AbstractIterableXTest {
     @Test
     public void reduceWithMonoidJoin(){
         assertThat(of("hello","2","world","4").join(","),equalTo("hello,2,world,4"));
-        assertThat(of("hello","2","world","4").reduce(Reducers.toString(",")),
+        assertThat(of("hello","2","world","4").foldLeft(Reducers.toString(",")),
                 equalTo(",hello,2,world,4"));
     }
 

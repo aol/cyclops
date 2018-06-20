@@ -9,9 +9,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import com.oath.cyclops.types.stream.Connectable;
 import cyclops.control.Option;
 import cyclops.data.*;
 import cyclops.data.HashMap;
@@ -361,90 +359,25 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().foldMap(mapper, reducer);
     }
 
-    /**
-     * Reduce this Folds to a single value, using the supplied Monoid. For example
-     * <pre>
-     * {@code
-     * ReactiveSeq.of("hello","2","world","4").reduce(Reducers.toString(","));
-     *
-     * //hello,2,world,4
-     * }
-     * </pre>
-     *
-     * @param reducer
-     *            Use supplied Monoid to reduce values
-     * @return reduced values
-     */
-    default T reduce(final Monoid<T> reducer) {
-        return reduce(reducer.zero(),reducer);
-    }
 
-    /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(BinaryOperator)}
-     *
-     *  <pre> {@code
-     *
-     *       ReactiveSeq.of(1,2,3,4,5).map(it -> it*100).reduce(
-     * (acc,next) -> acc+next)
-     *        //Optional[1500]
-     *  }
-     *  </pre>
-     * @param accumulator Combiner function
-     * @return
-     */
-    default Optional<T> reduce(final BinaryOperator<T> accumulator) {
-        return stream().reduce(accumulator);
-    }
 
     default Option<T> foldLeft(final BinaryOperator<T> accumulator) {
         return Option.fromOptional(stream().reduce(accumulator));
     }
 
-    /**
-     *  An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
-     * @param accumulator Combiner function
-     * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
-     */
-    default T reduce(final T identity, final BinaryOperator<T> accumulator) {
-        return stream().reduce(identity, accumulator);
-    }
 
-    /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BinaryOperator)}
-     *
-     * @param identity Identity value for the combiner function (leaves the input unchanged)
-     * @param accumulator Combiner function
-     * @return Value emitted by applying the current accumulated value and the
-     *          next value to the combiner function as this Folds is traversed from left to right
-     */
-    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-        final Folds<T> foldable = stream();
-        return foldable.reduce(identity, accumulator);
-    }
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator) {
-       return reduce(identity,accumulator);
+       return stream().reduce(identity,accumulator);
     }
     default <U> U foldLeft(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
-        return reduce(identity,accumulator,combiner);
+        return stream().reduce(identity,accumulator,combiner);
     }
     default T foldLeft(final T identity, final BinaryOperator<T> accumulator) {
-        return reduce(identity, accumulator);
+        return stream().reduce(identity, accumulator);
     }
     default T foldLeft(final Monoid<T> reducer) {
-        return reduce(reducer);
+        return stream().reduce(reducer);
     }
-
-    /**
-     * An equivalent function to {@link java.util.stream.Stream#reduce(Object, BiFunction, BinaryOperator)}
-     *
-     */
-    default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
-        return stream().reduce(identity, accumulator, combiner);
-    }
-
-
-
     /**
      * Reduce with multiple reducers in parallel NB if this Monad is an Optional
      * [Arrays.asList(1,2,3)] reduce will operate on the Optional as if the list
@@ -467,9 +400,11 @@ public interface Folds<T> extends Iterable<T>  {
      * @param reducers
      * @return
      */
-    default Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
+    default Seq<T> foldLeft(final Iterable<? extends Monoid<T>> reducers) {
         return stream().reduce(reducers);
     }
+
+
 
     /**
      *
@@ -524,7 +459,7 @@ public interface Folds<T> extends Iterable<T>  {
      *
      * <pre>
      * 		{@code
-     * 		ReactiveSeq.of(1,2,3).foldRightMapToType(Reducers.toString(""));
+     * 		ReactiveSeq.of(1,2,3).foldMapRight(Reducers.toString(""));
      *
      *         // "321"
      *         }
@@ -535,8 +470,8 @@ public interface Folds<T> extends Iterable<T>  {
      *            Monoid to reduce values
      * @return Reduce result
      */
-    default <R> R foldRightMapToType(final Reducer<R,T> reducer) {
-        return stream().foldRightMapToType(reducer);
+    default <R> R foldMapRight(final Reducer<R,T> reducer) {
+        return stream().foldMapRight(reducer);
     }
 
     /**

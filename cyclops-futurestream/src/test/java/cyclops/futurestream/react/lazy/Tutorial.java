@@ -50,13 +50,13 @@ public class Tutorial {
     public void futureOperationsExamaple(){
 
         Future<Integer> asyncResult = ReactiveSeq.of(1,2,3,4)
-                                                            .foldFuture(Executors.newFixedThreadPool(1),s->s.reduce( 50,(acc,next) -> acc+next));
+                                                            .foldFuture(Executors.newFixedThreadPool(1),s->s.foldLeft( 50,(acc,next) -> acc+next));
         //CompletableFuture[1550]
 
         Eval<Integer> lazyResult = ListX.of(1,2,3,4)
                                         .map(i->i*10)
                                         .foldLazy(s->s
-                                        .reduce( 50,(acc,next) -> acc+next));
+                                        .foldLeft( 50,(acc,next) -> acc+next));
 
       //Eval[15500]
     }

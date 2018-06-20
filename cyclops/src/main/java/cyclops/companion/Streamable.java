@@ -145,17 +145,12 @@ public interface Streamable<T> extends To<Streamable<T>>,
     return Streamable.fromIterable(IterableX.super.zip4(second,third,fourth,fn));
   }
 
-  /* (non-Javadoc)
-       * @see com.oath.cyclops.types.traversable.Traversable#zip(java.util.stream.Stream)
-       */
-    default <U> Streamable<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
+  default <U> Streamable<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
         return Streamable.fromIterable(IterableX.super.zipWithStream(other));
+
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
-     */
     @Override
     default <S, U> Streamable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
@@ -1386,7 +1381,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param reducer Use supplied Monoid to reduce values
      * @return reduced values
      */
-    @Override
     default T reduce(final Monoid<T> reducer) {
         return this.stream().reduce(reducer);
     }
@@ -1399,7 +1393,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * </pre>
      *
      */
-    @Override
     default Optional<T> reduce(final BinaryOperator<T> accumulator) {
         return this.stream().reduce(accumulator);
     }
@@ -1407,7 +1400,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /* (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BinaryOperator)
     */
-    @Override
     default T reduce(final T identity, final BinaryOperator<T> accumulator) {
         return this.stream().reduce(identity, accumulator);
     }
@@ -1415,7 +1407,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
     /* (non-Javadoc)
     * @see java.util.stream.Stream#reduce(java.lang.Object, java.util.function.BiFunction, java.util.function.BinaryOperator)
     */
-    @Override
     default <U> U reduce(final U identity, final BiFunction<U, ? super T, U> accumulator, final BinaryOperator<U> combiner) {
         return this.stream().reduce(identity, accumulator, combiner);
     }
@@ -1442,7 +1433,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param reducers
      * @return
      */
-    @Override
     default Seq<T> reduce(final Iterable<? extends Monoid<T>> reducers) {
         return this.stream().reduce(reducers);
     }
@@ -1497,8 +1487,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @return Reduce result
      */
     @Override
-    default <R> R foldRightMapToType(final Reducer<R,T> reducer) {
-        return this.stream().foldRightMapToType(reducer);
+    default <R> R foldMapRight(final Reducer<R,T> reducer) {
+        return this.stream().foldMapRight(reducer);
     }
 
     /**

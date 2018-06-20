@@ -262,7 +262,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public <T> T foldRightMapToType(final Reducer<T,U> reducer) {
+    public <T> T foldMapRight(final Reducer<T,U> reducer) {
         return reducer.foldMap(reverse());
 
     }
