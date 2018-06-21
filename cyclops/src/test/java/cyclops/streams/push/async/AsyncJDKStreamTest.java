@@ -234,11 +234,11 @@ public class AsyncJDKStreamTest {
     }
 	@Test
 	public void testMax(){
-		assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),equalTo(5));
+		assertThat(of(1,2,3,4,5).maximum((t1, t2) -> t1-t2).orElse(-100),equalTo(5));
 	}
 	@Test
 	public void testMin(){
-		assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),equalTo(1));
+		assertThat(of(1,2,3,4,5).minimum((t1, t2) -> t1-t2).orElse(-100),equalTo(1));
 	}
 
 	@Test

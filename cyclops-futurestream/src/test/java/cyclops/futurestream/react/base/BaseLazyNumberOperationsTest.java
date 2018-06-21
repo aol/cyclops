@@ -33,19 +33,19 @@ public abstract class BaseLazyNumberOperationsTest {
 
 	@Test
 	public void summaryStatsInt(){
-		assertThat( of(1,2,3,4).foldLazy(s->s.mapToInt(i->i)
+		assertThat( of(1,2,3,4).foldLazy(s->s.stream().mapToInt(i->i)
 											.summaryStatistics().getSum()).get(),
 				equalTo(10L));
 	}
 	@Test
 	public void summaryStatsDouble(){
-		assertThat(of(1.0,2.0,3.0,4.0).foldLazy(s->s.mapToDouble(i->i)
+		assertThat(of(1.0,2.0,3.0,4.0).foldLazy(s->s.stream().mapToDouble(i->i)
 													.summaryStatistics().getSum()).get(),
 				equalTo(10.0));
 	}
 	@Test
 	public void summaryStatsLong(){
-		assertThat(of(1l,2l,3l,4l).foldLazy(s->s.mapToLong(i->i).summaryStatistics().getSum()).get(),
+		assertThat(of(1l,2l,3l,4l).foldLazy(s->s.stream().mapToLong(i->i).summaryStatistics().getSum()).get(),
 				equalTo(10l));
 	}
 

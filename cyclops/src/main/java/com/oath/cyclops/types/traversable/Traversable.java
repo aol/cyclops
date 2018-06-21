@@ -48,16 +48,6 @@ public interface Traversable<T> extends Publisher<T>,
         return (Traversable<T>)FilterableTransformable.super.filterNot(predicate);
     }
 
-    default DoubleStream mapToDouble(ToDoubleFunction<? super T> fn){
-        return this.stream().mapToDouble(fn);
-    }
-    default LongStream mapToLong(ToLongFunction<? super T> fn){
-        return this.stream().mapToLong(fn);
-    }
-    default IntStream mapToInt(ToIntFunction<? super T> fn){
-        return this.stream().mapToInt(fn);
-    }
-
     @Override
     default <T2, R> Traversable<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {
         return traversable().zip(fn, publisher);
