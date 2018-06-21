@@ -310,11 +310,11 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 
     @Test
     public void testMax2(){
-        assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
+        assertThat(of(1,2,3,4,5).maximum((t1, t2) -> t1-t2).orElse(-1),is(5));
     }
     @Test
     public void testMin2(){
-        assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
+        assertThat(of(1,2,3,4,5).minimum((t1, t2) -> t1-t2).orElse(-10),is(1));
     }
 
 
@@ -421,11 +421,11 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
     }
     @Test
     public void testMax(){
-        assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
+        assertThat(of(1,2,3,4,5).maximum((t1, t2) -> t1-t2).orElse(-100),is(5));
     }
     @Test
     public void testMin(){
-        assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
+        assertThat(of(1,2,3,4,5).minimum((t1, t2) -> t1-t2).orElse(-3),is(1));
     }
 
 	@Test

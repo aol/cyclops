@@ -35,7 +35,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * Represents something that can generate a Stream, repeatedly
+ * A replayable, caching stream
  *
  * @author johnmcclean
  *
@@ -44,6 +44,7 @@ import java.util.stream.*;
 @FunctionalInterface
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
+                                        Stream<T>,
                                         IterableX<T>,
                                         Contains<T>,
                                         Unit<T> {
@@ -52,8 +53,88 @@ public interface Streamable<T> extends To<Streamable<T>>,
     Iterable<T> getStreamable();
 
     @Override
+    default boolean isParallel(){
+        return false;
+    }
+
+    @Override
+    default Stream<T> sequential(){
+        return this;
+    }
+
+    @Override
+    default Stream<T> parallel(){
+        return this;
+    }
+
+
+    @Override
+    default Stream<T> unordered(){
+        return this;
+    }
+    @Override
+    default Stream<T> onClose(Runnable closeHandler){
+        return this;
+    }
+    @Override
+    default void close(){
+
+    }
+
+
+    @Override
+    default IntStream mapToInt(ToIntFunction<? super T> mapper){
+        return stream().mapToInt(mapper);
+    }
+
+    @Override
+    default LongStream mapToLong(ToLongFunction<? super T> mapper){
+        return stream().mapToLong(mapper);
+    }
+
+    @Override
+    default DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper){
+        return stream().mapToDouble(mapper);
+    }
+
+    @Override
+    default IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+        return stream().flatMapToInt(mapper);
+    }
+
+    @Override
+    default LongStream flatMapToLong(Function<? super T, ? extends LongStream> mapper){
+        return stream().flatMapToLong(mapper);
+    }
+
+    @Override
+    default DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper){
+        return stream().flatMapToDouble(mapper);
+    }
+
+    @Override
+    default Optional<T> min(Comparator<? super T> comparator){
+        return stream().min(comparator);
+    }
+
+    @Override
+    default Optional<T> max(Comparator<? super T> comparator){
+        return stream().max(comparator);
+    }
+
+    @Override
+    default Optional<T> findFirst(){
+        return stream().findFirst();
+    }
+
+    @Override
+    default Optional<T> findAny(){
+        return stream().findAny();
+    }
+
+    @Override
     default ReactiveSeq<T> stream() {
-        return Streams.oneShotStream(this);
+        return Streams.oneShotStream((Iterable<T>)this);
     }
 
 
@@ -450,10 +531,16 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return Streamable.fromStream(this.stream().filter(fn));
     }
 
+    @Override
+    default <R> Streamable<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn){
+        return Streamable.fromStream(stream().flatMap(i -> fn.apply(i)));
+    }
 
+    /**
     default <R> Streamable<R> flatMap(final Function<? super T, Streamable<? extends R>> fn) {
         return Streamable.fromStream(stream().flatMap(i -> fn.apply(i).stream()));
     }
+     **/
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
      *
@@ -2573,6 +2660,16 @@ public interface Streamable<T> extends To<Streamable<T>>,
     @Override
     default Iterator<T> iterator() {
         return this.getStreamable().iterator();
+    }
+
+    @Override
+    default void forEach(Consumer<? super T> action) {
+        IterableX.super.forEach(action);
+    }
+
+    @Override
+    default Spliterator<T> spliterator() {
+        return IterableX.super.spliterator();
     }
 
 }

@@ -213,7 +213,7 @@ public interface Folds<T> extends Iterable<T>  {
     default double stdDeviation(ToDoubleFunction<T> fn){
         Seq<T> list = stream().toSeq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
-        return Math.sqrt( list.mapToDouble(fn)
+        return Math.sqrt( list.stream().mapToDouble(fn)
                 .map(i->i-avg)
                 .map(i->i*i)
                 .average()
@@ -230,15 +230,13 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().collect(Collectors.summarizingDouble(fn));
     }
 
-    default Optional<T> max(Comparator<? super T> comparator){
+    default Option<T> maximum(Comparator<? super T> comparator){
         return stream().sorted(comparator.reversed())
-                       .elementAt(0l)
-                       .toOptional();
+                       .elementAt(0l);
     }
-    default Optional<T> min(Comparator<? super T> comparator){
+    default Option<T> minimum(Comparator<? super T> comparator){
         return stream().sorted(comparator)
-                .elementAt(0l)
-                .toOptional();
+                .elementAt(0l);
     }
 
     default int sumInt(ToIntFunction<T> fn){

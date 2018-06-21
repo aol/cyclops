@@ -13,7 +13,6 @@ import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableFilterable;
 import cyclops.companion.Streams;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
@@ -26,31 +25,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.oath.cyclops.types.Unwrapable;
-import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.data.collections.extensions.standard.MapXImpl;
-import com.oath.cyclops.types.foldable.Folds;
-import com.oath.cyclops.types.foldable.To;
-import com.oath.cyclops.types.functor.BiTransformable;
-import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.types.reactive.ReactiveStreamsTerminalOperations;
-import com.oath.cyclops.types.recoverable.OnEmpty;
-import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import com.oath.cyclops.types.traversable.IterableFilterable;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.companion.Streams;
-import cyclops.control.Trampoline;
-import com.oath.cyclops.data.collections.extensions.FluentMapX;
-import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
-
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * An eXtended Map type, that offers additional eagerly executed functional style operators such as bimap, filter and more
@@ -228,21 +203,9 @@ public interface MapX<K, V> extends To<MapX<K,V>>,Map<K, V>,Unwrapable, FluentMa
         return Folds.super.noneMatch(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.stream.CyclopsCollectable#max(java.util.Comparator)
-     */
-    @Override
-    default Optional<Tuple2<K, V>> max(final Comparator<? super Tuple2<K, V>> comparator) {
-        return Folds.super.max(comparator);
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.stream.CyclopsCollectable#min(java.util.Comparator)
-     */
-    @Override
-    default Optional<Tuple2<K, V>> min(final Comparator<? super Tuple2<K, V>> comparator) {
-        return Folds.super.min(comparator);
-    }
+
+
 
     /* (non-Javadoc)
      * @see FluentMapX#plus(java.lang.Object, java.lang.Object)

@@ -43,7 +43,7 @@ public abstract class BaseNumberOperationsTest {
 	}
 	@Test
 	public void maxInt(){
-		assertThat(of(1,2,3,4).foldFuture(exec,s->s.mapToInt(i->i).max()).toOptional().get().getAsInt(),
+		assertThat(of(1,2,3,4).foldFuture(exec,s->s.stream().mapToInt(i->i).max()).toOptional().get().getAsInt(),
 				equalTo(4));
 	}
 

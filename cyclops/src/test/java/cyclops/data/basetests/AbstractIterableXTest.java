@@ -450,12 +450,12 @@ public abstract class AbstractIterableXTest {
 
 
     @Test
-    public void testMax2(){
-        assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
+    public void testMax2() {
+        assertThat(of(1, 2, 3, 4, 5).maximum((t1, t2) -> t1 - t2).orElse(-1), is(5));
     }
     @Test
     public void testMin2(){
-        assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
+        assertThat(of(1,2,3,4,5).minimum((t1, t2) -> t1-t2).orElse(-100),is(1));
     }
 
 
@@ -559,11 +559,11 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testMax(){
-        assertThat(of(1,2,3,4,5).max((t1,t2) -> t1-t2).get(),is(5));
+        assertThat(of(1,2,3,4,5).maximum((t1, t2) -> t1-t2).orElse(-100),is(5));
     }
     @Test
     public void testMin(){
-        assertThat(of(1,2,3,4,5).min((t1,t2) -> t1-t2).get(),is(1));
+        assertThat(of(1,2,3,4,5).minimum((t1, t2) -> t1-t2).orElse(-40),is(1));
     }
 
 	@Test
@@ -2736,18 +2736,18 @@ public abstract class AbstractIterableXTest {
 
     @Test
     public void testMapToInt(){
-        assertThat(of("1","2","3","4").mapToInt(it -> Integer.valueOf(it)).max().getAsInt(),equalTo(4));
+        assertThat(of("1","2","3","4").stream().mapToInt(it -> Integer.valueOf(it)).max().getAsInt(),equalTo(4));
 
     }
 
     @Test
     public void mapToLong() {
-        assertThat(of("1","2","3","4").mapToLong(it -> Long.valueOf(it)).max().getAsLong(),equalTo(4l));
+        assertThat(of("1","2","3","4").stream().mapToLong(it -> Long.valueOf(it)).max().getAsLong(),equalTo(4l));
     }
 
     @Test
     public void mapToDouble() {
-        assertThat(of("1","2","3","4").mapToDouble(it -> Double.valueOf(it)).max().getAsDouble(),equalTo(4d));
+        assertThat(of("1","2","3","4").stream().mapToDouble(it -> Double.valueOf(it)).max().getAsDouble(),equalTo(4d));
     }
 
 

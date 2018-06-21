@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.*;
 import java.util.function.Supplier;
 
+import cyclops.control.Option;
 import cyclops.futurestream.FutureStream;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public abstract class BaseSeqFutureTest {
 	}
 	@Test
 	public void testMax(){
-		assertThat(of(1,2,3,4,5).foldFuture(s->s.max((t1,t2) -> t1-t2)).orElse(Optional.empty()),is(Optional.of(5)));
+		assertThat(of(1,2,3,4,5).foldFuture(s->s.maximum((t1, t2) -> t1-t2)).orElse(Option.none()),is(Option.of(5)));
 	}
 
 }
