@@ -1,7 +1,6 @@
 package com.oath.cyclops.internal.react;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -207,8 +206,8 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
     }
 
     @Override
-    public <T> FutureStream<T> unitIterator(final Iterator<T> it) {
-        return simpleReact.from(it);
+    public <T> FutureStream<T> unitIterable(final Iterable<T> it) {
+        return simpleReact.fromIterable(it);
     }
 
     @Override

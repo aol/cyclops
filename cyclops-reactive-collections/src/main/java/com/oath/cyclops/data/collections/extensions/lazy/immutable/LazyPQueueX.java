@@ -8,7 +8,6 @@ import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 
-import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -148,8 +147,8 @@ public class LazyPQueueX<T> extends AbstractLazyPersistentCollection<T,Persisten
 
 
     @Override
-    public <U> LazyPQueueX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyPQueueX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

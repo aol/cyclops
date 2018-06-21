@@ -583,8 +583,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public <U> ReactiveSeq<U> unitIterator(Iterator<U> it) {
-        Iterable<U> iterable = () -> it;
+    public <U> ReactiveSeq<U> unitIterable(Iterable<U> iterable) {
         return createSeq(new IterableSourceOperator<U>(iterable));
     }
 

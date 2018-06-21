@@ -6,7 +6,6 @@ import com.oath.cyclops.types.persistent.PersistentSortedSet;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -17,9 +16,7 @@ import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -214,7 +211,7 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    <U> ImmutableSortedSet<U> unitIterator(Iterator<U> U);
+    <U> ImmutableSortedSet<U> unitIterable(Iterable<U> U);
 
     @Override
     default ImmutableSortedSet<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -506,15 +503,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         return unitStream(stream().insertStreamAt(pos,stream),comparator());
     }
 
-    @Override
-    default ImmutableSortedSet<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return unitStream(stream().recover(fn),comparator());
-    }
-
-    @Override
-    default <EX extends Throwable> ImmutableSortedSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return unitStream(stream().recover(exceptionClass, fn),comparator());
-    }
 
     @Override
     default ImmutableSortedSet<ReactiveSeq<T>> permutations() {

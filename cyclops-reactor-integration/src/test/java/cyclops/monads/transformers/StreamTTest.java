@@ -36,6 +36,7 @@ public class StreamTTest {
         ListX<Flux<Integer>> nested = ListX.of(Flux.just(10));
         StreamT<list,Integer> listOfFluxs = FluxAnyM.liftM(AnyM.fromList(nested));
         StreamT<list,Integer> doubled = listOfFluxs.map(i->i*2);
+
     }
 
     @Test

@@ -23,7 +23,6 @@ import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -148,8 +147,8 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
 
 
     @Override
-    public <R> SeqT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> SeqT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(Seq::of));
     }
 
@@ -746,14 +745,5 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     }
 
 
-    @Override
-    public SeqT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (SeqT) FoldableTransformerSeq.super.recover(fn);
-    }
-
-    @Override
-    public <EX extends Throwable> SeqT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (SeqT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
-    }
 
 }

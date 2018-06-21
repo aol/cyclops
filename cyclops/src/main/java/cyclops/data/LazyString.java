@@ -350,15 +350,7 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return fromLazySeq(string.insertStreamAt(pos,stream));
     }
 
-    @Override
-    public LazyString recover(Function<? super Throwable, ? extends Character> fn) {
-        return fromLazySeq(string.recover(fn));
-    }
 
-    @Override
-    public <EX extends Throwable> LazyString recover(Class<EX> exceptionClass, Function<? super EX, ? extends Character> fn) {
-        return fromLazySeq(string.recover(exceptionClass,fn));
-    }
 
     @Override
     public LazyString plusAll(Iterable<? extends Character> list) {

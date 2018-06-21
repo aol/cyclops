@@ -24,7 +24,6 @@ import cyclops.reactive.ReactiveSeq;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -145,8 +144,8 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
 
 
     @Override
-    public <R> LazySeqT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> LazySeqT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(LazySeq::of));
     }
 
@@ -743,14 +742,5 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
     }
 
 
-    @Override
-    public LazySeqT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (LazySeqT) FoldableTransformerSeq.super.recover(fn);
-    }
-
-    @Override
-    public <EX extends Throwable> LazySeqT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (LazySeqT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
-    }
 
 }

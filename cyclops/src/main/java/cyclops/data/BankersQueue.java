@@ -895,15 +895,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<T>) ImmutableQueue.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    default BankersQueue<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
-
-    @Override
-    default <EX extends Throwable> BankersQueue<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
 
     @Override

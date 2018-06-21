@@ -22,7 +22,7 @@ public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends Abs
 
     private final Supplier<IterableX<?>> empty;
     private final Function<?,IterableX<?>> unit;
-    private final Function<Iterator<?>,IterableX<?>> unitIterator;
+    private final Function<Iterable<?>,IterableX<?>> unitIterator;
     private final W witness;
 
 
@@ -32,7 +32,7 @@ public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends Abs
     private <U> Function<U,IterableX<U>>  getUnit(){
         return (Function)unit;
     }
-    private <U> Function<Iterator<U>,IterableX<U>>  getUnitIterator(){
+    private <U> Function<Iterable<U>,IterableX<U>>  getUnitIterator(){
         return (Function)unitIterator;
     }
     @Override
@@ -73,7 +73,7 @@ public class IterableXAdapter<W extends Witness.IterableXWitness<W>> extends Abs
 
     @Override
     public <T> AnyM<W, T> unitIterable(Iterable<T> it)  {
-       return fromIterableX(this.<T>getUnitIterator().apply(it.iterator()),witness);
+       return fromIterableX(this.<T>getUnitIterator().apply(it),witness);
     }
 
     @Override

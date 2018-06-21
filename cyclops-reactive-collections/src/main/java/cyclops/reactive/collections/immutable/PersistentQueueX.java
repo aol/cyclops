@@ -17,7 +17,6 @@ import cyclops.companion.Reducers;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.BankersQueue;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -445,8 +444,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     @Override
-    default <R> PersistentQueueX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> PersistentQueueX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
   //  @Override
