@@ -187,8 +187,8 @@ public class LazyListX<T> extends AbstractLazyCollection<T,List<T>> implements L
     }
 
     @Override
-    public <U> LazyListX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyListX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

@@ -5,7 +5,6 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.anym.transformers.NonEmptyTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
@@ -259,8 +258,8 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
 
 
 
-    public <R> EitherT<W,ST,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> EitherT<W,ST,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> Either.right(i)));
     }
 

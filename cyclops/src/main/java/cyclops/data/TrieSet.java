@@ -5,10 +5,7 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
 
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.trieSet;
 import cyclops.data.base.HashedPatriciaTrie;
 import cyclops.data.tuple.Tuple;
@@ -26,7 +23,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -159,10 +155,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return fromStream(ReactiveSeq.fromStream(stream));
     }
 
-    @Override
-    public <U> TrieSet<U> unitIterator(Iterator<U> it) {
-        return fromIterable(()->it);
-    }
 
     public TrieSet<T> plus(T value){
         return new TrieSet<>(map.put(value.hashCode(),value,value));
@@ -589,16 +581,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
     @Override
     public TrieSet<T> insertStreamAt(int pos, Stream<T> stream) {
         return (TrieSet<T>) ImmutableSet.super.insertStreamAt(pos,stream);
-    }
-
-    @Override
-    public TrieSet<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
-
-    @Override
-    public <EX extends Throwable> TrieSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
     }
 
 

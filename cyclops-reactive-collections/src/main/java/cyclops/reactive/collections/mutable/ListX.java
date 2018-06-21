@@ -455,8 +455,8 @@ public interface ListX<T> extends To<ListX<T>>,
      * @see com.oath.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
-    default <R> ListX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> ListX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
 

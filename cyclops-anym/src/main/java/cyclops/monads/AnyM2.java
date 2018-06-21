@@ -132,8 +132,8 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
 
     }
 
-    default <U> AnyM<W,U> unitIterator(Iterator<U> U){
-        return (AnyM<W,U>)adapter().unitIterable(()->U);
+    default <U> AnyM<W,U> unitIterable(Iterable<U> U){
+        return (AnyM<W,U>)adapter().unitIterable(U);
     }
 
     <R> AnyM2<W,T2,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);

@@ -11,7 +11,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
-import cyclops.monads.transformers.FutureT;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -288,8 +287,8 @@ public final class CompletableFutureT<W extends WitnessType<W>,T> extends ValueT
 
 
 
-    public <R> CompletableFutureT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> CompletableFutureT<W,R> unitIterable(final Iterable<R> it){
+        return of(run.unitIterable(it)
                      .map(e-> {
                          CompletableFuture<R> f = new CompletableFuture<>();
                          f.complete(e);

@@ -15,7 +15,6 @@ import cyclops.data.Seq;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -411,8 +410,8 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     }
 
     @Override
-    default <R> SetX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> SetX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     @Override

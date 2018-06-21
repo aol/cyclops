@@ -566,8 +566,8 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     @Override
-    default <R> VectorX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> VectorX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     /* (non-Javadoc)

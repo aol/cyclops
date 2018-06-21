@@ -9,8 +9,6 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -23,7 +21,6 @@ import cyclops.function.Function4;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
-import cyclops.reactive.Managed;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -32,7 +29,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -418,10 +414,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<R>)ImmutableList.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    default <U> Seq<U> unitIterator(Iterator<U> it) {
-        return fromIterable(()->it);
-    }
+
 
     @Override
     default Seq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -694,15 +687,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    default Seq<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
 
-    @Override
-    default <EX extends Throwable> Seq<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
     @Override
     default <U extends Comparable<? super U>> Seq<T> sorted(Function<? super T, ? extends U> function) {

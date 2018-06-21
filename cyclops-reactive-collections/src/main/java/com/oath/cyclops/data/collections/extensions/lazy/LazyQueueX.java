@@ -106,8 +106,8 @@ public class LazyQueueX<T> extends AbstractLazyCollection<T,Queue<T>> implements
     }
 
     @Override
-    public <U> LazyQueueX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyQueueX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

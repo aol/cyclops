@@ -1,10 +1,12 @@
 package cyclops.monads.transformers;
 
 
+import com.oath.cyclops.anym.transformers.TransformerSeq;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import com.oath.cyclops.types.traversable.Traversable;
 import com.oath.cyclops.anym.transformers.FoldableTransformerSeq;
 import cyclops.control.Option;
@@ -37,8 +39,9 @@ import java.util.stream.Stream;
  * @param <T> Type of data stored inside the nest  Streams
  */
 public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
+                                                            RecoverableTraversable<T>,
                                                             ReactiveTransformable<T>,
-                                                          FoldableTransformerSeq<W,T> {
+                                                            FoldableTransformerSeq<W,T> {
 
     final AnyM<W,Stream<T>> run;
 
@@ -216,8 +219,8 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
 
     @Override
-    public <R> StreamT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> StreamT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> ReactiveSeq.of(i)));
     }
 
@@ -876,11 +879,13 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     @Override
     public StreamT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (StreamT) FoldableTransformerSeq.super.recover(fn);
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.stream().recover(fn));
+        return unitAnyM(zipped);
     }
 
     @Override
     public <EX extends Throwable> StreamT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (StreamT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.stream().recover(exceptionClass,fn));
+        return unitAnyM(zipped);
     }
 }

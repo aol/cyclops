@@ -98,8 +98,8 @@ public class LazySortedSetX<T> extends AbstractLazyCollection<T,SortedSet<T>> im
     }
 
     @Override
-    public <U> LazySortedSetX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazySortedSetX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

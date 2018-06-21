@@ -265,8 +265,8 @@ public final class EvalT<W extends WitnessType<W>,T> extends ValueTransformer<W,
 
 
 
-    public <R> EvalT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> EvalT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> Eval.now(i)));
     }
 

@@ -139,8 +139,8 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,Persiste
 
 
     @Override
-    public <U> LazyPVectorX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyPVectorX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

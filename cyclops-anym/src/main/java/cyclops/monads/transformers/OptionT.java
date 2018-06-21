@@ -142,8 +142,8 @@ public final class OptionT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
 
-    public <R> OptionT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> OptionT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> Option.ofNullable(i)));
     }
 

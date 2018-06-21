@@ -9,8 +9,6 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -30,7 +28,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -619,10 +616,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<R>)ImmutableList.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    default <U> LazySeq<U> unitIterator(Iterator<U> it) {
-        return fromIterable(()->it);
-    }
+
 
     @Override
     default LazySeq<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -882,15 +876,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    default LazySeq<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
 
-    @Override
-    default <EX extends Throwable> LazySeq<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
     default LazySeq<T> prepend(T value){
     return cons(value,()->this);
   }

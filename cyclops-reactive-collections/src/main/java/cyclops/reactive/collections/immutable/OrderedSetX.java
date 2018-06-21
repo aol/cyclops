@@ -392,8 +392,8 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     @Override
-    default <R> OrderedSetX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> OrderedSetX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     //@Override

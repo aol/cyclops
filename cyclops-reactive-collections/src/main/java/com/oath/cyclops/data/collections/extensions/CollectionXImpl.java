@@ -270,8 +270,8 @@ public class CollectionXImpl<T> implements LazyCollectionX<T> {
      * @see com.oath.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
-    public <U> CollectionX<U> unitIterator(final Iterator<U> u) {
-        return ListX.fromIterable(() -> u);
+    public <U> CollectionX<U> unitIterable(final Iterable<U> u) {
+        return ListX.fromIterable(u);
     }
 
     /* (non-Javadoc)

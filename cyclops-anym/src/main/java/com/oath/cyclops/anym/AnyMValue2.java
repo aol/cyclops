@@ -18,7 +18,6 @@ import org.reactivestreams.Publisher;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 
@@ -36,8 +35,8 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
                                                                 MonadicValue<T> {
 
     @Override
-    default <U> AnyMValue2<W, T2, U> unitIterator(Iterator<U> U) {
-        return (AnyMValue2<W, T2, U>)AnyM2.super.unitIterator(U);
+    default <U> AnyMValue2<W, T2, U> unitIterable(Iterable<U> U) {
+        return (AnyMValue2<W, T2, U>)AnyM2.super.unitIterable(U);
     }
 
     @Override

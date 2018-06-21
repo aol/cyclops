@@ -154,8 +154,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
 
     }
 
-    default <U> AnyM<W,U> unitIterator(Iterator<U> U){
-        return (AnyM<W,U>)adapter().unitIterable(()->U);
+    default <U> AnyM<W,U> unitIterable(Iterable<U> U){
+        return (AnyM<W,U>)adapter().unitIterable(U);
     }
 
     <R> AnyM<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn);

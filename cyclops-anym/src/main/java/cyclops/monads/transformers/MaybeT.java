@@ -142,8 +142,8 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
 
 
 
-    public <R> MaybeT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> MaybeT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> Maybe.ofNullable(i)));
     }
 

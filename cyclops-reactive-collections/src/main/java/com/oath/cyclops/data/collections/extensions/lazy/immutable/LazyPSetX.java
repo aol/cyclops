@@ -9,7 +9,6 @@ import cyclops.function.Reducer;
 import cyclops.reactive.ReactiveSeq;
 
 
-import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
@@ -121,8 +120,8 @@ public class LazyPSetX<T> extends AbstractLazyPersistentCollection<T,PersistentS
 
 
     @Override
-    public <U> LazyPSetX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyPSetX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 
