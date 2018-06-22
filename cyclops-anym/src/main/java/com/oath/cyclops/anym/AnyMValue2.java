@@ -18,7 +18,6 @@ import org.reactivestreams.Publisher;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 
@@ -97,7 +96,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
 
     @Override
     default String mkString() {
-        return visit(s->"AnyMValue2[" + s + "]",()->"AnyMValue2[]");
+        return fold(s->"AnyMValue2[" + s + "]",()->"AnyMValue2[]");
 
     }
 
@@ -215,7 +214,7 @@ public interface AnyMValue2<W extends WitnessType<W>,T2,T> extends AnyM2<W,T2,T>
     }
     @Override
     default Option<T> get() {
-        return adapter().visit(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
+        return adapter().fold(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
                              , v->v.get(this));
     }
 

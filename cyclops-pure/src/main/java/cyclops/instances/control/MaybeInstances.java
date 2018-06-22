@@ -24,10 +24,6 @@ import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
-import cyclops.transformers.Transformer;
-import cyclops.transformers.TransformerFactory;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.BiFunction;
@@ -397,7 +393,7 @@ public class MaybeInstances {
                                                                               Higher<option, T> ds){
 
     Maybe<T> maybe = narrowK(ds);
-    Higher<C2, Maybe<R>> res = maybe.visit(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),
+    Higher<C2, Maybe<R>> res = maybe.fold(some-> applicative.map(m->Maybe.of(m), fn.apply(some)),
       ()->applicative.unit(Maybe.<R>nothing()));
 
     return Maybe.widen2(res);

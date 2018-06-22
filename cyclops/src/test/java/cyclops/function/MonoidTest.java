@@ -11,7 +11,7 @@ public class MonoidTest {
     @Test
     public void visit() throws Exception {
 
-      int res = Monoids.intSum.visit((fn,z)-> {
+      int res = Monoids.intSum.fold((fn, z)-> {
             if(z==0){
                 return fn.apply(1,2);
             }

@@ -236,7 +236,7 @@ public  class StateInstances {
       @Override
       public <T, R> Higher<Higher<state, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<state, S>, ? extends Either<T, R>>> fn) {
         return narrowK(fn.apply(initial)).flatMap( eval ->
-          eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
+          eval.fold(s->narrowK(tailRec(s,fn)), p->State.constant(p)));
       }
     };
   }

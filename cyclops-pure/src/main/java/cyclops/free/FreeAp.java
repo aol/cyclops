@@ -26,18 +26,18 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
         return new Ap(fp,fn);
     }
     default <P, R> FreeAp<F, R> ap(FreeAp<F, ? extends Function<T, R>> b){
-        return b.<P,FreeAp<F, R>>visit(f->this.map(f),
+        return b.<P,FreeAp<F, R>>fold(f->this.map(f),
                  (pivot,fn)->ap(pivot,ap(fn.map(fx->a->p->fx.apply(p).apply(a)))));
     }
     default <P, R> FreeAp<F, R> map(Function<? super T,? extends R> f){
-            return this.<P,FreeAp<F, R>>visit(a->pure(f.apply(a)),
+            return this.<P,FreeAp<F, R>>fold(a->pure(f.apply(a)),
                     (pivot,fn)-> ap(pivot, fn.map(it -> {
                         Function<P,? extends R> x = f.compose(it);
                         return Functions.narrow(x);
                     })));
     }
     default <P,G> Higher<G, T> foldMap(NaturalTransformation<F, G> f, Applicative<G> applicative){
-        return this.<P,Higher<G, T>>visit(a->applicative.unit(a),
+        return this.<P,Higher<G, T>>fold(a->applicative.unit(a),
                 (pivot,fn)->applicative.zip(f.apply(pivot),fn.foldMap(f,applicative),(a, g)->g.apply(a)));
     }
 
@@ -68,14 +68,14 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
     }
 
 
-    <P,R> R visit(Function<? super T,? extends R> pure, BiFunction<? super Higher<F,P>,FreeAp<F,Function<P, T>>,? extends R> ap);
+    <P,R> R fold(Function<? super T,? extends R> pure, BiFunction<? super Higher<F,P>,FreeAp<F,Function<P, T>>,? extends R> ap);
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     static class Pure<F, A> implements FreeAp<F,A> {
         private final  A a;
 
         @Override
-        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
+        public <P,R> R fold(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
             return pure.apply(a);
         }
     }
@@ -85,7 +85,7 @@ public interface FreeAp<F, T> extends Higher2<freeAp,F, T> {
         private final FreeAp<F,Function<P,A>> fn;
 
         @Override
-        public <P,R> R visit(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
+        public <P,R> R fold(Function<? super A, ? extends R> pure, BiFunction<? super Higher<F, P>, FreeAp<F, Function<P, A>>, ? extends R> ap) {
            Higher<F,P> p = (Higher)pivot;
             return (R)ap.apply((Higher<F, P>)pivot, (FreeAp) fn);
          }

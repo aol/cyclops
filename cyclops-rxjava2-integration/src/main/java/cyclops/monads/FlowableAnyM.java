@@ -33,7 +33,7 @@ public interface FlowableAnyM {
                 return (FlowableReactiveSeqImpl)s;
             }
             if(s instanceof ReactiveSeq){
-                return ((ReactiveSeq<T>)s).visit(sync->new FlowableReactiveSeqImpl<T>(Flowable.fromIterable(sync)),
+                return ((ReactiveSeq<T>)s).fold(sync->new FlowableReactiveSeqImpl<T>(Flowable.fromIterable(sync)),
                     rs->new FlowableReactiveSeqImpl<T>(Flowable.fromPublisher(rs)),
                     async ->new FlowableReactiveSeqImpl<T>(Observables.fromStream(async).toFlowable(BackpressureStrategy.BUFFER)));
             }
@@ -54,7 +54,7 @@ public interface FlowableAnyM {
             }
             if(s instanceof ReactiveSeq){
                 ReactiveSeq<T> r = (ReactiveSeq<T>)s;
-                return r.visit(sync->Flowable.fromIterable(sync),rs->Flowable.fromPublisher((Publisher)s),
+                return r.fold(sync->Flowable.fromIterable(sync), rs->Flowable.fromPublisher((Publisher)s),
                     async->Flowable.fromPublisher(async));
             }
             if(s instanceof Publisher){

@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /**
@@ -119,7 +118,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         next[0] = LazyEither.right(Either.left(initial));
         boolean cont = true;
         do {
-            cont = next[0].visit(p -> p.visit(s -> {
+            cont = next[0].fold(p -> p.fold(s -> {
                 next[0] = fn.apply(s);
                 return true;
             }, pr -> false), () -> false);
@@ -182,7 +181,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     default Either<LT,RT> toEither(){
-        return visit(Either::left,Either::right);
+        return fold(Either::left,Either::right);
     }
 
     @AllArgsConstructor
@@ -314,8 +313,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(Function<? super java.lang.Throwable, ? extends R> secondary, Function<? super RT, ? extends R> primary) {
-            return either.visit(secondary,primary);
+        public <R> R fold(Function<? super java.lang.Throwable, ? extends R> secondary, Function<? super RT, ? extends R> primary) {
+            return either.fold(secondary,primary);
         }
 
         @Override
@@ -349,15 +348,15 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
-            return either.visit(i->absent.get(),present);
+        public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
+            return either.fold(i->absent.get(),present);
         }
     }
 
     static <ST,PT> LazyEither<ST,PT> fromEither(Either<ST,PT> xor){
         if(xor instanceof LazyEither)
             return (LazyEither<ST,PT>)xor;
-        return xor.visit(LazyEither::left, LazyEither::right);
+        return xor.fold(LazyEither::left, LazyEither::right);
     }
 
     static <LT,RT> LazyEither<LT,RT> fromLazy(Eval<LazyEither<LT,RT>> lazy){
@@ -490,7 +489,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     static <X, PT extends X, ST extends X,R> R visitAny(LazyEither<ST, PT> either, Function<? super X, ? extends R> fn){
-        return either.visit(fn, fn);
+        return either.fold(fn, fn);
     }
 
     static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c, LazyEither<LT, RT> either){
@@ -768,7 +767,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      */
     @Override
     default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
-        return visit(s -> Either.left(secondary), p -> Either.right(p));
+        return fold(s -> Either.left(secondary), p -> Either.right(p));
     }
 
 
@@ -802,7 +801,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @param primary Function to execute if this is a Right Ior
      * @return Result of executing the appropriate function
      */
-    <R> R visit(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
+    <R> R fold(Function<? super LT, ? extends R> secondary, Function<? super RT, ? extends R> primary);
 
 
 
@@ -936,9 +935,9 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
     default <T2, R> LazyEither<LT, R> combine(final LazyEither<? extends LT, ? extends T2> app,
                                               final BinaryOperator<LT> semigroup, final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        return this.visit(secondary -> app.visit(s2 -> LazyEither.left(semigroup.apply(s2, secondary)),
+        return this.fold(secondary -> app.fold(s2 -> LazyEither.left(semigroup.apply(s2, secondary)),
                                                  p2 -> LazyEither.left(secondary)),
-                          primary -> app.visit(s2 -> LazyEither.left(s2),
+                          primary -> app.fold(s2 -> LazyEither.left(s2),
                                                p2 -> LazyEither.right(fn.apply(primary, p2))));
     }
 
@@ -962,17 +961,17 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
       @Override
       public Either<ST, PT> recover(Supplier<? extends PT> value) {
-        return visit(l->Either.right(value.get()),r->this);
+        return this.fold(l->Either.right(value.get()), r->this);
       }
 
       @Override
       public Either<ST, PT> recover(PT value) {
-        return visit(l->Either.right(value),r->this);
+        return this.fold(l->Either.right(value), r->this);
       }
 
       @Override
       public Either<ST, PT> recoverWith(Supplier<? extends Either<ST, PT>> fn) {
-        return visit(l->fn.get(),r->this);
+        return this.fold(l->fn.get(), r->this);
       }
         public Eval<Either<ST, PT>> nestedEval(){
             return (Eval)lazy;
@@ -1035,7 +1034,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         public LazyEither<ST, PT> resolve() {
           return lazy.get()
-                       .visit(LazyEither::left, LazyEither::right);
+                       .fold(LazyEither::left, LazyEither::right);
         }
         @Override
         public <R> LazyEither<ST, R> map(final Function<? super PT, ? extends R> mapper) {
@@ -1045,7 +1044,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         private <PT> LazyEither<ST, PT> toEither(MonadicValue<? extends PT> value) {
-            return value.visit(p -> LazyEither.right(p), () -> LazyEither.left(null));
+            return value.fold(p -> LazyEither.right(p), () -> LazyEither.left(null));
         }
 
         @Override
@@ -1182,9 +1181,9 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
          * java.util.function.Function)
          */
         @Override
-        public <R> R visit(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary) {
+        public <R> R fold(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary) {
             return trampoline()
-                       .visit(secondary, primary);
+                       .fold(secondary, primary);
         }
         private LazyEither<ST,PT> trampoline(){
             LazyEither<ST,PT> maybe = lazy.get();
@@ -1317,8 +1316,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
-            return trampoline().visit(present,absent);
+        public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+            return trampoline().fold(present,absent);
         }
     }
 
@@ -1462,8 +1461,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(final Function<? super ST, ? extends R> secondary,
-                final Function<? super PT, ? extends R> primary) {
+        public <R> R fold(final Function<? super ST, ? extends R> secondary,
+                          final Function<? super PT, ? extends R> primary) {
             return primary.apply(value.get());
         }
 
@@ -1510,7 +1509,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+        public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
             return present.apply(value.get());
         }
     }
@@ -1638,8 +1637,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(final Function<? super ST, ? extends R> secondary,
-                final Function<? super PT, ? extends R> primary) {
+        public <R> R fold(final Function<? super ST, ? extends R> secondary,
+                          final Function<? super PT, ? extends R> primary) {
             return secondary.apply(value.get());
         }
 
@@ -1710,7 +1709,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
         @Override
-        public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+        public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
             return absent.get();
         }
     }

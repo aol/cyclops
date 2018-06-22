@@ -169,8 +169,8 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
                 .flatMap(i -> createSeq(copy(), reversible));
 
     }
-    public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
-                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
+    public <R> R fold(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                      Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
         return sync.apply(this);
     }
 

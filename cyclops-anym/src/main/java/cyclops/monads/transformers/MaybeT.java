@@ -72,7 +72,7 @@ public final class MaybeT<W extends WitnessType<W>,T> extends ValueTransformer<W
     @Override
     public MaybeT<W,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.visit(t->t._2(),()->false) )
+                     .filter( f->f.fold(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
     }
 

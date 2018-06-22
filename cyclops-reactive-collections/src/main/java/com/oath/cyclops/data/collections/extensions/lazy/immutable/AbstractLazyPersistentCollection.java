@@ -67,7 +67,7 @@ public abstract class AbstractLazyPersistentCollection<T, C extends PersistentCo
     public C materializeList(ReactiveSeq<T> toUse){
         ReactiveSeq<C> mapped = ReactiveSeq.fromStream(collectorInternal.mapToType(toUse));
 
-        return toUse.visit(s -> mapped.reduce(collectorInternal.zero(), collectorInternal),
+        return toUse.fold(s -> mapped.reduce(collectorInternal.zero(), collectorInternal),
                             r -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)),
                             a -> fn.apply(mapped.reduceAll(collectorInternal.zero(), collectorInternal)));
 

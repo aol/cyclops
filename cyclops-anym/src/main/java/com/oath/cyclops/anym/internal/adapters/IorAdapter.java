@@ -38,7 +38,7 @@ public class IorAdapter extends AbstractMonadAdapter<ior> implements ValueAdapte
         return ior(t);
     }
 
-    public <R> R visit(Function<? super MonadAdapter<ior>,? extends R> fn1, Function<? super ValueAdapter<ior>, ? extends R> fn2){
+    public <R> R fold(Function<? super MonadAdapter<ior>,? extends R> fn1, Function<? super ValueAdapter<ior>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

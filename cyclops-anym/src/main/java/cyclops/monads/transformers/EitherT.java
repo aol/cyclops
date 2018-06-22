@@ -5,7 +5,6 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.anym.transformers.NonEmptyTransformer;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.monads.AnyM;
 import cyclops.monads.WitnessType;
@@ -75,7 +74,7 @@ public final class EitherT<W extends WitnessType<W>, ST,T> extends NonEmptyTrans
     @Override
     public EitherT<W,ST,T> filter(final Predicate<? super T> test) {
         return of(run.map(f->f.map(in->Tuple.tuple(in,test.test(in))))
-                     .filter( f->f.visit(t->t._2(),()->false) )
+                     .filter( f->f.fold(t->t._2(),()->false) )
                      .map( f->f.map(in->in._1())));
     }
 

@@ -9,7 +9,6 @@ import cyclops.arrow.*;
 import cyclops.data.LazySeq;
 import cyclops.control.*;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
@@ -29,7 +28,6 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 import static cyclops.data.tuple.Tuple.tuple;
@@ -132,10 +130,10 @@ public class Active<W,T> implements Filters<T>,
         public <R> R to(Function<S,R> fn);
     }
 
-    public <C,R> R visit(Function<? super Higher<W, T>,? extends C> narrow,Function<? super C,? extends R> visitor){
+    public <C,R> R fold(Function<? super Higher<W, T>,? extends C> narrow, Function<? super C,? extends R> visitor){
         return visitor.apply(narrow.apply(single));
     }
-    public <R> R visit(Function<? super Higher<W, T>,? extends R> visitor){
+    public <R> R fold(Function<? super Higher<W, T>,? extends R> visitor){
         return visitor.apply(single);
     }
     public <R> R visitA(Function<? super Active<W, T>,? extends R> visitor){
@@ -150,7 +148,7 @@ public class Active<W,T> implements Filters<T>,
     }
 
     public Active<W, T> filter(Predicate<? super T> predicate) {
-        return of(def1.monadZero().visit(s -> s.filter(predicate, single), () -> single), def1);
+        return of(def1.monadZero().fold(s -> s.filter(predicate, single), () -> single), def1);
     }
     public <R> Active<W,Tuple2<T, R>> zip(Higher<W, R> fb) {
         return of(def1.applicative().zip(single,fb),def1);
@@ -374,15 +372,15 @@ public class Active<W,T> implements Filters<T>,
     }
 
     public Unfolds unfoldsDefault(){
-        return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
+        return new Unfolds(def1.unfoldable().fold(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
     }
 
 
     public Maybe<Unfolds> unfolds(){
-        return def1.unfoldable().visit(e->Maybe.just(new Unfolds(e)),Maybe::nothing);
+        return def1.unfoldable().fold(e->Maybe.just(new Unfolds(e)),Maybe::nothing);
     }
     public Maybe<Plus> plus(){
-        return def1.monadPlus().visit(e->Maybe.just(new Plus(e)),Maybe::nothing);
+        return def1.monadPlus().fold(e->Maybe.just(new Plus(e)),Maybe::nothing);
     }
 
     @AllArgsConstructor

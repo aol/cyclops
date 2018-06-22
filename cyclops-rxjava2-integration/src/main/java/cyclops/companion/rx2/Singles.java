@@ -1,7 +1,6 @@
 package cyclops.companion.rx2;
 
 
-import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
@@ -10,12 +9,6 @@ import cyclops.control.*;
 import cyclops.data.Seq;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.AnyM;
-import cyclops.monads.Rx2Witness;
-import cyclops.monads.Rx2Witness.single;
-import cyclops.monads.WitnessType;
-import cyclops.monads.XorM;
-import cyclops.monads.transformers.rx2.SingleT;
 import io.reactivex.Single;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
@@ -48,7 +41,7 @@ public class Singles {
         next[0] = Single.just(Either.left(initial));
         boolean cont = true;
         do {
-            cont = next[0].map(p -> p.visit(s -> {
+            cont = next[0].map(p -> p.fold(s -> {
                 next[0] = fn.apply(s);
                 return true;
             }, pr -> false)).blockingGet();

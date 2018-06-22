@@ -1,6 +1,5 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
@@ -15,8 +14,6 @@ import cyclops.data.tuple.Tuple5;
 import cyclops.data.tuple.Tuple6;
 import cyclops.data.tuple.Tuple7;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
-import com.oath.cyclops.types.functor.Transformable;
-import cyclops.data.tuple.*;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;
@@ -74,7 +71,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
     public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
-        return io.map(t -> t.visit(i -> i, s));
+        return io.map(t -> t.fold(i -> i, s));
     }
 
     public static <T> IO<T> flatten(IO<IO<T>> io) {
@@ -400,7 +397,7 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         }
 
         public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
-            return io.map(t -> t.visit(i -> i, s));
+            return io.map(t -> t.fold(i -> i, s));
         }
 
         public static <T> IO<T> flatten(IO<IO<T>> io) {

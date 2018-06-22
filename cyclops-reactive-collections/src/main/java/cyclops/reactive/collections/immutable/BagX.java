@@ -16,7 +16,6 @@ import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.data.Bag;
 import cyclops.function.Function3;
@@ -31,7 +30,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import com.oath.cyclops.types.persistent.PersistentBag;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.reactivestreams.Publisher;
 
@@ -100,7 +98,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            BagX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            BagX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }

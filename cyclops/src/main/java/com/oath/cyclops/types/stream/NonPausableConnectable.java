@@ -35,7 +35,7 @@ public class NonPausableConnectable<T> extends BaseConnectableImpl<T> {
                 for (int i = 0; i < local; i++) {
 
                     Eithers.blocking(connections.get(i))
-                              .visit(FluentFunctions.ofChecked(in -> {
+                              .fold(FluentFunctions.ofChecked(in -> {
                         in.put(a);
                         return true;
                     }), q -> q.offer(a));

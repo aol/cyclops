@@ -159,10 +159,10 @@ public class CompletableEither4Test {
     @Test
     public void visit(){
 
-        assertThat(just.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("yes"));
-        assertThat(none.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("no"));
-        assertThat(left2.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left2"));
-        assertThat(left3.visit(secondary->"no", left2->"left2",left3->"left3", primary->"yes"),equalTo("left3"));
+        assertThat(just.fold(secondary->"no", left2->"left2", left3->"left3", primary->"yes"),equalTo("yes"));
+        assertThat(none.fold(secondary->"no", left2->"left2", left3->"left3", primary->"yes"),equalTo("no"));
+        assertThat(left2.fold(secondary->"no", left2->"left2", left3->"left3", primary->"yes"),equalTo("left2"));
+        assertThat(left3.fold(secondary->"no", left2->"left2", left3->"left3", primary->"yes"),equalTo("left3"));
     }
 
 
@@ -219,8 +219,8 @@ public class CompletableEither4Test {
 
     @Test
     public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
-        assertThat(just.visit(i->i+1,()->20),equalTo(11));
-        assertThat(none.visit(i->i+1,()->20),equalTo(20));
+        assertThat(just.fold(i->i+1,()->20),equalTo(11));
+        assertThat(none.fold(i->i+1,()->20),equalTo(20));
     }
 
 
@@ -239,14 +239,14 @@ public class CompletableEither4Test {
     @Test
     public void testConvertTo() {
 
-        Stream<Integer> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        Stream<Integer> toStream = just.fold(m->Stream.of(m),()->Stream.of());
         assertThat(toStream.collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
 
 
     @Test
     public void testConvertToAsync() {
-        Future<Stream<Integer>> async = Future.of(()->just.visit(f->Stream.of((int)f),()->Stream.of()));
+        Future<Stream<Integer>> async = Future.of(()->just.fold(f->Stream.of((int)f),()->Stream.of()));
 
         assertThat(async.orElse(Stream.empty()).collect(Collectors.toList()),equalTo(Arrays.asList(10)));
     }
@@ -370,8 +370,8 @@ public class CompletableEither4Test {
 
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
-        assertThat(just.visit(s->"hello", ()->"world"),equalTo("hello"));
-        assertThat(none.visit(s->"hello", ()->"world"),equalTo("world"));
+        assertThat(just.fold(s->"hello", ()->"world"),equalTo("hello"));
+        assertThat(none.fold(s->"hello", ()->"world"),equalTo("world"));
     }
 
 

@@ -42,7 +42,7 @@ public class Optionals {
         next[0] = Optional.of(Either.left(initial));
         boolean cont = true;
         do {
-            cont = Optionals.visit(next[0],p -> p.visit(s -> {
+            cont = Optionals.fold(next[0], p -> p.fold(s -> {
                 next[0] = fn.apply(s);
                 return true;
             }, pr -> false), () -> false);
@@ -51,7 +51,7 @@ public class Optionals {
     }
 
 
-    public static <T,R> R visit(Optional<T> optional, Function<? super T, ? extends R> fn, Supplier<R> s){
+    public static <T,R> R fold(Optional<T> optional, Function<? super T, ? extends R> fn, Supplier<R> s){
        return optional.isPresent() ? fn.apply(optional.get()) : s.get();
     }
 

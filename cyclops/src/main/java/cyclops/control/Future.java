@@ -367,7 +367,7 @@ public class Future<T> implements To<Future<T>>,
      */
     public static <T, X extends Throwable> Future<T> fromTry(final Try<T, X> value) {
 
-        return value.visit(s->Future.ofResult(s),e->Future.<T>of(CompletableFutures.error(e)));
+        return value.fold(s->Future.ofResult(s), e->Future.<T>of(CompletableFutures.error(e)));
     }
 
     /**
@@ -755,7 +755,7 @@ public class Future<T> implements To<Future<T>>,
      * @param failure  Function to execute if this Future fails
      * @return Result of the executed Function
      */
-    public <R> R visit(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
+    public <R> R fold(Function<? super T,? extends R> success, Function<? super Throwable,? extends R> failure){
         try {
             return success.apply(future.join());
         }catch(Throwable t){
@@ -1254,7 +1254,7 @@ public class Future<T> implements To<Future<T>>,
     }
 
     @Override
-    public <R> R visit(Function<? super T,? extends R> success, Supplier<? extends R> failure){
+    public <R> R fold(Function<? super T,? extends R> success, Supplier<? extends R> failure){
         try {
             return success.apply(future.join());
         }catch(Throwable t){

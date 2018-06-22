@@ -1,17 +1,8 @@
 package cyclops.companion.rx2;
 
-import com.oath.cyclops.anym.AnyMSeq;
-import com.oath.cyclops.rx2.adapter.FlowableReactiveSeqImpl;
 import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.AnyM;
-import cyclops.monads.Rx2Witness;
-import cyclops.monads.Rx2Witness.flowable;
-import cyclops.monads.WitnessType;
-import cyclops.monads.XorM;
-import cyclops.monads.transformers.StreamT;
-import cyclops.reactive.FlowableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -41,7 +32,7 @@ public class Flowables {
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.flatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {
@@ -64,7 +55,7 @@ public class Flowables {
 
     public static  <T> Flowable<T> flowableFrom(ReactiveSeq<T> stream){
 
-        return stream.visit(sync->Flowable.fromIterable(stream),
+        return stream.fold(sync->Flowable.fromIterable(stream),
                             rs->Flowable.fromPublisher(stream),
                             async-> Observables.fromStream(stream).toFlowable(BackpressureStrategy.BUFFER));
 

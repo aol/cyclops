@@ -136,7 +136,7 @@ For FluxReactiveSeq the visit method always executes the #2 function
 
 ReactiveSeq<Integer> seq = FluxReactiveSeq.just(1,2,3);
 
-String type = seq.visit(sync->"synchronous",rs->"reactive-streams",async->"pure async");
+String type = seq.fold(sync->"synchronous",rs->"reactive-streams",async->"pure async");
 //"reactive-streams"
 
 ```

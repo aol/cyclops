@@ -10,7 +10,6 @@ import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.control.LazyEither;
 import cyclops.monads.Witness.*;
@@ -26,7 +25,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -76,7 +74,7 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
 
     public <R>  XorM<W1,W2,R> coflatMap(final Function<? super  XorM<W1,W2,T>, R> mapper){
 
-        return visit(leftM ->  left(leftM.unit(mapper.apply(this))),
+        return fold(leftM ->  left(leftM.unit(mapper.apply(this))),
                      rightM -> right(rightM.unit(mapper.apply(this))));
     }
 
@@ -120,13 +118,13 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
 
     @Override
     public ReactiveSeq<T> stream() {
-        return xor.visit(a->a.stream(),b->b.stream());
+        return xor.fold(a->a.stream(), b->b.stream());
     }
 
 
     @Override
     public void subscribe(Subscriber<? super T> s) {
-        xor.visit(a->{
+        xor.fold(a->{
             a.subscribe(s);
             return null;
         },b->{
@@ -136,8 +134,8 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
 
     }
 
-    public <R> R visit(Function<? super AnyM<W1,? super T>, ? extends R> left,Function<? super AnyM<W2,? super T>, ? extends R> right ){
-        return xor.visit(left,right);
+    public <R> R fold(Function<? super AnyM<W1,? super T>, ? extends R> left, Function<? super AnyM<W2,? super T>, ? extends R> right ){
+        return xor.fold(left,right);
     }
 
     public XorM<W2,W1,T> swap(){
@@ -146,7 +144,7 @@ public class XorM<W1 extends WitnessType<W1>,W2 extends WitnessType<W2>,T> imple
 
     @Override
     public Iterator<T> iterator() {
-        return xor.visit(a->a.iterator(),b->b.iterator());
+        return xor.fold(a->a.iterator(), b->b.iterator());
     }
 
 

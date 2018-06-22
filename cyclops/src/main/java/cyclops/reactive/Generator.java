@@ -86,7 +86,7 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
     }
 
     Ior<T,Generator<T>> proceed() {
-       return value.visit(v->Ior.both(v, remainderOfWorkToBeDone.get()),()->
+       return value.fold(v->Ior.both(v, remainderOfWorkToBeDone.get()),()->
                 Ior.right(remainderOfWorkToBeDone.get()));
     }
 

@@ -42,7 +42,7 @@ import lombok.AllArgsConstructor;
 public interface MonadAdapter<W extends WitnessType<W>> {
 
 
-    default <R> R visit(Function<? super MonadAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
+    default <R> R fold(Function<? super MonadAdapter<W>,? extends R> fn1, Function<? super  ValueAdapter<W>, ? extends R> fn2){
         return fn1.apply(this);
     }
     default <T,T2,R> AnyM<W,R> ap2(AnyM<W,? extends Function<? super T,? extends Function<? super T2,? extends R>>> fn, AnyM<W,T> apply, AnyM<W,T2> apply2){

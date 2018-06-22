@@ -34,7 +34,7 @@ public class LazyEither3Adapter extends AbstractMonadAdapter<lazyEither3> implem
         return either3(t);
     }
 
-    public <R> R visit(Function<? super MonadAdapter<lazyEither3>,? extends R> fn1, Function<? super ValueAdapter<lazyEither3>, ? extends R> fn2){
+    public <R> R fold(Function<? super MonadAdapter<lazyEither3>,? extends R> fn1, Function<? super ValueAdapter<lazyEither3>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

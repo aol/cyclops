@@ -1,10 +1,9 @@
 package com.oath.cyclops.control;
 
-import static cyclops.companion.Optionals.visit;
+import static cyclops.companion.Optionals.fold;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
 import java.util.Optional;
 
 import cyclops.data.Seq;
@@ -37,8 +36,8 @@ public class OptionalsTest {
         Optional<Integer> empty = Optional.empty();
         Optional<Integer> present = Optional.of(10);
 
-        int a = visit(empty, i -> i + 10, () -> -1);
-        int b = visit(present, i -> i + 10, () -> -1);
+        int a = fold(empty, i -> i + 10, () -> -1);
+        int b = fold(present, i -> i + 10, () -> -1);
 
 
         assertThat(a,equalTo(-1));

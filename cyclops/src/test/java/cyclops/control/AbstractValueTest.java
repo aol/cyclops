@@ -2,8 +2,6 @@ package cyclops.control;
 
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.util.box.Mutable;
-import cyclops.companion.Semigroups;
-import cyclops.function.Monoid;
 import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
@@ -22,13 +20,13 @@ public abstract class AbstractValueTest {
   @Test
   public void fromPublisher(){
       assertTrue(fromPublisher(of(1)).isPresent());
-      assertThat(fromPublisher(of(1)).visit(i->i,()->-10),equalTo(1));
+      assertThat(fromPublisher(of(1)).fold(i->i,()->-10),equalTo(1));
   }
 
   @Test
   public void fromPublisherEmpty(){
     assertFalse(fromPublisher(empty()).isPresent());
-    assertThat(fromPublisher(empty()).visit(i->i,()->-10),equalTo(-10));
+    assertThat(fromPublisher(empty()).fold(i->i,()->-10),equalTo(-10));
   }
   @Test
   public void testForEach() {

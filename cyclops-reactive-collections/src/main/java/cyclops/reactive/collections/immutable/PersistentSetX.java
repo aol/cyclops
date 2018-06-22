@@ -82,7 +82,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            PersistentSetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            PersistentSetX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1121,7 +1121,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

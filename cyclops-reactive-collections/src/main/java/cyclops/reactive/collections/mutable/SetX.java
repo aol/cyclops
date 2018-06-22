@@ -15,7 +15,6 @@ import cyclops.data.Seq;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -75,7 +74,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             //@TODO
-            SetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            SetX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1108,7 +1107,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {
