@@ -267,8 +267,8 @@ public final class OptionalT<W extends WitnessType<W>,T> extends ValueTransforme
 
 
 
-    public <R> OptionalT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> OptionalT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> Optional.ofNullable(i)));
     }
 

@@ -227,17 +227,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
 
-    @Override
-    default TransformerSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.recover(fn));
-        return unitAnyM(zipped);
-    }
 
-    @Override
-    default <EX extends Throwable> TransformerSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.recover(exceptionClass,fn));
-        return unitAnyM(zipped);
-    }
 
   @Override
     default <T2, R> TransformerSeq<W,R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> publisher) {

@@ -5,7 +5,6 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.reactive.ReactiveSeq;
 
-import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -99,8 +98,8 @@ public class LazySetX<T> extends AbstractLazyCollection<T,Set<T>> implements Set
     }
 
     @Override
-    public <U> LazySetX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazySetX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

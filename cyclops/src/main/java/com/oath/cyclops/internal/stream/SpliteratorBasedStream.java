@@ -739,8 +739,8 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public <T> ReactiveSeq<T> unitIterator(final Iterator<T> it) {
-        return ReactiveSeq.fromIterator(it);
+    public <T> ReactiveSeq<T> unitIterable(final Iterable<T> it) {
+        return ReactiveSeq.fromIterable(it);
     }
 
 

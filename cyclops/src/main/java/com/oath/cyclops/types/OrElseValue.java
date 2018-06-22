@@ -2,6 +2,7 @@ package com.oath.cyclops.types;
 
 import java.util.function.Supplier;
 
+//replace with OnEmptySwitch
 public interface OrElseValue<T, X extends OrElseValue<T,?>> extends Value<T> {
     default X orElseUse(X opt){
         if(isPresent())

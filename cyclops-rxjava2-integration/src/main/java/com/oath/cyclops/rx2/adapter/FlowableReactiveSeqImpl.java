@@ -424,8 +424,8 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U> FlowableReactiveSeqImpl<U> unitIterator(Iterator<U> U) {
-        return new FlowableReactiveSeqImpl<>(Flowable.fromIterable(()->U));
+    public <U> FlowableReactiveSeqImpl<U> unitIterable(Iterable<U> U) {
+        return new FlowableReactiveSeqImpl<>(Flowable.fromIterable(U));
     }
 
     @Override

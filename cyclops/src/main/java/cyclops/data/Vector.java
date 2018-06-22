@@ -7,7 +7,6 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import cyclops.control.Either;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
@@ -24,7 +23,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -342,10 +340,6 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<R>)ImmutableList.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    public <U> Vector<U> unitIterator(Iterator<U> it) {
-        return fromIterable(()->it);
-    }
 
     @Override
     public Vector<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -589,15 +583,7 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    public Vector<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
 
-    @Override
-    public <EX extends Throwable> Vector<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
 
     @Override

@@ -7,6 +7,7 @@ import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.Unwrapable;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.control.Maybe;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 public interface CollectionX<T> extends IterableX<T>,
                                         Collection<T> ,
                                         Unwrapable,
+                                        RecoverableTraversable<T>,
                                         ReactiveTransformable<T>,
                                         Unit<T> {
 

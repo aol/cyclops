@@ -8,7 +8,6 @@ import com.oath.cyclops.types.recoverable.OnEmptyError;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
-import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -20,9 +19,7 @@ import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -278,8 +275,7 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().zip4(second,third,fourth,fn));
     }
 
-    @Override
-    <U> ImmutableSet<U> unitIterator(Iterator<U> U);
+
 
     @Override
     default ImmutableSet<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -566,15 +562,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().insertStreamAt(pos,stream));
     }
 
-    @Override
-    default ImmutableSet<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return unitStream(stream().recover(fn));
-    }
-
-    @Override
-    default <EX extends Throwable> ImmutableSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return unitStream(stream().recover(exceptionClass,fn));
-    }
 
     @Override
     default ImmutableSet<ReactiveSeq<T>> permutations() {

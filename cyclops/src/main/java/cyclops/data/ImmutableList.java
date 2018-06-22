@@ -12,7 +12,6 @@ import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -26,7 +25,6 @@ import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -473,11 +471,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().zip4(second,third,fourth,fn));
     }
 
-    @Override
-    default <U> ImmutableList<U> unitIterator(Iterator<U> it){
-        return unitStream(ReactiveSeq.fromIterator(it));
-    }
-
 
     @Override
     default ImmutableList<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -770,15 +763,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return unitStream(stream().insertStreamAt(pos,stream));
     }
 
-    @Override
-    default ImmutableList<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return unitStream(stream().recover(fn));
-    }
 
-    @Override
-    default <EX extends Throwable> ImmutableList<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return unitStream(stream().recover(exceptionClass,fn));
-    }
 
     @Override
     default ImmutableList<T> plusAll(Iterable<? extends T> list) {

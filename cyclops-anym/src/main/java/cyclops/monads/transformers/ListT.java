@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.control.Maybe;
@@ -57,6 +58,7 @@ import org.reactivestreams.Publisher;
  * @param <T> Type of data stored inside the nest Lists
  */
 public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
+                                                           RecoverableTraversable<T>,
                                                             ReactiveTransformable<T>,
                                                           FoldableTransformerSeq<W,T> {
 
@@ -256,8 +258,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
        return this;
     } */
     @Override
-    public <R> ListT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> ListT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(i -> ListX.of(i)));
     }
 
@@ -952,12 +954,14 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     @Override
     public ListT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (ListT) FoldableTransformerSeq.super.recover(fn);
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.stream().recover(fn));
+        return unitAnyM(zipped);
     }
 
     @Override
     public <EX extends Throwable> ListT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (ListT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
+        AnyM<W, Traversable<T>> zipped = transformerStream().map(s -> s.stream().recover(exceptionClass,fn));
+        return unitAnyM(zipped);
     }
 
 }

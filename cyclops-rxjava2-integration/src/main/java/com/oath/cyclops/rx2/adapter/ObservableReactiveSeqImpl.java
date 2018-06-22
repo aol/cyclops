@@ -433,8 +433,8 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U> ObservableReactiveSeqImpl<U> unitIterator(Iterator<U> U) {
-        return new ObservableReactiveSeqImpl<>(Observable.fromIterable(()->U));
+    public <U> ObservableReactiveSeqImpl<U> unitIterable(Iterable<U> U) {
+        return new ObservableReactiveSeqImpl<>(Observable.fromIterable(U));
     }
 
     @Override

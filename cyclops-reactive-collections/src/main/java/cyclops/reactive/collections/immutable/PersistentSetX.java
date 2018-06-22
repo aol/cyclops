@@ -402,8 +402,8 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
     @Override
-    default <R> PersistentSetX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> PersistentSetX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
    // @Override

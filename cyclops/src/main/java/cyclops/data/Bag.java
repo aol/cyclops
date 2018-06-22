@@ -90,8 +90,8 @@ public final class Bag<T> implements ImmutableSet<T>,
       return fromStream(stream().mergeMap(maxConcurecy,fn));
     }
 
-  @Override
-    public <R> Bag<R> unitIterable(Iterable<R> it) {
+    @Override
+    public <U> Bag<U> unitIterable(Iterable<U> it) {
         return fromIterable(it);
     }
 
@@ -105,10 +105,7 @@ public final class Bag<T> implements ImmutableSet<T>,
         return fromStream(stream);
     }
 
-    @Override
-    public <U> Bag<U> unitIterator(Iterator<U> U) {
-        return fromIterable(()->U);
-    }
+
 
     @Override
     public boolean containsValue(final T e) {

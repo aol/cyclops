@@ -4,23 +4,16 @@ package cyclops.monads.transformers.reactor;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Stream;
 
 
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
-import com.oath.cyclops.types.functor.Transformable;
 
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import com.oath.cyclops.types.*;
 import cyclops.data.tuple.Tuple;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import org.reactivestreams.Publisher;
 
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
@@ -207,10 +200,8 @@ public final class MonoT<W extends WitnessType<W>,T> implements To<MonoT<W,T>>, 
     }
 
 
-
-
-    public <R> MonoT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> MonoT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                 .map(i -> Mono.just(i)));
     }
 

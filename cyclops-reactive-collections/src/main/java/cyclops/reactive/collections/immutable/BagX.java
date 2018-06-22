@@ -16,7 +16,6 @@ import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.data.Bag;
 import cyclops.function.Function3;
@@ -31,7 +30,6 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import com.oath.cyclops.types.persistent.PersistentBag;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.reactivestreams.Publisher;
 
@@ -424,8 +422,8 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
      * @see com.oath.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
-    default <R> BagX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> BagX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     /* (non-Javadoc)

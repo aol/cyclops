@@ -1,7 +1,6 @@
 package com.oath.cyclops.anym;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -18,6 +17,7 @@ import com.oath.cyclops.anym.extensability.MonadAdapter;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -32,7 +32,6 @@ import org.reactivestreams.Subscription;
 import cyclops.function.Monoid;
 import cyclops.monads.AnyM;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import cyclops.control.Either;
 import cyclops.function.Predicates;
 import cyclops.function.Function4;
@@ -45,17 +44,17 @@ import cyclops.function.Function3;
  *
  * @param <T> Data types of elements managed by wrapped non-scalar Monad.
  */
-public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,TransformerTraversable<T>,IterableX<T>, Publisher<T> {
+public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, TransformerTraversable<T>,IterableX<T>,  RecoverableTraversable<T>, Publisher<T> {
 
 
     default <R> AnyMSeq<W,R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn){
-        return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
+        return this.flatMap(fn.andThen(i-> unitIterable(i)));
     }
     default <R> AnyMSeq<W,R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn){
-        return this.flatMap(fn.andThen(i->unitIterator(ReactiveSeq.fromPublisher(i).iterator())));
+        return this.flatMap(fn.andThen(i-> unitIterable(ReactiveSeq.fromPublisher(i))));
     }
     default <R> AnyMSeq<W,R> flatMapS(Function<? super T, ? extends Stream<? extends R>> fn){
-        return this.flatMap(fn.andThen(i->unitIterator(i.iterator())));
+        return this.flatMap(fn.andThen(i-> unitIterable(ReactiveSeq.fromStream(i))));
     }
 
     @Override
@@ -732,8 +731,8 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
 
     @Override
-    default <U> AnyMSeq<W,U> unitIterator(Iterator<U> U){
-        return (AnyMSeq<W,U>)adapter().unitIterable(()->U);
+    default <U> AnyMSeq<W,U> unitIterable(Iterable<U> U){
+        return (AnyMSeq<W,U>)adapter().unitIterable(U);
     }
 
 
@@ -863,12 +862,30 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>,Transform
 
     @Override
     default AnyMSeq<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return fromIterable(IterableX.super.recover(fn));
+        final Object o = unwrap();
+        if (o instanceof RecoverableTraversable) {
+            RecoverableTraversable<T> rt = (RecoverableTraversable<T>)o;
+            return fromIterable(rt.recover(fn));
+
+        }else if( o instanceof Stream){
+            RecoverableTraversable<T> rt = ReactiveSeq.fromStream((Stream<T>)o);
+            return fromIterable(rt.recover(fn));
+        }
+        return this;
     }
 
     @Override
     default <EX extends Throwable> AnyMSeq<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return fromIterable(IterableX.super.recover(exceptionClass,fn));
+        final Object o = unwrap();
+        if (o instanceof RecoverableTraversable) {
+            RecoverableTraversable<T> rt = (RecoverableTraversable<T>)o;
+            return fromIterable(rt.recover(exceptionClass,fn));
+
+        }else if( o instanceof Stream){
+            RecoverableTraversable<T> rt = ReactiveSeq.fromStream((Stream<T>)o);
+            return fromIterable(rt.recover(exceptionClass,fn));
+        }
+        return this;
     }
 
     @Override

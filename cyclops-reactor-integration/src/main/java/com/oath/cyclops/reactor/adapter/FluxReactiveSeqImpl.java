@@ -422,8 +422,8 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public <U> FluxReactiveSeqImpl<U> unitIterator(Iterator<U> U) {
-        return new FluxReactiveSeqImpl<>(Flux.fromIterable(()->U));
+    public <U> FluxReactiveSeqImpl<U> unitIterable(Iterable<U> U) {
+        return new FluxReactiveSeqImpl<>(Flux.fromIterable(U));
     }
 
     @Override

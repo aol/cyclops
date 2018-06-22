@@ -18,7 +18,6 @@ import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -514,8 +513,8 @@ public interface DequeX<T> extends To<DequeX<T>>,
      * @see com.oath.cyclops.types.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
-    default <R> DequeX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> DequeX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     /* (non-Javadoc)
