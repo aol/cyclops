@@ -867,6 +867,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Transfor
             RecoverableTraversable<T> rt = (RecoverableTraversable<T>)o;
             return fromIterable(rt.recover(fn));
 
+        }else if( o instanceof Stream){
+            RecoverableTraversable<T> rt = ReactiveSeq.fromStream((Stream<T>)o);
+            return fromIterable(rt.recover(fn));
         }
         return this;
     }
@@ -878,6 +881,9 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Transfor
             RecoverableTraversable<T> rt = (RecoverableTraversable<T>)o;
             return fromIterable(rt.recover(exceptionClass,fn));
 
+        }else if( o instanceof Stream){
+            RecoverableTraversable<T> rt = ReactiveSeq.fromStream((Stream<T>)o);
+            return fromIterable(rt.recover(exceptionClass,fn));
         }
         return this;
     }
