@@ -193,7 +193,7 @@ public class TryInstances {
         next[0] = Try.success(Either.left(initial));
         boolean cont = true;
         do {
-          cont = next[0].visit(p -> p.visit(s -> {
+          cont = next[0].fold(p -> p.fold(s -> {
             next[0] = narrowK(fn.apply(s));
             return true;
           }, pr -> false), () -> false);

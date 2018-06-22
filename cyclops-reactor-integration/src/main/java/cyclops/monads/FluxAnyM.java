@@ -31,7 +31,7 @@ public interface FluxAnyM {
                 return (FluxReactiveSeqImpl)s;
             }
             if(s instanceof ReactiveSeq){
-                return ((ReactiveSeq<T>)s).visit(sync->new FluxReactiveSeqImpl<T>(Flux.fromStream(sync)),
+                return ((ReactiveSeq<T>)s).fold(sync->new FluxReactiveSeqImpl<T>(Flux.fromStream(sync)),
                     rs->new FluxReactiveSeqImpl<T>(Flux.from(rs)),
                     async ->new FluxReactiveSeqImpl<T>(Flux.from(async)));
             }
@@ -54,7 +54,7 @@ public interface FluxAnyM {
             }
             if(s instanceof ReactiveSeq){
                 ReactiveSeq<T> r = (ReactiveSeq<T>)s;
-                return r.visit(sync->Flux.fromStream(sync),rs->Flux.from((Publisher)s),
+                return r.fold(sync->Flux.fromStream(sync), rs->Flux.from((Publisher)s),
                     async->Flux.from(async));
             }
             if(s instanceof Publisher){

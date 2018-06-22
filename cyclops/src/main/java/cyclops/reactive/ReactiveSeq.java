@@ -2934,6 +2934,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> limit(long time, final TimeUnit unit);
 
+    default ReactiveSeq take(long time, final TimeUnit unit){
+        return limit(time,unit);
+    }
+    default ReactiveSeq drop(long time, final TimeUnit unit){
+        return skip(time,unit);
+    }
     /**
      * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
      * .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
@@ -4620,8 +4626,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-    <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
-                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
+    <R> R fold(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+               Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
     /**
      * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.
@@ -4883,7 +4889,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = ReactiveSeq.fromIterable(next).concatMap(e -> e.visit(s -> {
+            next = ReactiveSeq.fromIterable(next).concatMap(e -> e.fold(s -> {
                     newValue[0]=true;
                     return fn.apply(s); },
                 p -> {

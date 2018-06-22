@@ -249,7 +249,7 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
 
     @Override
-    public <R> R visit(Function<? super ReactiveSeq<U>, ? extends R> sync, Function<? super ReactiveSeq<U>, ? extends R> reactiveStreams, Function<? super ReactiveSeq<U>, ? extends R> asyncNoBackPressure) {
+    public <R> R fold(Function<? super ReactiveSeq<U>, ? extends R> sync, Function<? super ReactiveSeq<U>, ? extends R> reactiveStreams, Function<? super ReactiveSeq<U>, ? extends R> asyncNoBackPressure) {
         return sync.apply(this);
     }
 

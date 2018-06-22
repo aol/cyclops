@@ -74,7 +74,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             //@TODO
-            SetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            SetX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1107,7 +1107,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

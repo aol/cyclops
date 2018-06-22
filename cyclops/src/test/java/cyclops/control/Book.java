@@ -64,7 +64,7 @@ public abstract class Book {
 
         Book functionalProgrammingInJava = nonfiction("978-1617292736");
         Integer a = functionalProgrammingInJava.match()
-                                               .visit(fiction->1, nonFiction -> 100);
+                                               .fold(fiction->1, nonFiction -> 100);
 
 
 

@@ -233,8 +233,8 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     @Test
     public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
-        assertThat(eager.visit(i -> i + 1, () -> 20), equalTo(11));
-        assertThat(none.visit(i -> i + 1, () -> 20), equalTo(20));
+        assertThat(eager.fold(i -> i + 1, () -> 20), equalTo(11));
+        assertThat(none.fold(i -> i + 1, () -> 20), equalTo(20));
     }
 
     @Test
@@ -250,14 +250,14 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     @Test
     public void testConvertTo() {
-        Stream<Integer> toStream = eager.visit(m -> Stream.of(m), () -> Stream.of());
+        Stream<Integer> toStream = eager.fold(m -> Stream.of(m), () -> Stream.of());
         assertThat(toStream.collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
 
     @Test
     public void testConvertToAsync() {
         Future<Stream<Integer>> async = Future
-                .of(() -> eager.visit(f -> Stream.of((int) f), () -> Stream.of()));
+                .of(() -> eager.fold(f -> Stream.of((int) f), () -> Stream.of()));
 
         assertThat(async.toOptional().get().collect(Collectors.toList()), equalTo(Arrays.asList(10)));
     }
@@ -400,10 +400,10 @@ public class OptionTest extends  AbstractValueTest implements Printable {
     @Test
     public void testWhenFunctionOfQsuperMaybeOfTQextendsR() {
 
-        String match = Option.some("data is present").visit(present -> "hello", () -> "missing");
+        String match = Option.some("data is present").fold(present -> "hello", () -> "missing");
 
-        assertThat(eager.visit(s -> "hello", () -> "world"), equalTo("hello"));
-        assertThat(none.visit(s -> "hello", () -> "world"), equalTo("world"));
+        assertThat(eager.fold(s -> "hello", () -> "world"), equalTo("hello"));
+        assertThat(none.fold(s -> "hello", () -> "world"), equalTo("world"));
     }
 
     @Test

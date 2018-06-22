@@ -253,7 +253,7 @@ public  class ReaderInstances {
           boolean cont = true;
           do {
 
-            cont = next[0].apply(in).visit(s -> {
+            cont = next[0].apply(in).fold(s -> {
               Reader<IN, ? extends Either<T, R>> x = narrowK(fn.apply(s));
 
               next[0] = narrowK(fn.apply(s));

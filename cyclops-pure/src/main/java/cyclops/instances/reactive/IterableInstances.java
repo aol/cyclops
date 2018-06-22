@@ -64,11 +64,11 @@ public class IterableInstances {
   }
   public static  <T> Active<reactiveSeq,T> allTypeclasses(Iterable<T> it,Executor ex){
     ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
-    return Active.of(r, r.visit(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ex), ac-> PublisherInstances.definitions(ex)));
+    return Active.of(r, r.fold(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ex), ac-> PublisherInstances.definitions(ex)));
   }
   public static  <T> Active<reactiveSeq,T> allTypeclasses(Iterable<T> it){
     ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);
-    return Active.of(r, r.visit(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor()), ac-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor())));
+    return Active.of(r, r.fold(sync-> IterableInstances.definitions(), rs-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor()), ac-> PublisherInstances.definitions(ThreadPools.getCurrentThreadExecutor())));
   }
   public static  <W2,R,T> Nested<reactiveSeq,W2,R> mapM(Iterable<T> it,Function<? super T,? extends Higher<W2,R>> fn, InstanceDefinitions<W2> defs){
     ReactiveSeq<T> r = ReactiveSeq.fromIterable(it);

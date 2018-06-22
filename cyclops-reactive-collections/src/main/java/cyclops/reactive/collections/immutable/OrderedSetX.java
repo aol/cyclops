@@ -75,7 +75,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            OrderedSetX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            OrderedSetX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1109,7 +1109,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return  fn.apply(s); },
                     p -> {

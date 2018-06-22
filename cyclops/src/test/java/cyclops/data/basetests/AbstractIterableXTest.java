@@ -1393,6 +1393,11 @@ public abstract class AbstractIterableXTest {
 		assertFalse(empty().toList().size()>0);
 		assertFalse(empty().to().streamable().size()>0);
 
+		assertFalse(empty.toMap(a->a).size()>0);
+        assertFalse(empty.toMap(a->a,a->a).size()>0);
+
+        assertFalse(empty.toHashMap(a->a).size()>0);
+        assertFalse(empty.toHashMap(a->a,a->a).size()>0);
 
 	}
 
@@ -1422,6 +1427,17 @@ public abstract class AbstractIterableXTest {
         assertTrue(of(1).toSet().size()>0);
         assertTrue(of(1).toList().size()>0);
         assertTrue(of(1).to().streamable().size()>0);
+        assertTrue(of(1).toMap(a->a).size()>0);
+        assertTrue(of(1).toMap(a->a,a->a).size()>0);
+
+        assertTrue(of(1).toHashMap(a->a).size()>0);
+        assertTrue(of(1).toHashMap(a->a,a->a).size()>0);
+
+
+        assertThat(of(1).toMap(a->a).get(1),equalTo(1));
+        assertThat(of(1).toMap(a->a+1,a->a+2).get(2),equalTo(3));
+        assertThat(of(1).toHashMap(a->a).get(1),equalTo(Option.some(1)));
+        assertThat(of(1).toHashMap(a->a+1,a->a+2).get(2),equalTo(Option.some(3)));
 
 
 
@@ -1447,7 +1463,11 @@ public abstract class AbstractIterableXTest {
         assertTrue(of(1,2).toSet().size()==2);
         assertTrue(of(1,2).toList().size()==2);
         assertTrue(of(1,2).to().streamable().size()==2);
+        assertTrue(of(1,2).toMap(a->a).size()==2);
+        assertTrue(of(1,2).toMap(a->a,a->a).size()==2);
 
+        assertTrue(of(1,2).toHashMap(a->a).size()==2);
+        assertTrue(of(1,2).toHashMap(a->a,a->a).size()==2);
 
     }
 

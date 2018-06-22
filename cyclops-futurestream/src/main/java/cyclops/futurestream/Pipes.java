@@ -393,7 +393,7 @@ public class Pipes<K, V> {
             final ValueSubscriber<V> sub = ValueSubscriber.subscriber();
             get(key).peek(a -> a.stream()
                     .subscribe(sub))
-                    .map(a -> sub.toMaybe().visit(s -> {
+                    .map(a -> sub.toMaybe().fold(s -> {
                         res.complete(s);
                         return Tuple.empty();
                     }, () -> {

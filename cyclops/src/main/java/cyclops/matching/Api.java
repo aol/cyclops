@@ -1,7 +1,6 @@
 package cyclops.matching;
 
 import com.oath.cyclops.matching.*;
-import com.oath.cyclops.matching.*;
 import com.oath.cyclops.matching.Case.Any;
 import com.oath.cyclops.matching.Case.Case2;
 import com.oath.cyclops.matching.Deconstruct.*;
@@ -45,7 +44,7 @@ public final class Api {
         return new PatternMatching5<>(value);
     }
 
-    public static <T1> PatternMatchingOrNone<T1> MatchType(Sealed1Or<T1> value) {
+    public static <T1> PatternMatchingOrNone<T1> MatchOr(SealedOr<T1> value) {
         return new PatternMatchingOrNone<>(value);
     }
 

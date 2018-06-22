@@ -8,7 +8,6 @@ import cyclops.arrow.Kleisli;
 import cyclops.arrow.MonoidK;
 import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
@@ -221,7 +220,7 @@ public class OptionInstances {
                                                                               Higher<option, T> ds){
 
     Option<T> maybe = narrowK(ds);
-    Higher<C2, Option<R>> res = maybe.visit(some-> applicative.map(m->Option.of(m), fn.apply(some)),
+    Higher<C2, Option<R>> res = maybe.fold(some-> applicative.map(m->Option.of(m), fn.apply(some)),
       ()->applicative.unit(Option.<R>none()));
 
     return Option.widen2(res);

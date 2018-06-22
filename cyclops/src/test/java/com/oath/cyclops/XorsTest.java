@@ -33,7 +33,7 @@ public class XorsTest {
 	                                                        .build();
 
 	        String result =   Eithers.adapter(adapter)
-	                                          .visit(queue->"we have a queue",topic->"we have a topic");
+	                                          .fold(queue->"we have a queue", topic->"we have a topic");
 	        assertThat(result,equalTo("we have a queue"));
 
 	}
@@ -42,12 +42,12 @@ public class XorsTest {
 	@Test
 	public void nonBlocking(){
 	    assertThat(Eithers.blocking(new ManyToManyConcurrentArrayQueue(10))
-	                                  .visit(c->"blocking", c->"not"),equalTo("not"));
+	                                  .fold(c->"blocking", c->"not"),equalTo("not"));
 	}
 	@Test
     public void blocking(){
         assertThat(Eithers.blocking(new LinkedBlockingQueue(10))
-                                      .visit(c->"blocking", c->"not"),equalTo("blocking"));
+                                      .fold(c->"blocking", c->"not"),equalTo("blocking"));
     }
 
 }

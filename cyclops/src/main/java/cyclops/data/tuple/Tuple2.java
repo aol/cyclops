@@ -126,7 +126,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         return lazy(()->_2(),()->_1());
     }
 
-    public <R> R visit(BiFunction<? super T1, ? super T2, ? extends R> fn){
+    public <R> R fold(BiFunction<? super T1, ? super T2, ? extends R> fn){
         return fn.apply(_1(),_2());
     }
 
@@ -150,7 +150,7 @@ public class Tuple2<T1,T2> implements To<Tuple2<T1,T2>>,
         boolean cont = true;
         do {
 
-            cont = next[0].visit((a,p) -> p.visit(s -> {
+            cont = next[0].fold((a, p) -> p.fold(s -> {
                 next[0] = narrowK(fn.apply(s)).map1(t1->op.apply(next[0]._1(),t1));
                 return true;
             }, __ -> false));

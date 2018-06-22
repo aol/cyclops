@@ -370,8 +370,8 @@ public interface AnyM2<W extends WitnessType<W>,T2,T> extends   AnyM<W,T>,
      * @return Aggregated Monad
      */
     default AnyM2<W,T2,List<T>> aggregate(AnyM2<W, T2,T> next){
-        return unit(Stream.concat(matchable().visit(value -> value.stream(), seq -> seq.stream()), next.matchable()
-                                  .visit(value -> value.stream(),
+        return unit(Stream.concat(matchable().fold(value -> value.stream(), seq -> seq.stream()), next.matchable()
+                                  .fold(value -> value.stream(),
                                          seq -> seq.stream()))
                     .collect(Collectors.toList()));
     }

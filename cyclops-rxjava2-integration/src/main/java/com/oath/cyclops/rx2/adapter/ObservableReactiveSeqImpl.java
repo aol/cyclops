@@ -68,7 +68,7 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public <U, R> ReactiveSeq<R> zipWithStream(Stream<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
          if(other instanceof ReactiveSeq){
             ReactiveSeq<U> o = (ReactiveSeq<U>)other;
-            return o.visit(sync->observable(observable.zipWith(ReactiveSeq.fromStream((Stream<U>)other),(a,b)->zipper.apply(a,b))),
+            return o.fold(sync->observable(observable.zipWith(ReactiveSeq.fromStream((Stream<U>)other),(a, b)->zipper.apply(a,b))),
                     rs->observable(observable.zipWith(ReactiveSeq.fromStream((Stream<U>)other),(a,b)->zipper.apply(a,b))),
                     async->observable(observable.zipWith(ReactiveSeq.fromStream((Stream<U>)other),(a,b)->zipper.apply(a,b))));
 
@@ -750,8 +750,8 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
         Observables.publisher(observable).subscribe(s);
     }
     @Override
-    public <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
-                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
+    public <R> R fold(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+                      Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure){
         return asyncNoBackPressure.apply(this);
     }
 

@@ -746,7 +746,7 @@ public class Queue<T> implements Adapter<T> {
         queue.continuationStrategy = this.continuationStrategy;
     }
     @Override
-    public <R> R visit(final Function<? super Queue<T>, ? extends R> caseQueue, final Function<? super Topic<T>, ? extends R> caseTopic) {
+    public <R> R fold(final Function<? super Queue<T>, ? extends R> caseQueue, final Function<? super Topic<T>, ? extends R> caseTopic) {
         return caseQueue.apply(this);
     }
 

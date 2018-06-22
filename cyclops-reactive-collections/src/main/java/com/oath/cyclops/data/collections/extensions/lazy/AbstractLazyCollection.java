@@ -67,7 +67,7 @@ public abstract class AbstractLazyCollection<T, C extends Collection<T>> impleme
                     if(toUse!=null){//dbl check - as we may pass null check on on thread and set updating false on another
 
 
-                        list = toUse.visit(s->{
+                        list = toUse.fold(s->{
 
                             return toUse.collect(collectorInternal);
                             },

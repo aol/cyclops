@@ -56,8 +56,8 @@ public class TrampolineTest {
     @Test
     public void interleave(){
 
-	    Trampoline<Integer> algorithm1 = loop(500000,5);
-        Trampoline<Integer> algorithm2 = loop2(500000,5);
+	    Trampoline<Integer> algorithm1 = loop(50000,5);
+        Trampoline<Integer> algorithm2 = loop2(50000,5);
 
         //interleaved execution via Zip!
         Tuple2<Integer, Integer> result = algorithm1.zip(algorithm2).get();

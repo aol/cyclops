@@ -149,7 +149,7 @@ public class Tuple8Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(tuple.visit((a, b,c,d,e,f,g,h)->a+b+c+d+e+f+g+h),equalTo(67));
+        assertThat(tuple.fold((a, b, c, d, e, f, g, h)->a+b+c+d+e+f+g+h),equalTo(67));
     }
 
     @Test

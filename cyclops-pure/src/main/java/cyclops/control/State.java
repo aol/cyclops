@@ -8,7 +8,6 @@ import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.kinds.SupplierKind;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -198,7 +197,7 @@ public final class State<S, T> implements Higher2<state,S,T> {
 
     }
     public static <S,T,R> State<S, R> tailRec(T initial, Function<? super T, ? extends  State<S,  ? extends Either<T, R>>> fn) {
-      return fn.apply(initial).flatMap( eval -> eval.visit(s->narrowK(tailRec(s,fn)),p->State.constant(p)));
+      return fn.apply(initial).flatMap( eval -> eval.fold(s->narrowK(tailRec(s,fn)), p->State.constant(p)));
 
 
     }

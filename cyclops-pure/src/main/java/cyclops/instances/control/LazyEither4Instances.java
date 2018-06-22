@@ -172,7 +172,7 @@ public class LazyEither4Instances {
       @Override
       public <T, R> Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, ? extends Either<T, R>>> fn) {
         return narrowK(fn.apply(initial)).flatMap( eval ->
-          eval.visit(s->narrowK(tailRec(s,fn)),p-> LazyEither4.right(p)));
+          eval.fold(s->narrowK(tailRec(s,fn)), p-> LazyEither4.right(p)));
       }
 
 
@@ -230,7 +230,7 @@ public class LazyEither4Instances {
       @Override
       public <C2, T, R> Higher<C2, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<Higher<lazyEither4, L1>, L2>,L3>, T> ds) {
         LazyEither4<L1,L2,L3,T> maybe = narrowK(ds);
-        return maybe.visit(left->  applicative.unit(LazyEither4.<L1,L2,L3,R>left1(left)),
+        return maybe.fold(left->  applicative.unit(LazyEither4.<L1,L2,L3,R>left1(left)),
           middle1->applicative.unit(LazyEither4.<L1,L2,L3,R>left2(middle1)),
           middle2->applicative.unit(LazyEither4.<L1,L2,L3,R>left3(middle2)),
           right->applicative.map(m-> LazyEither4.right(m), fn.apply(right)));

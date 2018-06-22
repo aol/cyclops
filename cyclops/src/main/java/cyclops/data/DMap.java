@@ -140,7 +140,7 @@ public interface DMap{
 
         @Override
         public LazyEither3<V1, V2, Nothing> get(Either<K1, K2> key) {
-            return key.visit(k1->{
+            return key.fold(k1->{
                 V1 r = getOrElse1(k1, null);
                 return r==null ? LazyEither3.right(Nothing.EMPTY) : LazyEither3.left1(r);
             },k2->{
@@ -247,7 +247,7 @@ public interface DMap{
 
         @Override
         public Three<K1, V1, K2, V2, K3, V3> put(LazyEither3<Tuple2<K1, V1>, Tuple2<K2, V2>, Tuple2<K3, V3>> keyAndValue) {
-            return keyAndValue.visit(kv1->put1(kv1),kv2->put2(kv2),kv3->put3(kv3));
+            return keyAndValue.fold(kv1->put1(kv1), kv2->put2(kv2), kv3->put3(kv3));
         }
 
         @Override
@@ -299,7 +299,7 @@ public interface DMap{
 
         @Override
         public LazyEither4<V1, V2, V3, Nothing> get(LazyEither3<K1, K2, K3> key) {
-            return key.visit(k1->{
+            return key.fold(k1->{
                 V1 r = getOrElse1(k1, null);
                 return r==null ? LazyEither4.right(Nothing.EMPTY) : LazyEither4.left1(r);
             },k2->{

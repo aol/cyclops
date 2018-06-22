@@ -80,7 +80,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,Persi
 
     public PersistentList<T> materializeList(ReactiveSeq<T> toUse){
 
-        return toUse.visit(s -> {
+        return toUse.fold(s -> {
             PersistentList<T> res = generator.from(toUse.iterator(),0);
             return new LazyLinkedListX<T>(
                     res,null, this.getCollectorInternal(),generator, evaluation());

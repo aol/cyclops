@@ -299,7 +299,7 @@ public  class FutureInstances {
       @Override
       public <C2, T, R> Higher<C2, Higher<future, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<future, T> ds) {
         Future<T> maybe = Future.narrowK(ds);
-        return maybe.visit(right->applicative.map(m->Future.ofResult(m), fn.apply(right)),left->  applicative.unit(Future.ofError(left)));
+        return maybe.fold(right->applicative.map(m->Future.ofResult(m), fn.apply(right)), left->  applicative.unit(Future.ofError(left)));
       }
 
       @Override

@@ -26,7 +26,7 @@ public interface Futures {
       next[0]=Future.ofResult(Either.left(initial));
       boolean cont = true;
       do {
-        cont = next[0].visit(p ->  p.visit(s -> {
+        cont = next[0].fold(p ->  p.fold(s -> {
           next[0] = Future.narrowK(fn.apply(s));
           return true;
         }, pr -> false), () -> false);

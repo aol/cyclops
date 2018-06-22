@@ -22,10 +22,8 @@ import com.oath.cyclops.types.Value;
 
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.To;
-import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.RecoverableFrom;
-import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.function.*;
 
 import com.oath.cyclops.hkt.DataWitness.tryType;
@@ -161,7 +159,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
         next[0] = Try.success(Either.left(initial));
         boolean cont = true;
         do {
-            cont = next[0].visit(p -> p.visit(s -> {
+            cont = next[0].fold(p -> p.fold(s -> {
                 next[0] = fn.apply(s);
                 return true;
             }, pr -> false), () -> false);
@@ -517,26 +515,6 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
 
 
 
-    /**
-     * Execute one function conditional on Try state (Success / Failure)
-     *
-     * <pre>
-     * {@code
-     *
-     *     Try<Integer> result = this.execute();
-     *
-     *     this.logState(result.visit(t->"value is " +t,e->"error is "+e.getMessage());
-     *
-     * }
-     * </pre>
-     *
-     * @param success Function to execute if this Try is a Success
-     * @param failure Funcion to execute if this Try is a Failure
-     * @return Result of executed function (one or other depending on case)
-     */
-    public <R> R visit(Function<? super T, ? extends R> success, Function<? super X, ? extends R> failure){
-        return xor.visit(failure,success);
-    }
 
 
 
@@ -928,8 +906,8 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
 
     @Override
-    public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
-        return xor.visit(present,absent);
+    public <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+        return xor.fold(present,absent);
     }
 
 
@@ -1022,7 +1000,7 @@ public class Try<T, X extends Throwable> implements  To<Try<T,X>>,
     }
     @Override
     public String toString() {
-        return xor.visit(s->"Failure["+s.toString()+"]",p->"Success["+p.toString()+"]");
+        return xor.fold(s->"Failure["+s.toString()+"]", p->"Success["+p.toString()+"]");
     }
 
     @Override

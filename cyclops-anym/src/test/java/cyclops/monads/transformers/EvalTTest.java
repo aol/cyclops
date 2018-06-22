@@ -107,8 +107,8 @@ public class EvalTTest implements Printable {
 	@Test
 	public void testWhenFunctionOfQsuperTQextendsRSupplierOfQextendsR() {
 
-		assertThat(just.visit(i->i+1,()->20),equalTo(AnyM.ofNullable(11)));
-		assertThat(none.visit(i->i+1,()->20),equalTo(AnyM.ofNullable(null)));
+		assertThat(just.fold(i->i+1,()->20),equalTo(AnyM.ofNullable(11)));
+		assertThat(none.fold(i->i+1,()->20),equalTo(AnyM.ofNullable(null)));
 	}
 
 
@@ -126,7 +126,7 @@ public class EvalTTest implements Printable {
 
 	@Test
     public void testConvertTo() {
-        AnyM<Witness.optional,Stream<Integer>> toStream = just.visit(m->Stream.of(m),()->Stream.of());
+        AnyM<Witness.optional,Stream<Integer>> toStream = just.fold(m->Stream.of(m),()->Stream.of());
 
         assertThat(toStream.stream().flatMap(i->i).collect(Collectors.toList()),equalTo(ListX.of(10)));
     }
@@ -299,13 +299,13 @@ public class EvalTTest implements Printable {
 
 
 	    String match = Eval.now("data is present")
-	                        .visit(present->"hello", ()->"missing");
+	                        .fold(present->"hello", ()->"missing");
 
 
 
-		assertThat(just.visit(s->"hello", ()->"world"),equalTo(AnyM.ofNullable("hello")));
+		assertThat(just.fold(s->"hello", ()->"world"),equalTo(AnyM.ofNullable("hello")));
 		//none remains none as visit is on the Future not the Optional
-		assertThat(none.visit(s->"hello", ()->"world"),equalTo(AnyM.ofNullable(null)));
+		assertThat(none.fold(s->"hello", ()->"world"),equalTo(AnyM.ofNullable(null)));
 	}
 
 

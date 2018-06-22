@@ -106,7 +106,7 @@ public interface Matching {
     @AllArgsConstructor
     final class PatternMatchingOrNone<T1> implements Matching {
 
-        private final Sealed1Or<T1> value;
+        private final SealedOr<T1> value;
 
         public <R> R with(Case<T1, R> case1, Case<Tuple0, R> case2) {
             return value.fold(a -> case1.test(a), () -> case2.test(Tuple.empty())).orElse(null);

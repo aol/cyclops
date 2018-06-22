@@ -1,25 +1,18 @@
 package cyclops.companion.rx2;
 
 import com.oath.cyclops.anym.AnyMSeq;
-import com.oath.cyclops.rx2.adapter.ObservableReactiveSeqImpl;
 import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.monads.AnyM;
-import cyclops.monads.Rx2Witness;
 import cyclops.monads.Rx2Witness.observable;
-import cyclops.monads.WitnessType;
-import cyclops.monads.XorM;
-import cyclops.monads.transformers.StreamT;
 import cyclops.reactive.ObservableReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import io.reactivex.*;
-import io.reactivex.schedulers.Schedulers;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -43,7 +36,7 @@ public class Observables {
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.flatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {
@@ -63,7 +56,7 @@ public class Observables {
     }
 
     public static  <T> Observable<T> observableFrom(ReactiveSeq<T> stream){
-        return stream.visit(sync->fromStream(stream),
+        return stream.fold(sync->fromStream(stream),
                 rs->observable(stream),
                 async->Observable.create(new ObservableOnSubscribe<T>() {
                     @Override
@@ -80,7 +73,7 @@ public class Observables {
 
         if(s instanceof  ReactiveSeq) {
             ReactiveSeq<T> stream = (ReactiveSeq<T>)s;
-            return stream.visit(sync -> Observable.fromIterable(stream),
+            return stream.fold(sync -> Observable.fromIterable(stream),
                     rs -> observable(stream),
                     async -> Observable.create(new ObservableOnSubscribe<T>() {
                         @Override

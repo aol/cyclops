@@ -21,6 +21,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -68,7 +69,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval ->
-                eval.visit(s->tailRec(s,fn),p-> Eval.now(p)));
+                eval.fold(s->tailRec(s,fn), p-> Eval.now(p)));
     }
     public static <T> Higher<eval, T> widen(Eval<T> narrow) {
     return narrow;
@@ -135,6 +136,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
 
+    default ReactiveSeq<T> streamWhile(Predicate<? super T> p){
+        return ReactiveSeq.generate(this).takeWhile(p);
+    }
+    default ReactiveSeq<T> streamUntil(Predicate<? super T> p){
+        return ReactiveSeq.generate(this).takeUntil(p);
+    }
+    default ReactiveSeq<T> streamUntil(long time,TimeUnit unit){
+        return ReactiveSeq.generate(this).take(time,unit);
+    }
     @Override
     default ReactiveSeq<T> stream() {
         return Function0.super.stream();
@@ -482,7 +492,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    default <R> R visit(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
+    default <R> R fold(final Function<? super T, ? extends R> present, final Supplier<? extends R> absent) {
         final T value = get();
         if (value != null)
             return present.apply(value);
@@ -883,8 +893,14 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
             @Override
             public T get() {
 
-                Eval<T> eval = input.visit(i->i,()->null);
+                Eval<T> eval = input.fold(i->i,()->null);
                 return eval.get();
+            }
+
+
+            @Override
+            public ReactiveSeq<T> stream() {
+                return Spouts.from(this);
             }
 
             @Override
