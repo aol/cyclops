@@ -81,7 +81,7 @@ public interface Effect extends Runnable{
             return r;
         };
     }
-    default <R> R visit(Supplier<R> success,Function<Throwable,? extends R> failure){
+    default <R> R fold(Supplier<R> success, Function<Throwable,? extends R> failure){
         try {
             run();
         }catch(Throwable t){

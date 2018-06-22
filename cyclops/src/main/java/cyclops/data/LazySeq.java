@@ -80,7 +80,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.flatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return fromStream(fn.apply(s).stream()); },
                     p -> {

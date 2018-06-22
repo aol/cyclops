@@ -73,7 +73,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            QueueX<T> target =  future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            QueueX<T> target =  future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }
@@ -1141,7 +1141,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.concatMap(e -> e.visit(s -> {
+            next = next.concatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {

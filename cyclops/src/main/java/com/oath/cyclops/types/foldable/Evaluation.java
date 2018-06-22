@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 public enum Evaluation {
     EAGER, LAZY;
 
-    public void visit(Runnable eager, Runnable lazy){
+    public void fold(Runnable eager, Runnable lazy){
         if(this==EAGER){
             eager.run();
         }

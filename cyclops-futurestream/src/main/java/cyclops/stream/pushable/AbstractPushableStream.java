@@ -22,7 +22,7 @@ public abstract class AbstractPushableStream<T, X extends Adapter<T>, R extends 
         return _2();
     }
 
-    public <U> U visit(final BiFunction<? super X, ? super R, ? extends U> visitor) {
+    public <U> U fold(final BiFunction<? super X, ? super R, ? extends U> visitor) {
         return visitor.apply(_1(), _2());
     }
 

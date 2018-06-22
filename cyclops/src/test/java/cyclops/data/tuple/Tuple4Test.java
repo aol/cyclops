@@ -118,7 +118,7 @@ public class Tuple4Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(tuple.visit((a, b,c,d)->a+b+c+d),equalTo(27));
+        assertThat(tuple.fold((a, b, c, d)->a+b+c+d),equalTo(27));
     }
 
     @Test

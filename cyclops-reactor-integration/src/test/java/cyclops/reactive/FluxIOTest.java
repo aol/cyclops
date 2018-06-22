@@ -92,41 +92,41 @@ public class FluxIOTest {
     public void asyncAttempt(){
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .mapTry(i->{throw re;})
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(-1)));
 
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .mapTry(i->i*2)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(20)));
     }
     @Test
     public void asyncAttemptRx(){
         assertThat(FluxIO.of(()->10, Schedulers.single())
             .mapTry(i->{throw re;})
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(-1)));
 
         assertThat(FluxIO.of(()->10, Schedulers.single())
             .mapTry(i->i*2)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(20)));
     }
     @Test
     public void asyncAttemptSpecific(){
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .mapTry(i->{throw re;}, IOException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.failure(re)));
 
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .mapTry(i->{throw re;},RuntimeException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(-1)));
 
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .mapTry(i->i*2,RuntimeException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(20)));
     }
 

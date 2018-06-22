@@ -1,29 +1,17 @@
 package cyclops.control;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.validated;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Sealed2;
-import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.OrElseValue;
 import com.oath.cyclops.types.Value;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.types.recoverable.Recoverable;
 import cyclops.companion.Semigroups;
-import cyclops.data.LazySeq;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
-import cyclops.data.tuple.Tuple2;
-import cyclops.data.tuple.Tuple3;
-import cyclops.data.tuple.Tuple4;
-import cyclops.function.Function3;
-import cyclops.function.Function4;
 import cyclops.function.Monoid;
-import cyclops.function.Reducer;
 import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,11 +19,9 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformable<T>, Iterable<T>,
@@ -173,11 +159,11 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         }
 
         @Override
-        public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
-            return either.visit(present,absent);
+        public <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+            return either.fold(present,absent);
         }
         public String toString(){
-            return either.visit(nl->Validated.invalid(nl).toString(),i->Validated.valid(i).toString());
+            return either.fold(nl->Validated.invalid(nl).toString(), i->Validated.valid(i).toString());
         }
 
         @Override
@@ -229,8 +215,8 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         }
 
         @Override
-        public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
-            return either.visit(present,absent);
+        public <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+            return either.fold(present,absent);
         }
         public String toString(){
             return "Valid["+either.orElse(null)+"]";
@@ -282,8 +268,8 @@ public interface Validated<E,T> extends Sealed2<NonEmptyList<E>,T>, Transformabl
         }
 
         @Override
-        public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
-            return either.visit(present,absent);
+        public <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+            return either.fold(present,absent);
         }
         public String toString(){
             String str = either.mapLeft(l -> l.join(",")).swap().orElse( "");

@@ -59,7 +59,7 @@ public class IteratorHotStream<T> {
                         for (int i = 0; i < local; i++) {
 
                             Eithers.blocking(connections.get(i))
-                                      .visit(FluentFunctions.ofChecked(in -> {
+                                      .fold(FluentFunctions.ofChecked(in -> {
                                 in.put(next);
                                 return true;
                             }), q -> q.offer(next));
@@ -90,7 +90,7 @@ public class IteratorHotStream<T> {
                     for (int i = 0; i < local; i++) {
 
                         Eithers.blocking(connections.get(i))
-                                  .visit(FluentFunctions.ofChecked(in -> {
+                                  .fold(FluentFunctions.ofChecked(in -> {
                             in.put(next);
                             return true;
                         }), q -> q.offer(next));
@@ -118,7 +118,7 @@ public class IteratorHotStream<T> {
                     for (int i = 0; i < local; i++) {
 
                         Eithers.blocking(connections.get(i))
-                                  .visit(FluentFunctions.ofChecked(in -> {
+                                  .fold(FluentFunctions.ofChecked(in -> {
                             in.put(next);
                             return true;
                         }), q -> q.offer(next));

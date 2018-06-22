@@ -69,16 +69,17 @@ public interface Folds<T> extends Iterable<T>  {
     default Seq<T> seq(){
         return Seq.fromIterable(this);
     }
-    /**
-     * Collect the collectable into a {@link Map}.
-     */
+
+    default <K, V> HashMap<K, V> toHashMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
+        return HashMap.fromStream(ReactiveSeq.fromIterable(this).map(a->Tuple.tuple(keyMapper.apply(a),valueMapper.apply(a))));
+    }
     default <K, V> Map<K, V> toMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
         return stream().collect(Collectors.toMap(keyMapper,valueMapper));
     }
+    default <K> HashMap<K, T> toHashMap(Function<? super T, ? extends K> keyMapper){
+        return HashMap.fromStream(ReactiveSeq.fromIterable(this).map(a->Tuple.tuple(keyMapper.apply(a),a)));
+    }
 
-    /**
-     * Collect the collectable into a {@link Map} with the given keys and the self element as value.
-     */
     default <K> Map<K, T> toMap(Function<? super T, ? extends K> keyMapper){
         return stream().collect(Collectors.toMap(keyMapper,i->i));
     }

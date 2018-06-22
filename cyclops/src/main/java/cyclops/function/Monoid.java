@@ -48,7 +48,7 @@ public interface Monoid<T> extends Semigroup<T> {
      */
     T zero();
 
-    default <R> R visit(BiFunction<? super Semigroup<T>,? super T,? extends R> visitFn){
+    default <R> R fold(BiFunction<? super Semigroup<T>,? super T,? extends R> visitFn){
         return visitFn.apply(this,zero());
     }
 

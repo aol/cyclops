@@ -8,7 +8,6 @@ import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.free.Free;
 import cyclops.function.*;
 import cyclops.kinds.SupplierKind;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -16,7 +15,6 @@ import cyclops.data.tuple.Tuple3;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static cyclops.data.tuple.Tuple.tuple;
 
@@ -38,7 +36,7 @@ public final class ReaderWriterState<R,W,S,T> implements Higher4<rws,R,W,S,T>{
     }
     private static  <T,R1, W, S, R> Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> tailRecInternal(Monoid<W> monoid,T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<rws, R1>, W>, S>, ? extends Either<T, R>>> fn) {
       return narrowK(fn.apply(initial)).flatMap( eval ->
-        eval.visit(s->narrowK(tailRecInternal(monoid,s,fn)),p->{
+        eval.fold(s->narrowK(tailRecInternal(monoid,s,fn)), p->{
           ReaderWriterState<R1, W, S, R> k = narrowK(rws((a,s)-> tuple(monoid.zero(),s,p),monoid));
           return k;
         }));

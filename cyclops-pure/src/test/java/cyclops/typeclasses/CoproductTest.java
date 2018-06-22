@@ -31,6 +31,6 @@ public class CoproductTest {
 
     @Test
     public void visit(){
-        assertThat(just.visit(s-> StreamKind.narrowK(s).count(), m-> Maybe.narrowK(m).toOptional().get()),equalTo(10));
+        assertThat(just.fold(s-> StreamKind.narrowK(s).count(), m-> Maybe.narrowK(m).toOptional().get()),equalTo(10));
     }
 }

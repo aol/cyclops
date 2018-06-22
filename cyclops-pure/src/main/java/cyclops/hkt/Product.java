@@ -8,7 +8,6 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.*;
 import cyclops.control.Maybe;
-import cyclops.control.Trampoline;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
@@ -35,7 +34,6 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 import static cyclops.data.tuple.Tuple.tuple;
@@ -79,8 +77,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
     public Product<W1,W2,T> filter(Predicate<? super T> test) {
         return of(run.transform((m1, m2)->{
-            Higher<W2, T> x2 = def2.monadZero().visit(p->p.filter(test,m2),()->m2);
-            Higher<W1,T> x1 = def1.monadZero().visit(p->p.filter(test,m1),()->m1);
+            Higher<W2, T> x2 = def2.monadZero().fold(p->p.filter(test,m2),()->m2);
+            Higher<W1,T> x1 = def1.monadZero().fold(p->p.filter(test,m1),()->m1);
             return Tuple.tuple(x1, x2);
         }),def1,def2);
     }
@@ -190,7 +188,7 @@ public class Product<W1,W2,T> implements  Filters<T>,
         return Active.of(sg.apply(run._2(),concat),def2);
     }
 
-    public <R> R visit(BiFunction<? super Higher<W1,? super T>,? super Higher<W2,? super T>, ? extends R> visitor){
+    public <R> R fold(BiFunction<? super Higher<W1,? super T>,? super Higher<W2,? super T>, ? extends R> visitor){
         return run.transform(visitor);
     }
     public <R> R visitA(BiFunction<? super Active<W1,? super T>,? super Active<W2,? super T>, ? extends R> visitor){
@@ -207,8 +205,8 @@ public class Product<W1,W2,T> implements  Filters<T>,
     }
 
     public Unfolds unfoldsDefault(){
-        return new Unfolds(def1.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()),
-                def2.unfoldable().visit(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
+        return new Unfolds(def1.unfoldable().fold(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()),
+                def2.unfoldable().fold(p->p,()->new Unfoldable.UnsafeValueUnfoldable<>()));
     }
 
     public Maybe<Unfolds> unfolds(){
@@ -543,13 +541,13 @@ public class Product<W1,W2,T> implements  Filters<T>,
                     next[0] = Product.of(Tuple.tuple(def1.unit().unit(in),def2.unit().unit(in)),def1,def2);
                     boolean cont = true;
                     do {
-                        cont = next[0].visit( (a,__) -> {
+                        cont = next[0].fold( (a, __) -> {
                             boolean[] internalCont = {true};
 
                             Higher<W1, ?> b = a;
                             Higher<W1, Boolean> r = def1.functor().map(p -> {
                                 Either<T, R> x = (Either<T, R>) p;
-                                internalCont[0] = internalCont[0] || x.visit(s -> {
+                                internalCont[0] = internalCont[0] || x.fold(s -> {
                                     next[0] = narrowK(fn.apply(s));
                                     return true;
                                 }, pr -> false);

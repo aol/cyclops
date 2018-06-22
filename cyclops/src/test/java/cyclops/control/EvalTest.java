@@ -7,7 +7,10 @@ import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 public class EvalTest {
 
@@ -15,6 +18,25 @@ public class EvalTest {
     @Before
     public void setup(){
         times = 0;
+    }
+
+    @Test
+    public void streamUntil(){
+       assertThat(Eval.always(()->times++)
+                        .peek(System.out::println)
+                        .streamUntil(i->i>10).count(),equalTo(11L));
+    }
+    @Test
+    public void streamUntilTime(){
+        assertThat(Eval.always(()->times++)
+            .peek(System.out::println)
+            .streamUntil(1000, TimeUnit.MILLISECONDS).count(),greaterThan(10L));
+    }
+    @Test
+    public void streamWhile(){
+        assertThat(Eval.always(()->times++)
+            .peek(System.out::println)
+            .streamWhile(i->i<10).count(),equalTo(10L));
     }
 	@Test
     public void lazyBugNow(){

@@ -10,14 +10,12 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.Comparators;
 import cyclops.function.Memoize;
 import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 
 /*
@@ -118,7 +116,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
     public <R> Tuple1<R> lazyFlatMap(Function<? super T, ? extends Tuple1<R>> fn){
         return lazy(()->fn.apply(_1())._1());
     }
-    public <R> R visit(Function<? super T, ? extends R> fn){
+    public <R> R fold(Function<? super T, ? extends R> fn){
         return fn.apply(_1());
     }
 
@@ -137,7 +135,7 @@ public class Tuple1<T> implements To<Tuple1<T>>,
         boolean cont = true;
         do {
 
-            cont = next[0].visit(p -> p.visit(s -> {
+            cont = next[0].fold(p -> p.fold(s -> {
                 next[0] = narrowK(fn.apply(s));
                 return true;
             }, __ -> false));

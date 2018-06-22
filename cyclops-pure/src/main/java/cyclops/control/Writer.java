@@ -32,7 +32,7 @@ public final class Writer<W, T> implements Transformable<T>, Iterable<T>,Higher2
         return writer(mapper.apply(value._1()), value._2(), monoid);
     }
 
-    public <R> R visit(BiFunction<? super Tuple2<T,W>,? super Monoid<W>,? extends R> fn){
+    public <R> R fold(BiFunction<? super Tuple2<T,W>,? super Monoid<W>,? extends R> fn){
         return fn.apply(value,monoid);
     }
     public <R> Writer<W, R> flatMap(Function<? super T,? extends  Writer<W, ? extends R>> fn) {

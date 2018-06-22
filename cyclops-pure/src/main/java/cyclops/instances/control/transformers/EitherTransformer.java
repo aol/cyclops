@@ -1,6 +1,5 @@
 package cyclops.instances.control.transformers;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.either;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Either;
@@ -28,7 +27,7 @@ public class EitherTransformer<W1,L,R> implements Transformer<W1,Higher<either,L
 
   @Override
   public <R1> Nested<W1, Higher<either, L>, R1> flatMap(Function<? super R, ? extends Nested<W1, Higher<either, L>, R1>> fn) {
-    Higher<W1, Higher<Higher<either, L>, R1>> res = monad1.flatMap(m -> Either.narrowK(m).visit(l -> monad1.unit(Either.left(l)),
+    Higher<W1, Higher<Higher<either, L>, R1>> res = monad1.flatMap(m -> Either.narrowK(m).fold(l -> monad1.unit(Either.left(l)),
 
       r -> fn.apply(r).nested),
       nested.nested);

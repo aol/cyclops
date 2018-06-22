@@ -1,6 +1,5 @@
 package cyclops.typeclasses;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.Higher;
@@ -58,7 +57,7 @@ public class ActiveTest {
     public void zipWith(){
         ListX<Integer> res =ListXInstances.allTypeclasses(ListX.of(1,2,3))
                 .zipWith(VectorXInstances.allTypeclasses(VectorX.of(10,20)), (a, b)->{
-                    return b.visit(p->a+p,()->-1);
+                    return b.fold(p->a+p,()->-1);
                 })
                 .getSingle()
                 .convert(ListX::narrowK);

@@ -188,8 +188,8 @@ public abstract class ValueTransformer<W extends WitnessType<W>,T> implements Pu
     }
 
 
-    public <R> AnyM<W,R> visit(Function<? super T, ? extends R> some, Supplier<? extends R> none){
-        return this.transformerStream().map(v->v.visit(some,none));
+    public <R> AnyM<W,R> fold(Function<? super T, ? extends R> some, Supplier<? extends R> none){
+        return this.transformerStream().map(v->v.fold(some,none));
     }
 
 

@@ -4,7 +4,6 @@ import cyclops.companion.Monoids;
 import cyclops.data.NonEmptyList;
 import cyclops.data.Seq;
 import cyclops.reactive.Spouts;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -132,9 +131,9 @@ public class ValidatedTest {
 
     @Test
     public void visit(){
-        assertThat(valid.visit(i->i,()->-1),equalTo(10));
-        assertThat(async.visit(i->i,()->-1),equalTo(10));
-        assertThat(invalid.visit(i->i,()->-1),equalTo(-1));
+        assertThat(valid.fold(i->i,()->-1),equalTo(10));
+        assertThat(async.fold(i->i,()->-1),equalTo(10));
+        assertThat(invalid.fold(i->i,()->-1),equalTo(-1));
     }
 
 }

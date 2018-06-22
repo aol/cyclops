@@ -82,7 +82,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            PersistentQueueX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            PersistentQueueX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }

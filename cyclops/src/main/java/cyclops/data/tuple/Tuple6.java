@@ -241,7 +241,7 @@ public class Tuple6<T1,T2,T3,T4,T5,T6> implements To<Tuple6<T1,T2,T3,T4,T5,T6>>,
         return result;
     }
 
-    public <R> R visit(Function6<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? extends R> fn){
+    public <R> R fold(Function6<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? super T6,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5(),_6());
     }
 

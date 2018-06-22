@@ -37,7 +37,7 @@ public class EitherAdapter extends AbstractMonadAdapter<either> implements Value
         return xor(t);
     }
 
-    public <R> R visit(Function<? super MonadAdapter<either>,? extends R> fn1, Function<? super ValueAdapter<either>, ? extends R> fn2){
+    public <R> R fold(Function<? super MonadAdapter<either>,? extends R> fn1, Function<? super ValueAdapter<either>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

@@ -98,7 +98,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            BagX<T> target = future.visit(l->l,t->{throw ExceptionSoftener.throwSoftenedException(t);});
+            BagX<T> target = future.fold(l->l, t->{throw ExceptionSoftener.throwSoftenedException(t);});
             return method.invoke(target,args);
         }
     }

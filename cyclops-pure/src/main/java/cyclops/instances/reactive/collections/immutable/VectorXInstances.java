@@ -287,7 +287,7 @@ public class VectorXInstances {
         VectorX<Either<T, R>> next = VectorX.of(Either.left(initial));
         boolean newValue[] = {false};
         for(;;){
-          next = next.concatMap(e -> e.visit(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
+          next = next.concatMap(e -> e.fold(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
           if(!newValue[0])
             break;
         }

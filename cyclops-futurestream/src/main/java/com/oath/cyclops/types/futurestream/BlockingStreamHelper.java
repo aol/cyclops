@@ -66,7 +66,7 @@ public class BlockingStreamHelper {
 
     static void capture(final Throwable t, final Optional<Consumer<Throwable>> errorHandler) {
         SimpleReactFailedStageException.matchable(t)
-                                       .visit(general -> captureGeneral(general, errorHandler), sr -> captureFailedStage(sr, errorHandler));
+                                       .fold(general -> captureGeneral(general, errorHandler), sr -> captureFailedStage(sr, errorHandler));
     }
 
     static Void captureFailedStage(final SimpleReactFailedStageException e, final Optional<Consumer<Throwable>> errorHandler) {

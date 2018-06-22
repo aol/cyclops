@@ -37,7 +37,7 @@ public class TryAdapter extends AbstractMonadAdapter<tryType> implements ValueAd
         return tryType(t);
     }
 
-    public <R> R visit(Function<? super MonadAdapter<tryType>,? extends R> fn1, Function<? super ValueAdapter<tryType>, ? extends R> fn2){
+    public <R> R fold(Function<? super MonadAdapter<tryType>,? extends R> fn1, Function<? super ValueAdapter<tryType>, ? extends R> fn2){
         return fn2.apply(this);
     }
 

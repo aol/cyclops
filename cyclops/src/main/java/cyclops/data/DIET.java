@@ -44,7 +44,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
         return containsRec(range).result();
     }
     default DIET<T> add(T value, Enumeration<T> enm, Comparator<? super T> comp){
-        return enm.succ(value).visit(s-> {
+        return enm.succ(value).fold(s-> {
             return add(Range.range(value, s, enm, comp));
         },()->this);
     }
@@ -144,7 +144,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
             if(contains(range))
                 return this;
             Tuple2<Range<T>, Option<Range<T>>> t = focus.plusAll(range);
-            return t._2().visit(s-> t._1()==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
+            return t._2().fold(s-> t._1()==focus? cons(left,focus,right.add(s)) : cons(left.add(s),focus,right),()->{
 
                 //create new expanded range and rebalance the trees
                 Tuple2<DIET<T>,T> leftAndStart = left.fold(l->l.findLeftAndStartingPoint(t._1().start).get(), n->tuple(n,t._1().start));
@@ -157,7 +157,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
 
         @Override
         public DIET<T> remove(T value) {
-            return focus.enumeration().succ(value).visit(s-> {
+            return focus.enumeration().succ(value).fold(s-> {
                 return remove(Range.range(value,s, focus.enumeration(),focus.ordering()));
             },()->this);
         }
@@ -186,7 +186,7 @@ public interface DIET<T> extends Sealed2<DIET.Node<T>,DIET.Nil<T>>,
 
             Option<Tuple2<Range<T>, Option<Range<T>>>> x = focus.minusAll(range);
 
-            return x.visit(s->s.transform((r, mr) ->  mr.visit(sr ->{
+            return x.fold(s->s.transform((r, mr) ->  mr.fold(sr ->{
 
                        return merge(cons( left,r, empty()),cons(empty(),sr,  right));
                     },() -> cons(range.startsBefore(focus) ? left.remove(range) : left, r, range.endsAfter(focus) ? right.remove(range) : right))

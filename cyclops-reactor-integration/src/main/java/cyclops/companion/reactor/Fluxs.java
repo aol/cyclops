@@ -1,17 +1,8 @@
 package cyclops.companion.reactor;
 
-import com.oath.cyclops.anym.AnyMSeq;
-import com.oath.cyclops.reactor.adapter.FluxReactiveSeqImpl;
 import cyclops.control.Either;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.AnyM;
-import cyclops.monads.ReactorWitness;
-import cyclops.monads.ReactorWitness.flux;
-import cyclops.monads.WitnessType;
-import cyclops.monads.XorM;
-import cyclops.monads.transformers.StreamT;
-import cyclops.reactive.FluxReactiveSeq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import lombok.experimental.UtilityClass;
@@ -21,7 +12,6 @@ import reactor.core.publisher.Flux;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 
 /**
@@ -40,7 +30,7 @@ public class Fluxs {
         boolean newValue[] = {true};
         for(;;){
 
-            next = next.flatMap(e -> e.visit(s -> {
+            next = next.flatMap(e -> e.fold(s -> {
                         newValue[0]=true;
                         return fn.apply(s); },
                     p -> {
@@ -59,7 +49,7 @@ public class Fluxs {
     }
     public static  <T> Flux<T> fluxFrom(ReactiveSeq<T> stream){
 
-        return stream.visit(sync->Flux.fromStream(stream),rs->Flux.from(stream),async->Flux.from(stream));
+        return stream.fold(sync->Flux.fromStream(stream), rs->Flux.from(stream), async->Flux.from(stream));
 
 
     }

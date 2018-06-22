@@ -4,8 +4,6 @@ import cyclops.control.Trampoline;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
@@ -129,7 +127,7 @@ public class Tuple1Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(t1.visit(i->i+1),equalTo(11));
+        assertThat(t1.fold(i->i+1),equalTo(11));
     }
 
     @Test

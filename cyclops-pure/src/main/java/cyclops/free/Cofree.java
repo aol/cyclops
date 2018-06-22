@@ -75,8 +75,8 @@ public class Cofree<W, T> implements Supplier<T>, Higher2<cofree,W,T> {
         return extract();
     }
 
-    public  <R> Eval<R> visit(Traverse<W> traverse,BiFunction<T, Higher<W, R>,Eval<R>> fn) {
-        Eval<Higher<W, R>> eval = traverse.traverseA(EvalInstances.applicative(), it -> it.visit( traverse,fn), tailForced())
+    public  <R> Eval<R> fold(Traverse<W> traverse, BiFunction<T, Higher<W, R>,Eval<R>> fn) {
+        Eval<Higher<W, R>> eval = traverse.traverseA(EvalInstances.applicative(), it -> it.fold( traverse,fn), tailForced())
                 .convert(Eval::narrowK);
         return eval.flatMap(i->fn.apply(extract(), i));
     }

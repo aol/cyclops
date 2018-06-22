@@ -2,7 +2,7 @@ package cyclops.data;
 
 
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
-import com.oath.cyclops.matching.Sealed1Or;
+import com.oath.cyclops.matching.SealedOr;
 import cyclops.data.tuple.Tuple;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 //https://apocalisp.wordpress.com/2008/10/23/heterogeneous-lists-and-the-limits-of-the-java-type-system/
 //inspired / influenced by Functional Java's HList
-public interface HList<T1 extends HList<T1>> extends Sealed1Or<HList<T1>> {
+public interface HList<T1 extends HList<T1>> extends SealedOr<HList<T1>> {
 
     public static <T, HL extends HList<HL>> HCons<T, HL> cons(final T value, final HL l) {
         return new HCons<>(value, l);

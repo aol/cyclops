@@ -1,6 +1,5 @@
 package cyclops.instances.control.transformers;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Maybe;
@@ -26,7 +25,7 @@ public class MaybeTransformer<W1,T> implements Transformer<W1,option,T> {
   }
   @Override
   public <R> Nested<W1, option, R> flatMap(Function<? super T, ? extends Nested<W1, option, R>> fn) {
-    Higher<W1, Higher<option, R>> r = monad1.flatMap(m -> Maybe.narrowK(m).visit(t -> fn.apply(t).nested,
+    Higher<W1, Higher<option, R>> r = monad1.flatMap(m -> Maybe.narrowK(m).fold(t -> fn.apply(t).nested,
       () -> monad1.unit(Maybe.nothing())),
       nested.nested);
 
