@@ -21,6 +21,7 @@ import org.reactivestreams.Subscription;
 
 import java.util.*;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Stream;
@@ -135,6 +136,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     }
 
+    default ReactiveSeq<T> streamWhile(Predicate<? super T> p){
+        return ReactiveSeq.generate(this).takeWhile(p);
+    }
+    default ReactiveSeq<T> streamUntil(Predicate<? super T> p){
+        return ReactiveSeq.generate(this).takeUntil(p);
+    }
+    default ReactiveSeq<T> streamUntil(long time,TimeUnit unit){
+        return ReactiveSeq.generate(this).take(time,unit);
+    }
     @Override
     default ReactiveSeq<T> stream() {
         return Function0.super.stream();
@@ -885,6 +895,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
                 Eval<T> eval = input.visit(i->i,()->null);
                 return eval.get();
+            }
+
+
+            @Override
+            public ReactiveSeq<T> stream() {
+                return Spouts.from(this);
             }
 
             @Override

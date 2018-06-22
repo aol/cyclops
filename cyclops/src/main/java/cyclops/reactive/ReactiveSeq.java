@@ -2932,6 +2932,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     ReactiveSeq<T> limit(long time, final TimeUnit unit);
 
+    default ReactiveSeq take(long time, final TimeUnit unit){
+        return limit(time,unit);
+    }
+    default ReactiveSeq drop(long time, final TimeUnit unit){
+        return skip(time,unit);
+    }
     /**
      * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
      * .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
