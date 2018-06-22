@@ -290,7 +290,7 @@ public class Future<T> implements To<Future<T>>,
      * @param pub Publisher to extract value from
      * @return Future populated syncrhonously from Publisher
      */
-    public static <T> Future<T> fromPublisher(final Publisher<T> pub) {
+    public static <T> Future<T> fromPublisher(final Publisher<? extends T> pub) {
       if(pub instanceof Future)
         return (Future<T>)pub;
         Future<T> result = future();

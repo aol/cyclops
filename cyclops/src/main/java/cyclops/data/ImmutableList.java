@@ -262,6 +262,7 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     default Tuple2<ImmutableList<T>, ImmutableList<T>> span(Predicate<? super T> pred) {
         return Tuple.tuple(takeWhile(pred), dropWhile(pred));
     }
+
     default Tuple2<ImmutableList<T>,ImmutableList<T>> splitBy(Predicate<? super T> test) {
         return span(test.negate());
     }

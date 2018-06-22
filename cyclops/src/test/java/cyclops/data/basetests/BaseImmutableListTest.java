@@ -6,6 +6,7 @@ import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import org.hamcrest.MatcherAssert;
@@ -29,6 +30,21 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
     public abstract <T> ImmutableList<T> of(T... values);
     public abstract <T> ImmutableList<T> empty();
 
+    @Test
+    public void span(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).span(i->i<3),equalTo(Tuple.tuple(of(1,2),of(3,4,1,2,3,4))));
+        assertThat(of(1,2,3).span(i->i<9),equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).span(i->i<0),equalTo(Tuple.tuple(of(),of(1,2,3))));
+    }
+
+    @Test
+    public void splitBy(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).splitBy(i->i>3),equalTo(Tuple.tuple(of(1,2,3),of(4,1,2,3,4))));
+        assertThat(of(1,2,3).splitBy(i->i<9),equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitBy(i->i<0),equalTo(Tuple.tuple(of(1,2,3),of())));
+    }
     @Test
     public void visit(){
 
