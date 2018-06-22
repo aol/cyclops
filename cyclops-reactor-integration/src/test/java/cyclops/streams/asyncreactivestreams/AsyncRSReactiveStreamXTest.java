@@ -304,7 +304,7 @@ public  class AsyncRSReactiveStreamXTest {
 				.toList();
 
 
-		assertThat(result,contains(1,2,3));
+		assertThat(result,hasItems(1,2,3));
 		assertThat(result.size(),lessThan(5));
 	}
     @Test
