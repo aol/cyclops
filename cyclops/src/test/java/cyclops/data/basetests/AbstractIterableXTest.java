@@ -1435,8 +1435,8 @@ public abstract class AbstractIterableXTest {
 
         assertThat(of(1).toMap(a->a).get(1),equalTo(1));
         assertThat(of(1).toMap(a->a+1,a->a+2).get(2),equalTo(3));
-        assertThat(of(1).toHashMap(a->a).get(1),equalTo(1));
-        assertThat(of(1).toHashMap(a->a+1,a->a+2).get(2),equalTo(3));
+        assertThat(of(1).toHashMap(a->a).get(1),equalTo(Option.some(1)));
+        assertThat(of(1).toHashMap(a->a+1,a->a+2).get(2),equalTo(Option.some(3)));
 
 
 

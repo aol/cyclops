@@ -342,10 +342,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return either.equals(obj);
         }
 
-        @Override
-        public <R> R fold(Function<? super Throwable, ? extends R> fn1, Function<? super RT, ? extends R> fn2) {
-            return either.fold(fn1,fn2);
-        }
 
         @Override
         public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
@@ -1310,10 +1306,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return trampoline().toString();
         }
 
-        @Override
-        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
-            return lazy.get().fold(fn1,fn2);
-        }
+
 
         @Override
         public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
@@ -1503,10 +1496,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         }
 
-        @Override
-        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
-            return fn2.apply(value.get());
-        }
 
         @Override
         public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
@@ -1703,10 +1692,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
 
 
-        @Override
-        public <R> R fold(Function<? super ST, ? extends R> fn1, Function<? super PT, ? extends R> fn2) {
-            return fn1.apply(value.get());
-        }
 
         @Override
         public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
