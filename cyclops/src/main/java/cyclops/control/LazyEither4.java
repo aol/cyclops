@@ -150,7 +150,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public <R> R fold(Function<? super Throwable, ? extends R> left1, Function<? super LT1, ? extends R> left2, Function<? super LT2, ? extends R> left3, Function<? super RT, ? extends R> right) {
-            return this.fold(left1,left2,left3,right);
+            return either.fold(left1,left2,left3,right);
         }
 
         @Override
@@ -805,7 +805,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
                           final Function<? super M2, ? extends R> third,
                           final Function<? super PT, ? extends R> primary) {
 
-            return this.fold(first, second,third, primary);
+            return trampoline().fold(first, second,third, primary);
         }
         @Override
         public LazyEither4<ST, M, PT, M2> swap3() {
