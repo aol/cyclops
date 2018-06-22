@@ -207,7 +207,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            return Optional.ofNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+            return Optional.ofNullable(result.get().fold(s->s, e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
         }
 
@@ -233,7 +233,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(1l);
 
-        return Optional.ofNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+        return Optional.ofNullable(result.get().fold(s->s, e->{throw ExceptionSoftener.throwSoftenedException(e);}));
     }
 
     public final static <T> Option<T> findFirstCallAll(ReactiveStreamX<T> stream) {
@@ -252,7 +252,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                     result.complete(null);
                 }
             });
-            return Option.fromNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+            return Option.fromNullable(result.get().fold(s->s, e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
         }
 
@@ -277,7 +277,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         });
         sub[0].request(Long.MAX_VALUE);
 
-        return Option.fromNullable(result.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+        return Option.fromNullable(result.get().fold(s->s, e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
 
     }
@@ -1340,7 +1340,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
         Future<T> future = Future.future();
         Object[] current = {null};
         forEach(e -> current[0] = current[0] != null ? accumulator.apply((T) current[0], e) : e, this.defaultErrorHandler, () -> future.complete((T) current[0]));
-        return Optional.ofNullable(future.get().visit(s->s,e->{throw ExceptionSoftener.throwSoftenedException(e);}));
+        return Optional.ofNullable(future.get().fold(s->s, e->{throw ExceptionSoftener.throwSoftenedException(e);}));
 
     }
 
@@ -1420,8 +1420,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public <R> R visit(Function<? super ReactiveSeq<T>, ? extends R> sync, Function<? super ReactiveSeq<T>, ? extends R> reactiveStreams,
-                       Function<? super ReactiveSeq<T>, ? extends R> asyncNoBackPressure) {
+    public <R> R fold(Function<? super ReactiveSeq<T>, ? extends R> sync, Function<? super ReactiveSeq<T>, ? extends R> reactiveStreams,
+                      Function<? super ReactiveSeq<T>, ? extends R> asyncNoBackPressure) {
         switch (this.async) {
             case SYNC:
                 return sync.apply(this);
@@ -1435,7 +1435,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public T singleOrElse(T alt) {
-        return single().visit(s -> s, () -> alt);
+        return single().fold(s -> s, () -> alt);
     }
 
     @Override

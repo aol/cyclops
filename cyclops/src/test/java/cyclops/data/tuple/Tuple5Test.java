@@ -127,7 +127,7 @@ public class Tuple5Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(tuple.visit((a, b,c,d,e)->a+b+c+d+e),equalTo(37));
+        assertThat(tuple.fold((a, b, c, d, e)->a+b+c+d+e),equalTo(37));
     }
 
     @Test

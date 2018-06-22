@@ -78,7 +78,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
     }
 
     static <X, PT extends X, ST extends X,R> R visitAny(Ior<ST,PT> either, Function<? super X, ? extends R> fn){
-        return either.visit(fn, fn, (a,b)-> fn.apply(a));
+        return either.fold(fn, fn, (a, b)-> fn.apply(a));
     }
 
     static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c,Ior<LT,RT> either){
@@ -277,7 +277,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      */
     @Override
     default <ST2> Either<ST2, RT> toEither(final ST2 secondary) {
-        return visit(s -> Either.left(secondary), p -> Either.right(p), (s, p) -> Either.right(p));
+        return fold(s -> Either.left(secondary), p -> Either.right(p), (s, p) -> Either.right(p));
     }
 
 
@@ -361,8 +361,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
      * @param both Function to execute if this Ior contains both types
      * @return Result of executing the appropriate function
      */
-     <R> R visit(final Function<? super LT, ? extends R> secondary, final Function<? super RT, ? extends R> primary,
-                 final BiFunction<? super LT, ? super RT, ? extends R> both) ;
+     <R> R fold(final Function<? super LT, ? extends R> secondary, final Function<? super RT, ? extends R> primary,
+                final BiFunction<? super LT, ? super RT, ? extends R> both) ;
 
 
     /* (non-Javadoc)
@@ -718,8 +718,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
         }
 
         @Override
-        public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                           final BiFunction<? super ST, ? super PT, ? extends R> both) {
+        public <R> R fold(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
+                          final BiFunction<? super ST, ? super PT, ? extends R> both) {
             return primary.apply(value);
         }
 
@@ -811,7 +811,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
         @Override
-        public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+        public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
             return present.apply(value);
         }
     }
@@ -930,9 +930,9 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
             @Override
-            public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                               final BiFunction<? super ST, ? super PT, ? extends R> both) {
-                return swap().visit(secondary, () -> null);
+            public <R> R fold(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
+                              final BiFunction<? super ST, ? super PT, ? extends R> both) {
+                return swap().fold(secondary, () -> null);
             }
 
             @Override
@@ -965,7 +965,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
             @Override
-            public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+            public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
                 return absent.get();
             }
         }
@@ -1050,8 +1050,8 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
             }
 
             @Override
-            public <R> R visit(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
-                               final BiFunction<? super ST, ? super PT, ? extends R> both) {
+            public <R> R fold(final Function<? super ST, ? extends R> secondary, final Function<? super PT, ? extends R> primary,
+                              final BiFunction<? super ST, ? super PT, ? extends R> both) {
                 return both.apply(this.secondary,this.primary);
             }
 
@@ -1129,7 +1129,7 @@ public interface Ior<LT, RT> extends To<Ior<LT, RT>>, Value<RT>,OrElseValue<RT,I
 
 
             @Override
-            public <R> R visit(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
+            public <R> R fold(Function<? super PT, ? extends R> present, Supplier<? extends R> absent) {
                 return present.apply(primary);
             }
         }

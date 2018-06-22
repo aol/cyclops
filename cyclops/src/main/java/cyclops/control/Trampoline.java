@@ -91,7 +91,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     public static <T> Trampoline<T> narrow(Trampoline<? extends T> broad){
         return (Trampoline<T>)broad;
     }
-    default <R> R visit(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
+    default <R> R fold(Function<? super Trampoline<T>,? extends R> more, Function<? super T, ? extends R> done){
         return complete() ? done.apply(get()) : more.apply(this.bounce());
     }
 
@@ -105,7 +105,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
     default <R>  Trampoline<R> map(Function<? super T, ? extends R> fn){
       Either<Trampoline<T>,T> e = resume();
-      return e.visit(left->{
+      return e.fold(left->{
         return Trampoline.more(()->left.map(fn));
       },right->{
         return Trampoline.done(fn.apply(right));
@@ -113,7 +113,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
     default <R>  Trampoline<R> flatMap(Function<? super T, ? extends Trampoline<R>> fn){
       Either<Trampoline<T>,T> e = resume();
-      return e.visit(left->{
+      return e.fold(left->{
         return Trampoline.more(()->left.flatMap(fn));
       },right->{
         return fn.apply(right);
@@ -182,7 +182,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
 
     default Either<Trampoline<T>,T> resume(){
-        return this.visit(Either::left, Either::right);
+        return this.fold(Either::left, Either::right);
     }
 
 
@@ -279,7 +279,7 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
     }
 
     @Override
-    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
+    default <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
         return present.apply(get());
     }
 }

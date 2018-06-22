@@ -1,7 +1,6 @@
 package cyclops.instances.control.transformers;
 
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.tryType;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Try;
@@ -29,7 +28,7 @@ public class TryTransformer<W1,X extends Throwable,T> implements Transformer<W1,
 
   @Override
   public <R1> Nested<W1, Higher<tryType, X>, R1> flatMap(Function<? super T, ? extends Nested<W1, Higher<tryType, X>, R1>> fn) {
-    Higher<W1, Higher<Higher<tryType, X>, R1>> res = monad1.flatMap(m -> Try.narrowK(m).visit(r -> fn.apply(r).nested, l -> monad1.unit(Try.failure(l))),
+    Higher<W1, Higher<Higher<tryType, X>, R1>> res = monad1.flatMap(m -> Try.narrowK(m).fold(r -> fn.apply(r).nested, l -> monad1.unit(Try.failure(l))),
       nested.nested);
 
     return Nested.of(res, nested.def1, nested.def2);

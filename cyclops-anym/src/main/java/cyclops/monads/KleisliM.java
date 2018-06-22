@@ -89,10 +89,10 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
     }
 
     default <__> KleisliM<W,Either<T, __>, Either<R, __>> leftK(W type) {
-         return kleisli(xr -> xr.visit(l -> apply(l).map(Either::left), r -> type.adapter().unit(r).map(Either::right)));
+         return kleisli(xr -> xr.fold(l -> apply(l).map(Either::left), r -> type.adapter().unit(r).map(Either::right)));
     }
     default <__> KleisliM<W,Either<__,T>, Either<__,R>> rightK(W type) {
-        return kleisli(xr -> xr.visit(l -> type.adapter().unit(l).map(Either::left), r -> apply(r).map(Either::right)));
+        return kleisli(xr -> xr.fold(l -> type.adapter().unit(l).map(Either::left), r -> apply(r).map(Either::right)));
     }
     default <__> KleisliM<W,Tuple2<T, __>, Tuple2<R, __>> firstK() {
         return kleisli(xr -> xr.transform((v1, v2) -> apply(v1).map(r1-> Tuple.tuple(r1,v2))));
@@ -110,7 +110,7 @@ public interface KleisliM<W extends WitnessType<W>,T,R> extends Function1<T,AnyM
     }
 
     default <T2> KleisliM<W,Either<T, T2>, R> fanIn(KleisliM<W,T2,R> fanIn) {
-        return e -> e.visit(this, fanIn);
+        return e -> e.fold(this, fanIn);
     }
 
 

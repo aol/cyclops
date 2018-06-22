@@ -1,6 +1,5 @@
 package cyclops.instances.control.transformers;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.identity;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Identity;
@@ -26,7 +25,7 @@ public class IdentityTransformer<W1,T> implements Transformer<W1,identity,T> {
   }
   @Override
   public <R> Nested<W1, identity, R> flatMap(Function<? super T, ? extends Nested<W1, identity, R>> fn) {
-    Higher<W1, Higher<identity, R>> r = monad1.flatMap(m -> Identity.narrowK(m).visit(t -> fn.apply(t).nested),
+    Higher<W1, Higher<identity, R>> r = monad1.flatMap(m -> Identity.narrowK(m).fold(t -> fn.apply(t).nested),
       nested.nested);
 
     return Nested.of(r, nested.def1, nested.def2);

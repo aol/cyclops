@@ -386,8 +386,8 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
      * @return Aggregated Monad
      */
     default AnyM<W,Seq<T>> aggregate(AnyM<W,T> next){
-        ReactiveSeq<T> s = matchable().visit(value -> value.stream(), seq -> seq.stream());
-        ReactiveSeq<T> s2 = next.matchable().visit(value -> value.stream(), seq -> seq.stream());
+        ReactiveSeq<T> s = matchable().fold(value -> value.stream(), seq -> seq.stream());
+        ReactiveSeq<T> s2 = next.matchable().fold(value -> value.stream(), seq -> seq.stream());
         Seq<T> ag = ReactiveSeq.concat(s, s2)
             .toSeq();
         return unit(ag);

@@ -1,6 +1,5 @@
 package cyclops.companion.reactor;
 
-import com.oath.cyclops.anym.AnyMValue;
 import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.Value;
 import cyclops.companion.Futures;
@@ -10,12 +9,6 @@ import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
-import cyclops.monads.AnyM;
-import cyclops.monads.ReactorWitness;
-import cyclops.monads.ReactorWitness.mono;
-import cyclops.monads.WitnessType;
-import cyclops.monads.XorM;
-import cyclops.monads.transformers.reactor.MonoT;
 import cyclops.reactive.collections.mutable.ListX;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
@@ -46,7 +39,7 @@ public class Monos {
         next[0] = Mono.just(Either.left(initial));
         boolean cont = true;
         do {
-            cont = next[0].map(p -> p.visit(s -> {
+            cont = next[0].map(p -> p.fold(s -> {
                 next[0] = fn.apply(s);
                 return true;
             }, pr -> false)).block();

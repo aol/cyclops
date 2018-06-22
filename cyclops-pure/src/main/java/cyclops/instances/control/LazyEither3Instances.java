@@ -174,7 +174,7 @@ public  interface LazyEither3Instances {
       @Override
       public <T, R> Higher<Higher<Higher<lazyEither3, L1>, L2>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<lazyEither3, L1>, L2>, ? extends Either<T, R>>> fn) {
         return narrowK(fn.apply(initial)).flatMap( eval ->
-          eval.visit(s->narrowK(tailRec(s,fn)),p-> LazyEither3.right(p)));
+          eval.fold(s->narrowK(tailRec(s,fn)), p-> LazyEither3.right(p)));
       }
 
 
@@ -232,7 +232,7 @@ public  interface LazyEither3Instances {
       @Override
       public <C2, T, R> Higher<C2, Higher<Higher<Higher<lazyEither3, L1>, L2>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<lazyEither3, L1>, L2>, T> ds) {
         LazyEither3<L1,L2,T> maybe = narrowK(ds);
-        return maybe.visit(left->  applicative.unit(LazyEither3.<L1,L2,R>left1(left)),
+        return maybe.fold(left->  applicative.unit(LazyEither3.<L1,L2,R>left1(left)),
           middle->applicative.unit(LazyEither3.<L1,L2,R>left2(middle)),
           right->applicative.map(m-> LazyEither3.right(m), fn.apply(right)));
       }

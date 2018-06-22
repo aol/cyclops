@@ -111,7 +111,7 @@ public class Tuple3Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(tuple.visit((a, b,c)->a+b+c),equalTo(17));
+        assertThat(tuple.fold((a, b, c)->a+b+c),equalTo(17));
     }
 
     @Test

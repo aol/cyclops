@@ -142,7 +142,7 @@ public class Tuple3<T1,T2,T3> implements To<Tuple3<T1,T2,T3>>,
     }
 
 
-    public <R> R visit(Function3<? super T1, ? super T2, ? super T3, ? extends R> fn){
+    public <R> R fold(Function3<? super T1, ? super T2, ? super T3, ? extends R> fn){
         return fn.apply(_1(),_2(),_3());
     }
 

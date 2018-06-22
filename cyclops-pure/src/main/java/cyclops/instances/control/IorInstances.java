@@ -200,7 +200,7 @@ public class IorInstances {
       public <C2, T, R> Higher<C2, Higher<Higher<ior, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<ior, L>, T> ds) {
         Ior<L,T> maybe = narrowK(ds);
 
-        return maybe.visit(left->  applicative.unit(Ior.<L,R>left(left)),
+        return maybe.fold(left->  applicative.unit(Ior.<L,R>left(left)),
           right->applicative.map(m->Ior.right(m), fn.apply(right)),
           (l,r)-> applicative.map(m->Ior.both(l,m), fn.apply(r)));
       }
@@ -291,7 +291,7 @@ public class IorInstances {
         next[0] = Ior.right(Either.left(initial));
         boolean cont = true;
         do {
-          cont = next[0].visit(p -> p.visit(s -> {
+          cont = next[0].fold(p -> p.fold(s -> {
             next[0] = narrowK(fn.apply(s));
             return true;
           }, pr -> false), () -> false);

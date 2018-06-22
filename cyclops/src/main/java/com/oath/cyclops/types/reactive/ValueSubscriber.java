@@ -175,7 +175,7 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     }
 
     @Override
-    public <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
+    public <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent) {
         while (firstValue.get() == UNSET && firstError.get() == UNSET)
             LockSupport.parkNanos(1000000l);
         if (firstValue.get() == UNSET)

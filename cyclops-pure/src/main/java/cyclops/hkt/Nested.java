@@ -28,8 +28,6 @@ import cyclops.instances.data.VectorInstances;
 import cyclops.instances.jdk.CompletableFutureInstances;
 import cyclops.instances.jdk.OptionalInstances;
 import cyclops.instances.jdk.StreamInstances;
-import cyclops.instances.reactive.collections.immutable.VectorXInstances;
-import cyclops.instances.reactive.collections.mutable.ListXInstances;
 import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
@@ -52,10 +50,8 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
@@ -345,7 +341,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
 
     public Unfolds unfoldsUnsafe(){
-        return def2.unfoldable().visit(s-> new Unfolds(s),()->new Unfolds(new Unfoldable.UnsafeValueUnfoldable<>()));
+        return def2.unfoldable().fold(s-> new Unfolds(s),()->new Unfolds(new Unfoldable.UnsafeValueUnfoldable<>()));
     }
     private Plus plusUnsafe(){
         return new Plus(def1.monadPlus().orElse(null),def2.monadPlus().orElse(null));
@@ -355,7 +351,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
 
     public Maybe<Unfolds> unfolds(){
-        return def2.unfoldable().visit(s-> Maybe.just(new Unfolds(s)),Maybe::nothing);
+        return def2.unfoldable().fold(s-> Maybe.just(new Unfolds(s)),Maybe::nothing);
     }
 
 
@@ -735,7 +731,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
                     boolean cont[] = {true};
                     do {
                         BinaryOperator<Either<T,R>> bifn = (a, b)->{
-                            if (cont[0] && b.visit(s -> {
+                            if (cont[0] && b.fold(s -> {
                                 Higher<Higher<Higher<nested, W1>, W2>, ? extends Either<T, R>> x = fn.apply(s);
                                 next[0] = (Higher)x;
                                 return true;

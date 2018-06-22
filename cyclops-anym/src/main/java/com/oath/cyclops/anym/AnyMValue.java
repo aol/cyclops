@@ -20,9 +20,7 @@ import org.reactivestreams.Subscriber;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 
@@ -60,8 +58,8 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     @Override
-    default <R> R visit(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
-        return get().visit(present,absent);
+    default <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
+        return get().fold(present,absent);
     }
 
     @Override
@@ -113,7 +111,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
 
     @Override
     default String mkString() {
-        return visit(s->"AnyMValue[" + s + "]",()->"AnyMValue[]");
+        return fold(s->"AnyMValue[" + s + "]",()->"AnyMValue[]");
 
     }
 
@@ -212,7 +210,7 @@ public interface AnyMValue<W extends WitnessType<W>,T> extends  AnyM<W,T>,
     }
 
     default Option<T> get() {
-        return adapter().visit(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
+        return adapter().fold(e->{ throw new IllegalAccessError("misconfigured adapter : value adapter required");}
                              , v->v.get(this));
     }
 

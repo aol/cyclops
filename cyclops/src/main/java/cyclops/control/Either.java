@@ -123,13 +123,13 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         next[0] = Either.right(Either.left(initial));
         boolean cont = true;
         do {
-            cont = next[0].visit(p -> p.visit(s -> {
+            cont = next[0].fold(p -> p.fold(s -> {
                 next[0] = narrowK(fn.apply(s));
                 return true;
             }, pr -> false), () -> false);
         } while (cont);
 
-        return next[0].map(x->x.visit(l->null,r->r));
+        return next[0].map(x->x.fold(l->null, r->r));
     }
 
     public static <L,T> Higher<Higher<either,L>, T> widen(Either<L,T> narrow) {
@@ -168,7 +168,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
     }
 
     static <X, PT extends X, ST extends X,R> R visitAny(Either<ST,PT> either, Function<? super X, ? extends R> fn){
-        return either.visit(fn, fn);
+        return either.fold(fn, fn);
     }
 
     static <X, LT extends X, RT extends X> X visitAny(Consumer<? super X> c,Either<LT,RT> either){
@@ -429,7 +429,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      */
     @Override
     default <ST2> Either<ST2, RT> toEither(final ST2 left) {
-        return visit(s -> left(left), p -> right(p));
+        return fold(s -> left(left), p -> right(p));
     }
     /**
      *  Turn a Collection of Eithers into a single Either with Lists of values.
@@ -670,7 +670,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
      * @param right Function to execute if this is a Right Ior
      * @return Result of executing the appropriate function
      */
-    <R> R visit(Function<? super LT, ? extends R> left, Function<? super RT, ? extends R> right);
+    <R> R fold(Function<? super LT, ? extends R> left, Function<? super RT, ? extends R> right);
 
 
     @Override
@@ -789,8 +789,8 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
 
     default <T2, R> Either<LT, R> combine(final Either<? extends LT, ? extends T2> app, final BinaryOperator<LT> semigroup,
                                           final BiFunction<? super RT, ? super T2, ? extends R> fn) {
-        return this.visit(left -> app.visit(s2 -> Either.left(semigroup.apply(s2, left)), p2 -> Either.left(left)),
-                          right -> app.visit(s2 -> Either.left(s2), p2 -> Either.right(fn.apply(right, p2))));
+        return this.fold(left -> app.fold(s2 -> Either.left(semigroup.apply(s2, left)), p2 -> Either.left(left)),
+                          right -> app.fold(s2 -> Either.left(s2), p2 -> Either.right(fn.apply(right, p2))));
     }
 
 
@@ -962,7 +962,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         }
 
         @Override
-        public <R> R visit(final Function<? super L, ? extends R> left, final Function<? super RT, ? extends R> right) {
+        public <R> R fold(final Function<? super L, ? extends R> left, final Function<? super RT, ? extends R> right) {
             return right.apply(value);
         }
 
@@ -995,13 +995,10 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
             return result;
         }
 
-        @Override
-        public <R> R fold(Function<? super L, ? extends R> fn1, Function<? super RT, ? extends R> fn2) {
-            return fn2.apply(value);
-        }
+
 
         @Override
-        public <R> R visit(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
+        public <R> R fold(Function<? super RT, ? extends R> present, Supplier<? extends R> absent) {
             return present.apply(value);
         }
     }
@@ -1118,10 +1115,6 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
 
 
 
-        @Override
-        public <R2> R2 visit(final Function<? super L, ? extends R2> left, final Function<? super R, ? extends R2> right) {
-            return left.apply(value);
-        }
 
         @Override
         public Maybe<R> toMaybe() {
@@ -1185,7 +1178,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         }
 
         @Override
-        public <R2> R2 visit(Function<? super R, ? extends R2> present, Supplier<? extends R2> absent) {
+        public <R2> R2 fold(Function<? super R, ? extends R2> present, Supplier<? extends R2> absent) {
             return absent.get();
         }
     }

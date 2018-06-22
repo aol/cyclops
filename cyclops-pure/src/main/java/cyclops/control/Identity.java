@@ -3,9 +3,7 @@ package cyclops.control;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct;
 import cyclops.data.tuple.*;
-import cyclops.function.Monoid;
 import com.oath.cyclops.hkt.DataWitness.identity;
-import cyclops.typeclasses.functor.Functor;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 
@@ -27,12 +25,12 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
         boolean cont = true;
         do {
 
-            cont = next[0].visit(p -> p.visit(s -> {
+            cont = next[0].fold(p -> p.fold(s -> {
                 next[0] = narrowK(fn.apply(s));
                 return true;
             }, __ -> false));
         } while (cont);
-        return next[0].map(x->x.visit(l->null,r->r));
+        return next[0].map(x->x.fold(l->null, r->r));
     }
     public static <T> Identity<T> of(T value){
          return new Identity<>(value);
@@ -47,7 +45,7 @@ public final class Identity<T> implements Higher<identity,T>, Iterable<T>, Decon
      public T extract(){
          return value;
      }
-     public <R> R visit(Function<? super T, ? extends R> fn){
+     public <R> R fold(Function<? super T, ? extends R> fn){
          return fn.apply(value);
      }
      public Identity<Identity<T>> nest(){

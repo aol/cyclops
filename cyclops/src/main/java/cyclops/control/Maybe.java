@@ -120,7 +120,7 @@ public interface Maybe<T> extends Option<T> {
 
     }
     public static  <T,R> Maybe<R> tailRec(T initial, Function<? super T, ? extends Maybe<? extends Either<T, R>>> fn){
-        return narrowK(fn.apply(initial)).flatMap( eval -> eval.visit(s->tailRec(s,fn),p->Maybe.just(p)));
+        return narrowK(fn.apply(initial)).flatMap( eval -> eval.fold(s->tailRec(s,fn), p->Maybe.just(p)));
     }
     public static <T> Higher<option, T> widen(Maybe<T> narrow) {
     return narrow;
@@ -214,8 +214,8 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> R visit(Function<? super T2, ? extends R> some, Supplier<? extends R> none) {
-            return maybe.visit(some,none);
+        public <R> R fold(Function<? super T2, ? extends R> some, Supplier<? extends R> none) {
+            return maybe.fold(some,none);
         }
 
         @Override
@@ -489,7 +489,7 @@ public interface Maybe<T> extends Option<T> {
         return Maybe.fromIterable(this);
     }
     default Option<T> eager(){
-        return visit(s->Option.some(s),()->Option.none());
+        return fold(s->Option.some(s),()->Option.none());
     }
     /**
      * <pre>
@@ -869,7 +869,7 @@ public interface Maybe<T> extends Option<T> {
      * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);
+    <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
     /*
      * (non-Javadoc)
@@ -972,7 +972,7 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
+        public <R> R fold(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             return some.apply(lazy.get());
         }
 
@@ -1090,7 +1090,7 @@ public interface Maybe<T> extends Option<T> {
         public Maybe<T> resolve() {
 
             return lazy.get()
-                    .visit(Maybe::just,Maybe::nothing);
+                    .fold(Maybe::just,Maybe::nothing);
         }
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
@@ -1104,12 +1104,12 @@ public interface Maybe<T> extends Option<T> {
         }
 
         @Override
-        public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
+        public <R> R fold(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             Maybe<T> maybe = lazy.get();
             while (maybe instanceof Lazy) {
                 maybe = ((Lazy<T>) maybe).lazy.get();
             }
-            return maybe.visit(some,none);
+            return maybe.fold(some,none);
         }
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
@@ -1334,7 +1334,7 @@ public interface Maybe<T> extends Option<T> {
 
 
         @Override
-        public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
+        public <R> R fold(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             return none.get();
         }
 

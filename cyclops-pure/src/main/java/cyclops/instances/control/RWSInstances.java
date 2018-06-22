@@ -240,7 +240,7 @@ public  class RWSInstances {
       @Override
       public <T, R> Higher<Higher<Higher<Higher<rws, R1>, W>, S>, R> tailRec(T initial, Function<? super T, ? extends Higher<Higher<Higher<Higher<rws, R1>, W>, S>, ? extends Either<T, R>>> fn) {
         return narrowK(fn.apply(initial)).flatMap( eval ->
-          eval.visit(s->narrowK(tailRec(s,fn)),p->{
+          eval.fold(s->narrowK(tailRec(s,fn)), p->{
             ReaderWriterState<R1, W, S, R> k = narrowK(RWSInstances.<R1, W, S>unit(monoid).<R>unit(p));
             return k;
           }));

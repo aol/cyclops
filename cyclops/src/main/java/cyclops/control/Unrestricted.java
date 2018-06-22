@@ -356,9 +356,9 @@ public abstract class Unrestricted<T> {
     }
 
 
-    public abstract <R> R visit(Function<? super Pure<T>, ? extends R> done,
-                            Function<? super Suspend<T>, ? extends R> suspend,
-                            Function<? super FlatMapped<?,T>,? extends R> flatMapped);
+    public abstract <R> R fold(Function<? super Pure<T>, ? extends R> done,
+                               Function<? super Suspend<T>, ? extends R> suspend,
+                               Function<? super FlatMapped<?,T>,? extends R> flatMapped);
 
 
 
@@ -481,7 +481,7 @@ public abstract class Unrestricted<T> {
 
     }
     public final Either<Transformable<Unrestricted<T>>, T> resume() {
-        return resumeInternal().visit(Either::left, Either::right, t->null);
+        return resumeInternal().fold(Either::left, Either::right, t->null);
 
     }
    abstract <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal();
@@ -498,9 +498,9 @@ public abstract class Unrestricted<T> {
             this.value = value;
         }
         @Override
-        public <R> R visit(Function<? super Pure<T>, ? extends R> done,
-                                    Function<? super Suspend<T>, ? extends R> suspend,
-                                    Function<? super FlatMapped<?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<T>, ? extends R> done,
+                          Function<? super Suspend<T>, ? extends R> suspend,
+                          Function<? super FlatMapped<?, T>,? extends R> flatMapped){
             return done.apply(this);
         }
         <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
@@ -519,9 +519,9 @@ public abstract class Unrestricted<T> {
             this.suspended = suspended;
         }
         @Override
-        public <R> R visit(Function<? super Pure<T>, ? extends R> done,
-                           Function<? super Suspend<T>, ? extends R> suspend,
-                           Function<? super FlatMapped<?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<T>, ? extends R> done,
+                          Function<? super Suspend<T>, ? extends R> suspend,
+                          Function<? super FlatMapped<?, T>,? extends R> flatMapped){
             return suspend.apply(this);
         }
         <T1, U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeInternal(){
@@ -546,9 +546,9 @@ public abstract class Unrestricted<T> {
             return (Function<IN, Unrestricted<T>>)fn;
         }
         @Override
-        public <R> R visit(Function<? super Pure<T>, ? extends R> done,
-                           Function<? super Suspend<T>, ? extends R> suspend,
-                           Function<? super FlatMapped<?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<T>, ? extends R> done,
+                          Function<? super Suspend<T>, ? extends R> suspend,
+                          Function<? super FlatMapped<?, T>,? extends R> flatMapped){
             return flatMapped.apply(this);
         }
         @Override
@@ -560,7 +560,7 @@ public abstract class Unrestricted<T> {
         }
         private  <U> LazyEither3<Transformable<Unrestricted<T>>, T, Unrestricted<T>> resumeNestedFree(){
             Function<IN, Unrestricted<T>> f = narrowFn();
-            return free.visit(pure-> LazyEither3.right(f.apply(pure.value)),
+            return free.fold(pure-> LazyEither3.right(f.apply(pure.value)),
                     s-> LazyEither3.left1(s.suspended.map(o -> o.flatMap(f))),
                     fm->{
                         final FlatMapped<U, IN> flatMapped2 = (FlatMapped<U, IN>)fm;

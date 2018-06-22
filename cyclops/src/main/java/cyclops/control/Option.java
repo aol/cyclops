@@ -64,13 +64,13 @@ public interface Option<T> extends To<Option<T>>,
       next[0] = Option.some(Either.left(initial));
       boolean cont = true;
       do {
-        cont = next[0].visit(p -> p.visit(s -> {
+        cont = next[0].fold(p -> p.fold(s -> {
           next[0] = narrowK(fn.apply(s));
           return true;
         }, pr -> false), () -> false);
       } while (cont);
 
-      return next[0].map(x->x.visit(l->null,r->r));
+      return next[0].map(x->x.fold(l->null, r->r));
     }
     public static <T> Option<T> narrowK(final Higher<option, T> opt) {
       return (Option<T>)opt;
@@ -602,7 +602,7 @@ public interface Option<T> extends To<Option<T>>,
      * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
      */
     @Override
-    <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none);
+    <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
     /*
      * (non-Javadoc)
@@ -709,7 +709,7 @@ public interface Option<T> extends To<Option<T>>,
         }
 
         @Override
-        public <R> R visit(Function<? super T, ? extends R> some, Supplier<? extends R> none) {
+        public <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none) {
             return some.apply(value);
         }
 
@@ -806,7 +806,7 @@ public interface Option<T> extends To<Option<T>>,
 
 
         @Override
-        public <R> R visit(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
+        public <R> R fold(final Function<? super T, ? extends R> some, final Supplier<? extends R> none) {
             return none.get();
         }
 

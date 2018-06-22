@@ -215,7 +215,7 @@ public class LazyEitherInstances {
       @Override
       public <C2, T, R> Higher<C2, Higher<Higher<either, L>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<either, L>, T> ds) {
         Either<L,T> maybe = narrowK(ds);
-        return maybe.visit(left->  applicative.unit(Either.<L,R>left(left)),
+        return maybe.fold(left->  applicative.unit(Either.<L,R>left(left)),
           right->applicative.map(m-> LazyEither.right(m), fn.apply(right)));
       }
 

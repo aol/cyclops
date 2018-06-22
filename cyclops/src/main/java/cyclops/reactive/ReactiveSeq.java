@@ -4624,8 +4624,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         init.addContinuation(continuation);
         return ReactiveSeq.fromStream(init.jdkStream());
     }
-    <R> R visit(Function<? super ReactiveSeq<T>,? extends R> sync,Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
-                       Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
+    <R> R fold(Function<? super ReactiveSeq<T>,? extends R> sync, Function<? super ReactiveSeq<T>,? extends R> reactiveStreams,
+               Function<? super ReactiveSeq<T>,? extends R> asyncNoBackPressure);
     /**
      * Broadcast the contents of this Stream to multiple downstream Streams (determined by supplier parameter).
      * For pull based Streams this Stream will be buffered.
@@ -4887,7 +4887,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         boolean newValue[] = {true};
         for(;;){
 
-            next = ReactiveSeq.fromIterable(next).concatMap(e -> e.visit(s -> {
+            next = ReactiveSeq.fromIterable(next).concatMap(e -> e.fold(s -> {
                     newValue[0]=true;
                     return fn.apply(s); },
                 p -> {

@@ -61,17 +61,17 @@ public final class UnrestrictedTest {
 
 
 
-        String one =a.visit(
+        String one =a.fold(
                         r ->   r.match()
-                                .visit(o->interleaveOutput(o,program2),
+                                .fold(o->interleaveOutput(o,program2),
                                         UnrestrictedTest::handleBell,
                                         UnrestrictedTest::handleDone)
                         ,
                         UnrestrictedTest::handleReturn
                     );
-        String two = b.visit(
+        String two = b.fold(
                 r ->   r.match()
-                        .visit(o->interleaveOutput1(o,program1),
+                        .fold(o->interleaveOutput1(o,program1),
                                 UnrestrictedTest::handleBell,
                                 UnrestrictedTest::handleDone)
                 ,
@@ -85,9 +85,9 @@ public final class UnrestrictedTest {
 
 
         return program.resume(ToyLanguage.decoder())
-                .visit(
+                .fold(
                         r ->    r.match()
-                                .visit(UnrestrictedTest::handleOutput,
+                                .fold(UnrestrictedTest::handleOutput,
                                        UnrestrictedTest::handleBell,
                                        UnrestrictedTest::handleDone)
                         ,

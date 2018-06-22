@@ -190,7 +190,7 @@ public class Tuple5<T1,T2,T3,T4,T5> implements To<Tuple5<T1,T2,T3,T4,T5>>,
         return lazy(() -> _1(), () -> _2(),()->_3(),()->_4(),()->fn.apply(_5()));
     }
 
-    public <R> R visit(Function5<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? extends R> fn){
+    public <R> R fold(Function5<? super T1, ? super T2, ? super T3,? super T4, ? super T5,? extends R> fn){
         return fn.apply(_1(),_2(),_3(),_4(),_5());
     }
     @Override

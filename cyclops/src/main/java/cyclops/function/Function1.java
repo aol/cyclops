@@ -114,7 +114,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     }
 
     default <T2> Function1<Either<T, T2>, R> fanIn(Function<? super T2, ? extends R> fanIn) {
-        return e ->   e.visit(this, fanIn);
+        return e ->   e.fold(this, fanIn);
     }
     default <__> Function1<Either<T, __>, Either<R, __>> leftFn() {
 

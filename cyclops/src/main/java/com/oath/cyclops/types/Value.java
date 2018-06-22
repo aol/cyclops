@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 
-import com.oath.cyclops.types.foldable.Visitable;
+import com.oath.cyclops.matching.SealedOr;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
@@ -33,22 +33,22 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
  * @param <T> Data type of element in this value
  */
 @FunctionalInterface
-public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
+public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
 
 
     default  Function0<T> asSupplier(T alt){
         return ()-> orElse(alt);
     }
     default boolean isPresent(){
-        return visit(p->true,()->false);
+        return fold(p->true,()->false);
     }
 
      default T orElse(T alt) {
-        return visit(p->p,()->alt);
+        return fold(p->p,()->alt);
      }
 
      default T  orElseGet(Supplier<? extends T> s) {
-         return visit(p->p,()->s.get());
+         return fold(p->p,()->s.get());
      }
 
 
@@ -67,13 +67,13 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
             @Override
             public boolean hasNext() {
                 return !complete[0]
-                           && visit(p->true,()->false);
+                           && fold(p->true,()->false);
             }
 
             @Override
             public T next() {
                 complete[0]=true;
-                return visit(p->p,()->null);
+                return fold(p->p,()->null);
             }
         };
 
@@ -163,7 +163,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     * @return Right Either with same value as this Value, or a Left Either with the provided Value if this Value is zero
     */
     default <ST> Either<ST, T> toEither(final ST secondary) {
-        return visit(p-> Either.right(p),()-> Either.left(secondary));
+        return fold(p-> Either.right(p),()-> Either.left(secondary));
 
     }
     default LazyEither<Throwable, T> toLazyEither() {
@@ -216,7 +216,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
 
 
     default Optional<T> toOptional(){
-        return visit(Optional::of,Optional::empty);
+        return fold(Optional::of,Optional::empty);
     }
 
     default Maybe<T> toMaybe() {
@@ -225,7 +225,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
 
 
     default Option<T> toOption() {
-        return visit(Option::some,Option::none);
+        return fold(Option::some,Option::none);
     }
 
 
@@ -235,7 +235,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
      */
     default String mkString() {
 
-        return visit(p->getClass().getSimpleName() + "[" + p + "]",()->getClass().getSimpleName() + "[]");
+        return fold(p->getClass().getSimpleName() + "[" + p + "]",()->getClass().getSimpleName() + "[]");
     }
 
 
@@ -279,7 +279,7 @@ public interface Value<T> extends Visitable<T>, Iterable<T>, Publisher<T> {
     }
 
     default void forEach(Consumer<? super T> c){
-        visit(p->{
+        fold(p->{
             c.accept(p);
             return null;
         },()->null);

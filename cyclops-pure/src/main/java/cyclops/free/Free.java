@@ -408,9 +408,9 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
     }
 
 
-    public abstract <R> R visit(Function<? super Pure<F,T>, ? extends R> done,
-                            Function<? super Suspend<F,T>, ? extends R> suspend,
-                            Function<? super FlatMapped<F,?,T>,? extends R> flatMapped);
+    public abstract <R> R fold(Function<? super Pure<F,T>, ? extends R> done,
+                               Function<? super Suspend<F,T>, ? extends R> suspend,
+                               Function<? super FlatMapped<F,?,T>,? extends R> flatMapped);
 
 
 
@@ -532,7 +532,7 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
 
     }
     public final Either<Higher<F, Free<F, T>>, T> resume(final Functor<F> functor) {
-        return resumeInternal( functor).visit(Either::left, Either::right, t->null);
+        return resumeInternal( functor).fold(Either::left, Either::right, t->null);
 
     }
    abstract <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor);
@@ -549,9 +549,9 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
             this.value = value;
         }
         @Override
-        public <R> R visit(Function<? super Pure<F, T>, ? extends R> done,
-                                    Function<? super Suspend<F, T>, ? extends R> suspend,
-                                    Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<F, T>, ? extends R> done,
+                          Function<? super Suspend<F, T>, ? extends R> suspend,
+                          Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
             return done.apply(this);
         }
         <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
@@ -570,9 +570,9 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
             this.suspended = suspended;
         }
         @Override
-        public <R> R visit(Function<? super Pure<F, T>, ? extends R> done,
-                           Function<? super Suspend<F, T>, ? extends R> suspend,
-                           Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<F, T>, ? extends R> done,
+                          Function<? super Suspend<F, T>, ? extends R> suspend,
+                          Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
             return suspend.apply(this);
         }
         <T1, U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeInternal(final Functor<F> functor){
@@ -597,9 +597,9 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
             return (Function<IN,  Free<F, T>>)fn;
         }
         @Override
-        public <R> R visit(Function<? super Pure<F, T>, ? extends R> done,
-                           Function<? super Suspend<F, T>, ? extends R> suspend,
-                           Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
+        public <R> R fold(Function<? super Pure<F, T>, ? extends R> done,
+                          Function<? super Suspend<F, T>, ? extends R> suspend,
+                          Function<? super FlatMapped<F,?, T>,? extends R> flatMapped){
             return flatMapped.apply(this);
         }
         @Override
@@ -611,7 +611,7 @@ public abstract class Free<F, T> implements Higher2<free,F,T> {
         }
         private  <U> LazyEither3<Higher<F, Free<F, T>>, T, Free<F, T>> resumeNestedFree(Functor<F> functor){
             Function<IN, Free<F, T>> f = narrowFn();
-            return free.visit(pure-> LazyEither3.right(f.apply(pure.value)),
+            return free.fold(pure-> LazyEither3.right(f.apply(pure.value)),
                     s-> LazyEither3.left1(functor.map(o -> o.flatMap(f), s.suspended)),
                     fm->{
                         final FlatMapped<F, U, IN> flatMapped2 = (FlatMapped<F, U, IN>)fm;

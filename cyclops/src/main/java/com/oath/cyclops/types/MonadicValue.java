@@ -3,8 +3,6 @@ package com.oath.cyclops.types;
 import com.oath.cyclops.types.factory.EmptyUnit;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.functor.Transformable;
-import com.oath.cyclops.util.ExceptionSoftener;
-import cyclops.control.Eval;
 import cyclops.control.Future;
 import cyclops.control.Option;
 import cyclops.control.Try;
@@ -20,7 +18,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static cyclops.matching.Api.Case;
 
@@ -34,7 +31,7 @@ import static cyclops.matching.Api.Case;
 public interface MonadicValue<T> extends Value<T>, Unit<T>, Transformable<T>, Filters<T>, EmptyUnit<T>{
 
     default <R> Future<R> mapAsync(Function<? super T,? extends R> fn, Executor ex){
-        return Future.of(()->map(fn),ex).flatMap(a->a.visit(s->Future.ofResult(s),()->Future.ofError(new NoSuchElementException())));
+        return Future.of(()->map(fn),ex).flatMap(a->a.fold(s->Future.ofResult(s),()->Future.ofError(new NoSuchElementException())));
     }
 
     default <R> Option<R> attemptMap(Function<? super T,? extends R> fn){

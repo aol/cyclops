@@ -9,8 +9,6 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 
 
-import cyclops.function.Monoid;
-import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -80,10 +78,10 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
     }
 
     public <__> Kleisli<W,Either<T, __>, Either<R, __>> leftK(W type) {
-        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Either::left,apply(l)), r -> monad.map(Either::right,monad.unit(r))));
+        return kleisliK(monad, xr -> xr.fold(l -> monad.map(Either::left,apply(l)), r -> monad.map(Either::right,monad.unit(r))));
     }
     public <__> Kleisli<W,Either<__,T>, Either<__,R>> rightK(W type) {
-        return kleisliK(monad, xr -> xr.visit(l -> monad.map(Either::left,monad.unit(l)), r -> monad.map(Either::right,apply(r))));
+        return kleisliK(monad, xr -> xr.fold(l -> monad.map(Either::left,monad.unit(l)), r -> monad.map(Either::right,apply(r))));
     }
     public <__> Kleisli<W,Tuple2<T, __>, Tuple2<R, __>> firstK() {
         return kleisliK(monad, xr -> xr.transform((v1, v2) -> monad.map(r1-> Tuple.tuple(r1,v2),apply(v1))));
@@ -102,7 +100,7 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
 
     public <T2> Kleisli<W,Either<T, T2>, R> fanIn(Kleisli<W,T2,R> fanIn) {
-        return of(monad,e -> e.visit(this, fanIn));
+        return of(monad,e -> e.fold(this, fanIn));
     }
 
 

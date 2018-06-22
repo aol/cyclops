@@ -7,15 +7,13 @@ import static cyclops.free.CharToy.output;
 import static cyclops.kinds.SupplierKind.λK;
 
 import cyclops.control.Either;
-import cyclops.function.Function0;
 import com.oath.cyclops.hkt.DataWitness.supplier;
 import cyclops.data.tuple.Tuple2;
-import cyclops.instances.jdk.SupplierInstances;
 import cyclops.kinds.SupplierKind;
 import org.junit.Test;
 
 import cyclops.free.CharToy.*;
-import static cyclops.function.Lambda.*;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -95,17 +93,17 @@ public final class FreeTest {
 
 
 
-        String one =a.visit(
+        String one =a.fold(
                         r ->   r.match()
-                                .visit(o->interleaveOutput(o,program2),
+                                .fold(o->interleaveOutput(o,program2),
                                         FreeTest::handleBell,
                                         FreeTest::handleDone)
                         ,
                         FreeTest::handleReturn
                     );
-        String two = b.visit(
+        String two = b.fold(
                 r ->   r.match()
-                        .visit(o->interleaveOutput1(o,program1),
+                        .fold(o->interleaveOutput1(o,program1),
                                 FreeTest::handleBell,
                                 FreeTest::handleDone)
                 ,
@@ -119,9 +117,9 @@ public final class FreeTest {
 
 
         return program.resume(CharToy.functor, CharToy::narrowK)
-                .visit(
+                .fold(
                         r ->   r.match()
-                                .visit(FreeTest::handleOutput,
+                                .fold(FreeTest::handleOutput,
                                        FreeTest::handleBell,
                                        FreeTest::handleDone)
                         ,

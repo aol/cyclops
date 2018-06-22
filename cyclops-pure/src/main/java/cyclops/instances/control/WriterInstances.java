@@ -188,7 +188,7 @@ public class WriterInstances {
       @Override
       public <C2, T, R> Higher<C2, Higher<Higher<writer, W>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<writer, W>, T> ds) {
         Writer<W, T> w = narrowK(ds);
-        Higher<C2, R> r = w.visit((t, m) -> fn.apply(t._1()));
+        Higher<C2, R> r = w.fold((t, m) -> fn.apply(t._1()));
         Higher<C2, Higher<Higher<writer, W>, R>> x = applicative.map_(r, t -> widen(Writer.writer(t, monoid)));
         return x;
 
@@ -246,7 +246,7 @@ public class WriterInstances {
 
         boolean cont = true;
         do {
-          cont = next[0].visit((p,__) -> p._1().visit(s -> {
+          cont = next[0].fold((p, __) -> p._1().fold(s -> {
             next[0] = narrowK(fn.apply(s));
             return true;
           }, pr -> false));

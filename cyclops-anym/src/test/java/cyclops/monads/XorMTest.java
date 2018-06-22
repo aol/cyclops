@@ -27,6 +27,6 @@ public class XorMTest {
 
     @Test
     public void visit(){
-        assertThat(just.visit(s->Witness.stream(s).count(),m->Witness.maybe(m).toOptional().get()),equalTo(10));
+        assertThat(just.fold(s->Witness.stream(s).count(), m->Witness.maybe(m).toOptional().get()),equalTo(10));
     }
 }

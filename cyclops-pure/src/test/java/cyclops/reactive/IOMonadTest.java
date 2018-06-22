@@ -1,16 +1,12 @@
 package cyclops.reactive;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Future;
 import cyclops.control.Try;
-import cyclops.instances.jdk.StreamInstances;
 import cyclops.instances.reactive.PublisherInstances;
-import cyclops.reactive.IOMonad.Converter;
 import cyclops.reactive.IOMonad.FromPublsher;
 import cyclops.reactive.IOMonad.ToPublsher;
-import cyclops.typeclasses.monad.Monad;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -133,29 +129,29 @@ public class IOMonadTest {
     public void asyncAttempt(){
         assertThat(ioMonad(futureConverter,Future.of(()->10, ex))
             .mapTry(i->{throw re;})
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(-1)));
 
         assertThat(ioMonad(futureConverter,Future.of(()->10, ex))
             .mapTry(i->i*2)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(20)));
     }
     @Test
     public void asyncAttemptSpecific(){
         assertThat(ioMonad(futureConverter,Future.of(()->10, ex))
             .mapTry(i->{throw re;}, IOException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.failure(re)));
 
         assertThat(ioMonad(futureConverter,Future.of(()->10, ex))
             .mapTry(i->{throw re;},RuntimeException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(-1)));
 
         assertThat(ioMonad(futureConverter,Future.of(()->10, ex))
             .mapTry(i->i*2,RuntimeException.class)
-            .map(t->t.visit(i->i,e->-1))
+            .map(t->t.fold(i->i, e->-1))
             .run(),equalTo(Try.success(20)));
     }
 

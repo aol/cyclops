@@ -102,7 +102,7 @@ public class Tuple2Test {
 
     @Test
     public void visit() throws Exception {
-        assertThat(t2.visit((a,b)->a+b),equalTo(15));
+        assertThat(t2.fold((a, b)->a+b),equalTo(15));
     }
 
     @Test
