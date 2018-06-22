@@ -126,9 +126,9 @@ public abstract class AbstractIterableXTest {
 
 
     @Test
-    public void unitIterator(){
-        assertThat(of(3).unitIterator(of().iterator()),equalTo(of()));
-        assertThat(of().unitIterator(of(3).iterator()),equalTo(of(3)));
+    public void unitIteratable(){
+        assertThat(of(3).unitIterable(()->of().iterator()),equalTo(of()));
+        assertThat(of().unitIterable(()->of(3).iterator()),equalTo(of(3)));
     }
 
     @Test
@@ -899,12 +899,13 @@ public abstract class AbstractIterableXTest {
 
 		}
 
-
+/**
     @Test
     public void recoverTest(){
 		    assertThat(of(1,2,3).recover(i->10),equalTo(of(1,2,3)));
         assertThat(of(1,2,3).recover(Throwable.class,i->10),equalTo(of(1,2,3)));
     }
+ **/
     @Test
     public void windowStatefullyUntil(){
         System.out.println(of(1,2,3,4,5,6)
@@ -2645,58 +2646,6 @@ public abstract class AbstractIterableXTest {
     }
 
 
-    @Test @Ignore
-    public void recover(){
-        assertThat(of(1,2,3,4)
-                .map(u->{throw new RuntimeException();})
-                .recover(e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
-
-    @Test @Ignore
-    public void recover2(){
-        assertThat(of(1,2,3,4)
-                .map(i->i+2)
-                .map(u->{throw new RuntimeException();})
-                .recover(e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
-    @Test @Ignore
-    public void recover3(){
-        assertThat(of(1,2,3,4)
-                .map(i->i+2)
-                .map(u->{throw new RuntimeException();})
-                .map(i->"x!"+i)
-                .recover(e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
-    @Test @Ignore
-    public void recoverIO(){
-        assertThat(of(1,2,3,4)
-                .map(u->{
-                    ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
-                .recover(e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
-
-    @Test @Ignore
-    public void recover2IO(){
-        assertThat(of(1,2,3,4)
-                .map(i->i+2)
-                .map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
-                .recover(IOException.class,e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
-    @Test(expected=IOException.class)
-
-    public void recoverIOUnhandledThrown(){
-        assertThat(of(1,2,3,4)
-                .map(i->i+2)
-                .map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
-                .map(i->"x!"+i)
-                .recover(IllegalStateException.class,e->"hello")
-                .firstValue(null),equalTo("hello"));
-    }
 
 
 

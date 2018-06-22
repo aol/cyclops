@@ -4,10 +4,7 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.hashSet;
 import cyclops.data.base.HAMT;
 import cyclops.data.tuple.Tuple;
@@ -26,7 +23,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -205,10 +201,6 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
           return HashSet.fromStream(ReactiveSeq.fromStream(stream));
       }
 
-      @Override
-      public <U> HashSet<U> unitIterator(Iterator<U> it) {
-          return HashSet.fromIterable(()->it);
-      }
 
       public HashSet<T> plus(T value){
 
@@ -650,16 +642,6 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       @Override
       public HashSet<T> insertStreamAt(int pos, Stream<T> stream) {
           return (HashSet<T>) ImmutableSet.super.insertStreamAt(pos,stream);
-      }
-
-      @Override
-      public HashSet<T> recover(Function<? super Throwable, ? extends T> fn) {
-          return this;
-      }
-
-      @Override
-      public <EX extends Throwable> HashSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-          return this;
       }
 
 

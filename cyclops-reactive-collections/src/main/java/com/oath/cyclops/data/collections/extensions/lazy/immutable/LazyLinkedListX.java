@@ -186,8 +186,8 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,Persi
 
 
     @Override
-    public <U> LazyLinkedListX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyLinkedListX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

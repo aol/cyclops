@@ -1,7 +1,6 @@
 package cyclops.monads.transformers;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -152,8 +151,8 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
 
 
     @Override
-    public <R> VectorT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> VectorT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                      .map(Vector::of));
     }
 
@@ -748,15 +747,5 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
         return limit(num);
     }
 
-
-    @Override
-    public VectorT<W,T> recover(final Function<? super Throwable, ? extends T> fn) {
-        return (VectorT) FoldableTransformerSeq.super.recover(fn);
-    }
-
-    @Override
-    public <EX extends Throwable> VectorT<W,T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn) {
-        return (VectorT) FoldableTransformerSeq.super.recover(exceptionClass,fn);
-    }
 
 }

@@ -5,10 +5,12 @@ import com.oath.cyclops.internal.stream.StreamableImpl;
 import com.oath.cyclops.types.factory.Unit;
 import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.stream.ToStream;
 import com.oath.cyclops.types.traversable.IterableX;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import cyclops.data.Seq;
 
 import cyclops.data.HashMap;
@@ -45,6 +47,7 @@ import java.util.stream.*;
 public interface Streamable<T> extends To<Streamable<T>>,
                                         ToStream<T>,
                                         Stream<T>,
+                                        RecoverableTraversable<T>,
                                         IterableX<T>,
                                         Contains<T>,
                                         Unit<T> {
@@ -339,8 +342,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @see com.oath.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
      */
     @Override
-    default <T> Streamable<T> unitIterator(final Iterator<T> it) {
-        return Streamable.fromIterator(it);
+    default <T> Streamable<T> unitIterable(final Iterable<T> it) {
+        return Streamable.fromIterable(it);
     }
 
     /**
@@ -2608,6 +2611,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param fn Function that accepts a Throwable and returns an alternative value
      * @return Streamable that can recover from an Exception
      */
+    @Override
     default Streamable<T> recover(final Function<? super Throwable, ? extends T> fn) {
         return fromStream(this.stream().recover(fn));
     }

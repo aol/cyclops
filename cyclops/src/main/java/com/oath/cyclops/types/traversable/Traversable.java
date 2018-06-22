@@ -17,8 +17,8 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -33,8 +33,7 @@ public interface Traversable<T> extends Publisher<T>,
                                         OnEmpty<T>,
                                         Zippable<T>,
                                         IterableFilterable<T>,
-                                        FilterableTransformable<T>,
-                                        Sequential<T>{
+                                        FilterableTransformable<T>{
 
     default Traversable<T> removeAt(long index){
         return zipWithIndex().filterNot(t2->t2._2()==index).map(t->t._1());
@@ -99,7 +98,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @param U Iterator to create new IterableFunctor from
      * @return New IterableFunctor instance
      */
-    <U> Traversable<U> unitIterator(Iterator<U> U);
+    <U> Traversable<U> unitIterable(Iterable<U> U);
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
      */
@@ -952,10 +951,7 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().sorted(function);
     }
 
-    /**
-     * @return This Traversable converted to a Stream and type narrowed to Traversable
-     */
-    //@TODO removeValue
+
     default Traversable<T> traversable() {
         return stream();
     }
@@ -1113,50 +1109,81 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().insertStreamAt(pos,stream);
     }
 
-    /**
-     * Recover from an exception with an alternative value
-     *
-     * <pre>
-     * {@code
-     * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 						   .map(i->i+2)
-     * 						   .map(u->{throw new RuntimeException();})
-     * 						   .recover(e->"hello")
-     * 						   .firstValue(),equalTo("hello"));
-     * }
-     * </pre>
-     *
-     * @param fn
-     *            Function that accepts a Throwable and returns an alternative
-     *            value
-     * @return ReactiveSeq that can recover from an Exception
-     */
-    default Traversable<T> recover(final Function<? super Throwable, ? extends T> fn){
-        return traversable().recover(fn);
-    }
 
     /**
-     * Recover from a particular exception type
+     * emit x elements per time period
      *
      * <pre>
      * {@code
-     * assertThat(ReactiveSeq.of(1,2,3,4)
-     * 					.map(i->i+2)
-     * 					.map(u->{ExceptionSoftener.throwSoftenedException( new IOException()); return null;})
-     * 					.recover(IOException.class,e->"hello")
-     * 					.firstValue(),equalTo("hello"));
+     *  SimpleTimer timer = new SimpleTimer();
+    ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+    .xPer(6, 100000000, TimeUnit.NANOSECONDS)
+    .collect(CyclopsCollectors.toList())
+    .size()
+
+    //6
      *
      * }
      * </pre>
      *
-     * @param exceptionClass
-     *            Type to recover from
-     * @param fn
-     *            That accepts an error and returns an alternative value
-     * @return Traversable that can recover from a particular exception
+     * @param x
+     *            number of elements to emit
+     * @param time
+     *            period
+     * @param t
+     *            Time unit
+     * @return ReactiveSeq that emits x elements per time period
      */
-    default <EX extends Throwable> Traversable<T> recover(Class<EX> exceptionClass, final Function<? super EX, ? extends T> fn){
-        return traversable().recover(exceptionClass,fn);
+    default ReactiveSeq<T> xPer(final int x, final long time, final TimeUnit t) {
+        return stream().xPer(x, time, t);
     }
 
+    /**
+     * emit one element per time period
+     *
+     * <pre>
+     * {@code
+     * ReactiveSeq.iterate("", last -> "next")
+     *              .limit(100)
+     *              .batchBySize(10)
+     *              .onePer(1, TimeUnit.MICROSECONDS)
+     *              .peek(batch -> System.out.println("batched : " + batch))
+     *              .flatMap(Collection::stream)
+     *              .peek(individual -> System.out.println("Flattened : "
+     *                      + individual))
+     *              .forEach(a->{});
+     * }
+     * </pre>
+     * @param time period
+     * @param t Time unit
+     * @return SequenceM that emits 1 element per time period
+     */
+    default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
+        return stream().onePer(time, t);
+    }
+
+    /**
+     * emit elements after a fixed delay
+     *
+     * <pre>
+     * {@code
+     *  SimpleTimer timer = new SimpleTimer();
+     *  ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *             .fixedDelay(10000, TimeUnit.NANOSECONDS)
+     *             .collect(CyclopsCollectors.toList())
+     *             .size()
+     *  //6
+     *  //timer.getElapsedNanoseconds() > greaterThan(60000l)
+     * }
+     * </pre>
+     *
+     * @param l
+     *            time length in nanos of the delay
+     * @param unit
+     *            for the delay
+     * @return SequenceM that emits each element after a fixed delay
+     */
+    default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
+        return stream().fixedDelay(l, unit);
+    }
 }

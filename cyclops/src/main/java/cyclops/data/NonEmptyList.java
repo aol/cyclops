@@ -7,7 +7,6 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct2;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
-import cyclops.control.Trampoline;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import lombok.AccessLevel;
@@ -18,7 +17,6 @@ import cyclops.data.tuple.Tuple2;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -37,7 +35,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         if(it instanceof NonEmptyList){
             return (NonEmptyList<R>)it;
         }
-        return unitIterator(it.iterator());
+        return this.unitIterator(it.iterator());
     }
 
     public ReactiveSeq<T> stream(){
@@ -92,10 +90,12 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
     @Override
     public <R> ImmutableList<R> unitStream(Stream<R> stream) {
         Iterator<R> it = stream.iterator();
-        return unitIterator(it);
+        return this.unitIterator(it);
     }
-    @Override
-    public <R> ImmutableList<R> unitIterator(Iterator<R> it) {
+
+
+    private <R> ImmutableList<R> unitIterator(Iterator<R> it) {
+
         if(it.hasNext()){
             return cons(it.next(), LazySeq.fromIterator(it));
         }
@@ -471,15 +471,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return (NonEmptyList<T>) ImmutableList.Some.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    public NonEmptyList<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
 
-    @Override
-    public <EX extends Throwable> NonEmptyList<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
 
     @Override

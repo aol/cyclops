@@ -6,11 +6,9 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
-import com.oath.cyclops.types.functor.Transformable;
 import cyclops.companion.rx2.Functions;
 import cyclops.companion.rx2.Maybes;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -137,8 +135,8 @@ public final class MaybeT<W extends WitnessType<W>,T> implements To<MaybeT<W,T>>
 
 
 
-    public <R> MaybeT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> MaybeT<W,R> unitIterable(final Iterable<R> it){
+        return of(run.unitIterable(it)
                 .map(i -> Maybe.just(i)));
     }
 

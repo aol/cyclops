@@ -9,6 +9,7 @@ import com.oath.cyclops.types.foldable.Contains;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.stream.*;
+import com.oath.cyclops.types.traversable.RecoverableTraversable;
 import cyclops.control.*;
 
 import cyclops.data.Enumeration;
@@ -111,6 +112,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                                         IterableX<T>,
                                         Contains<T>,
                                         Unit<T>,
+                                        RecoverableTraversable<T>,
                                         ReactiveTransformable<T>,
                                         Higher<reactiveSeq,T> {
 

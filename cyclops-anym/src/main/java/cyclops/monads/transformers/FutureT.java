@@ -287,8 +287,8 @@ public final class FutureT<W extends WitnessType<W>,T> extends ValueTransformer<
 
 
 
-    public <R> FutureT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> FutureT<W,R> unitIterable(final Iterable<R> it){
+        return of(run.unitIterable(it)
                      .map(i -> Future.ofResult(i)));
     }
 

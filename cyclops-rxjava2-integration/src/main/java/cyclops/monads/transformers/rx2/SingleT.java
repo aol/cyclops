@@ -6,11 +6,9 @@ import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
-import com.oath.cyclops.types.functor.Transformable;
 import cyclops.companion.rx2.Functions;
 import cyclops.companion.rx2.Singles;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -140,8 +138,8 @@ public final class SingleT<W extends WitnessType<W>,T> implements To<SingleT<W,T
 
 
 
-    public <R> SingleT<W,R> unitIterator(final Iterator<R> it) {
-        return of(run.unitIterator(it)
+    public <R> SingleT<W,R> unitIterable(final Iterable<R> it) {
+        return of(run.unitIterable(it)
                 .map(i -> Single.just(i)));
     }
 

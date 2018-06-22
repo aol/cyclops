@@ -4,10 +4,7 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;
 import cyclops.data.tuple.Tuple3;
@@ -23,7 +20,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -211,11 +207,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     @Override
     public ImmutableSortedSet<T> unitStream(Stream<T> stream, Comparator<? super T> comp) {
         return fromStream(ReactiveSeq.fromStream(stream),comp);
-    }
-
-    @Override
-    public <U> TreeSet<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it),Comparators.naturalOrderIdentityComparator());
     }
 
 
@@ -703,15 +694,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
         return (TreeSet<T>) ImmutableSortedSet.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    public TreeSet<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
-
-    @Override
-    public <EX extends Throwable> TreeSet<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
     @Override
     public <U extends Comparable<? super U>> TreeSet<T> sorted(Function<? super T, ? extends U> function) {

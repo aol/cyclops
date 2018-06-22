@@ -12,7 +12,6 @@ import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple2;
@@ -411,8 +410,8 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
     @Override
-    default <R> SortedSetX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> SortedSetX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     @Override

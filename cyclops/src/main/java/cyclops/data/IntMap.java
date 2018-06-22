@@ -7,7 +7,6 @@ import com.oath.cyclops.types.persistent.PersistentList;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Eval;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import com.oath.cyclops.hkt.DataWitness.intMap;
 import cyclops.data.base.IntPatriciaTrie;
 import cyclops.data.tuple.Tuple3;
@@ -25,7 +24,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -371,10 +369,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<R>)ImmutableList.super.zip4(second,third,fourth,fn);
     }
 
-    @Override
-    public <U> IntMap<U> unitIterator(Iterator<U> it) {
-        return fromIterable(()->it);
-    }
 
     @Override
     public IntMap<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -627,15 +621,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<T>) ImmutableList.super.insertStreamAt(pos,stream);
     }
 
-    @Override
-    public IntMap<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return this;
-    }
-
-    @Override
-    public <EX extends Throwable> IntMap<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return this;
-    }
 
 
     @Override

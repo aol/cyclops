@@ -11,7 +11,6 @@ import com.oath.cyclops.types.recoverable.OnEmptySwitch;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -25,7 +24,6 @@ import cyclops.data.tuple.Tuple4;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -435,11 +433,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().zip4(second,third,fourth,fn));
     }
 
-    @Override
-    default <U> ImmutableQueue<U> unitIterator(Iterator<U> it){
-        return unitStream(ReactiveSeq.fromIterator(it));
-    }
-
 
     @Override
     default ImmutableQueue<T> combine(BiPredicate<? super T, ? super T> predicate, BinaryOperator<T> op) {
@@ -733,15 +726,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().insertStreamAt(pos,stream));
     }
 
-    @Override
-    default ImmutableQueue<T> recover(Function<? super Throwable, ? extends T> fn) {
-        return unitStream(stream().recover(fn));
-    }
 
-    @Override
-    default <EX extends Throwable> ImmutableQueue<T> recover(Class<EX> exceptionClass, Function<? super EX, ? extends T> fn) {
-        return unitStream(stream().recover(exceptionClass,fn));
-    }
 
     @Override
     ImmutableQueue<T> minus();

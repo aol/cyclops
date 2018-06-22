@@ -523,8 +523,8 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     @Override
-    default <R> LinkedListX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> LinkedListX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
 
     //@Override

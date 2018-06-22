@@ -102,8 +102,8 @@ public class LazyDequeX<T> extends AbstractLazyCollection<T,Deque<T>> implements
     }
 
     @Override
-    public <U> LazyDequeX<U> unitIterator(Iterator<U> it) {
-        return fromStream(ReactiveSeq.fromIterator(it));
+    public <U> LazyDequeX<U> unitIterable(Iterable<U> it) {
+        return fromStream(ReactiveSeq.fromIterable(it));
     }
 
 

@@ -16,7 +16,6 @@ import cyclops.data.Vector;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -452,8 +451,8 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
     @Override
-    default <R> QueueX<R> unitIterator(final Iterator<R> it) {
-        return fromIterable(() -> it);
+    default <R> QueueX<R> unitIterable(final Iterable<R> it) {
+        return fromIterable(it);
     }
     @Override
     default QueueX<T> materialize() {

@@ -180,8 +180,9 @@ public class ExtensionOperatorsRSTest {
 										.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
-	}
+        assertThat(result,hasItems(1,2,3));
+        assertThat(result.size(),lessThan(5));
+    }
 	@Test
 	public void limitTimeEmpty(){
 		List<Integer> result = FlowableReactiveSeq.<Integer>of()
