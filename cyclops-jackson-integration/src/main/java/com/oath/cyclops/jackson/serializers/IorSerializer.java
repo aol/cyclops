@@ -40,7 +40,7 @@ public class IorSerializer extends JsonSerializer<Ior<?,?>> {
   @Override
   public void serialize(Ior<?, ?> value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
 
-    value.visit( ExceptionSoftener.softenFunction(l->{
+    value.fold( ExceptionSoftener.softenFunction(l->{
       JsonSerializer<Object> ser = serializers.findValueSerializer(LeftBean.class);
       ser.serialize(new LeftBean(l), gen, serializers);
       return null;
