@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.jsontype.impl.AsArrayTypeDeserializer;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.companion.Streamable;
 import cyclops.data.*;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Streamable;
 
 import java.io.IOException;
 import java.lang.invoke.CallSite;
