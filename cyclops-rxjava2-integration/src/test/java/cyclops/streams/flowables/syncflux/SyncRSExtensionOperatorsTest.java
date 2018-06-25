@@ -205,10 +205,10 @@ public class SyncRSExtensionOperatorsTest {
 										.peek(i->sleep(i*100))
 										.skip(1000,TimeUnit.MILLISECONDS)
 										.toList();
+        assertThat(result,not(hasItems(1,2,3)));
+        assertThat(result.size(),lessThanOrEqualTo(3));
 
 
-		assertThat(result,hasItems(4,5,6));
-        assertThat(result.size(),greaterThanOrEqualTo(2));
 	}
 	@Test
 	public void skipTimeEmpty(){
