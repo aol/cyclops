@@ -225,6 +225,7 @@ public class AsyncExtensionOperatorsTest {
 
 
 		assertThat(result,hasItems(1,2,3));
+
 	}
 	@Test
 	public void limitTimeEmpty(){
@@ -244,7 +245,8 @@ public class AsyncExtensionOperatorsTest {
 										.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(4,5,6)));
+		assertThat(result,not(hasItems(1,2,3)));
+        assertThat(result.size(),lessThanOrEqualTo(3));
 	}
 	@Test
 	public void skipTimeEmpty(){

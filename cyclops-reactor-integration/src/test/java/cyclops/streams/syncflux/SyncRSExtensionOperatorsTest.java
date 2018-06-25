@@ -183,7 +183,8 @@ public class SyncRSExtensionOperatorsTest {
 										.toList();
 
 
-		assertThat(result,equalTo(Arrays.asList(1,2,3)));
+		assertThat(result,hasItems(1,2,3));
+        assertThat(result.size(),greaterThanOrEqualTo(3));
 	}
 	@Test
 	public void limitTimeEmpty(){
