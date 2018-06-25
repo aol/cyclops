@@ -65,11 +65,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 /**
- * A powerful extended, sequential Stream type.
- * Extends JDK 8 java.util.stream.Stream.
- * Implements the reactive-stream publisher api.
- * Replayable Stream by default, using primitive operators (ints,longs, doubles or jool results in conversion to a oneshot Stream
- * (as of 2.0.0-MI1)
+ *
+ * A powerful Streaming interface.
+ *
+ * Use factory methods on this class for performant, synchronous Streams
+ * Use factory methods on Spouts for asynchronous streaming with and without back pressure
+ * Use factory methods on FutureStream (cyclops-futurestream) for powerful parallel streaming
  *
  * Features include
  *      Asynchronous execution
