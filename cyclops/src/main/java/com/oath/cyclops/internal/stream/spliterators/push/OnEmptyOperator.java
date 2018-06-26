@@ -1,5 +1,6 @@
 package com.oath.cyclops.internal.stream.spliterators.push;
 
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -19,19 +20,20 @@ public class OnEmptyOperator<T> extends BaseOperator<T,T> {
     }
 
 
+
     @Override
     public StreamSubscription subscribe(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         boolean[] data ={ false};
         return source.subscribe(e->{
-                    if(!data[0])
-                        data[0]=true;
-                    onNext.accept(e);
-                }
-                ,onError,()->{
-                    if(data[0]==false)
-                        onNext.accept(value.get());
-                    onComplete.run();
-                });
+                if(!data[0])
+                    data[0]=true;
+                onNext.accept(e);
+            }
+            ,onError,()->{
+                if(data[0]==false)
+                    onNext.accept(value.get());
+                onComplete.run();
+            });
     }
 
     @Override

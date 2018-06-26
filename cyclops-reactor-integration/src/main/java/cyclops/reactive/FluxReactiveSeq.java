@@ -5,9 +5,11 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.SynchronousSink;
+import reactor.core.scheduler.Scheduler;
 
 import java.time.Duration;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -71,13 +73,13 @@ public interface FluxReactiveSeq {
 
 
     @SafeVarargs
-    public static <I> ReactiveSeq<I> firstEmitting(Publisher<? extends I>... sources) {
-        return reactiveSeq(Flux.firstEmitting(sources));
+    public static <I> ReactiveSeq<I> first(Publisher<? extends I>... sources) {
+        return reactiveSeq(Flux.first(sources));
     }
 
 
-    public static <I> ReactiveSeq<I> firstEmitting(Iterable<? extends Publisher<? extends I>> sources) {
-        return reactiveSeq(Flux.firstEmitting(sources));
+    public static <I> ReactiveSeq<I> first(Iterable<? extends Publisher<? extends I>> sources) {
+        return reactiveSeq(Flux.first(sources));
     }
 
 
@@ -119,11 +121,14 @@ public interface FluxReactiveSeq {
     public static ReactiveSeq<Long> interval(Duration delay, Duration period) {
         return reactiveSeq(Flux.interval(delay,period));
     }
-
-
-    public static ReactiveSeq<Long> intervalMillis(long period) {
-        return reactiveSeq(Flux.intervalMillis(period));
+    public static ReactiveSeq<Long> interval(Duration period, Scheduler timer) {
+        return reactiveSeq(Flux.interval(period,timer));
     }
+
+    public static ReactiveSeq<Long> interval(Duration delay, Duration period, Scheduler timer) {
+        return reactiveSeq(Flux.interval(delay,period,timer));
+    }
+
     @SafeVarargs
     public static <T> ReactiveSeq<T> just(T... data) {
         return reactiveSeq(Flux.just(data));

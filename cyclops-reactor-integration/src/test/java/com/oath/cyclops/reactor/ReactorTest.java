@@ -29,7 +29,7 @@ public class ReactorTest {
 
         Stream<List<Integer>> stream = Stream.of(Arrays.asList(1, 2, 3), Arrays.asList(10, 20, 30));
 
-        SetX.fromPublisher(Flux.firstEmitting(ReactiveSeq.of(1, 2, 3), Flux.just(10, 20, 30)));
+        SetX.fromPublisher(Flux.first(ReactiveSeq.of(1, 2, 3), Flux.just(10, 20, 30)));
     }
 
     @Test
