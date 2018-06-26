@@ -228,8 +228,8 @@ public  class AsyncReactiveStreamXTest {
 				.skip(1000,TimeUnit.MILLISECONDS)
 				.toList();
 
-        assertThat(result.size(), Matchers.isOneOf(3,4));
-		assertThat(result,hasItems(4,5,6));
+        assertThat(result.size(),lessThanOrEqualTo(4));
+		assertThat(result,hasItems(5,6));
 	}
 	@Test
 	public void limitTime() throws InterruptedException {
