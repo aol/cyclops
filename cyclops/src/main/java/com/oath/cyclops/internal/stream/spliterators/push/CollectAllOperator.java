@@ -18,6 +18,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
     }
 
 
+
     @Override
     public StreamSubscription subscribe(Consumer<? super R> onNext, Consumer<? super Throwable> onError, Runnable onComplete) {
         Object[] next = {collector.supplier().get()};
@@ -48,9 +49,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
         upstream[0] = source.subscribe(e-> {
                     try {
                         A nextA = (A)next[0];
-
                         collector.accumulator().accept(nextA,e);
-
                         upstream[0].request(1l);
 
                     } catch (Throwable t) {

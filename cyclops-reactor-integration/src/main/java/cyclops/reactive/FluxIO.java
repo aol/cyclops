@@ -59,7 +59,7 @@ public final class FluxIO<T> implements IO<T> {
 
     @Override
     public IO<T> race(IO<T> that) {
-        return fromPublisher(Flux.firstEmitting(Seq.of(publisher(), that.publisher())));
+        return fromPublisher(Flux.first(Seq.of(publisher(), that.publisher())));
     }
 
     @Override
