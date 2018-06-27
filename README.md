@@ -1,6 +1,6 @@
 # Getting Cyclops X (10)
 
-* The latest version is [cyclops:10.0.0-M7](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M7)
+* The latest version is [cyclops:10.0.0-M8](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M8)
 * [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
@@ -29,9 +29,7 @@
 * [cyclops-pure](https://github.com/aol/cyclops-react/tree/master/cyclops-pure) - Higher kinded type classes for pure functional programming in Java
 * [cyclops-reactor-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-reactor-integration) - Reactive collections and AnyM integrations with Reactor.
 * [cyclops-rxjava2-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-rxjava2-integration) - Reactive collections and AnyM integrations with Rx Java 2.
-* [cyclops-rxjava-integration](https://github.com/aol/cyclops/tree/master/cyclops-rx) - Reactive collections and AnyM integrations with Rx Java.
-* [cyclops-vavr-integration](https://github.com/aol/cyclops/tree/master/cyclops-vavr) - Reactive collections and AnyM integrations with Vavr.
-* [cyclops-jackson-integration](https://github.com/aol/cyclops/tree/master/cyclops-jackson) - Jackson databindings for Cyclops persistent data structures and control types.
+* [cyclops-jackson-integration](https://github.com/aol/cyclops-react/tree/master/cyclops-jackson) - Jackson databindings for Cyclops persistent data structures and control types.
 
 
 
