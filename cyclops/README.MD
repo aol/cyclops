@@ -151,7 +151,7 @@ public Try<String,IOException> loadData(File f);
 
 # Replace CompletableFuture with Future
 
-A Future implementation with more standard method names (map / flatMap / zip as opposed to thenApply / thenCombose / then Combine)
+A Future implementation with more standard method names (map / flatMap / zip as opposed to thenApply / thenCompose / then Combine)
 ```java
 
 CompletableFuture<Result> future;
