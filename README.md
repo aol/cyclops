@@ -18,7 +18,8 @@
 - Improved naming of types (Function1-8 rather than Fn1-8, Either not Xor)
 - Group id is changed to com.oath.cyclops
 - Versioning between cyclops-react and cyclops is merged on cyclops versioning scheme (version 10 = Cyclops X)
-- Light weight dependencies : reactive-streams API & Agrona
+- Light weight dependencies : reactive-streams API, KindedJ & Agrona
+- JVM Polyglot Higher Kinded Types Support with KindedJ
 
 ## Modules
 
