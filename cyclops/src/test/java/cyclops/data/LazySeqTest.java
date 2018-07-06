@@ -1,6 +1,7 @@
 package cyclops.data;
 
 
+import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
 import cyclops.control.Option;
@@ -167,6 +168,27 @@ public class LazySeqTest extends BaseImmutableListTest {
                 .peek(System.out::println)
                 .scanRight(Reducers.toTotalInt()).toList(), is(asList(6,5,3,0)));
 
+    }
+
+    @Test
+    public void iterableTo(){
+
+        assertThat(LazySeq.of(1,2,3)
+               .iterableTo(ReactiveSeq::fromIterable),equalTo(ReactiveSeq.of(1,2,3)));
+    }
+
+    @Test
+    public void simpleFoldLeft(){
+
+        assertThat(LazySeq.of(1,2,3).foldLeft(0,(a,b)->a+b),equalTo(6));
+    }
+    @Test
+    public void simpleFoldRight(){
+        assertThat(LazySeq.of(1,2,3).foldRight(0,(a,b)->a+b),equalTo(6));
+    }
+    @Test
+    public void stackBuster(){
+        assertThat(LazySeq.range(0,100_000).foldRight(0,(a,b)->a+b),equalTo(704982704));
     }
     @Test
     public void retainAllStream(){

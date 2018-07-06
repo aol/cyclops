@@ -29,8 +29,9 @@ public class StatCollectorsTest {
     public void atPercentile(){
         assertThat(stats.atPercentile(0),equalTo(0));
         assertThat(stats.atPercentile(1),equalTo(1));
-        assertThat(stats.atPercentile(2),equalTo(2));
-        assertThat(stats.atPercentile(100),equalTo(99));
+        assertThat(stats.atPercentile(5),equalTo(5));
+        assertThat(stats.size(),equalTo(100));
+        assertThat(stats.atPercentile(99),equalTo(99));
 
     }
 
