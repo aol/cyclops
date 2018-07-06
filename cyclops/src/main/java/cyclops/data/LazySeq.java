@@ -889,7 +889,13 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return stream().join(",","[","]");
     }
 
+    @Override
     <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f);
+    @Override
+     T foldRight(final T identity, final BinaryOperator<T> accumulator);
+
+    @Override
+    T foldRight(final Monoid<T> reducer) ;
 
     LazySeq<T> filter(Predicate<? super T> pred);
 
@@ -944,6 +950,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return Cons.cons(head,tail);
     }
 
+    <R> R foldr(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f);
 
 
 
@@ -966,15 +973,34 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return false;
         }
 
-        public <R> R foldRight(R zero,BiFunction<? super T, ? super R, ? extends R> f) {
+        @Override
+        public T foldRight(T identity, BinaryOperator<T> accumulator) {
+            return this.foldRightImpl(identity,(a,b)->accumulator.apply(a,b));
+        }
+
+        @Override
+        public T foldRight(Monoid<T> reducer) {
+            return foldRight(reducer.zero(),reducer);
+        }
+
+        public <R> R foldr(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f){
+           return f.apply(head,()->tail.get().foldr(zero,f));
+        }
+
+         <R> R foldRightImpl(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
             class Step{
                 public Trampoline<R> loop(ImmutableList<T> s, Function<? super R, ? extends Trampoline<R>> fn){
 
-                    return s.fold(c-> Trampoline.more(()->loop(c.tail(), rem -> Trampoline.more(() -> fn.apply(f.apply(c.head(), rem))))), n->fn.apply(zero));
+                    return s.fold(c-> Trampoline.more(()->loop(c.tail(),
+                                rem -> Trampoline.more(() -> fn.apply(f.apply(c.head(), rem))))),
+                        n->fn.apply(zero));
 
                 }
             }
             return new Step().loop(this,i-> Trampoline.done(i)).result();
+        }
+        public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
+            return foldRightImpl(zero,f);
         }
         public <R> LazySeq<R> scanRight(R zero,BiFunction<? super T, ? super R, ? extends R> f) {
             Tuple2<R, LazySeq<R>> t2 = Tuple.tuple(zero, LazySeq.of(zero));
@@ -985,7 +1011,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
       @Override
       public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
-        return cons(fn.apply(head()),()->tail.get().map(fn));
+            return foldr(LazySeq.empty(),(a,b)->LazySeq.cons(fn.apply(a),b));
       }
 
       @Override
@@ -1194,9 +1220,23 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return list.get();
         }
 
+        public <R> R foldr(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f){
+            return zero;
+        }
+
         @Override
         public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
             return zero;
+        }
+
+        @Override
+        public T foldRight(T identity, BinaryOperator<T> accumulator) {
+            return identity;
+        }
+
+        @Override
+        public T foldRight(Monoid<T> reducer) {
+            return reducer.zero();
         }
 
         @Override

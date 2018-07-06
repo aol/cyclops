@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 
 public class LazySeqTest extends BaseImmutableListTest {
@@ -175,6 +176,12 @@ public class LazySeqTest extends BaseImmutableListTest {
 
         assertThat(LazySeq.of(1,2,3)
                .iterableTo(ReactiveSeq::fromIterable),equalTo(ReactiveSeq.of(1,2,3)));
+    }
+
+    @Test
+    public void inifiniteRight(){
+        assertTrue(LazySeq.generate(()->true).foldr(false,(a,b)->a ? true : b.get()));
+
     }
 
     @Test
