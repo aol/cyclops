@@ -1,6 +1,6 @@
 [index]
 
-== Working with Lambdas
+== Working with Functions and Lambdas
 
 cyclops-react provides a number of classes that makes working with Java 8 lambda expressions a little easier, they are listed below.
 
@@ -59,7 +59,7 @@ public String exceptionalFirstTime(String input) throws IOException{
             times++;
             throw new IOException();
         }
-        return input + " world"; 
+        return input + " world";
 }
 ----
 We can make use of FluentFunctions to retry the method twice 500ms apart.
@@ -68,7 +68,7 @@ We can make use of FluentFunctions to retry the method twice 500ms apart.
 FluentFunctions.ofChecked(this::exceptionalFirstTime)
                .println()
                .retry(2,500)
-               .apply("hello");   
+               .apply("hello");
 ----
 
 And the output will look something like this (thanks to the println operator).
@@ -90,9 +90,9 @@ Alternatively we could decide to recover from the thrown exception.
 FluentFunctions.ofChecked(this::exceptionalFirstTime)
                .recover(IOException.class, in->in+"boo!")
                .println()
-               .apply("hello ");   
+               .apply("hello ");
 
-        
+
 ----
 
 And the output would look like this (notice the missing StackTrace as the Exception has now been handled!.
@@ -100,7 +100,7 @@ And the output would look like this (notice the missing StackTrace as the Except
 [source,java]
 ----
 (fluent-function-Parameter[hello ])
-(fluent-function-Result[hello boo!]) 
+(fluent-function-Result[hello boo!])
 ----
 ====
 
@@ -149,7 +149,7 @@ Cache<Object, Integer> cache = CacheBuilder.newBuilder()
                    .expireAfterWrite(10, TimeUnit.MINUTES)
                    .build();
 
----- 
+----
 
 Now we can use our cache by passing a lambda expression in the format below to memoize. Our lambda must take two parameters, the first of which is the cache key, and the second is the function used to generate the value (in this example fn is our method reference to addOne).
 
@@ -231,7 +231,7 @@ At the end out our run setIn will be 10 (the input) and setOut will be false (ou
 (fluent-function-Result[false])
 
 setIn =10
-setOut = false               
+setOut = false
 ----
 
 ====
@@ -283,11 +283,11 @@ In this example we will call a method that simply adds 1 to its input. If the re
 
 [source,java]
 ----
-FluentFunctions.of(this::addOne)    
+FluentFunctions.of(this::addOne)
                .matches(-1,c->c.hasValues(2).then(i->3))
-               .apply(1)    
+               .apply(1)
 
-//returns 3  
+//returns 3
 ----
 ====
 
@@ -345,13 +345,13 @@ next element1453819223155
 ====
 We can also use a method or function to iterate infinitely over it's own input / output data cycle.
 
-In the example below we use the method addOne that adds 1 to it's input to generate an infinite sequence of numbers starting from 95281. 
+In the example below we use the method addOne that adds 1 to it's input to generate an infinite sequence of numbers starting from 95281.
 
 [source,java]
 ----
-FluentFunctions.of(this::addOne)    
+FluentFunctions.of(this::addOne)
                         .iterate(95281,i->i)
-                        .forEach(System.out::println);  
+                        .forEach(System.out::println);
 95282
 95283
 95284
@@ -364,7 +364,7 @@ FluentFunctions.of(this::addOne)
 95291
 95292
 95293
-95294     
+95294
 ----
 
 Note in orde to cycle infinitely over a methods input/output data output must be mapped back to input type on each cycle. Iterate takes a seed value and a function that maps from output types to input types.
@@ -389,9 +389,9 @@ Integer nullValue = null;
 Calling addOne directly with nullValue will result in a null pointer exception. Using the lift method however, we can wrap addOne so that it accepts and returns Optional, thus completely avoiding the possibilty of an NPE.
 [source,java]
 ----
-FluentFunctions.of(this::addOne)    
+FluentFunctions.of(this::addOne)
                .lift()
-               .apply(Optional.ofNullable(nullValue)); 
+               .apply(Optional.ofNullable(nullValue));
 ----
 
 ====
@@ -408,7 +408,7 @@ which allows the value to be converted into various forms (such as a
 thread-safe AtomicReference, Optional, Stream, CompletableFuture etc).
 
 
-==== Available Mutable classes 
+==== Available Mutable classes
 
 * http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/Mutable.html[Mutable]
 * http://static.javadoc.io/com.aol.cyclops2-react/cyclops-react-closures/7.1.0/com/aol/cyclops-react/closures/mutable/MutableInt.html[MutableInt]
@@ -427,7 +427,7 @@ Mutable can be used to work around Java's effectively final rule, simply wrap an
 .MutableInt within a Stream
 ====
 In this example, we mutate a local primitive variable using MutableInt, inside a lambda expression passed into a Stream. The mutate method is similar to map in Optional or Stream, in that accepts a function that takes the current value and returns a new one. It is different in that it mutates the MutableInt rather than creating a new mutable instances.
-                
+
 [source,java]
 ----
 
@@ -441,7 +441,7 @@ Stream.of(1,2,3,4)
 assertThat(num.get(),is(120));
 ----
 ====
-  
+
 
 
 [CAUTION]
@@ -515,11 +515,11 @@ Mutable is used inside cyclops-react for-comprehensions simplify the handling of
 [source,java]
 ----
 build(ComprehensionData c, Function fn) {
-			
+
 	Mutable<Vector<String>> vars = new Mutable<>(TreePVector.zero());
 	getAssigned().stream().forEach(e-> addToVar(e,vars,handleNext(e,c,vars.get())));
 	Mutable<Object> var = new Mutable<>(fn);
-		
+
 	return c.yield(()-> unwrapNestedFunction(c, fn, vars.get());
 }
 ----
@@ -599,10 +599,10 @@ set twice, second time has no effect
 LazyImmutable<Integer> value = new LazyImmutable<>();
 Supplier s= () -> value.setOnce(10);
 value.setOnce(20); //first time set
-		
+
 s.get();
-		
-		
+
+
 assertThat(value.get(),is(20));
 ```
 ====
@@ -636,7 +636,7 @@ public Data load(Task t) throws IOException(){
 
 Stream.generate(()->nextTask())
       .map(this::load)  // DOES NOT COMPILE
-      
+
 ----
 
 ==== Overview
@@ -649,7 +649,7 @@ to declare it.
 The example below shows a number of usages of ExceptionSoftener.
 
 .Throwing a softened exception
-==== 
+====
 ```java
 throw ExceptionSoftener.throwSoftenedException(new IOException("hello"));
 
@@ -658,7 +658,7 @@ throw ExceptionSoftener.throwSoftenedException(new Exception("hello"));
 //doesn't need softened, but will still work
 throw ExceptionSoftener.throwSoftenedException(new RuntimeException("hello"));
 ```
-==== 
+====
 TIP: Always use *throw* ExceptionSoftener.throwSoftenedException, where you would throw an actual Exception directly, rather than just passing the exception directly into the softener. This lets the compiler know an Exception is being thrown at this point, and means you won't get compile time errors about missing return values at an unreachable point in the code.
 
 
@@ -701,12 +701,12 @@ Function<String,Data> loader = ExceptionSoftener.softenFunction(file->load(file)
 
 public Data load(String file) throws IOException{
      ///load data
-}  
+}
 
 ----
 ====
 .Soften inside a stream
-==== 
+====
 
 [source,java]
 ----
@@ -725,32 +725,32 @@ Data loaded = ExceptionSoftener.softenFunction(this::load).apply(fileName);
 
 Stream.of("file1","file2","file3")
       .map(ExceptionSoftener.softenFunction(this::load))
-      .forEach(this::save)  	
+      .forEach(this::save)
 
 public String load(String file) throws IOException{
         throw new IOException();
 }
-```  
-==== 
+```
+====
 
 .Soften a Supplier
-==== 
+====
 
 ```java
 Supplier<String> supplier = ExceptionSoftener.softenSupplier(this::get);
-		
+
 assertThat(supplier.get(),equalTo("hello"));
 
 private String get() throws IOException{
 		return "hello";
 }
 ```
-==== 
+====
 
-ExceptionSoftener is used extensively within cyclops-react and simple-react. 
+ExceptionSoftener is used extensively within cyclops-react and simple-react.
 
 .Soften in a retry Function from cyclops-react
-==== 
+====
 
 This example comes from cycops-streams, by using SoftenRunnable we can use Thread.sleep without having to declare a throws / try & catch block for InteruptedException. Any exception caught from catching the users supplied function can also be thrown upwards.
 
@@ -766,21 +766,21 @@ Function<T,R> retry = t-> {
 				exception = e;
 			}
 			ExceptionSoftener.softenRunnable(()->Thread.sleep(sleep[0]));
-				
+
 			sleep[0]=sleep[0]*2;
 		}
 		throw ExceptionSoftener.throwSoftenedException(exception);
-			
+
 };
 
 ```
-==== 
+====
 === Memoization
 
 Memoisation allows us to transparently cache the result of function calls. With https://github.com/aol/cyclops-react[cyclops-react] we can memoise any JDK 8 Function via http://www.javadoc.io/doc/com.aol.cyclops2-react/cyclops-react-functions/5.0.0[Memoise.memoiseFunction] (and by extension -- via method references, we can also memoise most Java methods too!). For example
 
 .Memoize a simple addition function
-==== 
+====
 [source,java]
 ----
 int called =0; //instance variable
@@ -813,7 +813,7 @@ But, of course the memoisation is specific to the input parameter. Recalling mem
 assertThat(s.apply(1),equalTo(3));
 assertThat(s.apply(1),equalTo(3));
 ----
-==== 
+====
 
 
 #### Memoizing method calls
@@ -826,7 +826,7 @@ See also
 https://github.com/aol/cyclops-react/wiki/Memoisation,-Currying,-Uncurrying-and-Type-Inferencing[Memoisation,-Currying,-Uncurrying-and-Type-Inferencing]
 
 .Memoize a method with four parameters
-==== 
+====
 
 
 [source,java]
@@ -845,25 +845,25 @@ private int addAll(int a,int b,int c, int d){
     return a+b+c+d;
 }
 ----
-==== 
+====
 #### Cleaner type inference
 
 Via https://projectlombok.org/features/val.html[Lombok val] (entirely
 optional)
 
 .Scala-like type inference with Lombok
-==== 
+====
 ```java
 int called = 0; // instance variable
-	
+
 val cached = memoizeQuadFunction(this::addAll);
-		
+
 assertThat(cached.apply(1,2,3,4),equalTo(10));
 assertThat(cached.apply(1,2,3,4),equalTo(10));
 assertThat(cached.apply(1,2,3,4),equalTo(10));
 assertThat(called,equalTo(1));
-	
-	
+
+
 private int addAll(int a,int b,int c, int d){
 	called++;
 	return a+b+c+d;
@@ -875,27 +875,27 @@ private int addAll(int a,int b,int c, int d){
 Always check IDE Compatibility with any Lombok operators you use. Lombok is an annotation preprocessor, it doesn't introduce a runtime dependency for your project. However, while all annotations / keywords work with Eclipse - the same is not true for other IDEs. Delombok can remove Lombok annotations replacing them in your source with equivalent code.
 ====
 .Memoize a supplier
-==== 
+====
 cyclops-react supports Memoization for a large range of Java Functional Interfaces, in this example we memoize a supplier.
 ```java
 Supplier<Integer> s = memoiseSupplier(()->++called);
 assertThat(s.get(),equalTo(1));
 assertThat(s.get(),equalTo(1));
 ```
-==== 
+====
 #### Memoization in Microserver
 
 https://github.com/aol/micro-server[Microserver] uses cyclops-react memoization to ensure that plugins are only ever loaded once.
 
 .Ensure plugins are loaded once in Microserver
-==== 
+====
 [source,java]
 ----
 public class PluginLoader {
 
 	public final static PluginLoader INSTANCE = new PluginLoader();
 
-	public final Supplier<List<Plugin>> plugins = 
+	public final Supplier<List<Plugin>> plugins =
 	                                    Memoize.memoizeSupplier(this::load);
 
 	private List<Plugin> load(){
@@ -903,7 +903,7 @@ public class PluginLoader {
 	}
 }
 ----
-==== 
+====
 
 #### Referential Transparency & cyclops-react Memoization
 
@@ -915,7 +915,7 @@ Referential Transparency is an academic term that means that for any given input
 cyclops-react offers two forms of Memoization, one of which is suitable for referentially transparent (or pure) functions, and the other which may be appropriate with impure functions (those for which a given input may not always map to the same output).
 
 To support that later, impure type of function, cyclops-react supports Memoization with pluggable caches. Java is not a functionally pure language and we feel supporting this type of caching is useful for Java developers.
- 
+
 
 
 #### Memoization with plugabble caches
@@ -925,7 +925,7 @@ By default a Memoized lambda or method reference will cache the return value ins
 https://github.com/aol/simple-react[simple-react] supports auto-memoization of functions within a Stream, and this is implemented via cyclops-react-memoization.
 
 .Configure auto-memoization in simple-react with a ConurrentHashMap
-==== 
+====
 [source,java]
 ----
 Map cache = new ConcurrentHashMap<>();
@@ -938,7 +938,7 @@ List result = react.of("data1","data1","data2","data2")
 It is also possible to use advanced modern caching libraries such as Caffeine or Guava.
 
 .Configure auto-memoization in simple-react with a Guava cache
-==== 
+====
 [source,java]
 ----
 
@@ -960,14 +960,14 @@ List result = react.of("data1","data1","data2","data2")
 #### Currying
 
 Currying involves creating a ‘chain’ of functions, were arguments are evaluated
-one-by-one, where each apply call results in either another single 
-argument function or the final result. This contrasts with partial 
+one-by-one, where each apply call results in either another single
+argument function or the final result. This contrasts with partial
 application (above) which may produce a single function that accepts
-multiple parameters. Curried functions always only accept one parameter 
+multiple parameters. Curried functions always only accept one parameter
 at a time.
 
 .Currying a String concatanation function
-==== 
+====
 
 Given a method or function that performs String concatanation over 3 Strings
 
@@ -1000,7 +1000,7 @@ Which is very verbose. We can simplify this using Lombok's type inferencing val 
 val curried =  Curry.curry3( concat);
 ----
 
-==== 
+====
 In practice, if you are not making use of Lombok, it is cleaner to using Currying in a point free style, that is to Curry a function and pass it is a parameter to another function (that can defined the function chain in a cleaner way with Generics).
 [NOTE]
 ====
@@ -1009,7 +1009,7 @@ In practice, if you are not making use of Lombok, it is cleaner to using Curryin
 In addition at the point of currying one or more parameters may be applied.
 
 .Partially applying parameters
-==== 
+====
 [source,java]
 ----
 
@@ -1017,14 +1017,14 @@ Function<String,Function<String,String>> oneApplied =  Curry.curry3( concat).app
 
 Function<String,String> twoApplied =  Curry.curry3( concat).apply("hello").apply("world");
 ----
-==== 
+====
 
 The syntax for a Curried function looks something like this
 [source,java]
 ----
 (String a) -> (String b) -> (String c) -> b + a + c;
 ----
-Or without types 
+Or without types
 [source,java]
 ----
 a -> b -> c -> b + a + c;
@@ -1039,7 +1039,7 @@ The cyclops-react Lambda class can help with creating curried functions (althoug
 Another place in cyclops-react where Currying shows up, is inside For Comprehensions -- where the Curried syntax is chosen specifically to show nesting levels. E.g.
 
 .Currying to show nesting
-==== 
+====
 image::https://cdn-images-1.medium.com/max/1600/0*7Q3Q4Y_6ZDbkWi8m.[]
 
 
@@ -1051,12 +1051,12 @@ person -> car -> insurance -> { }
 
 TIP: Currying can be very useful in conjunction with cyclops-react for-comprehensions and existing methods, use the appropriate Curry method to create a curried reference to fit the yield or filter opertors!
 
-==== 
+====
 
 cyclops-react can convert any function (with up to 8 inputs) or method reference into a chain of one method functions (Currying). This technique is a useful (and more safe) alternative to Closures. The Curried function can be created and values explicitly passed in rather than captured by the compiler (where-upon they may change).
 
 .Currying method references
-==== 
+====
 ```java
 import static com.aol.cyclops2-react.functions.Curry.*;
 
@@ -1066,30 +1066,30 @@ curry2(this::mult).apply(3).apply(2);
 public Integer mult(Integer a,Integer b){
 	return a*b;
 }
-```	 
-==== 
+```
+====
 .Currying a BiFunction
-==== 
+====
 ```java
 Curry.curry2((Integer i, Integer j) -> "" + (i+j) + "hello").apply(1).apply(2);
 
 //"3hello"
 ```
-==== 
+====
 
 #### Curry Consumer
 
 The CurryConsumer class allows Consumers to also be Curried.
 
 .Currying a consumer
-==== 
+====
 ```java
 CurryConsumer.curry4( (Integer a, Integer b, Integer c,Integer d) -> value = a+b+c+d).apply(2).apply(1).apply(2).accept(3);
 
 //8
-```	
+```
 
-==== 
+====
 
 
 ### Uncurrying
@@ -1108,7 +1108,7 @@ com.aol.cyclops2-react.functions.UncurryConsumer does the same thing for curried
 ```java
 Uncurry.uncurry3((Integer a)->(Integer b)->(Integer c)->a+b+c).apply(1,2,3)
 //6
-```	
+```
 ====
 .Example Uncurrying a function to a function that takes 4 parameters
 ====
@@ -1119,7 +1119,7 @@ Uncurry.uncurry4((Integer a)->(Integer b)->(Integer c)->(Integer d)->a+b+c+d)
 //10
 ```
 ====
-#### Uncurry Consumer 
+#### Uncurry Consumer
 
 
 
@@ -1136,13 +1136,13 @@ assertThat(value,equalTo(5));
 === Partial Application
 
 
-We can also create partially applied functions. These are functions were 
+We can also create partially applied functions. These are functions were
 the some of the input values to a function are provided up front, but
 not all. The PartialApplicator class converts, for example, a function that takes 3 input
 parameters, into a function that takes only 1. E.g.
 .partially applying values to a String concatonation function
 ====
-Given the following function that concatonates three Strings 
+Given the following function that concatonates three Strings
 [source,java]
 ----
 TriFunction<String, String, String, String> concat = (a, b, c) ->

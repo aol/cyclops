@@ -46,6 +46,7 @@ public class OptionTest extends  AbstractValueTest implements Printable {
     @Test
     public void recoverWith(){
 
+
         assertThat(none.recoverWith(()->Option.some(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
         assertThat(eager.recoverWith(()->Option.some(5)).toOptional().get(),equalTo(10));

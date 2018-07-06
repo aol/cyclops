@@ -187,7 +187,7 @@ public interface Folds<T> extends Iterable<T>  {
      */
     default T atPercentile(double percentile){
         List<T> list = stream().collect(Collectors.toList());
-        Long pos = Math.round(((list.size()-1) * (percentile/100)));
+        Long pos = new Double(Math.ceil( (percentile / 100) * list.size())).longValue();
         return list.get(pos.intValue());
     }
 
