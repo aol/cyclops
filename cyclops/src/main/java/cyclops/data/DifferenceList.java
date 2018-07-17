@@ -6,6 +6,7 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
+import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -163,7 +164,7 @@ public final class DifferenceList<T> implements Folds<T>,
 
     @Override
     public DifferenceList<T> replaceFirst(T currentElement, T newElement) {
-        return (DifferenceList<T>)ImmutableList.super.replaceFirst(currentElement,newElement);
+        return of(LazySeq.fromIterable(ImmutableList.super.replaceFirst(currentElement,newElement)));
     }
 
     @Override
@@ -718,5 +719,40 @@ public final class DifferenceList<T> implements Folds<T>,
     @Override
     public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
         return run().fold(fn1,fn2);
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        for (T next : this)
+            hashCode = 31*hashCode + (next==null ? 0 : next.hashCode());
+        return hashCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj==null)
+            return false;
+        if (obj == this)
+            return true;
+        if(obj instanceof PersistentIndexed) {
+            return equalToIteration((Iterable)obj);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString(){
+        StringBuffer b = new StringBuffer("[");
+        Iterator<T> it = iterator();
+        if(it.hasNext()){
+            b.append(it.next());
+        }
+        while(it.hasNext()){
+            b.append(", "+it.next());
+        }
+        b.append("]");
+        return b.toString();
+
     }
 }
