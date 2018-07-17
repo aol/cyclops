@@ -29,7 +29,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
 
     public R apply(T1 a, T2 b);
 
-    default Function2<T1, T2,  Maybe<R>> lift(){
+    default Function2<T1, T2,  Maybe<R>> lazyLift(){
         Function2<T1, T2,  R> host = this;
        return (T1,T2)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(T1,T2))));
     }
@@ -41,7 +41,7 @@ public interface Function2<T1, T2, R> extends BiFunction<T1,T2,R>, To<Function2<
         Function2<T1, T2,  R> host = this;
        return (T1,T2)->  Try.withCatch(()->host.apply(T1,T2),Throwable.class);
     }
-    default Function2<T1, T2, Option<R>> liftOpt(){
+    default Function2<T1, T2, Option<R>> lift(){
         Function2<T1, T2,  R> host = this;
        return (T1,T2)-> Option.ofNullable(host.apply(T1,T2));
     }

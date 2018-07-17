@@ -78,7 +78,7 @@ public interface Function1<T,  R> extends Function<T,R>{
 
 
 
-    default Function1<T,Maybe<R>> lift(){
+    default Function1<T,Maybe<R>> lazyLift(){
        return (T1)-> Maybe.fromLazy(Eval.later(()-> Maybe.ofNullable(apply(T1))));
     }
     default Function1<T, Future<R>> lift(Executor ex){
@@ -87,7 +87,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     default Function1<T, Try<R,Throwable>> liftTry(){
        return (T1)->  Try.withCatch(()->apply(T1),Throwable.class);
     }
-    default Function1<T,   Option<R>> liftOpt(){
+    default Function1<T,   Option<R>> lift(){
        return (T1)-> Option.ofNullable(apply(T1));
     }
 

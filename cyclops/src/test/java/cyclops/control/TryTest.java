@@ -44,6 +44,14 @@ public class TryTest {
            .recover(()->"world");
 	}
 
+	@Test
+    public void exHandler(){
+	    Throwable e = null;
+
+	    Try.failure(e)
+            .onFail(Exception.class,System.out::println)
+            .onFail(RuntimeException.class,System.out::println);
+    }
 
 
 

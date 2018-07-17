@@ -11,7 +11,7 @@ public interface Function4<T1, T2, T3, T4, R> extends Function1<T1,Function1<T2,
 
     public R apply(T1 a, T2 b, T3 c, T4 d);
 
-    default Function4<T1, T2, T3, T4, Maybe<R>> lift4(){
+    default Function4<T1, T2, T3, T4, Maybe<R>> lazyLift4(){
        return (s1,s2,s3,s4)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4))));
     }
     default Function1<T2, Function1<T3, Function1<T4, R>>> apply(final T1 s) {
@@ -50,7 +50,7 @@ public interface Function4<T1, T2, T3, T4, R> extends Function1<T1,Function1<T2,
     default Function4<T1, T2, T3, T4, Try<R,Throwable>> liftTry4(){
        return (s1,s2,s3,s4)->  Try.withCatch(()->apply(s1,s2,s3,s4),Throwable.class);
     }
-    default Function4<T1, T2, T3, T4, Option<R>> liftOpt4(){
+    default Function4<T1, T2, T3, T4, Option<R>> lift4(){
 
        return (s1,s2,s3,s4)-> Option.ofNullable(apply(s1,s2,s3,s4));
     }

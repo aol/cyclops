@@ -31,61 +31,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Totally lazy, reactive  more powerful general Option type. Maybe is maybe like a Java
- * 8 Stream that represents 0 or 1 values rather than eager like a Java 8
- * Optional. transform / peek/ filter and flatMap build the execution chaing, but are
- * not executed until the value inside the Maybe is required.
- *
- * The Maybe interface has two implementations Some which holds a value and None which represents no value
- *
- * <pre>
- * {@code
- *
- *    //eagerly load data
- *    Optional.of(10)
- *            .map(this::load);
- *
- *    //lazily tee up loading of data until needed
- *    Maybe.of(10)
- *         .map(this::load);
- *            .
- *
- * }
- * </pre>
- *
- * Maybe is tail recursive
- *
- * <pre>
- * {@code
- *  @Test
-public void odd() {
-System.out.println(even(Maybe.just(200000)).getValue());
-}
+   Represents a lazy or reactive Option type.
 
-public Maybe<String> odd(Maybe<Integer> n) {
+   Maybe differs from Option in that it
 
-return n.flatMap(x -> even(Maybe.just(x - 1)));
-}
+   <pre>
+   1. Is lazy by default
+   2. Can operate Reactively (that is respond to data that arrives asynchronously)
+   </pre>
 
-public Maybe<String> even(Maybe<Integer> n) {
-return n.flatMap(x -> {
-return x <= 0 ? Maybe.just("done") : odd(Maybe.just(x - 1));
-});
-}
- *
- * }
- * </pre>
- *
- * Maybe is a functor (transform) monad (flatMap) and an applicative (ap)
- *
- * Maybe is reactive via fromPublisher and maybe() methods
- *
- * Maybe is convertable to all cyclops2-react data types.
- *
- *
- * @author johnmcclean
- *
- * @param <T> Data type of element stored in Maybe
+
+   @param <T> Data type of element stored in Maybe
  */
 public interface Maybe<T> extends Option<T> {
 
