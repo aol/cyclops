@@ -1,8 +1,6 @@
 package cyclops.function;
 
 
-import cyclops.data.Ord;
-
 import java.util.Comparator;
 
 public interface Ordering<T> extends Comparator<T> {

@@ -11,7 +11,6 @@ import cyclops.function.Reducer;
 import lombok.experimental.UtilityClass;
 
 import java.util.Comparator;
-import java.util.function.Function;
 
 
 @UtilityClass

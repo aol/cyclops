@@ -1,4 +1,4 @@
-package cyclops.data;
+package cyclops.companion;
 
 
 import java.util.Comparator;

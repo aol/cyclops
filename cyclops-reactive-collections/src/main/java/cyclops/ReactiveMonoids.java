@@ -1,23 +1,10 @@
 package cyclops;
 
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
-import com.oath.cyclops.types.Zippable;
-import com.oath.cyclops.types.persistent.PersistentCollection;
-import cyclops.control.*;
-import cyclops.data.Comparators;
-import cyclops.data.NaturalTransformation;
+import cyclops.companion.Comparators;
 import cyclops.function.Monoid;
-import cyclops.reactive.ReactiveSeq;
-import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.immutable.*;
 import cyclops.reactive.collections.mutable.*;
-import org.reactivestreams.Publisher;
-
-import java.math.BigInteger;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  *

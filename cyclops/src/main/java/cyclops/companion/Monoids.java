@@ -13,6 +13,7 @@ import cyclops.data.HashSet;
 import cyclops.data.TreeSet;
 import cyclops.function.Monoid;
 
+import cyclops.function.NaturalTransformation;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 

@@ -1,10 +1,8 @@
 package cyclops.data;
 
+import cyclops.companion.Comparators;
 import cyclops.data.base.RedBlackTree;
 import org.junit.Test;
-
-import java.util.Comparator;
-import java.util.NoSuchElementException;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,7 +23,7 @@ public class RBTTest {
         }
         return x;
     }
-    
+
     @Test
     public void emptyProperties(){
         assertTrue(empty().isBlack());

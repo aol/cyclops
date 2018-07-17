@@ -1,4 +1,4 @@
-package cyclops.data;
+package cyclops.function;
 
 import com.oath.cyclops.hkt.Higher;
 
