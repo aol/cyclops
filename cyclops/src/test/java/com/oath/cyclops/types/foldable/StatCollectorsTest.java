@@ -1,6 +1,7 @@
 package com.oath.cyclops.types.foldable;
 
 
+import cyclops.control.Option;
 import cyclops.data.Vector;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple;
@@ -26,13 +27,39 @@ public class StatCollectorsTest {
 
 
     @Test
-    public void atPercentile(){
-        assertThat(stats.atPercentile(0),equalTo(0));
-        assertThat(stats.atPercentile(1),equalTo(1));
-        assertThat(stats.atPercentile(5),equalTo(5));
-        assertThat(stats.size(),equalTo(100));
-        assertThat(stats.atPercentile(99),equalTo(99));
+    public void atPercentileEmptyData(){
+        assertThat(ReactiveSeq.empty().atPercentile(4),equalTo(Option.none()));
 
+    }
+    @Test
+    public void atPercentileOutOfRange(){
+        assertThat(stats.atPercentile(-1),equalTo(Option.none()));
+        assertThat(stats.atPercentile(200),equalTo(Option.none()));
+    }
+    @Test
+    public void atPercentile(){
+        assertThat(stats.atPercentile(0),equalTo(Option.some(0)));
+        assertThat(stats.atPercentile(1),equalTo(Option.some(1)));
+        assertThat(stats.atPercentile(5),equalTo(Option.some(5)));
+        assertThat(stats.size(),equalTo(100));
+        assertThat(stats.atPercentile(99),equalTo(Option.some(99)));
+
+    }
+
+    @Test
+    public void atPercentile1000(){
+        assertThat(stats1000.atPercentile(0),equalTo(Option.some(0)));
+        assertThat(stats1000.atPercentile(1),equalTo(Option.some(10)));
+        assertThat(stats1000.atPercentile(5),equalTo(Option.some(50)));
+        assertThat(stats1000.atPercentile(5.5),equalTo(Option.some(55)));
+        assertThat(stats1000.size(),equalTo(1000));
+        assertThat(stats1000.atPercentile(99),equalTo(Option.some(990)));
+
+    }
+
+    @Test
+    public void median(){
+        assertThat(stats1000.median(),equalTo(Option.some(500)));
     }
 
     @Test

@@ -36,7 +36,7 @@ public interface Function6<T1, T2, T3, T4, T5, T6, R> extends Function1<T1, Func
                        .apply(s4)
                        .apply(s5);
     }
-    default Function6<T1, T2, T3, T4, T5, T6, Maybe<R>> lift6() {
+    default Function6<T1, T2, T3, T4, T5, T6, Maybe<R>> lazyLift6() {
         return (s1, s2, s3, s4, s5,s6) ->  Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6))));
     }
     default Function6<T1, T2, T3, T4, T5, T6, Future<R>> lift6(Executor ex) {
@@ -48,7 +48,7 @@ public interface Function6<T1, T2, T3, T4, T5, T6, R> extends Function1<T1, Func
         return (s1, s2, s3, s4, s5,s6) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5,s6), Throwable.class);
     }
 
-    default Function6<T1, T2, T3, T4, T5, T6, Option<R>> liftOpt6() {
+    default Function6<T1, T2, T3, T4, T5, T6, Option<R>> lift6() {
 
         return (s1, s2, s3, s4, s5, s6) -> Option.ofNullable(apply(s1, s2, s3, s4, s5, s6));
     }

@@ -1379,6 +1379,7 @@ public abstract class AbstractIterableXTest {
 
 		assertFalse(empty().to().option().isPresent());
 
+        assertTrue(empty().nonEmptyList(()->10).size()>0);
         assertFalse(empty().seq().size()>0);
         assertFalse(empty().lazySeq().size()>0);
         assertFalse(empty().vector().size()>0);
@@ -1387,6 +1388,12 @@ public abstract class AbstractIterableXTest {
         assertFalse(empty().treeSet((Comparator)Comparator.naturalOrder()).size()>0);
         assertFalse(empty().to().hashMap(t->t,t->t).size()>0);
         assertFalse(empty().to().streamable().size()>0);
+        assertFalse(empty().to().seq().size()>0);
+        assertFalse(empty().to().lazySeq().size()>0);
+        assertFalse(empty().to().vector().size()>0);
+        assertFalse(empty().to().bankersQueue().size()>0);
+        assertFalse(empty().to().hashSet().size()>0);
+        assertFalse(empty().to().treeSet((Comparator)Comparator.naturalOrder()).size()>0);
 
 
         assertFalse(empty().toSet().size()>0);
@@ -1407,8 +1414,16 @@ public abstract class AbstractIterableXTest {
 	    assertTrue(of(1).to().bag().size()>0);
 
     }
+
 	@Test
 	public void presentConvert(){
+
+        assertTrue(of(1).seq().size()>0);
+        assertTrue(of(1).lazySeq().size()>0);
+        assertTrue(of(1).bankersQueue().size()>0);
+        assertTrue(of(1).vector().size()>0);
+        assertTrue(of(1).hashSet().size()>0);
+        assertThat(of(1).nonEmptyList(()->10),equalTo(NonEmptyList.of(1)));
 
         assertTrue(of(1).to().option().isPresent());
         assertTrue(of(1).toList().size()>0);

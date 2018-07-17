@@ -24,7 +24,7 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
   }
 
 
-    default Function3<S1, S2, S3, Maybe<R>> lift3(){
+    default Function3<S1, S2, S3, Maybe<R>> lazyLift3(){
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3))));
     }
@@ -36,7 +36,7 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)->  Try.withCatch(()->host.apply(s1,s2,s3),Throwable.class);
     }
-    default Function3<S1, S2, S3, Option<R>> liftOpt3(){
+    default Function3<S1, S2, S3, Option<R>> lift3(){
         Function3<S1, S2, S3, R> host = this;
        return (s1,s2,s3)-> Option.ofNullable(host.apply(s1,s2,s3));
     }

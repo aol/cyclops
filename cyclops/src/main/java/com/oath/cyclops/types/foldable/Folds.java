@@ -69,6 +69,11 @@ public interface Folds<T> extends Iterable<T>  {
     default Seq<T> seq(){
         return Seq.fromIterable(this);
     }
+    default NonEmptyList<T> nonEmptyList(Supplier<T> s){
+        Iterator<T> it = iterator();
+        return NonEmptyList.cons(it.hasNext() ? it.next() : s.get(), LazySeq.fromIterator(it));
+    }
+
 
     default <K, V> HashMap<K, V> toHashMap(Function<? super T, ? extends K> keyMapper, Function<? super T, ? extends V> valueMapper){
         return HashMap.fromStream(ReactiveSeq.fromIterable(this).map(a->Tuple.tuple(keyMapper.apply(a),valueMapper.apply(a))));
@@ -163,7 +168,7 @@ public interface Folds<T> extends Iterable<T>  {
     default double mean(ToDoubleFunction<T> fn){
         return stream().collect(Collectors.<T>averagingDouble(fn));
     }
-    default T median(){
+    default Option<T> median(){
         return atPercentile(50.0);
     }
 
@@ -184,11 +189,17 @@ public interface Folds<T> extends Iterable<T>  {
     /*
         Value at percentile denoted by a double value between 0 and 100
         Assumes the data is already sorted
+        Returns an Option, Option.none is returned when an invalid percentile or empty dataset is used
      */
-    default T atPercentile(double percentile){
+    default Option<T> atPercentile(double percentile){
         List<T> list = stream().collect(Collectors.toList());
+        if(list.size()==0)
+            return Option.none();
         Long pos = new Double(Math.ceil( (percentile / 100) * list.size())).longValue();
-        return list.get(pos.intValue());
+        if(pos<0 || pos > list.size()){
+            return Option.none();
+        }
+        return Option.some(list.get(pos.intValue()));
     }
 
 

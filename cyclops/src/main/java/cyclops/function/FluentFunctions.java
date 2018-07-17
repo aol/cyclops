@@ -952,13 +952,7 @@ public class FluentFunctions {
             return ReactiveSeq.generate(() -> fn.apply(input));
         }
 
-        /**
-         * @return A Function that accepts and returns an Option
 
-        public FluentFunction<Option<T>, Option<R>> lift() {
-            return new FluentFunction<>(
-                                        opt -> opt.map(t -> fn.applyHKT(t)));
-        }*/
 
         /**
          * @param classes To catch exceptions for

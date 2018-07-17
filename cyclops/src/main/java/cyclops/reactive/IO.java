@@ -36,24 +36,6 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
 
-
-
-
-
-
-    @Override
-    default <R> IO<R> retry(Function<? super T, ? extends R> fn) {
-        return (IO<R>)ReactiveTransformable.super.retry(fn);
-    }
-
-    @Override
-    default <R> IO<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
-        return (IO<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
-    }
-
-
-
-
     public static <T> IO<T> of(Supplier<? extends T> s) {
         return ReactiveSeqIO.of(s);
     }
@@ -81,6 +63,17 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     <R> IO<R> map(Function<? super T, ? extends R> s);
 
     <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s);
+
+    @Override
+    default <R> IO<R> retry(Function<? super T, ? extends R> fn) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn);
+    }
+
+    @Override
+    default <R> IO<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
+        return (IO<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
+    }
+
 
     default <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
         Managed<R> m = Managed.of(map(fn));
