@@ -4,6 +4,7 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentSet;
 import com.oath.cyclops.hkt.Higher;
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
 import com.oath.cyclops.hkt.DataWitness.treeSet;
 import cyclops.data.base.RedBlackTree;

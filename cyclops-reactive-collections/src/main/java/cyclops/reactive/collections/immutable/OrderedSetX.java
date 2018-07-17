@@ -5,7 +5,7 @@ import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import cyclops.ReactiveReducers;
-import cyclops.data.Comparators;
+import cyclops.companion.Comparators;
 import cyclops.data.Seq;
 import cyclops.data.TreeSet;
 import com.oath.cyclops.data.collections.extensions.lazy.immutable.LazyPOrderedSetX;

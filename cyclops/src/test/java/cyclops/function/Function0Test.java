@@ -1,9 +1,12 @@
 package cyclops.function;
 
+import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.Try;
 import org.junit.Test;
+
+import java.util.concurrent.ForkJoinPool;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
@@ -20,6 +23,11 @@ public class Function0Test {
     public void lift(){
         assertThat(some.lift().get(),equalTo(Option.some(10)));
         assertThat(none.lift().get(),equalTo(Option.none()));
+    }
+    @Test
+    public void liftEx(){
+        assertThat(some.lift(ForkJoinPool.commonPool()).get().orElse(-1),equalTo(Future.ofResult(10).orElse(-1)));
+        assertThat(none.lift(ForkJoinPool.commonPool()).get().orElse(-1),equalTo(null));
     }
     @Test
     public void liftTry(){

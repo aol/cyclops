@@ -1,10 +1,11 @@
 package cyclops.data;
 
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.EnumerationTest.Days;
-import cyclops.data.Ord;
+import cyclops.function.Ord;
 import org.junit.Test;
 
 import static cyclops.data.Enumeration.enums;
@@ -37,7 +38,7 @@ public class RangeTest {
 
     @Test
     public void map() throws Exception {
-        Range<Days> r  = five.map(d->Days.values()[d],days.enumeration(),Comparators.naturalOrderIdentityComparator());
+        Range<Days> r  = five.map(d->Days.values()[d],days.enumeration(), Comparators.naturalOrderIdentityComparator());
         assertThat(r.start,equalTo(Days.Tuesday));
         assertThat(r.end,equalTo(Days.Saturday));
     }

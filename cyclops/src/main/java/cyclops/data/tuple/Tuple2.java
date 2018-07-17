@@ -8,7 +8,7 @@ import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
 import cyclops.control.Either;
-import cyclops.data.Comparators;
+import cyclops.companion.Comparators;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import lombok.AllArgsConstructor;

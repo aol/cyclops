@@ -2,7 +2,7 @@ package cyclops.typeclasses;
 
 import cyclops.control.Maybe;
 import cyclops.control.Option;
-import cyclops.data.Eq;
+import cyclops.function.Eq;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
