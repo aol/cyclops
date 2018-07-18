@@ -16,6 +16,7 @@ import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
+import cyclops.function.Memoize;
 import cyclops.function.Monoid;
 import cyclops.reactive.Generator;
 import cyclops.reactive.ReactiveSeq;
@@ -144,6 +145,10 @@ public final class DifferenceList<T> implements Folds<T>,
     }
     public DifferenceList<T> prepend(T prepend) {
         return of(run().lazySeq().prepend(prepend));
+    }
+
+    public DifferenceList<T> memoize(){
+        return new DifferenceList<>(Memoize.memoizeFunction(this.appending));
     }
 
     @Override

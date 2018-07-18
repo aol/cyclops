@@ -986,6 +986,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
 
 
+
         public <R> R lazyFoldRight(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f){
 
 
@@ -1027,7 +1028,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
       @Override
       public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
-            return lazyFoldRight(LazySeq.empty(),(a, b)->LazySeq.cons(fn.apply(a),b));
+          return cons(fn.apply(head()),()->tail.get().map(fn));
       }
 
       @Override

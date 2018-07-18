@@ -35,13 +35,6 @@ public class LazySeqAnyMTest extends AbstractAnyMSeqOrderedDependentTest<lazySeq
     @Test  @Ignore //only works for lazy data types
     public void testRecover2(){
     }
-    @Test
-    public void testScanRightSumMonoid() {
-      assertThat(of("a", "ab", "abc").peek(System.out::println)
-        .map(str -> str.length())
-        .peek(System.out::println)
-        .scanRight(Reducers.toTotalInt()).toList(), is(asList(6,5,3,0)));
 
-    }
 }
 

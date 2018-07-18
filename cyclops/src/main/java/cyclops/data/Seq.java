@@ -819,6 +819,7 @@ public interface Seq<T> extends ImmutableList<T>,
           }
           return res.reverse();
         }
+
         @Override
         public Seq<T> tail() {
             return tail;

@@ -897,6 +897,11 @@ public abstract class AbstractIterableXTest {
 										.peek(System.out::println)
 										.scanRight(Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
 
+            assertThat(of("a", "ab", "abc").peek(System.out::println)
+                .map(str -> str.length())
+                .peek(System.out::println)
+                .scanRight(Reducers.toTotalInt().zero(),Reducers.toTotalInt()).toList(), is(asList(0, 3, 5, 6)));
+
 		}
 
 /**

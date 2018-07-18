@@ -8,6 +8,7 @@ import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
+import javaslang.collection.List;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -163,14 +164,6 @@ public class LazySeqTest extends BaseImmutableListTest {
         fromStream(ReactiveSeq.range(0,15_000).intersperse(0)).split(i->i==0).printOut();
     }
 
-    @Test
-    public void testScanRightSumMonoid() {
-        assertThat(of("a", "ab", "abc").peek(System.out::println)
-                .map(str -> str.length())
-                .peek(System.out::println)
-                .scanRight(Reducers.toTotalInt()).toList(), is(asList(6,5,3,0)));
-
-    }
 
     @Test
     public void iterableTo(){
@@ -267,6 +260,7 @@ public class LazySeqTest extends BaseImmutableListTest {
     int called = 0;
     @Test
     public void scanRightLazy(){
+
         called=0;
         LazySeq.of(1,2,3)
                 .peek(a->{

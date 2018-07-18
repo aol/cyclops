@@ -19,6 +19,22 @@ import static org.junit.Assert.assertThat;
  */
 public class DifferenceListTest extends BaseImmutableListTest {
 
+    int count;
+    @Test
+    public void memoize(){
+        count =0;
+        DifferenceList<Integer> list  = DifferenceList.of(LazySeq.range(1,10)).map(i->count++);
+        System.out.println(list.size());
+        assertThat(count,equalTo(9));
+        System.out.println(list.size());
+        assertThat(count,equalTo(18));
+        list = list.memoize();
+        System.out.println(list.size());
+        assertThat(count,equalTo(27));
+        System.out.println(list.size());
+        assertThat(count,equalTo(27));
+
+    }
     @Test
     public void append(){
         assertThat(DifferenceList.of(1,2,3).append(DifferenceList.of(4,5,6)).run(),equalTo(LazySeq.of(1,2,3,4,5,6)));
