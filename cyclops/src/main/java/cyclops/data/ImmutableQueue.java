@@ -118,6 +118,18 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return fold(c->Seq.cons(c.head(),c.tail().imSeq()), nil->Seq.empty());
     }
 
+    default Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> partition(final Predicate<? super T> splitter) {
+
+        return Tuple.tuple(filter(splitter), filter(splitter.negate()));
+
+    }
+    default Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> span(Predicate<? super T> pred) {
+        return Tuple.tuple(takeWhile(pred), dropWhile(pred));
+    }
+
+    default Tuple2<ImmutableQueue<T>,ImmutableQueue<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
 
 
     default Tuple2<ImmutableQueue<T>, ImmutableQueue<T>> splitAt(int n) {

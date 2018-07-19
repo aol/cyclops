@@ -18,6 +18,7 @@ import cyclops.control.Future;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -41,6 +42,8 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * An eXtended Persistent Ordered Set type, that offers additional functional style operators such as bimap, filter and more
@@ -274,6 +277,22 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     @Override
     default OrderedSetX<T> materialize() {
         return (OrderedSetX<T>)LazyCollectionX.super.materialize();
+    }
+
+    default Tuple2<OrderedSetX<T>, OrderedSetX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<OrderedSetX<T>, OrderedSetX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
+
+    default Tuple2<OrderedSetX<T>,OrderedSetX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<OrderedSetX<T>, OrderedSetX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
     }
 
     @Override
