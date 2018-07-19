@@ -257,6 +257,11 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
     @Override
     ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier);
+    default Tuple2<ImmutableList<T>, ImmutableList<T>> partition(final Predicate<? super T> splitter) {
+
+        return Tuple.tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     default Tuple2<ImmutableList<T>, ImmutableList<T>> span(Predicate<? super T> pred) {
         return Tuple.tuple(takeWhile(pred), dropWhile(pred));
     }

@@ -4,6 +4,7 @@ import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Maybe;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.collections.CollectionXTestsWithNulls;
 import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.Evaluation;
@@ -25,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -40,6 +42,51 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertEquals(of("a", "b", "x"), ListX.of("a", "b", "c").updateAt(2, "x"));
     }
 
+    @Test
+    public void span(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).span(i->i<3),equalTo(Tuple.tuple(of(1,2),of(3,4,1,2,3,4))));
+        assertThat(of(1,2,3).span(i->i<9),equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).span(i->i<0),equalTo(Tuple.tuple(of(),of(1,2,3))));
+    }
+
+    @Test
+    public void splitBy(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).splitBy(i->i>3),equalTo(Tuple.tuple(of(1,2,3),of(4,1,2,3,4))));
+        assertThat(of(1,2,3).splitBy(i->i<9),equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitBy(i->i<0),equalTo(Tuple.tuple(of(1,2,3),of())));
+    }
+
+    @Test
+    public void splitAtTest(){
+        assertThat(of(1,2,3).splitAt(4) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(3) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(2) ,equalTo(Tuple.tuple(of(1,2),of(3))));
+        assertThat(of(1,2,3).splitAt(1) ,equalTo(Tuple.tuple(of(1),of(2,3))));
+        assertThat(of(1,2,3).splitAt(0) ,equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitAt(-1) ,equalTo(Tuple.tuple(of(),of(1,2,3))));
+    }
+
+    @Test
+    public void testPartition() {
+
+
+        assertEquals(asList(1, 3, 5), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)._1().toList());
+        assertEquals(asList(2, 4, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)._2().toList());
+
+        assertEquals(asList(2, 4, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 == 0)._1().toList());
+        assertEquals(asList(1, 3, 5), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 == 0)._2().toList());
+
+        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5, 6).partition(i -> i <= 3)._1().toList());
+        assertEquals(asList(4, 5, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i <= 3)._2().toList());
+
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).partition(i -> true)._1().toList());
+        assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
+
+        assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
+    }
     @Test
     public void maybe() {
         Maybe<ListX<Integer>> m = Maybe.just(ListX.of(1, 2, 3));
@@ -146,7 +193,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Override
-    public <T> FluentCollectionX<T> of(T... values) {
+    public <T> ListX<T> of(T... values) {
         return ListX.of(values);
     }
 

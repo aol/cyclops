@@ -16,6 +16,7 @@ import cyclops.data.Vector;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -35,6 +36,8 @@ import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static cyclops.data.tuple.Tuple.tuple;
+
 /**
  * An eXtended Queue type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -53,7 +56,21 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
               .map(Supplier::get)
               .concatMap(l->l);
     }
+    default Tuple2<QueueX<T>, QueueX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<QueueX<T>, QueueX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
 
+    default Tuple2<QueueX<T>,QueueX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<QueueX<T>, QueueX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     static <T> CompletableQueueX<T> completable(){
         return new CompletableQueueX<>();
     }

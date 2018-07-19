@@ -6,6 +6,7 @@ import com.oath.cyclops.types.persistent.PersistentSortedSet;
 import com.oath.cyclops.types.traversable.IterableX;
 import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -24,6 +25,9 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
 
 
 
+    default Tuple2<ImmutableSortedSet<T>, ImmutableSortedSet<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
     @Override
     default ReactiveSeq<T> stream() {
         return ImmutableSet.super.stream();
@@ -42,6 +46,23 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
         }
         return set;
     }
+
+    default Tuple2<ImmutableSortedSet<T>, ImmutableSortedSet<T>> partition(final Predicate<? super T> splitter) {
+
+        return Tuple.tuple(filter(splitter), filter(splitter.negate()));
+
+    }
+    default Tuple2<ImmutableSortedSet<T>, ImmutableSortedSet<T>> span(Predicate<? super T> pred) {
+        return Tuple.tuple(takeWhile(pred), dropWhile(pred));
+    }
+
+    default Tuple2<ImmutableSortedSet<T>,ImmutableSortedSet<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+
+
+
+
 
     @Override
     default ImmutableSortedSet<T> removeAll(Iterable<? extends T> list){
