@@ -23,6 +23,8 @@ public class AsyncForEachSequenceMTest {
 	public void setup(){
 		error= null;
 		complete =false;
+		times = new AtomicInteger(0);
+        errors = new AtomicInteger(0);
 	}
     AtomicInteger times = new AtomicInteger(0);
 	@Test
@@ -46,21 +48,29 @@ public class AsyncForEachSequenceMTest {
 		});
         return ObservableReactiveSeq.reactiveSeq(Observables.observableFrom(seq));
 	}
+	AtomicInteger errors = new AtomicInteger(0);
 	@Test
 	public void onComplete(){
 
-        of(1, 2, 3, 4, 5, 6, 7, 8, 9)
-                    .map(this::load)
-                    .forEach(System.out::println,
-                aEx ->{System.err.println(aEx + ":" + aEx.getMessage());
-	                times.incrementAndGet();}, () -> {
-                    times.incrementAndGet();
-                    System.out.println("Over");
-                });
-        while(times.get()==0){
-            LockSupport.parkNanos(0l);
+	    for(int i=0;i<10000;i++)
+        {
+            times = new AtomicInteger(0);
+            errors = new AtomicInteger(0);
+            of(1, 2, 3, 4, 5, 6, 7, 8, 9)
+                .map(this::load)
+                .forEach(System.out::println,
+                    aEx -> {
+                        System.err.println(aEx + ":" + aEx.getMessage());
+                        errors.incrementAndGet();
+                    }, () -> {
+                        times.incrementAndGet();
+                        System.out.println("Over");
+                    });
+            while (times.get() == 0) {
+                LockSupport.parkNanos(0l);
+            }
+            assertThat("Errors " + errors.get(), times.get(), equalTo(1));
         }
-        assertThat(times.get(),equalTo(1));
 	}
 	@Test
     public void onCompleteXEvents(){

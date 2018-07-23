@@ -10,7 +10,7 @@ import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.control.Either;
 import cyclops.control.Option;
-import cyclops.data.Comparators;
+import cyclops.companion.Comparators;
 import cyclops.function.Memoize;
 import lombok.AllArgsConstructor;
 

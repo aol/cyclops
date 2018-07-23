@@ -9,7 +9,7 @@ import com.oath.cyclops.hkt.DataWitness.free;
 import com.oath.cyclops.hkt.DataWitness.freeAp;
 import cyclops.instances.free.FreeApInstances;
 import cyclops.instances.free.FreeInstances;
-import cyclops.data.NaturalTransformation;
+import cyclops.function.NaturalTransformation;
 import cyclops.typeclasses.monad.Applicative;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

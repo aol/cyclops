@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -245,7 +244,7 @@ public class FluentFunctionTest {
 	public void testLift(){
 		Integer nullValue = null;
 		FluentFunctions.of(this::addOne)
-						.lift()
+						.lazyLift()
 						.apply(1);
 	}
 

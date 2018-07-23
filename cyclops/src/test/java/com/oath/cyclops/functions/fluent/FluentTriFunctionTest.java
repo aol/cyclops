@@ -8,7 +8,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -213,7 +212,7 @@ public class FluentTriFunctionTest {
     public void testLift() {
         Integer nullValue = null;
         assertThat(FluentFunctions.of(this::add)
-                                  .liftOpt3()
+                                  .lift3()
                                   .apply(2, 1, 3),
                    equalTo(Option.some(6)));
     }

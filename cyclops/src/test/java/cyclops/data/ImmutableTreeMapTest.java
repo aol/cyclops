@@ -1,5 +1,6 @@
 package cyclops.data;
 
+import cyclops.companion.Comparators;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableMapTest;

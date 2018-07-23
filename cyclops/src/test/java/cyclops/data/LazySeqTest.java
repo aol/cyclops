@@ -3,10 +3,12 @@ package cyclops.data;
 
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
+import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
+import javaslang.collection.List;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +25,9 @@ import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyInt;
 
 public class LazySeqTest extends BaseImmutableListTest {
@@ -160,23 +164,40 @@ public class LazySeqTest extends BaseImmutableListTest {
         fromStream(ReactiveSeq.range(0,15_000).intersperse(0)).split(i->i==0).printOut();
     }
 
-    @Test
-    public void testScanRightSumMonoid() {
-        assertThat(of("a", "ab", "abc").peek(System.out::println)
-                .map(str -> str.length())
-                .peek(System.out::println)
-                .scanRight(Reducers.toTotalInt()).toList(), is(asList(6,5,3,0)));
 
+    @Test
+    public void iterableTo(){
+
+        assertThat(LazySeq.of(1,2,3)
+               .iterableTo(ReactiveSeq::fromIterable).toList(),equalTo(ReactiveSeq.of(1,2,3).toList()));
+    }
+
+    @Test
+    public void inifiniteFoldRight(){
+
+        assertTrue(LazySeq.generate(()->true).lazyFoldRight(false,(a, b)->a ? true : b.get()));
+
+    }
+
+    @Test
+    public void stackBusterFoldr(){
+        assertThat(LazySeq.range(0,100_000).lazyFoldRight(0,(a, b)->a+b.get()),equalTo(704982704));
+    }
+    @Test
+    public void simpleFoldLeft(){
+
+        assertThat(LazySeq.of(1,2,3).foldLeft(0,(a,b)->a+b),equalTo(6));
+    }
+    @Test
+    public void simpleFoldRight(){
+        assertThat(LazySeq.of(1,2,3).foldRight(0,(a,b)->a+b),equalTo(6));
+    }
+    @Test
+    public void stackBuster(){
+        assertThat(LazySeq.range(0,100_000).foldRight(0,(a,b)->a+b),equalTo(704982704));
     }
     @Test
     public void retainAllStream(){
-        /**
-        System.out.println(of(1,2,3,4,5));
-        System.out.println(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)));
-
-        System.out.println(ReactiveSeq.fromIterator(of(1,2,3,4,5).retainAllS(Stream.of(1,2,3)).iterator()).toListX());
-         **/
-      //  assertThat(Arrays.asList(1,2,3),hasItems(1,2,3));
 
         ImmutableList<Integer> l = of(1, 2, 3, 4, 5).retainStream(Stream.of(1, 2, 3));
         for(Integer n : l)
@@ -234,6 +255,20 @@ public class LazySeqTest extends BaseImmutableListTest {
     @Test
     public void scanRight(){
         LazySeq.of(1,2,3).scanRight(0,(a, b)->a+b).printOut();
+    }
+
+    int called = 0;
+    @Test
+    public void scanRightLazy(){
+
+        called=0;
+        LazySeq.of(1,2,3)
+                .peek(a->{
+                    called++;
+                    System.out.println(a);
+                })
+                .scanRight(0,(a, b)->a+b);
+        assertThat(called,equalTo(1));
     }
 
 

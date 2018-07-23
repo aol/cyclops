@@ -6,7 +6,7 @@ import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.foldable.EqualTo;
 import com.oath.cyclops.types.foldable.OrderedBy;
 import com.oath.cyclops.types.foldable.To;
-import cyclops.data.Comparators;
+import cyclops.companion.Comparators;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.Monoid;

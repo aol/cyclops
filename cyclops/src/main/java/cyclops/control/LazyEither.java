@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
 import java.util.function.*;
 
 /**
- * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. Either can operate reactively (i.e. suppports data arriving asynchronsouly
+ * A totally Lazy Either implementation with tail call optimization for transform and flatMap operators. LazyEither can operate reactively (i.e. suppports data arriving asynchronsouly
  the monadic chain of computations will only be executed once data arrives).
  *
  * 'Right' (or right type) biased disjunct union.
@@ -38,7 +38,7 @@ import java.util.function.*;
  *  {@code
  *
  *     public class Member{
- *           Either<SeniorTeam,JuniorTeam> team;
+ *           LazyEither<SeniorTeam,JuniorTeam> team;
  *     }
  *
  *     Rather than
@@ -57,10 +57,10 @@ import java.util.function.*;
  *  Left : Most methods do nothing to the left type if it is present.
  *              To operate on the Left type first call swap() or use left analogs of the main operators.
  *
- *  Instantiating an Either - Right
+ *  Instantiating a LazyEither - Right
  *  <pre>
  *  {@code
- *      Either.right("hello").map(v->v+" world")
+ *      LazyEither.right("hello").map(v->v+" world")
  *    //LazyEither.right["hello world"]
  *  }
  *  </pre>
@@ -73,7 +73,7 @@ import java.util.function.*;
  *  }
  *  </pre>
  *
- *  Either can operate (via transform/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
+ *  LazyEither can operate (via transform/flatMap) as a Functor / Monad and via combine as an ApplicativeFunctor
  *
  *   Values can be accumulated via
  *  <pre>

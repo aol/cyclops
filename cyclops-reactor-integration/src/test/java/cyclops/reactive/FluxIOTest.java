@@ -69,6 +69,16 @@ public class FluxIOTest {
         assertTrue(closed);
     }
     @Test
+    public void bracketThenMap2(){
+        assertFalse(closed);
+        FluxIO.of(()->10)
+            .bracket(i-> new MyCloseable())
+            .map(x->100)
+            .run();
+
+        assertTrue(closed);
+    }
+    @Test
     public void async(){
         assertThat(FluxIO.fromPublisher(Future.of(()->10, ex))
             .map(i->i+1)

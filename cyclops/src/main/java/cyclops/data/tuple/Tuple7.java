@@ -2,8 +2,7 @@ package cyclops.data.tuple;
 
 
 import com.oath.cyclops.types.foldable.To;
-import cyclops.data.Comparators;
-import cyclops.function.Function6;
+import cyclops.companion.Comparators;
 import cyclops.function.Function7;
 import cyclops.function.Memoize;
 import lombok.AccessLevel;

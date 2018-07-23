@@ -77,7 +77,7 @@ public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, 
         return (t1,t2,t3,t4,t5,t6,t7)-> after.apply(apply(t1,t2,t3,t4,t5,t6,t7));
     }
 
-    default Function7<T1, T2, T3, T4, T5, T6, T7, Maybe<R>> lift7() {
+    default Function7<T1, T2, T3, T4, T5, T6, T7, Maybe<R>> lazyLift7() {
         return (s1, s2, s3, s4, s5,s6,s7) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5,s6,s7))));
     }
     default Function7<T1, T2, T3, T4, T5, T6, T7,Future<R>> lift7(Executor ex) {
@@ -89,7 +89,7 @@ public interface Function7<T1, T2, T3, T4, T5, T6, T7, R> extends Function1<T1, 
         return (s1, s2, s3, s4, s5,s6,s7) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5,s6,s7), Throwable.class);
     }
 
-    default Function7<T1, T2, T3, T4, T5, T6, T7, Option<R>> liftOpt7() {
+    default Function7<T1, T2, T3, T4, T5, T6, T7, Option<R>> lift7() {
 
         return (s1, s2, s3, s4, s5, s6,s7) -> Option.ofNullable(apply(s1, s2, s3, s4, s5, s6,s7));
     }

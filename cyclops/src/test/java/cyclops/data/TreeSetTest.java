@@ -1,6 +1,6 @@
 package cyclops.data;
 
-import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.companion.Comparators;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 public class TreeSetTest extends BaseImmutableSortedSetTest{
     @Override
     protected <T> ImmutableSortedSet<T> fromStream(Stream<T> s) {
-        return TreeSet.fromStream(s,Comparators.naturalOrderIdentityComparator());
+        return TreeSet.fromStream(s, Comparators.naturalOrderIdentityComparator());
     }
 
     @Override

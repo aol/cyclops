@@ -3,6 +3,7 @@ package cyclops.data;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.companion.Reducers;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -17,8 +18,10 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 public class SeqTest extends BaseImmutableListTest {
     @Override
@@ -75,6 +78,8 @@ public class SeqTest extends BaseImmutableListTest {
 
 
     }
+   
+
 
 
 }

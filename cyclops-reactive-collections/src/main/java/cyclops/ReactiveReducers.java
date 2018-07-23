@@ -2,15 +2,12 @@ package cyclops;
 
 
 import com.oath.cyclops.types.persistent.*;
-import cyclops.companion.Monoids;
+import cyclops.companion.Comparators;
 import cyclops.data.*;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.reactive.collections.immutable.*;
 import lombok.experimental.UtilityClass;
-
-import java.util.Comparator;
 
 /**
  * Class that holds Reducers, Monoids with a type conversion for reducing a dataset to a single value.

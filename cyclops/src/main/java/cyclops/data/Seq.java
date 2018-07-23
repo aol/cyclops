@@ -48,16 +48,16 @@ public interface Seq<T> extends ImmutableList<T>,
         return Collectors.<T, List<T>, Iterable<T>,Seq<T>>collectingAndThen((Collector)c,Seq::fromIterable);
     }
     default T headOrElse(T head){
-        return visit(s->s.head(),nil->head);
+        return foldSeq(s->s.head(), nil->head);
     }
     default T headOrElseGet(Supplier<? extends T> head){
-        return visit(s->s.head(),nil->head.get());
+        return foldSeq(s->s.head(), nil->head.get());
     }
     default Seq<T> tailOrElse(Seq<T> tail){
-        return visit(s->s.tail(),nil->tail);
+        return foldSeq(s->s.tail(), nil->tail);
     }
     default Seq<T> tailOrElseGet(Supplier<? extends Seq<T>> tail){
-        return visit(s->s.tail(),nil->tail.get());
+        return foldSeq(s->s.tail(), nil->tail.get());
     }
 
     @Override
@@ -220,12 +220,12 @@ public interface Seq<T> extends ImmutableList<T>,
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
-           l = l.visit(c->c.tail,n->n);
+           l = l.foldSeq(c->c.tail, n->n);
            if(l instanceof Nil){ //short circuit
                return Option.none();
            }
         }
-        return Option.ofNullable(l.visit(c->c.head, n->null));
+        return Option.ofNullable(l.foldSeq(c->c.head, n->null));
     }
     default T getOrElse(int pos, T alt){
         if(pos<0)
@@ -233,13 +233,13 @@ public interface Seq<T> extends ImmutableList<T>,
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
-            l = l.visit(c->c.tail,n->n);
+            l = l.foldSeq(c->c.tail, n->n);
             if(l instanceof Seq.Nil){ //short circuit
                 return alt;
             }
 
         }
-        return l.visit(c->c.head,n->alt);
+        return l.foldSeq(c->c.head, n->alt);
     }
     default T getOrElseGet(int pos, Supplier<? extends T> alt){
         if(pos<0)
@@ -247,12 +247,12 @@ public interface Seq<T> extends ImmutableList<T>,
         T result = null;
         Seq<T> l = this;
         for(int i=0;i<pos;i++){
-            l = l.visit(c->c.tail,n->n);
+            l = l.foldSeq(c->c.tail, n->n);
             if(l instanceof Seq.Nil){ //short circuit
                 return alt.get();
             }
         }
-        return l.visit(c->c.head,n->alt.get());
+        return l.foldSeq(c->c.head, n->alt.get());
     }
     default Seq<T> append(T value){
         return Seq.of(value).prependAll(this);
@@ -272,7 +272,7 @@ public interface Seq<T> extends ImmutableList<T>,
         if( num <= 0)
            return Nil.Instance;
         if(num<1000) {
-            return this.visit(cons -> cons(cons.head, cons.take(num - 1)), nil -> nil);
+            return this.foldSeq(cons -> cons(cons.head, cons.take(num - 1)), nil -> nil);
         }
         return fromStream(ReactiveSeq.fromIterable(this).take(num));
 
@@ -281,7 +281,7 @@ public interface Seq<T> extends ImmutableList<T>,
         Seq<T> current = this;
         long pos = num;
         while (pos-- > 0 && !current.isEmpty()) {
-            current = current.visit(c->c.tail,nil->nil);
+            current = current.foldSeq(c->c.tail, nil->nil);
         }
         return current;
     }
@@ -304,7 +304,7 @@ public interface Seq<T> extends ImmutableList<T>,
 
             @Override
             public T next() {
-                return current.visit(c->{
+                return current.foldSeq(c->{
                     current = c.tail;
                     return c.head;
                 },n->null);
@@ -700,7 +700,9 @@ public interface Seq<T> extends ImmutableList<T>,
     default  T foldLeft(Monoid<T> m){
         return foldLeft(m.zero(),(T a,T b)->m.apply(a,b));
     }
-    <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f);
+    default <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f){
+      return (R) ImmutableList.super.foldRight(zero,f);
+    }
 
     default <R> R foldLeft(R zero, BiFunction<R, ? super T, R> f){
         R acc= zero;
@@ -738,7 +740,7 @@ public interface Seq<T> extends ImmutableList<T>,
     boolean isEmpty();
 
 
-    <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2);
+    <R> R foldSeq(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2);
 
     static <T> Seq<T> cons(T head, Seq<T> tail) {
         return Cons.cons(head,tail);
@@ -808,28 +810,7 @@ public interface Seq<T> extends ImmutableList<T>,
             return false;
         }
 
-        @Override
-        public T foldRight(T identity, BinaryOperator<T> accumulator) {
-            class Step{
-                public Trampoline<T> loop(Seq<T> s, Function<? super T, ? extends Trampoline<T>> fn){
 
-                    return s.visit(c-> Trampoline.more(()->loop(c.tail, rem -> Trampoline.more(() -> fn.apply(accumulator.apply(c.head, rem))))), n->fn.apply(identity));
-
-                }
-            }
-            return new Step().loop(this,i-> Trampoline.done(i)).result();
-        }
-
-        public <R> R foldRight(R zero, BiFunction<? super T, ? super R, ? extends R> f) {
-            class Step{
-                public Trampoline<R> loop(Seq<T> s, Function<? super R, ? extends Trampoline<R>> fn){
-
-                    return s.visit(c-> Trampoline.more(()->loop(c.tail, rem -> Trampoline.more(() -> fn.apply(f.apply(c.head, rem))))), n->fn.apply(zero));
-
-                }
-            }
-            return new Step().loop(this,i-> Trampoline.done(i)).result();
-        }
         @Override
         public <R> Seq<R> map(Function<? super T, ? extends R> fn) {
           Seq<R> res = empty();
@@ -838,6 +819,7 @@ public interface Seq<T> extends ImmutableList<T>,
           }
           return res.reverse();
         }
+
         @Override
         public Seq<T> tail() {
             return tail;
@@ -952,7 +934,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
-        public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+        public <R> R foldSeq(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
             return fn1.apply(this);
         }
 
@@ -1049,7 +1031,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
-        public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+        public <R> R foldSeq(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
             return fn2.apply(this);
         }
 

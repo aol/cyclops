@@ -15,6 +15,7 @@ import com.oath.cyclops.matching.SealedOr;
 import cyclops.control.*;
 import cyclops.control.LazyEither;
 import cyclops.control.Maybe;
+import cyclops.data.NonEmptyList;
 import cyclops.function.Function0;
 import cyclops.function.Monoid;
 import cyclops.reactive.Spouts;
@@ -35,6 +36,12 @@ import com.oath.cyclops.types.reactive.ValueSubscriber;
 @FunctionalInterface
 public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
 
+    default NonEmptyList<T> nonEmptyList(T alt){
+        return NonEmptyList.of(fold(s->s,()->alt));
+    }
+    default NonEmptyList<T> nonEmptyListGet(Supplier<T> alt){
+        return NonEmptyList.of(orElseGet(alt));
+    }
 
     default  Function0<T> asSupplier(T alt){
         return ()-> orElse(alt);
