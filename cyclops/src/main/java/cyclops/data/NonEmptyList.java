@@ -117,7 +117,7 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
 
     @Override
     public ImmutableList<T> take(long num) {
-        if(num==0){
+        if(num<=0){
             return LazySeq.empty();
         }
         return cons(head,tail.take(num-1));

@@ -1,12 +1,12 @@
 package cyclops.data;
 
-import com.oath.cyclops.hkt.DataWitness.nonEmptyList;
-import com.oath.cyclops.hkt.Higher;
+
+
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
-import io.kindedj.Hk;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,6 +41,19 @@ public class NonEmptyListTest extends BaseImmutableListTest {
             return NonEmptyList.of(values[0]);
 
         return NonEmptyList.of(values[0], Arrays.copyOfRange(values,1,values.length));
+    }
+    @Test
+    public void takeMinusOne(){
+        System.out.println(of(1,2,3).take(-1));
+    }
+    @Test
+    public void splitAtTest(){
+        assertThat(of(1,2,3).splitAt(4) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(3) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(2) ,equalTo(Tuple.tuple(of(1,2),of(3))));
+        assertThat(of(1,2,3).splitAt(1) ,equalTo(Tuple.tuple(of(1),of(2,3))));
+        assertThat(of(1,2,3).splitAt(0) ,equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitAt(-1) ,equalTo(Tuple.tuple(Seq.empty(),of(1,2,3))));
     }
 
     @Override
