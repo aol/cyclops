@@ -56,6 +56,15 @@ public class ReactiveSeqTest {
     Throwable err;
 
     @Test
+    public void dropRightValues(){
+        assertThat(of(1,2,3).dropRight(-1).seq(),equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(0).seq(),equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(1).seq(),equalTo(of(1,2).seq()));
+        assertThat(of(1,2,3).dropRight(2).seq(),equalTo(of(1).seq()));
+        assertThat(of(1,2,3).dropRight(3).seq(),equalTo(of().seq()));
+        assertThat(of(1,2,3).dropRight(4).seq(),equalTo(of().seq()));
+    }
+    @Test
     public void generateReplay(){
         ReactiveSeq<String> s =  ReactiveSeq.generate(()->"hello").take(1);
         assertThat(s.toList().size(),equalTo(1));
