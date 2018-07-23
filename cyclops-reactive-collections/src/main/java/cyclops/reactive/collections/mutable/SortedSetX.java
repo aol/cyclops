@@ -14,6 +14,7 @@ import cyclops.control.Future;
 import cyclops.control.Option;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * An eXtended SortedSet type, that offers additional functional style operators such as bimap, filter and more
@@ -52,7 +54,21 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
               .map(Supplier::get)
               .concatMap(l->l);
     }
+    default Tuple2<SortedSetX<T>, SortedSetX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<SortedSetX<T>, SortedSetX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
 
+    default Tuple2<SortedSetX<T>,SortedSetX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<SortedSetX<T>, SortedSetX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     static <T> CompletableSortedSetX<T> completable(){
         return new CompletableSortedSetX<>();
     }

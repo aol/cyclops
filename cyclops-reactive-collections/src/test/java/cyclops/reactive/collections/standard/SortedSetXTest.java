@@ -1,8 +1,10 @@
 package cyclops.reactive.collections.standard;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -23,6 +25,7 @@ import com.oath.cyclops.types.foldable.Evaluation;
 import com.oath.cyclops.util.SimpleTimer;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.collections.AbstractSetTest;
 import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
@@ -43,7 +46,7 @@ import cyclops.reactive.collections.mutable.SortedSetX;
 public class SortedSetXTest extends AbstractSetTest {
 
     @Override
-    public <T> FluentCollectionX<T> of(T... values) {
+    public <T> SortedSetX<T> of(T... values) {
         return SortedSetX.of(values);
     }
 
@@ -64,6 +67,51 @@ public class SortedSetXTest extends AbstractSetTest {
 
         counter = new AtomicLong(0);
         super.setup();
+    }
+    @Test
+    public void span(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).span(i->i<3),equalTo(Tuple.tuple(of(1,2),of(3,4,1,2,3,4))));
+        assertThat(of(1,2,3).span(i->i<9),equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).span(i->i<0),equalTo(Tuple.tuple(of(),of(1,2,3))));
+    }
+
+    @Test
+    public void splitBy(){
+
+        assertThat(of(1,2,3,4,1,2,3,4).splitBy(i->i>3),equalTo(Tuple.tuple(of(1,2,3),of(4,1,2,3,4))));
+        assertThat(of(1,2,3).splitBy(i->i<9),equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitBy(i->i<0),equalTo(Tuple.tuple(of(1,2,3),of())));
+    }
+
+    @Test
+    public void splitAtTest(){
+        assertThat(of(1,2,3).splitAt(4) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(3) ,equalTo(Tuple.tuple(of(1,2,3),of())));
+        assertThat(of(1,2,3).splitAt(2) ,equalTo(Tuple.tuple(of(1,2),of(3))));
+        assertThat(of(1,2,3).splitAt(1) ,equalTo(Tuple.tuple(of(1),of(2,3))));
+        assertThat(of(1,2,3).splitAt(0) ,equalTo(Tuple.tuple(of(),of(1,2,3))));
+        assertThat(of(1,2,3).splitAt(-1) ,equalTo(Tuple.tuple(of(),of(1,2,3))));
+    }
+
+    @Test
+    public void testPartition() {
+
+
+        assertEquals(asList(1, 3, 5), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)._1().toList());
+        assertEquals(asList(2, 4, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 != 0)._2().toList());
+
+        assertEquals(asList(2, 4, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 == 0)._1().toList());
+        assertEquals(asList(1, 3, 5), of(1, 2, 3, 4, 5, 6).partition(i -> i % 2 == 0)._2().toList());
+
+        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5, 6).partition(i -> i <= 3)._1().toList());
+        assertEquals(asList(4, 5, 6), of(1, 2, 3, 4, 5, 6).partition(i -> i <= 3)._2().toList());
+
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).partition(i -> true)._1().toList());
+        assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
+
+        assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
     }
     @Test
     public void emptyAllCombinations() {

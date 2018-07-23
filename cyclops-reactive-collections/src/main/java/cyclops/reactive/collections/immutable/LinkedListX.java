@@ -12,9 +12,11 @@ import cyclops.ReactiveReducers;
 import cyclops.control.Future;
 import cyclops.control.*;
 
+import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -41,6 +43,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
+import static cyclops.data.tuple.Tuple.tuple;
+
 /**
  * An eXtended Persistent List type, that offers additional functional style operators such as bimap, filter and more
  * Can operate eagerly, lazily or reactively (async push)
@@ -62,6 +66,23 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
       return of(s)
         .map(Supplier::get)
         .concatMap(l->l);
+    }
+
+    default Tuple2<LinkedListX<T>, LinkedListX<T>> splitAt(int n) {
+        return tuple(take(n), drop(n));
+    }
+
+    default Tuple2<LinkedListX<T>, LinkedListX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
+
+    default Tuple2<LinkedListX<T>,LinkedListX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<LinkedListX<T>, LinkedListX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
     }
 
     @Override

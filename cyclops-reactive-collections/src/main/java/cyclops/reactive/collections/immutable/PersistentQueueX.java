@@ -20,6 +20,7 @@ import cyclops.control.Option;
 import cyclops.data.BankersQueue;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -40,6 +41,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.function.*;
 import java.util.stream.Stream;
+
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * An eXtended Persistent Queue type, that offers additional functional style operators such as bimap, filter and more
@@ -284,8 +287,21 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
                 Reducers.toPersistentQueue(),Evaluation.LAZY);
     }
 
+    default Tuple2<PersistentQueueX<T>, PersistentQueueX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<PersistentQueueX<T>, PersistentQueueX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
 
+    default Tuple2<PersistentQueueX<T>,PersistentQueueX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<PersistentQueueX<T>, PersistentQueueX<T>> partition(final Predicate<? super T> splitter) {
 
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     default <T> PersistentQueueX<T> fromStream(final ReactiveSeq<T> stream) {
         return persistentQueueX(stream);
     }
