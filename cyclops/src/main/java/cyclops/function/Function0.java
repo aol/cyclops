@@ -43,17 +43,17 @@ public interface Function0<R> extends Supplier<R> {
     default R apply(){
         return get();
     }
-    default Function0<Maybe<R>> lift(){
+    default Function0<Maybe<R>> lazyLift(){
         return ()-> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply())));
     }
 
     default Function0<Future<R>> lift(Executor ex){
        return ()-> Future.of(()->apply(),ex);
     }
-    default Function0<   Try<R,Throwable>> liftTry(){
+    default Function0<Try<R,Throwable>> liftTry(){
        return ()->  Try.withCatch(()->apply(),Throwable.class);
     }
-    default Function0<Option<R>> liftOpt(){
+    default Function0<Option<R>> lift(){
        return ()-> Option.ofNullable(apply());
     }
 

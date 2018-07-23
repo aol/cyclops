@@ -14,7 +14,7 @@ import cyclops.data.Vector;
 import cyclops.function.Semigroup;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.data.NaturalTransformation;
+import cyclops.function.NaturalTransformation;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import org.reactivestreams.Publisher;
 

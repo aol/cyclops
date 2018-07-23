@@ -10,7 +10,7 @@ public interface Function5<T1, T2, T3, T4, T5, R> extends Function1<T1, Function
 
     public R apply(T1 a, T2 b, T3 c, T4 d, T5 e);
 
-    default Function5<T1, T2, T3, T4, T5, Maybe<R>> lift5() {
+    default Function5<T1, T2, T3, T4, T5, Maybe<R>> lazyLift5() {
         return (s1, s2, s3, s4, s5) -> Maybe.fromLazy(Eval.later(()->Maybe.ofNullable(apply(s1,s2,s3,s4,s5))));
     }
 
@@ -50,7 +50,7 @@ public interface Function5<T1, T2, T3, T4, T5, R> extends Function1<T1, Function
         return (s1, s2, s3, s4, s5) -> Try.withCatch(() -> apply(s1, s2, s3, s4, s5), Throwable.class);
     }
 
-    default Function5<T1, T2, T3, T4, T5, Option<R>> liftOpt5() {
+    default Function5<T1, T2, T3, T4, T5, Option<R>> lift5() {
 
         return (s1, s2, s3, s4, s5) -> Option.ofNullable(apply(s1, s2, s3, s4, s5));
     }

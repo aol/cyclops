@@ -22,10 +22,20 @@ import java.util.Optional;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-/*
- Eager / strict Option type. Base type for the lazy / reactive Maybe type.
- Less powerful, but may perform better than Maybe (simpler Object structure)
- */
+/**
+  A safe replacement for Optional.
+
+  Option consists of two states
+<pre>
+  1. Some : a value is present
+  2. None : no value is present
+ </pre>
+
+ Unlike Optional, Option does not expose an unsafe `get` method. `fold` or `orElse` can be used instead.
+
+ @see Maybe is a lazy / reactive sub-class of Option
+
+ **/
 public interface Option<T> extends To<Option<T>>,
                                     OrElseValue<T,Option<T>>,
                                     MonadicValue<T>,
@@ -130,9 +140,9 @@ public interface Option<T> extends To<Option<T>>,
      * {@code
      *   ReactiveSeq<Integer> stream =  ReactiveSeq.of(1,2,3);
 
-    Option<Integer> maybe = Option.fromPublisher(stream);
+        Option<Integer> maybe = Option.fromPublisher(stream);
 
-    //Maybe[1]
+        //Option[1]
      *
      * }
      * </pre>

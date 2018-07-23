@@ -2,8 +2,8 @@ package cyclops.data;
 
 import com.oath.cyclops.types.persistent.PersistentMap;
 import com.oath.cyclops.hkt.Higher2;
+import cyclops.companion.Comparators;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import com.oath.cyclops.hkt.DataWitness.treeMap;
@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -66,24 +65,24 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
         });
 
 
-        TreeMap<R, V> x = fromStream(s, cyclops.data.Comparators.naturalOrderIdentityComparator());
+        TreeMap<R, V> x = fromStream(s, Comparators.naturalOrderIdentityComparator());
         return x;
     }
 
 
     @Override
     public <R1, R2> TreeMap<R1, R2> bimap(BiFunction<? super K, ? super V, ? extends Tuple2<R1, R2>> map) {
-        return fromStream(stream().map(t->t.transform(map)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t->t.transform(map)), Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
     public <K2, V2> TreeMap<K2, V2> flatMap(BiFunction<? super K, ? super V, ? extends ImmutableMap<K2, V2>> mapper) {
-        return fromStream(stream().concatMap(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().concatMap(t->t.transform(mapper)), Comparators.naturalOrderIdentityComparator());
     }
 
     @Override
     public <K2, V2> TreeMap<K2, V2> concatMap(BiFunction<? super K, ? super V, ? extends Iterable<Tuple2<K2, V2>>> mapper) {
-        return fromStream(stream().concatMap(t->t.transform(mapper)), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().concatMap(t->t.transform(mapper)), Comparators.naturalOrderIdentityComparator());
     }
 
 
@@ -137,11 +136,11 @@ public final class TreeMap<K,V> implements ImmutableMap<K,V> ,
 
     @Override
     public <R1, R2> TreeMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2) {
-        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), Comparators.naturalOrderIdentityComparator());
     }
 
     public <R1, R2> TreeMap<R1, R2> bimap(Function<? super K, ? extends R1> fn1, Function<? super V, ? extends R2> fn2,Comparator<K> comp) {
-        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), cyclops.data.Comparators.naturalOrderIdentityComparator());
+        return fromStream(stream().map(t-> Tuple.tuple(fn1.apply(t._1()),fn2.apply(t._2()))), Comparators.naturalOrderIdentityComparator());
     }
 
     public static <K,V> TreeMap<K,V> fromMap(Comparator<K> comp, Map<K,V> map){

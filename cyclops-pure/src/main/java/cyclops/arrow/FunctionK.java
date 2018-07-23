@@ -1,20 +1,16 @@
 package cyclops.arrow;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.data.Seq;
 import cyclops.function.Function1;
 import com.oath.cyclops.hkt.DataWitness.option;
-import com.oath.cyclops.hkt.DataWitness.optional;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import cyclops.instances.control.MaybeInstances;
-import cyclops.instances.jdk.OptionalInstances;
 import cyclops.instances.reactive.PublisherInstances;
-import cyclops.kinds.OptionalKind;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.InstanceDefinitions;
-import cyclops.data.NaturalTransformation;
+import cyclops.function.NaturalTransformation;
 import lombok.AllArgsConstructor;
 
 

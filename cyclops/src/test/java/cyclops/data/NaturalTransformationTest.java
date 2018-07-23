@@ -6,10 +6,9 @@ import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.DataWitness.seq;
 import com.oath.cyclops.hkt.DataWitness.reactiveSeq;
 import com.oath.cyclops.hkt.DataWitness.vector;
+import cyclops.function.NaturalTransformation;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
-
-import java.util.Arrays;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;

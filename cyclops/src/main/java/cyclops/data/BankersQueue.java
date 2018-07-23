@@ -3,10 +3,7 @@ package cyclops.data;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentQueue;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.traversable.IterableX;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import cyclops.function.Function3;
@@ -22,7 +19,6 @@ import org.reactivestreams.Publisher;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -58,7 +54,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     default Tuple2<T,BankersQueue<T>> dequeue(T defaultValue){
-        return visit(c->c.dequeue(),n->Tuple.tuple(defaultValue,this));
+        return foldBankersQueue(c->c.dequeue(), n->Tuple.tuple(defaultValue,this));
     }
     public static <T> BankersQueue<T> empty(){
         return Nil.Instance;
@@ -118,16 +114,16 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         }
         return result;
     }
-     <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2);
+     <R> R foldBankersQueue(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2);
 
     default BankersQueue<T> tail(){
-        return visit(cons-> cons,nil->nil);
+        return foldBankersQueue(cons-> cons, nil->nil);
     }
     @Override
     default BankersQueue<T> drop(long num) {
         BankersQueue<T> res= this;
         for(long i=0;i<num;i++){
-            res = res.visit(c->c.tail(),nil->nil);
+            res = res.foldBankersQueue(c->c.tail(), nil->nil);
 
         }
         return  res;
@@ -283,7 +279,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
             return fn1.apply(this);
         }
         @Override
-        public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2) {
+        public <R> R foldBankersQueue(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2) {
             return fn1.apply(this);
         }
 
@@ -463,7 +459,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
             return fn2.apply(this);
         }
         @Override
-        public <R> R visit(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2) {
+        public <R> R foldBankersQueue(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil<T>, ? extends R> fn2) {
             return fn2.apply(this);
         }
 

@@ -4,6 +4,7 @@ import com.oath.cyclops.types.reactive.AsyncSubscriber;
 import com.oath.cyclops.util.SimpleTimer;
 import com.google.common.collect.Lists;
 import cyclops.companion.Monoids;
+import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 
 
@@ -42,6 +43,7 @@ import static cyclops.reactive.ReactiveSeq.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class ReactiveSeqTest {
@@ -60,6 +62,7 @@ public class ReactiveSeqTest {
         assertThat(s.toList().size(),equalTo(1));
 
     }
+
     @Test
     public void prependAppend(){
 

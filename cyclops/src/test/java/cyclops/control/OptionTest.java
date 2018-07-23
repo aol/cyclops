@@ -12,6 +12,7 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.data.HashSet;
+import cyclops.data.NonEmptyList;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
@@ -41,10 +42,17 @@ public class OptionTest extends  AbstractValueTest implements Printable {
 
     }
 
-
+    @Test
+    public void nonEmptyList(){
+        assertThat(none.nonEmptyList(10),equalTo(NonEmptyList.of(10)));
+        assertThat(none.nonEmptyListGet(()->10),equalTo(NonEmptyList.of(10)));
+        assertThat(eager.nonEmptyList(5),equalTo(NonEmptyList.of(10)));
+        assertThat(eager.nonEmptyListGet(()->5),equalTo(NonEmptyList.of(10)));
+    }
 
     @Test
     public void recoverWith(){
+
 
         assertThat(none.recoverWith(()->Option.some(10)).toOptional().get(),equalTo(10));
         assertThat(none.recoverWith(()->Option.none()).isPresent(),equalTo(false));
