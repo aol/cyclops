@@ -64,7 +64,13 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
 
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
-        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._1().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).span(i -> false)._2().toList());
+    }
+
+    @Test
+    public void take4(){
+        assertThat(of(1,2,3).take(4),equalTo(of(1,2,3)));
     }
     @Test
     public void splitAtTest(){
