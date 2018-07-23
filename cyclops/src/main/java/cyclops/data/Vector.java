@@ -714,7 +714,7 @@ public class Vector<T> implements ImmutableList<T>,
             return new Vector<>(this.root,BAMT.ActiveTail.emptyTail(),size()-1).drop(num-1);
         }
         if(tail.size()>0){
-            return new Vector<>(this.root,tail.dropRight(num),size()-(Math.max(tail.size(),num))).dropRight(num-tail.size());
+            return new Vector<>(this.root,tail.dropRight(num),size()-(Math.min(tail.size(),num))).dropRight(num-tail.size());
         }
         return unitStream(stream().dropRight(num));
     }
@@ -725,7 +725,7 @@ public class Vector<T> implements ImmutableList<T>,
         if(num>=size())
             return empty();
         if(size()<32){
-            return new Vector<>(this.root,tail.drop((int)num),size()-1);
+            return new Vector<>(this.root,tail.drop((int)num),size()-(int)num);
         }
         return unitStream(stream().drop(num));
     }
@@ -783,7 +783,7 @@ public class Vector<T> implements ImmutableList<T>,
         if(pos>=tailStart){
             return tail.get(pos-tailStart);
         }
-        return ((BAMT.PopulatedArray<T>)root).get(pos);
+        return root.get(pos);
 
     }
 
@@ -796,7 +796,8 @@ public class Vector<T> implements ImmutableList<T>,
         if(pos>=tailStart){
             return tail.getOrElse(pos-tailStart,alt);
         }
-        return ((BAMT.PopulatedArray<T>)root).getOrElse(pos,alt);
+
+        return root.getOrElse(pos,alt);
     }
 
     @Override
@@ -808,7 +809,7 @@ public class Vector<T> implements ImmutableList<T>,
         if(pos>=tailStart){
             return tail.getOrElse(pos-tailStart,alt.get());
         }
-        return ((BAMT.PopulatedArray<T>)root).getOrElse(pos,alt.get());
+        return root.getOrElse(pos,alt.get());
     }
 
     class VectorSome extends Vector<T> implements ImmutableList.Some<T>{

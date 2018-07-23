@@ -2,6 +2,7 @@ package cyclops.data;
 
 import cyclops.control.Maybe;
 import cyclops.data.base.BAMT;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
@@ -27,6 +28,28 @@ public class VectorTest extends BaseImmutableListTest {
         return Vector.fromStream(s);
     }
 
+    @Test
+    public void dropSize(){
+        System.out.println(of(1,2,3).drop(2));
+        System.out.println(of(1,2,3).drop(2).size());
+        assertThat(of(1,2,3).drop(2).size(),equalTo(1));
+    }
+    @Test
+    public void types(){
+        System.out.println(of(1,2,3).splitAt(2)._1().getClass());
+        System.out.println(of(1,2,3).splitAt(2)._1());
+        System.out.println(of(1,2,3).splitAt(2)._2().getClass());
+        System.out.println(of(1,2,3).splitAt(2)._2());
+
+        System.out.println(Tuple.tuple(of(1,2),of(3))._1().getClass());
+        System.out.println(Tuple.tuple(of(1,2),of(3))._1());
+        System.out.println(Tuple.tuple(of(1,2),of(3))._2().getClass());
+        assertThat(of(1,2,3).splitAt(2)._1() ,equalTo(of(1,2)));
+        ImmutableList<Integer> three = of(1,2,3).splitAt(2)._2();
+        three.equals(of(3));
+        assertThat(of(1,2,3).splitAt(2)._2() ,equalTo(of(3)));
+        assertThat(of(1,2,3).splitAt(2) ,equalTo(Tuple.tuple(of(1,2),of(3))));
+    }
     @Test
     public void equalsAndHash(){
         LinkedList<Integer> l = new LinkedList<>();
