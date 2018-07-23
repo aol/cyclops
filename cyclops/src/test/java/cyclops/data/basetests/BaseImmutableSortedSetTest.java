@@ -44,7 +44,7 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
     @Test
     public void span(){
 
-        assertThat(of(1,2,3,4,1,2,3,4).span(i->i<3),equalTo(Tuple.tuple(of(1,2),of(3,4,1,2,3,4))));
+        assertThat(of(1,2,3,4,1,2,3,4).span(i->i<3),equalTo(Tuple.tuple(of(1,2),of(3,4))));
         assertThat(of(1,2,3).span(i->i<9),equalTo(Tuple.tuple(of(1,2,3),of())));
         assertThat(of(1,2,3).span(i->i<0),equalTo(Tuple.tuple(of(),of(1,2,3))));
     }
@@ -52,7 +52,7 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
     @Test
     public void splitBy(){
 
-        assertThat(of(1,2,3,4,1,2,3,4).splitBy(i->i>3),equalTo(Tuple.tuple(of(1,2,3),of(4,1,2,3,4))));
+        assertThat(of(1,2,3,4,1,2,3,4).splitBy(i->i>3),equalTo(Tuple.tuple(of(1,2,3),of(4))));
         assertThat(of(1,2,3).splitBy(i->i<9),equalTo(Tuple.tuple(of(),of(1,2,3))));
         assertThat(of(1,2,3).splitBy(i->i<0),equalTo(Tuple.tuple(of(1,2,3),of())));
     }
@@ -73,7 +73,7 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
 
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
-        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._1().toList());
     }
     @Test
     public void splitAtTest(){

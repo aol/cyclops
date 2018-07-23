@@ -324,7 +324,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default LazySeq<T> take(final long n) {
         if( n <= 0)
             return LazySeq.Nil.Instance;
-        
+
         return fromStream(ReactiveSeq.fromIterable(this).take(n));
 
     }

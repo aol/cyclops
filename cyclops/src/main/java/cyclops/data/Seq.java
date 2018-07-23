@@ -271,9 +271,7 @@ public interface Seq<T> extends ImmutableList<T>,
     default Seq<T> take(final long num) {
         if( num <= 0)
            return Nil.Instance;
-        if(num<1000 && num<size()) {
-            return this.foldSeq(cons -> cons(cons.head, cons.take(num - 1)), nil -> nil);
-        }
+
         return fromStream(ReactiveSeq.fromIterable(this).take(num));
 
     }

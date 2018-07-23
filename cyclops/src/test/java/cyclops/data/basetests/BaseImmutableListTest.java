@@ -69,8 +69,9 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
     }
 
     @Test
-    public void take4(){
+    public void takeMultiple(){
         assertThat(of(1,2,3).take(4),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).take(2),equalTo(of(1,2)));
     }
     @Test
     public void splitAtTest(){

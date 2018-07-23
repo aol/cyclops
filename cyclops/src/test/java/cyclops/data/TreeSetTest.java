@@ -4,6 +4,7 @@ import cyclops.companion.Comparators;
 import cyclops.companion.Monoids;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
 import org.hamcrest.MatcherAssert;
@@ -36,6 +37,16 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
     }
 
+
+    @Test
+    public void takeWhileDropWhile(){
+        System.out.println(of(1,2,3,4,1,2,3,4).takeWhile(i->i<3));
+        System.out.println(of(1,2,3,4,1,2,3,4).dropWhile(i->i<3));
+    }
+    @Test
+    public void takeMultiple(){
+        assertThat(of(1,2,3,4).take(2),equalTo(of(1,2)));
+    }
     public <T> ImmutableSortedSet<T> of(Comparator<T> comp, T... values) {
         return TreeSet.of(comp,values);
     }

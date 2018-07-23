@@ -544,6 +544,11 @@ public abstract class AbstractIterableXTest {
 	@Test
     public void testTake(){
         assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),is(2));
+        assertThat(of(1,2,3,4,5).take(5).collect(Collectors.toList()).size(),is(5));
+        assertThat(of(1,2,3,4,5).take(50).collect(Collectors.toList()).size(),is(5));
+        assertThat(of(1,2,3,4,5).take(0).collect(Collectors.toList()).size(),is(0));
+        assertThat(of(1,2,3,4,5).take(-1).collect(Collectors.toList()).size(),is(0));
+        assertThat(of(1,2,3,4,5).take(5).containsValue(2),is(true));
     }
 
     @Test
@@ -552,6 +557,22 @@ public abstract class AbstractIterableXTest {
                                     .collect(Collectors.toList())
                                     .size(),
                    is(3));
+        assertThat(of(1, 2, 3, 4, 5).drop(0)
+                .collect(Collectors.toList())
+                .size(),
+            is(5));
+        assertThat(of(1, 2, 3, 4, 5).drop(-1)
+                .collect(Collectors.toList())
+                .size(),
+            is(5));
+        assertThat(of(1, 2, 3, 4, 5).drop(5)
+                .collect(Collectors.toList())
+                .size(),
+            is(0));
+        assertThat(of(1, 2, 3, 4, 5).drop(50)
+                .collect(Collectors.toList())
+                .size(),
+            is(0));
     }
     @Test
     public void testSkip(){
