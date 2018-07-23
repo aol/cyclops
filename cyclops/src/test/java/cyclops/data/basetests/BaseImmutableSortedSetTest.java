@@ -40,7 +40,20 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
     public void testFoldRightA(){
         assertThat(fromStream(ReactiveSeq.range(0,100_000)).foldRight(Monoids.intSum),equalTo(704982704));
     }
-
+    @Test
+    public void appendAllMultiple(){
+        assertThat(of(1,2,3).appendAll(of()),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).appendAll(of(4,5)),equalTo(of(1,2,3,4,5)));
+    }
+    @Test
+    public void takeRightValues(){
+        assertThat(of(1,2,3).takeRight(-1),equalTo(of()));
+        assertThat(of(1,2,3).takeRight(0),equalTo(of()));
+        assertThat(of(1,2,3).takeRight(1),equalTo(of(3)));
+        assertThat(of(1,2,3).takeRight(2),equalTo(of(2,3)));
+        assertThat(of(1,2,3).takeRight(3),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).takeRight(4),equalTo(of(1,2,3)));
+    }
     @Test
     public void takeValues(){
         assertThat(of(1,2,3).take(-1),equalTo(of()));

@@ -25,6 +25,11 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
     @Override
     public abstract <T> ImmutableQueue<T> of(T... values);
     @Test
+    public void appendAllMultiple(){
+        assertThat(of(1,2,3).appendAll(of()),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).appendAll(of(4,5)),equalTo(of(1,2,3,4,5)));
+    }
+    @Test
     public void takeValues(){
         assertThat(of(1,2,3).take(-1),equalTo(of()));
         assertThat(of(1,2,3).take(0),equalTo(of()));
@@ -32,6 +37,15 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
         assertThat(of(1,2,3).take(2),equalTo(of(1,2)));
         assertThat(of(1,2,3).take(3),equalTo(of(1,2,3)));
         assertThat(of(1,2,3).take(4),equalTo(of(1,2,3)));
+    }
+    @Test
+    public void takeRightValues(){
+        assertThat(of(1,2,3).takeRight(-1),equalTo(of()));
+        assertThat(of(1,2,3).takeRight(0),equalTo(of()));
+        assertThat(of(1,2,3).takeRight(1),equalTo(of(3)));
+        assertThat(of(1,2,3).takeRight(2),equalTo(of(2,3)));
+        assertThat(of(1,2,3).takeRight(3),equalTo(of(1,2,3)));
+        assertThat(of(1,2,3).takeRight(4),equalTo(of(1,2,3)));
     }
     @Test
     public void dropValues(){
