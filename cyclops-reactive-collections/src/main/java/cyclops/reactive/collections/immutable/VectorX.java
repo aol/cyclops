@@ -17,6 +17,7 @@ import cyclops.control.*;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
 import com.oath.cyclops.types.foldable.Evaluation;
+import cyclops.data.tuple.Tuple;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -42,6 +43,7 @@ import java.util.function.*;
 import java.util.stream.Stream;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
+import static cyclops.data.tuple.Tuple.tuple;
 
 /**
  * An eXtended Persistent Vector type, that offers additional functional style operators such as bimap, filter and more
@@ -327,8 +329,23 @@ public interface VectorX<T> extends To<VectorX<T>>,
                 Reducers.toPersistentVector(), LAZY);
     }
     VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
+    default Tuple2<VectorX<T>, VectorX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<VectorX<T>, VectorX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
 
+    default Tuple2<VectorX<T>,VectorX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<VectorX<T>, VectorX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     /**
+     *
      *
      * <pre>
      * {@code

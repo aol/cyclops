@@ -18,6 +18,7 @@ import cyclops.companion.Streams;
 import cyclops.control.Either;
 import cyclops.control.Future;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -26,6 +27,7 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.immutable.VectorX;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -38,6 +40,7 @@ import java.util.stream.Collector;
 import java.util.stream.Stream;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 /**
@@ -56,7 +59,22 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     DequeX<T> lazy();
     DequeX<T> eager();
+    default Tuple2<DequeX<T>, DequeX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
 
+    default Tuple2<DequeX<T>, DequeX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
+
+    default Tuple2<DequeX<T>,DequeX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<DequeX<T>, DequeX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     public static <T> DequeX<T> defer(Supplier<DequeX<T>> s){
         return of(s)
                   .map(Supplier::get)

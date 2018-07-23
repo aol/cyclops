@@ -18,6 +18,7 @@ import com.oath.cyclops.types.foldable.To;
 
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
@@ -39,6 +40,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static cyclops.data.tuple.Tuple.tuple;
 
 
 /**
@@ -58,7 +60,21 @@ public interface ListX<T> extends To<ListX<T>>,
                                   Higher<list,T> {
 
 
+    default Tuple2<ListX<T>, ListX<T>> splitAt(int n) {
+        return Tuple.tuple(take(n), drop(n));
+    }
+    default Tuple2<ListX<T>, ListX<T>> span(Predicate<? super T> pred) {
+        return tuple(takeWhile(pred), dropWhile(pred));
+    }
 
+    default Tuple2<ListX<T>,ListX<T>> splitBy(Predicate<? super T> test) {
+        return span(test.negate());
+    }
+    default Tuple2<ListX<T>, ListX<T>> partition(final Predicate<? super T> splitter) {
+
+        return tuple(filter(splitter), filter(splitter.negate()));
+
+    }
     @Override
     default Object[] toArray(){
         return LazyCollectionX.super.toArray();
