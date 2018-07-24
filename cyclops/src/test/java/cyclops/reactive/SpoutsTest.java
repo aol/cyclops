@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
+import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;
@@ -52,7 +53,24 @@ public class SpoutsTest {
         err = null;
     }
     Throwable err;
-
+    @Test
+    public void dropRightValues(){
+        assertThat(of(1,2,3).dropRight(-1).seq(), Matchers.equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(0).seq(), Matchers.equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(1).seq(), Matchers.equalTo(of(1,2).seq()));
+        assertThat(of(1,2,3).dropRight(2).seq(), Matchers.equalTo(of(1).seq()));
+        assertThat(of(1,2,3).dropRight(3).seq(), Matchers.equalTo(of().seq()));
+        assertThat(of(1,2,3).dropRight(4).seq(), Matchers.equalTo(of().seq()));
+    }
+    @Test
+    public void takeRightValues(){
+        assertThat(of(1,2,3).takeRight(-1).seq(), Matchers.equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(0).seq(), Matchers.equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(1).seq(), Matchers.equalTo(of(3).seq()));
+        assertThat(of(1,2,3).takeRight(2).seq(), Matchers.equalTo(of(2,3).seq()));
+        assertThat(of(1,2,3).takeRight(3).seq(), Matchers.equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).takeRight(4).seq(), Matchers.equalTo(of(1,2,3).seq()));
+    }
     @Test
     public void generateErrorTest(){
         Spouts.generate(()->{throw new RuntimeException();}).forEach(System.out::println,t->err=t);
