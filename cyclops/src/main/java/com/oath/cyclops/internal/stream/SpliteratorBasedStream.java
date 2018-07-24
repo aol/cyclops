@@ -675,12 +675,12 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public ReactiveSeq<T> skipLast(final int num) {
-        return createSeq(SkipLastSpliterator.skipLast(get(), num), this.reversible);
+        return createSeq(SkipLastSpliterator.skipLast(get(), num < 0 ? 0 : num), this.reversible);
     }
 
     @Override
     public ReactiveSeq<T> limitLast(final int num) {
-        return createSeq(LimitLastSpliterator.limitLast(get(), num), this.reversible);
+        return createSeq(LimitLastSpliterator.limitLast(get(), num < 0 ? 0 : num), this.reversible);
     }
 
     @Override

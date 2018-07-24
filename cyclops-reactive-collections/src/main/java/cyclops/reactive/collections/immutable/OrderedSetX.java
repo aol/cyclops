@@ -280,6 +280,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     }
 
     default Tuple2<OrderedSetX<T>, OrderedSetX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<OrderedSetX<T>, OrderedSetX<T>> span(Predicate<? super T> pred) {

@@ -988,7 +988,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         public <R> R lazyFoldRight(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f){
 
 
-            long inc = 800;
+            long inc = 500;
             LazySeq<T> host = this;
             long count = inc;
             LazySeq<T> next =  host.limit(count);

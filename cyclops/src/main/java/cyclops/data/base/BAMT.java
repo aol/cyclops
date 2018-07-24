@@ -34,6 +34,9 @@ public class BAMT<T> {
         }
 
         ReactiveSeq<T> stream();
+        public T getOrElseGet(int pos, Supplier<T> alt);
+        public T getOrElse(int pos, T alt);
+        public Option<T> get(int pos);
 
     }
     public interface PopulatedArray<T> extends NestedArray<T>{
@@ -164,6 +167,15 @@ public class BAMT<T> {
         @Override
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.empty();
+        }
+        public T getOrElseGet(int pos, Supplier<T> alt){
+            return alt.get();
+        }
+        public T getOrElse(int pos, T alt){
+            return alt;
+        }
+        public Option<T> get(int pos){
+            return Option.none();
         }
     }
 

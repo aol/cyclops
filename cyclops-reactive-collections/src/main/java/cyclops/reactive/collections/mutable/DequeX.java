@@ -60,6 +60,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     DequeX<T> lazy();
     DequeX<T> eager();
     default Tuple2<DequeX<T>, DequeX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
 
