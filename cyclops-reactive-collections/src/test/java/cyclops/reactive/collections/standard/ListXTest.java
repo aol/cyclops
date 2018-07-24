@@ -59,6 +59,11 @@ public class ListXTest extends CollectionXTestsWithNulls {
     }
 
     @Test
+    public void takeDrop(){
+        assertThat(of(1,2,3).take(2),equalTo(of(1,2)));
+        assertThat(of(1,2,3).drop(2),equalTo(of(3)));
+    }
+    @Test
     public void splitAtTest(){
         assertThat(of(1,2,3).splitAt(4) ,equalTo(Tuple.tuple(of(1,2,3),of())));
         assertThat(of(1,2,3).splitAt(3) ,equalTo(Tuple.tuple(of(1,2,3),of())));
@@ -85,7 +90,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
 
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
-        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._1().toList());
     }
     @Test
     public void maybe() {

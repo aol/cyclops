@@ -55,6 +55,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
               .concatMap(l->l);
     }
     default Tuple2<SortedSetX<T>, SortedSetX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<SortedSetX<T>, SortedSetX<T>> span(Predicate<? super T> pred) {

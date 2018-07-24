@@ -77,7 +77,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> true)._2().toList());
 
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
-        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._2().toList());
+        assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._1().toList());
     }
 
 	@Test

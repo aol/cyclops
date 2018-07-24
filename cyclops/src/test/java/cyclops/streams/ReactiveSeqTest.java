@@ -67,12 +67,12 @@ public class ReactiveSeqTest {
     }
     @Test
     public void takeRightValues(){
-        assertThat(of(1,2,3).takeRight(-1).seq(), Matchers.equalTo(of().seq()));
-        assertThat(of(1,2,3).takeRight(0).seq(), Matchers.equalTo(of().seq()));
-        assertThat(of(1,2,3).takeRight(1).seq(), Matchers.equalTo(of(3).seq()));
-        assertThat(of(1,2,3).takeRight(2).seq(), Matchers.equalTo(of(2,3).seq()));
-        assertThat(of(1,2,3).takeRight(3).seq(), Matchers.equalTo(of(1,2,3).seq()));
-        assertThat(of(1,2,3).takeRight(4).seq(), Matchers.equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).takeRight(-1).seq(), equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(0).seq(), equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(1).seq(), equalTo(of(3).seq()));
+        assertThat(of(1,2,3).takeRight(2).seq(), equalTo(of(2,3).seq()));
+        assertThat(of(1,2,3).takeRight(3).seq(), equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).takeRight(4).seq(), equalTo(of(1,2,3).seq()));
     }
     @Test
     public void generateReplay(){

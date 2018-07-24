@@ -61,6 +61,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
 
     default Tuple2<ListX<T>, ListX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<ListX<T>, ListX<T>> span(Predicate<? super T> pred) {

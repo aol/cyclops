@@ -57,6 +57,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
               .concatMap(l->l);
     }
     default Tuple2<QueueX<T>, QueueX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<QueueX<T>, QueueX<T>> span(Predicate<? super T> pred) {
