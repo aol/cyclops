@@ -288,6 +288,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
     default Tuple2<PersistentQueueX<T>, PersistentQueueX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<PersistentQueueX<T>, PersistentQueueX<T>> span(Predicate<? super T> pred) {

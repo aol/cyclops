@@ -16,6 +16,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 import cyclops.data.EnumerationTest.Days;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -55,6 +56,24 @@ public class ReactiveSeqTest {
     }
     Throwable err;
 
+    @Test
+    public void dropRightValues(){
+        assertThat(of(1,2,3).dropRight(-1).seq(),equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(0).seq(),equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).dropRight(1).seq(),equalTo(of(1,2).seq()));
+        assertThat(of(1,2,3).dropRight(2).seq(),equalTo(of(1).seq()));
+        assertThat(of(1,2,3).dropRight(3).seq(),equalTo(of().seq()));
+        assertThat(of(1,2,3).dropRight(4).seq(),equalTo(of().seq()));
+    }
+    @Test
+    public void takeRightValues(){
+        assertThat(of(1,2,3).takeRight(-1).seq(), equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(0).seq(), equalTo(of().seq()));
+        assertThat(of(1,2,3).takeRight(1).seq(), equalTo(of(3).seq()));
+        assertThat(of(1,2,3).takeRight(2).seq(), equalTo(of(2,3).seq()));
+        assertThat(of(1,2,3).takeRight(3).seq(), equalTo(of(1,2,3).seq()));
+        assertThat(of(1,2,3).takeRight(4).seq(), equalTo(of(1,2,3).seq()));
+    }
     @Test
     public void generateReplay(){
         ReactiveSeq<String> s =  ReactiveSeq.generate(()->"hello").take(1);

@@ -330,6 +330,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
     VectorX<T> type(Reducer<? extends PersistentList<T>,T> reducer);
     default Tuple2<VectorX<T>, VectorX<T>> splitAt(int n) {
+        materialize();
         return Tuple.tuple(take(n), drop(n));
     }
     default Tuple2<VectorX<T>, VectorX<T>> span(Predicate<? super T> pred) {

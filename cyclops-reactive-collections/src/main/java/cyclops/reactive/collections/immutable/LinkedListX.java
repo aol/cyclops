@@ -69,6 +69,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
 
     default Tuple2<LinkedListX<T>, LinkedListX<T>> splitAt(int n) {
+        materialize();
         return tuple(take(n), drop(n));
     }
 
