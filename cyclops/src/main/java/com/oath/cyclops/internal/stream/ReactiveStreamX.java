@@ -836,17 +836,17 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> skipLast(final int num) {
-        int toUse = num < 0 ? 0 : num;
+
         if(num==1)
             return createSeq(new SkipLastOneOperator<>(source));
-        return createSeq(new SkipLastOperator<>(source, toUse));
+        return createSeq(new SkipLastOperator<>(source, num < 0 ? 0 : num));
     }
 
     @Override
     public ReactiveSeq<T> limitLast(final int num) {
         if (num == 1)
             return createSeq(new LimitLastOneOperator<>(source));
-        return createSeq(new LimitLastOperator<>(source, num));
+        return createSeq(new LimitLastOperator<>(source, num < 0 ? 0 : num));
     }
 
     @Override
