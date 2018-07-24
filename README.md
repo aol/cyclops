@@ -1,7 +1,7 @@
 # Getting Cyclops X (10)
 
-* The latest version is [cyclops:10.0.0-M8](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-M8)
-* [![Maven Central : cyclops-react](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
+* The latest version is [cyclops:10.0.0-RC1](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.0-RC1)
+* [![Maven Central : cyclops](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.oath.cyclops/cyclops)
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
 
