@@ -262,6 +262,16 @@ Asynchronous stream execution
 
 Lazy / terminating fold
 
+With LazySeq
+```java
+LazySeq.generate(()->true)
+       .lazyFoldRight(false,(a, b)->a ? true : b.get());
+//true
+
+```
+
+With ReactiveSeq
+
 ```java
 ReactiveSeq.generate(this::process)
            .map(data->data.isSuccess())
@@ -269,6 +279,8 @@ ReactiveSeq.generate(this::process)
            .findFirst(); //terminating reduction on infinite data structure
 
 ```
+
+
 
 
 reactive-streams : Event Driven Push based Streams
