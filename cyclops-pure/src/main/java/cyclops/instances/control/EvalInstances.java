@@ -321,7 +321,7 @@ public class EvalInstances {
     return Eval.now(value);
   }
   private static <T,R> Eval<R> ap(Eval<Function< T, R>> lt,  Eval<T> maybe){
-    return lt.zip(maybe, (a,b)->a.apply(b));
+    return lt.zipWith(maybe, (a, b)->a.apply(b));
 
   }
   private static <T,R> Higher<eval,R> flatMap(Higher<eval,T> lt, Function<? super T, ? extends  Higher<eval,R>> fn){

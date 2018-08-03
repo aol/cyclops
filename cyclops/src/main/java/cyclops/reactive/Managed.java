@@ -95,7 +95,7 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         return new Managed<T>(){
             public  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn){
                 IO<R> y = IO.Comprehensions.forEach(acquire, t1 -> {
-                    IO<? extends Try<? extends IO<R>, Throwable>> res1 = IO.withCatch(() -> fn.apply(t1), Throwable.class);
+                    IO<? extends Try<? extends IO<R>, Throwable>> res1 = IO.ReactiveSeqIO.withCatch(() -> fn.apply(t1), Throwable.class);
                     return res1;
                 }, t2 -> {
 

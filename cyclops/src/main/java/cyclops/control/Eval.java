@@ -3,7 +3,6 @@ package cyclops.control;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.matching.Deconstruct.Deconstruct1;
 import com.oath.cyclops.types.MonadicValue;
-import com.oath.cyclops.types.Zippable;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.reactive.Completable;
 import com.oath.cyclops.util.box.Mutable;
@@ -56,16 +55,21 @@ import java.util.stream.Stream;
  * @param <T> Type of value storable in this Eval
  */
 public interface Eval<T> extends To<Eval<T>>,Function0<T>,
-                                 Deconstruct1<T>,
-                                 Zippable<T>,
+                                  Deconstruct1<T>,
                                   MonadicValue<T>,
-                                    Higher<eval ,T>{
+                                  Higher<eval ,T>{
 
 
     default Tuple1<T> unapply(){
         return Tuple.tuple(get());
     }
 
+
+    public static <T> Eval<T> eval(Supplier<T> s){
+        if(s instanceof Eval)
+            return (Eval<T>)s;
+        return later(s);
+    }
 
     public static  <T,R> Eval<R> tailRec(T initial, Function<? super T, ? extends Eval<? extends Either<T, R>>> fn){
         return narrowK(fn.apply(initial)).flatMap( eval ->
@@ -81,7 +85,15 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-
+    default  <B,R> Eval<R> zip(Supplier<B> b, BiFunction<? super T,? super B,? extends R> zipper){
+        Trampoline<B>tb = b instanceof Trampoline ?  (Trampoline<B>) b : eval(b).toTrampoline();
+        return Eval.later(toTrampoline().zip(tb,zipper));
+    }
+    default  <B,C,R> Eval<R> zip(Supplier<B> b,Supplier<C> c, Function3<? super T,? super B,? super C, ? extends R> zipper){
+        Trampoline<B> tb = b instanceof Trampoline ?  (Trampoline<B>) b : eval(b).toTrampoline();
+        Trampoline<C> tc = c instanceof Trampoline ?  (Trampoline<C>) c : eval(c).toTrampoline();
+        return Eval.later(toTrampoline().zip(tb,tc,zipper));
+    }
 
 
     /**
@@ -322,9 +334,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     Eval<ReactiveSeq<T>> identity = Eval.now(ReactiveSeq.empty());
 
-    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc, next) ->acc.zip(next,(a, b)->a.append(b));
+    BiFunction<Eval<ReactiveSeq<T>>,Eval<T>,Eval<ReactiveSeq<T>>> combineToStream = (acc, next) ->acc.zipWith(next,(a, b)->a.append(b));
 
-    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a, b)-> a.zip(b,(z1, z2)->z1.appendStream(z2));
+    BinaryOperator<Eval<ReactiveSeq<T>>> combineStreams = (a, b)-> a.zipWith(b,(z1, z2)->z1.appendStream(z2));
 
     return stream.reduce(identity,combineToStream,combineStreams);
   }
@@ -405,26 +417,20 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#combineEager(cyclops2.function.Monoid, com.oath.cyclops.types.MonadicValue)
-     */
+
     default Eval<T> combineEager(final Monoid<T> monoid, final MonadicValue<? extends T> v2) {
         return unit(this.forEach2( t1 -> v2, (t1, t2) -> monoid
                                                             .apply(t1, t2)).orElseGet(() -> orElseGet(() -> monoid.zero())));
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#concatMap(java.util.function.Function)
-     */
+
     @Override
     default <R> Eval<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return (Eval<R>)MonadicValue.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
-     */
+
     @Override
     default <R> Eval<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
@@ -436,15 +442,11 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
 
-    /* (non-Javadoc)
-     * @see java.util.function.Supplier#getValue()
-     */
+
     @Override
     public T get();
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
-     */
+
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
@@ -510,54 +512,20 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
     }
 
 
-    @Override
-    default <T2, R> Eval<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
+
+    default <T2, R> Eval<R> zipWith(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
         return  fromIterable(ReactiveSeq.fromIterable(this).zip(app,fn));
     }
 
 
-    @Override
-    default <T2, R> Eval<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
+
+    default <T2, R> Eval<R> zipWith(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
         return Eval.fromPublisher(Spouts.from(this).zip(fn,app));
 
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
-     */
-    @Override
-    default <U> Eval<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
-        return (Eval) Zippable.super.zip(other);
-    }
 
-
-
-    @Override
-    default <U> Eval<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (Eval)Zippable.super.zipWithPublisher(other);
-    }
-
-
-    @Override
-    default <S, U> Eval<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
-        return (Eval)Zippable.super.zip3(second,third);
-    }
-
-    @Override
-    default <S, U, R> Eval<R> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third, final Function3<? super T, ? super S, ? super U, ? extends R> fn3) {
-        return (Eval<R>)Zippable.super.zip3(second,third,fn3);
-    }
-
-    @Override
-    default <T2, T3, T4> Eval<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth) {
-        return (Eval)Zippable.super.zip4(second,third,fourth);
-    }
-
-    @Override
-    default <T2, T3, T4, R> Eval<R> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third, final Iterable<? extends T4> fourth, final Function4<? super T, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
-        return (Eval<R>)Zippable.super.zip4(second,third,fourth,fn);
-    }
 
 
 

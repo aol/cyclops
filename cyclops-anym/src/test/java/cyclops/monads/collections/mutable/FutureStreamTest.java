@@ -2,7 +2,13 @@ package cyclops.monads.collections.mutable;
 
 import com.oath.cyclops.anym.AnyMSeq;
 import com.oath.cyclops.ReactiveConvertableSequence;
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.async.adapters.Queue;
+import com.oath.cyclops.async.adapters.Topic;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import cyclops.companion.Monoids;
+import cyclops.control.Future;
+import cyclops.data.Seq;
 import cyclops.monads.Witness.*;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -17,8 +23,14 @@ import cyclops.futurestream.LazyReact;
 
 import cyclops.monads.collections.AbstractAnyMSeqOrderedDependentTest;
 import cyclops.futurestream.FutureStream;
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Test;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import cyclops.monads.AnyM;
@@ -26,7 +38,11 @@ import cyclops.reactive.collections.mutable.ListX;
 
 
 public class FutureStreamTest extends AbstractAnyMSeqOrderedDependentTest<futureStream> {
+
     int count = 0;
+
+
+
 
     public <T> FutureStream<T> ft(T... values) {
         return new LazyReact(ThreadPools.getCommonFreeThread()).async().of(values);

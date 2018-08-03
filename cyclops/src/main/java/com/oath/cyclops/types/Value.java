@@ -87,12 +87,6 @@ public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
     }
 
 
-    /**
-     * @return A factory class generating Values from reactive-streams Subscribers
-     */
-    default ValueSubscriber<T> newSubscriber() {
-        return ValueSubscriber.subscriber();
-    }
 
     /* (non-Javadoc)
      * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
@@ -149,12 +143,6 @@ public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
 
     }
 
-
-
-
-    default <R> R transform(Function<? super Value<? super T>, ? extends R> fn){
-        return fn.apply(this);
-    }
 
     default ReactiveSeq<T> stream() {
         return Spouts.from(this);
