@@ -55,33 +55,38 @@ public class LazySeqTest extends BaseImmutableListTest {
     }
 
 
+    @Test
+    public void laziness(){
+        assertTrue(LazySeq.generate(()->1).filter(i -> false).take(0).isEmpty());
+        assertTrue(LazySeq.generate(()->1).flatMap(i -> LazySeq.empty()).take(0).isEmpty());
+    }
 
   @Test
   public void testLazy(){
     of(1,2,3,4).map(i->count++);
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).flatMap(i->{
       System.out.println("here!");
       return LazySeq.of(count++);
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).concatMap(i->LazySeq.of(count++));
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).filter(i->{
       count++;
       return i>0;
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
 
     count =0;
     of(1,2,3,4).zip(of(1,2,3,4),(a,b)->{
       count++;
       return a;
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
 
 
 
@@ -148,7 +153,7 @@ public class LazySeqTest extends BaseImmutableListTest {
   @Test
   public void mapLarge(){
     LazySeq.range(0,100_000_000).map(i->count++);
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
   }
 
     @Test
@@ -258,17 +263,29 @@ public class LazySeqTest extends BaseImmutableListTest {
     }
 
     int called = 0;
+
+    @Test
+    public void inf(){
+        assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+    }
+    @Test
+    public void fromIterableSize(){
+        assertThat(LazySeq.fromIterable(Seq.of(1,2,3)).size(),equalTo(3));
+    }
     @Test
     public void scanRightLazy(){
 
         called=0;
-        LazySeq.of(1,2,3)
-                .peek(a->{
-                    called++;
-                    System.out.println(a);
-                })
-                .scanRight(0,(a, b)->a+b);
-        assertThat(called,equalTo(1));
+        LazySeq<Integer> ls = LazySeq.of(1, 2, 3)
+            .peek(a -> {
+                called++;
+                System.out.println(a);
+            })
+            .scanRight(0, (a, b) -> a + b);
+        assertThat(called,equalTo(0));
+        ls.size();
+        assertThat(called,equalTo(3));
     }
 
 

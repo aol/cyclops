@@ -5,6 +5,7 @@ import cyclops.futurestream.LazyReact;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.util.stream.Stream;
@@ -20,6 +21,14 @@ public class FutureSequentialTest extends BaseSequentialTest {
     protected <U> ReactiveSeq<U> of(U... array){
 
         return LazyReact.sequentialBuilder().of(array);
+    }
+
+    @Test
+    public void fanOutTest() {
+        System.out.println(of(1, 2, 3, 4)
+            .fanOut(s1 -> s1.map(i -> i * 2),
+                s2 -> s2.map(i -> i * 100))
+            .toList());
     }
     @Test
     public void duplicateReplay(){

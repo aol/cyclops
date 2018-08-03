@@ -66,6 +66,7 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
         this.reversible = rev;
     }
 
+
     @Override
     public SpliteratorBasedStream<T> onComplete(final Runnable fn) {
         return (SpliteratorBasedStream<T>) this.createSeq(new CompleteSpliterator<>(stream, fn));

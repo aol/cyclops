@@ -228,7 +228,7 @@ public class Future<T> implements To<Future<T>>,
 
     }
     /**
-     * Construct a Future asyncrhonously that contains a single value extracted from the supplied reactive-streams Publisher
+     * Construct a Future asynchronously that contains a single value extracted from the supplied reactive-streams Publisher
      *
      *
      * <pre>

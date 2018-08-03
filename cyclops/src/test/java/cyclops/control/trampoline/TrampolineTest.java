@@ -1,5 +1,6 @@
 package cyclops.control.trampoline;
 
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -7,7 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
+import cyclops.control.Eval;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
 import org.junit.Ignore;
 import org.junit.Test;

@@ -10,6 +10,7 @@ import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.control.Either;
+import cyclops.control.Eval;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
@@ -33,7 +34,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//safe LazyList (Stream) that does not support exceptional states
+//safe LazyList / Stream collection type that does not support exceptional states
 public interface LazySeq<T> extends  ImmutableList<T>,
                                     Folds<T>,
                                     Filters<T>,
@@ -45,6 +46,10 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> Collector<T, List<T>, LazySeq<T>> collector() {
         Collector<T, ?, List<T>> c  = Collectors.toList();
         return Collectors.<T, List<T>, Iterable<T>,LazySeq<T>>collectingAndThen((Collector)c,LazySeq::fromIterable);
+    }
+
+    static <T> LazySeq<T> defer(Supplier<LazySeq<T>> s){
+        return new Lazy<>(s);
     }
     @Override
     default<R> LazySeq<R> unitIterable(Iterable<R> it){
@@ -161,9 +166,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     default ReactiveSeq<T> stream(){
         return ReactiveSeq.fromIterable(this);
     }
-    default LazySeq<T> linkedSeq(){
-        return LazySeq.fromIterable(this);
-    }
+
     LazySeq<T> append(Supplier<LazySeq<T>> list);
     @Override
     default LazySeq<T> removeAll(T... values) {
@@ -292,11 +295,19 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return fromIterator(it.iterator());
     }
     static <T> LazySeq<T> fromIterator(Iterator<T> it){
-        return it.hasNext() ? cons(it.next(), () -> fromIterator(it)) : empty();
+        return new Lazy<>(Eval.later(()->it.hasNext() ? cons(Eval.later(()->it.next()),
+                            head ->{
+                                head.get();
+                                return ()->fromIterator(it);
+                            } ) : empty()));
     }
     static <T> LazySeq<T> fromStream(Stream<T> stream){
         Iterator<T> t = stream.iterator();
-        return t.hasNext() ? cons(t.next(),()->fromIterator(t)) : empty();
+        return new Lazy<>(Eval.later(()->t.hasNext() ? cons(Eval.later(()->t.next()),head-> {
+            head.get();
+            return ()->fromIterator(t);
+
+        }) : empty()));
     }
     @SafeVarargs
     static <T> LazySeq<T> of(T... value){
@@ -317,9 +328,11 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return span(test.negate());
     }
     default LazySeq<LazySeq<T>> split(Predicate<? super T> test) {
-        LazySeq<T> next = dropWhile(test);
-        Tuple2<LazySeq<T>, LazySeq<T>> split = next.splitBy(test).bimap(ImmutableList::lazySeq,ImmutableList::lazySeq);
-        return next.foldLazySeq(c->cons(split._1(),()->split._2().split(test)), n->n);
+        return defer(()->{
+            LazySeq<T> next = dropWhile(test);
+            Tuple2<LazySeq<T>, LazySeq<T>> split = next.splitBy(test).bimap(ImmutableList::lazySeq,ImmutableList::lazySeq);
+            return next.foldLazySeq(c->cons(split._1(),()->split._2().split(test)), n->n);
+        });
     }
     default LazySeq<T> take(final long n) {
         if( n <= 0)
@@ -329,45 +342,51 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
     default LazySeq<T> takeWhile(Predicate<? super T> p) {
-        return foldLazySeq(c->{
+        return new Lazy<T>(Eval.later(()->foldLazySeq(c->{
             if(p.test(c.head())){
                 return cons(c.head,()->c.tail.get().takeWhile(p));
             }else{
                 return empty();
             }
-        },n->this);
+        },n->this)));
     }
     default LazySeq<T> dropWhile(Predicate<? super T> p) {
-      LazySeq<T> current = this;
-        boolean[] found = {false};
-        while(!found[0] && !current.isEmpty()){
-            LazySeq<T> active = current;
-            current =  current.foldLazySeq(c->{
-                if(!p.test(c.head)){
-                    found[0]=true;
-                    return active;
+        return defer(()-> {
+            LazySeq<T> current = this;
+            boolean[] found = {false};
+            while (!found[0] && !current.isEmpty()) {
+                LazySeq<T> active = current;
+                current = current.foldLazySeq(c -> {
+                    if (!p.test(c.head.get())) {
+                        found[0] = true;
+                        return active;
 
-                }
-                return c.tail.get();
+                    }
+                    return c.tail.get();
 
-            },empty->empty);
-        }
-        return current;
+                }, empty -> empty);
+            }
+            return current;
+        });
     }
     default LazySeq<T> drop(final long num) {
-        LazySeq<T> current = this;
-        long pos = num;
-        while (pos-- > 0 && !current.isEmpty()) {
-            current = current.foldLazySeq(c->c.tail.get(), nil->nil);
-        }
-        return current;
+        return defer(()-> {
+            LazySeq<T> current = this;
+            long pos = num;
+            while (pos-- > 0 && !current.isEmpty()) {
+                current = current.foldLazySeq(c -> c.tail.get(), nil -> nil);
+            }
+            return current;
+        });
     }
     default LazySeq<T> reverse() {
-        LazySeq<T> res = empty();
-        for (T a : this) {
-            res = res.prepend(a);
-        }
-        return res;
+        return defer(()-> {
+            LazySeq<T> res = empty();
+            for (T a : this) {
+                res = res.prepend(a);
+            }
+            return res;
+        });
     }
     default Tuple2<LazySeq<T>,LazySeq<T>> duplicate(){
         return Tuple.tuple(this,this);
@@ -383,28 +402,17 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     default LazySeq<T> replaceFirst(T currentElement, T newElement) {
-        LazySeq<T> preceding = empty();
-        LazySeq<T> tail = this;
-        while(!tail.isEmpty()){
-            LazySeq<T> ref=  preceding;
-            LazySeq<T> tailRef = tail;
-            Tuple3<LazySeq<T>, LazySeq<T>, Boolean> t3 = tail.foldLazySeq(c -> {
-                if (Objects.equals(c.head, currentElement))
-                    return Tuple.tuple(ref, tailRef, true);
-                return Tuple.tuple(ref.prepend(c.head), c.tail.get(), false);
-            }, nil -> Tuple.tuple(ref, tailRef, true));
-
-            preceding = t3._1();
-            tail = t3._2();
-            if(t3._3())
-                break;
-
-        }
-
-        LazySeq<T> start = preceding;
-        return tail.foldLazySeq(cons->cons.tail.get().prepend(newElement).prependAll(start), nil->this);
+        boolean[] found = {false};
+        return map(i->{
+            if(Objects.equals(currentElement,i) && !found[0]) {
+                found[0] = true;
+                return newElement;
+            }
+            return i;
+        });
 
     }
+
 
 
     default Option<T> get(int pos){
@@ -433,7 +441,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return alt;
             }
         }
-        return l.foldLazySeq(c->c.head, n->alt);
+        return l.foldLazySeq(c->c.head.get(), n->alt);
     }
     default T getOrElseGet(int pos, Supplier<? extends T> alt){
         if(pos<0)
@@ -446,7 +454,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
                 return alt.get();
             }
         }
-        return l.foldLazySeq(c->c.head, n->alt.get());
+        return l.foldLazySeq(c->c.head.get(), n->alt.get());
     }
 
     @Override
@@ -460,10 +468,12 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     default LazySeq<T> prependAll(Iterable<? extends T> it){
-        LazySeq<T> value = narrow(fromIterable(it));
-        return value.fold(cons->
-                        cons.foldRight(this,(a,b)->b.prepend(a))
-                ,nil->this);
+        return defer(()-> {
+            LazySeq<T> value = narrow(fromIterable(it));
+            return value.fold(cons ->
+                    cons.foldRight(this, (a, b) -> b.prepend(a))
+                , nil -> this);
+        });
     }
     default LazySeq<T> append(T append) {
         return appendAll(LazySeq.of(append));
@@ -482,7 +492,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             public T next() {
                 return current.foldLazySeq(c->{
                     current = c.tail.get();
-                    return c.head;
+                    return c.head.get();
                 },n->null);
             }
         };
@@ -506,12 +516,14 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
 
   default LazySeq<T> appendAll(Iterable<? extends T> it) {
+      return defer(()->{
         LazySeq<T> append = narrow(fromIterable(it));
         return this.foldLazySeq(cons->{
             return append.foldLazySeq(c2->{
                 return cons(cons.head,()->cons.tail.get().appendAll(append));
             },n2->this);
         },nil->append);
+        });
 
     }
     default <R> R foldLeft(R zero, BiFunction<R, ? super T, R> f){
@@ -909,7 +921,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     boolean isEmpty();
     static <T> LazySeq<T> lazy(T head, Supplier<ImmutableList<T>> tail) {
-        return Cons.cons(head,()->tail.get().lazySeq());
+        return Cons.cons(Eval.now(head),()->tail.get().lazySeq());
     }
     public static <T> LazySeq<T> narrowK(final Higher<lazySeq, T> list) {
       return (LazySeq<T>)list;
@@ -951,7 +963,13 @@ public interface LazySeq<T> extends  ImmutableList<T>,
   }
 
   static <T> LazySeq<T> cons(T head, Supplier<LazySeq<T>> tail) {
+        return Cons.cons(Eval.now(head),tail);
+    }
+    static <T> LazySeq<T> cons(Eval<T> head, Supplier<LazySeq<T>> tail) {
         return Cons.cons(head,tail);
+    }
+    static <T> LazySeq<T> cons(Eval<T> head, Function<Eval<T>,Supplier<LazySeq<T>>> tail) {
+        return Cons.cons(head,tail.apply(head));
     }
 
     <R> R lazyFoldRight(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f);
@@ -961,17 +979,17 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Cons<T>  implements LazySeq<T>, ImmutableList.Some<T> {
         private static final long serialVersionUID = 1L;
-        public final T head;
+        public final Eval<T> head;
         public final Supplier<LazySeq<T>> tail;
 
-        public static <T> Cons<T> cons(T value, Supplier<LazySeq<T>> tail){
+        public static <T> Cons<T> cons(Eval<T> value, Supplier<LazySeq<T>> tail){
             return new Cons<>(value,Memoize.memoizeSupplier(tail));
         }
 
 
         @Override
         public Tuple2<T, ImmutableList<T>> unapply() {
-            return Tuple.tuple(head,tail.get());
+            return Tuple.tuple(head.get(),tail.get());
         }
         public boolean isEmpty(){
             return false;
@@ -1009,7 +1027,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         private <R> Tuple2<Boolean,R> lazyFoldRightImpl(R zero, BiFunction<? super T,Supplier<R>, ? extends R> f){
             boolean[] called=  {false};
-            R x = f.apply(head, () -> {
+            R x = f.apply(head.get(), () -> {
                 called[0] = true;
                 LazySeq<T> ls = tail.get();
                 return ls.foldLazySeq(s -> {
@@ -1026,7 +1044,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
       @Override
       public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
-          return cons(fn.apply(head()),()->tail.get().map(fn));
+          return cons(head.map(fn),()->tail.get().map(fn));
       }
 
       @Override
@@ -1095,25 +1113,20 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return tail.get();
         }
         public T head(){
-            return head;
+            return head.get();
         }
 
 
 
+        @Override
         public int size(){
-            int result =1;
-            ImmutableList<T> current[] = new LazySeq[1];
-            current[0]=tail.get();
-            while(true){
-               int toAdd =current[0].fold(c->{
-                    current[0]=c.tail();
-                    return 1;
-                },n->0);
-                result+=toAdd;
-                if(toAdd==0)
-                    break;
+            int size = 0;
+            Iterator<T> it = iterator();
+            while(it.hasNext()){
+                size++;
+                it.next();
             }
-            return result;
+            return size;
         }
         @Override
         public Cons<T> append(Supplier<LazySeq<T>> list) {
@@ -1122,7 +1135,11 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         @Override
         public Cons<T> reverse() {
-            return (Cons<T>)LazySeq.super.reverse();
+            LazySeq<T> t  = LazySeq.super.reverse();
+            if(t instanceof Cons){
+                return (Cons<T>)t;
+            }
+            return (Cons<T>)((Lazy<T>)t).ref.get();
         }
 
 
@@ -1173,7 +1190,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return fn1.apply(this);
         }
         public String toString(){
-            return "{"+head+"...}";
+            return "{"+head.get()+"...}";
         }
 
         public LazySeq<T> removeAt(final int i) {
@@ -1187,37 +1204,43 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         @Override
         public LazySeq<T> updateAt(int i, T value) {
 
-            if(i==0) {
-                if(Objects.equals(head,value))
-                    return this;
-                return cons(value, tail);
-            }
-            if(i>1000){
-                LazySeq<T> front = take(i);
-                LazySeq<T> back = drop(i);
+            return defer(()->{
+                if(i==0) {
+                    if(Objects.equals(head,value))
+                        return this;
+                    return cons(Eval.now(value), tail);
+                }
+                if(i>1000){
+                    LazySeq<T> front = take(i);
+                    LazySeq<T> back = drop(i);
 
-                return back.prepend(value).prependAll(front);
-            }
+                    return back.prepend(value).prependAll(front);
+                }
 
 
-            return cons(head, ()->tail.get().updateAt(i-1, value));
+                return cons(head, ()->tail.get().updateAt(i-1, value));
+            });
         }
 
         public LazySeq<T> insertAt(final int i, final T value) {
-            if(i==0)
-                return prepend(value);
-            if(i<1000)
-                return cons(head, ()->tail.get().insertAt(i-1, value));
-            return LazySeq.super.insertAt(i,value);
+            return defer(()-> {
+                if (i == 0)
+                    return prepend(value);
+                if (i < 1000)
+                    return cons(head, () -> tail.get().insertAt(i - 1, value));
+                return LazySeq.super.insertAt(i, value);
+            });
         }
 
         @Override
         public LazySeq<T> insertAt(int i, Iterable<? extends T> list) {
-            if(i==0)
-                return prependAll(list);
-            if(i<1000)
-                return cons(head, ()->tail.get().insertAt(i-1, list));
-            return LazySeq.super.insertAt(i,list);
+            return defer(()-> {
+                if (i == 0)
+                    return prependAll(list);
+                if (i < 1000)
+                    return cons(head, () -> tail.get().insertAt(i - 1, list));
+                return LazySeq.super.insertAt(i, list);
+            });
 
         }
 
@@ -1228,7 +1251,122 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
     }
 
-    public class Nil<T> implements LazySeq<T>, ImmutableList.None<T> {
+    @AllArgsConstructor
+    public static class Lazy<T> implements LazySeq<T>{
+
+        private final Eval<LazySeq<T>> ref;
+
+        public Lazy(Supplier<LazySeq<T>> s){
+            ref = Eval.eval(s);
+        }
+        @Override
+        public LazySeq<T> append(Supplier<LazySeq<T>> list) {
+            return ref.get().append(list);
+        }
+
+        @Override
+        public LazySeq<T> updateAt(int i, T value) {
+            return ref.get().updateAt(i,value);
+        }
+
+        @Override
+        public LazySeq<T> removeAt(int i) {
+            return ref.get().removeAt(i);
+        }
+
+        @Override
+        public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
+            return ref.get().map(fn);
+        }
+
+        @Override
+        public <R> LazySeq<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn) {
+            return ref.get().flatMap(fn);
+        }
+
+        @Override
+        public <R> R fold(Function<? super Some<T>, ? extends R> fn1, Function<? super None<T>, ? extends R> fn2) {
+            LazySeq<T> l =  ref.get();
+            return l.fold(fn1,fn2);
+        }
+
+        @Override
+        public <R> LazySeq<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
+            return ref.get().concatMap(fn);
+        }
+
+        @Override
+        public <R> LazySeq<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+            return ref.get().mergeMap(fn);
+        }
+
+        @Override
+        public <R> LazySeq<R> mergeMap(int maxConcurecy, Function<? super T, ? extends Publisher<? extends R>> fn) {
+            return ref.get().mergeMap(maxConcurecy,fn);
+        }
+
+        @Override
+        public LazySeq<T> onEmpty(T value) {
+            return ref.get().onEmpty(value);
+        }
+
+        @Override
+        public LazySeq<T> onEmptyGet(Supplier<? extends T> supplier) {
+            return ref.get().onEmptyGet(supplier);
+        }
+
+        @Override
+        public LazySeq<T> filter(Predicate<? super T> pred) {
+            return ref.get().filter(pred);
+        }
+
+        @Override
+        public <R> R foldLazySeq(Function<? super Cons<T>, ? extends R> fn1, Function<? super Nil, ? extends R> fn2) {
+            return ref.get().foldLazySeq(fn1,fn2);
+        }
+
+        @Override
+        public LazySeq<T> cycle() {
+            return ref.get().cycle();
+        }
+
+        @Override
+        public int size() {
+            return ref.get().size();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return ref.get().isEmpty();
+        }
+
+        @Override
+        public ImmutableList<T> onEmptySwitch(Supplier<? extends ImmutableList<T>> supplier) {
+            return ref.get().onEmptySwitch(supplier);
+        }
+
+        @Override
+        public <R> R lazyFoldRight(R zero, BiFunction<? super T, Supplier<R>, ? extends R> f) {
+            return ref.get().lazyFoldRight(zero,f);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return ref.get().equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+
+            return ref.get().hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return ref.get().toString();
+        }
+    }
+    public static class Nil<T> implements LazySeq<T>, ImmutableList.None<T> {
         static final Nil Instance = new Nil();
         private static final long serialVersionUID = 1L;
         @Override

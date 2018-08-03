@@ -6,6 +6,7 @@ import com.oath.cyclops.types.foldable.To;
 import cyclops.control.Future;
 import cyclops.control.Try;
 import cyclops.data.Seq;
+import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -16,6 +17,7 @@ import cyclops.data.tuple.Tuple7;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
+import cyclops.function.checked.CheckedSupplier;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -23,7 +25,9 @@ import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -48,8 +52,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return ReactiveSeqIO.fromPublisher(p);
     }
 
-    public static <T, X extends Throwable> IO<Try<T, X>> withCatch(Try.CheckedSupplier<T, X> cf, Class<? extends X>... classes) {
-        return of(() -> Try.withCatch(cf, classes));
+
+
+    public static <T, X extends Throwable> IO<T> withCatch(CheckedSupplier<? extends T> cf) {
+        return fromPublisher(Try.withCatch(()->cf.get(),Throwable.class));
     }
 
     public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
@@ -116,6 +122,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     default Try<T, Throwable> run() {
         return Future.fromPublisher(publisher())
             .get();
+    }
+
+    default <R> R foldLeft(final R identity, final BiFunction<R, ? super T, R> accumulator) {
+      return Spouts.from(publisher()).foldLeft(identity,accumulator);
     }
 
     default <R> R foldRun(Function<? super Try<T, Throwable>, ? extends R> transform) {
@@ -474,6 +484,8 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         public String toString(){
          return "IO["+ run().toString() + "]";
         }
+
+
 
     }
 }

@@ -88,6 +88,7 @@ public  class BaseSequenceTest {
 
     @Test
     public void testScanLeftStringConcat() {
+	    System.out.println((of("a", "b", "c").scanLeft("", String::concat).toList()));
         assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
         		is(4));
     }

@@ -2,6 +2,7 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
 import cyclops.control.Maybe;
@@ -9,10 +10,14 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
 
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -73,12 +78,11 @@ public class SeqTest extends BaseImmutableListTest {
     public void plus(){
         IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
 
-        Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
-
-
+        assertThat(vec,equalTo(Vector.of(5,2,1)));
 
     }
-   
+
+
 
 
 

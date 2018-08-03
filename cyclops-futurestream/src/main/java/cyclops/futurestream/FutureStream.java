@@ -46,9 +46,11 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.*;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
@@ -726,7 +728,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default void subscribe(final Subscriber<? super U> s) {
-
         FutureStreamSynchronousPublisher.super.subscribe(s);
     }
 
