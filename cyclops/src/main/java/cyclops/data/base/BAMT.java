@@ -400,6 +400,71 @@ public class BAMT<T> {
             };
         }
     }
+    @AllArgsConstructor
+    public static class ArrayIterator6D<T> implements Iterable<T>{
+        private final Object[][][][][][] array;
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                int curs1=0;
+                int curs2=0;
+                int curs3=0;
+                int curs4=0;
+                int curs5=0;
+                int curs6=0;
+
+                Object res = UNSET;
+                @Override
+                public boolean hasNext() {
+                    if(res!=UNSET)
+                        return true;
+                    for(;curs1<array.length;){
+                        for(;curs2<array[curs1].length;){
+                            for(;curs3<array[curs1][curs2].length;){
+                                for(;curs4<array[curs1][curs2][curs3].length;) {
+                                    for(;curs5<array[curs1][curs2][curs3][curs4].length;) {
+                                        for(;curs6<array[curs1][curs2][curs3][curs4][curs5].length;) {
+                                            if (array[curs1].length > 0 && array[curs1][curs2].length > 0 && array[curs1][curs2][curs3].length > 0
+                                                && array[curs1][curs2][curs3][curs4].length > 0  && array[curs1][curs2][curs3][curs4][curs5].length > 0 && curs6 < array[curs1][curs2][curs3][curs4][curs5].length) {
+                                                res = (T) array[curs1][curs2][curs3][curs4][curs5][curs6++];
+                                                return true;
+                                            } else {
+                                                curs6++;
+                                            }
+                                        }
+                                        curs6=0;
+                                        curs5++;
+                                    }
+                                    curs5=0;
+                                    curs4++;
+
+                                }
+                                curs4=0;
+                                curs3++;
+                            }
+                            curs3=0;
+                            curs2++;
+                        }
+                        curs2=0;
+                        curs1++;
+                    }
+                    return false;
+
+
+                }
+
+                @Override
+                public T next() {
+                    T ret = (T)res;
+                    res = UNSET;
+                    return ret;
+                }
+
+
+            };
+        }
+    }
 
     public static class Zero<T> implements NestedArray<T>{
         @Override
