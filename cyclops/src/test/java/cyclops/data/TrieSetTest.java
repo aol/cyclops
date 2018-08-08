@@ -4,7 +4,6 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
-import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -75,7 +74,7 @@ public class TrieSetTest extends BaseImmutableSetTest{
     public void allCombinations3NoOrd() {
 
 
-        Seq<Seq<Integer>> x = of(1, 2, 3).combinations().map(s -> s.toSeq()).toSeq();
+        Seq<Seq<Integer>> x = of(1, 2, 3).combinations().map(s -> s.seq()).seq();
         System.out.println(x);
         assertTrue(x.containsValue(Seq.empty()));
         assertTrue(x.containsValue(Seq.of(1)));

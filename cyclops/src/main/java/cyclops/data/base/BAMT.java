@@ -38,6 +38,8 @@ public class BAMT<T> {
         public T getOrElse(int pos, T alt);
         public Option<T> get(int pos);
 
+        public <R> NestedArray<R> map(Function<? super T, ? extends R> fn);
+
     }
     public interface PopulatedArray<T> extends NestedArray<T>{
         public T getOrElseGet(int pos, Supplier<T> alt);
@@ -111,6 +113,14 @@ public class BAMT<T> {
         }
 
         @Override
+        public <R> ActiveTail<R> map(Function<? super T, ? extends R> fn) {
+            R[] res = (R[])new Object[array.length];
+            for(int i=0;i<array.length;i++){
+                res[i] = fn.apply(array[i]);
+            }
+            return tail(res);
+        }
+        @Override
         public Option<T> get(int pos) {
             int indx = pos & 0x01f;
             if(indx<array.length)
@@ -177,6 +187,11 @@ public class BAMT<T> {
         public Option<T> get(int pos){
             return Option.none();
         }
+
+        @Override
+        public <R> Zero<R> map(Function<? super T, ? extends R> fn) {
+            return (Zero<R>)this;
+        }
     }
 
     @AllArgsConstructor
@@ -208,6 +223,16 @@ public class BAMT<T> {
                 return Option.of((T)array[indx]);
             return Option.none();
         }
+
+        @Override
+        public <R> One<R> map(Function<? super T, ? extends R> fn) {
+            R[] res = (R[])new Object[array.length];
+            for(int i=0;i<array.length;i++){
+                res[i] = fn.apply(array[i]);
+            }
+            return one(res);
+        }
+
         @Override
         public T getOrElse(int pos, T alt) {
             int indx = pos & 0x01f;
@@ -257,11 +282,20 @@ public class BAMT<T> {
             return two(updatedNodes);
 
         }
-
+        @Override
+        public <R> Two<R> map(Function<? super T, ? extends R> fn) {
+            Object[][] res = new Object[array.length][array[0].length];
+            for(int i=0;i<array.length;i++){
+                Object[] next = array[i];
+                for(int j=0;j<next.length;j++) {
+                    res[i][j] = fn.apply((T)array[i][j]);
+                }
+            }
+            return two(res);
+        }
         @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return Option.of(local[indx]);
@@ -271,7 +305,7 @@ public class BAMT<T> {
         @Override
         public T getOrElse(int pos, T alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
+
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -281,7 +315,7 @@ public class BAMT<T> {
         @Override
         public T getOrElseGet(int pos, Supplier<T> alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
+
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -345,9 +379,28 @@ public class BAMT<T> {
         }
 
         @Override
+        public <R> Three<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][] res = new Object[array.length][][];
+            for(int i=0;i<array.length-1;i++){
+                Object[][] nextA = array[i];
+                Object[][] resA = new Object[nextA.length][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length-1;j++) {
+                    Object[] nextB = nextA[j];
+
+                    Object[] resB = new Object[nextB.length];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length-1;k++) {
+                        resB[k] = fn.apply((T) nextB[k]);
+                    }
+                }
+            }
+            return three((Object[][][])res);
+        }
+
+        @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return Option.of(local[indx]);
@@ -357,7 +410,6 @@ public class BAMT<T> {
         @Override
         public T getOrElse(int pos, T alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -367,7 +419,6 @@ public class BAMT<T> {
         @Override
         public T getOrElseGet(int pos, Supplier<T> alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -449,6 +500,25 @@ public class BAMT<T> {
             n4[NestedArray.mask(pos)]=t;
             return four(n1);
 
+        }
+
+        @Override
+        public <R> Four<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length];
+            for(int i=0;i<array.length;i++){
+                Object[][][] nextA = array[i];
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][] nextB = nextA[j];
+                    for(int k=0;j<nextB.length;k++) {
+                        Object[] nextC = nextB[k];
+                        for(int l=0;j<nextC.length;l++) {
+                            res[i][j][k][l] = fn.apply((T) array[i][j][k][l]);
+                        }
+
+                    }
+                }
+            }
+            return four(res);
         }
         @Override
         public Option<T> get(int pos) {
@@ -580,7 +650,28 @@ public class BAMT<T> {
             return five(n1);
 
         }
+        @Override
+        public <R> Five<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length][array[0][0][0][0].length];
+            for(int i=0;i<array.length;i++){
+                Object[][][][] nextA = array[i];
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][][] nextB = nextA[j];
+                    for(int k=0;j<nextB.length;k++) {
+                        Object[][] nextC = nextB[k];
+                        for(int l=0;j<nextC.length;l++) {
+                            Object[] nextD = nextC[l];
+                            for(int m=0;j<nextD.length;m++) {
+                                res[i][j][k][l][m] = fn.apply((T) array[i][j][k][l][m]);
+                            }
 
+                        }
+
+                    }
+                }
+            }
+            return five(res);
+        }
         @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
@@ -725,6 +816,32 @@ public class BAMT<T> {
             n6[NestedArray.mask(pos)]=t;
             return six(n1);
 
+        }
+        @Override
+        public <R> Six<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length][array[0][0][0][0].length][array[0][0][0][0][0].length];
+            for(int i=0;i<array.length;i++){
+                Object[][][][][] nextA = array[i];
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][][][] nextB = nextA[j];
+                    for(int k=0;j<nextB.length;k++) {
+                        Object[][][] nextC = nextB[k];
+                        for(int l=0;j<nextC.length;l++) {
+                            Object[][] nextD = nextC[l];
+                            for(int m=0;j<nextD.length;m++) {
+                                Object[] nextE = nextD[m];
+                                for(int n=0;j<nextE.length;n++) {
+                                    res[i][j][k][l][m][n] = fn.apply((T) array[i][j][k][l][m][n]);
+                                }
+
+                            }
+
+                        }
+
+                    }
+                }
+            }
+            return six(res);
         }
 
         @Override

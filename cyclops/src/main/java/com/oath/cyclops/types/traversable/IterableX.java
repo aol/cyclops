@@ -83,7 +83,7 @@ public interface IterableX<T> extends Traversable<T>,
         return new ConvertableSequence<>(this);
     }
 
-    default Seq<T> toSeq(){
+    default Seq<T> seq(){
         return to().seq();
     }
     default HashSet<T> toHashSet(){

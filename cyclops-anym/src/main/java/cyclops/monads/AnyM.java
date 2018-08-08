@@ -389,7 +389,7 @@ public interface AnyM<W extends WitnessType<W>,T> extends Unwrapable,
         ReactiveSeq<T> s = matchable().fold(value -> value.stream(), seq -> seq.stream());
         ReactiveSeq<T> s2 = next.matchable().fold(value -> value.stream(), seq -> seq.stream());
         Seq<T> ag = ReactiveSeq.concat(s, s2)
-            .toSeq();
+            .seq();
         return unit(ag);
     }
 

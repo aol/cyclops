@@ -68,6 +68,8 @@ dependencies {
     testCompile (group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.1.0.Final')
     testCompile group: 'org.hsqldb', name: 'hsqldb', version: '2.0.0'
     jmh 'com.github.akarnokd:ixjava:1.0.0-RC5'
+    jmh 'io.vavr:vavr:0.9.2'
+    jmh 'com.google.guava:guava:19.0'
 
 }
 sourceSets {

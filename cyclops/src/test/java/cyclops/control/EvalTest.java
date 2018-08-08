@@ -89,8 +89,8 @@ public class EvalTest {
             return sum.flatMap(s->loop(times-1,Eval.now(s+times)));
     }
     Supplier<Integer> loopSupplier(int times, int sum){
-        System.out.println("Loop-A " + times + " : " + sum);
-        order = order.prepend("a");
+        System.out.println("Loop-Supplier " + times + " : " + sum);
+
         if(times==0)
             return ()->sum;
         else

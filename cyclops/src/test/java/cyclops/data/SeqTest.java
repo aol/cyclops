@@ -12,6 +12,7 @@ import cyclops.data.basetests.BaseImmutableListTest;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import javaslang.collection.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -82,6 +83,16 @@ public class SeqTest extends BaseImmutableListTest {
 
     }
 
+
+
+    @Test
+    public void seqTest(){
+        Seq.of(1,2,3).prepend(3);
+        for(Integer next : Seq.of(1,2,3)){
+            System.out.println(next);
+        }
+
+    }
 
 
 

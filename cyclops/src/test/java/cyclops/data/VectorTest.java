@@ -34,6 +34,11 @@ public class VectorTest extends BaseImmutableListTest {
         System.out.println(of(1,2,3).drop(2).size());
         assertThat(of(1,2,3).drop(2).size(),equalTo(1));
     }
+
+    @Test
+    public void map3(){
+        Vector.range(0, 10000).map(i->i*2);
+    }
     @Test
     public void types(){
         System.out.println(of(1,2,3).splitAt(2)._1().getClass());
@@ -158,7 +163,7 @@ public class VectorTest extends BaseImmutableListTest {
         }
         for(int i=0;i<p;i++){
             System.out.println(i);
-            ints = ints.set(i,i*2);
+            ints = ints.updateAt(i,i*2);
         }
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i*2)));
@@ -195,7 +200,7 @@ public class VectorTest extends BaseImmutableListTest {
             ints = ints.plus(i);
         }
         for(int i=0;i<p;i++){
-            ints = ints.set(i,i*2);
+            ints = ints.updateAt(i,i*2);
         }
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i*2)));
@@ -232,7 +237,7 @@ public class VectorTest extends BaseImmutableListTest {
             ints = ints.plus(i);
         }
         for(int i=0;i<p;i++){
-            ints = ints.set(i,i*2);
+            ints = ints.updateAt(i,i*2);
         }
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i*2)));
@@ -266,10 +271,15 @@ public class VectorTest extends BaseImmutableListTest {
         for(int i=0;i<p;i++){
 
 
+
             ints = ints.plus(i);
+            for(int x=0;x<i;x++){
+                assertThat(ints.get(x),equalTo(Option.some(x)));
+            }
+
         }
         for(int i=0;i<p;i++){
-            ints = ints.set(i,i*2);
+            ints = ints.updateAt(i,i*2);
         }
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i*2)));
@@ -278,5 +288,23 @@ public class VectorTest extends BaseImmutableListTest {
     }
 
 
+    @Test
+    public void shift(){
+        System.out.println("Shift "+(1 >>> 5) + " and " + ((1 >>> 5) & 31));
+        System.out.println("Shift "+(32 >>> 5) + " and " + ((32 >>> 5) & 31));
+        System.out.println("Shift "+(64 >>> 5) + " and " + ((64 >>> 5) & 31));
+        System.out.println("Shift "+(96 >>> 5) + " and " + ((96 >>> 5) & 31));
+        System.out.println("Shift "+(128 >>> 5) + " and " + ((128 >>> 5) & 31));
+
+    }
+    @Test
+    public void shift2(){
+        for(int i=0;i<10000;i++){
+            System.out.println("I is " +  i +  "Shift "+(i >>> 5) + " and " + ((i >>> 5) & 31));
+        }
+
+
+
+    }
 
 }

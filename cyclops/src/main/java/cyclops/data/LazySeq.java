@@ -48,7 +48,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return Collectors.<T, List<T>, Iterable<T>,LazySeq<T>>collectingAndThen((Collector)c,LazySeq::fromIterable);
     }
 
-    static <T> LazySeq<T> defer(Supplier<LazySeq<T>> s){
+    static <T> LazySeq<T> defer(Supplier<? extends LazySeq<? extends T>> s){
         return new Lazy<>(s);
     }
     @Override
@@ -968,7 +968,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     static <T> LazySeq<T> cons(Eval<T> head, Supplier<LazySeq<T>> tail) {
         return Cons.cons(head,tail);
     }
-    static <T> LazySeq<T> cons(Eval<T> head, Function<Eval<T>,Supplier<LazySeq<T>>> tail) {
+    static <T> LazySeq<T> cons(Eval<T> head, Function<? super Eval<T>,? extends Supplier<LazySeq<T>>> tail) {
         return Cons.cons(head,tail.apply(head));
     }
 
@@ -1256,8 +1256,8 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         private final Eval<LazySeq<T>> ref;
 
-        public Lazy(Supplier<LazySeq<T>> s){
-            ref = Eval.eval(s);
+        public Lazy(Supplier<? extends LazySeq<? extends T>> s){
+            ref = Eval.eval( (Supplier<LazySeq<T>>)s);
         }
         @Override
         public LazySeq<T> append(Supplier<LazySeq<T>> list) {
