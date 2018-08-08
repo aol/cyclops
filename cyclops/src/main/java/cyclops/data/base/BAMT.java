@@ -198,27 +198,42 @@ public class BAMT<T> {
             return new Iterator<T>() {
                 int curs1=0;
                 int curs2=0;
+
+
+                Object res = UNSET;
                 @Override
                 public boolean hasNext() {
-                    if(curs1<array.length){
-                        if(curs2<array[curs1].length){
-                            return true;
+                    if(res!=UNSET)
+                        return true;
+                    for(;curs1<array.length;){
+                        for(;curs2<array[curs1].length;){
+
+                                if(array[curs1].length>0 && curs2< array[curs1].length){
+                                    res = (T)array[curs1][curs2++];
+                                    return true;
+                                }else{
+                                    curs2++;
+                                }
+
+
+
                         }
+                        curs2=0;
+                        curs1++;
                     }
                     return false;
+
 
                 }
 
                 @Override
                 public T next() {
-                    T res = (T)array[curs1][curs2];
-                    //more to next non-zero
-                    while(++curs2==array[curs1].length && curs1<array.length-1 ){
-                        curs2=-1;
-                        curs1++;
-                    }
-                    return res;
+                    T ret = (T)res;
+                    res = UNSET;
+                    return ret;
                 }
+
+
             };
         }
     }
@@ -248,6 +263,60 @@ public class BAMT<T> {
                                 }else{
                                     curs3++;
                                 }
+                            }
+                            curs3=0;
+                            curs2++;
+                        }
+                        curs2=0;
+                        curs1++;
+                    }
+                    return false;
+
+
+                }
+
+                @Override
+                public T next() {
+                    T ret = (T)res;
+                    res = UNSET;
+                    return ret;
+                }
+
+
+            };
+        }
+    }
+    @AllArgsConstructor
+    public static class ArrayIterator4D<T> implements Iterable<T>{
+        private final Object[][][][] array;
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                int curs1=0;
+                int curs2=0;
+                int curs3=0;
+                int curs4=0;
+
+                Object res = UNSET;
+                @Override
+                public boolean hasNext() {
+                    if(res!=UNSET)
+                        return true;
+                    for(;curs1<array.length;){
+                        for(;curs2<array[curs1].length;){
+                            for(;curs3<array[curs1][curs2].length;){
+                                for(;curs4<array[curs1][curs2][curs3].length;) {
+                                    if (array[curs1].length > 0 && array[curs1][curs2].length > 0 && array[curs1][curs2][curs3].length > 0 && curs4 < array[curs1][curs2][curs3].length) {
+                                        res = (T) array[curs1][curs2][curs3][curs4++];
+                                        return true;
+                                    } else {
+                                        curs4++;
+                                    }
+
+                                }
+                                curs4=0;
+                                curs3++;
                             }
                             curs3=0;
                             curs2++;
