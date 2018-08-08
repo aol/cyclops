@@ -90,7 +90,7 @@ public class ArrayIterator5DTest {
         return Tuple.tuple(list,array);
     }
     public Tuple2<List<Integer>,Object[][][][][]> simpleNulls(){
-        Object[][][][][] array = new Object[3][3][4][4][];
+        Object[][][][][] array = new Object[3][3][3][4][4];
         List<Integer> list = new ArrayList<>();
         for(int b=0;b<3;b++) {
             for (int a = 0; a < 3; a++) {
