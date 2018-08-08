@@ -457,15 +457,19 @@ public class BAMT<T> {
         }
         @Override
         public <R> Two<R> map(Function<? super T, ? extends R> fn) {
-            Object[][] res = new Object[array.length][array[0].length];
-            for(int i=0;i<array.length;i++){
-                Object[] next = array[i];
-                for(int j=0;j<next.length;j++) {
-                    res[i][j] = fn.apply((T)array[i][j]);
-                }
+            Object[][] res = new Object[array.length][][];
+            for(int i=0;i<array.length-1;i++){
+                Object[] nextA = array[i];
+                Object[] resA = new Object[nextA.length][];
+                res[i]=resA;
+                for(int k=0;k<nextA.length-1;k++) {
+                        resA[k] = fn.apply((T) nextA[k]);
+                    }
+
             }
-            return two(res);
+            return two((Object[][])res);
         }
+
         @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
@@ -677,21 +681,28 @@ public class BAMT<T> {
 
         @Override
         public <R> Four<R> map(Function<? super T, ? extends R> fn) {
-            Object[][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length];
-            for(int i=0;i<array.length;i++){
+            Object[][][][] res = new Object[array.length][][][];
+            for(int i=0;i<array.length-1;i++){
                 Object[][][] nextA = array[i];
-                for(int j=0;j<nextA.length;j++) {
+                Object[][][] resA = new Object[nextA.length][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length-1;j++) {
                     Object[][] nextB = nextA[j];
-                    for(int k=0;j<nextB.length;k++) {
-                        Object[] nextC = nextB[k];
-                        for(int l=0;j<nextC.length;l++) {
-                            res[i][j][k][l] = fn.apply((T) array[i][j][k][l]);
-                        }
 
+                    Object[][] resB = new Object[nextB.length][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length-1;k++) {
+                        Object[] nextC= nextB[k];
+
+                        Object[] resC = new Object[nextC.length][];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            resC[l] = fn.apply((T) nextC[l]);
+                        }
                     }
                 }
             }
-            return four(res);
+            return four((Object[][][][])res);
         }
         @Override
         public Option<T> get(int pos) {
@@ -825,25 +836,34 @@ public class BAMT<T> {
         }
         @Override
         public <R> Five<R> map(Function<? super T, ? extends R> fn) {
-            Object[][][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length][array[0][0][0][0].length];
-            for(int i=0;i<array.length;i++){
+            Object[][][][][] res = new Object[array.length][][][][];
+            for(int i=0;i<array.length-1;i++){
                 Object[][][][] nextA = array[i];
-                for(int j=0;j<nextA.length;j++) {
+                Object[][][][] resA = new Object[nextA.length][][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length-1;j++) {
                     Object[][][] nextB = nextA[j];
-                    for(int k=0;j<nextB.length;k++) {
-                        Object[][] nextC = nextB[k];
-                        for(int l=0;j<nextC.length;l++) {
-                            Object[] nextD = nextC[l];
-                            for(int m=0;j<nextD.length;m++) {
-                                res[i][j][k][l][m] = fn.apply((T) array[i][j][k][l][m]);
+
+                    Object[][][] resB = new Object[nextB.length][][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length-1;k++) {
+                        Object[][] nextC= nextB[k];
+
+                        Object[][]resC = new Object[nextC.length][][];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            Object[] nextD= nextC[l];
+
+                            Object[] resD = new Object[nextD.length][];
+                            resC[l]=resD;
+                            for(int m=0;l<nextD.length;m++) {
+                                resD[m] = fn.apply((T) nextD[m]);
                             }
-
                         }
-
                     }
                 }
             }
-            return five(res);
+            return five((Object[][][][][])res);
         }
         @Override
         public Option<T> get(int pos) {
@@ -992,29 +1012,40 @@ public class BAMT<T> {
         }
         @Override
         public <R> Six<R> map(Function<? super T, ? extends R> fn) {
-            Object[][][][][][] res = new Object[array.length][array[0].length][array[0][0].length][array[0][0][0].length][array[0][0][0][0].length][array[0][0][0][0][0].length];
-            for(int i=0;i<array.length;i++){
+            Object[][][][][][] res = new Object[array.length][][][][][];
+            for(int i=0;i<array.length-1;i++){
                 Object[][][][][] nextA = array[i];
-                for(int j=0;j<nextA.length;j++) {
+                Object[][][][][] resA = new Object[nextA.length][][][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length-1;j++) {
                     Object[][][][] nextB = nextA[j];
-                    for(int k=0;j<nextB.length;k++) {
-                        Object[][][] nextC = nextB[k];
-                        for(int l=0;j<nextC.length;l++) {
-                            Object[][] nextD = nextC[l];
-                            for(int m=0;j<nextD.length;m++) {
-                                Object[] nextE = nextD[m];
-                                for(int n=0;j<nextE.length;n++) {
-                                    res[i][j][k][l][m][n] = fn.apply((T) array[i][j][k][l][m][n]);
+
+                    Object[][][][] resB = new Object[nextB.length][][][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length-1;k++) {
+                        Object[][][] nextC= nextB[k];
+
+                        Object[][][] resC = new Object[nextC.length][][];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            Object[][] nextD= nextC[l];
+
+                            Object[][] resD = new Object[nextD.length][];
+                            resC[l]=resD;
+                            for(int m=0;l<nextD.length;m++) {
+                                Object[] nextE= nextD[m];
+
+                                Object[] resE = new Object[nextE.length];
+                                resD[m]=resE;
+                                for(int n=0;l<nextE.length;n++) {
+                                    resE[n] = fn.apply((T) nextE[n]);
                                 }
-
                             }
-
                         }
-
                     }
                 }
             }
-            return six(res);
+            return six((Object[][][][][][])res);
         }
 
         @Override
