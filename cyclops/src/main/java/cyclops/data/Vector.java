@@ -28,7 +28,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@AllArgsConstructor
 public class Vector<T> implements ImmutableList<T>,
                                   Serializable,
                                  Higher<vector,T> {
@@ -36,7 +35,13 @@ public class Vector<T> implements ImmutableList<T>,
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
     private final int size;
-    private final Supplier<Integer> hash = Memoize.memoizeSupplier(() -> calcHash());
+    private Supplier<Integer> hash = null;
+
+    public Vector(BAMT.NestedArray<T> root,BAMT.ActiveTail<T> tail, int size) {
+        this.root = root;
+        this.tail = tail;
+        this.size = size;
+    }
 
     @Override
     public Vector<T> plusAll(Iterable<? extends T> list) {
@@ -224,6 +229,7 @@ public class Vector<T> implements ImmutableList<T>,
 
     public <R> Vector<R> map(Function<? super T, ? extends R> fn){
         return fromIterable(stream().map(fn));
+        //return new Vector<>(this.root.map(fn),tail.map(fn),size);
     }
 
     private Object writeReplace() {
@@ -593,7 +599,14 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> updateAt(int pos, T value) {
-        return (Vector<T>)ImmutableList.super.updateAt(pos,value);
+        if(pos<0||pos>=size){
+            return this;
+        }
+        int tailStart = size-tail.size();
+        if(pos>=tailStart){
+            return new Vector<T>(root,tail.set(pos-tailStart,value),size);
+        }
+        return new Vector<>(root.match(z->z, p->p.set(pos,value)),tail,size);
     }
 
     @Override
@@ -622,15 +635,18 @@ public class Vector<T> implements ImmutableList<T>,
         return fromIterable(stream().concatMap(fn));
     }
 
-    public Vector<T> set(int pos, T value){
+    public Either<Integer,Vector<T>> set(int pos, T value) {
+        if (pos < 0 || pos >= size) {
+            return Either.left(size);
+        }
+        return Either.right(updateAt(pos, value));
+    }
+
+    public Either<Integer,Vector<T>> delete(int pos){
         if(pos<0||pos>=size){
-            return this;
+            return Either.left(size);
         }
-        int tailStart = size-tail.size();
-        if(pos>=tailStart){
-            return new Vector<T>(root,tail.set(pos-tailStart,value),size);
-        }
-        return new Vector<>(root.match(z->z, p->p.set(pos,value)),tail,size);
+        return Either.right(removeAt(pos));
     }
 
     public int size(){
@@ -1001,6 +1017,11 @@ public class Vector<T> implements ImmutableList<T>,
     }
     @Override
     public int hashCode() {
+        if(hash==null){
+           Supplier<Integer> local = Memoize.memoizeSupplier(() -> calcHash());
+           hash = local;
+           return local.get();
+        }
        return hash.get();
     }
     public static  <T,R> Vector<R> tailRec(T initial, Function<? super T, ? extends Vector<? extends Either<T, R>>> fn) {

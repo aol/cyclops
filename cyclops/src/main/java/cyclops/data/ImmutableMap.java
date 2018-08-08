@@ -8,9 +8,7 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
-import cyclops.data.Seq;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.control.Try;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
@@ -19,9 +17,7 @@ import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
                                             Folds<Tuple2<K,V>>,
@@ -328,7 +324,7 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
      */
     default <T> Seq<T> toSeq(final Function<? super Tuple2<? super K, ? super V>, ? extends T> fn) {
         return Seq.narrow(stream().map(fn)
-                .toSeq());
+                .seq());
     }
 
 
