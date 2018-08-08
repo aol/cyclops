@@ -35,6 +35,7 @@ public class BAMT<T> {
         }
 
         ReactiveSeq<T> stream();
+        Iterator<T> iterator();
         public T getOrElseGet(int pos, Supplier<T> alt);
         public T getOrElse(int pos, T alt);
         public Option<T> get(int pos);
@@ -166,6 +167,11 @@ public class BAMT<T> {
         @Override
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.of(array);
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator<T>(array).iterator();
         }
     }
 
@@ -476,6 +482,22 @@ public class BAMT<T> {
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.empty();
         }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public T next() {
+                    return null;
+                }
+            };
+        }
+
         public T getOrElseGet(int pos, Supplier<T> alt){
             return alt.get();
         }
@@ -512,6 +534,11 @@ public class BAMT<T> {
         @Override
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.of(array);
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator<>(array).iterator();
         }
 
         @Override
@@ -563,7 +590,7 @@ public class BAMT<T> {
     @AllArgsConstructor
     public static class Two<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth =5;
-        private final Object[][] array;
+        final Object[][] array;
 
         public static <T> Two<T> two(Object[][] array){
             return new Two<T>(array);
@@ -582,12 +609,12 @@ public class BAMT<T> {
         }
         @Override
         public <R> Two<R> map(Function<? super T, ? extends R> fn) {
-            Object[][] res = new Object[array.length][][];
-            for(int i=0;i<array.length-1;i++){
+            Object[][] res = new Object[array.length][];
+            for(int i=0;i<array.length;i++){
                 Object[] nextA = array[i];
-                Object[] resA = new Object[nextA.length][];
+                Object[] resA = new Object[nextA.length];
                 res[i]=resA;
-                for(int k=0;k<nextA.length-1;k++) {
+                for(int k=0;k<nextA.length;k++) {
                         resA[k] = fn.apply((T) nextA[k]);
                     }
 
@@ -649,16 +676,24 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.fromIterator(iterator());
+            /**
             return ReactiveSeq.iterate(0, i->i+1)
                                 .take(array.length)
                                 .map(indx->array[indx])
                                 .flatMap(a-> ReactiveSeq.of((T[])a));
+             **/
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator2D<T>(array).iterator();
         }
     }
     @AllArgsConstructor
     public static class Three<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 10;
-        private final Object[][][] array;
+        final Object[][][] array;
 
         public static <T> Three<T> three(Object[][][] array){
             return new Three<T>(array);
@@ -683,16 +718,16 @@ public class BAMT<T> {
         @Override
         public <R> Three<R> map(Function<? super T, ? extends R> fn) {
             Object[][][] res = new Object[array.length][][];
-            for(int i=0;i<array.length-1;i++){
+            for(int i=0;i<array.length;i++){
                 Object[][] nextA = array[i];
                 Object[][] resA = new Object[nextA.length][];
                 res[i]=resA;
-                for(int j=0;j<nextA.length-1;j++) {
+                for(int j=0;j<nextA.length;j++) {
                     Object[] nextB = nextA[j];
 
                     Object[] resB = new Object[nextB.length];
                     resA[j]=resB;
-                    for(int k=0;k<nextB.length-1;k++) {
+                    for(int k=0;k<nextB.length;k++) {
                         resB[k] = fn.apply((T) nextB[k]);
                     }
                 }
@@ -764,6 +799,8 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.fromIterator(iterator());
+            /**
             return ReactiveSeq.iterate(0, i->i+1)
                               .take(array.length)
                               .map(indx->array[indx])
@@ -773,13 +810,19 @@ public class BAMT<T> {
                                                     .map(indx->a[indx])
                                                     .flatMap(a2-> ReactiveSeq.of((T[])a2));
                               });
+             **/
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator3D<T>(array).iterator();
         }
     }
 
     @AllArgsConstructor
     public static class Four<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 15;
-        private final Object[][][][] array;
+        final Object[][][][] array;
 
         public static <T> Four<T> four(Object[][][][] array){
             return new Four<T>(array);
@@ -807,19 +850,19 @@ public class BAMT<T> {
         @Override
         public <R> Four<R> map(Function<? super T, ? extends R> fn) {
             Object[][][][] res = new Object[array.length][][][];
-            for(int i=0;i<array.length-1;i++){
+            for(int i=0;i<array.length;i++){
                 Object[][][] nextA = array[i];
                 Object[][][] resA = new Object[nextA.length][][];
                 res[i]=resA;
-                for(int j=0;j<nextA.length-1;j++) {
+                for(int j=0;j<nextA.length;j++) {
                     Object[][] nextB = nextA[j];
 
                     Object[][] resB = new Object[nextB.length][];
                     resA[j]=resB;
-                    for(int k=0;k<nextB.length-1;k++) {
+                    for(int k=0;k<nextB.length;k++) {
                         Object[] nextC= nextB[k];
 
-                        Object[] resC = new Object[nextC.length][];
+                        Object[] resC = new Object[nextC.length];
                         resB[k]=resC;
                         for(int l=0;l<nextC.length;l++) {
                             resC[l] = fn.apply((T) nextC[l]);
@@ -913,6 +956,8 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.fromIterator(iterator());
+            /**
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -927,12 +972,18 @@ public class BAMT<T> {
                                             .flatMap(a3-> ReactiveSeq.of((T[])a3));
                                 });
                     });
+             **/
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator4D<T>(array).iterator();
         }
     }
     @AllArgsConstructor
     public static class Five<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 20;
-        private final Object[][][][][] array;
+        final Object[][][][][] array;
 
         public static <T> Five<T> five(Object[][][][][] array){
             return new Five<T>(array);
@@ -962,26 +1013,26 @@ public class BAMT<T> {
         @Override
         public <R> Five<R> map(Function<? super T, ? extends R> fn) {
             Object[][][][][] res = new Object[array.length][][][][];
-            for(int i=0;i<array.length-1;i++){
+            for(int i=0;i<array.length;i++){
                 Object[][][][] nextA = array[i];
                 Object[][][][] resA = new Object[nextA.length][][][];
                 res[i]=resA;
-                for(int j=0;j<nextA.length-1;j++) {
+                for(int j=0;j<nextA.length;j++) {
                     Object[][][] nextB = nextA[j];
 
                     Object[][][] resB = new Object[nextB.length][][];
                     resA[j]=resB;
-                    for(int k=0;k<nextB.length-1;k++) {
+                    for(int k=0;k<nextB.length;k++) {
                         Object[][] nextC= nextB[k];
 
-                        Object[][]resC = new Object[nextC.length][][];
+                        Object[][] resC = new Object[nextC.length][];
                         resB[k]=resC;
                         for(int l=0;l<nextC.length;l++) {
                             Object[] nextD= nextC[l];
 
-                            Object[] resD = new Object[nextD.length][];
+                            Object[] resD = new Object[nextD.length];
                             resC[l]=resD;
-                            for(int m=0;l<nextD.length;m++) {
+                            for(int m=0;m<nextD.length;m++) {
                                 resD[m] = fn.apply((T) nextD[m]);
                             }
                         }
@@ -1082,6 +1133,8 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.fromIterator(iterator());
+            /**
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -1101,12 +1154,18 @@ public class BAMT<T> {
                                             });
                                 });
                     });
+             **/
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator5D<T>(array).iterator();
         }
     }
     @AllArgsConstructor
     public static class Six<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 25;
-        private final Object[][][][][][] array;
+        final Object[][][][][][] array;
 
         public static <T> Six<T> six(Object[][][][][][] array){
             return new Six<T>(array);
@@ -1138,16 +1197,16 @@ public class BAMT<T> {
         @Override
         public <R> Six<R> map(Function<? super T, ? extends R> fn) {
             Object[][][][][][] res = new Object[array.length][][][][][];
-            for(int i=0;i<array.length-1;i++){
+            for(int i=0;i<array.length;i++){
                 Object[][][][][] nextA = array[i];
                 Object[][][][][] resA = new Object[nextA.length][][][][];
                 res[i]=resA;
-                for(int j=0;j<nextA.length-1;j++) {
+                for(int j=0;j<nextA.length;j++) {
                     Object[][][][] nextB = nextA[j];
 
                     Object[][][][] resB = new Object[nextB.length][][][];
                     resA[j]=resB;
-                    for(int k=0;k<nextB.length-1;k++) {
+                    for(int k=0;k<nextB.length;k++) {
                         Object[][][] nextC= nextB[k];
 
                         Object[][][] resC = new Object[nextC.length][][];
@@ -1157,12 +1216,12 @@ public class BAMT<T> {
 
                             Object[][] resD = new Object[nextD.length][];
                             resC[l]=resD;
-                            for(int m=0;l<nextD.length;m++) {
+                            for(int m=0;m<nextD.length;m++) {
                                 Object[] nextE= nextD[m];
 
                                 Object[] resE = new Object[nextE.length];
                                 resD[m]=resE;
-                                for(int n=0;l<nextE.length;n++) {
+                                for(int n=0;n<nextE.length;n++) {
                                     resE[n] = fn.apply((T) nextE[n]);
                                 }
                             }
@@ -1279,6 +1338,8 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+            return ReactiveSeq.fromIterator(iterator());
+            /**
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -1303,6 +1364,12 @@ public class BAMT<T> {
                                             });
                                 });
                     });
+             **/
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new ArrayIterator6D<T>(array).iterator();
         }
     }
 }

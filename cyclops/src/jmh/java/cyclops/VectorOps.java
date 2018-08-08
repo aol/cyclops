@@ -30,9 +30,9 @@ public class VectorOps {
 
     @Setup
     public void before() {
-        vector = Vector.range(0, 10000);
-        vectorX = VectorX.range(0, 10000);
-        js = io.vavr.collection.Vector.range(0, 10000);
+        vector = Vector.range(0, 100_000);
+        vectorX = VectorX.range(0, 100_000);
+        js = io.vavr.collection.Vector.range(0, 100_000);
 
     }
 
@@ -49,11 +49,13 @@ public class VectorOps {
     @Fork(1)
     public void vectorOps() {
         vector.map(i -> i * 2)
-                .concatMap(i->io.vavr.collection.Vector.range(0,10))
+                .concatMap(i->Vector.range(0,10))
                 .map(i -> i * 2)
                 .filter(i -> i < 5000)
                 .map(i -> "hello " + i)
                 .map(i -> i.length())
+                .zipWithIndex()
+                .map(i->i._1())
                 .foldLeft((a, b) -> a + b);
 
     }
@@ -69,11 +71,13 @@ public class VectorOps {
     @Fork(1)
     public void vavrOps() {
         js.map(i -> i * 2)
-            .flatMap(i->io.vavr.collection.Vector.range(0,10))
+            .flatMap(i->Vector.range(0,10))
             .map(i -> i * 2)
             .filter(i -> i < 5000)
             .map(i -> "hello " + i)
             .map(i -> i.length())
+            .zipWithIndex()
+            .map(i->i._1())
             .reduce((a, b) -> a + b);
 
     }
@@ -90,13 +94,19 @@ public class VectorOps {
     )
     @Fork(1)
     public void vectorXOps() {
+
         vectorX.map(i -> i * 2)
-            .concatMap(i->io.vavr.collection.Vector.range(0,10))
+                .concatMap(i->Vector.range(0,10))
                 .map(i -> i * 2)
                 .filter(i -> i < 5000)
                 .map(i -> "hello " + i)
                 .map(i -> i.length())
+                .zipWithIndex()
+                .map(i->i._1())
                .foldLeft((a, b) -> a + b);
+
+
+        
 
     }
 

@@ -111,6 +111,88 @@ public class VectorTest extends BaseImmutableListTest {
         return Vector.unfold(seed,unfolder);
     }
     @Test
+    public void map2depth(){
+        //Vector.range(0, 10000)
+        Vector.range(0, 32)
+            .map(i -> i * 2)
+
+            .foldLeft((a, b) -> a + b);
+    }
+    @Test
+    public void map3depth(){
+        Vector.range(0, 2000)
+            .map(i -> i * 2)
+            .foldLeft((a, b) -> a + b);
+    }
+    @Test
+    public void map4depth(){
+        Vector.range(0, 10000)
+            .map(i -> i * 2)
+            .foldLeft((a, b) -> a + b);
+    }
+
+    @Test
+    public void map5depth(){
+        Vector.range(0, 5000000)
+            .map(i -> i * 2)
+            .foldLeft((a, b) -> a + b);
+    }
+    @Test
+    public void npe4D(){
+        Vector.range(0, 10000)
+     //  Vector.range(0, 32)
+        //    .map(i -> i * 2)
+            .concatMap(i->Vector.range(0,10))
+            .map(i -> i * 2)
+         //   .filter(i -> i < 5000)
+         //   .map(i -> "hello " + i)
+         //   .map(i -> i.length())
+            .foldLeft((a, b) -> a + b);
+    }
+    @Test
+    public void npe3D(){
+        Vector.range(0, 1000)
+            //  Vector.range(0, 32)
+            //    .map(i -> i * 2)
+            .concatMap(i->Vector.range(0,10))
+            .map(i -> i * 2)
+            //   .filter(i -> i < 5000)
+            //   .map(i -> "hello " + i)
+            //   .map(i -> i.length())
+            .foldLeft((a, b) -> a + b);
+    }
+    @Test
+    public void map3D(){
+
+        assertThat(Vector.range(0, 10000)
+
+                .map(i -> i * 2),equalTo(Seq.range(0,10000).map(i->i*2)));
+
+
+    }
+    @Test
+    public void map2D(){
+        for(int i=32;i<1024;i++) {
+            System.out.println("I is " + i);
+            assertThat(Vector.range(0, i)
+
+                .map(n -> n * 2), equalTo(Seq.range(0, i).map(n -> n * 2)));
+        }
+
+
+    }
+    @Test
+    public void map1D(){
+
+        for(int i=0;i<32;i++) {
+            assertThat(Vector.range(0, i)
+
+                .map(n -> n * 2), equalTo(Seq.range(0, i).map(n -> n * 2)));
+        }
+
+
+    }
+    @Test
     public void testVector(){
         Vector<Integer> ints = Vector.<Integer>empty().plus(1);
         assertThat(ints.get(0),equalTo(Option.some(1)));
@@ -151,6 +233,7 @@ public class VectorTest extends BaseImmutableListTest {
                 }
         );
     }
+
 
     @Test
     public void test3PowSet(){
