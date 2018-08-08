@@ -102,7 +102,28 @@ public class Vector<T> implements ImmutableList<T>,
   }
     @Override
     public Iterator<T> iterator(){
-        return stream().iterator();
+        Iterator<T> ri = root.iterator();
+        Iterator<T> ti = tail.iterator();
+        return new Iterator<T>() {
+            Iterator<T> active = ri;
+            @Override
+            public boolean hasNext() {
+                if(active.hasNext())
+                    return true;
+                else if(active==ri)
+                {
+                    active = ti;
+                }
+                return active.hasNext();
+
+            }
+
+            @Override
+            public T next() {
+                return active.next();
+            }
+        };
+        //return stream().iterator();
     }
 
     @Override
@@ -228,8 +249,15 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     public <R> Vector<R> map(Function<? super T, ? extends R> fn){
-        return fromIterable(stream().map(fn));
-        //return new Vector<>(this.root.map(fn),tail.map(fn),size);
+       /**
+        Vector<R> res = Vector.empty();
+        for(T next : this){
+           res.append(fn.apply(next));
+        }
+        return res;
+        **/
+        //return fromIterable(stream().map(fn));
+        return new Vector<>(this.root.map(fn),tail.map(fn),size);
     }
 
     private Object writeReplace() {
