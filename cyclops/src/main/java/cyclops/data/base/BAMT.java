@@ -5,6 +5,7 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -165,6 +166,109 @@ public class BAMT<T> {
         @Override
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.of(array);
+        }
+    }
+
+    @AllArgsConstructor
+    public static class ArrayIterator<T> implements Iterable<T>{
+        private final T[] array;
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                int curs=0;
+                @Override
+                public boolean hasNext() {
+                    return curs < array.length;
+                }
+
+                @Override
+                public T next() {
+                    return array[curs++];
+                }
+            };
+        }
+    }
+    @AllArgsConstructor
+    public static class ArrayIterator2D<T> implements Iterable<T>{
+        private final Object[][] array;
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                int curs1=0;
+                int curs2=0;
+                @Override
+                public boolean hasNext() {
+                    if(curs1<array.length){
+                        if(curs2<array[curs1].length){
+                            return true;
+                        }
+                    }
+                    return false;
+
+                }
+
+                @Override
+                public T next() {
+                    T res = (T)array[curs1][curs2];
+                    //more to next non-zero
+                    while(++curs2==array[curs1].length && curs1<array.length-1 ){
+                        curs2=-1;
+                        curs1++;
+                    }
+                    return res;
+                }
+            };
+        }
+    }
+    private static final Object UNSET = new Object();
+    @AllArgsConstructor
+    public static class ArrayIterator3D<T> implements Iterable<T>{
+        private final Object[][][] array;
+
+        @Override
+        public Iterator<T> iterator() {
+            return new Iterator<T>() {
+                int curs1=0;
+                int curs2=0;
+                int curs3=0;
+
+                Object res = UNSET;
+                @Override
+                public boolean hasNext() {
+                    if(res!=UNSET)
+                        return true;
+                    for(;curs1<array.length;){
+                        for(;curs2<array[curs1].length;){
+                            for(;curs3<array[curs1][curs2].length;){
+                                if(array[curs1].length>0 && array[curs1][curs2].length>0 && curs3<array[curs1][curs2].length){
+                                    res = (T)array[curs1][curs2][curs3++];
+                                    return true;
+                                }else{
+                                    curs3++;
+                                }
+                            }
+                            curs3=0;
+                            curs2++;
+                        }
+                        curs2=0;
+                        curs1++;
+                    }
+                    return false;
+
+
+                }
+
+                @Override
+                public T next() {
+                    T ret = (T)res;
+                    res = UNSET;
+                    return ret;
+                }
+
+
+            };
         }
     }
 
