@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -35,7 +36,6 @@ public class BAMT<T> {
         }
 
         ReactiveSeq<T> stream();
-        Iterator<T> iterator();
         public T getOrElseGet(int pos, Supplier<T> alt);
         public T getOrElse(int pos, T alt);
         public Option<T> get(int pos);
@@ -169,308 +169,10 @@ public class BAMT<T> {
             return ReactiveSeq.of(array);
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator<T>(array).iterator();
-        }
+
     }
 
-    @AllArgsConstructor
-    public static class ArrayIterator<T> implements Iterable<T>{
-        private final T[] array;
 
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs=0;
-                @Override
-                public boolean hasNext() {
-                    return curs < array.length;
-                }
-
-                @Override
-                public T next() {
-                    return array[curs++];
-                }
-            };
-        }
-    }
-    @AllArgsConstructor
-    public static class ArrayIterator2D<T> implements Iterable<T>{
-        private final Object[][] array;
-
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs1=0;
-                int curs2=0;
-
-
-                Object res = UNSET;
-                @Override
-                public boolean hasNext() {
-                    if(res!=UNSET)
-                        return true;
-                    for(;curs1<array.length;){
-                        for(;curs2<array[curs1].length;){
-
-                                if(array[curs1].length>0 && curs2< array[curs1].length){
-                                    res = (T)array[curs1][curs2++];
-                                    return true;
-                                }else{
-                                    curs2++;
-                                }
-
-
-
-                        }
-                        curs2=0;
-                        curs1++;
-                    }
-                    return false;
-
-
-                }
-
-                @Override
-                public T next() {
-                    T ret = (T)res;
-                    res = UNSET;
-                    return ret;
-                }
-
-
-            };
-        }
-    }
-    private static final Object UNSET = new Object();
-    @AllArgsConstructor
-    public static class ArrayIterator3D<T> implements Iterable<T>{
-        private final Object[][][] array;
-
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs1=0;
-                int curs2=0;
-                int curs3=0;
-
-                Object res = UNSET;
-                @Override
-                public boolean hasNext() {
-                    if(res!=UNSET)
-                        return true;
-                    for(;curs1<array.length;){
-                        for(;curs2<array[curs1].length;){
-                            for(;curs3<array[curs1][curs2].length;){
-                                if(array[curs1].length>0 && array[curs1][curs2].length>0 && curs3<array[curs1][curs2].length){
-                                    res = (T)array[curs1][curs2][curs3++];
-                                    return true;
-                                }else{
-                                    curs3++;
-                                }
-                            }
-                            curs3=0;
-                            curs2++;
-                        }
-                        curs2=0;
-                        curs1++;
-                    }
-                    return false;
-
-
-                }
-
-                @Override
-                public T next() {
-                    T ret = (T)res;
-                    res = UNSET;
-                    return ret;
-                }
-
-
-            };
-        }
-    }
-    @AllArgsConstructor
-    public static class ArrayIterator4D<T> implements Iterable<T>{
-        private final Object[][][][] array;
-
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs1=0;
-                int curs2=0;
-                int curs3=0;
-                int curs4=0;
-
-                Object res = UNSET;
-                @Override
-                public boolean hasNext() {
-                    if(res!=UNSET)
-                        return true;
-                    for(;curs1<array.length;){
-                        for(;curs2<array[curs1].length;){
-                            for(;curs3<array[curs1][curs2].length;){
-                                for(;curs4<array[curs1][curs2][curs3].length;) {
-                                    if (array[curs1].length > 0 && array[curs1][curs2].length > 0 && array[curs1][curs2][curs3].length > 0 && curs4 < array[curs1][curs2][curs3].length) {
-                                        res = (T) array[curs1][curs2][curs3][curs4++];
-                                        return true;
-                                    } else {
-                                        curs4++;
-                                    }
-
-                                }
-                                curs4=0;
-                                curs3++;
-                            }
-                            curs3=0;
-                            curs2++;
-                        }
-                        curs2=0;
-                        curs1++;
-                    }
-                    return false;
-
-
-                }
-
-                @Override
-                public T next() {
-                    T ret = (T)res;
-                    res = UNSET;
-                    return ret;
-                }
-
-
-            };
-        }
-    }
-    @AllArgsConstructor
-    public static class ArrayIterator5D<T> implements Iterable<T>{
-        private final Object[][][][][] array;
-
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs1=0;
-                int curs2=0;
-                int curs3=0;
-                int curs4=0;
-                int curs5=0;
-
-                Object res = UNSET;
-                @Override
-                public boolean hasNext() {
-                    if(res!=UNSET)
-                        return true;
-                    for(;curs1<array.length;){
-                        for(;curs2<array[curs1].length;){
-                            for(;curs3<array[curs1][curs2].length;){
-                                for(;curs4<array[curs1][curs2][curs3].length;) {
-                                    for(;curs5<array[curs1][curs2][curs3][curs4].length;) {
-                                        if (array[curs1].length > 0 && array[curs1][curs2].length > 0 && array[curs1][curs2][curs3].length > 0
-                                            && array[curs1][curs2][curs3][curs4].length > 0 && curs5 < array[curs1][curs2][curs3][curs4].length) {
-                                            res = (T) array[curs1][curs2][curs3][curs4][curs5++];
-                                            return true;
-                                        } else {
-                                            curs5++;
-                                        }
-                                    }
-                                    curs5=0;
-                                    curs4++;
-
-                                }
-                                curs4=0;
-                                curs3++;
-                            }
-                            curs3=0;
-                            curs2++;
-                        }
-                        curs2=0;
-                        curs1++;
-                    }
-                    return false;
-
-
-                }
-
-                @Override
-                public T next() {
-                    T ret = (T)res;
-                    res = UNSET;
-                    return ret;
-                }
-
-
-            };
-        }
-    }
-    @AllArgsConstructor
-    public static class ArrayIterator6D<T> implements Iterable<T>{
-        private final Object[][][][][][] array;
-
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                int curs1=0;
-                int curs2=0;
-                int curs3=0;
-                int curs4=0;
-                int curs5=0;
-                int curs6=0;
-
-                Object res = UNSET;
-                @Override
-                public boolean hasNext() {
-                    if(res!=UNSET)
-                        return true;
-                    for(;curs1<array.length;){
-                        for(;curs2<array[curs1].length;){
-                            for(;curs3<array[curs1][curs2].length;){
-                                for(;curs4<array[curs1][curs2][curs3].length;) {
-                                    for(;curs5<array[curs1][curs2][curs3][curs4].length;) {
-                                        for(;curs6<array[curs1][curs2][curs3][curs4][curs5].length;) {
-                                            if (array[curs1].length > 0 && array[curs1][curs2].length > 0 && array[curs1][curs2][curs3].length > 0
-                                                && array[curs1][curs2][curs3][curs4].length > 0  && array[curs1][curs2][curs3][curs4][curs5].length > 0 && curs6 < array[curs1][curs2][curs3][curs4][curs5].length) {
-                                                res = (T) array[curs1][curs2][curs3][curs4][curs5][curs6++];
-                                                return true;
-                                            } else {
-                                                curs6++;
-                                            }
-                                        }
-                                        curs6=0;
-                                        curs5++;
-                                    }
-                                    curs5=0;
-                                    curs4++;
-
-                                }
-                                curs4=0;
-                                curs3++;
-                            }
-                            curs3=0;
-                            curs2++;
-                        }
-                        curs2=0;
-                        curs1++;
-                    }
-                    return false;
-
-
-                }
-
-                @Override
-                public T next() {
-                    T ret = (T)res;
-                    res = UNSET;
-                    return ret;
-                }
-
-
-            };
-        }
-    }
 
     public static class Zero<T> implements NestedArray<T>{
         @Override
@@ -483,20 +185,6 @@ public class BAMT<T> {
             return ReactiveSeq.empty();
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new Iterator<T>() {
-                @Override
-                public boolean hasNext() {
-                    return false;
-                }
-
-                @Override
-                public T next() {
-                    return null;
-                }
-            };
-        }
 
         public T getOrElseGet(int pos, Supplier<T> alt){
             return alt.get();
@@ -536,10 +224,6 @@ public class BAMT<T> {
             return ReactiveSeq.of(array);
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator<>(array).iterator();
-        }
 
         @Override
         public Option<T> get(int pos) {
@@ -676,19 +360,14 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.fromIterator(iterator());
-            /**
+
             return ReactiveSeq.iterate(0, i->i+1)
                                 .take(array.length)
                                 .map(indx->array[indx])
                                 .flatMap(a-> ReactiveSeq.of((T[])a));
-             **/
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator2D<T>(array).iterator();
-        }
+
     }
     @AllArgsConstructor
     public static class Three<T> implements PopulatedArray<T>{
@@ -799,8 +478,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.fromIterator(iterator());
-            /**
+
             return ReactiveSeq.iterate(0, i->i+1)
                               .take(array.length)
                               .map(indx->array[indx])
@@ -810,13 +488,10 @@ public class BAMT<T> {
                                                     .map(indx->a[indx])
                                                     .flatMap(a2-> ReactiveSeq.of((T[])a2));
                               });
-             **/
+
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator3D<T>(array).iterator();
-        }
+
     }
 
     @AllArgsConstructor
@@ -956,8 +631,6 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.fromIterator(iterator());
-            /**
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -972,13 +645,9 @@ public class BAMT<T> {
                                             .flatMap(a3-> ReactiveSeq.of((T[])a3));
                                 });
                     });
-             **/
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator4D<T>(array).iterator();
-        }
+
     }
     @AllArgsConstructor
     public static class Five<T> implements PopulatedArray<T>{
@@ -1133,8 +802,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.fromIterator(iterator());
-            /**
+
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -1154,13 +822,9 @@ public class BAMT<T> {
                                             });
                                 });
                     });
-             **/
+
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator5D<T>(array).iterator();
-        }
     }
     @AllArgsConstructor
     public static class Six<T> implements PopulatedArray<T>{
@@ -1338,8 +1002,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
-            return ReactiveSeq.fromIterator(iterator());
-            /**
+
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -1364,12 +1027,8 @@ public class BAMT<T> {
                                             });
                                 });
                     });
-             **/
+
         }
 
-        @Override
-        public Iterator<T> iterator() {
-            return new ArrayIterator6D<T>(array).iterator();
-        }
     }
 }

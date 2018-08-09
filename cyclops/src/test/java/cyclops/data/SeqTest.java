@@ -5,6 +5,7 @@ import com.oath.cyclops.hkt.Higher2;
 import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
+import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -28,6 +29,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class SeqTest extends BaseImmutableListTest {
     @Override
@@ -84,7 +86,6 @@ public class SeqTest extends BaseImmutableListTest {
     }
 
 
-
     @Test
     public void seqTest(){
         Seq.of(1,2,3).prepend(3);
@@ -95,6 +96,19 @@ public class SeqTest extends BaseImmutableListTest {
     }
 
 
-
+    @Test
+    public void setEither(){
+        Seq<Integer> ints = Seq.of(1,2,3);
+        assertTrue(ints.set(-1,10).isLeft());
+        assertTrue(ints.set(4,10).isLeft());
+        Assert.assertThat(ints.set(2,10),equalTo(Either.right(Seq.of(1,2,10))));
+    }
+    @Test
+    public void deleteEither(){
+        Seq<Integer> ints = Seq.of(1,2,3);
+        assertTrue(ints.delete(-1).isLeft());
+        assertTrue(ints.delete(4).isLeft());
+        Assert.assertThat(ints.delete(2),equalTo(Either.right(Vector.of(1,2))));
+    }
 
 }
