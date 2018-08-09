@@ -1,16 +1,19 @@
 package cyclops.data;
 
+import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.data.base.BAMT;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
+import cyclops.reactive.ReactiveSeq;
 import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -19,7 +22,7 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-
+import static org.junit.Assert.assertTrue;
 
 
 public class VectorTest extends BaseImmutableListTest {
@@ -33,6 +36,34 @@ public class VectorTest extends BaseImmutableListTest {
         System.out.println(of(1,2,3).drop(2));
         System.out.println(of(1,2,3).drop(2).size());
         assertThat(of(1,2,3).drop(2).size(),equalTo(1));
+    }
+
+    @Test
+    public void npeTest(){
+        com.google.common.collect.ImmutableList<String> guava = com.google.common.collect.ImmutableList.copyOf(ReactiveSeq.range(0,1000).map(i->""+i));
+        for(int i=0;i<1000;i++) {
+            System.out.println("Guava size " + guava.size());
+            guava = com.google.common.collect.ImmutableList.<String>builder().addAll(guava.subList(0,i)).add(""+i).addAll(guava.subList(i+1,guava.size())).build();
+        }
+        /**
+        //System.out.println(Seq.range(0,3).concatMap(i -> Vector.range(i*10,i*10+15).map(n->"i " + i + " n : " + n)));
+
+        System.out.println(Vector.range(0,3).concatMap(i -> Vector.range(i*10,i*10+15).map(n->"i " + i + " n : " + n)).size());
+        System.out.println(Vector.range(0,3).concatMap(i -> Vector.range(i*10,i*10+15).map(n->"i " + i + " n : " + n)));
+**/
+      /**  Vector.range(0,10).map(i -> i * 2)
+            .concatMap(i->Vector.range(0,10))
+            .map(i -> i * 2)
+            .filter(i -> i < 5000)
+            .map(i -> "hello " + i)
+            .map(i -> i.length())
+            .zip(Vector.range(0,1000000))
+            .map(i->i._1())
+            .foldLeft((a, b) -> a + b);**/
+    }
+    @Test
+    public void zipWithIndexOperation(){
+        Vector.of(1,2,3).zipWithIndex();
     }
 
     @Test
@@ -288,6 +319,13 @@ public class VectorTest extends BaseImmutableListTest {
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i*2)));
         }
+        Vector<Integer> doubled = ints.map(n->n*2);
+        Iterator<Integer> it = doubled.iterator();
+        for(int i=0;i<p;i++){
+                Integer next = it.next();
+                assertThat(next, equalTo(i * 4));
+
+        }
 
     }
     @Test @Ignore
@@ -307,6 +345,13 @@ public class VectorTest extends BaseImmutableListTest {
                     assertThat(finalRef.get(next), equalTo(Option.some(next)));
                 }
         );
+        Vector<Integer> doubled = ints.map(n->n*2);
+        Iterator<Integer> it = doubled.iterator();
+        for(int i=0;i<p;i++){
+            Integer next = it.next();
+            assertThat(next, equalTo(i * 2));
+
+        }
     }
 
     @Test @Ignore
@@ -331,19 +376,34 @@ public class VectorTest extends BaseImmutableListTest {
     public void test6Pow(){
         Vector<Integer> ints = Vector.<Integer>empty();
 
-        int p  = Double.valueOf(Math.pow(2,30)).intValue();
+        int progress = Double.valueOf(Math.pow(2,24)).intValue();
+
+        int p  = Double.valueOf(Math.pow(2,26)).intValue();
+        System.out.println("Plus");
         for(int i=0;i<p;i++){
             ints = ints.plus(i);
+            if(i%progress==0) {
+                System.out.println("Progress marker " + i);
+            }
         }
+        System.out.println("get");
         for(int i=0;i<p;i++){
             assertThat(ints.get(i),equalTo(Option.some(i)));
         }
-
+        System.out.println("stream");
         final Vector<Integer> finalRef = ints;
         ints.stream().forEach(next-> {
                     assertThat(finalRef.get(next), equalTo(Option.some(next)));
                 }
         );
+        System.out.println("map");
+        Vector<Integer> doubled = ints.map(n->n*2);
+        Iterator<Integer> it = doubled.iterator();
+        for(int i=0;i<p;i++){
+            Integer next = it.next();
+            assertThat(next, equalTo(i * 2));
+
+        }
     }
 
     @Test @Ignore
@@ -386,8 +446,21 @@ public class VectorTest extends BaseImmutableListTest {
             System.out.println("I is " +  i +  "Shift "+(i >>> 5) + " and " + ((i >>> 5) & 31));
         }
 
+    }
 
-
+    @Test
+    public void setEither(){
+        Vector<Integer> ints = Vector.of(1,2,3);
+        assertTrue(ints.set(-1,10).isLeft());
+        assertTrue(ints.set(4,10).isLeft());
+        assertThat(ints.set(2,10),equalTo(Either.right(Vector.of(1,2,10))));
+    }
+    @Test
+    public void deleteEither(){
+        Vector<Integer> ints = Vector.of(1,2,3);
+        assertTrue(ints.delete(-1).isLeft());
+        assertTrue(ints.delete(4).isLeft());
+        assertThat(ints.delete(2),equalTo(Either.right(Vector.of(1,2))));
     }
 
 }

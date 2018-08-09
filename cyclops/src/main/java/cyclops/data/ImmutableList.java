@@ -464,7 +464,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default <U> ImmutableList<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return unitStream(stream().zip(other));
+       return zip(other,Tuple::tuple);
+        // return unitStream(stream().zip(other));
     }
 
     @Override
@@ -525,7 +526,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<Tuple2<T, Long>> zipWithIndex() {
-        return unitStream(stream().zipWithIndex());
+        return zipWithStream(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
+       // return unitStream(stream().zipWithIndex());
     }
 
     @Override
@@ -554,7 +556,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     default <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
-        return unitStream(stream().zipWithStream(other));
+        return zip(ReactiveSeq.fromStream(other));
+       // return unitStream(stream().zipWithStream(other));
     }
 
     @Override

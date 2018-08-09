@@ -7,6 +7,7 @@ import io.vavr.collection.Stream;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
 import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
@@ -24,20 +25,18 @@ import java.util.stream.Collectors;
 public class DataSet {
 
 
-    Vector<Integer> vector;
-    List<Integer> list;
-    io.vavr.collection.Vector<Integer> js;
-    ImmutableList<Integer> guava;
-
-    @Setup
+    Vector<String> vector;
+    List<String> list;
+    io.vavr.collection.Vector<String> js;
+    ImmutableList<String> guava;
+    @Setup(Level.Iteration)
     public void before(){
-        vector = Vector.range(0,10000);
-        list = Stream.range(0,10000).toJavaList();
-        js = io.vavr.collection.Vector.range(0,10000);
+        vector = Vector.range(0,10000).map(i->""+i);;
+        list = Stream.range(0,10000).map(i->""+i).toJavaList();
+        js = io.vavr.collection.Vector.range(0,10000).map(i->""+i);
         guava = ImmutableList.copyOf(list);
 
     }
-
     @Benchmark
     @BenchmarkMode(Mode.SampleTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
@@ -50,7 +49,7 @@ public class DataSet {
     @Fork(1)
     public void jsVectorSet(){
         for(int i=0;i<10000;i++){
-            js.update(i,i);
+            js = js.update(i,""+i);
         }
     }
 
@@ -66,7 +65,7 @@ public class DataSet {
     @Fork(1)
     public void vectorSet(){
         for(int i=0;i<10000;i++){
-            vector.set(i,i);
+            vector =  vector.updateAt(i,""+i);
         }
     }
 
@@ -82,7 +81,7 @@ public class DataSet {
     @Fork(1)
     public void listSet(){
         for(int i=0;i<10000;i++){
-            list.set(i,i);
+            list.set(i,""+i);
         }
     }
 
@@ -97,49 +96,50 @@ public class DataSet {
     )
     @Fork(1)
     public void guavaSet(){
-        for(int i=0;i<10000;i++){
-            ImmutableList.builder().addAll(guava.subList(0,i)).addAll(guava.subList(i+1,guava.size())).build();
+        for(int i=0;i<10000;i++) {
+            guava = com.google.common.collect.ImmutableList.<String>builder().addAll(guava.subList(0,i)).add(""+i).addAll(guava.subList(i+1,guava.size())).build();
+
         }
     }
 }
 /**
- Benchmark                                  Mode     Cnt    Score    Error  Units
- DataSet.guavaSet                         sample      30  439.930 ± 26.522  ms/op
- DataSet.guavaSet:guavaSet·p0.00          sample          397.410           ms/op
- DataSet.guavaSet:guavaSet·p0.50          sample          427.819           ms/op
- DataSet.guavaSet:guavaSet·p0.90          sample          523.187           ms/op
- DataSet.guavaSet:guavaSet·p0.95          sample          543.267           ms/op
- DataSet.guavaSet:guavaSet·p0.99          sample          553.648           ms/op
- DataSet.guavaSet:guavaSet·p0.999         sample          553.648           ms/op
- DataSet.guavaSet:guavaSet·p0.9999        sample          553.648           ms/op
- DataSet.guavaSet:guavaSet·p1.00          sample          553.648           ms/op
- DataSet.jsVectorSet                      sample   19584    0.511 ±  0.003  ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.00    sample            0.387           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.50    sample            0.466           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.90    sample            0.663           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.95    sample            0.724           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.99    sample            0.878           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.999   sample            1.992           ms/op
- DataSet.jsVectorSet:jsVectorSet·p0.9999  sample            4.436           ms/op
- DataSet.jsVectorSet:jsVectorSet·p1.00    sample            4.538           ms/op
- DataSet.listSet                          sample  153856    0.033 ±  0.001  ms/op
- DataSet.listSet:listSet·p0.00            sample            0.028           ms/op
- DataSet.listSet:listSet·p0.50            sample            0.031           ms/op
- DataSet.listSet:listSet·p0.90            sample            0.033           ms/op
- DataSet.listSet:listSet·p0.95            sample            0.046           ms/op
- DataSet.listSet:listSet·p0.99            sample            0.072           ms/op
- DataSet.listSet:listSet·p0.999           sample            0.117           ms/op
- DataSet.listSet:listSet·p0.9999          sample            1.769           ms/op
- DataSet.listSet:listSet·p1.00            sample            2.388           ms/op
- DataSet.vectorSet                        sample   14971    0.669 ±  0.004  ms/op
- DataSet.vectorSet:vectorSet·p0.00        sample            0.555           ms/op
- DataSet.vectorSet:vectorSet·p0.50        sample            0.605           ms/op
- DataSet.vectorSet:vectorSet·p0.90        sample            0.805           ms/op
- DataSet.vectorSet:vectorSet·p0.95        sample            0.871           ms/op
- DataSet.vectorSet:vectorSet·p0.99        sample            1.104           ms/op
- DataSet.vectorSet:vectorSet·p0.999       sample            2.274           ms/op
- DataSet.vectorSet:vectorSet·p0.9999      sample            3.061           ms/op
- DataSet.vectorSet:vectorSet·p1.00        sample            3.330           ms/op
+ Benchmark                                  Mode    Cnt    Score   Error  Units
+ DataSet.guavaSet                         sample     30  403.649 ± 7.542  ms/op
+ DataSet.guavaSet:guavaSet·p0.00          sample         384.827          ms/op
+ DataSet.guavaSet:guavaSet·p0.50          sample         403.702          ms/op
+ DataSet.guavaSet:guavaSet·p0.90          sample         421.318          ms/op
+ DataSet.guavaSet:guavaSet·p0.95          sample         423.756          ms/op
+ DataSet.guavaSet:guavaSet·p0.99          sample         425.198          ms/op
+ DataSet.guavaSet:guavaSet·p0.999         sample         425.198          ms/op
+ DataSet.guavaSet:guavaSet·p0.9999        sample         425.198          ms/op
+ DataSet.guavaSet:guavaSet·p1.00          sample         425.198          ms/op
+ DataSet.jsVectorSet                      sample  16864    0.594 ± 0.003  ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.00    sample           0.494          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.50    sample           0.537          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.90    sample           0.696          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.95    sample           0.758          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.99    sample           0.962          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.999   sample           2.294          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p0.9999  sample           3.020          ms/op
+ DataSet.jsVectorSet:jsVectorSet·p1.00    sample           3.129          ms/op
+ DataSet.listSet                          sample  72219    0.139 ± 0.001  ms/op
+ DataSet.listSet:listSet·p0.00            sample           0.121          ms/op
+ DataSet.listSet:listSet·p0.50            sample           0.130          ms/op
+ DataSet.listSet:listSet·p0.90            sample           0.147          ms/op
+ DataSet.listSet:listSet·p0.95            sample           0.182          ms/op
+ DataSet.listSet:listSet·p0.99            sample           0.246          ms/op
+ DataSet.listSet:listSet·p0.999           sample           0.367          ms/op
+ DataSet.listSet:listSet·p0.9999          sample           2.847          ms/op
+ DataSet.listSet:listSet·p1.00            sample           3.269          ms/op
+ DataSet.vectorSet                        sample  19946    0.503 ± 0.003  ms/op
+ DataSet.vectorSet:vectorSet·p0.00        sample           0.422          ms/op
+ DataSet.vectorSet:vectorSet·p0.50        sample           0.461          ms/op
+ DataSet.vectorSet:vectorSet·p0.90        sample           0.615          ms/op
+ DataSet.vectorSet:vectorSet·p0.95        sample           0.658          ms/op
+ DataSet.vectorSet:vectorSet·p0.99        sample           0.815          ms/op
+ DataSet.vectorSet:vectorSet·p0.999       sample           2.582          ms/op
+ DataSet.vectorSet:vectorSet·p0.9999      sample           3.750          ms/op
+ DataSet.vectorSet:vectorSet·p1.00        sample           4.899          ms/op
 
  */
 

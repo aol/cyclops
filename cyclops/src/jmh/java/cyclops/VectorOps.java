@@ -3,6 +3,7 @@ package cyclops;
 
 import com.google.common.collect.ImmutableList;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.reactive.collections.immutable.VectorX;
 import io.vavr.collection.Stream;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -53,9 +54,9 @@ public class VectorOps {
                 .map(i -> i * 2)
                 .filter(i -> i < 5000)
                 .map(i -> "hello " + i)
-                .map(i -> i.length())
-                .zipWithIndex()
+                .zip(Vector.range(0,1000000))
                 .map(i->i._1())
+                .map(i -> i.length())
                 .foldLeft((a, b) -> a + b);
 
     }
@@ -75,9 +76,9 @@ public class VectorOps {
             .map(i -> i * 2)
             .filter(i -> i < 5000)
             .map(i -> "hello " + i)
-            .map(i -> i.length())
-            .zipWithIndex()
+            .zip(Vector.range(0,1000000))
             .map(i->i._1())
+            .map(i -> i.length())
             .reduce((a, b) -> a + b);
 
     }
@@ -100,14 +101,46 @@ public class VectorOps {
                 .map(i -> i * 2)
                 .filter(i -> i < 5000)
                 .map(i -> "hello " + i)
-                .map(i -> i.length())
-                .zipWithIndex()
+                .zip(Vector.range(0,1000000))
                 .map(i->i._1())
+                .map(i -> i.length())
                .foldLeft((a, b) -> a + b);
 
 
-        
+
 
     }
 
 }
+
+/**
+ * Benchmark                                  Mode  Cnt    Score    Error  Units
+ VectorOps.vavrOps                        sample   47  233.269 ± 24.097  ms/op
+ VectorOps.vavrOps:vavrOps·p0.00          sample       208.667           ms/op
+ VectorOps.vavrOps:vavrOps·p0.50          sample       217.842           ms/op
+ VectorOps.vavrOps:vavrOps·p0.90          sample       263.193           ms/op
+ VectorOps.vavrOps:vavrOps·p0.95          sample       382.206           ms/op
+ VectorOps.vavrOps:vavrOps·p0.99          sample       443.023           ms/op
+ VectorOps.vavrOps:vavrOps·p0.999         sample       443.023           ms/op
+ VectorOps.vavrOps:vavrOps·p0.9999        sample       443.023           ms/op
+ VectorOps.vavrOps:vavrOps·p1.00          sample       443.023           ms/op
+ VectorOps.vectorOps                      sample   46  249.527 ±  8.966  ms/op
+ VectorOps.vectorOps:vectorOps·p0.00      sample       208.142           ms/op
+ VectorOps.vectorOps:vectorOps·p0.50      sample       254.542           ms/op
+ VectorOps.vectorOps:vectorOps·p0.90      sample       263.350           ms/op
+ VectorOps.vectorOps:vectorOps·p0.95      sample       265.631           ms/op
+ VectorOps.vectorOps:vectorOps·p0.99      sample       301.466           ms/op
+ VectorOps.vectorOps:vectorOps·p0.999     sample       301.466           ms/op
+ VectorOps.vectorOps:vectorOps·p0.9999    sample       301.466           ms/op
+ VectorOps.vectorOps:vectorOps·p1.00      sample       301.466           ms/op
+ VectorOps.vectorXOps                     sample   60  197.770 ±  1.628  ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.00    sample       191.889           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.50    sample       197.394           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.90    sample       202.375           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.95    sample       203.922           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.99    sample       204.997           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.999   sample       204.997           ms/op
+ VectorOps.vectorXOps:vectorXOps·p0.9999  sample       204.997           ms/op
+ VectorOps.vectorXOps:vectorXOps·p1.00    sample       204.997           ms/op
+
+ */

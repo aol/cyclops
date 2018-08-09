@@ -790,7 +790,19 @@ public interface Seq<T> extends ImmutableList<T>,
   default <R1, R> Seq<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
     return (Seq< R>) ImmutableList.super.forEach2(iterable1,filterFunction,yieldingFunction);
   }
+    default Either<Integer,Seq<T>> set(int pos, T value) {
+        if (pos < 0 || pos >= size()) {
+            return Either.left(size());
+        }
+        return Either.right(updateAt(pos, value));
+    }
 
+    default Either<Integer,Seq<T>> delete(int pos){
+        if(pos<0||pos>=size()){
+            return Either.left(size());
+        }
+        return Either.right(removeAt(pos));
+    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(of={"head,tail"})

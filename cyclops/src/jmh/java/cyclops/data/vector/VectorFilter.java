@@ -1,7 +1,6 @@
 package cyclops.data.vector;
 
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -16,7 +15,7 @@ import org.openjdk.jmh.annotations.Warmup;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
-public class VectorMap {
+public class VectorFilter {
 
     Vector<String> vector;
     io.vavr.collection.Vector<String> js;
@@ -39,8 +38,8 @@ public class VectorMap {
         iterations = 10
     )
     @Fork(1)
-    public void vectorOps() {
-        vector.map(i -> i+ "2");
+    public void cyclopsOps() {
+        vector.filter(i -> Integer.parseInt(i) % 2==0);
 
     }
     @Benchmark
@@ -54,7 +53,7 @@ public class VectorMap {
     )
     @Fork(1)
     public void vavrOps() {
-        js.map(i -> i+ "2");
+        js.filter(i -> Integer.parseInt(i) % 2==0);
 
     }
 
