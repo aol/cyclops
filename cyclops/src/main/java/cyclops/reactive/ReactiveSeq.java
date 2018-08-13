@@ -963,15 +963,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#foldRight(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     <U> U foldRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> accumulator);
 
-    /* (non-Javadoc)
-    * @see org.jooq.lambda.Seq#printOut()
-    */
+
     @Override
     default void printOut() {
         forEach(System.out::println,System.err::println,()->{});
@@ -1205,7 +1201,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      */
     @Override
     default ReactiveSeq<T> cycleWhile(Predicate<? super T> predicate){
-        return cycle().limitWhile(predicate);
+        return cycle().takeWhile(predicate);
     }
 
     /**
@@ -1806,61 +1802,47 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<T>) IterableX.super.takeWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#drop(long)
-     */
+
     @Override
     default ReactiveSeq<T> drop(final long drop) {
         return skip(drop);
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#drop(long)
-     */
+
     @Override
     default ReactiveSeq<T> take(final long take) {
         return limit(take);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
-     */
+
     @Override
     default ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) IterableX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
-     */
+
     @Override
     default ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) IterableX.super.takeUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
-     */
+
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
         return (ReactiveSeq<T>) IterableX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
-     */
+
     @Override
     default ReactiveSeq<T> dropRight(final int num) {
 
         return (ReactiveSeq<T>) IterableX.super.dropRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
-     */
+
     @Override
     default ReactiveSeq<T> takeRight(final int num) {
 
@@ -1918,48 +1900,8 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default void forEachAsync(final Consumer<? super T> action){
         forEach(action);
     }
-    /**
-     *
-     * SkipWhile drops elements from the Stream while the predicate holds, once
-     * the predicte returns true all subsequent elements are included *
-     *
-     * <pre>
-     * {@code
-     * assertThat(ReactiveSeq.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
-     * }
-     * </pre>
-     *
-     * @param p
-     *            Predicate to skip while true
-     * @return Stream with elements skipped while predicate holds
-     */
-    @Override
-    ReactiveSeq<T> skipWhile(Predicate<? super T> p);
 
-    /**
-     * Drop elements from the Stream until the predicate returns true, after
-     * which all elements are included
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
-     * </pre>
-     *
-     *
-     * @param p
-     *            Predicate to skip until true
-     * @return Stream with elements skipped until predicate holds
-     */
-    @Override
-    default ReactiveSeq<T> skipUntil(Predicate<? super T> p) {
-        return skipWhile(p.negate());
-    }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#skipUntilClosed(java.util.function.Predicate)
-     */
-    default ReactiveSeq<T> skipUntilClosed(final Predicate<? super T> p) {
-        return skipWhileClosed(p.negate());
-    }
 
     /**
      *
@@ -1975,40 +1917,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     ReactiveSeq<T> limit(long num);
 
-    /**
-     * Take elements from the Stream while the predicate holds, once the
-     * predicate returns false all subsequent elements are excluded
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
-     * </pre>
-     *
-     * @param p
-     *            Limit while predicate is true
-     * @return Stream with limited elements
-     */
-    @Override
-    ReactiveSeq<T> limitWhile(Predicate<? super T> p);
 
-    /**
-     * Take elements from the Stream until the predicate returns true, after
-     * which all elements are excluded.
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
-     * </pre>
-     *
-     * @param p
-     *            Limit until predicate is true
-     * @return Stream with limited elements
-     */
-    @Override
-    ReactiveSeq<T> limitUntil(Predicate<? super T> p);
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#limitUntilClosed(java.util.function.Predicate)
-     */
-     ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p);
 
     /**
      * @return Does nothing ReactiveSeq is for Sequential Streams
@@ -2872,7 +2781,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
                     return Stream.of(t._1());
                 }
         ), ReactiveSeq.of(1)
-                    .limitWhile(p -> added[0] == false) //prevents stream already operated on errors
+                    .takeWhile(p -> added[0] == false) //prevents stream already operated on errors
                 .flatMap(i->stream));
     }
 
@@ -2895,32 +2804,11 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
     /**
-     * Skip all elements until specified time period has passed
-     *
-     * <pre>
-     * {@code
-     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).skip(1000, TimeUnit.MILLISECONDS).toList();
-     *
-     *  // [4,5,6]
-
-     *
-     * }
-     * </pre>
-     *
-     * @param time
-     *            Length of time
-     * @param unit
-     *            Time unit
-     * @return ReactiveSeq that skips all elements until time period has elapsed
-     */
-    ReactiveSeq<T> skip(long time, final TimeUnit unit);
-
-    /**
      * Return all elements until specified time period has elapsed
      *
      * <pre>
      * {@code
-     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).limit(1000, TimeUnit.MILLISECONDS).toList();
+     *  List<Integer> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).peek(i -> sleep(i * 100)).take(1000, TimeUnit.MILLISECONDS).toList();
      *
      *  // [1,2,3,4]
 
@@ -2933,40 +2821,10 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *            Time unit
      * @return ReactiveSeq that returns all elements until time period has elapsed
      */
-    ReactiveSeq<T> limit(long time, final TimeUnit unit);
+    ReactiveSeq take(long time, final TimeUnit unit);
+    ReactiveSeq drop(long time, final TimeUnit unit);
 
-    default ReactiveSeq take(long time, final TimeUnit unit){
-        return limit(time,unit);
-    }
-    default ReactiveSeq drop(long time, final TimeUnit unit){
-        return skip(time,unit);
-    }
-    /**
-     * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
-     * .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
-     *
-     * @param num
-     * @return
-     */
-    @Override
-    ReactiveSeq<T> skipLast(int num);
 
-    /**
-     * Limit results to the last x elements in a ReactiveSeq
-     *
-     * <pre>
-     * {@code
-     * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
-     * 							.limitLast(2)
-     * 							.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
-     *
-     * }
-     *
-     * @param num of elements to return (last elements)
-     * @return ReactiveSeq limited to last num elements
-     */
-    @Override
-    ReactiveSeq<T> limitLast(int num);
 
     /**
      * Turns this ReactiveSeq into a Connectable, a connectable Stream, being executed on a thread on the
@@ -3646,21 +3504,12 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
 
 
-    /*
-         * (non-Javadoc)
-         *
-         * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
-         */
     @Override
     default ReactiveSeq<T> onEmpty(T value){
         return onEmptyGet(()->value);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     ReactiveSeq<T> onEmptyGet(Supplier<? extends T> supplier);
 
@@ -4491,9 +4340,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     ReactiveSeq<T> cycle(long times);
 
 
-    ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate);
-
-    ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate);
 
     @Override
     default ReactiveSeq<T> removeStream(final Stream<? extends T> stream) {

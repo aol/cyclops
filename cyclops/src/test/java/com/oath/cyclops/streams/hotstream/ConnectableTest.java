@@ -221,7 +221,7 @@ public class ConnectableTest {
 		active=true;
 		CountDownLatch latch = new CountDownLatch(1);
 		PausableConnectable<Integer> s = ReactiveSeq.range(0,Integer.MAX_VALUE)
-		        .limitWhile(i->active)
+		        .takeWhile(i->active)
 				.peek(v->value=v)
 				.peek(v->latch.countDown())
 				.pausableHotStream(exec2);

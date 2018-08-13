@@ -418,16 +418,6 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
 
-    @Override
-    default VectorX<T> take(final long num) {
-
-        return limit(num);
-    }
-    @Override
-    default VectorX<T> drop(final long num) {
-
-        return skip(num);
-    }
 
 
     /* (non-Javadoc)
@@ -597,65 +587,16 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return (VectorX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
-     */
-    @Override
-    default VectorX<T> limit(final long num) {
-        return (VectorX<T>) LazyCollectionX.super.limit(num);
+
+    default VectorX<T> take(final long num) {
+        return (VectorX<T>) LazyCollectionX.super.take(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
-    @Override
-    default VectorX<T> skip(final long num) {
-        return (VectorX<T>) LazyCollectionX.super.skip(num);
+    default VectorX<T> drop(final long num) {
+        return (VectorX<T>) this.drop(num);
     }
 
-    @Override
-    default VectorX<T> takeRight(final int num) {
-        return (VectorX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    @Override
-    default VectorX<T> dropRight(final int num) {
-        return (VectorX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default VectorX<T> takeWhile(final Predicate<? super T> p) {
-        return (VectorX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default VectorX<T> dropWhile(final Predicate<? super T> p) {
-        return (VectorX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default VectorX<T> takeUntil(final Predicate<? super T> p) {
-        return (VectorX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default VectorX<T> dropUntil(final Predicate<? super T> p) {
-        return (VectorX<T>) LazyCollectionX.super.dropUntil(p);
-    }
-
-
+   
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
@@ -890,37 +831,33 @@ public interface VectorX<T> extends To<VectorX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default VectorX<T> skipWhile(final Predicate<? super T> p) {
+    default VectorX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (VectorX<T>) LazyCollectionX.super.skipWhile(p);
+        return (VectorX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default VectorX<T> skipUntil(final Predicate<? super T> p) {
+    default VectorX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (VectorX<T>) LazyCollectionX.super.skipUntil(p);
+        return (VectorX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default VectorX<T> limitWhile(final Predicate<? super T> p) {
+    default VectorX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (VectorX<T>) LazyCollectionX.super.limitWhile(p);
+        return (VectorX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default VectorX<T> limitUntil(final Predicate<? super T> p) {
+    default VectorX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (VectorX<T>) LazyCollectionX.super.limitUntil(p);
+        return (VectorX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -944,19 +881,17 @@ public interface VectorX<T> extends To<VectorX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default VectorX<T> skipLast(final int num) {
+    default VectorX<T> dropRight(final int num) {
 
-        return (VectorX<T>) LazyCollectionX.super.skipLast(num);
+        return (VectorX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default VectorX<T> limitLast(final int num) {
+    default VectorX<T> takeRight(final int num) {
 
-        return (VectorX<T>) LazyCollectionX.super.limitLast(num);
+        return (VectorX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

@@ -198,25 +198,25 @@ utilResultList:[1]
 	@Test
 	public void testSkipUntil(){
 
-		assertThat(Streams.skipUntil(Stream.of(4,3,6,7), i->i==6).collect(Collectors.toList()),
+		assertThat(Streams.dropUntil(Stream.of(4,3,6,7), i->i==6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(6,7)));
 
 
 	}
 	@Test
 	public void testSkipWhile(){
-		assertThat(Streams.skipWhile(Stream.of(4,3,6,7).sorted(), i->i<6).collect(Collectors.toList()),
+		assertThat(Streams.dropWhile(Stream.of(4,3,6,7).sorted(), i->i<6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(6,7)));
 	}
 
 	@Test
 	public void testLimitWhile(){
-		assertThat(Streams.limitWhile(Stream.of(4,3,6,7).sorted(), i->i<6).collect(Collectors.toList()),
+		assertThat(Streams.takeWhile(Stream.of(4,3,6,7).sorted(), i->i<6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(3,4)));
 	}
 	@Test
 	public void testLimitUntil(){
-		assertThat(Streams.limitUntil(Stream.of(4,3,6,7), i->i==6).collect(Collectors.toList()),
+		assertThat(Streams.takeUntil(Stream.of(4,3,6,7), i->i==6).collect(Collectors.toList()),
 				equalTo(Arrays.asList(4,3)));
 	}
 

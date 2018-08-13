@@ -795,35 +795,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<T>) ImmutableList.super.takeRight(num);
     }
 
-    @Override
-    default LazySeq<T> skip(long num) {
-        return (LazySeq<T>) ImmutableList.super.skip(num);
-    }
-
-    @Override
-    default LazySeq<T> skipWhile(Predicate<? super T> p) {
-        return (LazySeq<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    default LazySeq<T> skipUntil(Predicate<? super T> p) {
-        return (LazySeq<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    default LazySeq<T> limit(long num) {
-        return (LazySeq<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    default LazySeq<T> limitWhile(Predicate<? super T> p) {
-        return (LazySeq<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    default LazySeq<T> limitUntil(Predicate<? super T> p) {
-        return (LazySeq<T>) ImmutableList.super.limitUntil(p);
-    }
 
     @Override
     default LazySeq<T> intersperse(T value) {
@@ -833,16 +804,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     @Override
     default LazySeq<T> shuffle() {
         return (LazySeq<T>) ImmutableList.super.shuffle();
-    }
-
-    @Override
-    default LazySeq<T> skipLast(int num) {
-        return (LazySeq<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    default LazySeq<T> limitLast(int num) {
-        return (LazySeq<T>) ImmutableList.super.limitLast(num);
     }
 
     @Override
@@ -1009,7 +970,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             long inc = 500;
             LazySeq<T> host = this;
             long count = inc;
-            LazySeq<T> next =  host.limit(count);
+            LazySeq<T> next =  host.take(count);
             if(next.isEmpty())
                 return zero;
 
@@ -1018,7 +979,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
                     Cons<T> cons = next.foldLazySeq(c -> c, n -> null);
                     value = cons.lazyFoldRightImpl(value._2(), f);
-                    next = host.skip(count).limit(inc);
+                    next = host.drop(count).take(inc);
                     count = count + inc;
             }
            return value._2();

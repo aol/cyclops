@@ -316,34 +316,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Transfor
 
 
     @Override
-    default AnyMSeq<W,T> limit(final long num) {
-
-        return fromIterable(IterableX.super.limit(num));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return fromIterable(IterableX.super.limitWhile(p));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return fromIterable(IterableX.super.limitUntil(p));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> limitLast(final int num) {
-
-        return fromIterable(IterableX.super.limitLast(num));
-    }
-
-
-    @Override
     default AnyMSeq<W,T> onEmpty(final T value) {
         return fromIterable(IterableX.super.onEmpty(value));
     }
@@ -646,38 +618,11 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Transfor
     }
 
 
-    @Override
-    default AnyMSeq<W,T> skip(final long num) {
-
-        return fromIterable(IterableX.super.skip(num));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return fromIterable(IterableX.super.skipWhile(p));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return fromIterable(IterableX.super.skipUntil(p));
-    }
-
 
     @Override
     default AnyMSeq<W,T> intersperse(final T value) {
 
         return fromIterable(IterableX.super.intersperse(value));
-    }
-
-
-    @Override
-    default AnyMSeq<W,T> skipLast(final int num) {
-
-        return fromIterable(IterableX.super.skipLast(num));
     }
 
 

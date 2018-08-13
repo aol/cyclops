@@ -34,6 +34,9 @@ public class BAMT<T> {
         default  <R> R match(Function<? super Zero<T>, ? extends R> zeroFn, Function<? super PopulatedArray<T>, ? extends R> popFn){
             return this instanceof Zero ?  zeroFn.apply((Zero<T>)this) : popFn.apply((PopulatedArray<T>)this);
         }
+        default Iterator<T> iterator(){
+            return stream().iterator();
+        }
 
         ReactiveSeq<T> stream();
         public T getOrElseGet(int pos, Supplier<T> alt);

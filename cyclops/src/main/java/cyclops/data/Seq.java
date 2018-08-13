@@ -591,10 +591,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>) ImmutableList.super.takeRight(num);
     }
 
-    @Override
-    default Seq<T> skip(long num) {
-        return (Seq<T>) ImmutableList.super.skip(num);
-    }
 
     @Override
     default Seq<T> tailOrElse(ImmutableList<T> tail) {
@@ -602,30 +598,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return Seq.fromIterable(list);
     }
 
-    @Override
-    default Seq<T> skipWhile(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    default Seq<T> skipUntil(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    default Seq<T> limit(long num) {
-        return (Seq<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    default Seq<T> limitWhile(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    default Seq<T> limitUntil(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.limitUntil(p);
-    }
 
     @Override
     default Seq<T> intersperse(T value) {
@@ -637,15 +609,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>) ImmutableList.super.shuffle();
     }
 
-    @Override
-    default Seq<T> skipLast(int num) {
-        return (Seq<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    default Seq<T> limitLast(int num) {
-        return (Seq<T>) ImmutableList.super.limitLast(num);
-    }
 
     @Override
     default Seq<T> shuffle(Random random) {

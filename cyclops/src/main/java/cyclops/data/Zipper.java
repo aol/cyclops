@@ -115,7 +115,7 @@ public class Zipper<T> implements Iterable<T>,
         }),nil->this);
     }
     public <R> Option<Zipper<T>> previous(){
-        return left.fold(c-> Option.some(new Zipper(c.limit(c.size()-1),c.last(null) ,right.prepend(point))), nil-> Option.none());
+        return left.fold(c-> Option.some(new Zipper(c.take(c.size()-1),c.last(null) ,right.prepend(point))), nil-> Option.none());
     }
 
     public Zipper<T> left(T value){

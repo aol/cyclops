@@ -406,16 +406,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     default boolean containsValue(T item) {
         return LazyCollectionX.super.containsValue(item);
     }
-    @Override
-    default PersistentQueueX<T> take(final long num) {
 
-        return limit(num);
-    }
-    @Override
-    default PersistentQueueX<T> drop(final long num) {
-
-        return skip(num);
-    }
 
     /**
      * Combine two adjacent elements in a PersistentQueueX using the supplied
@@ -584,9 +575,8 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * limit(long)
      */
-    @Override
-    default PersistentQueueX<T> limit(final long num) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.limit(num);
+    default PersistentQueueX<T> take(final long num) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.take(num);
     }
 
     /*
@@ -596,68 +586,11 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * skip(long)
      */
-    @Override
-    default PersistentQueueX<T> skip(final long num) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.skip(num);
+    default PersistentQueueX<T> drop(final long num) {
+        return (PersistentQueueX<T>) this.drop(num);
     }
 
-    @Override
-    default PersistentQueueX<T> takeRight(final int num) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.takeRight(num);
-    }
 
-    @Override
-    default PersistentQueueX<T> dropRight(final int num) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentQueueX<T> takeWhile(final Predicate<? super T> p) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentQueueX<T> dropWhile(final Predicate<? super T> p) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentQueueX<T> takeUntil(final Predicate<? super T> p) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentQueueX<T> dropUntil(final Predicate<? super T> p) {
-        return (PersistentQueueX<T>) LazyCollectionX.super.dropUntil(p);
-    }
 
 
 
@@ -945,10 +878,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default PersistentQueueX<T> skipWhile(final Predicate<? super T> p) {
+    default PersistentQueueX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.skipWhile(p);
+        return (PersistentQueueX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /*
@@ -958,10 +890,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default PersistentQueueX<T> skipUntil(final Predicate<? super T> p) {
+    default PersistentQueueX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.skipUntil(p);
+        return (PersistentQueueX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /*
@@ -971,10 +902,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default PersistentQueueX<T> limitWhile(final Predicate<? super T> p) {
+    default PersistentQueueX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.limitWhile(p);
+        return (PersistentQueueX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /*
@@ -984,10 +914,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default PersistentQueueX<T> limitUntil(final Predicate<? super T> p) {
+    default PersistentQueueX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.limitUntil(p);
+        return (PersistentQueueX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /*
@@ -1023,10 +952,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * skipLast(int)
      */
-    @Override
-    default PersistentQueueX<T> skipLast(final int num) {
+    default PersistentQueueX<T> dropRight(final int num) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.skipLast(num);
+        return (PersistentQueueX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /*
@@ -1036,10 +964,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
      * limitLast(int)
      */
-    @Override
-    default PersistentQueueX<T> limitLast(final int num) {
+    default PersistentQueueX<T> takeRight(final int num) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.limitLast(num);
+        return (PersistentQueueX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

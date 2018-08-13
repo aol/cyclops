@@ -421,12 +421,12 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> take(final long num) {
 
-        return (ListX<T>) LazyCollectionX.super.limit(num);
+        return (ListX<T>) LazyCollectionX.super.take(num);
     }
     @Override
     default ListX<T> drop(final long num) {
 
-        return (ListX<T>) LazyCollectionX.super.skip(num);
+        return (ListX<T>) this.drop(num);
     }
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 
@@ -563,75 +563,6 @@ public interface ListX<T> extends To<ListX<T>>,
     default <R> ListX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
 
         return (ListX<R>) LazyCollectionX.super.concatMap(mapper);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
-     */
-    @Override
-    default ListX<T> limit(final long num) {
-
-        return (ListX<T>) LazyCollectionX.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
-     */
-    @Override
-    default ListX<T> skip(final long num) {
-
-        return (ListX<T>) LazyCollectionX.super.skip(num);
-    }
-
-    /* (non-Javadoc)
-     * @see LazyCollectionX#takeRight(int)
-     */
-    @Override
-    default ListX<T> takeRight(final int num) {
-        return (ListX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see LazyCollectionX#dropRight(int)
-     */
-    @Override
-    default ListX<T> dropRight(final int num) {
-        return (ListX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default ListX<T> takeWhile(final Predicate<? super T> p) {
-
-        return (ListX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default ListX<T> dropWhile(final Predicate<? super T> p) {
-
-        return (ListX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default ListX<T> takeUntil(final Predicate<? super T> p) {
-
-        return (ListX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default ListX<T> dropUntil(final Predicate<? super T> p) {
-        return (ListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
 
@@ -873,19 +804,17 @@ public interface ListX<T> extends To<ListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default ListX<T> skipWhile(final Predicate<? super T> p) {
+    default ListX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) LazyCollectionX.super.skipWhile(p);
+        return (ListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default ListX<T> skipUntil(final Predicate<? super T> p) {
+    default ListX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) LazyCollectionX.super.skipUntil(p);
+        return (ListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
@@ -900,10 +829,9 @@ public interface ListX<T> extends To<ListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#skipLast(int)
      */
-    @Override
-    default ListX<T> skipLast(final int num) {
+    default ListX<T> dropRight(final int num) {
 
-        return (ListX<T>) LazyCollectionX.super.skipLast(num);
+        return (ListX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
@@ -955,19 +883,17 @@ public interface ListX<T> extends To<ListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default ListX<T> limitWhile(final Predicate<? super T> p) {
+    default ListX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (ListX<T>) LazyCollectionX.super.limitWhile(p);
+        return (ListX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default ListX<T> limitUntil(final Predicate<? super T> p) {
+    default ListX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) LazyCollectionX.super.limitUntil(p);
+        return (ListX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -982,10 +908,9 @@ public interface ListX<T> extends To<ListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default ListX<T> limitLast(final int num) {
+    default ListX<T> takeRight(final int num) {
 
-        return (ListX<T>) LazyCollectionX.super.limitLast(num);
+        return (ListX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

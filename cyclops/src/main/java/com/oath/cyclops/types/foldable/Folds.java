@@ -298,10 +298,6 @@ public interface Folds<T> extends Iterable<T>  {
         return stream().filter(c).findFirst().isPresent();
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#noneMatch(java.util.function.Predicate)
-     */
-
     default boolean noneMatch(final Predicate<? super T> c) {
         return !stream().filter(c)
                         .findFirst()

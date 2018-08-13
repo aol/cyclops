@@ -448,38 +448,8 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
     }
 
     @Override
-    default ImmutableSet<T> skip(long num) {
-        return unitStream(stream().skip(num));
-    }
-
-    @Override
-    default ImmutableSet<T> skipWhile(Predicate<? super T> p) {
-        return unitStream(stream().skipWhile(p));
-    }
-
-    @Override
-    default ImmutableSet<T> skipUntil(Predicate<? super T> p) {
-        return unitStream(stream().skipUntil(p));
-    }
-
-    @Override
     default ImmutableSet<T> take(long num) {
         return unitStream(stream().take(num));
-    }
-
-    @Override
-    default ImmutableSet<T> limit(long num) {
-        return unitStream(stream().limit(num));
-    }
-
-    @Override
-    default ImmutableSet<T> limitWhile(Predicate<? super T> p) {
-        return unitStream(stream().limitWhile(p));
-    }
-
-    @Override
-    default ImmutableSet<T> limitUntil(Predicate<? super T> p) {
-        return unitStream(stream().limitUntil(p));
     }
 
     @Override
@@ -497,15 +467,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().shuffle());
     }
 
-    @Override
-    default ImmutableSet<T> skipLast(int num) {
-        return unitStream(stream().skipLast(num));
-    }
-
-    @Override
-    default ImmutableSet<T> limitLast(int num) {
-        return unitStream(stream().limitLast(num));
-    }
 
     @Override
     default ImmutableSet<T> shuffle(Random random) {

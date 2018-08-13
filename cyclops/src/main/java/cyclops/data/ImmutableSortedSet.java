@@ -405,39 +405,10 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     }
 
     @Override
-    default ImmutableSortedSet<T> skip(long num) {
-        return unitStream(stream().skip(num),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> skipWhile(Predicate<? super T> p) {
-        return unitStream(stream().skipWhile(p),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> skipUntil(Predicate<? super T> p) {
-        return unitStream(stream().skipUntil(p),comparator());
-    }
-
-    @Override
     default ImmutableSortedSet<T> take(long num) {
         return unitStream(stream().take(num),comparator());
     }
 
-    @Override
-    default ImmutableSortedSet<T> limit(long num) {
-        return unitStream(stream().limit(num),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> limitWhile(Predicate<? super T> p) {
-        return unitStream(stream().limitWhile(p),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> limitUntil(Predicate<? super T> p) {
-        return unitStream(stream().limitUntil(p),comparator());
-    }
 
     @Override
     default ImmutableSortedSet<T> intersperse(T value) {
@@ -452,16 +423,6 @@ public interface ImmutableSortedSet<T> extends ImmutableSet<T>, PersistentSorted
     @Override
     default ImmutableSortedSet<T> shuffle() {
         return unitStream(stream().shuffle(),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> skipLast(int num) {
-        return unitStream(stream().skipLast(num),comparator());
-    }
-
-    @Override
-    default ImmutableSortedSet<T> limitLast(int num) {
-        return unitStream(stream().limitLast(num),comparator());
     }
 
     @Override

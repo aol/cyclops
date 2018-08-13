@@ -558,36 +558,6 @@ public class Vector<T> implements ImmutableList<T>,
 
 
     @Override
-    public Vector<T> skip(long num) {
-        return (Vector<T>) ImmutableList.super.skip(num);
-    }
-
-    @Override
-    public Vector<T> skipWhile(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    public Vector<T> skipUntil(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    public Vector<T> limit(long num) {
-        return (Vector<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    public Vector<T> limitWhile(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    public Vector<T> limitUntil(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.limitUntil(p);
-    }
-
-    @Override
     public Vector<T> intersperse(T value) {
         return (Vector<T>) ImmutableList.super.intersperse(value);
     }
@@ -597,15 +567,6 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<T>) ImmutableList.super.shuffle();
     }
 
-    @Override
-    public Vector<T> skipLast(int num) {
-        return (Vector<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    public Vector<T> limitLast(int num) {
-        return (Vector<T>) ImmutableList.super.limitLast(num);
-    }
 
     @Override
     public Vector<T> shuffle(Random random) {
@@ -831,7 +792,7 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> prepend(T value) {
-        return prependAll(new BAMT.ArrayIterator<T>((T[])new Object[]{value}));
+        return prependAll(Arrays.asList(value));
     }
 
 

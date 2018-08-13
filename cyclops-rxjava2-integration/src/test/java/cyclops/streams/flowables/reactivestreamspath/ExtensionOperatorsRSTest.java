@@ -176,7 +176,7 @@ public class ExtensionOperatorsRSTest {
 	public void limitTime(){
 		List<Integer> result = FlowableReactiveSeq.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -187,7 +187,7 @@ public class ExtensionOperatorsRSTest {
 	public void limitTimeEmpty(){
 		List<Integer> result = FlowableReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -197,7 +197,7 @@ public class ExtensionOperatorsRSTest {
 	public void skipTime(){
 		List<Integer> result = FlowableReactiveSeq.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -207,7 +207,7 @@ public class ExtensionOperatorsRSTest {
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -224,31 +224,31 @@ public class ExtensionOperatorsRSTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(FlowableReactiveSeq.of(1,2,3,4,5)
-							.skipLast(2)
+							.dropRight(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(FlowableReactiveSeq.of()
-							.skipLast(2)
+							.dropRight(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(FlowableReactiveSeq.of(1,2,3,4,5)
-							.limitLast(2)
+							.takeRight(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLast1(){
 		assertThat(FlowableReactiveSeq.of(1,2,3,4,5)
-				.limitLast(1)
+				.takeRight(1)
 				.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList(5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(FlowableReactiveSeq.of()
-							.limitLast(2)
+							.takeRight(2)
 							.to(Streamable::fromStream).collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test

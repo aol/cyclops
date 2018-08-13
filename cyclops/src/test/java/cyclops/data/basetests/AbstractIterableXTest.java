@@ -537,10 +537,7 @@ public abstract class AbstractIterableXTest {
 	    assertThat(of(1,2,3).slice(0,3),hasItems(1,2,3));
 	    assertThat(empty().slice(0,2).size(),equalTo(0));
 	}
-	@Test
-    public void testLimit(){
-        assertThat(of(1,2,3,4,5).limit(2).collect(Collectors.toList()).size(),is(2));
-    }
+
 	@Test
     public void testTake(){
         assertThat(of(1,2,3,4,5).take(2).collect(Collectors.toList()).size(),is(2));
@@ -576,7 +573,7 @@ public abstract class AbstractIterableXTest {
     }
     @Test
     public void testSkip(){
-        assertThat(of(1,2,3,4,5).skip(2).collect(Collectors.toList()).size(),is(3));
+        assertThat(of(1,2,3,4,5).drop(2).collect(Collectors.toList()).size(),is(3));
     }
     @Test
     public void testMax(){
@@ -615,52 +612,42 @@ public abstract class AbstractIterableXTest {
 	}
 
 	@Test
-	public void dropUntil(){
+	public void dropUntil2(){
 		assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
 	}
 	@Test
-	public void dropUntilEmpty(){
+	public void dropUntilEmpty2(){
 		assertThat(of().dropUntil(p->true),equalTo(of()));
 	}
 	@Test
-	public void dropWhile(){
+	public void dropWhile2(){
 		assertThat(of(1,2,3,4,5).dropWhile(p->p<6).toList().size(),lessThan(1));
 	}
 	@Test
-	public void dropWhileEmpty(){
+	public void dropWhileEmpty2(){
 		assertThat(of().dropWhile(p->true),equalTo(of()));
 	}
 	@Test
-    public void skipUntil(){
-        assertThat(of(1,2,3,4,5).skipUntil(p->p==2).toList().size(),lessThan(5));
+    public void dropUntil(){
+        assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
     }
     @Test
-    public void skipUntilEmpty(){
-        assertThat(of().skipUntil(p->true).toList(),equalTo(Arrays.asList()));
+    public void dropUntilEmpty(){
+        assertThat(of().dropUntil(p->true).toList(),equalTo(Arrays.asList()));
     }
     @Test
-    public void skipWhile(){
-        assertThat(of(1,2,3,4,5).skipWhile(p->p<6).toList().size(),lessThan(1));
+    public void dropWhile(){
+        assertThat(of(1,2,3,4,5).dropWhile(p->p<6).toList().size(),lessThan(1));
     }
     @Test
-    public void skipWhileEmpty(){
-        assertThat(of().skipWhile(p->true),equalTo(of()));
+    public void dropWhileEmpty(){
+        assertThat(of().dropWhile(p->true),equalTo(of()));
     }
 	@Test
 	public void filter(){
 		assertThat(of(1,2,3,4,5).filter(i->i<3).toList(),hasItems(1,2));
 	}
 
-	/**
-	@Test
-	public void findAny(){
-		assertThat(of(1,2,3,4,5).findAny().get(),lessThan(6));
-	}
-	@Test
-	public void findFirst(){
-		assertThat(of(1,2,3,4,5).findFirst().get(),lessThan(6));
-	}
-**/
 
     Throwable error;
 
@@ -713,11 +700,11 @@ public abstract class AbstractIterableXTest {
 
 	}
 	@Test
-    public void limitWhileTest(){
+    public void takeWhileTest2(){
 
         List<Integer> list = new ArrayList<>();
         while(list.size()==0){
-            list = of(1,2,3,4,5,6).limitWhile(it -> it<4)
+            list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
                         .toList();
 
         }
@@ -837,10 +824,10 @@ public abstract class AbstractIterableXTest {
         public void testLimitUntil() {
 
 
-            assertTrue(of(1, 2, 3, 4, 5).limitUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
-            assertFalse(of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toList().size()==5);
+            assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
+            assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().size()==5);
 
-            assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+            assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
         }
 
 
@@ -1001,17 +988,17 @@ public abstract class AbstractIterableXTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(of(1,2,3,4,5)
-							.skipLast(2),equalTo(of(1,2,3)));
+							.dropRight(2),equalTo(of(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(of()
-							.skipLast(2),equalTo(of()));
+							.dropRight(2),equalTo(of()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(of(1,2,3,4,5)
-							.limitLast(2),equalTo(of(4,5)));
+							.takeRight(2),equalTo(of(4,5)));
 	}
 	@Test
     public void testTakeRight(){
@@ -1026,7 +1013,7 @@ public abstract class AbstractIterableXTest {
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(of()
-							.limitLast(2),equalTo(of()));
+							.takeRight(2),equalTo(of()));
 	}
 	@Test
 	public void endsWith(){
@@ -2408,7 +2395,7 @@ public abstract class AbstractIterableXTest {
 
         long start = System.currentTimeMillis();
         iterate(4,0, it -> it + 1)
-                .limit(3)
+                .take(3)
                 .onePer(1, TimeUnit.SECONDS)
                 .map(seconds -> "hello!")
                 .peek(System.out::println)
@@ -2423,7 +2410,7 @@ public abstract class AbstractIterableXTest {
         long start = System.currentTimeMillis();
         iterate(4,1, it -> it + 1)
                 .xPer(1,1, TimeUnit.SECONDS)
-                .limit(3)
+                .take(3)
                 .map(seconds -> "hello!")
                 .peek(System.out::println)
                 .toList();
@@ -2585,20 +2572,20 @@ public abstract class AbstractIterableXTest {
     @Test
     public void negative(){
         assertThat(range(-1000,150)
-                .limit(100)
+                .take(100)
                 .count(),equalTo(100l));
     }
     @Test
     public void negativeLong(){
         assertThat(rangeLong(-1000L,200)
-                .limit(100)
+                .take(100)
                 .count(),equalTo(100L));
     }
     @Test
-    public void limitRange() throws InterruptedException{
+    public void takeRange() throws InterruptedException{
 
         assertThat(range(0,150)
-                .limit(100)
+                .take(100)
                 .count(),equalTo(100L));
     }
 
@@ -2606,103 +2593,103 @@ public abstract class AbstractIterableXTest {
     @Test
     public void rangeLong(){
         assertThat(rangeLong(0,5)
-                .limit(2).toList(),equalTo(Arrays.asList(0l,1l)));
+                .take(2).toList(),equalTo(Arrays.asList(0l,1l)));
     }
 
     @Test
     public void rangeLongReversedSkip(){
         System.out.println(rangeLong(0,5).reverse()
-                .skip(3));
+                .drop(3));
         assertThat(rangeLong(0,5).reverse()
-                .skip(3).toList(),equalTo(Arrays.asList(1l,0l)));
+                .drop(3).toList(),equalTo(Arrays.asList(1l,0l)));
     }
     @Test
     public void rangeLongSkip(){
         assertThat(rangeLong(0,5)
-                .skip(3).toList(),equalTo(Arrays.asList(3l,4l)));
+                .drop(3).toList(),equalTo(Arrays.asList(3l,4l)));
     }
     @Test
     public void rangeInt(){
         System.out.println(range(0,150));
         assertThat(range(0,150)
-                .limit(2).toList(),equalTo(Arrays.asList(0,1)));
+                .take(2).toList(),equalTo(Arrays.asList(0,1)));
     }
     @Test
     public void rangeIntReversed(){
         assertThat(range(0,150).reverse()
-                .limit(2).toList(),equalTo(Arrays.asList(149, 148)));
+                .take(2).toList(),equalTo(Arrays.asList(149, 148)));
     }
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(range(0,5).reverse()
-                .skip(3).toList(),equalTo(Arrays.asList(1,0)));
+                .drop(3).toList(),equalTo(Arrays.asList(1,0)));
     }
 
     @Test
     public void rangeIntSkip2(){
         assertThat(range(0,5)
-                .skip(3).toList(),equalTo(Arrays.asList(3,4)));
+                .drop(3).toList(),equalTo(Arrays.asList(3,4)));
     }
 
     @Test
     public void take2Reversed(){
-        range(0,10).reverse().limit(2).printOut();
-        assertThat(range(0,10).reverse().limit(2).toList(),equalTo(Arrays.asList(9,8)));
+        range(0,10).reverse().take(2).printOut();
+        assertThat(range(0,10).reverse().take(2).toList(),equalTo(Arrays.asList(9,8)));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(range(0,20).reverse()
-                .limit(10).skip(8).toList(),equalTo(Arrays.asList(11, 10)));
+                .take(10).drop(8).toList(),equalTo(Arrays.asList(11, 10)));
     }
 
     @Test
     public void rangeIntSkip(){
 
         assertThat(range(0,20)
-                .limit(10).skip(8).toList(),equalTo(Arrays.asList(8, 9)));
+                .take(10).drop(8).toList(),equalTo(Arrays.asList(8, 9)));
     }
     @Test
-    public void limitArray() throws InterruptedException{
+    public void takeArray() throws InterruptedException{
 
         List<Integer> list= new ArrayList<>();
         for(int i=0;i<1000;i++)
             list.add(i);
         assertThat(of(list.toArray())
-                .limit(100)
+                .take(100)
                 .count(),equalTo(100L));
 
     }
     @Test
-    public void skipArray() throws InterruptedException{
+    public void dropArray() throws InterruptedException{
 
         List<Integer> list= new ArrayList<>();
         for(int i=0;i<1000;i++)
             list.add(i);
         assertThat(of(list.toArray())
-                .skip(100)
+                .drop(100)
                 .count(),equalTo(900L));
 
     }
     @Test
-    public void skipRange() throws InterruptedException{
+    public void dropRange() throws InterruptedException{
 
         assertThat(range(0,1000)
-                .skip(100)
+                .drop(100)
                 .count(),equalTo(900L));
     }
     @Test
-    public void skipRangeLong() throws InterruptedException{
+    public void dropRangeLong() throws InterruptedException{
 
         assertThat(rangeLong(0,1000)
-                .skip(100)
+                .drop(100)
                 .count(),equalTo(900L));
     }
     @Test
-    public void skipRangeReversed() throws InterruptedException{
+    public void dropRangeReversed() throws InterruptedException{
 
         assertThat(range(0,1000)
-                .skip(100).reverse()
+                .drop(100).reverse()
                 .count(),equalTo(900L));
     }
 

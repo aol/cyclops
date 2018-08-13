@@ -278,16 +278,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
 
 
 
-    @Override
-    default BagX<T> take(final long num) {
 
-        return limit(num);
-    }
-    @Override
-    default BagX<T> drop(final long num) {
-
-        return skip(num);
-    }
     @Override
     default ReactiveSeq<T> stream() {
 
@@ -513,61 +504,16 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
-    @Override
-    default BagX<T> limit(final long num) {
-        return (BagX<T>) LazyCollectionX.super.limit(num);
+    default BagX<T> take(final long num) {
+        return (BagX<T>) LazyCollectionX.super.take(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
      */
-    @Override
-    default BagX<T> skip(final long num) {
-        return (BagX<T>) LazyCollectionX.super.skip(num);
+    default BagX<T> drop(final long num) {
+        return (BagX<T>) this.drop(num);
     }
-
-    @Override
-    default BagX<T> takeRight(final int num) {
-        return (BagX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    @Override
-    default BagX<T> dropRight(final int num) {
-        return (BagX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default BagX<T> takeWhile(final Predicate<? super T> p) {
-        return (BagX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default BagX<T> dropWhile(final Predicate<? super T> p) {
-        return (BagX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default BagX<T> takeUntil(final Predicate<? super T> p) {
-        return (BagX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default BagX<T> dropUntil(final Predicate<? super T> p) {
-        return (BagX<T>) LazyCollectionX.super.dropUntil(p);
-    }
-
 
 
     /* (non-Javadoc)
@@ -778,37 +724,33 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default BagX<T> skipWhile(final Predicate<? super T> p) {
+    default BagX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (BagX<T>) LazyCollectionX.super.skipWhile(p);
+        return (BagX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default BagX<T> skipUntil(final Predicate<? super T> p) {
+    default BagX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (BagX<T>) LazyCollectionX.super.skipUntil(p);
+        return (BagX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default BagX<T> limitWhile(final Predicate<? super T> p) {
+    default BagX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (BagX<T>) LazyCollectionX.super.limitWhile(p);
+        return (BagX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default BagX<T> limitUntil(final Predicate<? super T> p) {
+    default BagX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (BagX<T>) LazyCollectionX.super.limitUntil(p);
+        return (BagX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -832,19 +774,17 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default BagX<T> skipLast(final int num) {
+    default BagX<T> dropRight(final int num) {
 
-        return (BagX<T>) LazyCollectionX.super.skipLast(num);
+        return (BagX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default BagX<T> limitLast(final int num) {
+    default BagX<T> takeRight(final int num) {
 
-        return (BagX<T>) LazyCollectionX.super.limitLast(num);
+        return (BagX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

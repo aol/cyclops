@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public class SkipLastSpliterator<T> extends AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
-    public static <T> Spliterator<T> skipLast(Spliterator<T> source, int skip){
+    public static <T> Spliterator<T> dropRight(Spliterator<T> source, int skip){
 
         if(skip==0){
             return source;

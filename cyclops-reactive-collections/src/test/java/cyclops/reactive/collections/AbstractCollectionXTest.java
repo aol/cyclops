@@ -401,7 +401,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 	}
 	@Test
     public void testLimit(){
-        assertThat(of(1,2,3,4,5).limit(2).collect(java.util.stream.Collectors.toList()).size(),is(2));
+        assertThat(of(1,2,3,4,5).take(2).collect(java.util.stream.Collectors.toList()).size(),is(2));
     }
 	@Test
     public void testTake(){
@@ -417,7 +417,7 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
     }
     @Test
     public void testSkip(){
-        assertThat(of(1,2,3,4,5).skip(2).collect(java.util.stream.Collectors.toList()).size(),is(3));
+        assertThat(of(1,2,3,4,5).drop(2).collect(java.util.stream.Collectors.toList()).size(),is(3));
     }
     @Test
     public void testMax(){
@@ -456,8 +456,8 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 
     @Test
     public void take2Reversed(){
-        range(0,10).reverse().limit(2).printOut();
-        assertThat(range(0,10).materialize().reverse().limit(2).toListX(),equalTo(ListX.of(9,8)));
+        range(0,10).reverse().take(2).printOut();
+        assertThat(range(0,10).materialize().reverse().take(2).toListX(),equalTo(ListX.of(9,8)));
     }
     @Test
     public void intStreamCompareReversed(){
@@ -475,25 +475,25 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
     @Test
     public void rangeLongReversedSkip(){
         System.out.println(rangeLong(0,5).materialize().reverse()
-                .skip(3));
+                .drop(3));
         assertThat(rangeLong(0,5).materialize().reverse()
-                .skip(3).toListX(),equalTo(ListX.of(1l,0l)));
+                .drop(3).toListX(),equalTo(ListX.of(1l,0l)));
     }
     @Test
     public void rangeIntReversed(){
         assertThat(range(0,150).materialize().reverse()
-                .limit(2).toListX(),equalTo(ListX.of(149, 148)));
+                .take(2).toListX(),equalTo(ListX.of(149, 148)));
     }
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(range(0,5).materialize().reverse()
-                .skip(3).toListX(),equalTo(ListX.of(1,0)));
+                .drop(3).toListX(),equalTo(ListX.of(1,0)));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(range(0,20).materialize().reverse()
-                .limit(10).skip(8).toListX(),equalTo(ListX.of(11, 10)));
+                .take(10).drop(8).toListX(),equalTo(ListX.of(11, 10)));
     }
     @Test
     public void batchBySizeSet(){

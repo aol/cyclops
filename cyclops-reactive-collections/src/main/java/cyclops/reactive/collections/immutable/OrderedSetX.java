@@ -388,16 +388,6 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         return LazyCollectionX.super.containsValue(item);
     }
 
-    @Override
-    default OrderedSetX<T> take(final long num) {
-
-        return limit(num);
-    }
-    @Override
-    default OrderedSetX<T> drop(final long num) {
-
-        return skip(num);
-    }
 
 
 
@@ -485,94 +475,38 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     @Override
     public OrderedSetX<T> removeAll(Iterable<? extends T> list);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#reverse()
-     */
+
     @Override
     default OrderedSetX<T> reverse() {
         return (OrderedSetX<T>) LazyCollectionX.super.reverse();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#filter(java.util.function.Predicate)
-     */
+
     @Override
     default OrderedSetX<T> filter(final Predicate<? super T> pred) {
         return (OrderedSetX<T>) LazyCollectionX.super.filter(pred);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#transform(java.util.function.Function)
-     */
+
     @Override
     default <R> OrderedSetX<R> map(final Function<? super T, ? extends R> mapper) {
         return (OrderedSetX<R>) LazyCollectionX.super.map(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#flatMap(java.util.function.Function)
-     */
+
     @Override
     default <R> OrderedSetX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return (OrderedSetX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
     @Override
-    default OrderedSetX<T> takeRight(final int num) {
-        return (OrderedSetX<T>) LazyCollectionX.super.takeRight(num);
+    default OrderedSetX<T> take(final long num) {
+        return (OrderedSetX<T>) LazyCollectionX.super.take(num);
     }
 
     @Override
-    default OrderedSetX<T> dropRight(final int num) {
-        return (OrderedSetX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
-     */
-    @Override
-    default OrderedSetX<T> limit(final long num) {
-        return (OrderedSetX<T>) LazyCollectionX.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
-    @Override
-    default OrderedSetX<T> skip(final long num) {
-        return (OrderedSetX<T>) LazyCollectionX.super.skip(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default OrderedSetX<T> takeWhile(final Predicate<? super T> p) {
-        return (OrderedSetX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default OrderedSetX<T> dropWhile(final Predicate<? super T> p) {
-        return (OrderedSetX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default OrderedSetX<T> takeUntil(final Predicate<? super T> p) {
-        return (OrderedSetX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default OrderedSetX<T> dropUntil(final Predicate<? super T> p) {
-        return (OrderedSetX<T>) LazyCollectionX.super.dropUntil(p);
+    default OrderedSetX<T> drop(final long num) {
+        return (OrderedSetX<T>) this.drop(num);
     }
 
 
@@ -789,37 +723,33 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default OrderedSetX<T> skipWhile(final Predicate<? super T> p) {
+    default OrderedSetX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.skipWhile(p);
+        return (OrderedSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default OrderedSetX<T> skipUntil(final Predicate<? super T> p) {
+    default OrderedSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.skipUntil(p);
+        return (OrderedSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default OrderedSetX<T> limitWhile(final Predicate<? super T> p) {
+    default OrderedSetX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.limitWhile(p);
+        return (OrderedSetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default OrderedSetX<T> limitUntil(final Predicate<? super T> p) {
+    default OrderedSetX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.limitUntil(p);
+        return (OrderedSetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -843,19 +773,17 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default OrderedSetX<T> skipLast(final int num) {
+    default OrderedSetX<T> dropRight(final int num) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.skipLast(num);
+        return (OrderedSetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default OrderedSetX<T> limitLast(final int num) {
+    default OrderedSetX<T> takeRight(final int num) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.limitLast(num);
+        return (OrderedSetX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 
 public class LimitLastSpliterator<T> extends AbstractSpliterator<T> implements CopyableSpliterator<T>{
 
-    public static <T> Spliterator<T> limitLast(Spliterator<T> source, int limit){
+    public static <T> Spliterator<T> takeRight(Spliterator<T> source, int limit){
 
         if(limit==0){
             return Spliterators.emptySpliterator();
