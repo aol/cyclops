@@ -453,40 +453,14 @@ public interface IterableX<T> extends Traversable<T>,
         return (IterableX<T>)Traversable.super.drop(num);
     }
 
-    @Override
-    default IterableX<T> skip(final long num) {
-        return (IterableX<T>)Traversable.super.skip(num);
-    }
 
-    @Override
-    default IterableX<T> skipWhile(final Predicate<? super T> p) {
-        return (IterableX<T>)Traversable.super.skipWhile(p);
-    }
-
-    @Override
-    default IterableX<T> skipUntil(final Predicate<? super T> p) {
-        return (IterableX<T>)Traversable.super.skipUntil(p);
-    }
 
     @Override
     default IterableX<T> take(final long num) {
         return (IterableX<T>)Traversable.super.take(num);
     }
 
-    @Override
-    default IterableX<T> limit(final long num) {
-        return (IterableX<T>)Traversable.super.limit(num);
-    }
 
-    @Override
-    default IterableX<T> limitWhile(final Predicate<? super T> p) {
-        return (IterableX<T>)Traversable.super.limitWhile(p);
-    }
-
-    @Override
-    default IterableX<T> limitUntil(final Predicate<? super T> p) {
-        return (IterableX<T>)Traversable.super.limitUntil(p);
-    }
 
     @Override
     default IterableX<T> intersperse(final T value) {
@@ -503,15 +477,7 @@ public interface IterableX<T> extends Traversable<T>,
         return (IterableX<T>)Traversable.super.shuffle();
     }
 
-    @Override
-    default IterableX<T> skipLast(final int num) {
-        return (IterableX<T>)Traversable.super.skipLast(num);
-    }
 
-    @Override
-    default IterableX<T> limitLast(final int num) {
-        return (IterableX<T>)Traversable.super.limitLast(num);
-    }
 
     @Override
     default IterableX<T> onEmpty(final T value) {

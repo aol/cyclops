@@ -434,46 +434,6 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     }
 
 
-    @Override
-    public SeqT<W,T> skip(final long num) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.skip(num);
-    }
-
-
-    @Override
-    public SeqT<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.skipWhile(p);
-    }
-
-
-    @Override
-    public SeqT<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.skipUntil(p);
-    }
-
-
-    @Override
-    public SeqT<W,T> limit(final long num) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.limit(num);
-    }
-
-
-    @Override
-    public SeqT<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.limitWhile(p);
-    }
-
-
-    @Override
-    public SeqT<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.limitUntil(p);
-    }
 
 
     @Override
@@ -494,20 +454,6 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
     public SeqT<W,T> shuffle() {
 
         return (SeqT<W,T>) FoldableTransformerSeq.super.shuffle();
-    }
-
-
-    @Override
-    public SeqT<W,T> skipLast(final int num) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.skipLast(num);
-    }
-
-
-    @Override
-    public SeqT<W,T> limitLast(final int num) {
-
-        return (SeqT<W,T>) FoldableTransformerSeq.super.limitLast(num);
     }
 
 
@@ -736,12 +682,12 @@ public class SeqT<W extends WitnessType<W>,T> implements To<SeqT<W,T>>,
 
     @Override
     public SeqT<W,T> drop(final long num) {
-        return skip(num);
+        return drop(num);
     }
 
     @Override
     public SeqT<W,T> take(final long num) {
-        return limit(num);
+        return take(num);
     }
 
 

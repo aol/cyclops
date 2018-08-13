@@ -213,7 +213,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     }
     @Test
     public void take2Reversed(){
-        range(0,10).reverse().limit(2).printOut();
+        range(0,10).reverse().take(2).printOut();
         assertThat(range(0,10).reverse(),equalTo(range(0,10)));
     }
     @Test
@@ -224,7 +224,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void rangeLongReversedSkip(){
         System.out.println(rangeLong(0,5).reverse()
-                .skip(3));
+                .drop(3));
         assertThat(rangeLong(0,5).reverse(),equalTo(rangeLong(0,5)));
     }
     @Test @Ignore
@@ -239,13 +239,13 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(range(0,5).reverse()
-                .skip(3).toList().size(),equalTo(2));
+                .drop(3).toList().size(),equalTo(2));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(range(0,20).reverse()
-                .limit(10).skip(8).size(),equalTo(2));
+                .take(10).drop(8).size(),equalTo(2));
     }
     @Test
     public void combinations2() {
@@ -256,12 +256,12 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     public void rangeInt(){
         System.out.println(range(0,150));
         assertThat(range(0,150)
-                .limit(2).count(),equalTo(2l));
+                .take(2).count(),equalTo(2l));
     }
     @Test
     public void rangeIntReversed(){
         assertThat(range(0,150).reverse()
-                .limit(2).size(),equalTo(2));
+                .take(2).size(),equalTo(2));
     }
     @Test
     public void removeFirst(){

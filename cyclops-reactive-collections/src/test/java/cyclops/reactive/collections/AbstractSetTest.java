@@ -5,7 +5,6 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
-import cyclops.reactive.collections.immutable.VectorX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.reactive.collections.mutable.SetX;
 import cyclops.companion.Monoids;
@@ -13,12 +12,10 @@ import cyclops.companion.Reducers;
 import cyclops.companion.Semigroups;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
-import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 import cyclops.data.TreeSet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -186,7 +183,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
 
     @Test
     public void take2Reversed(){
-        range(0,10).reverse().limit(2).printOut();
+        range(0,10).reverse().take(2).printOut();
         assertThat(range(0,10).materialize().reverse(),equalTo(range(0,10)));
     }
     @Test
@@ -197,7 +194,7 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void rangeLongReversedSkip(){
         System.out.println(rangeLong(0,5).reverse()
-                .skip(3));
+                .drop(3));
         assertThat(rangeLong(0,5).materialize().reverse(),equalTo(rangeLong(0,5)));
     }
     @Test @Ignore
@@ -212,13 +209,13 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     @Test
     public void rangeIntReversedSkip2(){
         assertThat(range(0,5).reverse()
-                .skip(3).toListX().size(),equalTo(2));
+                .drop(3).toListX().size(),equalTo(2));
     }
     @Test
     public void rangeIntReversedSkip(){
 
         assertThat(range(0,20).reverse()
-                .limit(10).skip(8).size(),equalTo(2));
+                .take(10).drop(8).size(),equalTo(2));
     }
     @Test
     public void combinations2() {
@@ -229,12 +226,12 @@ public abstract class AbstractSetTest extends AbstractCollectionXTest {
     public void rangeInt(){
         System.out.println(range(0,150));
         assertThat(range(0,150)
-                .limit(2).count(),equalTo(2l));
+                .take(2).count(),equalTo(2l));
     }
     @Test
     public void rangeIntReversed(){
         assertThat(range(0,150).reverse()
-                .limit(2).size(),equalTo(2));
+                .take(2).size(),equalTo(2));
     }
     @Test
     public void removeFirst(){

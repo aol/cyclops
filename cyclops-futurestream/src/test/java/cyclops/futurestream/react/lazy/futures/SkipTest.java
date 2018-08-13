@@ -14,28 +14,28 @@ public class SkipTest {
 	public void testSkipLast(){
 		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5)
 							.actOnFutures()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(LazyReact.sequentialBuilder().of()
 							.actOnFutures()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5)
 							.actOnFutures()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(LazyReact.sequentialBuilder().of()
 							.actOnFutures()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 }

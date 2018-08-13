@@ -497,35 +497,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return (TrieSet<T>) ImmutableSet.super.takeRight(num);
     }
 
-    @Override
-    public TrieSet<T> skip(long num) {
-        return (TrieSet<T>) ImmutableSet.super.skip(num);
-    }
-
-    @Override
-    public TrieSet<T> skipWhile(Predicate<? super T> p) {
-        return (TrieSet<T>) ImmutableSet.super.skipWhile(p);
-    }
-
-    @Override
-    public TrieSet<T> skipUntil(Predicate<? super T> p) {
-        return (TrieSet<T>) ImmutableSet.super.skipUntil(p);
-    }
-
-    @Override
-    public TrieSet<T> limit(long num) {
-        return (TrieSet<T>) ImmutableSet.super.limit(num);
-    }
-
-    @Override
-    public TrieSet<T> limitWhile(Predicate<? super T> p) {
-        return (TrieSet<T>) ImmutableSet.super.limitWhile(p);
-    }
-
-    @Override
-    public TrieSet<T> limitUntil(Predicate<? super T> p) {
-        return (TrieSet<T>) ImmutableSet.super.limitUntil(p);
-    }
 
     @Override
     public TrieSet<T> intersperse(T value) {
@@ -537,15 +508,6 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return (TrieSet<T>) ImmutableSet.super.shuffle();
     }
 
-    @Override
-    public TrieSet<T> skipLast(int num) {
-        return (TrieSet<T>) ImmutableSet.super.skipLast(num);
-    }
-
-    @Override
-    public TrieSet<T> limitLast(int num) {
-        return (TrieSet<T>) ImmutableSet.super.limitLast(num);
-    }
 
     @Override
     public TrieSet<T> shuffle(Random random) {

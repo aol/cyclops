@@ -132,80 +132,23 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().flatMap(mapper.andThen(Streams::stream)));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#limit(long)
-     */
+
     @Override
-    default LazyCollectionX<T> limit(final long num) {
+    default LazyCollectionX<T> take(final long num) {
         return fromStream(stream().limit(num));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#skip(long)
-     */
+
     @Override
-    default LazyCollectionX<T> skip(final long num) {
+    default LazyCollectionX<T> drop(final long num) {
         return fromStream(stream().skip(num));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#takeRight(int)
-     */
-    @Override
-    default LazyCollectionX<T> takeRight(final int num) {
-        return fromStream(stream().limitLast(num));
-    }
-
-    /* (non-Javadoc)
-     * @see CollectionX#dropRight(int)
-     */
-    @Override
-    default LazyCollectionX<T> dropRight(final int num) {
-        return fromStream(stream().skipLast(num));
-    }
-
-    /* (non-Javadoc)
-     * @see CollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LazyCollectionX<T> takeWhile(final Predicate<? super T> p) {
-        return fromStream(stream().limitWhile(p));
-    }
-
-    /* (non-Javadoc)
-     * @see CollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LazyCollectionX<T> dropWhile(final Predicate<? super T> p) {
-        return fromStream(stream().skipWhile(p));
-    }
-
-    /* (non-Javadoc)
-     * @see CollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LazyCollectionX<T> takeUntil(final Predicate<? super T> p) {
-        return fromStream(stream().limitUntil(p));
-    }
-
-    /* (non-Javadoc)
-     * @see CollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LazyCollectionX<T> dropUntil(final Predicate<? super T> p) {
-        return fromStream(stream().skipUntil(p));
-    }
 
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#slice(long, long)
-     */
-    /* (non-Javadoc)
-     * @see CollectionX#slice(long, long)
-     */
+
+
     @Override
     default LazyCollectionX<T> slice(final long from, final long to) {
         return fromStream(stream().slice(from, to));
@@ -430,37 +373,33 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     /* (non-Javadoc)
      * @see CollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default LazyCollectionX<T> skipWhile(final Predicate<? super T> p) {
+    default LazyCollectionX<T> dropWhile(final Predicate<? super T> p) {
 
-        return fromStream(stream().skipWhile(p));
+        return fromStream(stream().dropWhile(p));
     }
 
     /* (non-Javadoc)
      * @see CollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default LazyCollectionX<T> skipUntil(final Predicate<? super T> p) {
+    default LazyCollectionX<T> dropUntil(final Predicate<? super T> p) {
 
-        return fromStream(stream().skipUntil(p));
+        return fromStream(stream().dropWhile(p));
     }
 
     /* (non-Javadoc)
      * @see CollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default LazyCollectionX<T> limitWhile(final Predicate<? super T> p) {
+    default LazyCollectionX<T> takeWhile(final Predicate<? super T> p) {
 
-        return fromStream(stream().limitWhile(p));
+        return fromStream(stream().takeWhile(p));
     }
 
     /* (non-Javadoc)
      * @see CollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default LazyCollectionX<T> limitUntil(final Predicate<? super T> p) {
+    default LazyCollectionX<T> takeUntil(final Predicate<? super T> p) {
 
-        return fromStream(stream().limitUntil(p));
+        return fromStream(stream().takeUntil(p));
     }
 
     /* (non-Javadoc)
@@ -481,43 +420,31 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().shuffle());
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#skipLast(int)
-     */
     @Override
-    default LazyCollectionX<T> skipLast(final int num) {
+    default LazyCollectionX<T> dropRight(final int num) {
 
-        return fromStream(stream().skipLast(num));
+        return fromStream(stream().dropRight(num));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#limitLast(int)
-     */
     @Override
-    default LazyCollectionX<T> limitLast(final int num) {
+    default LazyCollectionX<T> takeRight(final int num) {
 
-        return fromStream(stream().limitLast(num));
+        return fromStream(stream().takeRight(num));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#onEmpty(java.lang.Object)
-     */
+
     @Override
     default LazyCollectionX<T> onEmpty(final T value) {
         return fromStream(stream().onEmpty(value));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     default LazyCollectionX<T> onEmptyGet(final Supplier<? extends T> supplier) {
         return fromStream(stream().onEmptyGet(supplier));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#onEmptyError(java.util.function.Supplier)
-     */
+
     @Override
     default <X extends Throwable> LazyCollectionX<T> onEmptyError(final Supplier<? extends X> supplier) {
         return fromStream(stream().onEmptyError(supplier));

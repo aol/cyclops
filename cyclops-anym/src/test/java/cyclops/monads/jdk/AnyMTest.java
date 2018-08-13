@@ -343,11 +343,11 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSkipUntil(){
-		assertThat(fromStream(Stream.of(4,3,6,7)).stream().skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().dropWhile(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipWhile(){
-		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().dropWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testLimit(){
@@ -355,11 +355,11 @@ public class AnyMTest {
 	}
 	@Test
 	public void testLimitUntil(){
-		assertThat(fromStream(Stream.of(4,3,6,7)).stream().limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().takeUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3)));
 	}
 	@Test
 	public void testLimitWhile(){
-		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().sorted().takeWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));
 	}
 
 	@Test

@@ -22,12 +22,12 @@ public class SixTest {
     }
     @Test
     public void dynamic(){
-        for(int i=0;i<20;i++) {
+        for(int i=0;i<15;i++) {
             Six<Integer> two = create(i, i,i,i,i,i);
             Six<Integer> mapped = two.map(n -> n * 100);
-            System.out.println(Arrays.deepToString(two.array));
+          //  System.out.println(Arrays.deepToString(two.array));
             System.out.println(Arrays.deepToString(mapped.array));
-            assertThat(ReactiveSeq.fromIterator(mapped.iterator()).toList(),
+            assertThat(mapped.stream().toList(),
                 equalTo(ReactiveSeq.iterate(0,n->n+100).take(i*i*i*i*i*i).toList()));
         }
 

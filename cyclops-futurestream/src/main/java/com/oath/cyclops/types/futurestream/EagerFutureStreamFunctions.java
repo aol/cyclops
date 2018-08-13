@@ -173,7 +173,7 @@ public class EagerFutureStreamFunctions {
                   .filter(next -> !(next instanceof Optional));
     }
 
-    static <T1, T2> ReactiveSeq<T1> skipUntil(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
+    static <T1, T2> ReactiveSeq<T1> dropUntil(final SimpleReactStream<T1> left, final SimpleReactStream<T2> right) {
 
         final Queue q = left.then(it -> new Val(
                                                 Val.Pos.left, it))

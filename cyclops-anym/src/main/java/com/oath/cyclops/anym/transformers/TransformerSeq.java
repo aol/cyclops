@@ -218,12 +218,12 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
     @Override
     default TransformerSeq<W,T> drop(final long num) {
-        return skip(num);
+        return unitAnyM(transformerStream().map(s -> s.drop(num)));
     }
 
     @Override
     default TransformerSeq<W,T> take(final long num) {
-        return limit(num);
+        return unitAnyM(transformerStream().map(s -> s.take(num)));
     }
 
 
@@ -266,17 +266,12 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip(org.jooq.lambda.Seq)
-     */
     @Override
     default <U> TransformerSeq<W,Tuple2<T, U>> zip(final Iterable<? extends U> other) {
         return zipWithStream((Stream<? extends U>) ReactiveSeq.fromIterable(other));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip3(java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     default <S, U> TransformerSeq<W,Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
         final Streamable<? extends S> streamable2 = Streamable.fromIterable(second);
@@ -285,9 +280,7 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     default <T2, T3, T4> TransformerSeq<W,Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
@@ -299,9 +292,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
         return unitAnyM(zipped);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#zipWithIndex()
-     */
     @Override
     default TransformerSeq<W,Tuple2<T, Long>> zipWithIndex() {
         return unitAnyM(transformerStream().map(s -> s.zipWithIndex()));
@@ -444,41 +434,6 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
     }
 
 
-    @Override
-    default TransformerSeq<W,T> skip(final long num) {
-        return unitAnyM(transformerStream().map(s -> s.skip(num)));
-    }
-
-
-    @Override
-    default TransformerSeq<W,T> skipWhile(final Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s -> s.skipWhile(p)));
-    }
-
-
-    @Override
-    default TransformerSeq<W,T> skipUntil(final Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s -> s.skipUntil(p)));
-    }
-
-
-    @Override
-    default TransformerSeq<W,T> limit(final long num) {
-        return unitAnyM(transformerStream().map(s -> s.limit(num)));
-    }
-
-
-    @Override
-    default TransformerSeq<W,T> limitWhile(final Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s -> s.limitWhile(p)));
-    }
-
-
-    @Override
-    default TransformerSeq<W,T> limitUntil(final Predicate<? super T> p) {
-        return unitAnyM(transformerStream().map(s -> s.limitUntil(p)));
-    }
-
 
     @Override
     default TransformerSeq<W,T> intersperse(final T value) {
@@ -498,58 +453,32 @@ public interface TransformerSeq<W extends WitnessType<W>,T> extends Unwrapable,
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#skipLast(int)
-     */
-    @Override
-    default TransformerSeq<W,T> skipLast(final int num) {
-        return unitAnyM(transformerStream().map(s -> s.skipLast(num)));
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#limitLast(int)
-     */
-    @Override
-    default TransformerSeq<W,T> limitLast(final int num) {
-        return unitAnyM(transformerStream().map(s -> s.limitLast(num)));
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#onEmpty(java.lang.Object)
-     */
     @Override
     default TransformerSeq<W,T> onEmpty(final T value) {
         return unitAnyM(transformerStream().map(s -> s.onEmpty(value)));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     default TransformerSeq<W,T> onEmptyGet(final Supplier<? extends T> supplier) {
         return unitAnyM(transformerStream().map(s -> s.onEmptyGet(supplier)));
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#shuffle(java.util.Random)
-     */
     @Override
     default TransformerSeq<W,T> shuffle(final Random random) {
         return unitAnyM(transformerStream().map(s -> s.shuffle(random)));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#slice(long, long)
-     */
+
     @Override
     default TransformerSeq<W,T> slice(final long from, final long to) {
         return unitAnyM(transformerStream().map(s -> s.slice(from, to)));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> TransformerSeq<W,T> sorted(final Function<? super T, ? extends U> function) {
         return unitAnyM(transformerStream().map(s -> s.sorted(function)));

@@ -145,23 +145,16 @@ public class OneShotStreamX<T> extends SpliteratorBasedStream<T> {
     public final ReactiveSeq<T> cycleWhile(final Predicate<? super T> predicate) {
 
         return createSeq(Streams.cycle(unwrapStream()), reversible)
-                .limitWhile(predicate);
+                .takeWhile(predicate);
     }
 
     @Override
     public final ReactiveSeq<T> cycleUntil(final Predicate<? super T> predicate) {
         return createSeq(Streams.cycle(unwrapStream()), reversible)
-                .limitWhile(predicate.negate());
+                .takeWhile(predicate.negate());
     }
 
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate),reversible);
-    }
-    @Override
-    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate.negate()),reversible);
-    }
+
 
     @Override
     public ReactiveSeq<T> cycle(long times) {

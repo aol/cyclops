@@ -217,16 +217,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     }
 
 
-    @Override
-    default SortedSetX<T> take(final long num) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.limit(num);
-    }
-    @Override
-    default SortedSetX<T> drop(final long num) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.skip(num);
-    }
     /**
      * Construct a SortedSetX from an Publisher
      *
@@ -488,65 +479,18 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
      */
-    @Override
-    default SortedSetX<T> limit(final long num) {
-        return (SortedSetX<T>) LazyCollectionX.super.limit(num);
+    default SortedSetX<T> take(final long num) {
+        return (SortedSetX<T>) LazyCollectionX.super.take(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
      */
-    @Override
-    default SortedSetX<T> skip(final long num) {
+    default SortedSetX<T> drop(final long num) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.skip(num);
+        return (SortedSetX<T>) this.drop(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default SortedSetX<T> takeWhile(final Predicate<? super T> p) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default SortedSetX<T> dropWhile(final Predicate<? super T> p) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default SortedSetX<T> takeUntil(final Predicate<? super T> p) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default SortedSetX<T> dropUntil(final Predicate<? super T> p) {
-
-        return (SortedSetX<T>) LazyCollectionX.super.dropUntil(p);
-    }
-
-    @Override
-    default SortedSetX<T> takeRight(final int num) {
-        return (SortedSetX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    @Override
-    default SortedSetX<T> dropRight(final int num) {
-        return (SortedSetX<T>) LazyCollectionX.super.dropRight(num);
-    }
 
 
 
@@ -761,37 +705,33 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default SortedSetX<T> skipWhile(final Predicate<? super T> p) {
+    default SortedSetX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.skipWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default SortedSetX<T> skipUntil(final Predicate<? super T> p) {
+    default SortedSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.skipUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default SortedSetX<T> limitWhile(final Predicate<? super T> p) {
+    default SortedSetX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.limitWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default SortedSetX<T> limitUntil(final Predicate<? super T> p) {
+    default SortedSetX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.limitUntil(p);
+        return (SortedSetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -815,19 +755,17 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default SortedSetX<T> skipLast(final int num) {
+    default SortedSetX<T> dropRight(final int num) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.skipLast(num);
+        return (SortedSetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default SortedSetX<T> limitLast(final int num) {
+    default SortedSetX<T> takeRight(final int num) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.limitLast(num);
+        return (SortedSetX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

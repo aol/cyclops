@@ -805,7 +805,7 @@ public class ReactiveSeqTest {
         pushable.onNext("hello3");
         pushable.onComplete();
        // stream.printOut();
-        stream.limitLast(2).zipWithStream(Stream.of(1,2)).printOut();
+        stream.takeRight(2).zipWithStream(Stream.of(1,2)).printOut();
     }
 
     @Test

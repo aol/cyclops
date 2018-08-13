@@ -329,15 +329,6 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
 
 
-    @Override
-    default PersistentSetX<T> take(final long num) {
-        return limit(num);
-    }
-    @Override
-    default PersistentSetX<T> drop(final long num) {
-
-        return skip(num);
-    }
 
     /**
      * coflatMap pattern, can be used to perform lazy reductions / collections / folds and other terminal operations
@@ -493,63 +484,6 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         return (PersistentSetX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
-     */
-    @Override
-    default PersistentSetX<T> limit(final long num) {
-        return (PersistentSetX<T>) LazyCollectionX.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
-    @Override
-    default PersistentSetX<T> skip(final long num) {
-        return (PersistentSetX<T>) LazyCollectionX.super.skip(num);
-    }
-
-    @Override
-    default PersistentSetX<T> takeRight(final int num) {
-        return (PersistentSetX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    @Override
-    default PersistentSetX<T> dropRight(final int num) {
-        return (PersistentSetX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentSetX<T> takeWhile(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentSetX<T> dropWhile(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentSetX<T> takeUntil(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default PersistentSetX<T> dropUntil(final Predicate<? super T> p) {
-        return (PersistentSetX<T>) LazyCollectionX.super.dropUntil(p);
-    }
 
 
     /* (non-Javadoc)
@@ -767,37 +701,33 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default PersistentSetX<T> skipWhile(final Predicate<? super T> p) {
+    default PersistentSetX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.skipWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default PersistentSetX<T> skipUntil(final Predicate<? super T> p) {
+    default PersistentSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.skipUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default PersistentSetX<T> limitWhile(final Predicate<? super T> p) {
+    default PersistentSetX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.limitWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default PersistentSetX<T> limitUntil(final Predicate<? super T> p) {
+    default PersistentSetX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.limitUntil(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -821,19 +751,17 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default PersistentSetX<T> skipLast(final int num) {
+    default PersistentSetX<T> dropRight(final int num) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.skipLast(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default PersistentSetX<T> limitLast(final int num) {
+    default PersistentSetX<T> takeRight(final int num) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.limitLast(num);
+        return (PersistentSetX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

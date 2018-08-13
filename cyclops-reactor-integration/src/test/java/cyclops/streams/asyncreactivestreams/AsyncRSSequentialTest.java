@@ -45,7 +45,7 @@ public class AsyncRSSequentialTest extends BaseSequentialTest {
     public void testLimitUntilWithNulls() {
 
 
-        assertThat(of(1, 2, 3, 4, 5).limitUntil(i -> false).toList(), equalTo(asList(1, 2,3, 4, 5)));
+        assertThat(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList(), equalTo(asList(1, 2,3, 4, 5)));
     }
     @Test
     public void flatMapStreamFilter() {

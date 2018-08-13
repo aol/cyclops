@@ -558,35 +558,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
           return (HashSet<T>) ImmutableSet.super.takeRight(num);
       }
 
-      @Override
-      public HashSet<T> skip(long num) {
-          return (HashSet<T>) ImmutableSet.super.skip(num);
-      }
 
-      @Override
-      public HashSet<T> skipWhile(Predicate<? super T> p) {
-          return (HashSet<T>) ImmutableSet.super.skipWhile(p);
-      }
-
-      @Override
-      public HashSet<T> skipUntil(Predicate<? super T> p) {
-          return (HashSet<T>) ImmutableSet.super.skipUntil(p);
-      }
-
-      @Override
-      public HashSet<T> limit(long num) {
-          return (HashSet<T>) ImmutableSet.super.limit(num);
-      }
-
-      @Override
-      public HashSet<T> limitWhile(Predicate<? super T> p) {
-          return (HashSet<T>) ImmutableSet.super.limitWhile(p);
-      }
-
-      @Override
-      public HashSet<T> limitUntil(Predicate<? super T> p) {
-          return (HashSet<T>) ImmutableSet.super.limitUntil(p);
-      }
 
       @Override
       public HashSet<T> intersperse(T value) {
@@ -596,16 +568,6 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
       @Override
       public HashSet<T> shuffle() {
           return (HashSet<T>) ImmutableSet.super.shuffle();
-      }
-
-      @Override
-      public HashSet<T> skipLast(int num) {
-          return (HashSet<T>) ImmutableSet.super.skipLast(num);
-      }
-
-      @Override
-      public HashSet<T> limitLast(int num) {
-          return (HashSet<T>) ImmutableSet.super.limitLast(num);
       }
 
       @Override

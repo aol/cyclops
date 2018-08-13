@@ -97,16 +97,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
     @Override
-    default FutureStream<U> skipUntilClosed(final Predicate<? super U> p) {
-        return fromStream(stream().skipUntilClosed(p));
-    }
-
-    @Override
-    default ReactiveSeq<U> limitUntilClosed(final Predicate<? super U> p) {
-        return fromStream(stream().limitUntilClosed(p));
-    }
-
-    @Override
     default <R> FutureStream<R> reduceAll(R identity, BiFunction<R, ? super U, R>  accumulator) {
         return fromStream(stream().reduceAll(identity,accumulator));
     }
@@ -311,32 +301,24 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
 
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.util.stream.Stream)
-     */
+
     @Override
     default FutureStream<U> appendStream(Stream<? extends U> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).appendStream(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#append(java.lang.Iterable)
-     */
+
     @Override
     default FutureStream<U> appendAll(Iterable<? extends U> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).appendAll(other));
     }
 
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prependAll(java.util.stream.Stream)
-     */
     @Override
     default FutureStream<U> prependStream(Stream<? extends U> other) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).prependStream(other));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#prependAll(java.lang.Iterable)
-     */
+
+
     @Override
     default FutureStream<U> prependAll(Iterable<? extends U> other) {
 
@@ -362,30 +344,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return fromStream(stream().cycle(times));
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#skipWhileClosed(java.util.function.Predicate)
-     */
-    @Override
-    default FutureStream<U> skipWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(stream()).skipWhileClosed(predicate);
-    }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#limitWhileClosed(java.util.function.Predicate)
-     */
-    @Override
-    default FutureStream<U> limitWhileClosed(Predicate<? super U> predicate) {
-        return fromStream(stream()).limitWhileClosed(predicate);
 
-    }
 
     @Override
     default <U1> FutureStream<Tuple2<U, U1>> crossJoin(ReactiveSeq<? extends U1> other) {
         Streamable<? extends U1> s = Streamable.fromStream(other);
         return fromStream(stream().forEach2(a->ReactiveSeq.fromIterable(s), Tuple::tuple));
     }
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function, java.util.Comparator)
-     */
+
     @Override
     default <U1> FutureStream<U> sorted(Function<? super U, ? extends U1> function, Comparator<? super U1> comparator) {
         return fromStream(ReactiveSeq.oneShotStream(stream()).sorted(function,comparator));
@@ -1938,7 +1904,6 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @return Limited FutureStream
      *
-     * @see org.jooq.lambda.Seq#limit(long)
      */
     @Override
     default FutureStream<U> limit(final long maxSize) {
@@ -1965,41 +1930,9 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
         return limit(take);
     }
 
-    @Override
-    default FutureStream<U> takeWhile(final Predicate<? super U> p) {
 
-        return this.limitWhile(p);
-    }
 
-    @Override
-    default FutureStream<U> dropWhile(final Predicate<? super U> p) {
 
-        return this.skipWhile(p);
-    }
-
-    @Override
-    default FutureStream<U> takeUntil(final Predicate<? super U> p) {
-
-        return this.limitUntil(p);
-    }
-
-    @Override
-    default FutureStream<U> dropUntil(final Predicate<? super U> p) {
-
-        return this.skipUntil(p);
-    }
-
-    @Override
-    default FutureStream<U> dropRight(final int num) {
-
-        return this.skipLast(num);
-    }
-
-    @Override
-    default FutureStream<U> takeRight(final int num) {
-
-        return this.limitLast(num);
-    }
 
     /*
      * FutureStream.of(1,2,3,4).skip(2)
@@ -2010,7 +1943,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      *
      * @return FutureStream missing skipped elements
      *
-     * @see org.jooq.lambda.Seq#skip(long)
+     * )
      */
     @Override
     default FutureStream<U> skip(final long n) {
@@ -2021,11 +1954,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /*
-     * @return distinct elements in this Stream (must be a finite stream!)
-     *
-     * @see org.jooq.lambda.Seq#distinct()
-     */
+
     @Override
     default FutureStream<U> distinct() {
 
@@ -2289,14 +2218,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * evaluates to true.
      *
      *
-     * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipWhile(i &gt; i &lt;
+     * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).dropWhile(i &gt; i &lt;
      * 3)
      *
      */
     @Override
-    default FutureStream<U> skipWhile(final Predicate<? super U> predicate) {
+    default FutureStream<U> dropWhile(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .skipWhile(predicate));
+                                     .dropWhile(predicate));
     }
 
     /**
@@ -2304,14 +2233,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * evaluates to false.
      *
      *
-     * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).skipUntil(i &gt; i == 3)
+     * // (3, 4, 5) FutureStream.of(1, 2, 3, 4, 5).dropUntil(i &gt; i == 3)
      *
      *
      */
     @Override
-    default FutureStream<U> skipUntil(final Predicate<? super U> predicate) {
+    default FutureStream<U> dropUntil(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .skipUntil(predicate));
+                                     .dropWhile(predicate));
     }
 
     /**
@@ -2319,14 +2248,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * to true.
      *
      *
-     * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
+     * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).takeWhile(i -&gt; i &lt; 3)
      *
      *
      */
     @Override
-    default FutureStream<U> limitWhile(final Predicate<? super U> predicate) {
+    default FutureStream<U> takeWhile(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .limitWhile(predicate));
+                                     .takeWhile(predicate));
     }
 
     /**
@@ -2334,12 +2263,12 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * to false.
      *
      *
-     * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).limitUntil(i &gt; i == 3)
+     * // (1, 2) FutureStream.of(1, 2, 3, 4, 5).takeUntil(i &gt; i == 3)
      *
      */
     @Override
-    default FutureStream<U> limitUntil(final Predicate<? super U> predicate) {
-        return fromStream(LazyFutureStreamFunctions.limitUntil(this, predicate));
+    default FutureStream<U> takeUntil(final Predicate<? super U> predicate) {
+        return fromStream(LazyFutureStreamFunctions.takeUntil(this, predicate));
     }
 
 
@@ -2441,7 +2370,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      */
     @Override
     default FutureStream<U> cycleWhile(final Predicate<? super U> predicate) {
-        return cycle().limitWhile(predicate);
+        return cycle().takeWhile(predicate);
     }
 
     /**
@@ -2462,7 +2391,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<U> cycleUntil(final Predicate<? super U> predicate) {
 
-        return cycle().limitUntil(predicate);
+        return cycle().takeUntil(predicate);
     }
 
 
@@ -2498,21 +2427,13 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                                               .getExecutor());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#unordered()
-     */
+
     @Override
     default FutureStream<U> unordered() {
         return this;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#onClose(java.lang.Runnable)
-     */
+
     @Override
     default FutureStream<U> onClose(final Runnable closeHandler) {
         getLastActive().stream()
@@ -2521,22 +2442,14 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#sorted()
-     */
+
     @Override
     default FutureStream<U> sorted() {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                                      .sorted());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#sorted(java.util.Comparator)
-     */
+
     @Override
     default FutureStream<U> sorted(final Comparator<? super U> comparator) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
@@ -3041,42 +2954,34 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
      * @see cyclops2.stream.ReactiveSeq#skip(long, java.util.concurrent.TimeUnit)
      */
     @Override
-    default FutureStream<U> skip(final long time, final TimeUnit unit) {
+    default FutureStream<U> drop(final long time, final TimeUnit unit) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .skip(time, unit));
+                                     .drop(time, unit));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#limit(long, java.util.concurrent.TimeUnit)
-     */
+
     @Override
-    default FutureStream<U> limit(final long time, final TimeUnit unit) {
+    default FutureStream<U> take(final long time, final TimeUnit unit) {
         getSubscription().registerTimeLimit(unit.toNanos(time));
         return fromStream(stream()
-                                   .limit(time, unit));
+                                   .take(time, unit));
     }
 
     /*
      * @see cyclops2.stream.ReactiveSeq#skipLast(int)
      */
-    @Override
-    default FutureStream<U> skipLast(final int num) {
+    default FutureStream<U> dropRight(final int num) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .skipLast(num));
+                                     .dropRight(num));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#limitLast(int)
-     */
-    @Override
-    default FutureStream<U> limitLast(final int num) {
+
+    default FutureStream<U> takeRight(final int num) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .limitLast(num));
+                                     .takeRight(num));
     }
 
-    /*
-     * @see cyclops2.stream.ReactiveSeq#firstValue()
-     */
+
     @Override
     default U firstValue(U alt) {
 

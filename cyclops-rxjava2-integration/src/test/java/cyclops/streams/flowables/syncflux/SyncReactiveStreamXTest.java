@@ -102,7 +102,7 @@ public  class SyncReactiveStreamXTest {
 
 		List<Integer> list = new ArrayList<>();
 		while(list.size()==0){
-			list = of(1,2,3,4,5,6).limitWhile(it -> it<4)
+			list = of(1,2,3,4,5,6).takeWhile(it -> it<4)
 						.peek(it -> System.out.println(it)).collect(Collectors.toList());
 
 		}
@@ -218,7 +218,7 @@ public  class SyncReactiveStreamXTest {
 	public void skipTime(){
 		List<Integer> result = of(1,2,3,4,5,6)
 				.peek(i->sleep(i*100))
-				.skip(1000,TimeUnit.MILLISECONDS)
+				.drop(1000,TimeUnit.MILLISECONDS)
 				.toList();
 
         assertThat(result.size(), Matchers.isOneOf(3,4));
@@ -228,7 +228,7 @@ public  class SyncReactiveStreamXTest {
 	public void limitTime(){
 		List<Integer> result = of(1,2,3,4,5,6)
 				.peek(i->sleep(i*100))
-				.limit(1000, TimeUnit.MILLISECONDS)
+				.take(1000, TimeUnit.MILLISECONDS)
 				.toList();
 
 
@@ -237,7 +237,7 @@ public  class SyncReactiveStreamXTest {
 	}
     @Test
 	public void skipUntil(){
-		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).skipUntil(i -> i % 3 == 0).toList());
+		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropWhile(i -> i % 3 == 0).toList());
 	}
 	@Test
     public void simpleZip(){
@@ -268,7 +268,7 @@ public  class SyncReactiveStreamXTest {
 
     @Test
 	public void dropRight(){
-		System.out.println(of(1,2,3).skipLast(1).toList());
+		System.out.println(of(1,2,3).dropRight(1).toList());
 		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
 	}
 	@Test
@@ -277,18 +277,18 @@ public  class SyncReactiveStreamXTest {
 	}
 	@Test
 	public void skipLast1(){
-		assertThat(of(1,2,3).skipLast(1).toList(),hasItems(1,2));
+		assertThat(of(1,2,3).dropRight(1).toList(),hasItems(1,2));
 	}
 	@Test
 	public void testSkipLast(){
 		assertThat(of(1,2,3,4,5)
-				.skipLast(2)
+				.dropRight(2)
 				.to(ReactiveConvertableSequence::converter).listX(),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastForEach(){
 		List<Integer> list = new ArrayList();
-		of(1,2,3,4,5).skipLast(2)
+		of(1,2,3,4,5).dropRight(2)
 				.forEach(n->{list.add(n);});
 		assertThat(list,equalTo(Arrays.asList(1,2,3)));
 	}
@@ -443,50 +443,50 @@ public  class SyncReactiveStreamXTest {
 	    public void testSkipWhile() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertTrue(s.get().skipWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertTrue(s.get().dropWhile(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
 
-	        assertEquals(asList(), s.get().skipWhile(i -> true).toList());
+	        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testSkipUntil() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
-	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertEquals(asList(), s.get().dropWhile(i -> false).toList());
+	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
 	    @Test(expected= NullPointerException.class)
 	    public void testSkipUntilWithNulls() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
-	        assertTrue(s.get().skipUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
+	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().limitWhile(i -> false).toList());
-	        assertTrue( s.get().limitWhile(i -> i < 3).toList().size()!=5);
-	        assertTrue(s.get().limitWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
+	        assertTrue( s.get().takeWhile(i -> i < 3).toList().size()!=5);
+	        assertTrue(s.get().takeWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
 	    @Test
 	    public void testLimitUntil() {
 
 
-	        assertTrue(of(1, 2, 3, 4, 5).limitUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
-	        assertFalse(of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toList().size()==5);
+	        assertTrue(of(1, 2, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertFalse(of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList().size()==5);
 
-	        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
 
 	    @Test(expected = NullPointerException.class)
 	    public void testLimitUntilWithNulls() {
 
-	    	System.out.println(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).toList());
-	        assertTrue(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
+	    	System.out.println(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList());
+	        assertTrue(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 

@@ -594,59 +594,8 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT<W,T>) FoldableTransformerSeq.super.takeRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skip(long)
-     */
-    @Override
-    public ListT<W,T> skip(final long num) {
 
-        return (ListT<W,T>) FoldableTransformerSeq.super.skip(num);
-    }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipWhile(java.util.function.Predicate)
-     */
-    @Override
-    public ListT<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.skipWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipUntil(java.util.function.Predicate)
-     */
-    @Override
-    public ListT<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.skipUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limit(long)
-     */
-    @Override
-    public ListT<W,T> limit(final long num) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitWhile(java.util.function.Predicate)
-     */
-    @Override
-    public ListT<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.limitWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitUntil(java.util.function.Predicate)
-     */
-    @Override
-    public ListT<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.limitUntil(p);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#intersperse(java.lang.Object)
@@ -675,23 +624,6 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
         return (ListT<W,T>) FoldableTransformerSeq.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipLast(int)
-     */
-    @Override
-    public ListT<W,T> skipLast(final int num) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.skipLast(num);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitLast(int)
-     */
-    @Override
-    public ListT<W,T> limitLast(final int num) {
-
-        return (ListT<W,T>) FoldableTransformerSeq.super.limitLast(num);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#onEmpty(java.lang.Object)
@@ -943,12 +875,12 @@ public class ListT<W extends WitnessType<W>,T> implements To<ListT<W,T>>,
 
     @Override
     public ListT<W,T> drop(final long num) {
-        return skip(num);
+        return drop(num);
     }
 
     @Override
     public ListT<W,T> take(final long num) {
-        return limit(num);
+        return take(num);
     }
 
 

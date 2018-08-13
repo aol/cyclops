@@ -286,7 +286,7 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skipWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return observable(observable.skipWhile(t->p.test(t)));
     }
 
@@ -296,22 +296,14 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> limitWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
         return observable(Observables.connectToReactiveSeq(observable).takeWhile(p));
     }
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> p) {
-        return observable(observable.takeWhile(t->p.test(t)));
-    }
+
 
     @Override
-    public ReactiveSeq<T> limitUntil(Predicate<? super T> p) {
-       return observable(Observables.connectToReactiveSeq(observable).limitUntil(p));
-    }
-
-    @Override
-    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
-        return observable(observable.takeUntil((T t)->p.test(t)));
+    public ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
+       return observable(Observables.connectToReactiveSeq(observable).takeUntil(p));
     }
 
     @Override
@@ -573,22 +565,22 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
 
     @Override
-    public ReactiveSeq<T> skip(long time, TimeUnit unit) {
+    public ReactiveSeq<T> drop(long time, TimeUnit unit) {
         return observable(observable.skip(time,unit));
     }
 
     @Override
-    public ReactiveSeq<T> limit(long time, TimeUnit unit) {
+    public ReactiveSeq<T> take(long time, TimeUnit unit) {
         return observable(observable.take(time,unit));
     }
 
     @Override
-    public ReactiveSeq<T> skipLast(int num) {
+    public ReactiveSeq<T> dropRight(int num) {
         return observable(observable.skipLast(num));
     }
 
     @Override
-    public ReactiveSeq<T> limitLast(int num) {
+    public ReactiveSeq<T> takeRight(int num) {
         return observable(observable.takeLast(num));
     }
 
@@ -682,10 +674,6 @@ public class ObservableReactiveSeqImpl<T> implements ReactiveSeq<T> {
         return observable(observable.repeat(times));
     }
 
-    @Override
-    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return observable(Observables.connectToReactiveSeq(observable).skipWhileClosed(predicate));
-    }
 
     @Override
     public ReactiveSeq<T> changes() {

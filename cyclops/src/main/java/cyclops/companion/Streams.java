@@ -843,7 +843,7 @@ public class Streams {
     public final static <T> Tuple2<Stream<T>, Stream<T>> splitBy(final Stream<T> stream, final Predicate<T> splitter) {
         final Tuple2<Stream<T>, Stream<T>> Tuple2 = duplicate(stream);
         return Tuple.tuple(
-                          limitWhile(Tuple2._1(), splitter), skipWhile(Tuple2._2(), splitter));
+                          takeWhile(Tuple2._1(), splitter), dropWhile(Tuple2._2(), splitter));
     }
 
     /**
@@ -1147,7 +1147,7 @@ public class Streams {
     /**
      * skip elements in Stream until Predicate holds true
      * 	<pre>
-     * {@code  Streams.skipUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList())
+     * {@code  Streams.dropUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
 
@@ -1155,16 +1155,16 @@ public class Streams {
      * @param predicate to applyHKT
      * @return Stream with elements skipped
      */
-    public static <U> Stream<U> skipUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
-        return skipWhile(stream, predicate.negate());
+    public static <U> Stream<U> dropUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
+        return dropWhile(stream, predicate.negate());
     }
 
-    public static <U> Stream<U> skipLast(final Stream<U> stream, final int num) {
-        return StreamSupport.stream(SkipLastSpliterator.skipLast(stream.spliterator(),num),stream.isParallel());
+    public static <U> Stream<U> dropRight(final Stream<U> stream, final int num) {
+        return StreamSupport.stream(SkipLastSpliterator.dropRight(stream.spliterator(),num),stream.isParallel());
     }
 
-    public static <U> Stream<U> limitLast(final Stream<U> stream, final int num) {
-        return StreamSupport.stream(LimitLastSpliterator.limitLast(stream.spliterator(), num),stream.isParallel());
+    public static <U> Stream<U> takeRight(final Stream<U> stream, final int num) {
+        return StreamSupport.stream(LimitLastSpliterator.takeRight(stream.spliterator(), num),stream.isParallel());
     }
 
     public static <T> Stream<T> recover(final Stream<T> stream, final Function<Throwable, ? extends T> fn) {
@@ -1182,23 +1182,23 @@ public class Streams {
      *
      * <pre>
      *
-     * {@code  Streams.skipWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList())
+     * {@code  Streams.dropWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList())
      *  // [6,7]
      *  }</pre>
      * @param stream
      * @param predicate
      * @return
      */
-    public static <U> Stream<U> skipWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
+    public static <U> Stream<U> dropWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
         return StreamSupport.stream(new SkipWhileSpliterator<U>(stream.spliterator(),predicate), stream.isParallel());
     }
 
-    public static <U> Stream<U> limit(final Stream<U> stream, final long time, final TimeUnit unit) {
+    public static <U> Stream<U> take(final Stream<U> stream, final long time, final TimeUnit unit) {
         return StreamSupport.stream(
                 new LimitWhileTimeSpliterator<U>(stream.spliterator(),time,unit),stream.isParallel());
     }
 
-    public static <U> Stream<U> skip(final Stream<U> stream, final long time, final TimeUnit unit) {
+    public static <U> Stream<U> drop(final Stream<U> stream, final long time, final TimeUnit unit) {
         return StreamSupport.stream(new SkipWhileTimeSpliterator<U>(stream.spliterator(),time,unit),stream.isParallel());
     }
 
@@ -1281,7 +1281,7 @@ public class Streams {
     /**
      * Take elements from a stream while the predicates hold
      * <pre>
-     * {@code Streams.limitWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList());
+     * {@code Streams.takeWhile(Stream.of(4,3,6,7).sorted(),i->i<6).collect(CyclopsCollectors.toList());
      * //[4,3]
      * }
      * </pre>
@@ -1289,14 +1289,14 @@ public class Streams {
      * @param predicate
      * @return
      */
-    public static <U> Stream<U> limitWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
+    public static <U> Stream<U> takeWhile(final Stream<U> stream, final Predicate<? super U> predicate) {
         return StreamSupport.stream(new LimitWhileSpliterator<>(stream.spliterator(), predicate),stream.isParallel());
     }
 
     /**
      * Take elements from a Stream until the predicate holds
      *  <pre>
-     * {@code Streams.limitUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList());
+     * {@code Streams.takeUntil(Stream.of(4,3,6,7),i->i==6).collect(CyclopsCollectors.toList());
      * //[4,3]
      * }
      * </pre>
@@ -1304,8 +1304,8 @@ public class Streams {
      * @param predicate
      * @return
      */
-    public static <U> Stream<U> limitUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
-        return limitWhile(stream, predicate.negate());
+    public static <U> Stream<U> takeUntil(final Stream<U> stream, final Predicate<? super U> predicate) {
+        return takeWhile(stream, predicate.negate());
 
     }
 
@@ -1548,7 +1548,7 @@ public class Streams {
      * @return Repeating Stream
      */
     public final static <T> Stream<T> cycleWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
-        return Streams.limitWhile(Streams.cycle(stream), predicate);
+        return Streams.takeWhile(Streams.cycle(stream), predicate);
     }
 
     /**
@@ -1568,7 +1568,7 @@ public class Streams {
      * @return Repeating Stream
      */
     public final static <T> Stream<T> cycleUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
-        return Streams.limitUntil(Streams.cycle(stream), predicate);
+        return Streams.takeUntil(Streams.cycle(stream), predicate);
     }
 
     /**

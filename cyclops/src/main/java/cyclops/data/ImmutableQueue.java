@@ -615,37 +615,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
 
 
-    @Override
-    default ImmutableQueue<T> skip(long num) {
-        return unitStream(stream().skip(num));
-    }
-
-    @Override
-    default ImmutableQueue<T> skipWhile(Predicate<? super T> p) {
-        return unitStream(stream().skipWhile(p));
-    }
-
-    @Override
-    default ImmutableQueue<T> skipUntil(Predicate<? super T> p) {
-        return unitStream(stream().skipUntil(p));
-    }
-
-
-
-    @Override
-    default ImmutableQueue<T> limit(long num) {
-        return unitStream(stream().limit(num));
-    }
-
-    @Override
-    default ImmutableQueue<T> limitWhile(Predicate<? super T> p) {
-        return unitStream(stream().limitWhile(p));
-    }
-
-    @Override
-    default ImmutableQueue<T> limitUntil(Predicate<? super T> p) {
-        return unitStream(stream().limitUntil(p));
-    }
 
     @Override
     default ImmutableQueue<T> intersperse(T value) {
@@ -655,16 +624,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
     @Override
     default ImmutableQueue<T> shuffle() {
         return unitStream(stream().shuffle());
-    }
-
-    @Override
-    default ImmutableQueue<T> skipLast(int num) {
-        return unitStream(stream().skipLast(num));
-    }
-
-    @Override
-    default ImmutableQueue<T> limitLast(int num) {
-        return unitStream(stream().limitLast(num));
     }
 
     @Override

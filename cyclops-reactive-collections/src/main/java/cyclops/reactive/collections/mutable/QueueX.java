@@ -315,12 +315,12 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     @Override
     default QueueX<T> take(final long num) {
 
-        return (QueueX<T>) LazyCollectionX.super.limit(num);
+        return (QueueX<T>) LazyCollectionX.super.take(num);
     }
     @Override
     default QueueX<T> drop(final long num) {
 
-        return (QueueX<T>) LazyCollectionX.super.skip(num);
+        return (QueueX<T>) this.drop(num);
     }
     /* (non-Javadoc)
      * @see CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
@@ -519,84 +519,22 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
-     */
-    @Override
-    default QueueX<T> limit(final long num) {
 
-        return (QueueX<T>) LazyCollectionX.super.limit(num);
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
-     */
-    @Override
-    default QueueX<T> skip(final long num) {
-
-        return (QueueX<T>) LazyCollectionX.super.skip(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default QueueX<T> takeWhile(final Predicate<? super T> p) {
-
-        return (QueueX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default QueueX<T> dropWhile(final Predicate<? super T> p) {
-
-        return (QueueX<T>) LazyCollectionX.super.dropWhile(p);
-    }
 
     @Override
     default QueueX<T> takeRight(final int num) {
         return (QueueX<T>) LazyCollectionX.super.takeRight(num);
     }
 
-    @Override
-    default QueueX<T> dropRight(final int num) {
-        return (QueueX<T>) LazyCollectionX.super.dropRight(num);
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default QueueX<T> takeUntil(final Predicate<? super T> p) {
-
-        return (QueueX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default QueueX<T> dropUntil(final Predicate<? super T> p) {
-
-        return (QueueX<T>) LazyCollectionX.super.dropUntil(p);
-    }
-
-
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#slice(long, long)
-     */
     @Override
     default QueueX<T> slice(final long from, final long to) {
 
         return (QueueX<T>) LazyCollectionX.super.slice(from, to);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> QueueX<T> sorted(final Function<? super T, ? extends U> function) {
 
@@ -614,9 +552,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX) LazyCollectionX.super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+
     @Override
     default <U, R> QueueX<R> zip(final Iterable<? extends U> other, final BiFunction<? super T, ? super U, ? extends R> zipper) {
 
@@ -624,7 +560,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     }
 
 
-  @Override
+    @Override
     default QueueX<Seq<T>> sliding(final int windowSize) {
         return (QueueX<Seq<T>>) LazyCollectionX.super.sliding(windowSize);
     }
@@ -759,117 +695,81 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX) LazyCollectionX.super.zip4(second, third, fourth);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#zipWithIndex()
-     */
+
     @Override
     default QueueX<Tuple2<T, Long>> zipWithIndex() {
 
         return (QueueX<Tuple2<T, Long>>) LazyCollectionX.super.zipWithIndex();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#distinct()
-     */
     @Override
     default QueueX<T> distinct() {
 
         return (QueueX<T>) LazyCollectionX.super.distinct();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#sorted()
-     */
+
     @Override
     default QueueX<T> sorted() {
 
         return (QueueX<T>) LazyCollectionX.super.sorted();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#sorted(java.util.Comparator)
-     */
     @Override
     default QueueX<T> sorted(final Comparator<? super T> c) {
 
         return (QueueX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipWhile(java.util.function.Predicate)
-     */
-    @Override
-    default QueueX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (QueueX<T>) LazyCollectionX.super.skipWhile(p);
+    default QueueX<T> dropWhile(final Predicate<? super T> p) {
+
+        return (QueueX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipUntil(java.util.function.Predicate)
      */
-    @Override
-    default QueueX<T> skipUntil(final Predicate<? super T> p) {
+    default QueueX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (QueueX<T>) LazyCollectionX.super.skipUntil(p);
+        return (QueueX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default QueueX<T> limitWhile(final Predicate<? super T> p) {
+    default QueueX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (QueueX<T>) LazyCollectionX.super.limitWhile(p);
+        return (QueueX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default QueueX<T> limitUntil(final Predicate<? super T> p) {
+    default QueueX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (QueueX<T>) LazyCollectionX.super.limitUntil(p);
+        return (QueueX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#intersperse(java.lang.Object)
-     */
     @Override
     default QueueX<T> intersperse(final T value) {
 
         return (QueueX<T>) LazyCollectionX.super.intersperse(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#shuffle()
-     */
     @Override
     default QueueX<T> shuffle() {
 
         return (QueueX<T>) LazyCollectionX.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipLast(int)
-     */
     @Override
-    default QueueX<T> skipLast(final int num) {
+    default QueueX<T> dropRight(final int num) {
 
-        return (QueueX<T>) LazyCollectionX.super.skipLast(num);
+        return (QueueX<T>) LazyCollectionX.super.dropRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitLast(int)
-     */
-    @Override
-    default QueueX<T> limitLast(final int num) {
 
-        return (QueueX<T>) LazyCollectionX.super.limitLast(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
-     */
     @Override
     default QueueX<T> onEmptySwitch(final Supplier<? extends Queue<T>> supplier) {
         if (isEmpty())
@@ -877,9 +777,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#onEmpty(java.lang.Object)
-     */
+
     @Override
     default QueueX<T> onEmpty(final T value) {
 
@@ -895,54 +793,41 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
         return (QueueX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#onEmptyError(java.util.function.Supplier)
-     */
+
     @Override
     default <X extends Throwable> QueueX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
         return (QueueX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#shuffle(java.util.Random)
-     */
+
     @Override
     default QueueX<T> shuffle(final Random random) {
 
         return (QueueX<T>) LazyCollectionX.super.shuffle(random);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#ofType(java.lang.Class)
-     */
+
     @Override
     default <U> QueueX<U> ofType(final Class<? extends U> type) {
 
         return (QueueX<U>) LazyCollectionX.super.ofType(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#filterNot(java.util.function.Predicate)
-     */
     @Override
     default QueueX<T> filterNot(final Predicate<? super T> fn) {
 
         return (QueueX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#notNull()
-     */
+
     @Override
     default QueueX<T> notNull() {
 
         return (QueueX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default QueueX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -954,36 +839,28 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
       return removeAll(narrowIterable());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default QueueX<T> removeAll(final T... values) {
 
         return (QueueX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default QueueX<T> retainAll(final Iterable<? extends T> it) {
 
         return (QueueX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default QueueX<T> retainStream(final Stream<? extends T> seq) {
 
         return (QueueX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default QueueX<T> retainAll(final T... values) {
 

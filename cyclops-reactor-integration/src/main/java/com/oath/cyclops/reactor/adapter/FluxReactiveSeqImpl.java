@@ -276,7 +276,7 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skipWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return flux(flux.skipWhile(p));
     }
 
@@ -286,22 +286,13 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> limitWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
         return flux(Spouts.from(flux).takeWhile(p));
     }
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> p) {
-        return flux(flux.takeWhile(p));
-    }
 
     @Override
-    public ReactiveSeq<T> limitUntil(Predicate<? super T> p) {
-       return flux(Spouts.from(flux).limitUntil(p));
-    }
-
-    @Override
-    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
-        return flux(flux.takeUntil(p));
+    public ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
+       return flux(Spouts.from(flux).takeUntil(p));
     }
 
     @Override
@@ -563,22 +554,22 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skip(long time, TimeUnit unit) {
+    public ReactiveSeq<T> drop(long time, TimeUnit unit) {
         return flux(flux.skip(Duration.ofNanos(unit.toNanos(time))));
     }
 
     @Override
-    public ReactiveSeq<T> limit(long time, TimeUnit unit) {
+    public ReactiveSeq<T> take(long time, TimeUnit unit) {
         return flux(flux.take(Duration.ofNanos(unit.toNanos(time))));
     }
 
     @Override
-    public ReactiveSeq<T> skipLast(int num) {
+    public ReactiveSeq<T> dropRight(int num) {
         return flux(flux.skipLast(num));
     }
 
     @Override
-    public ReactiveSeq<T> limitLast(int num) {
+    public ReactiveSeq<T> takeRight(int num) {
         return flux(flux.takeLast(num));
     }
 
@@ -673,12 +664,6 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public ReactiveSeq<T> cycle(long times) {
         return flux(flux.repeat(times));
     }
-
-    @Override
-    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return flux(Spouts.from(flux).skipWhileClosed(predicate));
-    }
-
 
     @Override
     public ReactiveSeq<T> changes() {

@@ -265,12 +265,12 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default SetX<T> take(final long num) {
 
-        return (SetX<T>) LazyCollectionX.super.limit(num);
+        return (SetX<T>) LazyCollectionX.super.take(num);
     }
     @Override
     default SetX<T> drop(final long num) {
 
-        return (SetX<T>) LazyCollectionX.super.skip(num);
+        return (SetX<T>) this.drop(num);
     }
 
     /* (non-Javadoc)
@@ -462,22 +462,6 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<R>)LazyCollectionX.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
-     */
-    @Override
-    default SetX<T> limit(final long num) {
-        return (SetX<T>) LazyCollectionX.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
-     */
-    @Override
-    default SetX<T> skip(final long num) {
-
-        return (SetX<T>) LazyCollectionX.super.skip(num);
-    }
 
     @Override
     default SetX<T> takeRight(final int num) {
@@ -489,36 +473,28 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<T>) LazyCollectionX.super.dropRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
+
     @Override
     default SetX<T> takeWhile(final Predicate<? super T> p) {
 
         return (SetX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
+
     @Override
     default SetX<T> dropWhile(final Predicate<? super T> p) {
 
         return (SetX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
+
     @Override
     default SetX<T> takeUntil(final Predicate<? super T> p) {
 
         return (SetX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
+
     @Override
     default SetX<T> dropUntil(final Predicate<? super T> p) {
 
@@ -527,18 +503,14 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#slice(long, long)
-     */
+
     @Override
     default SetX<T> slice(final long from, final long to) {
 
         return (SetX<T>) LazyCollectionX.super.slice(from, to);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> SetX<T> sorted(final Function<? super T, ? extends U> function) {
 
@@ -739,81 +711,22 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return (SetX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipWhile(java.util.function.Predicate)
-     */
-    @Override
-    default SetX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (SetX<T>) LazyCollectionX.super.skipWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipUntil(java.util.function.Predicate)
-     */
-    @Override
-    default SetX<T> skipUntil(final Predicate<? super T> p) {
-
-        return (SetX<T>) LazyCollectionX.super.skipUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitWhile(java.util.function.Predicate)
-     */
-    @Override
-    default SetX<T> limitWhile(final Predicate<? super T> p) {
-
-        return (SetX<T>) LazyCollectionX.super.limitWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitUntil(java.util.function.Predicate)
-     */
-    @Override
-    default SetX<T> limitUntil(final Predicate<? super T> p) {
-
-        return (SetX<T>) LazyCollectionX.super.limitUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#intersperse(java.lang.Object)
-     */
     @Override
     default SetX<T> intersperse(final T value) {
 
         return (SetX<T>) LazyCollectionX.super.intersperse(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#shuffle()
-     */
+
     @Override
     default SetX<T> shuffle() {
 
         return (SetX<T>) LazyCollectionX.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skipLast(int)
-     */
-    @Override
-    default SetX<T> skipLast(final int num) {
 
-        return (SetX<T>) LazyCollectionX.super.skipLast(num);
-    }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limitLast(int)
-     */
-    @Override
-    default SetX<T> limitLast(final int num) {
-
-        return (SetX<T>) LazyCollectionX.super.limitLast(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
-     */
     @Override
     default SetX<T> onEmptySwitch(final Supplier<? extends Set<T>> supplier) {
         if (isEmpty())
@@ -821,72 +734,56 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#onEmpty(java.lang.Object)
-     */
+
     @Override
     default SetX<T> onEmpty(final T value) {
 
         return (SetX<T>) LazyCollectionX.super.onEmpty(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     default SetX<T> onEmptyGet(final Supplier<? extends T> supplier) {
 
         return (SetX<T>) LazyCollectionX.super.onEmptyGet(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#onEmptyError(java.util.function.Supplier)
-     */
+
     @Override
     default <X extends Throwable> SetX<T> onEmptyError(final Supplier<? extends X> supplier) {
 
         return (SetX<T>) LazyCollectionX.super.onEmptyError(supplier);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#shuffle(java.util.Random)
-     */
+
     @Override
     default SetX<T> shuffle(final Random random) {
 
         return (SetX<T>) LazyCollectionX.super.shuffle(random);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#ofType(java.lang.Class)
-     */
+
     @Override
     default <U> SetX<U> ofType(final Class<? extends U> type) {
 
         return (SetX<U>) LazyCollectionX.super.ofType(type);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#filterNot(java.util.function.Predicate)
-     */
+
     @Override
     default SetX<T> filterNot(final Predicate<? super T> fn) {
 
         return (SetX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#notNull()
-     */
+
     @Override
     default SetX<T> notNull() {
 
         return (SetX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default SetX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -898,36 +795,28 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
       return removeAll(narrowIterable());
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default SetX<T> removeAll(final T... values) {
 
         return (SetX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default SetX<T> retainAll(final Iterable<? extends T> it) {
 
         return (SetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default SetX<T> retainStream(final Stream<? extends T> seq) {
 
         return (SetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default SetX<T> retainAll(final T... values) {
 

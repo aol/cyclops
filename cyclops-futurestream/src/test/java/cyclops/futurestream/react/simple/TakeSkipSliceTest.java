@@ -30,7 +30,7 @@ public class TakeSkipSliceTest {
 		System.out.println(SimpleReact.sequentialCommonBuilder()
 				.from(IntStream.range(0, 1000000))
 				// .peek(System.out::println)
-				.skipUntil(stoppingStream)
+				.dropUntil(stoppingStream)
 				.peek(System.out::println)
 				.toList()
 				.size());
@@ -46,9 +46,9 @@ public class TakeSkipSliceTest {
 	public void skipUntil2(){
 
 		System.out.println(react(()->1,()->2,()->3,()->4,()->value2())
-				.skipUntil(react(()->value())).collect(Collectors.toList()));
-		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).allMatch(it-> it==200));
-		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).skipUntil(react(()->value())).count(),is(1l));
+				.dropUntil(react(()->value())).collect(Collectors.toList()));
+		assertTrue(react(()->1,()->2,()->3,()->4,()->value2()).dropUntil(react(()->value())).allMatch(it-> it==200));
+		assertThat(react(()->1,()->2,()->3,()->4,()->value2()).dropUntil(react(()->value())).count(),is(1l));
 	}
 	@Test
 	public void takeUntil(){

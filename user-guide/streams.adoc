@@ -1480,7 +1480,7 @@ The limitTime operator takes values from the Stream while time elapsed is less t
 ----
 ReactiveSeq.range(1,1_000_000)
          .peek(i->sleep(i*100))
-         .skip(1000,TimeUnit.MILLISECONDS)
+         .drop(1000,TimeUnit.MILLISECONDS)
          .toList()
 //takes values from the range for 1,000ms (1 sec)
 ----
@@ -1496,7 +1496,7 @@ The skipTime operator drops elements from the Stream until the specified time pe
 ----
 ReactiveSeq.range(1,Integer.MAX_VALUE)
                                         .peek(i->sleep(i*100))
-                                        .skip(1000,TimeUnit.MILLISECONDS)
+                                        .drop(1000,TimeUnit.MILLISECONDS)
                                         .toList()
 //skips values from the range until 1 second has elapsed, then accept values
 ----
@@ -1506,12 +1506,12 @@ ReactiveSeq.range(1,Integer.MAX_VALUE)
 
 Skip (drop) the specified number of entries from the end of the stream
 
-.skipLast
+.takeRight
 ====
 [source,java]
 ----
 ReactiveSeq.of(1,2,3,4,5)
-                            .skipLast(2)
+                            .takeRight(2)
                             .collect(Collectors.toList());
 //List[1,2,3]
 ----
@@ -1525,12 +1525,12 @@ Take (include) the last x elements.
 The english name limitLast is much less informative than the equiavlent takeLast, this is likely why the naming convention is changing in JDK 9 even at the cost of inconistency.
 ====
 
-.limitLast
+.takeRight
 ====
 [source,java]
 ----
 ReactiveSeq.of(1,2,3,4,5)
-                            .limitLast(2)
+                            .takeRight(2)
                             .collect(Collectors.toList())
 //List[4,5]
 ----
@@ -1539,11 +1539,11 @@ ReactiveSeq.of(1,2,3,4,5)
 
 SkipWhile drops elements from the Stream while the predicate holds, once the predicte returns true all subsequent elements are included
 
-.skipWhile
+.dropWhile
 ====
 [source,java]
 ----
-ReactiveSeq.of(1, 2, 3, 4, 5,1).skipWhile(i->i<5);
+ReactiveSeq.of(1, 2, 3, 4, 5,1).dropWhile(i->i<5);
 
 //ReactiveSeq[5,1]
 ----
@@ -1553,11 +1553,11 @@ ReactiveSeq.of(1, 2, 3, 4, 5,1).skipWhile(i->i<5);
 
 Take elements from the Stream while the predicate holds, once the predicate returns false all subsequent elements are excluded
 
-.limitWhile
+.takeWhile
 ====
 [source,java]
 ----
-ReactiveSeq.of(1, 2, 3, 4, 5,6).limitWhile(i->i<5);
+ReactiveSeq.of(1, 2, 3, 4, 5,6).takeWhile(i->i<5);
 
 //ReactiveSeq[1,2,3,4]
 ----
@@ -1567,11 +1567,11 @@ ReactiveSeq.of(1, 2, 3, 4, 5,6).limitWhile(i->i<5);
 
 Drop elements from the Stream until the predicate returns true, after which all elements are included.
 
-.skipUntil
+.dropWhile
 ====
 [source,java]
 ----
-ReactiveSeq.of(1, 2, 3, 4, 5).skipUntil(i->i==4);
+ReactiveSeq.of(1, 2, 3, 4, 5).dropWhile(i->i==4);
 
 //ReactiveSeq[4,5]
 ----
@@ -1580,11 +1580,11 @@ ReactiveSeq.of(1, 2, 3, 4, 5).skipUntil(i->i==4);
 
 Take elements from the Stream until the predicate returns true, after which all elements are excluded.
 
-.limitUntil
+.takeUntil
 ====
 [source,java]
 ----
-ReactiveSeq.of(1, 2, 3, 4, 5).limitWhile(i->i==4);
+ReactiveSeq.of(1, 2, 3, 4, 5).takeWhile(i->i==4);
 
 //ReactiveSeq[1,2,3]
 ----

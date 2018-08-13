@@ -184,7 +184,7 @@ public class AsyncRSExtensionOperatorsTest {
     public void limitTime(){
         List<Integer> result = of(1,2,3,4,5,6)
                 .peek(i->sleep(i*100))
-                .limit(1000,TimeUnit.MILLISECONDS)
+                .take(1000,TimeUnit.MILLISECONDS)
                 .toList();
 
 
@@ -194,7 +194,7 @@ public class AsyncRSExtensionOperatorsTest {
     public void limitTimeEmpty(){
         List<Integer> result = Spouts.<Integer>of()
                 .peek(i->sleep(i*100))
-                .limit(1000,TimeUnit.MILLISECONDS)
+                .take(1000,TimeUnit.MILLISECONDS)
                 .toList();
 
 
@@ -204,7 +204,7 @@ public class AsyncRSExtensionOperatorsTest {
     public void skipTime(){
         List<Integer> result = of(1,2,3,4,5,6)
                 .peek(i->sleep(i*100))
-                .skip(1000,TimeUnit.MILLISECONDS)
+                .drop(1000,TimeUnit.MILLISECONDS)
                 .toList();
 
 
@@ -214,7 +214,7 @@ public class AsyncRSExtensionOperatorsTest {
     public void skipTimeEmpty(){
         List<Integer> result = ReactiveSeq.<Integer>of()
                 .peek(i->sleep(i*100))
-                .skip(1000,TimeUnit.MILLISECONDS)
+                .drop(1000,TimeUnit.MILLISECONDS)
                 .toList();
 
 
@@ -231,34 +231,34 @@ public class AsyncRSExtensionOperatorsTest {
     @Test
     public void testSkipLast(){
         assertThat(of(1,2,3,4,5)
-                .skipLast(2)
+                .dropRight(2)
                 .collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
     }
     @Test
     public void testSkipLastEmpty(){
         assertThat(of()
-                .skipLast(2)
+                .dropRight(2)
                 .collect(Collectors.toList()),equalTo(Arrays.asList()));
     }
     @Test
     public void testLimitLast(){
         assertThat(of(1,2,3,4,5)
-                .limitLast(2)
+                .takeRight(2)
                 .collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
     }
     @Test
     public void testLimitLast1(){
         assertThat(of(1,2,3,4,5)
-                .limitLast(1)
+                .takeRight(1)
                 .findFirst().get(),equalTo(5));
         assertThat(of(1,2,3,4,5)
-                .limitLast(1)
+                .takeRight(1)
                 .collect(Collectors.toList()),equalTo(Arrays.asList(5)));
     }
     @Test
     public void testLimitLastEmpty(){
         assertThat(of()
-                .limitLast(2)
+                .takeRight(2)
                 .collect(Collectors.toList()),equalTo(Arrays.asList()));
     }
     @Test

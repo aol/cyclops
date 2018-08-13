@@ -222,15 +222,6 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
     @Override
     public ReactiveSeq<T> skip(final long num) {
-       /** TODO future optimization so position of skip doesn't matter
-        if(reversible.isPresent()){
-            ReversableSpliterator rev = reversible.getValue();
-            if(rev instanceof Indexable){
-                Indexable<T> indexable = (Indexable)rev;
-                Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).skip(num));
-                return createSeq(getValue(),newRev);
-            }
-        }**/
         if(this.stream instanceof Indexable){
             Indexable<T> indexable = (Indexable)stream;
             return createSeq(indexable.skip(num),reversible);
@@ -239,13 +230,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public final ReactiveSeq<T> skipWhile(final Predicate<? super T> p) {
+    public final ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
         return createSeq(new SkipWhileSpliterator<T>(get(),p), reversible);
     }
 
     @Override
-    public final ReactiveSeq<T> skipUntil(final Predicate<? super T> p) {
-        return skipWhile(p.negate());
+    public final ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
+        return dropWhile(p.negate());
     }
 
     @Override
@@ -255,41 +246,26 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
        if(this.stream instanceof Indexable){
            Indexable<T> indexable = (Indexable)stream;
            Spliterator<T> limit = indexable.take(num);
-         //  Optional<ReversableSpliterator> newRev = Optional.of((ReversableSpliterator) (indexable).take(num));
+
            return createSeq(limit,Optional.empty());
        }
         return createSeq(new LimitSpliterator<T>(get(),num), reversible);
     }
 
     @Override
-    public final ReactiveSeq<T> limitWhile(final Predicate<? super T> p) {
+    public final ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
         return createSeq(new LimitWhileSpliterator<T>(get(), p), reversible);
     }
 
     @Override
-    public final ReactiveSeq<T> limitUntil(final Predicate<? super T> p) {
-        return limitWhile(p.negate());
+    public final ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
+        return takeWhile(p.negate());
     }
 
 
 
 
 
-
-
-    @Override
-    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new SkipWhileSpliterator<T>(get(),predicate),reversible );
-    }
-
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate),reversible);
-    }
-    @Override
-    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedSpliterator<T>(get(),predicate.negate()),reversible);
-    }
 
 
 
@@ -601,12 +577,12 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
 
 
     @Override
-    public ReactiveSeq<T> skip(final long time, final TimeUnit unit) {
+    public ReactiveSeq<T> drop(final long time, final TimeUnit unit) {
         return createSeq(new SkipWhileTimeSpliterator<T>(get(), time, unit), this.reversible);
     }
 
     @Override
-    public ReactiveSeq<T> limit(final long time, final TimeUnit unit) {
+    public ReactiveSeq<T> take(final long time, final TimeUnit unit) {
         return createSeq(new LimitWhileTimeSpliterator<T>(get(),time,unit),reversible);
 
     }
@@ -675,13 +651,13 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     }
 
     @Override
-    public ReactiveSeq<T> skipLast(final int num) {
-        return createSeq(SkipLastSpliterator.skipLast(get(), num < 0 ? 0 : num), this.reversible);
+    public ReactiveSeq<T> dropRight(final int num) {
+        return createSeq(SkipLastSpliterator.dropRight(get(), num < 0 ? 0 : num), this.reversible);
     }
 
     @Override
-    public ReactiveSeq<T> limitLast(final int num) {
-        return createSeq(LimitLastSpliterator.limitLast(get(), num < 0 ? 0 : num), this.reversible);
+    public ReactiveSeq<T> takeRight(final int num) {
+        return createSeq(LimitLastSpliterator.takeRight(get(), num < 0 ? 0 : num), this.reversible);
     }
 
     @Override
