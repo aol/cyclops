@@ -22,7 +22,7 @@ public class SixTest {
     }
     @Test
     public void dynamic(){
-        for(int i=0;i<15;i++) {
+        for(int i=0;i<10;i++) {
             Six<Integer> two = create(i, i,i,i,i,i);
             Six<Integer> mapped = two.map(n -> n * 100);
           //  System.out.println(Arrays.deepToString(two.array));
