@@ -525,18 +525,18 @@ public abstract class BaseSequentialSeqTest {
 	    public void testSkipUntil() {
 	    	Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().dropWhile(i -> false).toList());
-	        assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i % 3 == 0).toList());
-	        assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i == 3).toList());
-	        assertEquals(asList(4, 5), s.get().dropWhile(i -> i == 4).toList());
-	        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropWhile(i -> true).toList());
+	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i % 3 == 0).toList());
+	        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i == 3).toList());
+	        assertEquals(asList(4, 5), s.get().dropUntil(i -> i == 4).toList());
+	        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 		  }
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
 	    	 Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
-	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropWhile(i -> true).toList());
+	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 	    }
 
 	    @Test
