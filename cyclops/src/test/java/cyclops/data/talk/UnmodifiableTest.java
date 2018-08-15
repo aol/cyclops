@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UnmodifiableTest {
     int CORE_USER = 0;
-    @Test
+
     public void unmod(){
         List<Integer> list = new ArrayList<>();
         list.add(10);

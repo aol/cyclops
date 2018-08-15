@@ -248,7 +248,7 @@ public  class AsyncReactiveStreamXTest {
 	}
     @Test
 	public void skipUntil(){
-		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropWhile(i -> i % 3 == 0).toList());
+		assertEquals(asList(3, 4, 5), of(1, 2, 3, 4, 5).dropUntil(i -> i % 3 == 0).toList());
 	}
 	@Test
     public void simpleZip(){
@@ -462,15 +462,15 @@ public  class AsyncReactiveStreamXTest {
 	    public void testSkipUntil() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().dropWhile(i -> false).toList());
-	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 	    }
 
 	    @Test

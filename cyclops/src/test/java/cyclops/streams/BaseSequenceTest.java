@@ -275,15 +275,15 @@ public  class BaseSequenceTest {
 	    public void testSkipUntil() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().dropWhile(i -> false).toList());
-	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
+	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
 	        Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
-	        assertTrue(s.get().dropWhile(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
+	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test

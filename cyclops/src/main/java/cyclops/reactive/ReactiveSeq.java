@@ -1793,9 +1793,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
 
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
-     */
+
     @Override
     default ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
 
@@ -1832,7 +1830,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     @Override
     default ReactiveSeq<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ReactiveSeq<T>) IterableX.super.dropUntil(p);
+        return dropWhile(p.negate());
     }
 
 
