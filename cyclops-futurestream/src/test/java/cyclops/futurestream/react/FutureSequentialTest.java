@@ -37,7 +37,7 @@ public class FutureSequentialTest extends BaseSequentialTest {
         assertThat(t._2().limit(1).toList(),equalTo(ListX.of(1)));
     }
     @Test
-    public void limitReplay() {
+    public void takeReplay() {
         final ReactiveSeq<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
         assertThat(t.limit(1).toList(), equalTo(ListX.of(1)));
 
