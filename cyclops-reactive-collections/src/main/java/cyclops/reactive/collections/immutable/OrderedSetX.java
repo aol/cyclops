@@ -733,7 +733,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
      */
     default OrderedSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (OrderedSetX<T>) LazyCollectionX.super.dropWhile(p);
+        return (OrderedSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

@@ -721,50 +721,38 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
-     */
+
     default BagX<T> dropWhile(final Predicate<? super T> p) {
 
         return (BagX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
-     */
+
     default BagX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (BagX<T>) LazyCollectionX.super.dropWhile(p);
+        return (BagX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
-     */
+
     default BagX<T> takeWhile(final Predicate<? super T> p) {
 
         return (BagX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
-     */
+
     default BagX<T> takeUntil(final Predicate<? super T> p) {
 
         return (BagX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#intersperse(java.lang.Object)
-     */
+
     @Override
     default BagX<T> intersperse(final T value) {
 
         return (BagX<T>) LazyCollectionX.super.intersperse(value);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#shuffle()
-     */
+
     @Override
     default BagX<T> shuffle() {
 

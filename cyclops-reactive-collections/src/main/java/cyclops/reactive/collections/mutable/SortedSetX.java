@@ -715,7 +715,7 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
      */
     default SortedSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (SortedSetX<T>) LazyCollectionX.super.dropWhile(p);
+        return (SortedSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

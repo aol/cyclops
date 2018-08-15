@@ -370,33 +370,24 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().sorted(c));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#skipWhile(java.util.function.Predicate)
-     */
+
     default LazyCollectionX<T> dropWhile(final Predicate<? super T> p) {
 
         return fromStream(stream().dropWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#skipUntil(java.util.function.Predicate)
-     */
     default LazyCollectionX<T> dropUntil(final Predicate<? super T> p) {
 
-        return fromStream(stream().dropWhile(p));
+        return fromStream(stream().dropUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#limitWhile(java.util.function.Predicate)
-     */
+
     default LazyCollectionX<T> takeWhile(final Predicate<? super T> p) {
 
         return fromStream(stream().takeWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#limitUntil(java.util.function.Predicate)
-     */
+
     default LazyCollectionX<T> takeUntil(final Predicate<? super T> p) {
 
         return fromStream(stream().takeUntil(p));

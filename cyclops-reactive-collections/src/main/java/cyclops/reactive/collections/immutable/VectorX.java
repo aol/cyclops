@@ -596,7 +596,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return (VectorX<T>) this.drop(num);
     }
 
-   
+
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#slice(long, long)
      */
@@ -841,7 +841,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
      */
     default VectorX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (VectorX<T>) LazyCollectionX.super.dropWhile(p);
+        return (VectorX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

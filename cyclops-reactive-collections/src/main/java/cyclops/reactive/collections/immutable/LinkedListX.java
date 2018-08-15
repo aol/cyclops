@@ -858,33 +858,25 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
-     */
+
     default LinkedListX<T> dropWhile(final Predicate<? super T> p) {
 
         return (LinkedListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
-     */
+
     default LinkedListX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.dropWhile(p);
+        return (LinkedListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
-     */
+
     default LinkedListX<T> takeWhile(final Predicate<? super T> p) {
 
         return (LinkedListX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
-     */
+
     default LinkedListX<T> takeUntil(final Predicate<? super T> p) {
 
         return (LinkedListX<T>) LazyCollectionX.super.takeUntil(p);

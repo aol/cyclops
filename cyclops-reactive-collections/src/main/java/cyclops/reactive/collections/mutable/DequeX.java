@@ -827,12 +827,10 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
-     */
+
     default DequeX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (DequeX<T>) LazyCollectionX.super.dropWhile(p);
+        return (DequeX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

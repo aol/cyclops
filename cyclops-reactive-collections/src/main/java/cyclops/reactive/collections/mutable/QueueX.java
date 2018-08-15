@@ -732,7 +732,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
      */
     default QueueX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (QueueX<T>) LazyCollectionX.super.dropWhile(p);
+        return (QueueX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

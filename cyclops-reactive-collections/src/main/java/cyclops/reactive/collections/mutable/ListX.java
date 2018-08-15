@@ -801,51 +801,39 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
-     */
+
+
     default ListX<T> dropWhile(final Predicate<? super T> p) {
 
         return (ListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
-     */
+
     default ListX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (ListX<T>) LazyCollectionX.super.dropWhile(p);
+        return (ListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#shuffle()
-     */
     @Override
     default ListX<T> shuffle() {
 
         return (ListX<T>) LazyCollectionX.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#skipLast(int)
-     */
+
     default ListX<T> dropRight(final int num) {
 
         return (ListX<T>) LazyCollectionX.super.dropRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#shuffle(java.util.Random)
-     */
+
     @Override
     default ListX<T> shuffle(final Random random) {
 
         return (ListX<T>) LazyCollectionX.super.shuffle(random);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#permutations()
-     */
+
     @Override
     default ListX<ReactiveSeq<T>> permutations() {
 

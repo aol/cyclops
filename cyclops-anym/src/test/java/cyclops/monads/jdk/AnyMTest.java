@@ -343,7 +343,7 @@ public class AnyMTest {
 	}
 	@Test
 	public void testSkipUntil(){
-		assertThat(fromStream(Stream.of(4,3,6,7)).stream().dropWhile(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
+		assertThat(fromStream(Stream.of(4,3,6,7)).stream().dropUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));
 	}
 	@Test
 	public void testSkipWhile(){
