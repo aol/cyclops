@@ -2,16 +2,18 @@ package cyclops.data.talk;
 
 import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Ignore
 public class ImmutableTest {
     int CORE_USER = 0;
     int context =-1;
-    @Test
+   // @Test
     public ImmutableList<Integer> unmod(){
 
         cyclops.data.ImmutableList<Integer> userIds = findUserIds(context);

@@ -821,7 +821,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> takeRight(final int num) {
+    public ReactiveSeq<T> dropRight(final int num) {
 
         if(num==1)
             return createSeq(new SkipLastOneOperator<>(source));
@@ -829,7 +829,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> dropRight(final int num) {
+    public ReactiveSeq<T> takeRight(final int num) {
         if (num == 1)
             return createSeq(new LimitLastOneOperator<>(source));
         return createSeq(new LimitLastOperator<>(source, num < 0 ? 0 : num));

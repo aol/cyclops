@@ -121,12 +121,17 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
     @Override
     default BankersQueue<T> drop(long num) {
-        BankersQueue<T> res= this;
-        for(long i=0;i<num;i++){
-            res = res.foldBankersQueue(c->c.tail(), nil->nil);
-
-        }
-        return  res;
+        if(num<=0)
+            return this;
+        if(num>=size())
+            return empty();
+        return this.foldBankersQueue(c -> {
+            ImmutableList<T> newFront = c.front.drop(num);
+            ImmutableList<T> newBack = c.back.dropRight((int) num - c.front.size());
+            if (newFront.size() > 0 || newBack.size() > 0)
+                return new Cons<>(newFront, newBack);
+            return empty();
+        }, nil -> nil);
     }
 
     @Override
