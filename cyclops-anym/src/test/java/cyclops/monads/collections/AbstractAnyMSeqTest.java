@@ -136,7 +136,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 
 	@Test
 	public void dropUntil(){
-		assertThat(of(1,2,3,4,5).dropUntil(p->p==2).toList().size(),lessThan(5));
+		assertThat(of(1,2,3,4,5)
+                 .dropUntil(p->p==2).toList().size(),lessThan(5));
 	}
 	@Test
 	public void dropUntilEmpty(){
@@ -303,7 +304,8 @@ public abstract class AbstractAnyMSeqTest<W extends WitnessType<W>> {//@TODO ext
 	    public void testSkipUntil() {
 	        Supplier<AnyMSeq<W,Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertEquals(asList(), s.get()
+                    .dropUntil(i -> false).toList());
 	        assertTrue(s.get().dropUntil(i -> true).toList().containsAll(asList(1, 2, 3, 4, 5)));
 		  }
 

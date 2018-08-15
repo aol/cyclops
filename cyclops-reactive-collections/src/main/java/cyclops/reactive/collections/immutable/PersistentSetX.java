@@ -711,7 +711,7 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
      */
     default PersistentSetX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (PersistentSetX<T>) LazyCollectionX.super.dropWhile(p);
+        return (PersistentSetX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)

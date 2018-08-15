@@ -892,7 +892,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
      */
     default PersistentQueueX<T> dropUntil(final Predicate<? super T> p) {
 
-        return (PersistentQueueX<T>) LazyCollectionX.super.dropWhile(p);
+        return (PersistentQueueX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /*

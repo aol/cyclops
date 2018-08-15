@@ -2240,7 +2240,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     @Override
     default FutureStream<U> dropUntil(final Predicate<? super U> predicate) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
-                                     .dropWhile(predicate));
+                                     .dropUntil(predicate));
     }
 
     /**
