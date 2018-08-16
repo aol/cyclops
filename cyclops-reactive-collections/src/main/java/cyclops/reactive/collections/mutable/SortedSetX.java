@@ -476,19 +476,15 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
         return (SortedSetX<R>) LazyCollectionX.super.concatMap(mapper);
 }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
-     */
+
     default SortedSetX<T> take(final long num) {
         return (SortedSetX<T>) LazyCollectionX.super.take(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
-     */
+
     default SortedSetX<T> drop(final long num) {
 
-        return (SortedSetX<T>) this.drop(num);
+        return (SortedSetX<T>)LazyCollectionX.super.drop(num);
     }
 
 

@@ -593,7 +593,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
 
     default VectorX<T> drop(final long num) {
-        return (VectorX<T>) this.drop(num);
+        return (VectorX<T>) LazyCollectionX.super.drop(num);
     }
 
 

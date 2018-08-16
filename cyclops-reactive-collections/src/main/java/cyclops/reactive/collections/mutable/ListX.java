@@ -426,7 +426,7 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> drop(final long num) {
 
-        return (ListX<T>) this.drop(num);
+        return (ListX<T>) LazyCollectionX.super.drop(num);
     }
     ListX<T> withCollector(Collector<T, ?, List<T>> collector);
 

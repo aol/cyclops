@@ -589,7 +589,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
     @Override
     default DequeX<T> drop(final long num) {
 
-        return (DequeX<T>) this.drop(num);
+        return (DequeX<T>) LazyCollectionX.super.drop(num);
     }
 
 
