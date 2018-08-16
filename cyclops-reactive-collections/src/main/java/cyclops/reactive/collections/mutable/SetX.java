@@ -270,7 +270,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     @Override
     default SetX<T> drop(final long num) {
 
-        return (SetX<T>) this.drop(num);
+        return (SetX<T>)LazyCollectionX.super.drop(num);
     }
 
     /* (non-Javadoc)

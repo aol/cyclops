@@ -579,15 +579,9 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<T>) LazyCollectionX.super.take(num);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * skip(long)
-     */
+
     default PersistentQueueX<T> drop(final long num) {
-        return (PersistentQueueX<T>) this.drop(num);
+        return (PersistentQueueX<T>) LazyCollectionX.super.drop(num);
     }
 
 

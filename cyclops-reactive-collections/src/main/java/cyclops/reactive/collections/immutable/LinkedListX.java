@@ -614,12 +614,10 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX) LazyCollectionX.super.take(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
+
     default LinkedListX<T> drop(final long num) {
 
-        return (LinkedListX) this.drop(num);
+        return (LinkedListX) LazyCollectionX.super.drop(num);
     }
 
 

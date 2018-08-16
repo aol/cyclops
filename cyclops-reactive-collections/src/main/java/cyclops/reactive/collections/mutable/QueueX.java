@@ -320,11 +320,9 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     @Override
     default QueueX<T> drop(final long num) {
 
-        return (QueueX<T>) this.drop(num);
+        return (QueueX<T>) LazyCollectionX.super.drop(num);
     }
-    /* (non-Javadoc)
-     * @see CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
+
     @Override
     default <R1, R2, R3, R> QueueX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,

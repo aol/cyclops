@@ -506,7 +506,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
     @Override
     default OrderedSetX<T> drop(final long num) {
-        return (OrderedSetX<T>) this.drop(num);
+        return (OrderedSetX<T>) LazyCollectionX.super.drop(num);
     }
 
 

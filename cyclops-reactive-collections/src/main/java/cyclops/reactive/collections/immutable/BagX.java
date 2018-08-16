@@ -508,11 +508,9 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<T>) LazyCollectionX.super.take(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
+
     default BagX<T> drop(final long num) {
-        return (BagX<T>) this.drop(num);
+        return (BagX<T>) LazyCollectionX.super.drop(num);
     }
 
 
@@ -759,25 +757,19 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
         return (BagX<T>) LazyCollectionX.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
-     */
+
     default BagX<T> dropRight(final int num) {
 
         return (BagX<T>) LazyCollectionX.super.dropRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
-     */
+
     default BagX<T> takeRight(final int num) {
 
         return (BagX<T>) LazyCollectionX.super.takeRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.recoverable.OnEmptySwitch#onEmptySwitch(java.util.function.Supplier)
-     */
+
     @Override
     default BagX<T> onEmptySwitch(final Supplier<? extends PersistentBag<T>> supplier) {
         if (isEmpty())
