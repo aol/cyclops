@@ -362,7 +362,7 @@ public abstract class BaseSequentialSeqTest {
 
 	@Test
 	public void limitWhileTest(){
-		List<Integer> list = of(1,2,3,4,5,6).limitWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+		List<Integer> list = of(1,2,3,4,5,6).takeWhile(it -> it<4).peek(it -> System.out.println(it)).collect(Collectors.toList());
 
 		assertThat(list,hasItem(1));
 		assertThat(list,hasItem(2));
@@ -514,60 +514,60 @@ public abstract class BaseSequentialSeqTest {
 	    public void testSkipWhile() {
 	    	 Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	         assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
-	         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
-	         assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i < 3).toList());
-	         assertEquals(asList(4, 5), s.get().skipWhile(i -> i < 4).toList());
-	         assertEquals(asList(), s.get().skipWhile(i -> true).toList());
+	         assertEquals(asList(1, 2, 3, 4, 5), s.get().dropWhile(i -> false).toList());
+	         assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i % 3 != 0).toList());
+	         assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i < 3).toList());
+	         assertEquals(asList(4, 5), s.get().dropWhile(i -> i < 4).toList());
+	         assertEquals(asList(), s.get().dropWhile(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testSkipUntil() {
 	    	Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
-	        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
-	        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i == 3).toList());
-	        assertEquals(asList(4, 5), s.get().skipUntil(i -> i == 4).toList());
-	        assertEquals(asList(1, 2, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+	        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+	        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i % 3 == 0).toList());
+	        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i == 3).toList());
+	        assertEquals(asList(4, 5), s.get().dropUntil(i -> i == 4).toList());
+	        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 		  }
 
 	    @Test
 	    public void testSkipUntilWithNulls() {
 	    	 Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, null, 3, 4, 5);
 
-	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+	         assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropUntil(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testLimitWhile() {
 	    	 Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-	         assertEquals(asList(), s.get().limitWhile(i -> false).toList());
-	         assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());
-	         assertEquals(asList(1, 2), s.get().limitWhile(i -> i < 3).toList());
-	         assertEquals(asList(1, 2, 3), s.get().limitWhile(i -> i < 4).toList());
-	         assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhile(i -> true).toList());
+	         assertEquals(asList(), s.get().takeWhile(i -> false).toList());
+	         assertEquals(asList(1, 2), s.get().takeWhile(i -> i % 3 != 0).toList());
+	         assertEquals(asList(1, 2), s.get().takeWhile(i -> i < 3).toList());
+	         assertEquals(asList(1, 2, 3), s.get().takeWhile(i -> i < 4).toList());
+	         assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhile(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testLimitUntil() {
-	    	 assertEquals(asList(1, 2, 3, 4, 5),of(1, 2, 3, 4, 5).limitUntil(i -> false).toList());
-	         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toList());
-	         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i == 3).toList());
-	         assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntil(i -> i == 4).toList());
-	         assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+	    	 assertEquals(asList(1, 2, 3, 4, 5),of(1, 2, 3, 4, 5).takeUntil(i -> false).toList());
+	         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList());
+	         assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i == 3).toList());
+	         assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).takeUntil(i -> i == 4).toList());
+	         assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 
 
 
-	        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+	        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 	    }
 
 	    @Test
 	    public void testLimitUntilWithNulls() {
 
 
-	        assertThat(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).toList(),equalTo(asList(1, 2, null, 3, 4, 5)));
+	        assertThat(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList(),equalTo(asList(1, 2, null, 3, 4, 5)));
 	    }
 
 	    @Test

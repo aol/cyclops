@@ -82,8 +82,8 @@ public class LazyFutureStreamFunctions {
      * Seq.of(1, 2, 3, 4, 5).limitWhile(i -&gt; i &lt; 3)
      * </code>
      */
-    public static <T> ReactiveSeq<T> limitWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
-        return limitUntil(stream, predicate.negate());
+    public static <T> ReactiveSeq<T> takeWhile(final Stream<T> stream, final Predicate<? super T> predicate) {
+        return takeUntil(stream, predicate.negate());
     }
 
     /**
@@ -96,7 +96,7 @@ public class LazyFutureStreamFunctions {
      * </code>
      */
     @SuppressWarnings("unchecked")
-    public static <T> ReactiveSeq<T> limitUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
+    public static <T> ReactiveSeq<T> takeUntil(final Stream<T> stream, final Predicate<? super T> predicate) {
         final Iterator<T> it = stream.iterator();
 
         class LimitUntil implements Iterator<T> {

@@ -464,7 +464,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default <U> ImmutableList<Tuple2<T, U>> zip(Iterable<? extends U> other) {
-        return unitStream(stream().zip(other));
+       return zip(other,Tuple::tuple);
+        // return unitStream(stream().zip(other));
     }
 
     @Override
@@ -525,7 +526,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
     @Override
     default ImmutableList<Tuple2<T, Long>> zipWithIndex() {
-        return unitStream(stream().zipWithIndex());
+        return zipWithStream(ReactiveSeq.rangeLong(0,Long.MAX_VALUE));
+       // return unitStream(stream().zipWithIndex());
     }
 
     @Override
@@ -554,7 +556,8 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     }
 
     default <U> ImmutableList<Tuple2<T, U>> zipWithStream(Stream<? extends U> other) {
-        return unitStream(stream().zipWithStream(other));
+        return zip(ReactiveSeq.fromStream(other));
+       // return unitStream(stream().zipWithStream(other));
     }
 
     @Override
@@ -646,38 +649,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
 
 
     @Override
-    default ImmutableList<T> skip(long num) {
-        return unitStream(stream().skip(num));
-    }
-
-    @Override
-    default ImmutableList<T> skipWhile(Predicate<? super T> p) {
-        return unitStream(stream().skipWhile(p));
-    }
-
-    @Override
-    default ImmutableList<T> skipUntil(Predicate<? super T> p) {
-        return unitStream(stream().skipUntil(p));
-    }
-
-
-
-    @Override
-    default ImmutableList<T> limit(long num) {
-        return unitStream(stream().limit(num));
-    }
-
-    @Override
-    default ImmutableList<T> limitWhile(Predicate<? super T> p) {
-        return unitStream(stream().limitWhile(p));
-    }
-
-    @Override
-    default ImmutableList<T> limitUntil(Predicate<? super T> p) {
-        return unitStream(stream().limitUntil(p));
-    }
-
-    @Override
     default ImmutableList<T> intersperse(T value) {
         return unitStream(stream().intersperse(value));
     }
@@ -685,16 +656,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
     @Override
     default ImmutableList<T> shuffle() {
         return unitStream(stream().shuffle());
-    }
-
-    @Override
-    default ImmutableList<T> skipLast(int num) {
-        return unitStream(stream().skipLast(num));
-    }
-
-    @Override
-    default ImmutableList<T> limitLast(int num) {
-        return unitStream(stream().limitLast(num));
     }
 
     @Override

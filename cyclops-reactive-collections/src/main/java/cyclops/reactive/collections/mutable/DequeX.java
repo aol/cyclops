@@ -27,7 +27,6 @@ import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
-import cyclops.reactive.collections.immutable.VectorX;
 import org.reactivestreams.Publisher;
 
 import java.lang.reflect.InvocationHandler;
@@ -581,86 +580,17 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#limit(long)
-     */
-    @Override
-    default DequeX<T> limit(final long num) {
-
-        return (DequeX<T>) LazyCollectionX.super.limit(num);
-    }
 
     @Override
     default DequeX<T> take(final long num) {
 
-        return (DequeX<T>) LazyCollectionX.super.limit(num);
+        return (DequeX<T>) LazyCollectionX.super.take(num);
     }
     @Override
     default DequeX<T> drop(final long num) {
 
-        return (DequeX<T>) LazyCollectionX.super.skip(num);
+        return (DequeX<T>) LazyCollectionX.super.drop(num);
     }
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#skip(long)
-     */
-    @Override
-    default DequeX<T> skip(final long num) {
-
-        return (DequeX<T>) LazyCollectionX.super.skip(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default DequeX<T> takeWhile(final Predicate<? super T> p) {
-
-        return (DequeX<T>) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see LazyCollectionX#takeRight(int)
-     */
-    @Override
-    default DequeX<T> takeRight(final int num) {
-        return (DequeX<T>) LazyCollectionX.super.takeRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see LazyCollectionX#dropRight(int)
-     */
-    @Override
-    default DequeX<T> dropRight(final int num) {
-        return (DequeX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default DequeX<T> dropWhile(final Predicate<? super T> p) {
-
-        return (DequeX<T>) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default DequeX<T> takeUntil(final Predicate<? super T> p) {
-
-        return (DequeX<T>) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default DequeX<T> dropUntil(final Predicate<? super T> p) {
-        return (DequeX<T>) LazyCollectionX.super.dropUntil(p);
-    }
-
-
 
 
     @Override
@@ -892,37 +822,31 @@ public interface DequeX<T> extends To<DequeX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#skipWhile(java.util.function.Predicate)
      */
-    @Override
-    default DequeX<T> skipWhile(final Predicate<? super T> p) {
+    default DequeX<T> dropWhile(final Predicate<? super T> p) {
 
-        return (DequeX<T>) LazyCollectionX.super.skipWhile(p);
+        return (DequeX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.Traversable#skipUntil(java.util.function.Predicate)
-     */
-    @Override
-    default DequeX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (DequeX<T>) LazyCollectionX.super.skipUntil(p);
+    default DequeX<T> dropUntil(final Predicate<? super T> p) {
+
+        return (DequeX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#limitWhile(java.util.function.Predicate)
      */
-    @Override
-    default DequeX<T> limitWhile(final Predicate<? super T> p) {
+    default DequeX<T> takeWhile(final Predicate<? super T> p) {
 
-        return (DequeX<T>) LazyCollectionX.super.limitWhile(p);
+        return (DequeX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#limitUntil(java.util.function.Predicate)
      */
-    @Override
-    default DequeX<T> limitUntil(final Predicate<? super T> p) {
+    default DequeX<T> takeUntil(final Predicate<? super T> p) {
 
-        return (DequeX<T>) LazyCollectionX.super.limitUntil(p);
+        return (DequeX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -946,19 +870,17 @@ public interface DequeX<T> extends To<DequeX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#skipLast(int)
      */
-    @Override
-    default DequeX<T> skipLast(final int num) {
+    default DequeX<T> dropRight(final int num) {
 
-        return (DequeX<T>) LazyCollectionX.super.skipLast(num);
+        return (DequeX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.lambda.monads.Traversable#limitLast(int)
      */
-    @Override
-    default DequeX<T> limitLast(final int num) {
+    default DequeX<T> takeRight(final int num) {
 
-        return (DequeX<T>) LazyCollectionX.super.limitLast(num);
+        return (DequeX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

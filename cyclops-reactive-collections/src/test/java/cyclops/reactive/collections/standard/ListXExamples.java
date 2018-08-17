@@ -60,4 +60,10 @@ public class ListXExamples {
         alsoOneToTen.printOut();
 
     }
+
+    @Test
+    public void mutableImmutable(){
+        ListX.of(1,2,3);
+        ListX.of(1,2,3).withCollector(ListX.immutableCollector());
+    }
 }

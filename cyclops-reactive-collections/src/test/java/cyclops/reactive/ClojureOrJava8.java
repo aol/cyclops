@@ -33,7 +33,7 @@ public class ClojureOrJava8 {
 
 
 
-        ListX<Integer> org = ListX.of(10,20,30).limit(1);
+        ListX<Integer> org = ListX.of(10,20,30).take(1);
         List<Integer> mapped = org.map(i->i*2);
 
     }

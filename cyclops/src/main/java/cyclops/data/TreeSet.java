@@ -269,7 +269,7 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
 
     @Override
     public Option<T> last() {
-        return stream().limitLast(1).takeOne();
+        return stream().takeRight(1).takeOne();
     }
 
     @Override
@@ -610,36 +610,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<T> skip(long num) {
-        return (TreeSet<T>) ImmutableSortedSet.super.skip(num);
-    }
-
-    @Override
-    public TreeSet<T> skipWhile(Predicate<? super T> p) {
-        return (TreeSet<T>) ImmutableSortedSet.super.skipWhile(p);
-    }
-
-    @Override
-    public TreeSet<T> skipUntil(Predicate<? super T> p) {
-        return (TreeSet<T>) ImmutableSortedSet.super.skipUntil(p);
-    }
-
-    @Override
-    public TreeSet<T> limit(long num) {
-        return (TreeSet<T>) ImmutableSortedSet.super.limit(num);
-    }
-
-    @Override
-    public TreeSet<T> limitWhile(Predicate<? super T> p) {
-        return (TreeSet<T>) ImmutableSortedSet.super.limitWhile(p);
-    }
-
-    @Override
-    public TreeSet<T> limitUntil(Predicate<? super T> p) {
-        return (TreeSet<T>) ImmutableSortedSet.super.limitUntil(p);
-    }
-
-    @Override
     public TreeSet<T> intersperse(T value) {
         return (TreeSet<T>) ImmutableSortedSet.super.intersperse(value);
     }
@@ -647,16 +617,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     @Override
     public TreeSet<T> shuffle() {
         return (TreeSet<T>) ImmutableSortedSet.super.shuffle();
-    }
-
-    @Override
-    public TreeSet<T> skipLast(int num) {
-        return (TreeSet<T>) ImmutableSortedSet.super.skipLast(num);
-    }
-
-    @Override
-    public TreeSet<T> limitLast(int num) {
-        return (TreeSet<T>) ImmutableSortedSet.super.limitLast(num);
     }
 
     @Override

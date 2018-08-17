@@ -175,7 +175,7 @@ public class ExtensionOperatorsTest {
 	public void limitTime(){
 		List<Integer> result = Spouts.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -185,7 +185,7 @@ public class ExtensionOperatorsTest {
 	public void limitTimeEmpty(){
 		List<Integer> result = Spouts.<Integer>of()
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -195,7 +195,7 @@ public class ExtensionOperatorsTest {
 	public void skipTime(){
 		List<Integer> result = Spouts.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -205,7 +205,7 @@ public class ExtensionOperatorsTest {
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -222,19 +222,19 @@ public class ExtensionOperatorsTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(Spouts.of(1,2,3,4,5)
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(Spouts.of()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(Spouts.of(1,2,3,4,5)
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
@@ -243,7 +243,7 @@ public class ExtensionOperatorsTest {
 	    System.out.println("Hello world!");
         Future result = Future.future();
 
-        Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).forEachSubscribe(e -> {
+        Spouts.of(1,2,3,4,5).takeRight(1).collectAll(Collectors.toList()).forEachSubscribe(e -> {
             System.out.println("Value recieved " + e);
             result.complete(e);
           //  sub[0].cancel();
@@ -260,18 +260,18 @@ public class ExtensionOperatorsTest {
         }).request(1l);
 
         assertThat(result.orElse(null),equalTo(Arrays.asList(5)));
-        System.out.println(Spouts.of(1,2,3,4,5).limitLast(1).collectAll(Collectors.toList()).findFirst());
+        System.out.println(Spouts.of(1,2,3,4,5).takeRight(1).collectAll(Collectors.toList()).findFirst());
 
 
 		assertThat(Spouts.of(1,2,3,4,5)
-				.limitLast(1)
+				.takeRight(1)
 				.collect(Collectors.toList()),equalTo(Arrays.asList(5)));
 
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(Spouts.of()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test

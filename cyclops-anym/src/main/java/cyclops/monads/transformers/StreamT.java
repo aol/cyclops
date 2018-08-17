@@ -1,7 +1,6 @@
 package cyclops.monads.transformers;
 
 
-import com.oath.cyclops.anym.transformers.TransformerSeq;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.traversable.IterableX;
@@ -520,59 +519,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,T>) FoldableTransformerSeq.super.takeRight(num);
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skip(long)
-     */
-    @Override
-    public StreamT<W,T> skip(final long num) {
 
-        return (StreamT<W,T>) FoldableTransformerSeq.super.skip(num);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipWhile(java.util.function.Predicate)
-     */
-    @Override
-    public StreamT<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.skipWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipUntil(java.util.function.Predicate)
-     */
-    @Override
-    public StreamT<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.skipUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limit(long)
-     */
-    @Override
-    public StreamT<W,T> limit(final long num) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.limit(num);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitWhile(java.util.function.Predicate)
-     */
-    @Override
-    public StreamT<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.limitWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitUntil(java.util.function.Predicate)
-     */
-    @Override
-    public StreamT<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.limitUntil(p);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#intersperse(java.lang.Object)
@@ -601,23 +548,7 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
         return (StreamT<W,T>) FoldableTransformerSeq.super.shuffle();
     }
 
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#skipLast(int)
-     */
-    @Override
-    public StreamT<W,T> skipLast(final int num) {
 
-        return (StreamT<W,T>) FoldableTransformerSeq.super.skipLast(num);
-    }
-
-    /* (non-Javadoc)
-     * @see cyclops2.monads.transformers.values.ListT#limitLast(int)
-     */
-    @Override
-    public StreamT<W,T> limitLast(final int num) {
-
-        return (StreamT<W,T>) FoldableTransformerSeq.super.limitLast(num);
-    }
 
     /* (non-Javadoc)
      * @see cyclops2.monads.transformers.values.ListT#onEmpty(java.lang.Object)
@@ -868,12 +799,12 @@ public class StreamT<W extends WitnessType<W>,T> implements To<StreamT<W,T>>,
 
     @Override
     public StreamT<W,T> drop(final long num) {
-        return skip(num);
+        return drop(num);
     }
 
     @Override
     public StreamT<W,T> take(final long num) {
-        return limit(num);
+        return take(num);
     }
 
 

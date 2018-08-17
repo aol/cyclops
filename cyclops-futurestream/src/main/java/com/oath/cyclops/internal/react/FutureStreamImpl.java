@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,6 +22,7 @@ import com.oath.cyclops.react.collectors.lazy.BatchingCollector;
 import com.oath.cyclops.react.collectors.lazy.LazyResultConsumer;
 import com.oath.cyclops.react.collectors.lazy.MaxActive;
 import com.oath.cyclops.react.threads.ReactPool;
+import com.oath.cyclops.types.reactive.FutureStreamSynchronousPublisher;
 import com.oath.cyclops.types.stream.Connectable;
 import com.oath.cyclops.types.stream.PausableConnectable;
 import cyclops.companion.Streams;
@@ -38,7 +40,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Wither;
-
+import org.reactivestreams.Subscriber;
 
 
 @Getter
@@ -89,6 +91,13 @@ public class FutureStreamImpl<U> implements FutureStream<U> {
 
         this.maxActive = lazyReact.getMaxActive();
 
+    }
+
+    private final AtomicBoolean subscribed = new AtomicBoolean(false);
+    @Override
+    public void subscribe(Subscriber<? super U> s) {
+        if(subscribed.compareAndSet(false,true))
+            FutureStream.super.subscribe(s);
     }
 
     public FutureStreamImpl(final LazyReact lazyReact, final Supplier<Stream<U>> stream) {

@@ -31,6 +31,21 @@ import static org.hamcrest.Matchers.is;
 public class IOTest {
   Executor ex = Executors.newFixedThreadPool(1);
   RuntimeException re = new RuntimeException();
+
+  @Test
+  public void withCatch(){
+      IO<Integer> x = IO.withCatch(() -> {
+          throw new IOException();
+      });
+
+      assertTrue(x.run().isFailure());
+
+  }
+
+  @Test
+  public void foldForEach(){
+
+  }
   @Test
   public void sync(){
     assertThat(IO.of(()->10)

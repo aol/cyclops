@@ -144,7 +144,7 @@ public class SequenceMTest {
 	public void limitTime(){
 		List<Integer> result = Streamable.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -154,7 +154,7 @@ public class SequenceMTest {
 	public void limitTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -164,7 +164,7 @@ public class SequenceMTest {
 	public void skipTime(){
 		List<Integer> result = Streamable.of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -174,7 +174,7 @@ public class SequenceMTest {
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -191,25 +191,25 @@ public class SequenceMTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(Streamable.of(1,2,3,4,5)
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(Streamable.of()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(Streamable.of(1,2,3,4,5)
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(Streamable.of()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test

@@ -9,6 +9,7 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
+import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
@@ -262,7 +263,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return value.prependAll(this);
     }
     default Seq<T> prepend(T value){
-        return cons(value,this);
+        return Cons.cons(value,this);
     }
     default Seq<T> prependAll(Iterable<? extends T> it){
       return (Seq<T>)ImmutableList.super.prependAll(it);
@@ -290,25 +291,35 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         return res;
     }
-
     @Override
-    default Iterator<T> iterator(){
+    default Iterator<T> iterator() {
+        final Seq<T> host= Seq.this;
         return new Iterator<T>() {
-            Seq<T> current= Seq.this;
+
+            Seq<T> active= host;
+            Seq<T> empty = empty();
+
             @Override
             public boolean hasNext() {
-                return current.fold(c->true, n->false);
+                return !active.isEmpty();
             }
 
             @Override
             public T next() {
-                return current.foldSeq(c->{
-                    current = c.tail;
-                    return c.head;
-                },n->null);
+                if(active instanceof Cons){
+                    Cons<T> cons = (Cons<T>)active;
+                    active = cons.tail;
+                    return cons.head;
+                }
+                return null;
+               /** T result = active instanceof  Cons ? ((Cons<T>)active).head : null;
+                active =active instanceof  Cons ? ((Cons<T>)active).tail : empty;
+                return result;
+                **/
             }
         };
     }
+
 
     @Override
     default Seq<T> replaceFirst(T currentElement, T newElement) {
@@ -580,10 +591,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>) ImmutableList.super.takeRight(num);
     }
 
-    @Override
-    default Seq<T> skip(long num) {
-        return (Seq<T>) ImmutableList.super.skip(num);
-    }
 
     @Override
     default Seq<T> tailOrElse(ImmutableList<T> tail) {
@@ -591,30 +598,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return Seq.fromIterable(list);
     }
 
-    @Override
-    default Seq<T> skipWhile(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    default Seq<T> skipUntil(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    default Seq<T> limit(long num) {
-        return (Seq<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    default Seq<T> limitWhile(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    default Seq<T> limitUntil(Predicate<? super T> p) {
-        return (Seq<T>) ImmutableList.super.limitUntil(p);
-    }
 
     @Override
     default Seq<T> intersperse(T value) {
@@ -626,15 +609,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return (Seq<T>) ImmutableList.super.shuffle();
     }
 
-    @Override
-    default Seq<T> skipLast(int num) {
-        return (Seq<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    default Seq<T> limitLast(int num) {
-        return (Seq<T>) ImmutableList.super.limitLast(num);
-    }
 
     @Override
     default Seq<T> shuffle(Random random) {
@@ -779,7 +753,19 @@ public interface Seq<T> extends ImmutableList<T>,
   default <R1, R> Seq<R> forEach2(Function<? super T, ? extends Iterable<R1>> iterable1, BiFunction<? super T, ? super R1, Boolean> filterFunction, BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
     return (Seq< R>) ImmutableList.super.forEach2(iterable1,filterFunction,yieldingFunction);
   }
+    default Either<Integer,Seq<T>> set(int pos, T value) {
+        if (pos < 0 || pos >= size()) {
+            return Either.left(size());
+        }
+        return Either.right(updateAt(pos, value));
+    }
 
+    default Either<Integer,Seq<T>> delete(int pos){
+        if(pos<0||pos>=size()){
+            return Either.left(size());
+        }
+        return Either.right(removeAt(pos));
+    }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(of={"head,tail"})
@@ -788,15 +774,10 @@ public interface Seq<T> extends ImmutableList<T>,
         public final T head;
         public final Seq<T> tail;
         private final int size;
-        private final Supplier<Integer> hash = Memoize.memoizeSupplier(()->{
-            int hashCode = 1;
-            for (T e : this)
-                hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
-            return hashCode;
-        });
+        private Supplier<Integer> hash;
 
         public static <T> Cons<T> cons(T value, Seq<T> tail){
-            return new Cons<>(value,tail,tail.size()+1);
+            return new Cons<>(value,tail,tail.size()+1,null);
         }
 
 
@@ -897,6 +878,16 @@ public interface Seq<T> extends ImmutableList<T>,
         }
         @Override
         public int hashCode() {
+            if(hash==null){
+                Supplier<Integer> local = Memoize.memoizeSupplier(()->{
+                    int hashCode = 1;
+                    for (T e : this)
+                        hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+                    return hashCode;
+                });
+                hash= local;
+                return local.get();
+            }
             return hash.get();
         }
 

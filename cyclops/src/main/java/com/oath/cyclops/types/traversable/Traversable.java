@@ -86,22 +86,9 @@ public interface Traversable<T> extends Publisher<T>,
         return ReactiveSeq.fromIterable(this);
     }
 
-    /**
-     * Create an IterableFunctor instance of the same type from an Iterator
-     * <pre>
-     * {@code
-     *       ReactiveSeq<Integer> newSeq = seq.unitIterable(myIterator);
-     *
-     * }
-     * </pre>
-     *
-     * @param U Iterator to create new IterableFunctor from
-     * @return New IterableFunctor instance
-     */
+
     <U> Traversable<U> unitIterable(Iterable<U> U);
-    /* (non-Javadoc)
-     * @see org.reactivestreams.Publisher#forEachAsync(org.reactivestreams.Subscriber)
-     */
+
     @Override
     default void subscribe(final Subscriber<? super T> s) {
         traversable().subscribe(s);
@@ -119,6 +106,19 @@ public interface Traversable<T> extends Publisher<T>,
 
      *  //Seq(3,4)
      * }</pre>
+     *
+     * Can be used to implement terminating lazy folds on lazy data types
+     *
+     * <pre>
+     *    {@code
+     *    ReactiveSeq.generate(this::process)
+                     .map(data->data.isSuccess())
+                     .combine((a,b)-> a ? false : true, (a,b) -> a|b)
+                    .findFirst(); //terminating reduction on infinite data structure
+     *    }
+     *
+     *
+     * </pre>
      *
      * @param predicate Test to see if two neighbours should be joined. The first parameter to the bi-predicate is the currently
      *                  accumulated result and the second is the next element
@@ -169,97 +169,27 @@ public interface Traversable<T> extends Publisher<T>,
                                  .dropWhile(i->firstFailed[0] && (dropped[0]++==0));
     }
 
-    /**
-     * Convert to a Stream with the values repeated specified times
-     *
-     * <pre>
-     * {@code
-     * 		ReactiveSeq.of(1,2,2)
-     * 								.cycle(3)
-     * 								.collect(CyclopsCollectors.toList());
-     *
-     * 		//List[1,2,2,1,2,2,1,2,2]
-     *
-     * }
-     * </pre>
-     *
-     * @param times
-     *            Times values should be repeated within a Stream
-     * @return Stream with values repeated
-     */
+
     default Traversable<T> cycle(final long times) {
         return traversable().cycle(times);
     }
 
-    /**
-     * Convert to a Stream with the result of a reduction operation repeated
-     * specified times
-     *
-     * <pre>
-     * {@code
-     *   List<Integer> list = ReactiveSeq.of(1,2,2))
-     *                                 .cycle(Reducers.toCountInt(),3)
-     *                                 .collect(CyclopsCollectors.toList());
-     *   //List[3,3,3];
-     *   }
-     * </pre>
-     *
-     * @param m
-     *            Monoid to be used in reduction
-     * @param times
-     *            Number of times value should be repeated
-     * @return Stream with reduced values repeated
-     */
+
     default Traversable<T> cycle(final Monoid<T> m, final long times) {
         return traversable().cycle(m, times);
     }
 
-    /**
-     * Repeat in a Stream while specified predicate holds
-     *
-     * <pre>
-     * {@code
-     *  MutableInt count = MutableInt.of(0);
-     *  ReactiveSeq.of(1, 2, 2).cycleWhile(next -> count++ < 6).collect(CyclopsCollectors.toList());
-     *
-     *  // List(1,2,2,1,2,2)
-     * }
-     * </pre>
-     *
-     * @param predicate
-     *            repeat while true
-     * @return Repeating Stream
-     */
+
     default Traversable<T> cycleWhile(final Predicate<? super T> predicate) {
         return traversable().cycleWhile(predicate);
     }
 
-    /**
-     * Repeat in a Stream until specified predicate holds
-     *
-     * <pre>
-     * {@code
-     * 	MutableInt count =MutableInt.of(0);
-     * 		ReactiveSeq.of(1,2,2)
-     * 		 		.cycleUntil(next -> count.getValue()>6)
-     * 		 		.peek(i-> count.mutate(i->i+1))
-     * 		 		.collect(CyclopsCollectors.toList());
-     *
-     * 		//List[1,2,2,1,2,2,1]
-     * }
-     * </pre>
-     *
-     * @param predicate
-     *            repeat while true
-     * @return Repeating Stream
-     */
+
     default Traversable<T> cycleUntil(final Predicate<? super T> predicate) {
         return traversable().cycleUntil(predicate);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable, java.util.function.BiFunction)
-     */
+
     @Override
     default <U, R> Traversable<R> zip(final Iterable<? extends U> other,final BiFunction<? super T, ? super U, ? extends R> zipper) {
         return traversable().zip(other, zipper);
@@ -267,136 +197,80 @@ public interface Traversable<T> extends Publisher<T>,
 
 
 
-    /**
-     * zip 3 Streams into one
-     *
-     * <pre>
-     * {@code
-     *  List<Tuple3<Integer, Integer, Character>> list = of(1, 2, 3, 4, 5, 6).zip3(of(100, 200, 300, 400), of('a', 'b', 'c')).collect(CyclopsCollectors.toList());
-     *
-     *  // [[1,100,'a'],[2,200,'b'],[3,300,'c']]
-     * }
-     *
-     * </pre>
-     */
+
     default <S, U> Traversable<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
         return traversable().zip3(second, third);
     }
 
-    /**
-     * zip 4 Streams into 1
-     *
-     * <pre>
-     * {@code
-     *  List<Tuple4<Integer, Integer, Character, String>> list = of(1, 2, 3, 4, 5, 6).zip4(of(100, 200, 300, 400), of('a', 'b', 'c'), of("hello", "world"))
-     *          .collect(CyclopsCollectors.toList());
-     *
-     * }
-     * // [[1,100,'a',"hello"],[2,200,'b',"world"]]
-     * </pre>
-     */
+
     default <T2, T3, T4> Traversable<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
             final Iterable<? extends T4> fourth) {
         return traversable().zip4(second, third, fourth);
     }
 
-    /**
-     * Add an index to the current Stream
-     *
-     * <pre>
-     * {@code
-     * assertEquals(asList(new Tuple2("a", 0L), new Tuple2("b", 1L)), of("a", "b").zipWithIndex().toList());
-     * }
-     * </pre>
-     */
+
     default Traversable<Tuple2<T, Long>> zipWithIndex() {
         return traversable().zipWithIndex();
     }
 
     /**
-     * Create a sliding view over this Sequence
-     *
-     * <pre>
-     * {@code
-     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(2).collect(CyclopsCollectors.toList());
-     *
-     *  assertThat(list.getValue(0), hasItems(1, 2));
-     *  assertThat(list.getValue(1), hasItems(2, 3));
-     *
-     * }
-     *
-     * </pre>
-     *
-     * @param windowSize
-     *            Size of sliding window
-     * @return SequenceM with sliding view
-     */
+     * Create a sliding view
+     **/
     default Traversable<Seq<T>> sliding(final int windowSize) {
         return traversable().sliding(windowSize);
     }
 
     /**
-     * Create a sliding view over this Sequence
-     *
-     * <pre>
-     * {@code
-     *  List<List<Integer>> list = ReactiveSeq.of(1, 2, 3, 4, 5, 6).sliding(3, 2).collect(CyclopsCollectors.toList());
-     *
-     *  assertThat(list.getValue(0), hasItems(1, 2, 3));
-     *  assertThat(list.getValue(1), hasItems(3, 4, 5));
-     *
-     *
-     * }
-     *
-     * </pre>
-     *
-     * @param windowSize
-     *            number of elements in each batch
-     * @param increment
-     *            for each window
-     * @return SequenceM with sliding view
-     */
+     * Create a sliding view
+     **/
     default Traversable<Seq<T>> sliding(final int windowSize, final int increment) {
         return traversable().sliding(windowSize, increment);
     }
 
     /**
-     * Batch elements in a Stream by size into a toX created by the
-     * supplied factory
+     * Group the elements of this traversable
      *
      * <pre>
      * {@code
-     * assertThat(ReactiveSeq.of(1,1,1,1,1,1)
-     *                      .batchBySize(3,()->new TreeSet<>())
-     *                      .toList()
-     *                      .getValue(0)
-     *                      .size(),is(1));
+     * ReactiveSeq.of(1,1,1,1,1,1)
+     *            .grouped(3,()->new TreeSet<>())
+     *            .toList()
+     *            .getValue(0)
+     *            .size();
+     * //1
+     *
+     * ReactiveSeq.of(1,2,3,4,5,6)
+     *            .grouped(3,()->new TreeSet<>())
+     *            .toList()
+     *            .getValue(0)
+     *            .size();
+     * //3
+     *
      * }
      * </pre>
      * @param size batch size
      * @param supplier Collection factory
-     * @return SequenceM batched into toX types by size
+     * @return Traversable grouped by size
      */
     default <C extends PersistentCollection<? super T>> Traversable<C> grouped(final int size, final Supplier<C> supplier) {
         return traversable().grouped(size, supplier);
     }
 
     /**
-     * Create a Traversable batched by List, where each batch is populated until
-     * the predicate holds
      *
      * <pre>
      * {@code
-     *  assertThat(ReactiveSeq.of(1,2,3,4,5,6)
+     *  ReactiveSeq.of(1,2,3,4,5,6)
      *              .groupedUntil(i->i%3==0)
      *              .toList()
-     *              .size(),equalTo(2));
+     *              .size();
+     *   //2
      * }
      * </pre>
      *
      * @param predicate
-     *            Batch until predicate holds, applyHKT open next batch
-     * @return SequenceM batched into lists determined by the predicate supplied
+     *            group until predicate holds
+     * @return Traversable batched into Vectors determined by the predicate supplied
      */
     default Traversable<Vector<T>> groupedUntil(final Predicate<? super T> predicate) {
         return traversable().groupedUntil(predicate);
@@ -535,10 +409,11 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      *
-     * 	assertEquals(asList("", "a", "ab", "abc"),ReactiveSeq.of("a", "b", "c")
-     * 													.scanLeft(Reducers.toString("")).toList());
+     * 	ReactiveSeq.of("a", "b", "c")
+     * 			   .scanLeft(Reducers.toString(""))
+     * 			   .toList();
+     *  //asList("", "a", "ab", "abc")
      *
-     *         }
      * </pre>
      *
      * @param monoid
@@ -553,8 +428,10 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     *  assertThat(of("a", "b", "c").scanLeft("", String::concat).toList().size(),
-     *         		is(4));
+     *  ReactiveSeq.of("a", "b", "c")
+     *             .scanLeft("", String::concat)
+     *             .toList();
+     *   //[, a, ab, abc]
      * }
      * </pre>
      */
@@ -567,8 +444,11 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     * assertThat(of("a", "b", "c").scanRight(Monoid.of("", String::concat)).toList().size(),
-     *             is(asList("", "c", "bc", "abc").size()));
+     * ReactiveSeq.of("a", "b", "c")
+     *            .scanRight(Monoid.of("", String::concat))
+     *            .toList()
+     *
+     * //asList("", "c", "bc", "abc")
      * }
      * </pre>
      */
@@ -581,8 +461,11 @@ public interface Traversable<T> extends Publisher<T>,
      *
      * <pre>
      * {@code
-     * assertThat(of("a", "ab", "abc").map(str->str.length()).scanRight(0, (t, u) -> u + t).toList().size(),
-     *             is(asList(0, 3, 5, 6).size()));
+     * ReactiveSeq.of("a", "ab", "abc")
+     *            .map(str->str.length())
+     *            .scanRight(0, (t, u) -> u + t)
+     *            .toList();
+     * //asList(0, 3, 5, 6);
      *
      * }
      * </pre>
@@ -593,7 +476,11 @@ public interface Traversable<T> extends Publisher<T>,
 
     /**
      * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7)).sorted().toList(),equalTo(Arrays.asList(3,4,6,7))); }
+     * {@code ReactiveSeq.of(4,3,6,7))
+     *                   .sorted()
+     *                   .toList()
+     *
+     *   //Arrays.asList(3,4,6,7)
      * </pre>
      *
      */
@@ -630,7 +517,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeWhile(final Predicate<? super T> p) {
-        return limitWhile(p);
+        return traversable().takeWhile(p);
     }
 
     /**
@@ -645,7 +532,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropWhile(final Predicate<? super T> p) {
-        return skipWhile(p);
+        return traversable().dropWhile(p);
     }
 
     /**
@@ -661,7 +548,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return  Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeUntil(final Predicate<? super T> p) {
-        return limitUntil(p);
+        return traversable().takeUntil(p);
     }
 
     /**
@@ -676,7 +563,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropUntil(final Predicate<? super T> p) {
-        return skipUntil(p);
+        return traversable().dropUntil(p);
     }
 
     /**
@@ -691,7 +578,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> dropRight(final int num) {
-        return skipLast(num);
+        return traversable().dropRight(num);
     }
 
     /**
@@ -706,7 +593,7 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable generated by application of the predicate to the elements in this Traversable in order
      */
     default Traversable<T> takeRight(final int num) {
-        return limitLast(num);
+        return traversable().takeRight(num);
     }
     /**
      * <pre>
@@ -720,203 +607,71 @@ public interface Traversable<T> extends Publisher<T>,
      * @return Traversable with specified number of elements skipped
      */
     default Traversable<T> drop(final long num) {
-        return traversable().skip(num);
+        return traversable().drop(num);
     }
-    /**
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).skip(2).toList(),equalTo(Arrays.asList(6,7))); }
-     * </pre>
-     *
-     *
-     *
-     * @param num
-     *            Number of elemenets to skip
-     * @return Stream with specified number of elements skipped
-     */
-    default Traversable<T> skip(final long num) {
-        return traversable().skip(num);
-    }
+
+
 
     /**
      *
-     * SkipWhile drops elements from the Stream while the predicate holds, once
-     * the predicte returns true all subsequent elements are included *
      *
      * <pre>
      * {@code
-     * assertThat(ReactiveSeq.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
-     * }
-     * </pre>
-     *
-     * @param p
-     *            Predicate to skip while true
-     * @return Stream with elements skipped while predicate holds
-     */
-    default Traversable<T> skipWhile(final Predicate<? super T> p) {
-        return traversable().skipWhile(p);
-    }
-
-    /**
-     * Drop elements from the Stream until the predicate returns true, after
-     * which all elements are included
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
-     * </pre>
-     *
-     *
-     * @param p
-     *            Predicate to skip until true
-     * @return Stream with elements skipped until predicate holds
-     */
-    default Traversable<T> skipUntil(final Predicate<? super T> p) {
-        return traversable().skipUntil(p);
-    }
-    /**
-     *
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).take(2).toList(),equalTo(Arrays.asList(4,3));}
+     *  ReactiveSeq.of(4,3,6,7)
+     *             .take(2)
+     *             .toList()
+     *  asList(4,3)
      * </pre>
      *
      * @param num
-     *            Limit element size to num
-     * @return Monad converted to Stream with elements up to num
+     *            Elements to take
+     * @return Traversable with specified number of elements
      */
     default Traversable<T> take(final long num) {
-        return traversable().limit(num);
+        return traversable().take(num);
     }
 
+
+
+
+
+
+
     /**
+     * Returns a Traversable with a given value interspersed between any two values.
      *
      *
      * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).limit(2).toList(),equalTo(Arrays.asList(4,3));}
-     * </pre>
-     *
-     * @param num
-     *            Limit element size to num
-     * @return Monad converted to Stream with elements up to num
-     */
-    default Traversable<T> limit(final long num) {
-        return traversable().limit(num);
-    }
-
-    /**
-     * Take elements from the Stream while the predicate holds, once the
-     * predicate returns false all subsequent elements are excluded
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
-     * </pre>
-     *
-     * @param p
-     *            Limit while predicate is true
-     * @return Stream with limited elements
-     */
-    default Traversable<T> limitWhile(final Predicate<? super T> p) {
-        return traversable().limitWhile(p);
-    }
-
-    /**
-     * Take elements from the Stream until the predicate returns true, after
-     * which all elements are excluded.
-     *
-     * <pre>
-     * {@code assertThat(ReactiveSeq.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
-     * </pre>
-     *
-     * @param p
-     *            Limit until predicate is true
-     * @return Stream with limited elements
-     */
-    default Traversable<T> limitUntil(final Predicate<? super T> p) {
-        return traversable().limitUntil(p);
-    }
-
-    /**
-     * Returns a stream with a given value interspersed between any two values
-     * of this stream.
-     *
-     *
-     * // (1, 0, 2, 0, 3, 0, 4) ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
-     *
+     *    {@code
+     *      ReactiveSeq.of(1, 2, 3, 4).intersperse(0)
+     *      // (1, 0, 2, 0, 3, 0, 4)
+     * }
+     *</pre>
      */
     default Traversable<T> intersperse(final T value) {
         return traversable().intersperse(value);
     }
 
-    /**
-     * Potentially efficient Stream reversal. Is efficient if
-     *
-     * - Sequence created via a range - Sequence created via a List - Sequence
-     * created via an Array / var args
-     *
-     * Otherwise Sequence collected into a Collection prior to reversal
-     *
-     * <pre> {@code assertThat( of(1, 2, 3).reverse().toList(),
-     * equalTo(asList(3, 2, 1))); } </pre>
-     */
+
     default Traversable<T> reverse() {
         return traversable().reverse();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#shuffle()
-     */
+
     default Traversable<T> shuffle() {
         return traversable().shuffle();
     }
 
 
 
-    /**
-     * assertThat(ReactiveSeq.of(1,2,3,4,5) .skipLast(2)
-     * .collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
-     *
-     * @param num
-     * @return
-     */
-    default Traversable<T> skipLast(final int num) {
-        return traversable().skipLast(num);
-    }
 
-    /**
-     * Limit results to the last x elements in a SequenceM
-     *
-     * <pre>
-     * {@code
-     * 	assertThat(ReactiveSeq.of(1,2,3,4,5)
-     * 							.limitLast(2)
-     * 							.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
-     *
-     * }
-     * </pre>
-     *
-     * @param num of elements to return (last elements)
-     * @return SequenceM limited to last num elements
-     */
-    default Traversable<T> limitLast(final int num) {
-        return traversable().limitLast(num);
-    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#onEmpty(java.lang.Object)
-     */
     @Override
     default Traversable<T> onEmpty(final T value) {
         return traversable().onEmpty(value);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#onEmptyGet(java.util.function.Supplier)
-     */
+
     @Override
     default Traversable<T> onEmptyGet(final Supplier<? extends T> supplier) {
         return traversable().onEmptyGet(supplier);
@@ -924,29 +679,16 @@ public interface Traversable<T> extends Publisher<T>,
 
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#shuffle(java.util.Random)
-     */
     default Traversable<T> shuffle(final Random random) {
         return traversable().shuffle(random);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#slice(long, long)
-     */
+
     default Traversable<T> slice(final long from, final long to) {
         return traversable().slice(from, to);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
-     */
+
     default <U extends Comparable<? super U>> Traversable<T> sorted(final Function<? super T, ? extends U> function) {
         return traversable().sorted(function);
     }
@@ -956,42 +698,12 @@ public interface Traversable<T> extends Publisher<T>,
         return stream();
     }
 
-    /**
-     * Prepend Stream to this ReactiveSeq
-     *
-     * <pre>
-     * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3)
-     *                                   .prependStream(of(100, 200, 300))
-     *                                   .map(it -> it + "!!")
-     *                                   .collect(CyclopsCollectors.toList());
-     *
-     *  assertThat(result, equalTo(Arrays.asList("100!!", "200!!", "300!!", "1!!", "2!!", "3!!")));
-     * }
-     * </pre>
-     *
-     * @param stream
-     *            to Prepend
-     * @return ReactiveSeq with Stream prepended
-     */
+
     default Traversable<T> prependStream(Stream<? extends T> stream){
         return traversable().prependStream(stream);
     }
 
-    /**
-     * Append values to the take of this ReactiveSeq
-     *
-     * <pre>
-     * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).append(100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
-     *
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "3!!", "100!!", "200!!", "300!!")));     * }
-     * </pre>
-     *
-     * @param values
-     *            to append
-     * @return ReactiveSeq with appended values
-     */
+
     default Traversable<T> appendAll(T... values){
         return traversable().appendAll(values);
     }
@@ -1017,16 +729,16 @@ public interface Traversable<T> extends Publisher<T>,
 
 
     /**
-     * Prepend given values to the skip of the Stream
      *
      * <pre>
      * {@code
      * List<String> result = 	ReactiveSeq.of(1,2,3)
-     * 									 .prependAll(100,200,300)
-     * 										 .map(it ->it+"!!")
-     * 										 .collect(CyclopsCollectors.toList());
+     * 									   .prependAll(100,200,300)
+     * 									   .map(it ->it+"!!")
+     * 									   .collect(CyclopsCollectors.toList());
      *
-     * 			assertThat(result,equalTo(Arrays.asList("100!!","200!!","300!!","1!!","2!!","3!!")));
+     *
+     * //asList("100!!","200!!","300!!","1!!","2!!","3!!")));
      * }
      * @param values to prependAll
      * @return ReactiveSeq with values prepended
@@ -1036,13 +748,16 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert data into a stream at given position
+     * Insert data into a traversable at given position
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, 100, 200, 300).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3)
+     *                                   .insertAt(1, 100, 200, 300)
+     *                                   .map(it -> it + "!!")
+     *                                   .collect(CyclopsCollectors.toList());
      *
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));     *
+     *  //Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")))
      * }
      * </pre>
      *
@@ -1050,7 +765,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            to insert data at
      * @param values
      *            to insert
-     * @return Stream with new data inserted
+     * @return Traversable with new data inserted
      */
     default Traversable<T> insertAt(int pos, T... values){
         return traversable().insertAt(pos,values);
@@ -1069,13 +784,15 @@ public interface Traversable<T> extends Publisher<T>,
         return traversable().removeAt(pos);
     }
     /**
-     * Delete elements between given indexes in a Stream
+     * Delete elements between given indexes
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6).deleteBetween(2, 4).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+     *                                   .deleteBetween(2, 4).map(it -> it + "!!")
+     *                                   .collect(CyclopsCollectors.toList());
      *
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "2!!", "5!!", "6!!")));     * }
+     *  //Arrays.asList("1!!", "2!!", "5!!", "6!!")));
      * </pre>
      *
      * @param start
@@ -1089,13 +806,16 @@ public interface Traversable<T> extends Publisher<T>,
     }
 
     /**
-     * Insert a Stream into the middle of this stream at the specified position
+     * Insert a Stream into the middle of this traversable at the specified position
      *
      * <pre>
      * {@code
-     *  List<String> result = ReactiveSeq.of(1, 2, 3).insertAt(1, of(100, 200, 300)).map(it -> it + "!!").collect(CyclopsCollectors.toList());
+     *  List<String> result = ReactiveSeq.of(1, 2, 3)
+     *                                   .insertAt(1, of(100, 200, 300))
+     *                                   .map(it -> it + "!!")
+     *                                   .collect(CyclopsCollectors.toList());
      *
-     *  assertThat(result, equalTo(Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
+     *  //Arrays.asList("1!!", "100!!", "200!!", "300!!", "2!!", "3!!")));
      * }
      * </pre>
      *
@@ -1116,12 +836,12 @@ public interface Traversable<T> extends Publisher<T>,
      * <pre>
      * {@code
      *  SimpleTimer timer = new SimpleTimer();
-    ReactiveSeq.of(1, 2, 3, 4, 5, 6)
-    .xPer(6, 100000000, TimeUnit.NANOSECONDS)
-    .collect(CyclopsCollectors.toList())
-    .size()
+        ReactiveSeq.of(1, 2, 3, 4, 5, 6)
+                   .xPer(6, 100000000, TimeUnit.NANOSECONDS)
+                   .collect(CyclopsCollectors.toList())
+                   .size()
 
-    //6
+        //6
      *
      * }
      * </pre>
@@ -1156,7 +876,7 @@ public interface Traversable<T> extends Publisher<T>,
      * </pre>
      * @param time period
      * @param t Time unit
-     * @return SequenceM that emits 1 element per time period
+     * @return ReactiveSeq that emits 1 element per time period
      */
     default ReactiveSeq<T> onePer(final long time, final TimeUnit t) {
         return stream().onePer(time, t);
@@ -1181,7 +901,7 @@ public interface Traversable<T> extends Publisher<T>,
      *            time length in nanos of the delay
      * @param unit
      *            for the delay
-     * @return SequenceM that emits each element after a fixed delay
+     * @return ReactiveSeq that emits each element after a fixed delay
      */
     default ReactiveSeq<T> fixedDelay(final long l, final TimeUnit unit) {
         return stream().fixedDelay(l, unit);

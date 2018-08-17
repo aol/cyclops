@@ -2,13 +2,12 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.traversable.IterableX;
-import cyclops.companion.Reducers;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple2;
 import cyclops.reactive.ReactiveSeq;
-import javaslang.collection.List;
+import lombok.AllArgsConstructor;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,13 +16,13 @@ import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
+import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -55,33 +54,52 @@ public class LazySeqTest extends BaseImmutableListTest {
     }
 
 
+    @Test
+    public void laziness(){
+
+        boolean empty = LazySeq.generate(()->1)
+                               .filter(i -> false)
+                               .take(0)
+                               .isEmpty();
+
+        System.out.println("Empty ? " + empty);
+
+
+
+        /**
+
+
+        assertTrue(LazySeq.generate(()->1).filter(i -> false).take(0).isEmpty());
+        assertTrue(LazySeq.generate(()->1).flatMap(i -> LazySeq.empty()).take(0).isEmpty());
+         **/
+    }
 
   @Test
   public void testLazy(){
     of(1,2,3,4).map(i->count++);
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).flatMap(i->{
       System.out.println("here!");
       return LazySeq.of(count++);
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).concatMap(i->LazySeq.of(count++));
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
     count =0;
     of(1,2,3,4).filter(i->{
       count++;
       return i>0;
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
 
     count =0;
     of(1,2,3,4).zip(of(1,2,3,4),(a,b)->{
       count++;
       return a;
     });
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
 
 
 
@@ -148,7 +166,7 @@ public class LazySeqTest extends BaseImmutableListTest {
   @Test
   public void mapLarge(){
     LazySeq.range(0,100_000_000).map(i->count++);
-    assertThat(count,equalTo(1));
+    assertThat(count,equalTo(0));
   }
 
     @Test
@@ -258,17 +276,29 @@ public class LazySeqTest extends BaseImmutableListTest {
     }
 
     int called = 0;
+
+    @Test
+    public void inf(){
+        assertThat(empty().lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.nothing()));
+        assertThat(of(1,2,3).lastIndexOfSlice(Seq.of(1,2,3)),equalTo(Maybe.just(0l)));
+    }
+    @Test
+    public void fromIterableSize(){
+        assertThat(LazySeq.fromIterable(Seq.of(1,2,3)).size(),equalTo(3));
+    }
     @Test
     public void scanRightLazy(){
 
         called=0;
-        LazySeq.of(1,2,3)
-                .peek(a->{
-                    called++;
-                    System.out.println(a);
-                })
-                .scanRight(0,(a, b)->a+b);
-        assertThat(called,equalTo(1));
+        LazySeq<Integer> ls = LazySeq.of(1, 2, 3)
+            .peek(a -> {
+                called++;
+                System.out.println(a);
+            })
+            .scanRight(0, (a, b) -> a + b);
+        assertThat(called,equalTo(0));
+        ls.size();
+        assertThat(called,equalTo(3));
     }
 
 
@@ -291,6 +321,8 @@ public class LazySeqTest extends BaseImmutableListTest {
         assertThat(of().toString(),equalTo("[]"));
         assertThat(of(1).toString(),equalTo("{1...}"));
     }
+
+
 
 
 }

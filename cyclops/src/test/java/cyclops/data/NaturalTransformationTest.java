@@ -19,7 +19,7 @@ public class NaturalTransformationTest {
     NaturalTransformation<reactiveSeq,seq> streamToList = new NaturalTransformation<reactiveSeq, seq>() {
         @Override
         public <T> Higher<seq, T> apply(Higher<reactiveSeq, T> a) {
-            return a.convert(ReactiveSeq::narrowK).toSeq();
+            return a.convert(ReactiveSeq::narrowK).seq();
         }
     };
     NaturalTransformation<seq,vector> listToVector= new NaturalTransformation<seq, vector>() {

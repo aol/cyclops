@@ -2,17 +2,24 @@ package cyclops.data;
 
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher2;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.companion.Reducers;
+import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableListTest;
 
+import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
+import javaslang.collection.Iterator;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -22,6 +29,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertTrue;
 
 public class SeqTest extends BaseImmutableListTest {
     @Override
@@ -73,13 +81,34 @@ public class SeqTest extends BaseImmutableListTest {
     public void plus(){
         IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);
 
-        Assert.assertThat(vec,equalTo(Vector.of(5,2,1)));
-
-
+        assertThat(vec,equalTo(Vector.of(5,2,1)));
 
     }
-   
 
 
+    @Test
+    public void seqTest(){
+        Seq.of(1,2,3).prepend(3);
+        for(Integer next : Seq.of(1,2,3)){
+            System.out.println(next);
+        }
+
+    }
+
+
+    @Test
+    public void setEither(){
+        Seq<Integer> ints = Seq.of(1,2,3);
+        assertTrue(ints.set(-1,10).isLeft());
+        assertTrue(ints.set(4,10).isLeft());
+        Assert.assertThat(ints.set(2,10),equalTo(Either.right(Seq.of(1,2,10))));
+    }
+    @Test
+    public void deleteEither(){
+        Seq<Integer> ints = Seq.of(1,2,3);
+        assertTrue(ints.delete(-1).isLeft());
+        assertTrue(ints.delete(4).isLeft());
+        Assert.assertThat(ints.delete(2),equalTo(Either.right(Vector.of(1,2))));
+    }
 
 }

@@ -261,48 +261,8 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
     }
 
     @Override
-    public LazyString skip(long num) {
-        return fromLazySeq(string.skip(num));
-    }
-
-    @Override
-    public LazyString skipWhile(Predicate<? super Character> p) {
-        return fromLazySeq(string.skipWhile(p));
-    }
-
-    @Override
-    public LazyString skipUntil(Predicate<? super Character> p) {
-        return fromLazySeq(string.skipUntil(p));
-    }
-
-    @Override
-    public LazyString limit(long num) {
-        return fromLazySeq(string.limit(num));
-    }
-
-    @Override
-    public LazyString limitWhile(Predicate<? super Character> p) {
-        return fromLazySeq(string.limitWhile(p));
-    }
-
-    @Override
-    public LazyString limitUntil(Predicate<? super Character> p) {
-        return fromLazySeq(string.limitUntil(p));
-    }
-
-    @Override
     public LazyString shuffle() {
         return fromLazySeq(string.shuffle());
-    }
-
-    @Override
-    public LazyString skipLast(int num) {
-        return fromLazySeq(string.skipLast(num));
-    }
-
-    @Override
-    public LazyString limitLast(int num) {
-        return fromLazySeq(string.limitLast(num));
     }
 
     @Override

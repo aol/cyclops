@@ -175,7 +175,7 @@ public interface Folds<T> extends Iterable<T>  {
 
     default Seq<Tuple2<T,BigDecimal>> withPercentiles(){
 
-        Seq<T> list = stream().toSeq();
+        Seq<T> list = stream().seq();
 
         int precision = new Double(Math.log10(list.size())).intValue();
 
@@ -204,7 +204,7 @@ public interface Folds<T> extends Iterable<T>  {
 
 
     default double variance(ToDoubleFunction<T> fn){
-        Seq<T> list = stream().toSeq();
+        Seq<T> list = stream().seq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
@@ -213,7 +213,7 @@ public interface Folds<T> extends Iterable<T>  {
 
     }
     default double populationVariance(ToDoubleFunction<T> fn){
-        Seq<T> list = stream().toSeq();
+        Seq<T> list = stream().seq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return (list.map(t -> fn.applyAsDouble(t))
                 .map(t -> t - avg)
@@ -223,7 +223,7 @@ public interface Folds<T> extends Iterable<T>  {
     }
 
     default double stdDeviation(ToDoubleFunction<T> fn){
-        Seq<T> list = stream().toSeq();
+        Seq<T> list = stream().seq();
         double avg = list.collect(Collectors.<T>averagingDouble(fn));
         return Math.sqrt( list.stream().mapToDouble(fn)
                 .map(i->i-avg)
@@ -297,10 +297,6 @@ public interface Folds<T> extends Iterable<T>  {
     default boolean anyMatch(final Predicate<? super T> c) {
         return stream().filter(c).findFirst().isPresent();
     }
-
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Collectable#noneMatch(java.util.function.Predicate)
-     */
 
     default boolean noneMatch(final Predicate<? super T> c) {
         return !stream().filter(c)

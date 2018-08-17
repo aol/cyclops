@@ -37,8 +37,10 @@ public class BankersQueueTest extends BaseImmutableQueueTest {
         BankersQueue<Integer> q = BankersQueue.cons(1)
                                               .enqueue(10);
 
-
+        System.out.println(q);
+        System.out.println(q.seq());
         System.out.println(q.equals(q));
+
         System.out.println(q.tail());
         System.out.println(q.dequeue(-1));
         assertThat(q.dequeue(-1),equalTo(Tuple.tuple(1,q.tail())));

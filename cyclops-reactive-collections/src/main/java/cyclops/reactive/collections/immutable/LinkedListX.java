@@ -12,11 +12,9 @@ import cyclops.ReactiveReducers;
 import cyclops.control.Future;
 import cyclops.control.*;
 
-import cyclops.data.ImmutableList;
 import cyclops.data.Seq;
 import com.oath.cyclops.types.foldable.Evaluation;
 import cyclops.data.Vector;
-import cyclops.data.tuple.Tuple;
 import cyclops.function.Monoid;
 import cyclops.function.Reducer;
 import cyclops.companion.Reducers;
@@ -471,16 +469,6 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX)LazyCollectionX.super.forEach2(stream1, filterFunction, yieldingFunction);
     }
 
-    @Override
-    default LinkedListX<T> take(final long num) {
-
-        return limit(num);
-    }
-    @Override
-    default LinkedListX<T> drop(final long num) {
-
-        return skip(num);
-    }
 
     /**
      * coflatMap pattern, can be used to perform maybe reductions / collections / folds and other terminal operations
@@ -621,65 +609,18 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limit(long)
      */
-    @Override
-    default LinkedListX<T> limit(final long num) {
+    default LinkedListX<T> take(final long num) {
 
-        return (LinkedListX) LazyCollectionX.super.limit(num);
+        return (LinkedListX) LazyCollectionX.super.take(num);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skip(long)
-     */
-    @Override
-    default LinkedListX<T> skip(final long num) {
 
-        return (LinkedListX) LazyCollectionX.super.skip(num);
+    default LinkedListX<T> drop(final long num) {
+
+        return (LinkedListX) LazyCollectionX.super.drop(num);
     }
 
-    @Override
-    default LinkedListX<T> takeRight(final int num) {
-        return (LinkedListX<T>) LazyCollectionX.super.takeRight(num);
-    }
 
-    @Override
-    default LinkedListX<T> dropRight(final int num) {
-        return (LinkedListX<T>) LazyCollectionX.super.dropRight(num);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> takeWhile(final Predicate<? super T> p) {
-
-        return (LinkedListX) LazyCollectionX.super.takeWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> dropWhile(final Predicate<? super T> p) {
-
-        return (LinkedListX) LazyCollectionX.super.dropWhile(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#takeUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> takeUntil(final Predicate<? super T> p) {
-
-        return (LinkedListX) LazyCollectionX.super.takeUntil(p);
-    }
-
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#dropUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> dropUntil(final Predicate<? super T> p) {
-        return (LinkedListX) LazyCollectionX.super.dropUntil(p);
-    }
 
 
 
@@ -915,40 +856,28 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
         return (LinkedListX<T>) LazyCollectionX.super.sorted(c);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> skipWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.skipWhile(p);
+    default LinkedListX<T> dropWhile(final Predicate<? super T> p) {
+
+        return (LinkedListX<T>) LazyCollectionX.super.dropWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> skipUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.skipUntil(p);
+    default LinkedListX<T> dropUntil(final Predicate<? super T> p) {
+
+        return (LinkedListX<T>) LazyCollectionX.super.dropUntil(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitWhile(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> limitWhile(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.limitWhile(p);
+    default LinkedListX<T> takeWhile(final Predicate<? super T> p) {
+
+        return (LinkedListX<T>) LazyCollectionX.super.takeWhile(p);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitUntil(java.util.function.Predicate)
-     */
-    @Override
-    default LinkedListX<T> limitUntil(final Predicate<? super T> p) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.limitUntil(p);
+    default LinkedListX<T> takeUntil(final Predicate<? super T> p) {
+
+        return (LinkedListX<T>) LazyCollectionX.super.takeUntil(p);
     }
 
     /* (non-Javadoc)
@@ -972,19 +901,17 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#skipLast(int)
      */
-    @Override
-    default LinkedListX<T> skipLast(final int num) {
+    default LinkedListX<T> dropRight(final int num) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.skipLast(num);
+        return (LinkedListX<T>) LazyCollectionX.super.dropRight(num);
     }
 
     /* (non-Javadoc)
      * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#limitLast(int)
      */
-    @Override
-    default LinkedListX<T> limitLast(final int num) {
+    default LinkedListX<T> takeRight(final int num) {
 
-        return (LinkedListX<T>) LazyCollectionX.super.limitLast(num);
+        return (LinkedListX<T>) LazyCollectionX.super.takeRight(num);
     }
 
     /* (non-Javadoc)

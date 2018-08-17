@@ -636,11 +636,7 @@ public interface OperationsOnFutures<T> {
                                        .intersperse(FastFuture.fromCompletableFuture(value)));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#shuffle()
-     */
+
     default FutureStream<T> shuffle() {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
@@ -954,7 +950,7 @@ public interface OperationsOnFutures<T> {
      * {@code
      * assertThat(FutureStream.of(1,2,3,4,5)
     						.actOnFutures()
-    						.skipLast(2)
+    						.dropRight(2)
     						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
      *
      * }
@@ -962,10 +958,10 @@ public interface OperationsOnFutures<T> {
      *
      *
      */
-    default FutureStream<T> skipLast(final int num) {
+    default FutureStream<T> dropRight(final int num) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .skipLast(num));
+                                       .dropRight(num));
     }
 
     /**
@@ -974,7 +970,7 @@ public interface OperationsOnFutures<T> {
      * <pre>
      * {@code
      * 	assertThat(FutureStream.of(1,2,3,4,5).actOnFutures()
-     * 										.limitLast(2)
+     * 										.takeRight(2)
      * 										.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
      *
      * }
@@ -982,10 +978,10 @@ public interface OperationsOnFutures<T> {
      * @param num of elements to return (last elements)
      * @return SequenceM limited to last num elements
      */
-    default FutureStream<T> limitLast(final int num) {
+    default FutureStream<T> takeRight(final int num) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
-                                       .limitLast(num));
+                                       .takeRight(num));
     }
 
     /**
@@ -1059,33 +1055,20 @@ public interface OperationsOnFutures<T> {
                                                                    .map(cf -> FastFuture.fromCompletableFuture(cf)));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#concat(java.util.stream.Stream)
-     */
     default FutureStream<T> concat(final Stream<T> other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .appendStream(other.map(t -> FastFuture.completedFuture(t))));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#concat(java.lang.Object)
-     */
+
     default FutureStream<T> concat(final T other) {
         return fromStreamOfFutures(this.getLastActive()
                                        .injectFuturesSeq()
                                        .append(FastFuture.completedFuture(other)));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#concat(java.lang.Object[])
-     */
+
     default FutureStream<T> concat(final T... other) {
         return concat(Stream.of(other));
     }
