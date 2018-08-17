@@ -2,6 +2,7 @@ package cyclops.reactive;
 
 import cyclops.control.Ior;
 import cyclops.control.Maybe;
+import cyclops.data.Range;
 import cyclops.function.BooleanFunction0;
 import com.oath.cyclops.types.foldable.ConvertableSequence;
 import com.oath.cyclops.types.stream.ToStream;
@@ -307,6 +308,8 @@ public class Generator<T> implements Iterable<T>, ToStream<T> {
 
         return res;
     }
+
+
     public static <T> Generator<T> suspend(Predicate<? super T> pred, GeneratorFunction<T> value){
         Suspended<T> suspended = new Suspended<>(new Suspended<>());
 

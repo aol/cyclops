@@ -19,6 +19,9 @@ import java.util.function.Supplier;
 public final class FluxIO<T> implements IO<T> {
     private final Flux<T> flowable;
 
+    public static <T> IO<T> of(Future<T> f){
+        return of(Flux.from(f));
+    }
     public static <T> IO<T> of(Flux<T> flowable){
         return new FluxIO<>(flowable);
     }

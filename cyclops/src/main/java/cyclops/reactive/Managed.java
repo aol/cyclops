@@ -66,7 +66,7 @@ import java.util.function.Supplier;
  *
  */
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, Publisher<T>{
 
 
@@ -80,10 +80,10 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public static <T> Managed<T> of(Publisher<T> acq, Consumer<T> cleanup){
         return of(IO.fromPublisher(acq),cleanup);
     }
-    public static <T> Managed<T> of(Supplier<T> acq, Consumer<T> cleanup){
+    public static <T> Managed<T> of(Supplier<? extends T> acq, Consumer<T> cleanup){
         return of(IO.of(acq),cleanup);
     }
-    public static <T extends AutoCloseable> Managed<T> of(Supplier<T> acq){
+    public static <T extends AutoCloseable> Managed<T> of(Supplier<? extends T> acq){
         return of(IO.of(acq),ExceptionSoftener.softenConsumer(c->c.close()));
     }
     public static <T extends AutoCloseable> Managed<T> of(Publisher<T> acq){
@@ -216,7 +216,7 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public final  <T2,R> Managed<R> zip(Managed<T2> b, BiFunction<? super T,? super T2,? extends R> fn){
         return flatMap(t1 -> b.map(t2 -> fn.apply(t1, t2)));
     }
-    abstract  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn);
+    public abstract  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn);
 
     public final void forEach(Consumer<? super T> onNext,Consumer<Throwable> errorHandler){
         stream().forEach(onNext,errorHandler);
@@ -251,10 +251,10 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         return io().stream();
     }
 
-    public final <R> Managed<R> map(Function<? super T, ? extends R> mapper){
+    public <R> Managed<R> map(Function<? super T, ? extends R> mapper){
         return of(apply(mapper.andThen(IO::of)),__->{});
     }
-    public final <R> Managed<R> flatMap(Function<? super T, Managed<R>> f){
+    public  <R> Managed<R> flatMap(Function<? super T, Managed<R>> f){
 
        Managed<T> m = this;
         return new Managed<R>(){
@@ -272,10 +272,10 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     }
 
 
-    public final static <T> Semigroup<Managed<T>> semigroup(Semigroup<T> s){
+    public static <T> Semigroup<Managed<T>> semigroup(Semigroup<T> s){
         return (a,b) -> a.flatMap(t1 -> b.map(t2 -> s.apply(t1, t2)));
     }
-    public final static <T> Monoid<Managed<T>> monoid(Monoid<T> s){
+    public static <T> Monoid<Managed<T>> monoid(Monoid<T> s){
         return Monoid.of(managed(s.zero(),__->{}),semigroup(s));
     }
 
