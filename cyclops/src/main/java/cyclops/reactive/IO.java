@@ -3,7 +3,12 @@ package cyclops.reactive;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
+import com.oath.cyclops.types.reactive.ValueSubscriber;
+import com.oath.cyclops.util.ExceptionSoftener;
+import cyclops.control.Either;
+import cyclops.control.Eval;
 import cyclops.control.Future;
+import cyclops.control.LazyEither;
 import cyclops.control.Try;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
@@ -34,6 +39,16 @@ import java.util.function.Supplier;
 
 
 public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,Publisher<T> {
+
+    public static <T> IO<T> sync(T s) {
+        return SyncIO.of(s);
+    }
+    public static <T> IO<T> sync(Supplier<? extends T> s) {
+        return SyncIO.of(s);
+    }
+    public static <T> IO<T> sync(Iterable<? extends T> s) {
+        return new SyncIO<T>(ReactiveSeq.narrow(ReactiveSeq.fromIterable(s)));
+    }
 
     public static <T> IO<T> of(T s) {
         return ReactiveSeqIO.of(s);
@@ -484,6 +499,179 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
 
         public String toString(){
          return "IO["+ run().toString() + "]";
+        }
+
+
+
+    }
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public final class SyncIO<T> implements IO<T> {
+        private final ReactiveSeq<T> fn;
+
+        public static <T> IO<T> of(T s) {
+            return new ReactiveSeqIO<T>(ReactiveSeq.narrow(ReactiveSeq.of(s)));
+        }
+
+        public static <T> IO<T> of(Supplier<? extends T> s) {
+            return new SyncIO<T>(ReactiveSeq.generate(Memoize.memoizeSupplier((Supplier<T>)s)).take(1));
+        }
+
+        public static <T> IO<T> of(Future<? extends T> f) {
+            return new SyncIO<T>(ReactiveSeq.narrow(f.stream()));
+        }
+
+
+
+
+        public static <T, X extends Throwable> IO<Try<T, X>> withCatch(Try.CheckedSupplier<T, X> cf, Class<? extends X>... classes) {
+            return of(() -> Try.withCatch(cf, classes));
+        }
+
+        public static <T, X extends Throwable> IO<T> recover(IO<Try<T, X>> io, Supplier<? extends T> s) {
+            return io.map(t -> t.fold(i -> i, s));
+        }
+
+        public static <T> IO<T> flatten(IO<IO<T>> io) {
+            return io.flatMap(i -> i);
+        }
+
+
+        @Override
+        public <R> IO<R> map(Function<? super T, ? extends R> s) {
+            return new SyncIO<>(fn.map(s));
+        }
+
+        @Override
+        public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s) {
+            return new SyncIO<R>(fn.mergeMap(s));
+        }
+
+        @Override
+        public <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
+            Managed<R> m = SyncManaged.of(map(fn));
+            return m.io();
+        }
+        @Override
+        public <R> IO<R> bracket(Function<? super T, ? extends R> fn, Consumer<R> consumer) {
+            Managed<R> m = SyncManaged.of(map(fn),consumer);
+            return m.io();
+        }
+
+
+        @Override
+        public IO<T> ensuring(Consumer<T> action){
+            return SyncManaged.of(this,action).io();
+        }
+
+
+        @Override
+        public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
+           fn.forEach(consumerElement, consumerError, onComplete);
+        }
+
+        @Override
+        public Try<T, Throwable> run() {
+            try {
+                return Either.fromIterable(fn).toTry();
+            }catch(Throwable t){
+                return Try.failure(t);
+            }
+        }
+
+
+        @Override
+        public Future<T> future() {
+            return Future.fromIterable(fn);
+        }
+
+        @Override
+        public Publisher<T> publisher() {
+            return fn;
+        }
+
+        @Override
+        public final void subscribe(final Subscriber<? super T> sub) {
+            fn.subscribe(sub);
+        }
+
+        @Override
+        public ReactiveSeq<T> stream() {
+            return fn;
+        }
+
+        @Override
+        public Try<T, Throwable> runAsync(Executor e) {
+            return Try.fromPublisher(Future.of(() -> run(), e))
+                .flatMap(Function.identity());
+        }
+
+        public String toString(){
+            return "IO["+ run().toString() + "]";
+        }
+
+        @AllArgsConstructor(access = AccessLevel.PROTECTED)
+        public static abstract class SyncManaged<T> extends Managed<T> {
+
+
+            public static <T> Managed<T> of(IO<T> acquire, Consumer<T> cleanup){
+
+                return new SyncManaged<T>(){
+                    public  <R> IO<R> apply(Function<? super T,? extends IO<R>> fn){
+                        IO<R> y = IO.Comprehensions.forEach(acquire, t1 -> {
+                            IO<? extends Try<? extends IO<R>, Throwable>> res1 = SyncIO.withCatch(() -> fn.apply(t1), Throwable.class);
+                            return res1;
+                        }, t2 -> {
+
+                            Try<? extends IO<R>, Throwable> tr = t2._2();
+                            IO<R> res = tr.fold(r -> r, e -> SyncIO.of(Future.ofError(e)));
+                            cleanup.accept(t2._1());
+
+                            return res;
+                        });
+                        return y;
+                    }
+                };
+            }
+
+            public static <T extends AutoCloseable> Managed<T> of(IO<T> acquire){
+                return of(acquire,ExceptionSoftener.softenConsumer(c->c.close()));
+            }
+
+            public static  <T> Managed<Seq<T>> sequence(Iterable<? extends Managed<T>> all) {
+
+                Managed<Seq<T>> acc =null;
+                for(Managed<T> n : all){
+                    if(acc==null)
+                        acc=n.map(Seq::of);
+                    else
+                        acc = acc.zip(n,(a,b)->a.append(b));
+
+                }
+                return acc;
+
+            }
+
+
+            public <R> Managed<R> map(Function<? super T, ? extends R> mapper){
+                return of(apply(mapper.andThen(IO::of)),__->{});
+            }
+            public  <R> Managed<R> flatMap(Function<? super T, cyclops.reactive.Managed<R>> f){
+
+                SyncManaged<T> m = this;
+                return new SyncManaged<R>(){
+
+                    @Override
+                    public <R1> IO<R1> apply(Function<? super R, ? extends IO<R1>> fn) {
+                        IO<R1> x = m.apply(r1 -> {
+                            IO<R1> r = f.apply(r1).apply(r2 -> fn.apply(r2));
+                            return r;
+                        });
+                        return x;
+                    }
+                };
+
+            }
+
         }
 
 
