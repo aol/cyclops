@@ -75,7 +75,7 @@ public class Functions {
 
     public static final  <T> Function1<? super Iterable<T>,? extends T> tail(){
         return it -> ReactiveSeq.fromIterable(it)
-                                .limitLast(1)
+                                .takeRight(1)
                                 .firstValue(null);
     }
     public static final  <T> Function1<? super Iterable<T>,? extends T> reduce(Monoid<T> monoid){

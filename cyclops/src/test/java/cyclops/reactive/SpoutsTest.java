@@ -521,13 +521,17 @@ public class SpoutsTest {
             ReactiveSeq<Integer> stream2 = topic.stream();
             assertThat(stream2.takeRight(1).singleOrElse(null), Matchers.equalTo(99_999));
         });
-        t.start();
 
+
+        Thread t2 = new Thread( ()->{
         ReactiveSeq<Integer> stream1 = topic.stream();
 
         assertThat(stream1.takeRight(1).singleOrElse(null), Matchers.equalTo(99_999));
-
+});
+        t.start();
+        t2.start();
         t.join();
+        t2.join();
 
     }
 

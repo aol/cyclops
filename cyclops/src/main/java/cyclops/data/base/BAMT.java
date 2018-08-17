@@ -5,6 +5,8 @@ import cyclops.reactive.ReactiveSeq;
 import lombok.AllArgsConstructor;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,11 +34,16 @@ public class BAMT<T> {
         default  <R> R match(Function<? super Zero<T>, ? extends R> zeroFn, Function<? super PopulatedArray<T>, ? extends R> popFn){
             return this instanceof Zero ?  zeroFn.apply((Zero<T>)this) : popFn.apply((PopulatedArray<T>)this);
         }
+        default Iterator<T> iterator(){
+            return stream().iterator();
+        }
 
         ReactiveSeq<T> stream();
         public T getOrElseGet(int pos, Supplier<T> alt);
         public T getOrElse(int pos, T alt);
         public Option<T> get(int pos);
+
+        public <R> NestedArray<R> map(Function<? super T, ? extends R> fn);
 
     }
     public interface PopulatedArray<T> extends NestedArray<T>{
@@ -111,6 +118,14 @@ public class BAMT<T> {
         }
 
         @Override
+        public <R> ActiveTail<R> map(Function<? super T, ? extends R> fn) {
+            R[] res = (R[])new Object[array.length];
+            for(int i=0;i<array.length;i++){
+                res[i] = fn.apply(array[i]);
+            }
+            return tail(res);
+        }
+        @Override
         public Option<T> get(int pos) {
             int indx = pos & 0x01f;
             if(indx<array.length)
@@ -156,7 +171,11 @@ public class BAMT<T> {
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.of(array);
         }
+
+
     }
+
+
 
     public static class Zero<T> implements NestedArray<T>{
         @Override
@@ -168,6 +187,8 @@ public class BAMT<T> {
         public ReactiveSeq<T> stream() {
             return ReactiveSeq.empty();
         }
+
+
         public T getOrElseGet(int pos, Supplier<T> alt){
             return alt.get();
         }
@@ -176,6 +197,11 @@ public class BAMT<T> {
         }
         public Option<T> get(int pos){
             return Option.none();
+        }
+
+        @Override
+        public <R> Zero<R> map(Function<? super T, ? extends R> fn) {
+            return (Zero<R>)this;
         }
     }
 
@@ -201,6 +227,7 @@ public class BAMT<T> {
             return ReactiveSeq.of(array);
         }
 
+
         @Override
         public Option<T> get(int pos) {
             int indx = pos & 0x01f;
@@ -208,6 +235,16 @@ public class BAMT<T> {
                 return Option.of((T)array[indx]);
             return Option.none();
         }
+
+        @Override
+        public <R> One<R> map(Function<? super T, ? extends R> fn) {
+            R[] res = (R[])new Object[array.length];
+            for(int i=0;i<array.length;i++){
+                res[i] = fn.apply(array[i]);
+            }
+            return one(res);
+        }
+
         @Override
         public T getOrElse(int pos, T alt) {
             int indx = pos & 0x01f;
@@ -240,7 +277,7 @@ public class BAMT<T> {
     @AllArgsConstructor
     public static class Two<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth =5;
-        private final Object[][] array;
+        final Object[][] array;
 
         public static <T> Two<T> two(Object[][] array){
             return new Two<T>(array);
@@ -257,11 +294,24 @@ public class BAMT<T> {
             return two(updatedNodes);
 
         }
+        @Override
+        public <R> Two<R> map(Function<? super T, ? extends R> fn) {
+            Object[][] res = new Object[array.length][];
+            for(int i=0;i<array.length;i++){
+                Object[] nextA = array[i];
+                Object[] resA = new Object[nextA.length];
+                res[i]=resA;
+                for(int k=0;k<nextA.length;k++) {
+                        resA[k] = fn.apply((T) nextA[k]);
+                    }
+
+            }
+            return two((Object[][])res);
+        }
 
         @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return Option.of(local[indx]);
@@ -271,7 +321,7 @@ public class BAMT<T> {
         @Override
         public T getOrElse(int pos, T alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
+
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -281,7 +331,7 @@ public class BAMT<T> {
         @Override
         public T getOrElseGet(int pos, Supplier<T> alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
+
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -313,16 +363,19 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+
             return ReactiveSeq.iterate(0, i->i+1)
                                 .take(array.length)
                                 .map(indx->array[indx])
                                 .flatMap(a-> ReactiveSeq.of((T[])a));
         }
+
+
     }
     @AllArgsConstructor
     public static class Three<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 10;
-        private final Object[][][] array;
+        final Object[][][] array;
 
         public static <T> Three<T> three(Object[][][] array){
             return new Three<T>(array);
@@ -345,9 +398,28 @@ public class BAMT<T> {
         }
 
         @Override
+        public <R> Three<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][] res = new Object[array.length][][];
+            for(int i=0;i<array.length;i++){
+                Object[][] nextA = array[i];
+                Object[][] resA = new Object[nextA.length][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length;j++) {
+                    Object[] nextB = nextA[j];
+
+                    Object[] resB = new Object[nextB.length];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length;k++) {
+                        resB[k] = fn.apply((T) nextB[k]);
+                    }
+                }
+            }
+            return three((Object[][][])res);
+        }
+
+        @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return Option.of(local[indx]);
@@ -357,7 +429,6 @@ public class BAMT<T> {
         @Override
         public T getOrElse(int pos, T alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -367,7 +438,6 @@ public class BAMT<T> {
         @Override
         public T getOrElseGet(int pos, Supplier<T> alt) {
             T[] local = getNestedArrayAt(pos);
-            int resolved = NestedArray.bitpos(pos,bitShiftDepth);
             int indx = pos & 0x01f;
             if(indx<local.length){
                 return local[indx];
@@ -411,6 +481,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+
             return ReactiveSeq.iterate(0, i->i+1)
                               .take(array.length)
                               .map(indx->array[indx])
@@ -420,13 +491,16 @@ public class BAMT<T> {
                                                     .map(indx->a[indx])
                                                     .flatMap(a2-> ReactiveSeq.of((T[])a2));
                               });
+
         }
+
+
     }
 
     @AllArgsConstructor
     public static class Four<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 15;
-        private final Object[][][][] array;
+        final Object[][][][] array;
 
         public static <T> Four<T> four(Object[][][][] array){
             return new Four<T>(array);
@@ -449,6 +523,32 @@ public class BAMT<T> {
             n4[NestedArray.mask(pos)]=t;
             return four(n1);
 
+        }
+
+        @Override
+        public <R> Four<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][] res = new Object[array.length][][][];
+            for(int i=0;i<array.length;i++){
+                Object[][][] nextA = array[i];
+                Object[][][] resA = new Object[nextA.length][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][] nextB = nextA[j];
+
+                    Object[][] resB = new Object[nextB.length][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length;k++) {
+                        Object[] nextC= nextB[k];
+
+                        Object[] resC = new Object[nextC.length];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            resC[l] = fn.apply((T) nextC[l]);
+                        }
+                    }
+                }
+            }
+            return four((Object[][][][])res);
         }
         @Override
         public Option<T> get(int pos) {
@@ -549,11 +649,13 @@ public class BAMT<T> {
                                 });
                     });
         }
+
+
     }
     @AllArgsConstructor
     public static class Five<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 20;
-        private final Object[][][][][] array;
+        final Object[][][][][] array;
 
         public static <T> Five<T> five(Object[][][][][] array){
             return new Five<T>(array);
@@ -580,7 +682,37 @@ public class BAMT<T> {
             return five(n1);
 
         }
+        @Override
+        public <R> Five<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][][] res = new Object[array.length][][][][];
+            for(int i=0;i<array.length;i++){
+                Object[][][][] nextA = array[i];
+                Object[][][][] resA = new Object[nextA.length][][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][][] nextB = nextA[j];
 
+                    Object[][][] resB = new Object[nextB.length][][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length;k++) {
+                        Object[][] nextC= nextB[k];
+
+                        Object[][] resC = new Object[nextC.length][];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            Object[] nextD= nextC[l];
+
+                            Object[] resD = new Object[nextD.length];
+                            resC[l]=resD;
+                            for(int m=0;m<nextD.length;m++) {
+                                resD[m] = fn.apply((T) nextD[m]);
+                            }
+                        }
+                    }
+                }
+            }
+            return five((Object[][][][][])res);
+        }
         @Override
         public Option<T> get(int pos) {
             T[] local = getNestedArrayAt(pos);
@@ -673,6 +805,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -692,12 +825,14 @@ public class BAMT<T> {
                                             });
                                 });
                     });
+
         }
+
     }
     @AllArgsConstructor
     public static class Six<T> implements PopulatedArray<T>{
         public static final int bitShiftDepth = 25;
-        private final Object[][][][][][] array;
+        final Object[][][][][][] array;
 
         public static <T> Six<T> six(Object[][][][][][] array){
             return new Six<T>(array);
@@ -725,6 +860,43 @@ public class BAMT<T> {
             n6[NestedArray.mask(pos)]=t;
             return six(n1);
 
+        }
+        @Override
+        public <R> Six<R> map(Function<? super T, ? extends R> fn) {
+            Object[][][][][][] res = new Object[array.length][][][][][];
+            for(int i=0;i<array.length;i++){
+                Object[][][][][] nextA = array[i];
+                Object[][][][][] resA = new Object[nextA.length][][][][];
+                res[i]=resA;
+                for(int j=0;j<nextA.length;j++) {
+                    Object[][][][] nextB = nextA[j];
+
+                    Object[][][][] resB = new Object[nextB.length][][][];
+                    resA[j]=resB;
+                    for(int k=0;k<nextB.length;k++) {
+                        Object[][][] nextC= nextB[k];
+
+                        Object[][][] resC = new Object[nextC.length][][];
+                        resB[k]=resC;
+                        for(int l=0;l<nextC.length;l++) {
+                            Object[][] nextD= nextC[l];
+
+                            Object[][] resD = new Object[nextD.length][];
+                            resC[l]=resD;
+                            for(int m=0;m<nextD.length;m++) {
+                                Object[] nextE= nextD[m];
+
+                                Object[] resE = new Object[nextE.length];
+                                resD[m]=resE;
+                                for(int n=0;n<nextE.length;n++) {
+                                    resE[n] = fn.apply((T) nextE[n]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return six((Object[][][][][][])res);
         }
 
         @Override
@@ -833,6 +1005,7 @@ public class BAMT<T> {
 
         @Override
         public ReactiveSeq<T> stream() {
+
             return ReactiveSeq.iterate(0, i->i+1)
                     .take(array.length)
                     .map(indx->array[indx])
@@ -857,6 +1030,8 @@ public class BAMT<T> {
                                             });
                                 });
                     });
+
         }
+
     }
 }

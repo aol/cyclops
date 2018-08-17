@@ -121,12 +121,17 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
     @Override
     default BankersQueue<T> drop(long num) {
-        BankersQueue<T> res= this;
-        for(long i=0;i<num;i++){
-            res = res.foldBankersQueue(c->c.tail(), nil->nil);
-
-        }
-        return  res;
+        if(num<=0)
+            return this;
+        if(num>=size())
+            return empty();
+        return this.foldBankersQueue(c -> {
+            ImmutableList<T> newFront = c.front.drop(num);
+            ImmutableList<T> newBack = c.back.dropRight((int) num - c.front.size());
+            if (newFront.size() > 0 || newBack.size() > 0)
+                return new Cons<>(newFront, newBack);
+            return empty();
+        }, nil -> nil);
     }
 
     @Override
@@ -805,35 +810,7 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<T>) ImmutableQueue.super.takeRight(num);
     }
 
-    @Override
-    default BankersQueue<T> skip(long num) {
-        return (BankersQueue<T>) ImmutableQueue.super.skip(num);
-    }
 
-    @Override
-    default BankersQueue<T> skipWhile(Predicate<? super T> p) {
-        return (BankersQueue<T>) ImmutableQueue.super.skipWhile(p);
-    }
-
-    @Override
-    default BankersQueue<T> skipUntil(Predicate<? super T> p) {
-        return (BankersQueue<T>) ImmutableQueue.super.skipUntil(p);
-    }
-
-    @Override
-    default BankersQueue<T> limit(long num) {
-        return (BankersQueue<T>) ImmutableQueue.super.limit(num);
-    }
-
-    @Override
-    default BankersQueue<T> limitWhile(Predicate<? super T> p) {
-        return (BankersQueue<T>) ImmutableQueue.super.limitWhile(p);
-    }
-
-    @Override
-    default BankersQueue<T> limitUntil(Predicate<? super T> p) {
-        return (BankersQueue<T>) ImmutableQueue.super.limitUntil(p);
-    }
 
     @Override
     default BankersQueue<T> intersperse(T value) {
@@ -843,16 +820,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     @Override
     default BankersQueue<T> shuffle() {
         return (BankersQueue<T>) ImmutableQueue.super.shuffle();
-    }
-
-    @Override
-    default BankersQueue<T> skipLast(int num) {
-        return (BankersQueue<T>) ImmutableQueue.super.skipLast(num);
-    }
-
-    @Override
-    default BankersQueue<T> limitLast(int num) {
-        return (BankersQueue<T>) ImmutableQueue.super.limitLast(num);
     }
 
     @Override

@@ -193,24 +193,24 @@ public class BaseSequentialTest {
     }
 
     @Test
-    public void skipDuplicateSkip() {
-        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toList(), equalTo(Arrays.asList(3)));
-        assertThat(of(1, 2, 3).duplicate()._2().skip(1).duplicate()._2().skip(1).toList(), equalTo(Arrays.asList(3)));
+    public void dropDuplicateSkip() {
+        assertThat(of(1, 2, 3).duplicate()._1().drop(1).duplicate()._1().drop(1).toList(), equalTo(Arrays.asList(3)));
+        assertThat(of(1, 2, 3).duplicate()._2().drop(1).duplicate()._2().drop(1).toList(), equalTo(Arrays.asList(3)));
     }
 
     @Test
-    public void skipLimitDuplicateLimitSkip() {
+    public void dropLimitDuplicateLimitSkip() {
         Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup = of(1, 2, 3).triplicate();
-        Option<Integer> head1 = dup._1().limit(1).to().option().flatMap(l -> {
+        Option<Integer> head1 = dup._1().take(1).to().option().flatMap(l -> {
             return l.size() > 0 ? l.get(0) : Option.<Integer>none();
         });
-        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup._2().skip(1).triplicate();
-        Option<Integer> head2 = dup2._1().limit(1).to().option().flatMap(l -> {
+        Tuple3<ReactiveSeq<Integer>, ReactiveSeq<Integer>, ReactiveSeq<Integer>> dup2 = dup._2().drop(1).triplicate();
+        Option<Integer> head2 = dup2._1().take(1).to().option().flatMap(l -> {
             return l.size() > 0 ? l.get(0) : Option.<Integer>none();
         });
-        assertThat(dup2._2().skip(1).toList(), equalTo(Arrays.asList(3)));
+        assertThat(dup2._2().drop(1).toList(), equalTo(Arrays.asList(3)));
 
-        assertThat(of(1, 2, 3).duplicate()._1().skip(1).duplicate()._1().skip(1).toList(), equalTo(Arrays.asList(3)));
+        assertThat(of(1, 2, 3).duplicate()._1().drop(1).duplicate()._1().drop(1).toList(), equalTo(Arrays.asList(3)));
     }
 
 
@@ -906,8 +906,8 @@ public class BaseSequentialTest {
     public void zipInOrder() {
 
         for (int i = 0; i < ITERATIONS; i++) {
-            List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6).limit(6)
-                    .zip(of(100, 200, 300, 400).limit(4))
+            List<Tuple2<Integer, Integer>> list = of(1, 2, 3, 4, 5, 6).take(6)
+                    .zip(of(100, 200, 300, 400).take(4))
                     .collect(Collectors.toList());
 
             assertThat(list.get(0)._1(), is(1));
@@ -986,8 +986,8 @@ public class BaseSequentialTest {
     }
 
     @Test
-    public void limitWhileTest() {
-        List<Integer> list = of(1, 2, 3, 4, 5, 6).limitWhile(it -> it < 4).peek(it -> System.out.println(it)).collect(Collectors.toList());
+    public void takeWhileTest() {
+        List<Integer> list = of(1, 2, 3, 4, 5, 6).takeWhile(it -> it < 4).peek(it -> System.out.println(it)).collect(Collectors.toList());
 
         System.out.println("List " + list);
         assertThat(list, hasItem(1));
@@ -1016,8 +1016,8 @@ public class BaseSequentialTest {
     @Test
     public void testCycle() {
 
-        assertEquals(asList(1, 2, 1, 2, 1, 2), of(1, 2).cycle().limit(6).toList());
-        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().limit(6).toList());
+        assertEquals(asList(1, 2, 1, 2, 1, 2), of(1, 2).cycle().take(6).toList());
+        assertEquals(asList(1, 2, 3, 1, 2, 3), of(1, 2, 3).cycle().take(6).toList());
     }
 
     @Test
@@ -1097,81 +1097,62 @@ public class BaseSequentialTest {
     public void testSkipWhile() {
         Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-        assertEquals(asList(1, 2, 3, 4, 5), s.get().skipWhile(i -> false).toList());
-        assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i % 3 != 0).toList());
-        assertEquals(asList(3, 4, 5), s.get().skipWhile(i -> i < 3).toList());
-        assertEquals(asList(4, 5), s.get().skipWhile(i -> i < 4).toList());
-        assertEquals(asList(), s.get().skipWhile(i -> true).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropWhile(i -> false).toList());
+        assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i % 3 != 0).toList());
+        assertEquals(asList(3, 4, 5), s.get().dropWhile(i -> i < 3).toList());
+        assertEquals(asList(4, 5), s.get().dropWhile(i -> i < 4).toList());
+        assertEquals(asList(), s.get().dropWhile(i -> true).toList());
     }
 
     @Test
     public void testSkipUntil() {
         Supplier<ReactiveSeq<Integer>> s = () -> of(1, 2, 3, 4, 5);
 
-        assertEquals(asList(), s.get().skipUntil(i -> false).toList());
-        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i % 3 == 0).toList());
-        assertEquals(asList(3, 4, 5), s.get().skipUntil(i -> i == 3).toList());
-        assertEquals(asList(4, 5), s.get().skipUntil(i -> i == 4).toList());
-        assertEquals(asList(1, 2, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+        assertEquals(asList(), s.get().dropUntil(i -> false).toList());
+        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i % 3 == 0).toList());
+        assertEquals(asList(3, 4, 5), s.get().dropUntil(i -> i == 3).toList());
+        assertEquals(asList(4, 5), s.get().dropUntil(i -> i == 4).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), s.get().dropUntil(i -> true).toList());
     }
 
     @Test
     public void testSkipUntilWithNulls() {
         Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, null, 3, 4, 5);
 
-        assertEquals(asList(1, 2, null, 3, 4, 5), s.get().skipUntil(i -> true).toList());
+        assertEquals(asList(1, 2, null, 3, 4, 5), s.get().dropUntil(i -> true).toList());
     }
 
     @Test
     public void testLimitWhile() {
         Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
-        assertEquals(asList(), s.get().limitWhile(i -> false).toList());
-        assertEquals(asList(1, 2), s.get().limitWhile(i -> i % 3 != 0).toList());
-        assertEquals(asList(1, 2), s.get().limitWhile(i -> i < 3).toList());
-        assertEquals(asList(1, 2, 3), s.get().limitWhile(i -> i < 4).toList());
-        assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhile(i -> true).toList());
+        assertEquals(asList(), s.get().takeWhile(i -> false).toList());
+        assertEquals(asList(1, 2), s.get().takeWhile(i -> i % 3 != 0).toList());
+        assertEquals(asList(1, 2), s.get().takeWhile(i -> i < 3).toList());
+        assertEquals(asList(1, 2, 3), s.get().takeWhile(i -> i < 4).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), s.get().takeWhile(i -> true).toList());
     }
-    @Test
-    public void testLimitWhileClosed() {
-        Supplier<ReactiveSeq<Integer>> s = () -> ReactiveSeq.of(1, 2, 3, 4, 5);
 
-        assertEquals(asList(1), s.get().limitWhileClosed(i -> false).toList());
-        assertEquals(asList(1, 2, 3), s.get().limitWhileClosed(i -> i % 3 != 0).toList());
-        assertEquals(asList(1, 2,3), s.get().limitWhileClosed(i -> i < 3).toList());
-        assertEquals(asList(1, 2, 3,4), s.get().limitWhileClosed(i -> i < 4).toList());
-        assertEquals(asList(1, 2, 3, 4, 5), s.get().limitWhileClosed(i -> true).toList());
-    }
 
 
     @Test
     public void testLimitUntil() {
-        assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntil(i -> false).toList());
-        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i % 3 == 0).toList());
-        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).limitUntil(i -> i == 3).toList());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntil(i -> i == 4).toList());
-        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+        assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).takeUntil(i -> false).toList());
+        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i % 3 == 0).toList());
+        assertEquals(asList(1, 2), of(1, 2, 3, 4, 5).takeUntil(i -> i == 3).toList());
+        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).takeUntil(i -> i == 4).toList());
+        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
 
 
-        assertEquals(asList(), of(1, 2, 3, 4, 5).limitUntil(i -> true).toList());
+        assertEquals(asList(), of(1, 2, 3, 4, 5).takeUntil(i -> true).toList());
     }
 
-    @Test
-    public void testLimitUntilClosed() {
-      //  assertEquals(asList(1, 2, 3, 4, 5), of(1, 2, 3, 4, 5).limitUntilClosed(i -> false).toList());
-        assertEquals(asList(1, 2, 3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i % 3 == 0).toList());
-        assertEquals(asList(1, 2,3), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 3).toList());
-        assertEquals(asList(1, 2, 3,4), of(1, 2, 3, 4, 5).limitUntilClosed(i -> i == 4).toList());
-        assertEquals(asList(1), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
 
-
-        assertEquals(asList(1), of(1, 2, 3, 4, 5).limitUntilClosed(i -> true).toList());
-    }
     @Test
     public void testLimitUntilWithNulls() {
 
 
-        assertThat(of(1, 2, null, 3, 4, 5).limitUntil(i -> false).toList(), equalTo(asList(1, 2, null, 3, 4, 5)));
+        assertThat(of(1, 2, null, 3, 4, 5).takeUntil(i -> false).toList(), equalTo(asList(1, 2, null, 3, 4, 5)));
     }
 
     @Test
@@ -1226,10 +1207,10 @@ public class BaseSequentialTest {
     }
 
     @Test
-    public void skipInvestigate() {
-        System.out.println("0" + of(1, 2, 3).skip(0).toList());
+    public void dropInvestigate() {
+        System.out.println("0" + of(1, 2, 3).drop(0).toList());
 
-        assertThat(of(1, 2, 3).skip(0).toList(), equalTo(Arrays.asList(1, 2, 3)));
+        assertThat(of(1, 2, 3).drop(0).toList(), equalTo(Arrays.asList(1, 2, 3)));
     }
 
     @Test
@@ -1255,32 +1236,32 @@ public class BaseSequentialTest {
     public void splitAtHeadImpl2() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
 
-        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
-        assertThat(t._2().skip(1).toList(), equalTo(Arrays.asList()));
+        assertThat(t._1().take(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._2().drop(1).toList(), equalTo(Arrays.asList()));
 
     }
 
     @Test
-    public void limitReplay() {
+    public void takeReplay() {
         final ReactiveSeq<Integer> t = of(1).map(i -> i).flatMap(i -> Stream.of(i));
-        assertThat(t.limit(1).toList(), equalTo(Arrays.asList(1)));
-        assertThat(t.limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t.take(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t.take(1).toList(), equalTo(Arrays.asList(1)));
     }
 
     @Test
     public void duplicateReplay() {
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = of(1).duplicate();
-        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().take(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().take(1).toList(), equalTo(Arrays.asList(1)));
     }
 
     @Test
     public void splitLimit() {
         ReactiveSeq<Integer> stream = of(1);
         final Tuple2<ReactiveSeq<Integer>, ReactiveSeq<Integer>> t = stream.duplicate();
-        assertThat(stream.limit(1).toList(), equalTo(Arrays.asList(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
-        assertThat(t._1().limit(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(stream.take(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().take(1).toList(), equalTo(Arrays.asList(1)));
+        assertThat(t._1().take(1).toList(), equalTo(Arrays.asList(1)));
     }
 
 
@@ -1350,7 +1331,7 @@ public class BaseSequentialTest {
     @Test
     public void flattenEmptyStream() throws Exception {
 
-        assertThat(this.<Integer>of(1, 2, 3, 4, 5, 5, 6, 8, 9, 10).flatMap(this::flatMapFun).limit(10).collect(Collectors.toList()),
+        assertThat(this.<Integer>of(1, 2, 3, 4, 5, 5, 6, 8, 9, 10).flatMap(this::flatMapFun).take(10).collect(Collectors.toList()),
                 equalTo(asList(2, 3, 4, 5, 6, 7, 0, 0, 0, 0)));
     }
 

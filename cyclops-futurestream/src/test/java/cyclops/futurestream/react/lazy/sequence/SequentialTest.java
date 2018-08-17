@@ -124,7 +124,7 @@ public class SequentialTest {
 	public void limitTime(){
 		List<Integer> result = LazyReact.sequentialBuilder().of(1,2,3,4,5,6)
 										.peek(i->sleep(i*100))
-										.limit(900,TimeUnit.MILLISECONDS)
+										.take(900,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -135,7 +135,7 @@ public class SequentialTest {
 	public void limitTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.limit(1000,TimeUnit.MILLISECONDS)
+										.take(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -146,7 +146,7 @@ public class SequentialTest {
 	    sleep(500);
 		List<Integer> result = LazyReact.sequentialBuilder().of(0,1,2,3,4,5,6)
 										.peek(i->sleep(i*300))
-										.skip(700,TimeUnit.MILLISECONDS)
+										.drop(700,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -157,7 +157,7 @@ public class SequentialTest {
 	public void skipTimeEmpty(){
 		List<Integer> result = ReactiveSeq.<Integer>of()
 										.peek(i->sleep(i*100))
-										.skip(1000,TimeUnit.MILLISECONDS)
+										.drop(1000,TimeUnit.MILLISECONDS)
 										.toList();
 
 
@@ -174,25 +174,25 @@ public class SequentialTest {
 	@Test
 	public void testSkipLast(){
 		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5)
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(1,2,3)));
 	}
 	@Test
 	public void testSkipLastEmpty(){
 		assertThat(LazyReact.sequentialBuilder().of()
-							.skipLast(2)
+							.dropRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test
 	public void testLimitLast(){
 		assertThat(LazyReact.sequentialBuilder().of(1,2,3,4,5)
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList(4,5)));
 	}
 	@Test
 	public void testLimitLastEmpty(){
 		assertThat(LazyReact.sequentialBuilder().of()
-							.limitLast(2)
+							.takeRight(2)
 							.collect(Collectors.toList()),equalTo(Arrays.asList()));
 	}
 	@Test

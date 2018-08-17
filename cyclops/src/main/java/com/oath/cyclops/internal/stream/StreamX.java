@@ -152,7 +152,7 @@ public class StreamX<T> extends SpliteratorBasedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return Tuple.tuple(
-                Tuple2._1().limitWhile(splitter), Tuple2._2().skipWhile(splitter));
+                Tuple2._1().takeWhile(splitter), Tuple2._2().dropWhile(splitter));
     }
 
     @Override

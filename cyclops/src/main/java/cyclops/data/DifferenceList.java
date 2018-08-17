@@ -565,35 +565,6 @@ public final class DifferenceList<T> implements Folds<T>,
         return (DifferenceList<T>)ImmutableList.super.takeRight(num);
     }
 
-    @Override
-    public DifferenceList<T> skip(long num) {
-        return (DifferenceList<T>)ImmutableList.super.skip(num);
-    }
-
-    @Override
-    public DifferenceList<T> skipWhile(Predicate<? super T> p) {
-        return (DifferenceList<T>)ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    public DifferenceList<T> skipUntil(Predicate<? super T> p) {
-        return (DifferenceList<T>)ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    public DifferenceList<T> limit(long num) {
-        return (DifferenceList<T>)ImmutableList.super.limit(num);
-    }
-
-    @Override
-    public DifferenceList<T> limitWhile(Predicate<? super T> p) {
-        return (DifferenceList<T>)ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    public DifferenceList<T> limitUntil(Predicate<? super T> p) {
-        return (DifferenceList<T>)ImmutableList.super.limitUntil(p);
-    }
 
     @Override
     public DifferenceList<T> intersperse(T value) {
@@ -603,16 +574,6 @@ public final class DifferenceList<T> implements Folds<T>,
     @Override
     public DifferenceList<T> shuffle() {
         return (DifferenceList<T>)ImmutableList.super.shuffle();
-    }
-
-    @Override
-    public DifferenceList<T> skipLast(int num) {
-        return (DifferenceList<T>)ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    public DifferenceList<T> limitLast(int num) {
-        return (DifferenceList<T>)ImmutableList.super.limitLast(num);
     }
 
     @Override

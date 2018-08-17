@@ -28,7 +28,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@AllArgsConstructor
 public class Vector<T> implements ImmutableList<T>,
                                   Serializable,
                                  Higher<vector,T> {
@@ -36,7 +35,13 @@ public class Vector<T> implements ImmutableList<T>,
     private final BAMT.NestedArray<T> root;
     private final BAMT.ActiveTail<T> tail;
     private final int size;
-    private final Supplier<Integer> hash = Memoize.memoizeSupplier(() -> calcHash());
+    private Supplier<Integer> hash = null;
+
+    public Vector(BAMT.NestedArray<T> root,BAMT.ActiveTail<T> tail, int size) {
+        this.root = root;
+        this.tail = tail;
+        this.size = size;
+    }
 
     @Override
     public Vector<T> plusAll(Iterable<? extends T> list) {
@@ -97,7 +102,19 @@ public class Vector<T> implements ImmutableList<T>,
   }
     @Override
     public Iterator<T> iterator(){
-        return stream().iterator();
+        return new Iterator<T>() {
+            int index =0;
+            @Override
+            public boolean hasNext() {
+                return index <size;
+            }
+
+            @Override
+            public T next() {
+                return getOrElse(index++,null);
+            }
+        };
+
     }
 
     @Override
@@ -215,15 +232,33 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     public ReactiveSeq<T> stream(){
-        return ReactiveSeq.concat(root.stream(),tail.stream());
+        return ReactiveSeq.fromIterable(this);
     }
 
     public Vector<T> filter(Predicate<? super T> pred){
-        return fromIterable(stream().filter(pred));
+        int newSize= 0;
+        BAMT.NestedArray<T> newRoot =new BAMT.Zero<>();
+        BAMT.ActiveTail<T> newTail = BAMT.ActiveTail.emptyTail();
+        for (T t : this) {
+            if(pred.test(t)) {
+                if (newTail.size() < 32) {
+                    newTail = newTail.append(t);
+                    newSize++;
+                } else {
+                    newRoot = newRoot.append(newTail);
+                    newTail = BAMT.ActiveTail.tail(t);
+                    newSize++;
+                }
+            }
+
+
+        }
+        return new Vector<>(newRoot,newTail,newSize);
     }
 
     public <R> Vector<R> map(Function<? super T, ? extends R> fn){
-        return fromIterable(stream().map(fn));
+
+        return new Vector<>(this.root.map(fn),tail.map(fn),size);
     }
 
     private Object writeReplace() {
@@ -373,7 +408,32 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public <U, R> Vector<R> zip(Iterable<? extends U> other, BiFunction<? super T, ? super U, ? extends R> zipper) {
-        return (Vector<R>) ImmutableList.super.zip(other,zipper);
+        int newSize= 0;
+        BAMT.NestedArray<R> newRoot =new BAMT.Zero<>();
+        BAMT.ActiveTail<R> newTail = BAMT.ActiveTail.emptyTail();
+        Iterator<? extends U> it = other.iterator();
+        for (T t : this) {
+            if(it.hasNext()) {
+                R r = zipper.apply(t, it.next());
+                if(newTail.size()<32) {
+                    newTail = newTail.append(r);
+                    newSize++;
+                }else{
+                    newRoot = newRoot.append(newTail);
+                    newTail = BAMT.ActiveTail.tail(r);
+                    newSize++;
+                }
+            }
+            else{
+                break;
+            }
+
+
+
+
+        }
+        return new Vector<R>(newRoot,newTail,newSize);
+       // return (Vector<R>) ImmutableList.super.zip(other,zipper);
     }
 
     @Override
@@ -498,36 +558,6 @@ public class Vector<T> implements ImmutableList<T>,
 
 
     @Override
-    public Vector<T> skip(long num) {
-        return (Vector<T>) ImmutableList.super.skip(num);
-    }
-
-    @Override
-    public Vector<T> skipWhile(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    public Vector<T> skipUntil(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    public Vector<T> limit(long num) {
-        return (Vector<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    public Vector<T> limitWhile(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    public Vector<T> limitUntil(Predicate<? super T> p) {
-        return (Vector<T>) ImmutableList.super.limitUntil(p);
-    }
-
-    @Override
     public Vector<T> intersperse(T value) {
         return (Vector<T>) ImmutableList.super.intersperse(value);
     }
@@ -537,15 +567,6 @@ public class Vector<T> implements ImmutableList<T>,
         return (Vector<T>) ImmutableList.super.shuffle();
     }
 
-    @Override
-    public Vector<T> skipLast(int num) {
-        return (Vector<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    public Vector<T> limitLast(int num) {
-        return (Vector<T>) ImmutableList.super.limitLast(num);
-    }
 
     @Override
     public Vector<T> shuffle(Random random) {
@@ -593,7 +614,14 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> updateAt(int pos, T value) {
-        return (Vector<T>)ImmutableList.super.updateAt(pos,value);
+        if(pos<0||pos>=size){
+            return this;
+        }
+        int tailStart = size-tail.size();
+        if(pos>=tailStart){
+            return new Vector<T>(root,tail.set(pos-tailStart,value),size);
+        }
+        return new Vector<>(root.match(z->z, p->p.set(pos,value)),tail,size);
     }
 
     @Override
@@ -604,7 +632,7 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     public <R> Vector<R> flatMap(Function<? super T, ? extends ImmutableList<? extends R>> fn){
-        return fromIterable(stream().concatMap(fn));
+        return concatMap(fn);
     }
 
     @Override
@@ -619,18 +647,38 @@ public class Vector<T> implements ImmutableList<T>,
 
   @Override
     public <R> Vector<R> concatMap(Function<? super T, ? extends Iterable<? extends R>> fn) {
-        return fromIterable(stream().concatMap(fn));
+      int newSize= 0;
+      BAMT.NestedArray<R> newRoot =new BAMT.Zero<>();
+      BAMT.ActiveTail<R> newTail = BAMT.ActiveTail.emptyTail();
+      for (T t : this) {
+          for(R r : fn.apply(t)) {
+
+              if(newTail.size()<32) {
+                  newTail = newTail.append(r);
+                  newSize++;
+              }else{
+                  newRoot = newRoot.append(newTail);
+                  newTail = BAMT.ActiveTail.tail(r);
+                  newSize++;
+              }
+
+          }
+      }
+      return new Vector<R>(newRoot,newTail,newSize);
     }
 
-    public Vector<T> set(int pos, T value){
+    public Either<Integer,Vector<T>> set(int pos, T value) {
+        if (pos < 0 || pos >= size) {
+            return Either.left(size);
+        }
+        return Either.right(updateAt(pos, value));
+    }
+
+    public Either<Integer,Vector<T>> delete(int pos){
         if(pos<0||pos>=size){
-            return this;
+            return Either.left(size);
         }
-        int tailStart = size-tail.size();
-        if(pos>=tailStart){
-            return new Vector<T>(root,tail.set(pos-tailStart,value),size);
-        }
-        return new Vector<>(root.match(z->z, p->p.set(pos,value)),tail,size);
+        return Either.right(removeAt(pos));
     }
 
     public int size(){
@@ -744,13 +792,44 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> prepend(T value) {
-        return unitStream(stream().prepend(value));
+        return prependAll(Arrays.asList(value));
     }
 
 
     @Override
     public Vector<T> prependAll(Iterable<? extends T> value) {
-        return unitStream(stream().prependAll(value));
+        int newSize= 0;
+        BAMT.NestedArray<T> newRoot =new BAMT.Zero<>();
+        BAMT.ActiveTail<T> newTail = BAMT.ActiveTail.emptyTail();
+
+        for (T t : value) {
+
+            if(newTail.size()<32) {
+                newTail = newTail.append(t);
+                newSize++;
+            }else{
+                newRoot = newRoot.append(newTail);
+                newTail = BAMT.ActiveTail.tail(t);
+                newSize++;
+            }
+
+
+        }
+        for (T t : this) {
+
+            if(newTail.size()<32) {
+                newTail = newTail.append(t);
+                newSize++;
+            }else{
+                newRoot = newRoot.append(newTail);
+                newTail = BAMT.ActiveTail.tail(t);
+                newSize++;
+            }
+
+
+        }
+
+        return new Vector<>(newRoot,newTail,newSize);
     }
 
     public Vector<T> append(T value) {
@@ -759,12 +838,23 @@ public class Vector<T> implements ImmutableList<T>,
 
     @Override
     public Vector<T> appendAll(Iterable<? extends T> value) {
-        Vector<T> vec = this;
+        int newSize= size;
+        BAMT.NestedArray<T> newRoot =root;
+        BAMT.ActiveTail<T> newTail = tail;
+        for (T t : value) {
 
-        for(T next : value){
-            vec = vec.plus(next);
+                if(newTail.size()<32) {
+                    newTail = newTail.append(t);
+                    newSize++;
+                }else{
+                    newRoot = newRoot.append(newTail);
+                    newTail = BAMT.ActiveTail.tail(t);
+                    newSize++;
+                }
+
+
         }
-        return vec;
+        return new Vector<>(newRoot,newTail,newSize);
     }
     public Vector<T> subList(int start, int end){
         return drop(start).take(end-start);
@@ -1001,6 +1091,11 @@ public class Vector<T> implements ImmutableList<T>,
     }
     @Override
     public int hashCode() {
+        if(hash==null){
+           Supplier<Integer> local = Memoize.memoizeSupplier(() -> calcHash());
+           hash = local;
+           return local.get();
+        }
        return hash.get();
     }
     public static  <T,R> Vector<R> tailRec(T initial, Function<? super T, ? extends Vector<? extends Either<T, R>>> fn) {

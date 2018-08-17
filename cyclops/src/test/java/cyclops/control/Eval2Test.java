@@ -334,19 +334,19 @@ public class Eval2Test {
 
 	@Test
     public void testZipEval() {
-        assertThat(just.zip(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
+        assertThat(just.zipWith(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
     }
     @Test
     public void testZipEvalLazy(){
-        assertTrue(Eval.later(()->10).zip(Eval.later(()->20),this::add) instanceof Later);
+        assertTrue(Eval.later(()->10).zipWith(Eval.later(()->20),this::add) instanceof Later);
     }
     @Test
     public void testZipPubEval() {
-        assertThat(just.zip(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
+        assertThat(just.zipWith(Eval.later(()->20),this::add),equalTo(Eval.now(30)));
     }
     @Test
     public void testZipPubEvalLazy(){
-        assertTrue(Eval.later(()->10).zip(this::add, Eval.later(()->20)) instanceof Eval.Module.FutureAlways);
+        assertTrue(Eval.later(()->10).zipWith(this::add, Eval.later(()->20)) instanceof Eval.Module.FutureAlways);
     }
 
 	private int add3(int a, int b, int c){

@@ -438,46 +438,6 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
     }
 
 
-    @Override
-    public VectorT<W,T> skip(final long num) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.skip(num);
-    }
-
-
-    @Override
-    public VectorT<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.skipWhile(p);
-    }
-
-
-    @Override
-    public VectorT<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.skipUntil(p);
-    }
-
-
-    @Override
-    public VectorT<W,T> limit(final long num) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.limit(num);
-    }
-
-
-    @Override
-    public VectorT<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.limitWhile(p);
-    }
-
-
-    @Override
-    public VectorT<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.limitUntil(p);
-    }
 
 
     @Override
@@ -498,20 +458,6 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
     public VectorT<W,T> shuffle() {
 
         return (VectorT<W,T>) FoldableTransformerSeq.super.shuffle();
-    }
-
-
-    @Override
-    public VectorT<W,T> skipLast(final int num) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.skipLast(num);
-    }
-
-
-    @Override
-    public VectorT<W,T> limitLast(final int num) {
-
-        return (VectorT<W,T>) FoldableTransformerSeq.super.limitLast(num);
     }
 
 
@@ -739,12 +685,12 @@ public class VectorT<W extends WitnessType<W>,T> implements To<VectorT<W,T>>,
 
     @Override
     public VectorT<W,T> drop(final long num) {
-        return skip(num);
+        return drop(num);
     }
 
     @Override
     public VectorT<W,T> take(final long num) {
-        return limit(num);
+        return take(num);
     }
 
 

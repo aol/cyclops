@@ -278,8 +278,11 @@ public interface Trampoline<T> extends Value<T>, Function0<T>,To<Trampoline<T>> 
         };
     }
 
+
     @Override
     default <R> R fold(Function<? super T, ? extends R> present, Supplier<? extends R> absent){
         return present.apply(get());
     }
+
+
 }

@@ -379,7 +379,7 @@ public class Tutorial {
 		System.out.println(SimpleReact.sequentialCommonBuilder()
 				.from(IntStream.range(0, 10000))
 				// .peek(System.out::println)
-				.skipUntil(stoppingStream).peek(System.out::println)
+				.dropUntil(stoppingStream).peek(System.out::println)
 				.toList()
 				.size());
 	}

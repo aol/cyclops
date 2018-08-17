@@ -351,36 +351,22 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
 
     @Override
-    public final ReactiveSeq<T> skipWhile(final Predicate<? super T> p) {
+    public final ReactiveSeq<T> dropWhile(final Predicate<? super T> p) {
         return createSeq(new SkipWhileOperator<>(source, p));
     }
 
 
     @Override
-    public final ReactiveSeq<T> limitWhile(final Predicate<? super T> p) {
+    public final ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
         return createSeq(new LimitWhileOperator<>(source, p));
     }
 
     @Override
-    public final ReactiveSeq<T> limitUntil(final Predicate<? super T> p) {
-        return limitWhile(p.negate());
-    }
-
-    @Override
-    public final ReactiveSeq<T> limitUntilClosed(final Predicate<? super T> p) {
-        return limitWhileClosed(p.negate());
+    public final ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
+        return takeWhile(p.negate());
     }
 
 
-    @Override
-    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new SkipWhileOperator<>(source, predicate));
-    }
-
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> predicate) {
-        return createSeq(new LimitWhileClosedOperator<>(source, predicate));
-    }
 
 
 
@@ -769,12 +755,12 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skip(final long time, final TimeUnit unit) {
+    public ReactiveSeq<T> drop(final long time, final TimeUnit unit) {
         return createSeq(new SkipWhileTimeOperator<>(source, time, unit));
     }
 
     @Override
-    public ReactiveSeq<T> limit(final long time, final TimeUnit unit) {
+    public ReactiveSeq<T> take(final long time, final TimeUnit unit) {
         return createSeq(new LimitWhileTimeOperator<>(source, time, unit));
 
     }
@@ -835,7 +821,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skipLast(final int num) {
+    public ReactiveSeq<T> dropRight(final int num) {
 
         if(num==1)
             return createSeq(new SkipLastOneOperator<>(source));
@@ -843,7 +829,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     }
 
     @Override
-    public ReactiveSeq<T> limitLast(final int num) {
+    public ReactiveSeq<T> takeRight(final int num) {
         if (num == 1)
             return createSeq(new LimitLastOneOperator<>(source));
         return createSeq(new LimitLastOperator<>(source, num < 0 ? 0 : num));
@@ -1242,7 +1228,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> splitBy(final Predicate<T> splitter) {
         final Tuple2<ReactiveSeq<T>, ReactiveSeq<T>> Tuple2 = duplicate();
         return Tuple.tuple(
-                Tuple2._1().limitWhile(splitter), Tuple2._2().skipWhile(splitter));
+                Tuple2._1().takeWhile(splitter), Tuple2._2().dropWhile(splitter));
     }
 
     @Override

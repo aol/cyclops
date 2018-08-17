@@ -261,58 +261,41 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeWhile(java.util.function.Predicate)
-     */
     @Override
     default Streamable<T> takeWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) IterableX.super.takeWhile(p);
+        return fromStream(stream().takeWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropWhile(java.util.function.Predicate)
-     */
     @Override
     default Streamable<T> dropWhile(final Predicate<? super T> p) {
 
-        return (Streamable<T>) IterableX.super.dropWhile(p);
+        return Streamable.fromStream(this.stream().dropWhile(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeUntil(java.util.function.Predicate)
-     */
+
     @Override
     default Streamable<T> takeUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) IterableX.super.takeUntil(p);
+        return Streamable.fromStream(this.stream().takeUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropUntil(java.util.function.Predicate)
-     */
     @Override
     default Streamable<T> dropUntil(final Predicate<? super T> p) {
 
-        return (Streamable<T>) IterableX.super.dropUntil(p);
+        return Streamable.fromStream(this.stream().dropUntil(p));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#dropRight(int)
-     */
+
     @Override
     default Streamable<T> dropRight(final int num) {
-
-        return (Streamable<T>) IterableX.super.dropRight(num);
+        return Streamable.fromStream(this.stream().dropRight(num));
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.traversable.Traversable#takeRight(int)
-     */
+
     @Override
     default Streamable<T> takeRight(final int num) {
-
-        return (Streamable<T>) IterableX.super.takeRight(num);
+        return Streamable.fromStream(this.stream().takeRight(num));
     }
 
     /**
@@ -329,7 +312,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
     }
 
     public static <T> Streamable<T> fromIterator(final Iterator<T> it) {
-
         return Streamable.fromIterable(() -> it);
     }
 
@@ -338,9 +320,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return of(t);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.lambda.monads.IterableFunctor#unitIterable(java.util.Iterator)
-     */
+
     @Override
     default <T> Streamable<T> unitIterable(final Iterable<T> it) {
         return Streamable.fromIterable(it);
@@ -1222,42 +1202,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(this.stream().skip(num));
     }
 
-    /**
-     *
-     *
-     * <pre>
-     * {@code
-     * assertThat(Streamable.of(4,3,6,7).sorted().skipWhile(i->i<6).toList(),equalTo(Arrays.asList(6,7)));
-     * }
-     * </pre>
-     *
-     * @param p
-     *            Predicate to skip while true
-     * @return Monad converted to Stream with elements skipped while predicate
-     *         holds
-     */
-    @Override
-    default Streamable<T> skipWhile(final Predicate<? super T> p) {
-        return fromStream(this.stream().skipWhile(p));
-    }
-
-    /**
-     *
-     *
-     * <pre>
-     * {@code assertThat(Streamable.of(4,3,6,7).skipUntil(i->i==6).toList(),equalTo(Arrays.asList(6,7)));}
-     * </pre>
-     *
-     *
-     * @param p
-     *            Predicate to skip until true
-     * @return Monad converted to Stream with elements skipped until predicate
-     *         holds
-     */
-    @Override
-    default Streamable<T> skipUntil(final Predicate<? super T> p) {
-        return fromStream(this.stream().skipUntil(p));
-    }
 
     /**
      *
@@ -1275,38 +1219,6 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(this.stream().limit(num));
     }
 
-    /**
-     *
-     *
-     * <pre>
-     * {@code assertThat(Streamable.of(4,3,6,7).sorted().limitWhile(i->i<6).toList(),equalTo(Arrays.asList(3,4)));}
-     * </pre>
-     *
-     * @param p
-     *            Limit while predicate is true
-     * @return Monad converted to Stream with limited elements
-     */
-    @Override
-    default Streamable<T> limitWhile(final Predicate<? super T> p) {
-        return fromStream(this.stream().limitWhile(p));
-    }
-
-    /**
-     *
-     *
-     * <pre>
-     * {@code assertThat(Streamable.of(4,3,6,7).limitUntil(i->i==6).toList(),equalTo(Arrays.asList(4,3))); }
-     * </pre>
-     *
-     * @param p
-     *            Limit until predicate is true
-     * @return Monad converted to Stream with limited elements
-     */
-    @Override
-    default Streamable<T> limitUntil(final Predicate<? super T> p) {
-        return fromStream(this.stream().limitUntil(p));
-
-    }
 
     /**
      * True if predicate matches all elements when Monad converted to a Stream
@@ -1689,9 +1601,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
         return fromStream(this.stream().reverse());
     }
 
-    /* (non-Javadoc)
-     * @see org.jooq.lambda.Seq#shuffle()
-     */
+
     @Override
     default Streamable<T> shuffle() {
         return fromStream(this.stream().shuffle());
@@ -1907,8 +1817,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param unit Time unit
      * @return Streamable that skips all elements until time period has elapsed
      */
-    default Streamable<T> skip(final long time, final TimeUnit unit) {
-        return fromStream(this.stream().skip(time, unit));
+    default Streamable<T> drop(final long time, final TimeUnit unit) {
+        return fromStream(this.stream().drop(time, unit));
     }
 
     /**
@@ -1917,7 +1827,7 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * {@code
      * List<Integer> result = Streamable.of(1,2,3,4,5,6)
     									.peek(i->sleep(i*100))
-    									.limit(1000,TimeUnit.MILLISECONDS)
+    									.take(1000,TimeUnit.MILLISECONDS)
     									.toList();
 
 
@@ -1928,40 +1838,8 @@ public interface Streamable<T> extends To<Streamable<T>>,
      * @param unit Time unit
      * @return Streamable that returns all elements until time period has elapsed
      */
-    default Streamable<T> limit(final long time, final TimeUnit unit) {
-        return fromStream(this.stream().limit(time, unit));
-    }
-
-    /**
-     * assertThat(Streamable.of(1,2,3,4,5)
-    						.skipLast(2)
-    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(1,2,3)));
-     *
-     * @param num
-     * @return
-     */
-    @Override
-    default Streamable<T> skipLast(final int num) {
-        return fromStream(this.stream().skipLast(num));
-    }
-
-    /**
-     * Limit results to the last x elements in a Streamable
-     * <pre>
-     * {@code
-     * 	assertThat(Streamable.of(1,2,3,4,5)
-    						.limitLast(2)
-    						.collect(CyclopsCollectors.toList()),equalTo(Arrays.asList(4,5)));
-     *
-     * }
-     * </pre>
-     *
-     * @param num of elements to return (last elements)
-     * @return Streamable limited to last num elements
-     */
-    @Override
-    default Streamable<T> limitLast(final int num) {
-        return fromStream(this.stream().limitLast(num));
+    default Streamable<T> take(final long time, final TimeUnit unit) {
+        return fromStream(this.stream().take(time, unit));
     }
 
     /**

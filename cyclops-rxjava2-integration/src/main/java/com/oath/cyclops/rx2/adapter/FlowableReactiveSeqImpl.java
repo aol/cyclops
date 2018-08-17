@@ -278,7 +278,7 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> skipWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> dropWhile(Predicate<? super T> p) {
         return flux(flowable.skipWhile(Functions.rxPredicate(p)));
     }
 
@@ -288,23 +288,15 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
     }
 
     @Override
-    public ReactiveSeq<T> limitWhile(Predicate<? super T> p) {
+    public ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
         return flux(Spouts.from(flowable).takeWhile(p));
     }
-    @Override
-    public ReactiveSeq<T> limitWhileClosed(Predicate<? super T> p) {
-        return flux(flowable.takeWhile(Functions.rxPredicate(p)));
-    }
 
     @Override
-    public ReactiveSeq<T> limitUntil(Predicate<? super T> p) {
-       return flux(Spouts.from(flowable).limitUntil(p));
+    public ReactiveSeq<T> takeUntil(Predicate<? super T> p) {
+       return flux(Spouts.from(flowable).takeUntil(p));
     }
 
-    @Override
-    public ReactiveSeq<T> limitUntilClosed(Predicate<? super T> p) {
-        return flux(flowable.takeUntil(Functions.rxPredicate(p)));
-    }
 
     @Override
     public ReactiveSeq<T> parallel() {
@@ -566,22 +558,22 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
 
     @Override
-    public ReactiveSeq<T> skip(long time, TimeUnit unit) {
+    public ReactiveSeq<T> drop(long time, TimeUnit unit) {
         return flux(flowable.skip(time,unit));
     }
 
     @Override
-    public ReactiveSeq<T> limit(long time, TimeUnit unit) {
+    public ReactiveSeq<T> take(long time, TimeUnit unit) {
         return flux(flowable.take(time,unit));
     }
 
     @Override
-    public ReactiveSeq<T> skipLast(int num) {
+    public ReactiveSeq<T> dropRight(int num) {
         return flux(flowable.skipLast(num));
     }
 
     @Override
-    public ReactiveSeq<T> limitLast(int num) {
+    public ReactiveSeq<T> takeRight(int num) {
         return flux(flowable.takeLast(num));
     }
 
@@ -675,10 +667,6 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
         return flux(flowable.repeat(times));
     }
 
-    @Override
-    public ReactiveSeq<T> skipWhileClosed(Predicate<? super T> predicate) {
-        return flux(Spouts.from(flowable).skipWhileClosed(predicate));
-    }
 
     @Override
     public ReactiveSeq<T> changes() {

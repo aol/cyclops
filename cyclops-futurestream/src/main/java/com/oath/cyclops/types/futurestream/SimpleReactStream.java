@@ -316,8 +316,8 @@ public interface SimpleReactStream<U> extends BaseSimpleReactStream<U>, Blocking
      * @param s Stream that will skip the emission of values from this stream
      * @return Next stage in the Stream but with all values skipped until the provided Stream starts emitting
      */
-    default <T> ReactiveSeq<U> skipUntil(final SimpleReactStream<T> s) {
-        return EagerFutureStreamFunctions.skipUntil(this, s);
+    default <T> ReactiveSeq<U> dropUntil(final SimpleReactStream<T> s) {
+        return EagerFutureStreamFunctions.dropUntil(this, s);
     }
 
     /**

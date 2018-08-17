@@ -431,47 +431,6 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
     }
 
 
-    @Override
-    public LazySeqT<W,T> skip(final long num) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.skip(num);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> skipWhile(final Predicate<? super T> p) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.skipWhile(p);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> skipUntil(final Predicate<? super T> p) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.skipUntil(p);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> limit(final long num) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.limit(num);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> limitWhile(final Predicate<? super T> p) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.limitWhile(p);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> limitUntil(final Predicate<? super T> p) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.limitUntil(p);
-    }
-
 
     @Override
     public LazySeqT<W,T> intersperse(final T value) {
@@ -493,19 +452,6 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
         return (LazySeqT<W,T>) FoldableTransformerSeq.super.shuffle();
     }
 
-
-    @Override
-    public LazySeqT<W,T> skipLast(final int num) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.skipLast(num);
-    }
-
-
-    @Override
-    public LazySeqT<W,T> limitLast(final int num) {
-
-        return (LazySeqT<W,T>) FoldableTransformerSeq.super.limitLast(num);
-    }
 
 
     @Override
@@ -733,12 +679,12 @@ public class LazySeqT<W extends WitnessType<W>,T> implements To<LazySeqT<W,T>>,
 
     @Override
     public LazySeqT<W,T> drop(final long num) {
-        return skip(num);
+        return drop(num);
     }
 
     @Override
     public LazySeqT<W,T> take(final long num) {
-        return limit(num);
+        return take(num);
     }
 
 

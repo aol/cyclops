@@ -11,13 +11,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.oath.cyclops.async.QueueFactories;
+import com.oath.cyclops.types.reactive.ReactiveSubscriber;
+import cyclops.futurestream.FutureStream;
+import cyclops.futurestream.LazyReact;
 import cyclops.futurestream.SimpleReact;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -49,6 +56,41 @@ public class TopicTest {
 				is(" hello world"));
 	}
 
+    @Test
+    public void concurrentSub(){
+        ReactiveSeq<Integer> initialStream = ReactiveSeq.of(1,2,3,4,5,6);
+
+
+
+        FutureStream<Integer> futureStream = FutureStream.builder()
+                                                         .fromStream(initialStream)
+                                                         .map(v -> v -1);
+        Queue<Integer> queue= QueueFactories.<Integer>boundedNonBlockingQueue(1000).build();
+        Topic<Integer> topic = new Topic<Integer>(queue,QueueFactories.<Integer>boundedNonBlockingQueue(1000));
+
+        ReactiveSeq<Integer> s2 = topic.stream();
+        ReactiveSeq<Integer> s1 = topic.stream();
+
+        Thread t = new Thread(()->{
+            topic.fromStream(futureStream);
+            topic.close();
+        });
+        t.start();
+
+
+        CompletableFuture future1 = CompletableFuture.runAsync(() -> s1.forEach(v -> System.out.println("1 -> " + v)));
+        CompletableFuture future2 = CompletableFuture.runAsync(() -> s2.forEach(v -> System.out.println("2 -> " + v)));
+
+        try {
+
+            future1.get();
+            future2.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
 	@Test
 	public void multipleSubscribersGetSameMessagesSimpleReact() throws InterruptedException, ExecutionException {
 		Topic<String> topic = new Topic<>(new Queue<>());

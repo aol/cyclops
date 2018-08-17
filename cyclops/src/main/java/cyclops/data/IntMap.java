@@ -535,35 +535,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<T>) ImmutableList.super.takeRight(num);
     }
 
-    @Override
-    public IntMap<T> skip(long num) {
-        return (IntMap<T>) ImmutableList.super.skip(num);
-    }
-
-    @Override
-    public IntMap<T> skipWhile(Predicate<? super T> p) {
-        return (IntMap<T>) ImmutableList.super.skipWhile(p);
-    }
-
-    @Override
-    public IntMap<T> skipUntil(Predicate<? super T> p) {
-        return (IntMap<T>) ImmutableList.super.skipUntil(p);
-    }
-
-    @Override
-    public IntMap<T> limit(long num) {
-        return (IntMap<T>) ImmutableList.super.limit(num);
-    }
-
-    @Override
-    public IntMap<T> limitWhile(Predicate<? super T> p) {
-        return (IntMap<T>) ImmutableList.super.limitWhile(p);
-    }
-
-    @Override
-    public IntMap<T> limitUntil(Predicate<? super T> p) {
-        return (IntMap<T>) ImmutableList.super.limitUntil(p);
-    }
 
     @Override
     public IntMap<T> intersperse(T value) {
@@ -573,16 +544,6 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
     @Override
     public IntMap<T> shuffle() {
         return (IntMap<T>) ImmutableList.super.shuffle();
-    }
-
-    @Override
-    public IntMap<T> skipLast(int num) {
-        return (IntMap<T>) ImmutableList.super.skipLast(num);
-    }
-
-    @Override
-    public IntMap<T> limitLast(int num) {
-        return (IntMap<T>) ImmutableList.super.limitLast(num);
     }
 
     @Override
