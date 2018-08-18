@@ -21,6 +21,9 @@ public final class FlowableIO<T> implements IO<T> {
     public static <T> IO<T> of(Flowable<T> flowable){
         return new FlowableIO<>(flowable);
     }
+    public static <T> IO<T> of(Future<T> f){
+        return of(Flowable.fromPublisher(f));
+    }
     public static <T> IO<T> just(T s){
         return new FlowableIO<T>(Flowable.just(s));
     }

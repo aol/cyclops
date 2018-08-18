@@ -683,7 +683,9 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
     @Override
     public ReactiveSeq<T> onEmptyGet(final Supplier<? extends T> supplier) {
-        return createSeq(new OnEmptyOperator<T>(source, supplier)).flatMap(a->ReactiveSeq.of(a));
+
+
+         return createSeq(new OnEmptyOperator<T>(source, supplier)).flatMap(a->ReactiveSeq.of(a));
     }
 
     @Override
