@@ -34,7 +34,7 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                     return;
                 super.request(n);
 
-                 upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
+                 upstream[0].request(n );
 
 
             }
@@ -66,10 +66,12 @@ public class CollectAllOperator<T,A,R> extends BaseOperator<T,R> {
                     try {
 
                         onNext.accept(collector.finisher().apply(nextA));
+
                     }catch(Throwable t){
                         onError.accept(t);
                     }
                     onComplete.run();
+
                 });
         return sub;
     }
