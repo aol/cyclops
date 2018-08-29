@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 /**
  *  Either left or right.
  *
- * 'Right' (or right type) biased disjunct union. Often called Either, but in a generics heavy Java world Either is half the length of Either.
+ * 'Right' (or right type) biased disjunct union.
  *
  *  No 'projections' are provided, swap() and leftXXXX alternative methods can be used instead.
  *
