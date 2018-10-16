@@ -13,7 +13,7 @@ public interface SetView<T> extends Set<T>
   @Override
   @Deprecated
   default boolean removeIf(Predicate<? super T> filter) {
-    return false;
+      throw new UnsupportedOperationException();
   }
 
   @Override
@@ -41,6 +41,7 @@ public interface SetView<T> extends Set<T>
 
 
   @Override
+  @Deprecated
   void clear();
 
   @AllArgsConstructor
@@ -76,12 +77,12 @@ public interface SetView<T> extends Set<T>
 
     @Override
     public boolean add(T t) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean remove(Object o) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -96,24 +97,24 @@ public interface SetView<T> extends Set<T>
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
 
 
     @Override
     public boolean removeAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException();
     }
 
 

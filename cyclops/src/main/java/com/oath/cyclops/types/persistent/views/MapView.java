@@ -17,7 +17,7 @@ public interface MapView<K,V> extends Map<K,V>
   @Override
   @Deprecated
    default V putIfAbsent(K key, V value){
-    return value;
+      throw new UnsupportedOperationException();
   }
 
   @Override
@@ -31,61 +31,61 @@ public interface MapView<K,V> extends Map<K,V>
   @Override
   @Deprecated
   default V replace(K key, V value){
-    return value;
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction){
-    return mappingFunction.apply(key);
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default  V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction){
-    return remappingFunction.apply(key,get(key));
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction){
-    return remappingFunction.apply(key,get(key));
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
    default V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction){
-    return remappingFunction.apply(get(key),value);
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default V put(K key, V value){
-     return value;
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default V remove(Object key){
-    return get(key);
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default void clear(){
-
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default void putAll(Map<? extends K, ? extends V> m){
-
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function){
-
+      throw new UnsupportedOperationException();
   }
 
   @AllArgsConstructor
@@ -117,40 +117,40 @@ public interface MapView<K,V> extends Map<K,V>
 
     @Override
     public boolean remove(Object key, Object value) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean replace(K key, V oldValue, V newValue) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
-
+        throw new UnsupportedOperationException();
     }
     @Override
     @Deprecated
     public V put(K key, V value){
-      return value;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public V remove(Object key){
-      return get(key);
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public void clear(){
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public void putAll(Map<? extends K, ? extends V> m){
-
+        throw new UnsupportedOperationException();
     }
 
 

@@ -17,9 +17,11 @@ import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -245,15 +247,57 @@ public abstract class BaseImmutableListTest extends AbstractIterableXTest {
       assertThat(list.size(),equalTo(3));
       assertThat(list,equalTo(Arrays.asList(1,2,3)));
 
-      assertThat(list.add(1),equalTo(false));
-      assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
-      assertThat(list.addAll(1,Arrays.asList(1)),equalTo(false));
+
       assertThat(list.contains(2),equalTo(true));
       assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
       assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-      assertThat(list.remove(1),equalTo(2));
-      assertThat(list.remove((Object)1),equalTo(false));
-      assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void addView(){
+        List<Integer> list = of(1,2,3).listView();
+
+
+        assertThat(list.add(1),equalTo(false));
+
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void addAllView(){
+        List<Integer> list = of(1,2,3).listView();
+        assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
+        assertThat(list.contains(2),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeView(){
+        List<Integer> list = of(1,2,3).listView();
+
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeObjectView(){
+        List<Integer> list = of(1,2,3).listView();
+
+
+        assertThat(list.remove((Object)1),equalTo(false));
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeAllView(){
+        List<Integer> list = of(1,2,3).listView();
+
+
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
     }
   @Test
   public void mergeMap(){
