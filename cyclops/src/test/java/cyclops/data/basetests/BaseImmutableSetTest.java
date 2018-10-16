@@ -344,7 +344,7 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     assertThat(list.contains(2),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-   
+
   }
 
   @Test(expected = UnsupportedOperationException.class)

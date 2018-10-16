@@ -88,7 +88,7 @@ public interface ListView<T> extends List<T>
 
     @Override
     public boolean add(T t) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -108,12 +108,12 @@ public interface ListView<T> extends List<T>
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
