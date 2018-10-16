@@ -270,10 +270,42 @@ public abstract  class BaseImmutableMapTest {
     assertThat(map.size(),equalTo(2));
     assertThat(map,equalTo(hashMap));
 
-    assertThat(map.put(1,"hello"),equalTo("hello"));
 
-    assertThat(map.remove(1),equalTo("hello"));
-    assertThat(map.remove((Object)1),equalTo("hello"));
 
   }
+    @Test(expected =  UnsupportedOperationException.class)
+    public void putViewTest(){
+        Map<Integer,String> map = of(1,"hello",2,"world").mapView();
+        Map<Integer,String> hashMap = of(1,"hello",2,"world").mapView();
+
+
+        assertThat(map.put(1,"hello"),equalTo("hello"));
+
+
+
+    }
+    @Test(expected =  UnsupportedOperationException.class)
+    public void removeViewTest(){
+        Map<Integer,String> map = of(1,"hello",2,"world").mapView();
+        Map<Integer,String> hashMap = of(1,"hello",2,"world").mapView();
+
+
+
+
+        assertThat(map.remove(1),equalTo("hello"));
+
+
+    }
+    @Test(expected =  UnsupportedOperationException.class)
+    public void removeObjectViewTest(){
+        Map<Integer,String> map = of(1,"hello",2,"world").mapView();
+        Map<Integer,String> hashMap = of(1,"hello",2,"world").mapView();
+
+
+
+
+
+        assertThat(map.remove((Object)1),equalTo("hello"));
+
+    }
 }
