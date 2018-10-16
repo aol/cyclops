@@ -37,19 +37,19 @@ public interface ListView<T> extends List<T>
   @Override
   @Deprecated
   default void replaceAll(UnaryOperator<T> operator) {
-
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default void sort(Comparator<? super T> c) {
-
+      throw new UnsupportedOperationException();
   }
 
   @Override
   @Deprecated
   default boolean removeIf(Predicate<? super T> filter) {
-    return false;
+      throw new UnsupportedOperationException();
   }
 
   @Override
@@ -93,7 +93,7 @@ public interface ListView<T> extends List<T>
 
     @Override
     public boolean remove(Object o) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -118,17 +118,17 @@ public interface ListView<T> extends List<T>
 
     @Override
     public boolean removeAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -138,17 +138,17 @@ public interface ListView<T> extends List<T>
 
     @Override
     public T set(int index, T element) {
-      return element;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void add(int index, T element) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public T remove(int index) {
-      return get(index);
+        throw new UnsupportedOperationException();
     }
 
 

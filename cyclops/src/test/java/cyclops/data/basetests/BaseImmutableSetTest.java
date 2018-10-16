@@ -339,15 +339,58 @@ public abstract class BaseImmutableSetTest extends AbstractIterableXTest {
     assertThat(list.size(),equalTo(3));
     assertThat(list,equalTo(new java.util.HashSet<>(Arrays.asList(1,2,3))));
 
-    assertThat(list.add(1),equalTo(false));
-    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
 
     assertThat(list.contains(2),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-    assertThat(list.remove(1),equalTo(false));
-    assertThat(list.remove((Object)1),equalTo(false));
-    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+   
   }
+
+  @Test(expected = UnsupportedOperationException.class)
+  public void addView(){
+        Set<Integer> list = of(1,2,3).setView();
+
+
+        assertThat(list.add(1),equalTo(false));
+
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void addAllView(){
+        Set<Integer> list = of(1,2,3).setView();
+          assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
+        assertThat(list.contains(2),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeView(){
+        Set<Integer> list = of(1,2,3).setView();
+
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeObjectView(){
+        Set<Integer> list = of(1,2,3).setView();
+
+
+        assertThat(list.remove((Object)1),equalTo(false));
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeAllView(){
+        Set<Integer> list = of(1,2,3).setView();
+
+
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
 
 }

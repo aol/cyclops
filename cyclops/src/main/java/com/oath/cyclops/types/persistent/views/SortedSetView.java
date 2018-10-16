@@ -16,7 +16,7 @@ public interface SortedSetView<T> extends SortedSet<T>
   @Override
   @Deprecated
   default boolean removeIf(Predicate<? super T> filter) {
-    return false;
+      throw new UnsupportedOperationException();
   }
 
   @Override
@@ -44,6 +44,7 @@ public interface SortedSetView<T> extends SortedSet<T>
 
 
   @Override
+  @Deprecated
   void clear();
 
   @AllArgsConstructor
@@ -99,24 +100,24 @@ public interface SortedSetView<T> extends SortedSet<T>
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
 
 
     @Override
     public boolean removeAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException();
     }
 
 
