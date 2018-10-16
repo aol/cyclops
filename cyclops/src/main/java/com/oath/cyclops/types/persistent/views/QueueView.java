@@ -44,10 +44,11 @@ public interface QueueView<T> extends Queue<T>
   @Override
   @Deprecated
   default boolean removeIf(Predicate<? super T> filter) {
-    return false;
+      throw new UnsupportedOperationException();
   }
 
   @Override
+  @Deprecated
   void clear();
 
   @AllArgsConstructor
@@ -83,12 +84,12 @@ public interface QueueView<T> extends Queue<T>
 
     @Override
     public boolean add(T t) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean offer(T t) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -103,7 +104,7 @@ public interface QueueView<T> extends Queue<T>
 
     @Override
     public boolean remove(Object o) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -118,22 +119,22 @@ public interface QueueView<T> extends Queue<T>
 
     @Override
     public boolean addAll(Collection<? extends T> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-      return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void clear() {
-
+        throw new UnsupportedOperationException();
     }
 
 
