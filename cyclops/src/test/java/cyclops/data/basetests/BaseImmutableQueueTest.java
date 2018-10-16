@@ -9,9 +9,11 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -145,18 +147,14 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
         assertFalse(of(1,2).onEmptyTry(()->new RuntimeException("hello")).isFailure());
     }
   @Test
-  public void queueViewTest(){
-    Queue<Integer> list = of(1,2,3).queueView();
-    assertThat(list.size(),equalTo(3));
-    assertThat(list.toArray(),equalTo(BankersQueue.of(1,2,3).toArray()));
-    assertThat(list.add(1),equalTo(false));
-    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
-    assertThat(list.contains(2),equalTo(true));
-    assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
-    assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-    assertThat(list.remove(1),equalTo(false));
-    assertThat(list.remove((Object)1),equalTo(false));
-    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+  public void queueViewTest() {
+      Queue<Integer> list = of(1, 2, 3).queueView();
+      assertThat(list.size(), equalTo(3));
+      assertThat(list.toArray(), equalTo(BankersQueue.of(1, 2, 3).toArray()));
+
+      assertThat(list.contains(2), equalTo(true));
+      assertThat(list.containsAll(Arrays.asList(2, 3)), equalTo(true));
+      assertThat(list.containsAll(Arrays.asList(2, 3, 4)), equalTo(false));
   }
   @Test
   public void viewTest(){
@@ -164,14 +162,58 @@ public abstract class BaseImmutableQueueTest extends AbstractIterableXTest {
     assertThat(list.size(),equalTo(3));
 
 
-    assertThat(list.add(1),equalTo(false));
-    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
 
     assertThat(list.contains(2),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-    assertThat(list.remove(1),equalTo(false));
-    assertThat(list.remove((Object)1),equalTo(false));
-    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+
   }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void addView(){
+        Queue<Integer> list = of(1,2,3).queueView();
+
+
+        assertThat(list.add(1),equalTo(false));
+
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void addAllView(){
+        Queue<Integer> list = of(1,2,3).queueView();
+        assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
+
+        assertThat(list.contains(2),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
+        assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeView(){
+        Queue<Integer> list = of(1,2,3).queueView();
+
+        assertThat(list.remove(1),equalTo(false));
+        assertThat(list.remove((Object)1),equalTo(false));
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeObjectView(){
+        Queue<Integer> list = of(1,2,3).queueView();
+
+
+        assertThat(list.remove((Object)1),equalTo(false));
+
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void removeAllView(){
+        Queue<Integer> list = of(1,2,3).queueView();
+
+
+        assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+    }
+
 }

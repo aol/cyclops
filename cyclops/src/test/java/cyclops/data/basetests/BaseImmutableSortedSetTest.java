@@ -170,30 +170,23 @@ public abstract class BaseImmutableSortedSetTest extends BaseImmutableSetTest {
     assertThat(list.size(),equalTo(3));
     assertThat(list,equalTo(new java.util.HashSet<>(Arrays.asList(1,2,3))));
 
-    assertThat(list.add(1),equalTo(false));
-    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
 
     assertThat(list.contains(2),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-    assertThat(list.remove(1),equalTo(false));
-    assertThat(list.remove((Object)1),equalTo(false));
-    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+
   }
+
   @Test
   public void sortedSetViewTest(){
     SortedSet<Integer> list = of(1,2,3).sortedSetView();
     assertThat(list.size(),equalTo(3));
     assertThat(list,equalTo(new java.util.TreeSet<>(Arrays.asList(1,2,3))));
 
-    assertThat(list.add(1),equalTo(false));
-    assertThat(list.addAll(Arrays.asList(1)),equalTo(false));
 
     assertThat(list.contains(2),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3)),equalTo(true));
     assertThat(list.containsAll(Arrays.asList(2,3,4)),equalTo(false));
-    assertThat(list.remove(1),equalTo(false));
-    assertThat(list.remove((Object)1),equalTo(false));
-    assertThat(list.removeAll(Arrays.asList(1)),equalTo(false));
+
   }
 }
