@@ -7,6 +7,8 @@
 
 * [Documentation](https://github.com/aol/cyclops-react/wiki) (work in progress for Cyclops X)
 
+* [Integration modules](https://github.com/aol/cyclops-integration)
+
 # What's new in Cyclops X (cyclops 10.0.0)
 
 ![cyclops-data-types](https://user-images.githubusercontent.com/9964792/37656704-b4266d7a-2c40-11e8-84d9-23a4a77e0341.jpeg)
