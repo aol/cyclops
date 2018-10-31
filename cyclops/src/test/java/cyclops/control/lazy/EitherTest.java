@@ -35,6 +35,41 @@ import static org.junit.Assert.*;
 
 public class EitherTest {
 
+    int called = 0;
+    @Before
+    public void setup(){
+        called =0;
+    }
+    @Test
+    public void later(){
+
+
+        LazyEither<Object, Integer> e = LazyEither.later(() -> {
+            called++;
+            return Either.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(1));
+    }
+    @Test
+    public void always(){
+
+
+        LazyEither<Object, Integer> e = LazyEither.always(() -> {
+            called++;
+            return Either.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(2));
+    }
 
     @Test
     public void filterAlt(){
