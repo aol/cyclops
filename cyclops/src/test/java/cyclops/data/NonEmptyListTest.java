@@ -3,6 +3,7 @@ package cyclops.data;
 
 
 import com.oath.cyclops.types.traversable.IterableX;
+import cyclops.companion.Semigroups;
 import cyclops.control.Option;
 import cyclops.data.basetests.BaseImmutableListTest;
 import cyclops.data.tuple.Tuple;
@@ -41,6 +42,14 @@ public class NonEmptyListTest extends BaseImmutableListTest {
             return NonEmptyList.of(values[0]);
 
         return NonEmptyList.of(values[0], Arrays.copyOfRange(values,1,values.length));
+    }
+
+
+    @Test
+    public void reduceTest() {
+        assertThat(NonEmptyList.of(1, 2, 3, 4)
+            .reduce(Semigroups.intSum),equalTo(10));
+
     }
     @Test
     public void takeMinusOne(){
