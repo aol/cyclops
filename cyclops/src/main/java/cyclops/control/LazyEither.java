@@ -359,6 +359,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return new LazyEither.Lazy<>(lazy);
     }
 
+    static <LT,RT> LazyEither<LT,RT> later(Supplier<Either<LT,RT>> lazy){
+        return new LazyEither.Lazy<>(Eval.later(lazy).map(LazyEither::fromEither));
+    }
+    static <LT,RT> LazyEither<LT,RT> always(Supplier<Either<LT,RT>> lazy){
+        return new LazyEither.Lazy<>(Eval.always(lazy).map(LazyEither::fromEither));
+    }
+
     static <T> LazyEither<Throwable,T> fromFuture(Future<T> future){
         return fromLazy(Eval.<LazyEither<Throwable,T>>fromFuture(
                         future.map(e->e!=null? LazyEither.<Throwable,T>right(e) : LazyEither.<Throwable,T>left(new NoSuchElementException()))
