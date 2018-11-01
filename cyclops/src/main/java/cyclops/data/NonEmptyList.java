@@ -267,6 +267,17 @@ public class NonEmptyList<T> implements Deconstruct2<T,ImmutableList<T>>,
         return lazySeq().foldRight(zero,f);
 
     }
+
+    public  T reduce(BiFunction<? super T, ? super T, ? extends T> f){
+        Iterator<T> it = iterator();
+        T res = it.next();
+
+        while(it.hasNext()){
+            T next = it.next();
+            res= f.apply(res,next);
+        }
+        return res;
+    }
     public <R> R foldLeft(R zero,BiFunction<R, ? super T, R> f) {
         return lazySeq().foldLeft(zero,f);
     }
