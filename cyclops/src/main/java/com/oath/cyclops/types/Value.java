@@ -62,11 +62,8 @@ public interface Value<T> extends SealedOr<T>, Iterable<T>, Publisher<T> {
     default T fold(final Monoid<T> reducer) {
         return orElse(reducer.zero());
     }
-    /* An Iterator over the list returned from toList()
-         *
-         *  (non-Javadoc)
-         * @see java.lang.Iterable#iterator()
-         */
+
+
     @Override
     default Iterator<T> iterator() {
         boolean[] complete = {false};
