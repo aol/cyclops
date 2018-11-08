@@ -110,12 +110,12 @@ import java.util.stream.Stream;
  * @param <RT> Right type
  */
 public interface Either<LT, RT> extends To<Either<LT, RT>>,
-                                     BiTransformable<LT, RT>,
-                                     Sealed2<LT, RT>,Value<RT>,
-                                     OrElseValue<RT,Either<LT, RT>>,
-                                     Unit<RT>, Transformable<RT>, Filters<RT>,
-                                     Serializable,
-                                     Higher2<either, LT, RT> {
+                                         BiTransformable<LT, RT>,
+                                         Sealed2<LT, RT>,Value<RT>,
+                                         OrElseValue<RT,Either<LT, RT>>,
+                                         Unit<RT>, Transformable<RT>, Filters<RT>,
+                                         Serializable,
+                                         Higher2<either, LT, RT> {
 
 
     public static  <L,T,R> Either<L,R> tailRec(T initial, Function<? super T, ? extends Either<L,? extends Either<T, R>>> fn){
