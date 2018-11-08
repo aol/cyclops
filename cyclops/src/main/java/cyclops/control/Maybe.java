@@ -25,6 +25,7 @@ import org.reactivestreams.Subscription;
 import java.io.InvalidObjectException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -123,13 +124,13 @@ public interface Maybe<T> extends Option<T> {
      * @return A reactive CompletableMaybe
      */
     static <T> CompletableMaybe<T,T> maybe(){
-        Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
-        return new Maybe.CompletableMaybe<T, T>(c,fromFuture(Future.fromPublisher(c)));
+        CompletableFuture<T> c = new CompletableFuture<T>();
+        return new Maybe.CompletableMaybe<T, T>(c,fromFuture(Future.of(c)));
     }
     @AllArgsConstructor
     static class CompletableMaybe<ORG,T2> implements Maybe<T2>, Completable<ORG> {
 
-        public final Completable.CompletablePublisher<ORG> complete;
+        public final CompletableFuture<ORG> complete;
         public final Maybe<T2> maybe;
 
         private Object writeReplace() {
@@ -181,7 +182,7 @@ public interface Maybe<T> extends Option<T> {
 
         @Override
         public boolean isFailed() {
-            return complete.isFailed();
+            return complete.isCompletedExceptionally();
         }
 
         @Override
@@ -309,6 +310,8 @@ public interface Maybe<T> extends Option<T> {
      * @return Maybe populated with first value from Publisher (Maybe.zero if Publisher zero)
      */
     public static <T> Maybe<T> fromPublisher(final Publisher<T> pub) {
+        if(pub instanceof Maybe)
+            return (Maybe<T>)pub;
         return fromFuture(Future.fromPublisher(pub));
     }
 
@@ -1043,11 +1046,6 @@ public interface Maybe<T> extends Option<T> {
         }
 
 
-        public Maybe<T> resolve() {
-
-            return lazy.get()
-                    .fold(Maybe::just,Maybe::nothing);
-        }
         @Override
         public <R> Maybe<R> flatMap(final Function<? super T, ? extends MonadicValue<? extends R>> mapper) {
             return Maybe.fromLazy(lazy.map(m->m.flatMap(mapper)));
@@ -1067,6 +1065,12 @@ public interface Maybe<T> extends Option<T> {
             }
             return maybe.fold(some,none);
         }
+
+        @Override
+        public ReactiveSeq<T> stream() {
+            return Spouts.from(this);
+        }
+
         @Override
         public final void subscribe(final Subscriber<? super T> sub) {
             lazy.subscribe(new Subscriber<Maybe<T>>() {

@@ -9,6 +9,7 @@ import cyclops.companion.Semigroups;
 import cyclops.data.LazySeq;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 
@@ -176,8 +178,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return
      */
     static <RT> CompletableEither<RT,RT> either(){
-        Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
-        return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
+        CompletableFuture<RT> c = new CompletableFuture<RT>();
+        return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.of(c)));
     }
 
     default Either<LT,RT> toEither(){
@@ -187,7 +189,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     @AllArgsConstructor
     static class CompletableEither<ORG,RT> implements LazyEither<Throwable,RT>, Completable<ORG> {
 
-        public final Completable.CompletablePublisher<ORG> complete;
+        public final CompletableFuture<ORG> complete;
         public final LazyEither<Throwable,RT> either;
 
 
@@ -214,7 +216,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
         @Override
         public boolean isFailed() {
-            return complete.isFailed();
+            return complete.isCompletedExceptionally();
         }
 
         @Override
@@ -560,7 +562,39 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return Either constructed from the supplied Publisher
      */
     public static <T> LazyEither<Throwable, T> fromPublisher(final Publisher<T> pub) {
-        return fromFuture(Future.fromPublisher(pub));
+
+        if(pub instanceof LazyEither)
+            return (LazyEither<Throwable,T>)pub;
+        CompletableEither<T, T> result = LazyEither.either();
+
+        pub.subscribe(new Subscriber<T>() {
+            Subscription sub;
+            @Override
+            public void onSubscribe(Subscription s) {
+                sub =s;
+                s.request(1l);
+            }
+
+            @Override
+            public void onNext(T t) {
+                result.complete(t);
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                result.completeExceptionally(t);
+            }
+
+            @Override
+            public void onComplete() {
+                if(!result.isDone())  {
+                    result.completeExceptionally(new NoSuchElementException());
+                }
+            }
+        });
+        return result;
+
     }
 
     /**
@@ -1067,20 +1101,25 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
                 @Override
                 public void onNext(LazyEither<ST, PT> pts) {
+                    System.out.println(pts);
                     if(pts.isRight()){ //if we create a LazyThrowable type
                                         // we could safely propagate an error if pts was a left
                         PT v = pts.orElse(null);
                         if(v!=null)
                             sub.onNext(v);
+
+                        if(!onCompleteSent){
+                            sub.onComplete();
+                            onCompleteSent =true;
+                        }
                     }else if(pts.isLeft()){
                         ST v = pts.swap().orElse(null);
-                        if(v instanceof Throwable)
-                            sub.onError((Throwable)v);
+                        if(v instanceof Throwable) {
+                            sub.onError((Throwable) v);
+
+                        }
                     }
-                    if(!onCompleteSent){
-                        sub.onComplete();
-                        onCompleteSent =true;
-                    }
+
                 }
 
                 @Override
@@ -1098,7 +1137,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             });
         }
 
-        @Override
+       @Override
+       public ReactiveSeq<PT> stream() {
+           return Spouts.from(this);
+       }
+
+       @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
             return Maybe.fromIterable(this).filter(test);
 
@@ -1194,8 +1238,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         @Override
         public <LT1> LazyEither<LT1, PT> flatMapLeft(Function<? super ST, ? extends Either<LT1, PT>> mapper) {
             return LazyEither.fromLazy(lazy.map(m->m.flatMapLeft(mapper)));
-           /** return lazy(Eval.later(() -> resolve()
-                                             .flatMapLeft(mapper)));**/
+
         }
 
 

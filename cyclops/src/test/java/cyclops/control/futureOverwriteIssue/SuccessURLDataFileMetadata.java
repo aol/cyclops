@@ -24,7 +24,7 @@ public class SuccessURLDataFileMetadata extends DataFileMetadata {
 
     @Override
     public Either<IOException,String> loadContents() {
-       return Either.right("success");
+       return Either.right("contents here");
     }
 
 }

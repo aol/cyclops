@@ -28,7 +28,7 @@ public class ConcurrentFlatMapper<T, R> {
 
     final StreamSubscription sub;
     final int maxConcurrency;
-    volatile boolean running = true;
+    private volatile boolean running = true;
 
 
     final AtomicLong requested = new AtomicLong(0);
@@ -106,6 +106,7 @@ public class ConcurrentFlatMapper<T, R> {
 
         running = false;
         handleMainPublisher();
+
     }
 
     void handleMainPublisher() {
@@ -287,7 +288,7 @@ public class ConcurrentFlatMapper<T, R> {
 
         final AtomicReference<Subscription> sub = new AtomicReference();
         final Queue<R> queue = new OneToOneConcurrentArrayQueue<>(1024);
-        volatile boolean done;
+        private volatile boolean done;
 
 
         @Override
@@ -326,7 +327,10 @@ public class ConcurrentFlatMapper<T, R> {
 
         @Override
         public void onError(Throwable t) {
-            ConcurrentFlatMapper.this.onError(t);
+            if(done)
+                return;
+            onError.accept(t);
+            handleMainPublisher();
         }
 
         @Override
