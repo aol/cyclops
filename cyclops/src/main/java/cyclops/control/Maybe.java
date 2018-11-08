@@ -651,7 +651,7 @@ public interface Maybe<T> extends Option<T> {
 
     @Override
     default <U> Maybe<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (Maybe)Option.super.zipWithPublisher(other);
+        return mergeMap(a->Maybe.fromPublisher(other).map(b->Tuple.tuple(a,b)));
     }
 
     @Override
@@ -748,7 +748,7 @@ public interface Maybe<T> extends Option<T> {
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return flatMap(a->Option.fromIterable(app).map(b->fn.apply(a,b)));
+        return flatMap(a->Maybe.fromIterable(app).map(b->fn.apply(a,b)));
     }
 
 
@@ -756,8 +756,8 @@ public interface Maybe<T> extends Option<T> {
     @Override
     default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
       return narrow(Spouts.from(this)
-        .zip(fn, app)
-        .takeOne());
+                        .zip(fn, app)
+                        .takeOne());
     }
 
 
