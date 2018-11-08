@@ -13,6 +13,8 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.data.HashSet;
+import cyclops.data.tuple.Tuple;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
@@ -206,6 +208,15 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         Monoid<Integer> firstNonNull = Monoid.of(null, Semigroups.firstNonNull());
         assertThat(just.zip(firstNonNull, none), equalTo(none));
 
+    }
+
+    @Test
+    public void asyncZip(){
+       CompletableMaybe<Integer,Integer> cm =  Maybe.maybe();
+        System.out.println("Test ");
+        Maybe<Tuple2<Integer, Integer>> m = cm.zip(Tuple::tuple, Maybe.just(10));
+        System.out.println("Blocked ? ");
+       System.out.println("Maybe = " +  m.getClass());
     }
 
     @Test
