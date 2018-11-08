@@ -1064,21 +1064,13 @@ public class Future<T> implements To<Future<T>>,
         return Future.<T> of(cf);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
-     */
+
     @Override
     public boolean isPresent() {
         return !this.future.isCompletedExceptionally();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Value#mkString()
-     */
+
     @Override
     public String mkString() {
 
@@ -1089,45 +1081,27 @@ public class Future<T> implements To<Future<T>>,
         return "Future[" + future.toString() + "]";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.Filters#filter(java.util.function.Predicate)
-     */
+
     @Override
     public Maybe<T> filter(final Predicate<? super T> fn) {
         return toMaybe().filter(fn);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Filters#ofType(java.lang.Class)
-     */
+
     @Override
     public <U> Maybe<U> ofType(final Class<? extends U> type) {
 
         return (Maybe<U>) MonadicValue.super.ofType(type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.types.Filters#filterNot(java.util.function.Predicate)
-     */
+
     @Override
     public Maybe<T> filterNot(final Predicate<? super T> fn) {
 
         return (Maybe<T>) MonadicValue.super.filterNot(fn);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.types.Filters#notNull()
-     */
+
     @Override
     public Maybe<T> notNull() {
 
