@@ -36,7 +36,7 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,R> {
                     return;
                 super.request(n);
 
-                 upstream[0].request(n ); //we can't multiply by groupSize - doesn't work with Sets
+                 upstream[0].request(n );
 
 
             }
@@ -60,10 +60,12 @@ public class ReduceAllOperator<T,A,R> extends BaseOperator<T,R> {
                         onError.accept(t);
                     }
                 }
-                ,t->{onError.accept(t);
+                ,t->{
+                    onError.accept(t);
                     sub.requested.decrementAndGet();
-                    if(sub.isActive())
-                     upstream[0].request(1);
+                     if(sub.isActive())
+                        upstream[0].request(1);
+
                 },()->{
                     try {
                         onNext.accept((R) current[0]);

@@ -19,9 +19,9 @@ public class SleepingURLDataFileMetadata extends DataFileMetadata {
 
     @Override
     public Either<IOException,String> loadContents() {
-        System.out.println("Current thread " + Thread.currentThread().getId());
+       // System.out.println("Current thread " + Thread.currentThread().getId());
         try {
-            Thread.sleep(10000000l);
+            Thread.sleep(501l);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

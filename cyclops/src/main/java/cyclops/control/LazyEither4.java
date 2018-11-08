@@ -15,15 +15,18 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.*;
 
 /**
@@ -103,8 +106,8 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return
      */
     static <LT2,LT3,RT> LazyEither4.CompletableEither4<RT,LT2,LT3,RT> either4(){
-        Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
-        return new LazyEither4.CompletableEither4<RT,LT2,LT3, RT>(c,fromFuture(Future.fromPublisher(c)));
+        CompletableFuture<RT> c = new CompletableFuture<RT>();
+        return new LazyEither4.CompletableEither4<RT,LT2,LT3, RT>(c,fromFuture(Future.of(c)));
     }
 
     default LazyEither4<LT1,LT2,LT3, RT> filter(Predicate<? super RT> test, Function<? super RT, ? extends LT1> rightToLeft){
@@ -119,12 +122,12 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
     @AllArgsConstructor
     static class CompletableEither4<ORG,LT1,LT2,RT> implements LazyEither4<Throwable,LT1,LT2,RT>, Completable<ORG> {
 
-        public final Completable.CompletablePublisher<ORG> complete;
+        public final CompletableFuture<ORG> complete;
         public final LazyEither4<Throwable, LT1,LT2, RT> either;
 
         @Override
         public boolean isFailed() {
-            return complete.isFailed();
+            return complete.isCompletedExceptionally();
         }
 
         @Override
@@ -365,6 +368,8 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Publisher
      */
     public static <T1,T2,T> LazyEither4<Throwable, T1, T2, T> fromPublisher(final Publisher<T> pub) {
+        if(pub instanceof LazyEither4)
+            return (LazyEither4<Throwable,T1,T2,T>)pub;
         return fromFuture(Future.fromPublisher(pub));
     }
     /**
@@ -702,9 +707,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         private final Eval<LazyEither4<ST, M,M2, PT>> lazy;
 
-        public LazyEither4<ST, M,M2, PT> resolve() {
-            return this.fold(LazyEither4::left1, LazyEither4::left2, LazyEither4::left3, LazyEither4::right);
-        }
+
 
         private static <ST, M,M2, PT> Lazy<ST, M,M2, PT> lazy(final Eval<LazyEither4<ST, M,M2, PT>> lazy) {
             return new Lazy<>(lazy);
@@ -724,9 +727,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
 
         @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
-
-            return Maybe.fromEval(Eval.later(() -> resolve().filter(test)))
-                        .flatMap(Function.identity());
+            return Maybe.fromLazy(lazy.map(m->m.filter(test)));
 
         }
         @Override
@@ -772,8 +773,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public ReactiveSeq<PT> stream() {
 
-            return trampoline()
-                       .stream();
+            return Spouts.from(this);
         }
 
         @Override
@@ -791,10 +791,44 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
 
         @Override
-        public void subscribe(final Subscriber<? super PT> s) {
+        public final void subscribe(final Subscriber<? super PT> sub) {
+            lazy.subscribe(new Subscriber<LazyEither4<ST, M, M2,PT>>() {
+                boolean onCompleteSent = false;
+                @Override
+                public void onSubscribe(Subscription s) {
+                    sub.onSubscribe(s);
+                }
 
-            lazy.get()
-                .subscribe(s);
+                @Override
+                public void onNext(LazyEither4<ST,M,M2, PT> pts) {
+                    if(pts.isRight()){
+                        PT v = pts.orElse(null);
+                        if(v!=null)
+                            sub.onNext(v);
+                    }else if(pts.isLeft1()){
+                        ST v = pts.swap1().orElse(null);
+                        if(v instanceof Throwable)
+                            sub.onError((Throwable)v);
+                    }
+                    if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+
+                @Override
+                public void onError(Throwable t) {
+                    sub.onError(t);
+                }
+
+                @Override
+                public void onComplete() {
+                    if(!onCompleteSent){
+                        sub.onComplete();
+                        onCompleteSent =true;
+                    }
+                }
+            });
         }
 
 
@@ -809,16 +843,17 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         }
         @Override
         public LazyEither4<ST, M, PT, M2> swap3() {
-            return lazy(Eval.later(() -> resolve().swap3()));
+            return LazyEither4.fromLazy(lazy.map(m->m.swap3()));
+
         }
         @Override
         public LazyEither4<ST, PT, M2, M> swap2() {
-            return lazy(Eval.later(() -> resolve().swap2()));
+            return LazyEither4.fromLazy(lazy.map(m->m.swap2()));
         }
 
         @Override
         public LazyEither4<PT, M,M2, ST> swap1() {
-            return lazy(Eval.later(() -> resolve().swap1()));
+            return LazyEither4.fromLazy(lazy.map(m->m.swap1()));
         }
 
         @Override
@@ -847,7 +882,7 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
         @Override
         public <R1, R2> LazyEither4<ST, M,R1, R2> bimap(final Function<? super M2, ? extends R1> fn1,
                                                         final Function<? super PT, ? extends R2> fn2) {
-            return lazy(Eval.later(() -> resolve().bimap(fn1, fn2)));
+            return LazyEither4.fromLazy(lazy.map(m->m.bimap(fn1,fn2)));
         }
 
         @Override
