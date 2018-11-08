@@ -552,8 +552,7 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
 
     default <T2, R> Eval<R> zipWith(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-        return Eval.fromPublisher(Spouts.from(this).zip(fn,app));
-
+        return mergeMap(a->Eval.fromPublisher(app).map(b->fn.apply(a,b)));
     }
 
 
