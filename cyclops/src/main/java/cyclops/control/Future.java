@@ -53,7 +53,7 @@ import java.util.concurrent.*;
 
 
 /**
- * A Wrapper around CompletableFuture that implements cyclops2-react interfaces and provides a more standard api
+ * A Wrapper around CompletableFuture that implements cyclops interfaces and provides a more standard api
  *
  * e.g.
  *   transform instead of thenApply
