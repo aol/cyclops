@@ -216,7 +216,7 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         System.out.println("Test ");
         Maybe<Tuple2<Integer, Integer>> m = cm.zip(Tuple::tuple, Maybe.just(10));
         System.out.println("Blocked ? ");
-       System.out.println("Maybe = " +  m.getClass());
+       assertThat(m.getClass(),equalTo(Maybe.Lazy.class));
     }
 
     @Test

@@ -282,9 +282,6 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
-     */
     @Override
     default <R> Maybe<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
@@ -755,9 +752,7 @@ public interface Maybe<T> extends Option<T> {
 
     @Override
     default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-      return narrow(Spouts.from(this)
-                        .zip(fn, app)
-                        .takeOne());
+       return mergeMap(a->Maybe.fromPublisher(app).map(b->fn.apply(a,b)));
     }
 
 
