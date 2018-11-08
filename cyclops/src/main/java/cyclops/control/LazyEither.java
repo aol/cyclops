@@ -1101,7 +1101,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
                 @Override
                 public void onNext(LazyEither<ST, PT> pts) {
-                    System.out.println(pts);
                     if(pts.isRight()){ //if we create a LazyThrowable type
                                         // we could safely propagate an error if pts was a left
                         PT v = pts.orElse(null);
