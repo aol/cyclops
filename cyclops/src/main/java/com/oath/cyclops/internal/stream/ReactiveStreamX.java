@@ -161,7 +161,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
                 result.completeExceptionally(t);
             }, () -> {
                 if (!result.isDone()) {
-                    result.complete(null);
+                    result.completeExceptionally(new Queue.ClosedQueueException() );
                 }
             });
 
