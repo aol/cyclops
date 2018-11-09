@@ -9,6 +9,7 @@ import cyclops.companion.Semigroups;
 import cyclops.data.LazySeq;
 import cyclops.function.*;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.reactive.Spouts;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.*;
 
@@ -176,8 +178,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return
      */
     static <RT> CompletableEither<RT,RT> either(){
-        Completable.CompletablePublisher<RT> c = new Completable.CompletablePublisher<RT>();
-        return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.fromPublisher(c)));
+        CompletableFuture<RT> c = new CompletableFuture<RT>();
+        return new LazyEither.CompletableEither<RT, RT>(c,fromFuture(Future.of(c)));
     }
 
     default Either<LT,RT> toEither(){
@@ -187,7 +189,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     @AllArgsConstructor
     static class CompletableEither<ORG,RT> implements LazyEither<Throwable,RT>, Completable<ORG> {
 
-        public final Completable.CompletablePublisher<ORG> complete;
+        public final CompletableFuture<ORG> complete;
         public final LazyEither<Throwable,RT> either;
 
 
@@ -214,7 +216,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         }
         @Override
         public boolean isFailed() {
-            return complete.isFailed();
+            return complete.isCompletedExceptionally();
         }
 
         @Override
@@ -560,7 +562,39 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return Either constructed from the supplied Publisher
      */
     public static <T> LazyEither<Throwable, T> fromPublisher(final Publisher<T> pub) {
-        return fromFuture(Future.fromPublisher(pub));
+
+        if(pub instanceof LazyEither)
+            return (LazyEither<Throwable,T>)pub;
+        CompletableEither<T, T> result = LazyEither.either();
+
+        pub.subscribe(new Subscriber<T>() {
+            Subscription sub;
+            @Override
+            public void onSubscribe(Subscription s) {
+                sub =s;
+                s.request(1l);
+            }
+
+            @Override
+            public void onNext(T t) {
+                result.complete(t);
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                result.completeExceptionally(t);
+            }
+
+            @Override
+            public void onComplete() {
+                if(!result.isDone())  {
+                    result.completeExceptionally(new NoSuchElementException());
+                }
+            }
+        });
+        return result;
+
     }
 
     /**
@@ -950,8 +984,11 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
         return (LazyEither<ST, PT>) broad;
     }
 
-    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+   // @AllArgsConstructor(access = AccessLevel.PRIVATE)
     static final class Lazy<ST, PT> implements LazyEither<ST, PT> {
+        private Lazy(Eval<LazyEither<ST, PT>> lazy) {
+            this.lazy = lazy;
+        }
 
         private final Eval<LazyEither<ST, PT>> lazy;
 
@@ -1035,10 +1072,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             };
         }
 
-        public LazyEither<ST, PT> resolve() {
-          return lazy.get()
-                       .fold(LazyEither::left, LazyEither::right);
-        }
+
         @Override
         public <R> LazyEither<ST, R> map(final Function<? super PT, ? extends R> mapper) {
             return flatMap(t -> LazyEither.right(mapper.apply(t)));
@@ -1072,11 +1106,19 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
                         PT v = pts.orElse(null);
                         if(v!=null)
                             sub.onNext(v);
+
+                        if(!onCompleteSent){
+                            sub.onComplete();
+                            onCompleteSent =true;
+                        }
+                    }else if(pts.isLeft()){
+                        ST v = pts.swap().orElse(null);
+                        if(v instanceof Throwable) {
+                            sub.onError((Throwable) v);
+
+                        }
                     }
-                    if(!onCompleteSent){
-                        sub.onComplete();
-                        onCompleteSent =true;
-                    }
+
                 }
 
                 @Override
@@ -1094,7 +1136,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             });
         }
 
-        @Override
+       @Override
+       public ReactiveSeq<PT> stream() {
+           return Spouts.from(this);
+       }
+
+       @Override
         public Maybe<PT> filter(final Predicate<? super PT> test) {
             return Maybe.fromIterable(this).filter(test);
 
@@ -1102,87 +1149,49 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
         @Override
         public LazyEither<ST, PT> filter(Predicate<? super PT> test, Function<? super PT, ? extends ST> rightToLeft) {
-          return lazy(Eval.later(()->resolve().filter(test,rightToLeft)));
+            return LazyEither.fromLazy(lazy.map(m->m.filter(test,rightToLeft)));
         }
 
 
-      /*
-       * (non-Javadoc)
-       *
-       * @see com.oath.cyclops.sum.types.Either#mapLeftToRight(java.util.
-       * function.Function)
-       */
+
         @Override
         public LazyEither<ST, PT> mapLeftToRight(Function<? super ST, ? extends PT> fn) {
-            return lazy(Eval.later(() ->  resolve()
-                                             .mapLeftToRight(fn)));
+            return LazyEither.fromLazy(lazy.map(m->m.mapLeftToRight(fn)));
 
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#mapLeft(java.util.function.
-         * Function)
-         */
+
         @Override
         public <R> LazyEither<R, PT> mapLeft(Function<? super ST, ? extends R> fn) {
-            return lazy(Eval.later(() -> resolve().mapLeft(fn)));
+            return LazyEither.fromLazy(lazy.map(m->m.mapLeft(fn)));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#peekLeft(java.util.function.
-         * Consumer)
-         */
+
         @Override
         public LazyEither<ST, PT> peekLeft(Consumer<? super ST> action) {
-            return lazy(Eval.later(() -> resolve().peekLeft(action)));
+            return LazyEither.fromLazy(lazy.map(m -> m.peekLeft(action)));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#peek(java.util.function.Consumer)
-         */
+
         @Override
         public LazyEither<ST, PT> peek(Consumer<? super PT> action) {
-            return lazy(Eval.later(() -> resolve().peek(action)));
+            return LazyEither.fromLazy(lazy.map(m->m.peek(action)));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#swap()
-         */
+
         @Override
         public LazyEither<PT, ST> swap() {
-            return lazy(Eval.later(() ->  resolve()
-                                             .swap()));
+            return LazyEither.fromLazy(lazy.map(m->m.swap()));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#toIor()
-         */
+
         @Override
         public Ior<ST, PT> toIor() {
             return trampoline()
                        .toIor();
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#visit(java.util.function.Function,
-         * java.util.function.Function)
-         */
+
         @Override
         public <R> R fold(Function<? super ST, ? extends R> secondary, Function<? super PT, ? extends R> primary) {
             return trampoline()
@@ -1196,22 +1205,14 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             return maybe;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#getValue()
-         */
+
         @Override
         public Option<PT> get() {
 
             return Maybe.fromIterable((this));
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#getLeft()
-         */
+
         @Override
         public Option<ST> getLeft() {
             return Maybe.fromIterable(swap());
@@ -1224,11 +1225,7 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#leftToStream()
-         */
+
         @Override
         public ReactiveSeq<ST> leftToStream() {
             return ReactiveSeq.generate(() -> trampoline()
@@ -1236,48 +1233,29 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
                               .flatMap(Function.identity());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#flatMapLeft(java.util.function.
-         * Function)
-         */
+
         @Override
         public <LT1> LazyEither<LT1, PT> flatMapLeft(Function<? super ST, ? extends Either<LT1, PT>> mapper) {
-            return lazy(Eval.later(() -> resolve()
-                                             .flatMapLeft(mapper)));
+            return LazyEither.fromLazy(lazy.map(m->m.flatMapLeft(mapper)));
+
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * com.oath.cyclops.sum.types.Either#flatMapLeftToRight(java.util.
-         * function.Function)
-         */
+
         @Override
         public LazyEither<ST, PT> flatMapLeftToRight(Function<? super ST, ? extends Either<ST, PT>> fn) {
-            return lazy(Eval.later(() -> resolve().flatMapLeftToRight(fn)));
+            return LazyEither.fromLazy(lazy.map(m->m.flatMapLeftToRight(fn)));
+
         }
 
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#isRight()
-         */
+
         @Override
         public boolean isRight() {
             return trampoline()
                        .isRight();
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.oath.cyclops.sum.types.Either#isLeft()
-         */
+
         @Override
         public boolean isLeft() {
             return trampoline()

@@ -19,6 +19,7 @@ import org.reactivestreams.Subscription;
 
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -120,7 +121,38 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return Eval created from Publisher
      */
     public static <T> Eval<T> fromPublisher(final Publisher<T> pub) {
-        return fromFuture(Future.fromPublisher(pub));
+        if(pub instanceof Eval)
+            return (Eval<T>)pub;
+        CompletableEval<T, T> result = eval();
+
+        pub.subscribe(new Subscriber<T>() {
+            Subscription sub;
+            @Override
+            public void onSubscribe(Subscription s) {
+                sub =s;
+                s.request(1l);
+            }
+
+            @Override
+            public void onNext(T t) {
+                result.complete(t);
+
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                result.completeExceptionally(t);
+            }
+
+            @Override
+            public void onComplete() {
+                if(!result.isDone())  {
+                    result.completeExceptionally(new NoSuchElementException());
+                }
+            }
+        });
+        return result;
+
     }
 
     /**
@@ -143,8 +175,8 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return A reactive CompletableEval
      */
     static <T> CompletableEval<T,T> eval(){
-        Completable.CompletablePublisher<T> c = new Completable.CompletablePublisher<T>();
-        return new CompletableEval<T, T>(c,fromFuture(Future.fromPublisher(c)));
+        CompletableFuture<T> c = new CompletableFuture<T>();
+        return new CompletableEval<T, T>(c,fromFuture(Future.of(c)));
 
     }
 
@@ -164,12 +196,12 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
 
     @AllArgsConstructor
     static class CompletableEval<ORG,T2> implements Eval<T2>, Completable<ORG>{
-        public final CompletablePublisher<ORG> complete;
+        public final CompletableFuture<ORG> complete;
         public final Eval<T2> lazy;
 
         @Override
         public boolean isFailed() {
-            return complete.isFailed();
+            return complete.isCompletedExceptionally();
         }
 
         @Override
