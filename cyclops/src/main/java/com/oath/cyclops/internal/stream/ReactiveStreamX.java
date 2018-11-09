@@ -1435,7 +1435,7 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public Maybe<T> single() {
         Maybe.CompletableMaybe<T, T> maybe = Maybe.<T>maybe();
         subscribe(new Subscriber<T>() {
-            T value = null;
+            Object value = UNSET;
             Subscription sub;
 
             @Override
@@ -1446,10 +1446,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             @Override
             public void onNext(T t) {
-                if (value == null)
+                if (value == UNSET)
                     value = t;
                 else {
-                    maybe.complete(null);
+                    maybe.completeAsNone();
                     sub.cancel();
                 }
             }
@@ -1461,7 +1461,10 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
             @Override
             public void onComplete() {
-                maybe.complete(value);
+                if(value == UNSET)
+                    maybe.completeAsNone();
+                else
+                    maybe.complete((T)value);
             }
         });
         return maybe;
