@@ -49,7 +49,7 @@ public class CompletableEither5Test {
         LazyEither5<Throwable,Integer,Integer,Integer,Integer> mapped = completable.map(i->i*2)
                                                               .flatMap(i-> LazyEither5.right(i+1));
 
-        completable.complete(null);
+        completable.completeExceptionally(new NoSuchElementException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));

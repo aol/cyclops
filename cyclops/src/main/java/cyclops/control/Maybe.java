@@ -840,7 +840,7 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    
+
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
 

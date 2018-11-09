@@ -112,7 +112,7 @@ public class EitherTest {
         LazyEither<Throwable,Integer> mapped = completable.map(i->i*2)
                                                       .flatMap(i-> LazyEither.right(i+1));
 
-        completable.complete(null);
+        completable.completeExceptionally(new NoSuchElementException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
