@@ -14,6 +14,7 @@ import cyclops.control.LazyEither3.CompletableEither3;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
 import cyclops.data.LazySeq;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 
 import cyclops.reactive.ReactiveSeq;
@@ -29,10 +30,62 @@ import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class Either3Test {
+    int called = 0;
+    @Before
+    public void setup(){
+        called =0;
+    }
+    @Test
+    public void later(){
 
+
+        LazyEither3<Object, Object, Integer> e = LazyEither3.later(() -> {
+            called++;
+            return LazyEither3.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(1));
+    }
+    @Test
+    public void always(){
+
+
+        LazyEither3<Object, Object, Integer>  e = LazyEither3.always(() -> {
+            called++;
+            return LazyEither3.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(2));
+    }
+    @Test
+    public void nullPublisher() {
+        assertThat(LazyEither3.fromPublisher(Seq.of(null, 190)), not(equalTo(LazyEither3.right(null))));
+    }
+    @Test
+    public void fromNull(){
+        System.out.println(LazyEither3.fromIterable(Seq.of().plus(null)));
+        assertThat(LazyEither3.right(null), equalTo(LazyEither3.right(null)));
+
+        assertThat(LazyEither3.fromIterable(Seq.of()),equalTo(LazyEither3.left1(null)));
+
+
+        assertThat(LazyEither3.fromPublisher(Seq.of(null,190)),not(equalTo(LazyEither3.right(null))));
+        assertTrue(LazyEither3.fromPublisher(Seq.of(null,190)).isLeft1());
+        assertThat(LazyEither3.fromFuture(Future.ofResult(null)),equalTo(LazyEither3.right(null)));
+
+    }
     @Test
     public void completableTest(){
         CompletableEither3<Integer,Integer,Integer> completable = LazyEither3.either3();

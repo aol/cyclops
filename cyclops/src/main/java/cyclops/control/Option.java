@@ -174,6 +174,8 @@ public interface Option<T> extends To<Option<T>>,
      * @return Option populated with first value from Iterable (Option.zero if Publisher zero)
      */
     static <T> Option<T> fromIterable(final Iterable<T> iterable) {
+        if(iterable instanceof Option)
+            return (Option<T>)iterable;
         Iterator<T> it = iterable.iterator();
         if(it.hasNext()){
             return Option.some(it.next());
@@ -731,21 +733,13 @@ public interface Option<T> extends To<Option<T>>,
         public String toString() {
             return mkString();
         }
-        /*
-       * (non-Javadoc)
-       *
-       * @see java.lang.Object#hashCode()
-       */
+
         @Override
         public int hashCode() {
             return Objects.hashCode(value);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
             if(obj instanceof Some){
