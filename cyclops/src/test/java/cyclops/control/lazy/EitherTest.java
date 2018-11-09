@@ -31,6 +31,7 @@ import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class EitherTest {
@@ -70,7 +71,22 @@ public class EitherTest {
         e.isRight();
         assertThat(called,equalTo(2));
     }
+    @Test
+    public void nullPublisher() {
+        assertThat(LazyEither.fromPublisher(Seq.of(null, 190)), not(equalTo(LazyEither.right(null))));
+    }
+    @Test
+    public void fromNull(){
+        System.out.println(LazyEither.fromIterable(Seq.of().plus(null),10));
+        assertThat(LazyEither.right(null), equalTo(LazyEither.right(null)));
+        assertThat(Maybe.nothing(), not(equalTo(Maybe.just(null))));
+        assertThat(LazyEither.fromIterable(Seq.of(),10),equalTo(LazyEither.right(10)));
 
+        System.out.println(Maybe.fromPublisher(Seq.of(null,190)));
+        assertThat(LazyEither.fromPublisher(Seq.of(null,190)),not(equalTo(LazyEither.right(null))));
+        assertThat(LazyEither.fromFuture(Future.ofResult(null)),equalTo(LazyEither.right(null)));
+
+    }
     @Test
     public void filterAlt(){
       assertThat(LazyEither.right(10).filter(i->i>100,r->"hello"),equalTo(LazyEither.left("hello")));

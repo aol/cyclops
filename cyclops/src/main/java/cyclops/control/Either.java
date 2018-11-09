@@ -967,9 +967,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
         }
 
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -984,9 +982,7 @@ public interface Either<LT, RT> extends To<Either<LT, RT>>,
             return Objects.equals(value,other.orElse(null));
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
+
         @Override
         public int hashCode() {
             final int prime = 31;

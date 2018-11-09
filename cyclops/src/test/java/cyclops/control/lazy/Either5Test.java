@@ -11,6 +11,7 @@ import cyclops.control.*;
 import cyclops.control.LazyEither5;
 import cyclops.control.Maybe;
 import cyclops.control.Trampoline;
+import cyclops.data.Seq;
 import cyclops.data.Vector;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
@@ -26,9 +27,62 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class Either5Test {
+    int called = 0;
+    @Before
+    public void setup(){
+        called =0;
+    }
+    @Test
+    public void later(){
+
+
+        LazyEither5<Object, Object, Object, Object, Integer> e = LazyEither5.later(() -> {
+            called++;
+            return LazyEither5.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(1));
+    }
+    @Test
+    public void always(){
+
+
+        LazyEither5<Object, Object, Object, Object, Integer>  e = LazyEither5.always(() -> {
+            called++;
+            return LazyEither5.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(2));
+    }
+    @Test
+    public void nullPublisher() {
+        assertThat(LazyEither5.fromPublisher(Seq.of(null, 190)), not(equalTo(LazyEither5.right(null))));
+    }
+    @Test
+    public void fromNull(){
+        System.out.println(LazyEither5.fromIterable(Seq.of().plus(null)));
+        assertThat(LazyEither5.right(null), equalTo(LazyEither5.right(null)));
+
+        assertThat(LazyEither5.fromIterable(Seq.of()),equalTo(LazyEither5.left1(null)));
+
+
+        assertThat(LazyEither5.fromPublisher(Seq.of(null,190)),not(equalTo(LazyEither5.right(null))));
+        assertTrue(LazyEither5.fromPublisher(Seq.of(null,190)).isLeft1());
+        assertThat(LazyEither5.fromFuture(Future.ofResult(null)),equalTo(LazyEither5.right(null)));
+
+    }
     boolean lazy = true;
     @Test
     public void lazyTest() {

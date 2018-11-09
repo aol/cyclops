@@ -13,12 +13,14 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.control.Maybe.CompletableMaybe;
 import cyclops.data.HashSet;
+import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple3;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
@@ -34,6 +36,7 @@ import java.util.stream.StreamSupport;
 import static cyclops.control.Maybe.just;
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class MaybeTest extends  AbstractValueTest implements Printable {
@@ -51,6 +54,36 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
 
     int cap =0;
 
+
+    @Test
+    public void nullPublisher(){
+
+        assertThat(Maybe.fromPublisher(Seq.of(null,190)),not(equalTo(Maybe.just(null))));
+    }
+    @Test
+    public void fromNull(){
+        System.out.println(Maybe.fromIterable(Seq.of().plus(null)));
+        assertThat(Maybe.just(null), not(equalTo(Maybe.nothing())));
+        assertThat(Maybe.nothing(), not(equalTo(Maybe.just(null))));
+        assertThat(Maybe.fromIterable(Seq.of()),equalTo(Maybe.nothing()));
+        assertThat(Maybe.fromIterable(Seq.of().plus(null)),equalTo(Maybe.just(null)));
+        System.out.println(Maybe.fromPublisher(Seq.of(null,190)));
+        assertThat(Maybe.fromPublisher(Seq.of(null,190)),not(equalTo(Maybe.just(null))));
+        assertThat(Maybe.fromFuture(Future.ofResult(null)),equalTo(Maybe.just(null)));
+        assertThat(Maybe.fromOption(Option.some(null)),equalTo(Maybe.just(null)));
+    }
+    @Test
+    public void fromNullOption(){
+        System.out.println(Maybe.fromIterable(Seq.of().plus(null)));
+        assertThat(Maybe.just(null), not(equalTo(Option.none())));
+        assertThat(Maybe.nothing(), not(equalTo(Option.some(null))));
+        assertThat(Maybe.fromIterable(Seq.of()),equalTo(Option.none()));
+        assertThat(Maybe.fromIterable(Seq.of().plus(null)),equalTo(Option.some(null)));
+        System.out.println(Maybe.fromPublisher(Seq.of(null,190)));
+        assertThat(Maybe.fromPublisher(Seq.of(null,190)),not(equalTo(Option.some(null))));
+        assertThat(Maybe.fromFuture(Future.ofResult(null)),equalTo(Option.some(null)));
+        assertThat(Maybe.fromOption(Option.some(null)),equalTo(Option.some(null)));
+    }
   @Test
   public void testMaybeWithNull() {
       assertThat(Maybe.fromEval(Eval.later(()->null)),equalTo(Maybe.just(null)));
@@ -100,9 +133,10 @@ public class MaybeTest extends  AbstractValueTest implements Printable {
         Maybe<Integer> mapped = completable.map(i->i*2)
                                            .flatMap(i->Eval.later(()->i+1));
 
-        completable.complete(null);
+        completable.completeAsNone();
 
         mapped.printOut();
+
         assertThat(mapped.isPresent(),equalTo(false));
 
 

@@ -369,9 +369,8 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     }
 
     static <T> LazyEither<Throwable,T> fromFuture(Future<T> future){
-        return fromLazy(Eval.<LazyEither<Throwable,T>>fromFuture(
-                        future.map(e->e!=null? LazyEither.<Throwable,T>right(e) : LazyEither.<Throwable,T>left(new NoSuchElementException()))
-                            .recover(t-> LazyEither.<Throwable,T>left(t.getCause()))));
+        return fromLazy(Eval.fromFuture(future.<LazyEither<Throwable,T>>map(LazyEither::right).recover(e->LazyEither.<Throwable,T>left(e.getCause()))));
+
     }
 
     /**
@@ -562,7 +561,6 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return Either constructed from the supplied Publisher
      */
     public static <T> LazyEither<Throwable, T> fromPublisher(final Publisher<T> pub) {
-
         if(pub instanceof LazyEither)
             return (LazyEither<Throwable,T>)pub;
         CompletableEither<T, T> result = LazyEither.either();
@@ -589,11 +587,12 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
             @Override
             public void onComplete() {
                 if(!result.isDone())  {
-                    result.completeExceptionally(new NoSuchElementException());
+                   result.completeExceptionally(new NoSuchElementException());
                 }
             }
         });
         return result;
+
 
     }
 
@@ -613,9 +612,10 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
      * @return Either constructed from the supplied Iterable
      */
     public static <ST, T> LazyEither<ST, T> fromIterable(final Iterable<T> iterable, T alt) {
-
-        final Iterator<T> it = iterable.iterator();
-        return it.hasNext() ? LazyEither.right( it.next()) : LazyEither.right(alt);
+        return later(()-> {
+            final Iterator<T> it = iterable.iterator();
+            return it.hasNext() ? LazyEither.right(it.next()) : LazyEither.right(alt);
+        });
     }
 
 
@@ -1265,22 +1265,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#hashCode()
-         */
         @Override
         public int hashCode() {
             return trampoline().hashCode();
 
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
 
@@ -1448,17 +1439,13 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
 
 
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
         @Override
         public int hashCode() {
-            return value.get().hashCode();
+            return Objects.hashCode(value.get());
+
         }
 
-        /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)

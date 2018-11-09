@@ -1,6 +1,7 @@
 package cyclops.control;
 
 
+import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
@@ -23,6 +24,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.io.InvalidObjectException;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -192,7 +194,7 @@ public interface Maybe<T> extends Option<T> {
 
 
         public boolean completeAsNone(){
-            return complete(null);
+            return completeExceptionally(new Queue.ClosedQueueException());
         }
         @Override
         public boolean complete(ORG done) {
@@ -220,7 +222,8 @@ public interface Maybe<T> extends Option<T> {
         }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
-        return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
+        return fromLazy(Eval.fromFuture(future.map(Maybe::of)
+                                              .recover(e->Maybe.nothing())));
     }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));
@@ -328,7 +331,13 @@ public interface Maybe<T> extends Option<T> {
      * @return Maybe populated with first value from Iterable (Maybe.zero if Publisher zero)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
-        return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
+        if(iterable instanceof Maybe)
+            return (Maybe<T>)iterable;
+        return new Lazy<>(Eval.later(()->{
+            Iterator<T> it = iterable.iterator();
+            return it.hasNext() ? Maybe.just(it.next()) :  Maybe.nothing();
+        })) ;
+
     }
 
     static <R> Maybe<R> fromStream(Stream<? extends R> apply) {
@@ -745,7 +754,7 @@ public interface Maybe<T> extends Option<T> {
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return flatMap(a->Maybe.fromIterable(app).map(b->fn.apply(a,b)));
+        return flatMap(a->Option.fromIterable(app).map(b->fn.apply(a,b)));
     }
 
 
@@ -952,23 +961,21 @@ public interface Maybe<T> extends Option<T> {
             return true;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#hashCode()
-         */
+
         @Override
         public int hashCode() {
             return Objects.hashCode(lazy.get());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
+            if (obj instanceof Nothing) {
+                return false;
+            }
+            else if (obj instanceof None) {
+                return  false;
+            }
             if (obj instanceof Present)
                 return Objects.equals(lazy.get(), ((Present) obj).orElse(null));
             else if (obj instanceof Lazy) {
@@ -1200,22 +1207,18 @@ public interface Maybe<T> extends Option<T> {
             return maybe.hashCode();
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
 
-            if (obj instanceof Present)
-                return Objects.equals(orElse(null), ((Present) obj).orElse(null));
-            else if (obj instanceof Nothing) {
+           if (obj instanceof Nothing) {
                 return !isPresent();
             }
             else if (obj instanceof None) {
                 return !isPresent();
-            }else if (obj instanceof Lazy) {
+            }else if (obj instanceof Present && isPresent())
+                return Objects.equals(orElse(null), ((Present) obj).orElse(null));
+            else if (obj instanceof Lazy) {
                 if (isPresent())
                     return Objects.equals(orElse(null), ((Maybe) obj).orElse(null));
                 else {
