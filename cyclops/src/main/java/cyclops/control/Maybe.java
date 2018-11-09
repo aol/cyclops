@@ -765,20 +765,14 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
-   */
+
     @Override
     default <U> Maybe<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
         return (Maybe) Option.super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
-     */
+
     @Override
     default <T> Maybe<T> unit(final T unit) {
         return Maybe.of(unit);
@@ -788,19 +782,13 @@ public interface Maybe<T> extends Option<T> {
 
 
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see com.oath.cyclops.value.Value#toMaybe()
-   */
+
     @Override
     default Maybe<T> toMaybe() {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
-     */
+
     @Override
     boolean isPresent();
 
@@ -816,62 +804,35 @@ public interface Maybe<T> extends Option<T> {
         return recoverWith(()->opt);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
-     */
+
     @Override
     <R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
-     */
+
     @Override
     <R> Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
-     */
+
     @Override
     <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.
-     * Predicate)
-     */
+
     @Override
     Maybe<T> filter(Predicate<? super T> fn);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
-     */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
         return (Maybe<U>) Option.super.ofType(type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.
-     * Predicate)
-     */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
         return (Maybe<T>) Option.super.filterNot(fn);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
-     */
+
     @Override
     default Maybe<T> notNull() {
 
@@ -879,12 +840,7 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
-     */
+    
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
 
