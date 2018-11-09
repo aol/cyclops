@@ -96,8 +96,10 @@ public class ValueSubscriber<T> implements Subscriber<T>, Value<T> {
     public void onComplete() {
 
         this.onComplete.run();
-        firstError.set(new NoSuchElementException(
-                                                  "publisher has no elements"));
+        if(firstValue.get()==UNSET && firstError.get()==UNSET) {
+            firstError.set(new NoSuchElementException(
+                "publisher has no elements"));
+        }
 
     }
 
