@@ -20,7 +20,9 @@ import org.junit.Before;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -37,12 +39,18 @@ public class CompletableMaybeTest implements Printable {
 
     Maybe<Integer> just;
     Maybe<Integer> none;
+    Maybe<Integer> nullMaybe;
     public static <T> Maybe.CompletableMaybe<T,T> just(T value){
         Maybe.CompletableMaybe<T,T> completable = Maybe.maybe();
         completable.complete(value);
         return completable;
     }
     public static <T> Maybe.CompletableMaybe<T,T> none(){
+        Maybe.CompletableMaybe<T,T> completable = Maybe.maybe();
+        completable.completeAsNone();
+        return completable;
+    }
+    public static <T> Maybe.CompletableMaybe<T,T> nullMaybe(){
         Maybe.CompletableMaybe<T,T> completable = Maybe.maybe();
         completable.complete(null);
         return completable;
@@ -51,6 +59,7 @@ public class CompletableMaybeTest implements Printable {
     public void setUp() throws Exception {
         just = just(10);
         none = none();
+        nullMaybe = nullMaybe();
 
     }
     @Test
@@ -72,7 +81,7 @@ public class CompletableMaybeTest implements Printable {
         Maybe<Integer> mapped = completable.map(i->i*2)
                                            .flatMap(i->Eval.later(()->i+1));
 
-        completable.complete(null);
+        completable.completeAsNone();
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));
@@ -214,6 +223,7 @@ public class CompletableMaybeTest implements Printable {
     public void testToMaybe() {
         assertThat(just.toMaybe(), equalTo(Maybe.just(10)));
         assertThat(none.toMaybe(), equalTo(Maybe.nothing()));
+        assertThat(nullMaybe.toMaybe(), equalTo(Maybe.just(null)));
     }
 
     private int add1(int i) {
@@ -293,6 +303,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testIsPresent() {
         assertTrue(just.isPresent());
+        assertTrue(nullMaybe.isPresent());
         assertFalse(none.isPresent());
     }
 
@@ -306,6 +317,7 @@ public class CompletableMaybeTest implements Printable {
     public void testRecoverT() {
         assertThat(just.recover(() -> 20), equalTo(Maybe.of(10)));
         assertThat(none.recover(() -> 10), equalTo(Maybe.of(10)));
+        assertThat(nullMaybe.recover(() -> 10), equalTo(Maybe.of(null)));
     }
 
     @Test
@@ -338,6 +350,9 @@ public class CompletableMaybeTest implements Printable {
     public void testStream() {
         assertThat(just.stream().toList(), equalTo(Arrays.asList(10)));
         assertThat(none.stream().toList(), equalTo(Arrays.asList()));
+        List<Integer> list = new ArrayList<>();
+        list.add(null);
+        assertThat(nullMaybe.stream().toList(), equalTo(list));
     }
 
     @Test
@@ -398,6 +413,13 @@ public class CompletableMaybeTest implements Printable {
         assertThat(empty.map(__ -> 10), equalTo(Either.right(10)));
 
     }
+    @Test
+    public void testToXorSecondaryNullMaybe() {
+        Either<Integer, ?> empty = nullMaybe.toEither(-100).swap();
+        assertTrue(empty.isLeft());
+        assertThat(empty.mapLeft(__ -> 10), equalTo(Either.left(10)));
+
+    }
 
     @Test
     public void testToTry() {
@@ -408,6 +430,10 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testToTryClassOfXArray() {
         assertTrue(none.toTry(Throwable.class).isFailure());
+    }
+    @Test
+    public void testToTryClassOfXArrayNull() {
+        assertFalse(nullMaybe.toTry(Throwable.class).isFailure());
     }
 
 
@@ -425,6 +451,7 @@ public class CompletableMaybeTest implements Printable {
     public void testMkString() {
         assertThat(just.mkString(), equalTo("CompletableMaybe[10]"));
         assertThat(none.mkString(), equalTo("CompletableMaybe[]"));
+        assertThat(nullMaybe.mkString(), equalTo("CompletableMaybe[null]"));
     }
 
 
@@ -505,11 +532,13 @@ public class CompletableMaybeTest implements Printable {
 
         assertThat(just.fold(s -> "hello", () -> "world"), equalTo("hello"));
         assertThat(none.fold(s -> "hello", () -> "world"), equalTo("world"));
+        assertThat(nullMaybe.fold(s -> "hello", () -> "world"), equalTo("hello"));
     }
 
     @Test
     public void testOrElseGet() {
         assertThat(none.orElseGet(() -> 2), equalTo(2));
+        assertThat(nullMaybe.orElseGet(() -> 2), equalTo(null));
         assertThat(just.orElseGet(() -> 2), equalTo(10));
     }
 
@@ -523,6 +552,7 @@ public class CompletableMaybeTest implements Printable {
     @Test
     public void testToStream() {
         assertThat(none.stream().collect(Collectors.toList()).size(), equalTo(0));
+        assertThat(nullMaybe.stream().collect(Collectors.toList()).size(), equalTo(1));
         assertThat(just.stream().collect(Collectors.toList()).size(), equalTo(1));
 
     }
@@ -532,6 +562,7 @@ public class CompletableMaybeTest implements Printable {
     public void testOrElse() {
         assertThat(none.orElse(20), equalTo(20));
         assertThat(just.orElse(20), equalTo(10));
+        assertThat(nullMaybe.orElse(20), equalTo(null));
     }
 
 

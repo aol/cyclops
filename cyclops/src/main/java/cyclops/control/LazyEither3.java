@@ -212,9 +212,9 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     }
 
     static <LT2,RT> LazyEither3<Throwable,LT2,RT> fromFuture(Future<RT> future){
-        return fromLazy(Eval.<LazyEither3<Throwable,LT2,RT>>fromFuture(
-                future.map(e->e!=null? LazyEither3.<Throwable,LT2,RT>right(e) : LazyEither3.<Throwable,LT2,RT>left1(new NoSuchElementException()))
-                        .recover(t-> LazyEither3.<Throwable,LT2,RT>left1(t.getCause()))));
+        return fromLazy(Eval.fromFuture(future.<LazyEither3<Throwable,LT2,RT>>map(LazyEither3::right)
+            .recover(e->LazyEither3.left1(e.getCause()))));
+
     }
     /**
      *  Turn an IterableX of Either3 into a single Either with Lists of values.
@@ -329,11 +329,17 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
      * @return Either constructed from the supplied Iterable
      */
     public static <ST, T,RT> LazyEither3<ST, T,RT> fromIterable(final Iterable<RT> iterable) {
-
-        final Iterator<RT> it = iterable.iterator();
-        return it.hasNext() ? LazyEither3.right( it.next()) : LazyEither3.left1(null);
+        return LazyEither3.later(()->{
+            final Iterator<RT> it = iterable.iterator();
+            return it.hasNext() ? LazyEither3.right( it.next()) : LazyEither3.left1(null);
+        });
     }
-
+    static <ST, T,RT> LazyEither3<ST, T,RT> later(Supplier<LazyEither3<ST,T,RT>> lazy){
+        return new LazyEither3.Lazy<>(Eval.later(lazy));
+    }
+    static <ST, T,RT> LazyEither3<ST, T,RT> always(Supplier<LazyEither3<ST,T,RT>> lazy){
+        return new LazyEither3.Lazy<>(Eval.always(lazy));
+    }
     /**
      * Static method useful as a method reference for fluent consumption of any value type stored in this Either
      * (will capture the lowest common type)

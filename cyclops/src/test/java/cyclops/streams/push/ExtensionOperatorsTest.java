@@ -12,6 +12,7 @@ import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 import org.hamcrest.Matchers;
 import org.junit.Test;
+import reactor.core.publisher.Flux;
 
 import java.io.Serializable;
 import java.util.*;
@@ -163,9 +164,11 @@ public class ExtensionOperatorsTest {
 	public void singleOptionalTest(){
 		assertThat(Spouts.of(1).single().toOptional().get(),equalTo(1));
 	}
+
 	@Test
 	public void singleOptionalEmpty(){
 		assertFalse(Spouts.of().single().isPresent());
+        assertFalse(Spouts.from(Flux.empty()).single().isPresent());
 	}
 	@Test
 	public void singleOptonal2(){

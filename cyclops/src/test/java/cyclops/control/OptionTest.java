@@ -13,6 +13,7 @@ import cyclops.companion.Semigroups;
 import cyclops.companion.Streams;
 import cyclops.data.HashSet;
 import cyclops.data.NonEmptyList;
+import cyclops.data.Seq;
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Before;
@@ -28,6 +29,7 @@ import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
 import static cyclops.data.tuple.Tuple.tuple;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class OptionTest extends  AbstractValueTest implements Printable {
@@ -41,7 +43,30 @@ public class OptionTest extends  AbstractValueTest implements Printable {
         none = Option.none();
 
     }
+    @Test
+    public void fromNull(){
+        System.out.println(Option.fromIterable(Seq.of().plus(null)));
+        assertThat(Option.some(null), not(equalTo(Option.none())));
+        assertThat(Option.none(), not(equalTo(Option.some(null))));
+        assertThat(Option.fromIterable(Seq.of()),equalTo(Option.none()));
+        assertThat(Option.fromIterable(Seq.of().plus(null)),equalTo(Option.some(null)));
+       // System.out.println(Option.fromPublisher(Seq.of(null,190)));
+       // assertThat(Option.fromPublisher(Seq.of(null,190)),equalTo(Option.some(null)));
+        assertThat(Option.fromFuture(Future.ofResult(null)),equalTo(Option.some(null)));
 
+    }
+    @Test
+    public void fromNullMaybe(){
+        System.out.println(Option.fromIterable(Seq.of().plus(null)));
+        assertThat(Option.some(null), not(equalTo(Maybe.nothing())));
+        assertThat(Option.none(), not(equalTo(Maybe.just(null))));
+        assertThat(Option.fromIterable(Seq.of()),equalTo(Maybe.nothing()));
+        assertThat(Option.fromIterable(Seq.of().plus(null)),equalTo(Maybe.just(null)));
+        // System.out.println(Option.fromPublisher(Seq.of(null,190)));
+      //  assertThat(Option.fromPublisher(Seq.of(null,190)),equalTo(Maybe.just(null)));
+        assertThat(Option.fromFuture(Future.ofResult(null)),equalTo(Maybe.just(null)));
+
+    }
     @Test
     public void nonEmptyList(){
         assertThat(none.nonEmptyList(10),equalTo(NonEmptyList.of(10)));

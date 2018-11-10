@@ -42,6 +42,7 @@ public class EvalTest {
         assertThat(order.getOrElse(2,"null"),equalTo("b"));
         assertThat(order.getOrElse(3,"null"),equalTo("a"));
     }
+
     @Test
     public void interleave3(){
         order = Seq.empty();
@@ -311,6 +312,13 @@ public class EvalTest {
 
 
 
-
+    @Test
+    public void asyncZip(){
+        Eval.CompletableEval<Integer,Integer> cm =  Eval.eval();
+        System.out.println("Test ");
+        Eval<Tuple2<Integer, Integer>> m = cm.zipWith(Tuple::tuple, Eval.now(10));
+        System.out.println("Blocked ? ");
+        assertThat(m.getClass(),equalTo(Eval.Module.FutureAlways.class));
+    }
 
 }

@@ -270,9 +270,9 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      }
 
      static <LT2,LT3,RT> LazyEither4<Throwable,LT2,LT3,RT> fromFuture(Future<RT> future){
-         return fromLazy(Eval.<LazyEither4<Throwable,LT2,LT3,RT>>fromFuture(
-                 future.map(e->e!=null? LazyEither4.<Throwable,LT2,LT3,RT>right(e): LazyEither4.<Throwable,LT2,LT3,RT>left1(new NoSuchElementException()))
-                         .recover(t-> LazyEither4.<Throwable,LT2,LT3,RT>left1(t.getCause()))));
+         return fromLazy(Eval.fromFuture(future.<LazyEither4<Throwable,LT2,LT3,RT>>map(LazyEither4::right)
+             .recover(e->LazyEither4.left1(e.getCause()))));
+
      }
 
     /**
@@ -388,11 +388,17 @@ public interface LazyEither4<LT1, LT2,LT3, RT> extends Transformable<RT>,
      * @return Either constructed from the supplied Iterable
      */
     public static <ST, T, T2,RT> LazyEither4<ST, T,T2,RT> fromIterable(final Iterable<RT> iterable) {
-
-        final Iterator<RT> it = iterable.iterator();
-        return it.hasNext() ? LazyEither4.right( it.next()) : LazyEither4.left1(null);
+        return later(()->{
+            final Iterator<RT> it = iterable.iterator();
+            return it.hasNext() ? LazyEither4.right( it.next()) : LazyEither4.left1(null);
+        });
     }
-
+    static <ST, T,T2,RT> LazyEither4<ST, T,T2,RT> later(Supplier<LazyEither4<ST,T,T2,RT>> lazy){
+        return new LazyEither4.Lazy<>(Eval.later(lazy));
+    }
+    static <ST, T, T2, RT> LazyEither4<ST, T, T2, RT> always(Supplier<LazyEither4<ST,T,T2,RT>> lazy){
+        return new LazyEither4.Lazy<>(Eval.always(lazy));
+    }
     /**
      * Construct a Either4#Right from an Eval
      *

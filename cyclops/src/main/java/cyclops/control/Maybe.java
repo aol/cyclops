@@ -1,6 +1,7 @@
 package cyclops.control;
 
 
+import com.oath.cyclops.async.adapters.Queue;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Present;
@@ -23,6 +24,7 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.io.InvalidObjectException;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -192,7 +194,7 @@ public interface Maybe<T> extends Option<T> {
 
 
         public boolean completeAsNone(){
-            return complete(null);
+            return completeExceptionally(new Queue.ClosedQueueException());
         }
         @Override
         public boolean complete(ORG done) {
@@ -220,7 +222,8 @@ public interface Maybe<T> extends Option<T> {
         }
     }
     static <T> Maybe<T> fromFuture(Future<T> future){
-        return fromLazy(Eval.fromFuture(future.recover(e->null)).map(Maybe::ofNullable));
+        return fromLazy(Eval.fromFuture(future.map(Maybe::of)
+                                              .recover(e->Maybe.nothing())));
     }
     public static <T,R> Function<? super T, ? extends Maybe<R>> arrow(Function<?  super T, ? extends R> fn){
         return in-> Maybe.ofNullable(fn.apply(in));
@@ -282,9 +285,6 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMapP(java.util.function.Function)
-     */
     @Override
     default <R> Maybe<R> mergeMap(final Function<? super T, ? extends Publisher<? extends R>> mapper) {
         return this.flatMap(a -> {
@@ -331,7 +331,13 @@ public interface Maybe<T> extends Option<T> {
      * @return Maybe populated with first value from Iterable (Maybe.zero if Publisher zero)
      */
     static <T> Maybe<T> fromIterable(final Iterable<T> iterable) {
-        return Maybe.fromEvalNullable(Eval.fromIterable(iterable));
+        if(iterable instanceof Maybe)
+            return (Maybe<T>)iterable;
+        return new Lazy<>(Eval.later(()->{
+            Iterator<T> it = iterable.iterator();
+            return it.hasNext() ? Maybe.just(it.next()) :  Maybe.nothing();
+        })) ;
+
     }
 
     static <R> Maybe<R> fromStream(Stream<? extends R> apply) {
@@ -651,7 +657,7 @@ public interface Maybe<T> extends Option<T> {
 
     @Override
     default <U> Maybe<Tuple2<T, U>> zipWithPublisher(final Publisher<? extends U> other) {
-        return (Maybe)Option.super.zipWithPublisher(other);
+        return mergeMap(a->Maybe.fromPublisher(other).map(b->Tuple.tuple(a,b)));
     }
 
     @Override
@@ -748,33 +754,25 @@ public interface Maybe<T> extends Option<T> {
     @Override
     default <T2, R> Maybe<R> zip(final Iterable<? extends T2> app, final BiFunction<? super T, ? super T2, ? extends R> fn) {
 
-        return flatMap(a->Option.fromIterable(app).map(b->fn.apply(a,b)));
+        return flatMap(a->  Maybe.fromIterable(app).map(b->fn.apply(a,b)));
     }
 
 
 
     @Override
     default <T2, R> Maybe<R> zip(final BiFunction<? super T, ? super T2, ? extends R> fn, final Publisher<? extends T2> app) {
-      return narrow(Spouts.from(this)
-        .zip(fn, app)
-        .takeOne());
+       return mergeMap(a->Maybe.fromPublisher(app).map(b->fn.apply(a,b)));
     }
 
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see com.oath.cyclops.types.Zippable#zip(java.lang.Iterable)
-   */
+
     @Override
     default <U> Maybe<Tuple2<T, U>> zip(final Iterable<? extends U> other) {
 
         return (Maybe) Option.super.zip(other);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#unit(java.lang.Object)
-     */
+
     @Override
     default <T> Maybe<T> unit(final T unit) {
         return Maybe.of(unit);
@@ -784,19 +782,13 @@ public interface Maybe<T> extends Option<T> {
 
 
 
-  /*
-   * (non-Javadoc)
-   *
-   * @see com.oath.cyclops.value.Value#toMaybe()
-   */
+
     @Override
     default Maybe<T> toMaybe() {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Convertable#isPresent()
-     */
+
     @Override
     boolean isPresent();
 
@@ -812,62 +804,35 @@ public interface Maybe<T> extends Option<T> {
         return recoverWith(()->opt);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#transform(java.util.function.Function)
-     */
+
     @Override
     <R> Maybe<R> map(Function<? super T, ? extends R> mapper);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.MonadicValue#flatMap(java.util.function.Function)
-     */
+
     @Override
     <R> Maybe<R> flatMap(Function<? super T, ? extends MonadicValue<? extends R>> mapper);
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.types.foldable.Convertable#visit(java.util.function.Function, java.util.function.Supplier)
-     */
+
     @Override
     <R> R fold(Function<? super T, ? extends R> some, Supplier<? extends R> none);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#filter(java.util.function.
-     * Predicate)
-     */
+
     @Override
     Maybe<T> filter(Predicate<? super T> fn);
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#ofType(java.lang.Class)
-     */
     @Override
     default <U> Maybe<U> ofType(final Class<? extends U> type) {
 
         return (Maybe<U>) Option.super.ofType(type);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.lambda.monads.Filters#filterNot(java.util.function.
-     * Predicate)
-     */
     @Override
     default Maybe<T> filterNot(final Predicate<? super T> fn) {
 
         return (Maybe<T>) Option.super.filterNot(fn);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.oath.cyclops.lambda.monads.Filters#notNull()
-     */
+
     @Override
     default Maybe<T> notNull() {
 
@@ -875,12 +840,7 @@ public interface Maybe<T> extends Option<T> {
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.lambda.monads.Functor#peek(java.util.function.Consumer)
-     */
+
     @Override
     default Maybe<T> peek(final Consumer<? super T> c) {
 
@@ -957,23 +917,21 @@ public interface Maybe<T> extends Option<T> {
             return true;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#hashCode()
-         */
+
         @Override
         public int hashCode() {
             return Objects.hashCode(lazy.get());
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
+            if (obj instanceof Nothing) {
+                return false;
+            }
+            else if (obj instanceof None) {
+                return  false;
+            }
             if (obj instanceof Present)
                 return Objects.equals(lazy.get(), ((Present) obj).orElse(null));
             else if (obj instanceof Lazy) {
@@ -1205,22 +1163,18 @@ public interface Maybe<T> extends Option<T> {
             return maybe.hashCode();
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+
         @Override
         public boolean equals(final Object obj) {
 
-            if (obj instanceof Present)
-                return Objects.equals(orElse(null), ((Present) obj).orElse(null));
-            else if (obj instanceof Nothing) {
+           if (obj instanceof Nothing) {
                 return !isPresent();
             }
             else if (obj instanceof None) {
                 return !isPresent();
-            }else if (obj instanceof Lazy) {
+            }else if (obj instanceof Present && isPresent())
+                return Objects.equals(orElse(null), ((Present) obj).orElse(null));
+            else if (obj instanceof Lazy) {
                 if (isPresent())
                     return Objects.equals(orElse(null), ((Maybe) obj).orElse(null));
                 else {

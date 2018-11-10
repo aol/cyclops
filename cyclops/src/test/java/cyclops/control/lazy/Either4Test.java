@@ -25,9 +25,63 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 public class Either4Test {
+
+    int called = 0;
+    @Before
+    public void setup(){
+        called =0;
+    }
+    @Test
+    public void later(){
+
+
+        LazyEither4<Object, Object, Object, Integer> e = LazyEither4.later(() -> {
+            called++;
+            return LazyEither4.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(1));
+    }
+    @Test
+    public void always(){
+
+
+        LazyEither4<Object, Object, Object, Integer>  e = LazyEither4.always(() -> {
+            called++;
+            return LazyEither4.right(10);
+        });
+        assertThat(called,equalTo(0));
+
+        e.isRight();
+        assertThat(called,equalTo(1));
+        e.isRight();
+        assertThat(called,equalTo(2));
+    }
+    @Test
+    public void nullPublisher() {
+        assertThat(LazyEither4.fromPublisher(Seq.of(null, 190)), not(equalTo(LazyEither4.right(null))));
+    }
+    @Test
+    public void fromNull(){
+        System.out.println(LazyEither4.fromIterable(Seq.of().plus(null)));
+        assertThat(LazyEither4.right(null), equalTo(LazyEither4.right(null)));
+
+        assertThat(LazyEither4.fromIterable(Seq.of()),equalTo(LazyEither4.left1(null)));
+
+
+        assertThat(LazyEither4.fromPublisher(Seq.of(null,190)),not(equalTo(LazyEither4.right(null))));
+        assertTrue(LazyEither4.fromPublisher(Seq.of(null,190)).isLeft1());
+        assertThat(LazyEither4.fromFuture(Future.ofResult(null)),equalTo(LazyEither4.right(null)));
+
+    }
     boolean lazy = true;
     @Test
     public void lazyTest() {
