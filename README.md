@@ -1,15 +1,15 @@
 # Getting Cyclops X (10)
 
-* The latest version is [cyclops:10.0.2](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.2)
+* The latest version is [cyclops:10.0.3](http://mvnrepository.com/artifact/com.oath.cyclops/cyclops/10.0.3)
 
 
 * Stackoverflow tag [cyclops-react](http://stackoverflow.com/search?q=cyclops-react)
 
-* [Documentation](https://github.com/aol/cyclops-react/wiki) (work in progress for Cyclops X)
+* [Documentation](https://github.com/aol/cyclops/wiki) (work in progress for Cyclops X)
 
 * [Integration modules](https://github.com/aol/cyclops-integration)
 
-# What's new in Cyclops X (cyclops 10.0.0)
+# What's new in Cyclops X (cyclops 10)
 
 ![cyclops-data-types](https://user-images.githubusercontent.com/9964792/37656704-b4266d7a-2c40-11e8-84d9-23a4a77e0341.jpeg)
 
