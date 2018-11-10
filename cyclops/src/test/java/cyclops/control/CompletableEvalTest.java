@@ -1,6 +1,7 @@
 package cyclops.control;
 
 import com.oath.cyclops.types.persistent.PersistentSet;
+import com.oath.cyclops.types.reactive.Completable;
 import cyclops.data.HashSet;
 import cyclops.companion.Monoids;
 import cyclops.companion.Reducers;
@@ -333,7 +334,7 @@ public class CompletableEvalTest {
     public void testZipPubEvalLazy(){
 
 	    System.out.println("Class " + Eval.later(()->10).zipWith(this::add, Eval.later(()->20)));
-        assertTrue(Eval.later(()->10).zipWith(this::add, Eval.later(()->20)) instanceof CompletableEval);
+        assertTrue(Eval.later(()->10).zipWith(this::add, Eval.later(()->20)) instanceof Eval.Module.Later);
     }
 
 	private int add3(int a, int b, int c){

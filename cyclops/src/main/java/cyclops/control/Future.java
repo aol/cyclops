@@ -29,6 +29,7 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
 
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -314,7 +315,7 @@ public class Future<T> implements To<Future<T>>,
             @Override
             public void onComplete() {
                 if(!result.isDone())  {
-                    result.complete(null);
+                    result.completeExceptionally(new NoSuchElementException());
                 }
             }
         });

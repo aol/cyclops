@@ -720,25 +720,26 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
     public Maybe<T> single(Predicate<? super T> predicate) {
         return filter(predicate).single();
     }
-
+    private final static Object UNSET =  new Object();
     @Override
     public Maybe<T> single() {
-        Maybe.CompletableMaybe<T,T> maybe = Maybe.<T>maybe();
+        Maybe.CompletableMaybe<T, T> maybe = Maybe.<T>maybe();
         flux.subscribe(new Subscriber<T>() {
-            T value = null;
+            Object value = UNSET;
             Subscription sub;
+
             @Override
             public void onSubscribe(Subscription s) {
-                this.sub=s;
+                this.sub = s;
                 s.request(Long.MAX_VALUE);
             }
 
             @Override
             public void onNext(T t) {
-                if(value==null)
+                if (value == UNSET)
                     value = t;
                 else {
-                    maybe.complete(null);
+                    maybe.completeAsNone();
                     sub.cancel();
                 }
             }
@@ -750,7 +751,10 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
             @Override
             public void onComplete() {
-                maybe.complete(value);
+                if(value == UNSET)
+                    maybe.completeAsNone();
+                else
+                    maybe.complete((T)value);
             }
         });
         return maybe;

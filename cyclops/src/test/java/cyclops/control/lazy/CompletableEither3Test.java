@@ -51,7 +51,7 @@ public class CompletableEither3Test {
         LazyEither3<Throwable,Integer,Integer> mapped = completable.map(i->i*2)
                                                               .flatMap(i-> LazyEither3.right(i+1));
 
-        completable.complete(null);
+        completable.completeExceptionally(new NoSuchElementException());
 
         mapped.printOut();
         assertThat(mapped.isPresent(),equalTo(false));

@@ -20,6 +20,7 @@ public class LazyEitherTest {
     assertThat(JacksonUtil.serializeToJson(LazyEither.right(10)),equalTo("{\"right\":10}"));
 
   }
+
   @Test
   public void roundTripLeft(){
 

@@ -346,7 +346,7 @@ public class Eval2Test {
     }
     @Test
     public void testZipPubEvalLazy(){
-        assertTrue(Eval.later(()->10).zipWith(this::add, Eval.later(()->20)) instanceof Eval.CompletableEval);
+        assertTrue(Eval.later(()->10).zipWith(this::add, Eval.later(()->20)) instanceof Eval.Module.Later);
     }
 
 	private int add3(int a, int b, int c){
