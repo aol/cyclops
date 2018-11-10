@@ -662,7 +662,7 @@ public class FluxReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
     @Override
     public ReactiveSeq<T> cycle(long times) {
-        return flux(flux.repeat(times));
+        return flux(flux.repeat(times-1));
     }
 
     @Override
