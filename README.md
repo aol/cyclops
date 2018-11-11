@@ -14,10 +14,10 @@
 * [Dysfunctional programming in Java : A functional tutorial](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-a-functional-tutorial-20e0bebd2ec9)
   - [Part 1 : Laziness (Covering Supplier & the Eval monad)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-i-laziness-cc9c6981de39)
   - [Part 2 : Immutability (Covering Immutable Objects with Lombok, withers)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-2-immutability-a2cff487c224)
-  - Part 3 : [Functional Composition (Covering method chaining, Streams, ReactiveSeq, Flux from Reactor)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-3-functional-composition-16828f0609c2)
-  - Part 4 : [No nulls allowed (Covering class design, Optional, eager / lazy / reactive Option types, Mono from Reactor)](https://blog.usejournal.com/dysfunctional-programming-in-java-4-no-nulls-allowed-88e8735475a)
-  - Part 5 : [No exceptions (Covering making illegal states unrepresentable, eager / lazy Either type, Try)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-5-no-exceptions-5f37ac594323)
-  - Part 6 : [No locks or synchronized blocks (Covering Future, Sequence, FutureStreams and reactive-streams)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-6-no-locks-or-synchronized-blocks-ea5a47644689)
+  - [Part 3 : Functional Composition (Covering method chaining, Streams, ReactiveSeq, Flux from Reactor)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-3-functional-composition-16828f0609c2)
+  - [Part 4 : No nulls allowed (Covering class design, Optional, eager / lazy / reactive Option types, Mono from Reactor)](https://blog.usejournal.com/dysfunctional-programming-in-java-4-no-nulls-allowed-88e8735475a)
+  - [Part 5 : No exceptions (Covering making illegal states unrepresentable, eager / lazy Either type, Try)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-5-no-exceptions-5f37ac594323)
+  - [Part 6 : No locks or synchronized blocks (Covering Future, Sequence, FutureStreams and reactive-streams)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-6-no-locks-or-synchronized-blocks-ea5a47644689)
 
 # What's new in Cyclops X (cyclops 10)
 
