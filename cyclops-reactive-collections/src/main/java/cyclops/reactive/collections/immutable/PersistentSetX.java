@@ -837,18 +837,14 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
         return (PersistentSetX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default PersistentSetX<T> removeStream(final Stream<? extends T> stream) {
 
         return (PersistentSetX<T>) LazyCollectionX.super.removeStream(stream);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default PersistentSetX<T> removeAll(final T... values) {
 
@@ -856,30 +852,24 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     }
     @Override
     default PersistentSetX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default PersistentSetX<T> retainAll(final Iterable<? extends T> it) {
 
         return (PersistentSetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default PersistentSetX<T> retainStream(final Stream<? extends T> seq) {
 
         return (PersistentSetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default PersistentSetX<T> retainAll(final T... values) {
 
