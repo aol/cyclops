@@ -129,10 +129,10 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     }
 
     public <R2> Tupled<T,R2> with(Function<? super T, ? extends R2> fn){
-        return new Tupled<>(map(i->Tuple.tuple(i,fn.apply(i))));
+        return new Tupled<>(this,i->Tuple.tuple(i,fn.apply(i)));
     }
     public <R1,R2> Tupled<R1,R2> tupled(Function<? super T, ? extends Tuple2<R1,R2>> fn){
-        return new Tupled<>(map(fn));
+        return new Tupled<>(this,fn);
     }
     public <R1,R2,R3> Tupled3<R1,R2,R3> tupled3(Function<? super T, ? extends Tuple3<R1,R2,R3>> fn){
         return new Tupled3<>(map(fn));
@@ -140,17 +140,24 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     @AllArgsConstructor(access =  AccessLevel.PRIVATE)
     public static class Tupled<T1,T2>{
 
-        private final Managed<Tuple2<T1,T2>> managed;
+        private final Managed<T1> managed;
+        private final Function<T1,Tuple2<T1,T2>> fn2;
 
         public <R> Tupled3<T1,T2,R> with(BiFunction<? super T1,? super T2, ? extends R> fn){
             return new Tupled3(map((a,b)->Tuple.tuple(a,b,fn.apply(a,b))));
         }
 
         public final <R> Managed<R> flatMap(BiFunction<? super T1,? super T2, Managed<R>> f) {
-            return managed.flatMap(t2->f.apply(t2._1(),t2._2()));
+            return managed.flatMap(t1->{
+                Tuple2<T1,T2> t2 = fn2.apply(t1);
+                return f.apply(t2._1(),t2._2());
+            });
         }
         public final <R> Managed<R> map(BiFunction<? super T1,? super T2, ? extends R> f){
-            return managed.map(t2->f.apply(t2._1(),t2._2()));
+            return managed.map(t1->{
+                Tuple2<T1,T2> t2 = fn2.apply(t1);
+                return f.apply(t2._1(),t2._2());
+            });
         }
 
         public <R1,R2> Tupled<R1,R2> mapTupled(BiFunction<? super T1,? super T2, Tuple2<R1,R2>> fn){
@@ -173,8 +180,8 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     @AllArgsConstructor(access =  AccessLevel.PRIVATE)
     public static class Tupled3<T1,T2,T3>{
 
-        private final Managed<Tuple3<T1,T2,T3>> managed;
-
+        private final Managed<T1> managed;
+        private final Function<T1,Tuple3<T1,T2,T3>> fn3;
 
         public final <R> Managed<R> flatMap(Function3<? super T1,? super T2,? super T3, Managed<R>> f) {
             return managed.flatMap(t3->f.apply(t3._1(),t3._2(),t3._3()));

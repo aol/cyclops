@@ -12,8 +12,7 @@ import org.mockito.Mockito;
 import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class HibernateManagedTest {
     SessionFactory factory;
@@ -40,13 +39,17 @@ public class HibernateManagedTest {
 
         Try<String, Throwable> res = Managed.of(factory::openSession)
                                             .with(Session::beginTransaction)
-                                            .map((session, tx) ->
+                                            .map((session, tx) ->{
+                                                try {
+                                                    verify(session,never()).close();
+                                                }catch(Exception e) {
+                                                }
 
-                                                deleteFromMyTable(session)
-                                                        .bipeek(success -> tx.commit(),error -> tx.rollback())
+                                                return deleteFromMyTable(session)
+                                                        .bipeek(success -> tx.commit(),error -> tx.rollback());
 
 
-                                            ).foldRun(Try::flatten);
+    } ).foldRun(Try::flatten);
 
         assertThat(res,equalTo(Try.success("deleted")));
 
