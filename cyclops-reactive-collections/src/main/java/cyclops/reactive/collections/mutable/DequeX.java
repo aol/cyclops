@@ -973,9 +973,7 @@ public interface DequeX<T> extends To<DequeX<T>>,
         return (DequeX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default DequeX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -984,48 +982,38 @@ public interface DequeX<T> extends To<DequeX<T>>,
 
     @Override
     default DequeX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default DequeX<T> removeAll(final T... values) {
 
         return (DequeX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default DequeX<T> retainAll(final Iterable<? extends T> it) {
 
         return (DequeX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default DequeX<T> retainStream(final Stream<? extends T> seq) {
 
         return (DequeX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default DequeX<T> retainAll(final T... values) {
 
         return (DequeX<T>) LazyCollectionX.super.retainAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see LazyCollectionX#grouped(int, java.util.function.Supplier)
-     */
+
     @Override
     default <C extends PersistentCollection<? super T>> DequeX<C> grouped(final int size, final Supplier<C> supplier) {
 

@@ -955,9 +955,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default ListX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -965,32 +963,26 @@ public interface ListX<T> extends To<ListX<T>>,
     }
 
     @Override
-    default ListX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+    default ListX<T> removeAll(CollectionX<? extends T> it){
+        return removeAll((Iterable<T>)it);
     }
 
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default ListX<T> removeAll(final T... values) {
 
         return (ListX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default ListX<T> retainAll(final Iterable<? extends T> it) {
 
         return (ListX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default ListX<T> retainStream(final Stream<? extends T> seq) {
 
