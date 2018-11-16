@@ -66,7 +66,7 @@ public class IOTest {
   public void bracket(){
       assertFalse(closed);
       IO.of(()->10)
-          .bracket(i-> new MyCloseable())
+          .checkedBracket(i-> new MyCloseable())
           .run();
 
       assertTrue(closed);
@@ -75,7 +75,7 @@ public class IOTest {
     public void bracketCons(){
         assertFalse(closed);
         IO.of(()->10)
-            .bracket(i-> new MyCloseable(),b->{
+            .checkedBracket(i-> new MyCloseable(),b->{
                 try {
                     b.close();
                 } catch (Exception e) {
