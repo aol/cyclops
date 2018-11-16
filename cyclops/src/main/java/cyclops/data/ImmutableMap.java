@@ -8,6 +8,7 @@ import com.oath.cyclops.types.functor.BiTransformable;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.recoverable.OnEmpty;
 import com.oath.cyclops.types.recoverable.OnEmptySwitch;
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.control.Option;
 import cyclops.control.Try;
 import cyclops.function.Function3;
@@ -36,6 +37,13 @@ public interface ImmutableMap<K,V> extends Iterable<Tuple2<K,V>>,
 
     ImmutableMap<K,V> remove(K key);
     ImmutableMap<K,V> removeAll(K... keys);
+
+    default ReactiveSeq<K> keys(){
+       return stream().map(Tuple2::_1);
+    }
+    default ReactiveSeq<V> values(){
+        return stream().map(Tuple2::_2);
+    }
 
     @Override
     default ImmutableMap<K, V> removeAllKeys(Iterable<? extends K> keys){
