@@ -30,15 +30,15 @@ public abstract  class BaseImmutableMapTest {
 
 
     @Test
-    public void keys(){
+    public void keys() {
         List<Integer> allKeys = new ArrayList<>();
-       for(Integer  next : of(1,"a",2,"b").keys()){
-           allKeys.add(next);
-       }
+        for (Integer next : of(1, "a", 2, "b").keys()) {
+            allKeys.add(next);
+        }
 
-       assertThat(allKeys.size(),equalTo(2));
-        assertThat(allKeys,hasItem(1));
-        assertThat(allKeys,hasItem(2));
+        assertThat(allKeys.size(), equalTo(2));
+        assertThat(allKeys, hasItem(1));
+        assertThat(allKeys, hasItem(2));
     }
     @Test
     public void values(){
