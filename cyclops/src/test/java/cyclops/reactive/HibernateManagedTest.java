@@ -55,4 +55,25 @@ public class HibernateManagedTest {
 
     }
 
+    @Test
+    public void hibernateIO(){
+
+        Try<String, Throwable> res = IO.of(factory)
+                                        .checkedBracketWith(SessionFactory::openSession,Session::beginTransaction)
+            .mapIO((session, tx) ->{
+                try {
+                    verify(session,never()).close();
+                }catch(Exception e) {
+                }
+
+                return deleteFromMyTable(session)
+                    .bipeek(success -> tx.commit(),error -> tx.rollback());
+
+
+            } ).foldRun(Try::flatten);
+
+        assertThat(res,equalTo(Try.success("deleted")));
+
+    }
+
 }

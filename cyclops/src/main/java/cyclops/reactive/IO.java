@@ -22,6 +22,8 @@ import cyclops.data.tuple.Tuple7;
 import com.oath.cyclops.types.functor.ReactiveTransformable;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
+import cyclops.function.checked.CheckedConsumer;
+import cyclops.function.checked.CheckedFunction;
 import cyclops.function.checked.CheckedSupplier;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -100,9 +102,25 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         Managed<R> m = Managed.of(map(fn));
         return m.io();
     }
+    default <R extends AutoCloseable> IO<R> checkedBracket(CheckedFunction<? super T, ? extends R> fn) {
+        return bracket(ExceptionSoftener.softenFunction(fn));
+    }
+
+    default <R extends AutoCloseable,R1> Managed.Tupled<R,R1> bracketWith(Function<? super T, ? extends R> fn, Function<? super R, ? extends R1> with) {
+        Managed.Tupled<? extends R, ? extends R1> x = Managed.of(map(fn)).with(with);
+        return (Managed.Tupled<R, R1> )x;
+
+    }
+    default <R extends AutoCloseable,R1> Managed.Tupled<R,R1> checkedBracketWith(CheckedFunction<? super T, ? extends R> fn, CheckedFunction<? super R, ? extends R1> with) {
+        return bracketWith(ExceptionSoftener.softenFunction(fn),ExceptionSoftener.softenFunction(with));
+
+    }
     default <R> IO<R> bracket(Function<? super T, ? extends R> fn, Consumer<R> consumer) {
         Managed<R> m = Managed.of(map(fn),consumer);
         return m.io();
+    }
+    default <R> IO<R> checkedBracket(CheckedFunction<? super T, ? extends R> fn, CheckedConsumer<R> consumer) {
+       return bracket(ExceptionSoftener.softenFunction(fn),ExceptionSoftener.softenConsumer(consumer));
     }
 
 
@@ -551,12 +569,17 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
             Managed<R> m = SyncManaged.of(map(fn));
             return m.io();
         }
+
         @Override
         public <R> IO<R> bracket(Function<? super T, ? extends R> fn, Consumer<R> consumer) {
             Managed<R> m = SyncManaged.of(map(fn),consumer);
             return m.io();
         }
-
+        @Override
+        public <R extends AutoCloseable,R1> Managed.Tupled<R,R1> bracketWith(Function<? super T, ? extends R> fn, Function<? super R, ? extends R1> with) {
+            Managed.Tupled<? extends R, ? extends R1> x = SyncManaged.of(map(fn)).with(with);
+            return (Managed.Tupled<R, R1> )x;
+        }
 
         @Override
         public IO<T> ensuring(Consumer<T> action){
