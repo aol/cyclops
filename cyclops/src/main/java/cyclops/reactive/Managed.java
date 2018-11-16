@@ -131,12 +131,8 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public <R2> Tupled<T,R2> with(Function<? super T, ? extends R2> fn){
         return new Tupled<>(this,i->Tuple.tuple(i,fn.apply(i)));
     }
-    public <R1,R2> Tupled<R1,R2> tupled(Function<? super T, ? extends Tuple2<R1,R2>> fn){
-        return new Tupled<>(this,fn);
-    }
-    public <R1,R2,R3> Tupled3<R1,R2,R3> tupled3(Function<? super T, ? extends Tuple3<R1,R2,R3>> fn){
-        return new Tupled3<>(map(fn));
-    }
+
+
     @AllArgsConstructor(access =  AccessLevel.PRIVATE)
     public static class Tupled<T1,T2>{
 
@@ -144,7 +140,10 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         private final Function<T1,Tuple2<T1,T2>> fn2;
 
         public <R> Tupled3<T1,T2,R> with(BiFunction<? super T1,? super T2, ? extends R> fn){
-            return new Tupled3(map((a,b)->Tuple.tuple(a,b,fn.apply(a,b))));
+            return new Tupled3<T1,T2,R>(managed,t1->{
+                Tuple2<T1,T2> t2 = fn2.apply(t1);
+                return Tuple.tuple(t2._1(),t2._2(),fn.apply(t2._1(),t2._2()));
+            });
         }
 
         public final <R> Managed<R> flatMap(BiFunction<? super T1,? super T2, Managed<R>> f) {
@@ -160,21 +159,24 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
             });
         }
 
-        public <R1,R2> Tupled<R1,R2> mapTupled(BiFunction<? super T1,? super T2, Tuple2<R1,R2>> fn){
-            return new Tupled<>(map(fn));
-        }
+
 
 
         public Managed<Tuple2<T1,T2>> managed(){
-            return managed;
+            return managed.map(fn2);
         }
         public final Try<Tuple2<T1,T2>,Throwable> run() {
-            return  managed.run();
+            return  managed.map(fn2).run();
         }
         public final <R> R foldRun(Function<? super Try<Tuple2<T1,T2>,Throwable>,? extends R> transform) {
-            return  managed.foldRun(transform);
+            return  managed.map(fn2).foldRun(transform);
         }
-
+        public final <R> IO<R> mapIO(BiFunction<? super T1,? super T2, R> f){
+            return map(f).io();
+        }
+        public final <R> IO<R> flatMapIO(BiFunction<? super T1,? super T2, IO<R>> f) {
+           return map(f).io().flatMap(Function.identity());
+        }
 
     }
     @AllArgsConstructor(access =  AccessLevel.PRIVATE)
@@ -184,25 +186,27 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         private final Function<T1,Tuple3<T1,T2,T3>> fn3;
 
         public final <R> Managed<R> flatMap(Function3<? super T1,? super T2,? super T3, Managed<R>> f) {
-            return managed.flatMap(t3->f.apply(t3._1(),t3._2(),t3._3()));
+            return managed.flatMap(t1->{
+                Tuple3<T1, T2, T3> t3 = fn3.apply(t1);
+                return f.apply(t3._1(),t3._2(),t3._3());
+            });
         }
         public final <R> Managed<R> map(Function3<? super T1,? super T2,? super T3, ? extends R> f){
-            return managed.map(t3->f.apply(t3._1(),t3._2(),t3._3()));
-        }
-
-        public <R1,R2,R3> Tupled3<R1,R2,R3> mapTupled(Function3<? super T1,? super T2,? super T3,  Tuple3<R1,R2,R3>> fn){
-            return new Tupled3<>(map(fn));
+            return managed.map(t1->{
+                Tuple3<T1, T2, T3> t3 = fn3.apply(t1);
+                return f.apply(t3._1(),t3._2(),t3._3());
+            });
         }
 
 
         public Managed<Tuple3<T1,T2,T3>> managed(){
-            return managed;
+            return managed.map(fn3);
         }
         public final Try<Tuple3<T1,T2,T3>,Throwable> run() {
-            return  managed.run();
+            return  managed.map(fn3).run();
         }
         public final <R> R foldRun(Function<? super Try<Tuple3<T1,T2,T3>,Throwable>,? extends R> transform) {
-            return  managed.foldRun(transform);
+            return  managed.map(fn3).foldRun(transform);
         }
 
 
