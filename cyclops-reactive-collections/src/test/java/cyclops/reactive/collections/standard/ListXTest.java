@@ -301,7 +301,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
     public <U, T> FluentCollectionX<T> unfold(U seed, Function<? super U, Option<Tuple2<T, U>>> unfolder) {
         return ListX.unfold(seed, unfolder);
     }
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test//(expected = IndexOutOfBoundsException.class)
     public void minusAtOutOfRange(){
         IterableX<Integer> vec = this.<Integer>empty();
         vec = vec.insertAt(0,1)
@@ -314,7 +314,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertThat(vec.removeAt(-1),equalTo(of(5,2,1)));
 
     }
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test//(expected = IndexOutOfBoundsException.class)
     public void minusAtOutOfRange2(){
         IterableX<Integer> vec = this.<Integer>empty();
         vec = vec.insertAt(0,1)
@@ -328,7 +328,7 @@ public class ListXTest extends CollectionXTestsWithNulls {
         assertThat(vec.removeAt(500),equalTo(of(5,2,1)));
 
     }
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test//(expected = IndexOutOfBoundsException.class)
     public void minusOne(){
         assertThat(of().removeAt(1).size(),equalTo(0));
     }

@@ -657,8 +657,7 @@ public interface ListX<T> extends To<ListX<T>>,
 
     @Override
     default ListX<T> removeAt(final long pos) {
-        remove(pos);
-        return this;
+        return fromStream(stream().removeAt(pos));
     }
 
 
