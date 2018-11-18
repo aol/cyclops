@@ -46,11 +46,9 @@ import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
 import java.util.*;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.*;
@@ -3295,7 +3293,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
     }
 
     @Override
-    default FutureStream<U> removeAt(int pos) {
+    default FutureStream<U> removeAt(long pos) {
         return fromStream(ReactiveSeq.oneShotStream(stream())
                 .removeAt(pos));
     }
@@ -3318,11 +3316,7 @@ public interface FutureStream<U> extends LazySimpleReactStream<U>,
                 .insertAt(pos,values));
     }
 
-    @Override
-    default FutureStream<U> removeAt(long index) {
-        return fromStream(ReactiveSeq.oneShotStream(stream())
-                .removeAt(index));
-    }
+
 
     @Override
     default FutureStream<U> plusAll(Iterable<? extends U> list) {

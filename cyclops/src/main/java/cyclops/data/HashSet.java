@@ -643,10 +643,7 @@ public final class HashSet<T> implements  ImmutableSet<T>,Higher<hashSet,T> , Se
           return (HashSet<T>) ImmutableSet.super.removeAt(pos);
       }
 
-      @Override
-      public HashSet<T> removeAt(int pos) {
-          return (HashSet<T>) ImmutableSet.super.removeAt(pos);
-      }
+
 
       @Override
       public HashSet<T> prependAll(Iterable<? extends T> value) {

@@ -947,11 +947,6 @@ public interface AnyMSeq<W extends WitnessType<W>,T> extends AnyM<W,T>, Transfor
     }
 
     @Override
-    default AnyMSeq<W,T> removeAt(int pos) {
-        return fromIterable(IterableX.super.removeAt(pos));
-    }
-
-    @Override
     default AnyMSeq<W,T> removeAll(Iterable<? extends T> value) {
         return fromIterable(IterableX.super.removeAll(value));
     }

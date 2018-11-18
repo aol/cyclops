@@ -126,7 +126,7 @@ public class LazyPVectorX<T> extends AbstractLazyPersistentCollection<T,Persiste
 
 
     @Override
-    public VectorX<T> removeAt(int i) {
+    public VectorX<T> removeAt(long i) {
         return from(get().removeAt(i));
     }
 

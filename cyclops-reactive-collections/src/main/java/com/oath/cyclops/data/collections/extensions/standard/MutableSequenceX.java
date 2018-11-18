@@ -30,7 +30,7 @@ public interface MutableSequenceX<T> extends CollectionX<T>, IndexedSequenceX<T>
     public MutableSequenceX<T> removeAll(Iterable<? extends T> list);
 
     @Override
-    public MutableSequenceX<T> removeAt(int i);
+    public MutableSequenceX<T> removeAt(long i);
 
 
 }

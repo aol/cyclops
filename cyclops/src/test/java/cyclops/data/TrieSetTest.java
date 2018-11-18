@@ -7,15 +7,18 @@ import cyclops.data.basetests.BaseImmutableSetTest;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -48,6 +51,14 @@ public class TrieSetTest extends BaseImmutableSetTest{
     @Override
     public <T> ImmutableSet<T> iterate(int times, T seed, UnaryOperator<T> fn) {
         return TrieSet.iterate(seed,fn,times);
+    }
+    @Test
+    @Override
+    public void insertAtIterable(){
+        List<String> result = 	of(1,2,3).insertAt(1,of(100,200,300))
+            .map(it ->it+"!!").collect(Collectors.toList());
+
+        assertThat(result, hasItems("1!!","100!!","200!!","300!!","2!!","3!!"));
     }
 
     @Override

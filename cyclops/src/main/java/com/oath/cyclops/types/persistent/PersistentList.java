@@ -24,7 +24,7 @@ public interface PersistentList<T> extends PersistentIndexed<T> {
     PersistentList<T> removeAll(Iterable<? extends T> list);
 
 
-    PersistentList<T> removeAt(int i);
+    PersistentList<T> removeAt(long i);
 
     default ListView<T> listView(){
     return new ListView.Impl<>(this);

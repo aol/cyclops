@@ -1,8 +1,5 @@
 package com.oath.cyclops.data.collections.extensions;
 
-import cyclops.reactive.collections.mutable.ListX;
-
-import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -59,7 +56,7 @@ public interface IndexedSequenceX<T> extends FluentCollectionX<T> {
      * @param i Index at which to remvoe element
      * @return FluentSequence with element removed
      */
-    public IndexedSequenceX<T> removeAt(int i);
+    public IndexedSequenceX<T> removeAt(long i);
 
 
 

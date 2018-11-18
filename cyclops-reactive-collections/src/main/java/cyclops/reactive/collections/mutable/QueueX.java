@@ -928,6 +928,37 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
     default <R> QueueX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (QueueX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> QueueX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (QueueX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default QueueX<T> removeFirst(Predicate<? super T> pred) {
+        return (QueueX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default QueueX<T> appendAll(Iterable<? extends T> value) {
+        return (QueueX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default QueueX<T> prependAll(Iterable<? extends T> value) {
+        return (QueueX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default QueueX<T> updateAt(int pos, T value) {
+        return (QueueX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default QueueX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (QueueX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default QueueX<T> prependStream(Stream<? extends T> stream) {
