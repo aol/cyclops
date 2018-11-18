@@ -196,8 +196,8 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
     }
 
     @Override
-    default BankersQueue<T> removeValue(T e) {
-        return removeAll(e);
+    default BankersQueue<T> removeValue(T value) {
+        return removeFirst(e->Objects.equals(e,value));
     }
 
 
