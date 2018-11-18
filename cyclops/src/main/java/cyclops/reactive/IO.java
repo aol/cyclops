@@ -83,20 +83,41 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         return io.flatMap(i -> i);
     }
 
+    default <R> IO<R> checkedMap(CheckedFunction<? super T, ? extends R> checkedFunction){
+        return map(ExceptionSoftener.softenFunction(checkedFunction));
+    }
+
     <R> IO<R> map(Function<? super T, ? extends R> s);
 
+    default <R> IO<R> checkedFlatMap(CheckedFunction<? super T, IO<? extends R>> checkedFunction){
+        return flatMap(ExceptionSoftener.softenFunction(checkedFunction));
+    }
     <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s);
 
+    default <R> IO<R> concatMap(Function<? super T, Iterable<? extends R>> s){
+        return flatMap(i->sync(s.apply(i)));
+    }
+
+    default <R> IO<R> checkedConcatMap(CheckedFunction<? super T, Iterable<? extends R>> s){
+        return concatMap(ExceptionSoftener.softenFunction(s));
+    }
+
+    <R> IO<R> mergeMap(int maxConcurrency,Function<? super T, Publisher<? extends R>> s);
+
+    default <R> IO<R> checkedRetry(CheckedFunction<? super T,? extends R> checkedFunction){
+        return retry(ExceptionSoftener.softenFunction(checkedFunction));
+    }
     @Override
     default <R> IO<R> retry(Function<? super T, ? extends R> fn) {
         return (IO<R>)ReactiveTransformable.super.retry(fn);
     }
-
+    default <R> IO<R> checkedRetry(CheckedFunction<? super T,? extends R> checkedFunction, int retries, long delay, TimeUnit timeUnit){
+        return retry(ExceptionSoftener.softenFunction(checkedFunction),retries,delay,timeUnit);
+    }
     @Override
     default <R> IO<R> retry(Function<? super T, ? extends R> fn, int retries, long delay, TimeUnit timeUnit) {
         return (IO<R>)ReactiveTransformable.super.retry(fn,retries,delay,timeUnit);
     }
-
 
     default <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
         Managed<R> m = Managed.of(map(fn));
@@ -460,7 +481,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s) {
             return fromPublisher(Spouts.from(fn).mergeMap(t -> s.apply(t).publisher()));
         }
-
+        @Override
+        public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+            return fromPublisher(Spouts.from(fn).mergeMap(maxConcurrency,t -> s.apply(t)));
+        }
 
 
         @Override
@@ -563,7 +587,10 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
         public <R> IO<R> flatMap(Function<? super T, IO<? extends R>> s) {
             return new SyncIO<R>(fn.mergeMap(s));
         }
-
+        @Override
+        public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+            return new SyncIO<R>(fn.mergeMap(maxConcurrency,s));
+        }
         @Override
         public <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
             Managed<R> m = SyncManaged.of(map(fn));
