@@ -18,6 +18,7 @@
   - [Part 4 : No nulls allowed (Covering class design, Optional, eager / lazy / reactive Option types, Mono from Reactor)](https://blog.usejournal.com/dysfunctional-programming-in-java-4-no-nulls-allowed-88e8735475a)
   - [Part 5 : No exceptions (Covering making illegal states unrepresentable, eager / lazy Either type, Try)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-5-no-exceptions-5f37ac594323)
   - [Part 6 : No locks or synchronized blocks (Covering Future, Sequence, FutureStreams and reactive-streams)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-6-no-locks-or-synchronized-blocks-ea5a47644689)
+  - [Part 7 : Immutable Collections (Covering Vector, NonEmptyList and reactive processing)](https://medium.com/@johnmcclean/dysfunctional-programming-in-java-7-immutable-collections-83ba78aaf4dd)
 
 # What's new in Cyclops X (cyclops 10)
 
