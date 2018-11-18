@@ -585,10 +585,7 @@ public final class TrieSet<T> implements ImmutableSet<T>,
         return (TrieSet<T>) ImmutableSet.super.removeAt(pos);
     }
 
-    @Override
-    public TrieSet<T> removeAt(int pos) {
-        return (TrieSet<T>) ImmutableSet.super.removeAt(pos);
-    }
+
 
     @Override
     public TrieSet<T> prependAll(Iterable<? extends T> value) {

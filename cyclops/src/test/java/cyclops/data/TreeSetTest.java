@@ -12,10 +12,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
@@ -37,7 +39,14 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
     }
 
+    @Test
+    @Override
+    public void insertAtIterable(){
+        List<String> result = 	of(1,2,3).insertAt(1,of(100,200,300))
+            .map(it ->it+"!!").collect(Collectors.toList());
 
+        MatcherAssert.assertThat(result, hasItems("1!!","100!!","200!!","300!!","2!!","3!!"));
+    }
     @Test
     public void takeWhileDropWhile(){
         System.out.println(of(1,2,3,4,1,2,3,4).takeWhile(i->i<3));

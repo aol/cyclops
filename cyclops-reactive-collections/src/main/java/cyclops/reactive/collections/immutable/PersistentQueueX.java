@@ -39,6 +39,7 @@ import java.lang.reflect.Proxy;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.function.*;
 import java.util.stream.Stream;
 
@@ -556,25 +557,13 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
         return (PersistentQueueX<R>) LazyCollectionX.super.map(mapper);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * flatMap(java.util.function.Function)
-     */
+
     @Override
     default <R> PersistentQueueX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return (PersistentQueueX<R>) LazyCollectionX.super.concatMap(mapper);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * limit(long)
-     */
+
     default PersistentQueueX<T> take(final long num) {
         return (PersistentQueueX<T>) LazyCollectionX.super.take(num);
     }
@@ -585,28 +574,117 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
 
+    @Override
+    default <R> PersistentQueueX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
 
+    @Override
+    default <R> PersistentQueueX<R> retry(final Function<? super T, ? extends R> fn) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.retry(fn);
+    }
 
+    @Override
+    default <R> PersistentQueueX<R> retry(final Function<? super T, ? extends R> fn, final int retries, final long delay, final TimeUnit timeUnit) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.retry(fn,retries,delay,timeUnit);
+    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * slice(long, long)
-     */
+    @Override
+    default <R> PersistentQueueX<R> flatMap(Function<? super T, ? extends Stream<? extends R>> fn) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.flatMap(fn);
+    }
+
+    @Override
+    default <R> PersistentQueueX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PersistentQueueX<R>) LazyCollectionX.super.mergeMap(fn);
+    }
+
+    @Override
+    default PersistentQueueX<T> prependStream(Stream<? extends T> stream) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.prependStream(stream);
+    }
+
+    @Override
+    default PersistentQueueX<T> appendAll(T... values) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.appendAll(values);
+    }
+
+    @Override
+    default PersistentQueueX<T> append(T value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.append(value);
+    }
+
+    @Override
+    default PersistentQueueX<T> prepend(T value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.prepend(value);
+    }
+
+    @Override
+    default PersistentQueueX<T> prependAll(T... values) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.prependAll(values);
+    }
+
+    @Override
+    default PersistentQueueX<T> insertAt(int pos, T... values) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PersistentQueueX<T> insertAt(int pos, T value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.insertAt(pos,value);
+    }
+
+    @Override
+    default PersistentQueueX<T> deleteBetween(int start, int end) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.deleteBetween(start,end);
+    }
+
+    @Override
+    default PersistentQueueX<T> insertStreamAt(int pos, Stream<T> stream) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.insertStreamAt(pos,stream);
+    }
+
+    @Override
+    default PersistentQueueX<T> removeAt(long pos) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.removeAt(pos);
+    }
+
+    @Override
+    default PersistentQueueX<T> removeFirst(Predicate<? super T> pred) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default PersistentQueueX<T> appendAll(Iterable<? extends T> value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default PersistentQueueX<T> prependAll(Iterable<? extends T> value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default PersistentQueueX<T> updateAt(int pos, T value) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default PersistentQueueX<T> insertAt(int pos, Iterable<? extends T> values) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.insertAt(pos,values);
+    }
+
+    @Override
+    default PersistentQueueX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (PersistentQueueX<T>) LazyCollectionX.super.insertAt(pos,values);
+    }
+
     @Override
     default PersistentQueueX<T> slice(final long from, final long to) {
         return (PersistentQueueX<T>) LazyCollectionX.super.slice(from, to);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> PersistentQueueX<T> sorted(final Function<? super T, ? extends U> function) {
         return (PersistentQueueX<T>) LazyCollectionX.super.sorted(function);

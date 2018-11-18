@@ -544,10 +544,6 @@ public interface ImmutableSet<T> extends OnEmptySwitch<ImmutableSet<T>,Immutable
         return unitStream(stream().removeAt(pos));
     }
 
-    @Override
-    default ImmutableSet<T> removeAt(int pos) {
-        return unitStream(stream().removeAt(pos));
-    }
 
     @Override
     default ImmutableSet<T> removeFirst(Predicate<? super T> pred) {

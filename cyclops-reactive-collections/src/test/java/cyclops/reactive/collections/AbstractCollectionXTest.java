@@ -5,12 +5,15 @@ import com.oath.cyclops.data.collections.extensions.CollectionX;
 import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 
 
+import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.basetests.AbstractIterableXTest;
+import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.TreeSet;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -49,6 +52,20 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
 
 	static Executor ex = Executors.newFixedThreadPool(1);
     boolean set = false;
+    @Test
+    public void mergeMap3(){
+        for(int l=0;l<10_000;l++) {
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+            System.out.println("************Iteration " + l);
+
+            Assert.assertThat(this.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+                    .mergeMap(3,i -> Spouts.of(i, i * 2, i * 4)
+                        .mergeMap(3,x -> of(5, 6, 7))).toList().size(),
+                equalTo(Arrays.asList(5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7).size()));
+
+        }
+    }
     @Test
     public void testOnEmpty() throws AbstractIterableXTest.X {
         assertEquals(asList(1), of().onEmpty(1).to().listX());
@@ -191,11 +208,9 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
         assertThat(of().plusAll(of(1)).plus(2),hasItems(1,2));
     }
 
-	@Test
-    public void minusOne(){
-        assertThat(of().removeAt(1).size(),equalTo(0));
-    }
-	@Test
+
+
+    @Test
     public void minusOneNotEmpty(){
         assertThat(of(1).removeValue(1).size(),equalTo(0));
     }

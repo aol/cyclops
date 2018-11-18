@@ -9,10 +9,8 @@ import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
 import com.oath.cyclops.types.persistent.PersistentList;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Either;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -72,7 +70,7 @@ public interface Seq<T> extends ImmutableList<T>,
         return prependAll((Iterable<T>)t);
     }
     Seq<T> updateAt(int i, T value);
-    Seq<T> removeAt(final int i);
+    Seq<T> removeAt(final long i);
     default Seq<T> plus(T value){
         return prepend(value);
     }
@@ -100,11 +98,6 @@ public interface Seq<T> extends ImmutableList<T>,
         return fromStream(stream);
     }
 
-
-    @Override
-    default Seq<T> removeAt(long pos){
-        return (Seq<T>)ImmutableList.super.removeAt(pos);
-    }
 
     @Override
     default Seq<T> insertAt(int pos, T... values) {
@@ -803,7 +796,7 @@ public interface Seq<T> extends ImmutableList<T>,
         public Seq<T> tail() {
             return tail;
         }
-        public Seq<T> removeAt(final int i) {
+        public Seq<T> removeAt(final long i) {
             if (size == 0)
                 return this;
             if (i == 0)
@@ -1035,7 +1028,7 @@ public interface Seq<T> extends ImmutableList<T>,
         }
 
         @Override
-        public Seq<T> removeAt(int i) {
+        public Seq<T> removeAt(long i) {
             return this;
         }
 

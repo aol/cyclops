@@ -7,10 +7,8 @@ import com.oath.cyclops.types.foldable.Folds;
 import com.oath.cyclops.types.functor.Transformable;
 import com.oath.cyclops.types.persistent.PersistentCollection;
 import com.oath.cyclops.types.persistent.PersistentIndexed;
-import com.oath.cyclops.types.traversable.Traversable;
 import cyclops.control.Option;
 import cyclops.control.Trampoline;
-import cyclops.control.Try;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
@@ -27,7 +25,6 @@ import org.reactivestreams.Publisher;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.function.BinaryOperator;
@@ -653,10 +650,6 @@ public final class DifferenceList<T> implements Folds<T>,
         return (DifferenceList<T>)ImmutableList.super.removeValue(value);
     }
 
-    @Override
-    public DifferenceList<T> removeAt(int pos) {
-        return (DifferenceList<T>)ImmutableList.super.removeAt(pos);
-    }
 
     @Override
     public DifferenceList<T> removeAll(Iterable<? extends T> value) {

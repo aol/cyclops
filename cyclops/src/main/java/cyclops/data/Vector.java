@@ -128,13 +128,10 @@ public class Vector<T> implements ImmutableList<T>,
     }
 
     @Override
-    public Vector<T> removeAt(int i) {
+    public Vector<T> removeAt(long i) {
         return (Vector<T>)ImmutableList.super.removeAt(i);
     }
-    @Override
-    public Vector<T> removeAt(long pos) {
-        return unitStream(stream().removeAt(pos));
-    }
+
     @Override
     public Vector<T> insertAt(int pos, T... values) {
         return (Vector<T>)ImmutableList.super.insertAt(pos,values);

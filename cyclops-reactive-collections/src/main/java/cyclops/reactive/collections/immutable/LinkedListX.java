@@ -121,12 +121,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     @Override
     LinkedListX<T> eager();
 
-    /**
-     * Widen a PStackType nest inside another HKT encoded type
-     *
-     * @param list HTK encoded type containing  a PStack to widen
-     * @return HKT encoded type with a widened PStack
-     */
+
     public static <C2,T> Higher<C2, Higher<linkedListX,T>> widen2(Higher<C2, LinkedListX<T>> list){
 
         return (Higher)list;
@@ -134,12 +129,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     public static <T> Higher<linkedListX, T> widen(LinkedListX<T> narrow) {
       return narrow;
     }
-    /**
-     * Convert the raw Higher Kinded Type for PStack types into the PStackType type definition class
-     *
-     * @param list HKT encoded list into a PStackType
-     * @return PStackType
-     */
+
     public static <T> LinkedListX<T> narrowK(final Higher<linkedListX, T> list) {
         return (LinkedListX<T>)list;
     }
@@ -666,7 +656,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
 
 
     @Override
-    public LinkedListX<T> removeAt(int i);
+    public LinkedListX<T> removeAt(long i);
 
 
 
@@ -1091,6 +1081,33 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     default <R> LinkedListX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (LinkedListX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> LinkedListX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (LinkedListX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default LinkedListX<T> removeFirst(Predicate<? super T> pred) {
+        return (LinkedListX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default LinkedListX<T> appendAll(Iterable<? extends T> value) {
+        return (LinkedListX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default LinkedListX<T> prependAll(Iterable<? extends T> value) {
+        return (LinkedListX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+
+    @Override
+    default LinkedListX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (LinkedListX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default LinkedListX<T> prependStream(Stream<? extends T> stream) {

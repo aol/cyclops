@@ -327,10 +327,6 @@ public final class LazyString implements ImmutableList<Character>,Higher<lazyStr
         return fromLazySeq(string.removeValue(value));
     }
 
-    @Override
-    public LazyString removeAt(int pos) {
-        return fromLazySeq(string.removeAt(pos));
-    }
 
     @Override
     public LazyString removeAll(Iterable<? extends Character> value) {
