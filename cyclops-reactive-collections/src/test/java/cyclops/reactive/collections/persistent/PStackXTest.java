@@ -139,9 +139,7 @@ public class PStackXTest extends CollectionXTestsWithNulls {
     public void onEmptySwitch(){
             assertThat(LinkedListX.empty().onEmptySwitch(()-> LinkedListX.of(1,2,3)),equalTo(LinkedListX.of(1,2,3)));
     }
-	/* (non-Javadoc)
-	 * @see com.oath.cyclops.function.collections.extensions.AbstractCollectionXTest#zero()
-	 */
+
 	@Override
 	public <T> FluentCollectionX<T> empty() {
 		return LinkedListX.empty();
@@ -149,15 +147,6 @@ public class PStackXTest extends CollectionXTestsWithNulls {
 
 
 
-	@Test
-	public void remove(){
-	    /**
-	    LinkedListX.of(1,2,3)
-	            .removeAll(PBagX.of(2,3))
-                .flatMapP(i->Flux.just(10+i,20+i,30+i));
-
-	    **/
-	}
 	@Test
 	public void plus(){
 		IterableX<Integer> vec = this.<Integer>empty().plus(1).plus(2).plus(5);

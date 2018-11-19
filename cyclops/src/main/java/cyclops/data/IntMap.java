@@ -630,12 +630,7 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
         return (IntMap<T>)ImmutableList.super.removeFirst(pred);
     }
 
-    @Override
-    public IntMap<T> removeAt(int i) {
-        if(i<0 || i>=size())
-            return this;
-        return  new IntMap<>(intMap.minus(i,i),size-1);
-    }
+
 
     @Override
     public IntMap<T> removeAt(long pos) {

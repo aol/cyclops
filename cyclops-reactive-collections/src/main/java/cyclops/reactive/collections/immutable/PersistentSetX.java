@@ -932,6 +932,37 @@ public interface PersistentSetX<T> extends To<PersistentSetX<T>>,PersistentSet<T
     default <R> PersistentSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (PersistentSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> PersistentSetX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (PersistentSetX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default PersistentSetX<T> removeFirst(Predicate<? super T> pred) {
+        return (PersistentSetX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default PersistentSetX<T> appendAll(Iterable<? extends T> value) {
+        return (PersistentSetX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default PersistentSetX<T> prependAll(Iterable<? extends T> value) {
+        return (PersistentSetX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default PersistentSetX<T> updateAt(int pos, T value) {
+        return (PersistentSetX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default PersistentSetX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (PersistentSetX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default PersistentSetX<T> prependStream(Stream<? extends T> stream) {

@@ -707,10 +707,6 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
         return unitStream(stream().removeAt(pos));
     }
 
-    @Override
-    default ImmutableQueue<T> removeAt(int pos) {
-        return unitStream(stream().removeAt(pos));
-    }
 
 
 

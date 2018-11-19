@@ -958,6 +958,36 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
     default <R> OrderedSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (OrderedSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> OrderedSetX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (OrderedSetX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default OrderedSetX<T> removeFirst(Predicate<? super T> pred) {
+        return (OrderedSetX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default OrderedSetX<T> appendAll(Iterable<? extends T> value) {
+        return (OrderedSetX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default OrderedSetX<T> prependAll(Iterable<? extends T> value) {
+        return (OrderedSetX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default OrderedSetX<T> updateAt(int pos, T value) {
+        return (OrderedSetX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default OrderedSetX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (OrderedSetX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
 
     @Override
     default OrderedSetX<T> prependStream(Stream<? extends T> stream) {

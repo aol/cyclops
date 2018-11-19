@@ -35,9 +35,7 @@ public interface Traversable<T> extends Publisher<T>,
                                         IterableFilterable<T>,
                                         FilterableTransformable<T>{
 
-    default Traversable<T> removeAt(long index){
-        return zipWithIndex().filterNot(t2->t2._2()==index).map(t->t._1());
-    }
+
 
     @Override
     <R> Traversable<R> map(Function<? super T, ? extends R> fn);
@@ -780,7 +778,7 @@ public interface Traversable<T> extends Publisher<T>,
     default Traversable<T> updateAt(int i, T e){
         return traversable().updateAt(i,e);
     }
-    default Traversable<T> removeAt(int pos){
+    default Traversable<T> removeAt(long pos){
         return traversable().removeAt(pos);
     }
     /**

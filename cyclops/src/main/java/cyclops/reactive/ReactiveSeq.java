@@ -153,7 +153,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
             return t2._1();
         });
     }
-    default ReactiveSeq<T> removeAt(int pos){
+    default ReactiveSeq<T> removeAt(long pos){
 
         return zipWithIndex().filter(t2->pos!=t2._2()).map(Tuple2::_1);
     }
@@ -3761,10 +3761,6 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return this.filter(v -> v != t);
     }
 
-    @Override
-    default ReactiveSeq<T> removeAt(long index) {
-        return zipWithIndex().filterNot(t2 -> t2._2() == index).map(t -> t._1());
-    }
 
     /**
      * Generate the permutations based on values in the ReactiveSeq Makes use of

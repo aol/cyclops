@@ -5,8 +5,8 @@ import com.oath.cyclops.internal.react.stream.ReactBuilder;
 import com.oath.cyclops.react.ThreadPools;
 import com.oath.cyclops.types.futurestream.SimpleReactStream;
 import cyclops.reactive.Spouts;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.Builder;
 import lombok.experimental.Wither;
 import org.reactivestreams.Publisher;
 

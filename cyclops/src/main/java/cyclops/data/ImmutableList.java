@@ -747,10 +747,6 @@ public interface ImmutableList<T> extends Sealed2<ImmutableList.Some<T>,Immutabl
         return removeFirst(e->Objects.equals(e,value));
     }
 
-    @Override
-    default ImmutableList<T> removeAt(int pos) {
-        return unitIterable(IterableX.super.removeAt(pos));
-    }
 
     @Override
     default ImmutableList<T> removeAll(Iterable<? extends T> value) {

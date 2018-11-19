@@ -28,6 +28,7 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.companion.Streamable;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -53,6 +54,7 @@ import static cyclops.data.tuple.Tuple.tuple;
 import static cyclops.reactive.ReactiveSeq.fromIntStream;
 import static java.util.Arrays.asList;
 import static java.util.Comparator.comparing;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -78,7 +80,13 @@ public abstract class AbstractIterableXTest {
 
         assertThat(result,equalTo(Arrays.asList("1!!","2!!","5!!","6!!")));
     }
+    @Test
+    public void insertAtIterable(){
+        List<String> result = 	of(1,2,3).insertAt(1,of(100,200,300))
+            .map(it ->it+"!!").collect(Collectors.toList());
 
+        Assert.assertThat(result,equalTo(Arrays.asList("1!!","100!!","200!!","300!!","2!!","3!!")));
+    }
     @Test
     public void indexOf(){
       assertThat(empty().indexOf(e->true),equalTo(Maybe.nothing()));

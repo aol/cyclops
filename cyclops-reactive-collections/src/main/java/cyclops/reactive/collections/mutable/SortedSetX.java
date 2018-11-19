@@ -976,6 +976,37 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
     default <R> SortedSetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (SortedSetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> SortedSetX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SortedSetX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default SortedSetX<T> removeFirst(Predicate<? super T> pred) {
+        return (SortedSetX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default SortedSetX<T> appendAll(Iterable<? extends T> value) {
+        return (SortedSetX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default SortedSetX<T> prependAll(Iterable<? extends T> value) {
+        return (SortedSetX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default SortedSetX<T> updateAt(int pos, T value) {
+        return (SortedSetX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default SortedSetX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (SortedSetX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default SortedSetX<T> prependStream(Stream<? extends T> stream) {
