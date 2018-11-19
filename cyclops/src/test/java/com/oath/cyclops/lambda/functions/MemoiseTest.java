@@ -20,6 +20,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import cyclops.function.Function3;
+import cyclops.function.Function4;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -126,7 +128,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseTriFunction(){
-		val cached = Memoize.memoizeTriFunction(this::mult);
+        Function3<Integer, Integer, Integer, Integer> cached = Memoize.memoizeTriFunction(this::mult);
 
 		assertThat(cached.apply(1,2,3),equalTo(6));
 		assertThat(cached.apply(1,2,3),equalTo(6));
@@ -140,7 +142,7 @@ public class MemoiseTest {
 	}
 	@Test
 	public void testMemoiseQuadFunction(){
-		val cached = memoizeQuadFunction(this::addAll);
+        Function4<Integer, Integer, Integer, Integer, Integer> cached = memoizeQuadFunction(this::addAll);
 
 		assertThat(cached.apply(1,2,3,4),equalTo(10));
 		assertThat(cached.apply(1,2,3,4),equalTo(10));
