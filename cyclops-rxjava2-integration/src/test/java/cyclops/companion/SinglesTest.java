@@ -1,6 +1,6 @@
 package cyclops.companion;
 
-import com.sun.tools.javac.comp.Flow;
+
 import cyclops.companion.rx2.Singles;
 import cyclops.control.Future;
 import cyclops.reactive.Spouts;
