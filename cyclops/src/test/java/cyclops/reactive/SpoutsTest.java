@@ -52,6 +52,19 @@ public class SpoutsTest {
         count=0;
         err = null;
     }
+    @Test
+    public void rangeMaxConcurrency1M32() {
+        List<Integer> list =Spouts.range(0, 1_000_000).mergeMap(32,Flux::just).toList();
+
+       assertThat(list.size(),equalTo(100_000));
+    }
+    @Test
+    public void rangeMaxConcurrency1M64() {
+        List<Integer> list =Spouts.range(0, 1_000_000).mergeMap(32,Flux::just).toList();
+
+        assertThat(list.size(),equalTo(1_000_000));
+    }
+
     Throwable err;
     @Test
     public void dropRightValues(){

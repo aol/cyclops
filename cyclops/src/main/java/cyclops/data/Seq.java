@@ -74,6 +74,7 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> updateAt(int i, T value);
     Seq<T> removeAt(final int i);
     default Seq<T> plus(T value){
+        System.out.println("Plus  "+ System.identityHashCode(value));
         return prepend(value);
     }
     default Seq<T> insertAt(final int i, final T e){
@@ -859,7 +860,77 @@ public interface Seq<T> extends ImmutableList<T>,
 
         @Override
         public Seq<T> removeValue(T e) {
-            return removeAll(e);
+
+            if(Objects.equals(this.head,e)) {
+                return tail;
+            }
+            if(tail.size()<1000) {
+                Seq<T> seq = tail.removeValue(e);
+                if(seq == tail){
+                    return this;
+                }
+                return cons(head,seq);
+            }else{
+                List<T> prepend = new ArrayList<>(size);
+                Seq<T> remainder = this.tail;
+                boolean found = false;
+                while(!remainder.isEmpty()){
+                    T nextHead = remainder.headOrElse(null);
+                    if(Objects.equals(nextHead,e)){
+                        found=true;
+                        break;
+                    }else{
+                        prepend.add(nextHead);
+                    }
+                    remainder = remainder.tailOrElse(Seq.empty());
+
+                }
+                if(!found) {
+                    return this;
+                }
+                Seq<T> res = remainder.prependAll(prepend);
+
+                return res;
+
+            }
+
+        }
+        @Override
+        public Seq<T> removeFirst(Predicate<? super T> e) {
+
+            if(e.test(this.head)) {
+                return tail;
+            }
+            if(tail.size()<1000) {
+                Seq<T> seq = tail.removeFirst(e);
+                if(seq == tail){
+                    return this;
+                }
+                return cons(head,seq);
+            }else{
+                List<T> prepend = new ArrayList<>(size);
+                Seq<T> remainder = this.tail;
+                boolean found = false;
+                while(!remainder.isEmpty()){
+                    T nextHead = remainder.headOrElse(null);
+                    if(e.test(nextHead)){
+                        found=true;
+                        break;
+                    }else{
+                        prepend.add(nextHead);
+                    }
+                    remainder = remainder.tailOrElse(Seq.empty());
+
+                }
+                if(!found) {
+                    return this;
+                }
+                Seq<T> res = remainder.prependAll(prepend);
+
+                return res;
+
+            }
+
         }
 
         @Override
