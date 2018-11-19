@@ -27,7 +27,7 @@ public class Fluxs {
 
     public static <T> Flux<Mono<T>> sequence(final Publisher<? extends Flux<T>> fts) {
 
-        Flux<Mono<T>> identity = Flux.just(Mono.empty());
+        Flux<Mono<T>> identity = Flux.just();
 
         BiFunction<Flux<Mono<T>>,Flux<T>,Flux<Mono<T>>> combineToStream = (acc,next) ->Flux.merge(acc,next.map(Mono::just));
 
@@ -39,6 +39,7 @@ public class Fluxs {
         Mono<Flux<R>> s = Mono.from(stream).map(h -> h.map(fn));
         return sequence(s);
     }
+
 
     public static  <T,R> Flux<R> tailRec(T initial, Function<? super T, ? extends Flux<? extends Either<T, R>>> fn) {
         Flux<Either<T, R>> next = Flux.just(Either.left(initial));
