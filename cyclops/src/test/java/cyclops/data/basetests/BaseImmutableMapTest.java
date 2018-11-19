@@ -9,10 +9,13 @@ import cyclops.data.ImmutableMap;
 import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
@@ -24,6 +27,30 @@ public abstract  class BaseImmutableMapTest {
     protected abstract  <K,V> ImmutableMap<K,V> of(K k1,V v1);
     protected abstract <K,V> ImmutableMap<K,V> of(K k1,V v1,K k2, V v2);
     protected abstract ImmutableMap<String,Integer> fromMap(Map<String, Integer> hello);
+
+
+    @Test
+    public void keys() {
+        List<Integer> allKeys = new ArrayList<>();
+        for (Integer next : of(1, "a", 2, "b").keys()) {
+            allKeys.add(next);
+        }
+
+        assertThat(allKeys.size(), equalTo(2));
+        assertThat(allKeys, hasItem(1));
+        assertThat(allKeys, hasItem(2));
+    }
+    @Test
+    public void values(){
+        List<String> allValues = new ArrayList<>();
+        for(String  next : of(1,"a",2,"b").values()){
+            allValues.add(next);
+        }
+
+        assertThat(allValues.size(),equalTo(2));
+        assertThat(allValues,hasItem("a"));
+        assertThat(allValues,hasItem("b"));
+    }
 
   @Test
   public void removeMissingKey(){
