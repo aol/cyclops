@@ -1,6 +1,7 @@
 package cyclops.companion.reactor;
 
 import cyclops.control.Either;
+import cyclops.control.Future;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
@@ -30,10 +31,12 @@ public class Fluxs {
 
         BiFunction<Flux<Mono<T>>,Flux<T>,Flux<Mono<T>>> combineToStream = (acc,next) ->Flux.merge(acc,next.map(Mono::just));
 
-        Mono<Flux<Mono<T>>> x = Mono.from(fts).reduce(identity, combineToStream);
+
+        Flux<Flux<Mono<T>>> x = Flux.from(fts).reduce(identity, combineToStream).flatMapMany(Flux::just);
+        return x.flatMap(i->i);
     }
-    public static <T,R> Mono<Flux<R>> traverse(Function<? super T,? extends R> fn,Publisher<Mono<T>> stream) {
-        Flux<Mono<R>> s = Flux.from(stream).map(h -> h.map(fn));
+    public static <T,R> Flux<Mono<R>> traverse(Function<? super T,? extends R> fn,Publisher<Flux<T>> stream) {
+        Mono<Flux<R>> s = Mono.from(stream).map(h -> h.map(fn));
         return sequence(s);
     }
 
