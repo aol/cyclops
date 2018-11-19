@@ -116,9 +116,6 @@ public class ConcurrentFlatMapper<T, R> {
         populateFromQueuesAndCleanup();
     }
 
-    int incrementActiveIndex(int index, Seq<ActiveSubscriber> active){
-        return index >= active.size() ? 0 : index;
-    }
 
     class SubscriberRequests {
 
@@ -275,15 +272,23 @@ public class ConcurrentFlatMapper<T, R> {
     }
 
     private boolean processRequests(Seq<ActiveSubscriber> localActiveSubs, SubscriberRequests state) {
-        int activeIndex = incrementActiveIndex(subscriberIndex,activeList);
+        int activeIndex = subscriberIndex;
+        if(activeIndex >= localActiveSubs.size())
+            activeIndex =0;
 
         for (int i = 0; i < localActiveSubs.size() && state.requestedLocal !=0L && sub.isOpen; i++) {
-            state.setNextActive( localActiveSubs.getOrElse(activeIndex,null));
+
+
+            state.setNextActive(localActiveSubs.getOrElse(activeIndex, null));
+
             if(!state.populateRequestsFromQueue())
                 return true;
             state.handleComplete();
             state.processPendingRequests();
-            activeIndex = incrementActiveIndex(++activeIndex,localActiveSubs);
+            activeIndex = activeIndex+1;
+            if(activeIndex >= localActiveSubs.size())
+                activeIndex = 0;
+
 
         }
 

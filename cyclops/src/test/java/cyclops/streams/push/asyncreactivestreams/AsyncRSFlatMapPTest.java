@@ -1,9 +1,12 @@
 package cyclops.streams.push.asyncreactivestreams;
 
 
+import cyclops.data.Seq;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
@@ -14,15 +17,30 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.LockSupport;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 
 public class AsyncRSFlatMapPTest {
     protected <U> ReactiveSeq<U> of(U... array){
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
+    protected ReactiveSeq<Integer> range(int start, int end){
+        return Spouts.from(Flux.range(start,end).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
+
+    }
+    protected ReactiveSeq<Integer> empty(){
+        return Spouts.from(Flux.from(Spouts.<Integer>empty()).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
     }
     Executor ex = Executors.newFixedThreadPool(4);
@@ -218,4 +236,311 @@ public class AsyncRSFlatMapPTest {
                     .toList());
         }
     }
+    @Test
+    public void rangeMaxConcurrencyM32() {
+        List<Integer> list =range(0, 1_000_000).mergeMap(32,Flux::just).toList();
+
+        assertThat(list.size(), CoreMatchers.equalTo(1_000_000));
+    }
+    @Test
+    public void rangeMaxConcurrencyM64() {
+        List<Integer> list = range(0, 1_000_000).mergeMap(64,Flux::just).toList();
+
+        assertThat(list.size(), CoreMatchers.equalTo(1_000_000));
+    }
+    @Test
+    public void nullReactiveStreamsPublisher() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        range(0, 1000).mergeMap(v -> Flux.just((Integer)null))
+            .forEach(n->{
+                data.set(true);
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertFalse(data.get());
+        assertFalse(complete.get());
+        while(error.get()==null){
+            LockSupport.parkNanos(10l);
+        }
+        assertThat(error.get(),instanceOf(NullPointerException.class));
+    }
+    @Test
+    public void nullReactiveSeq() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        range(0, 1000).mergeMap(v -> (v%2==0 ? Spouts.of((Integer)null): Spouts.of(v)))
+            .forEach(n->{
+                data.set(true);
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void emptyTest() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        this.<Integer>empty().mergeMap(v -> Flux.just(v)).forEach(n->{
+            data.set(true);
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void innerEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        range(0,  1000).mergeMap(v -> Flux.<Integer>empty()).forEach(n->{
+            data.set(true);
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void simpleMergeMap() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        range(0, 1000).mergeMap(Flux::just).forEach(n->{
+            data.incrementAndGet();
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+    }
+
+    @Test
+    public void mixedMergeMap() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        range(0, 1000).mergeMap(
+            v -> v % 2 == 0 ? Flux.just(v) : Flux.fromIterable(Arrays.asList(v))).forEach(n->{
+            data.incrementAndGet();
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void mergeMapMixedIncremental() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c = range(0, 1000).mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : ReactiveSeq.of(v)).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+        assertThat(data.get(), CoreMatchers.equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(500);
+        while(data.get()!=500){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(500);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void mergeMapMixedOversubscribed() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c = range(0, 1000).mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : Seq.of(v)).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+        assertThat(data.get(), CoreMatchers.equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(500);
+        while(data.get()!=500){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(1500);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void mergeMapIncremental() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c =  range(0, 1000).mergeMap(Flux::just).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+
+        assertThat(data.get(), CoreMatchers.equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+        c.request(500);
+
+        while(data.get()!=500){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(500);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
+    @Test
+    public void mergeMapIncrementalOversubscribed() throws InterruptedException {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c =  range(0, 1000).mergeMap(Flux::just).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+
+        assertThat(data.get(), CoreMatchers.equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+        c.request(500);
+
+        while(data.get()!=500){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+
+
+
+        c.request(1500);
+        while(!complete.get()){
+            LockSupport.parkNanos(10l);
+        }
+
+        assertThat(data.get(), CoreMatchers.equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(), CoreMatchers.equalTo(null));
+    }
+
 }

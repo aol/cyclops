@@ -1000,7 +1000,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
       @Override
       public <R> LazySeq<R> map(Function<? super T, ? extends R> fn) {
-          return cons(head.map(fn),()->tail.get().map(fn));
+          return    cons(head.map(fn),()->tail.get().map(fn));
       }
 
       @Override

@@ -7,6 +7,7 @@ import cyclops.control.Option;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSortedSetTest;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +38,11 @@ public class TreeSetTest extends BaseImmutableSortedSetTest{
     @Override
     public <T> ImmutableSortedSet<T> of(T... values) {
         return TreeSet.of(Comparators.naturalOrderIdentityComparator(),values);
+    }
+    @Test
+    public void minusOneLarge(){
+        assertThat(range(0,10_000).removeValue(1).size(), equalTo(9999));
+        assertThat(range(0,10_000).append(1).removeValue(1).size(), equalTo(9999));
     }
 
     @Test

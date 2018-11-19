@@ -119,7 +119,7 @@ public class ManagedTest {
     }
     @Test
     public void traverse(){
-        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a", "b", "c"),this::acquireNamed);
+        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a", "b", "c"),ManagedTest::acquireNamed);
         Try<Seq<Future<String>>, Throwable> t = writers.run();
 
         assertTrue(t.isSuccess());
@@ -127,7 +127,7 @@ public class ManagedTest {
     }
     @Test
     public void traverse2(){
-        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a"),this::acquireNamed);
+        Managed<Seq<Future<String>>> writers = Managed.traverse(Seq.of("a"),ManagedTest::acquireNamed);
 
         Try<Seq<Future<String>>, Throwable> t = writers.run();
         System.out.println(t);
@@ -150,7 +150,7 @@ public class ManagedTest {
         assertThat(t.isSuccess(), equalTo(true));
         assertThat(t.map(f->f.orElse("world")).orElse("world"),equalTo("HELLO"));
     }
-    public Managed<Future<String>> acquireNamed(String name){
+    public static Managed<Future<String>> acquireNamed(String name){
         return Managed.managed(Future.of(() -> {
             System.out.println("Acquiring " + name);
             return name.toUpperCase();
