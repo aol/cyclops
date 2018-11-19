@@ -6,6 +6,7 @@ import cyclops.function.Function4;
 import cyclops.reactive.ReactiveSeq;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 
@@ -24,7 +25,17 @@ import java.util.stream.Stream;
 public class Flowables {
 
 
+    public static <T> Flowable<Single<T>> sequence(final Publisher<? extends Flowable<T>> fts) {
 
+        io.reactivex.functions.BiFunction<Flowable<Single<T>>,Flowable<T>,Flowable<Single<T>>> combineToStream = (acc,next) ->Flowable.merge(acc,next.map(Single::just));
+        Single<Flowable<Single<T>>> x = Flowable.fromPublisher(fts).reduce(Flowable.empty(), combineToStream);
+        Flowable<Flowable<Single<T>>> r = x.flatMapPublisher(Flowable::just);
+        return r.flatMap(i->i);
+    }
+    public static <T,R> Flowable<Single<R>> traverse(Function<? super T,? extends R> fn,Publisher<Flowable<T>> stream) {
+        Single<Flowable<R>> s = Single.fromPublisher(stream).map(h -> h.map(in->fn.apply(in)));
+        return sequence(s.toFlowable());
+    }
 
     public static  <T,R> Flowable<R> tailRec(T initial, Function<? super T, ? extends Flowable<? extends Either<T, R>>> fn) {
         Flowable<Either<T, R>> next = Flowable.just(Either.left(initial));

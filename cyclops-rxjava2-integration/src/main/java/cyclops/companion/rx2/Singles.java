@@ -5,10 +5,15 @@ import com.oath.cyclops.react.Status;
 import com.oath.cyclops.types.MonadicValue;
 import com.oath.cyclops.types.Value;
 import cyclops.companion.Futures;
-import cyclops.control.*;
+import cyclops.control.Either;
+import cyclops.control.Eval;
+import cyclops.control.Future;
+import cyclops.control.LazyEither;
+import cyclops.control.Maybe;
 import cyclops.data.Seq;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
@@ -29,8 +34,16 @@ import java.util.function.Predicate;
 @UtilityClass
 public class Singles {
 
+    public static <T> Single<Flowable<T>> sequence(final Publisher<? extends Single<T>> fts) {
 
+        Single<Single<Flowable<T>>> res = Flowable.fromPublisher(fts).<Single<Flowable<T>>>reduce(Single.just(Flowable.empty()), (acc, next) -> acc.zipWith(next, (a, b) -> Flowable.concat(a, Flowable.just(b))));
+        return res.flatMap(i->i);
+    }
 
+    public static <T,R> Single<Flowable<R>> traverse(Function<? super T,? extends R> fn,Publisher<Single<T>> stream) {
+        Flowable<Single<R>> s = Flowable.fromPublisher(stream).map(h -> h.map(i->fn.apply(i)));
+        return sequence(s);
+    }
     public static <T> Single<T> fromValue(MonadicValue<T> future){
         return Single.fromPublisher(future);
     }
