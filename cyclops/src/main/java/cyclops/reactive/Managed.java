@@ -17,6 +17,8 @@ import cyclops.data.tuple.Tuple7;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.function.Semigroup;
+import cyclops.function.checked.CheckedFunction;
+import cyclops.function.checked.CheckedSupplier;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -77,15 +79,22 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
     public static <T extends AutoCloseable> Managed<T> managed(T acq){
         return of(IO.of(()->acq), ExceptionSoftener.softenConsumer(c->c.close()));
     }
+
     public static <T> Managed<T> of(Publisher<T> acq, Consumer<T> cleanup){
         return of(IO.fromPublisher(acq),cleanup);
     }
+
     public static <T> Managed<T> of(Supplier<? extends T> acq, Consumer<T> cleanup){
         return of(IO.of(acq),cleanup);
     }
+
     public static <T extends AutoCloseable> Managed<T> of(Supplier<? extends T> acq){
         return of(IO.of(acq),ExceptionSoftener.softenConsumer(c->c.close()));
     }
+    public static <T extends AutoCloseable> Managed<T> checked(CheckedSupplier<? extends T> acq){
+        return of(IO.of(ExceptionSoftener.softenSupplier(acq)),ExceptionSoftener.softenConsumer(c->c.close()));
+    }
+
     public static <T extends AutoCloseable> Managed<T> of(Publisher<T> acq){
         return of(IO.fromPublisher(acq),ExceptionSoftener.softenConsumer(c->c.close()));
     }
@@ -262,8 +271,15 @@ public  abstract class Managed<T> implements Higher<managed,T>,To<Managed<T>>, P
         return io().stream();
     }
 
+    public <R> Managed<R> checkedMap(CheckedFunction<? super T, ? extends R> mapper){
+        return map(ExceptionSoftener.softenFunction(mapper));
+    }
+
     public <R> Managed<R> map(Function<? super T, ? extends R> mapper){
         return of(apply(mapper.andThen(IO::of)),__->{});
+    }
+    public  <R> Managed<R> checkedFlatMap(CheckedFunction<? super T, Managed<R>> f){
+        return flatMap(ExceptionSoftener.softenFunction(f));
     }
     public  <R> Managed<R> flatMap(Function<? super T, Managed<R>> f){
 
