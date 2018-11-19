@@ -76,6 +76,10 @@ public final class FluxIO<T> implements IO<T> {
     }
 
     @Override
+    public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+        return of(flowable.flatMap(s,maxConcurrency));
+    }
+    @Override
     public <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
         Managed<R> m = FluxManaged.of(map(fn));
         return m.io();
