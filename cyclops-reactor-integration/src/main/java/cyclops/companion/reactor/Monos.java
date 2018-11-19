@@ -9,7 +9,10 @@ import cyclops.control.Future;
 import cyclops.control.Maybe;
 import cyclops.function.Function3;
 import cyclops.function.Function4;
+import cyclops.instances.control.FutureInstances;
+import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.collections.mutable.ListX;
+import io.kindedj.Hk;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -18,9 +21,11 @@ import reactor.core.publisher.Mono;
 import java.util.Iterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 
 /**
@@ -33,6 +38,18 @@ import java.util.function.Predicate;
 public class Monos {
 
 
+    public static <T> Mono<Flux<T>> sequence(final Publisher<? extends Mono<T>> fts) {
+
+        Mono<Flux<T>> identity = Mono.just(Flux.empty());
+
+        BiFunction<Mono<Flux<T>>,Mono<T>,Mono<Flux<T>>> combineToStream = (acc,next) ->acc.zipWith(next,(a,b)->Flux.concat(a,Flux.just(b)));
+
+        return Flux.from(fts).reduce(identity, combineToStream).flatMap(i->i);
+    }
+    public static <T,R> Mono<Flux<R>> traverse(Function<? super T,? extends R> fn,Publisher<Mono<T>> stream) {
+        Flux<Mono<R>> s = Flux.from(stream).map(h -> h.map(fn));
+        return sequence(s);
+    }
 
     public static <T, R> Mono< R> tailRec(T initial, Function<? super T, ? extends Mono<? extends Either<T, R>>> fn) {
         Mono<? extends Either<T, R>> next[] = new Mono[1];
