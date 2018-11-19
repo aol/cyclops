@@ -8,6 +8,7 @@ import cyclops.reactive.Spouts;
 import lombok.experimental.UtilityClass;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -23,6 +24,18 @@ import java.util.function.Supplier;
 @UtilityClass
 public class Fluxs {
 
+    public static <T> Flux<Mono<T>> sequence(final Publisher<? extends Flux<T>> fts) {
+
+        Flux<Mono<T>> identity = Flux.just(Mono.empty());
+
+        BiFunction<Flux<Mono<T>>,Flux<T>,Flux<Mono<T>>> combineToStream = (acc,next) ->Flux.merge(acc,next.map(Mono::just));
+
+        Mono<Flux<Mono<T>>> x = Mono.from(fts).reduce(identity, combineToStream);
+    }
+    public static <T,R> Mono<Flux<R>> traverse(Function<? super T,? extends R> fn,Publisher<Mono<T>> stream) {
+        Flux<Mono<R>> s = Flux.from(stream).map(h -> h.map(fn));
+        return sequence(s);
+    }
 
     public static  <T,R> Flux<R> tailRec(T initial, Function<? super T, ? extends Flux<? extends Either<T, R>>> fn) {
         Flux<Either<T, R>> next = Flux.just(Either.left(initial));
