@@ -494,9 +494,7 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
 
 
 
-    /* (non-Javadoc)
-     * @see CollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default LazyCollectionX<T> removeAll(final T... values) {
         return fromStream(stream().removeAll(values));

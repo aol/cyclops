@@ -73,6 +73,11 @@ public final class FutureStreamIO<T> implements IO<T> {
         Managed<R> m = FutureStreamManaged.of(map(fn),consumer);
         return m.io();
     }
+    @Override
+    public <R extends AutoCloseable,R1> Managed.Tupled<R,R1> bracketWith(Function<? super T, ? extends R> fn, Function<? super R, ? extends R1> with) {
+        Managed.Tupled<? extends R, ? extends R1> x = FutureStreamManaged.of(map(fn)).with(with);
+        return (Managed.Tupled<R, R1> )x;
+    }
 
 
     @Override

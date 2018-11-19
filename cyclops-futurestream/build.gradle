@@ -42,6 +42,8 @@ dependencies {
     testCompile 'org.testng:testng:5.14.10'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
     testCompile 'io.vertx:vertx-core:3.0.0'
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: '5.1.0.Final')
+    testCompile (group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.1.0.Final')
 }
 sourceSets {
     main.compileClasspath += [configurations.provided]
