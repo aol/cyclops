@@ -49,6 +49,8 @@ dependencies {
     testCompile 'org.reactivestreams:reactive-streams-tck:1.0.0'
     testCompile 'org.assertj:assertj-core:3.2.0'
     testCompile 'com.github.stefanbirkner:system-rules:1.10.0'
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: '5.1.0.Final')
+    testCompile (group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.1.0.Final')
 }
 
 sourceSets {

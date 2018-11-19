@@ -336,6 +336,11 @@ public abstract class AbstractIterableXTest {
         assertThat(of().plusAll(of(1).toList()).plus(2),hasItems(1,2));
     }
 
+    @Test
+    public void minusOneLarge(){
+        assertThat(range(0,10_000).removeValue(1).size(),equalTo(9999));
+        assertThat(range(0,10_000).append(1).removeValue(1).size(),equalTo(10000));
+    }
 	@Test
     public void minusOne(){
         assertThat(of().removeValue(1).size(),equalTo(0));

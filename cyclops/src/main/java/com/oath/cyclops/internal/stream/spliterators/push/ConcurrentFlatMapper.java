@@ -117,10 +117,9 @@ public class ConcurrentFlatMapper<T, R> {
     }
 
     int incrementActiveIndex(int index, Seq<ActiveSubscriber> active){
-        return index > active.size() ? 0 : subscriberIndex;
+        return index >= active.size() ? 0 : index;
     }
 
-    @AllArgsConstructor
     class SubscriberRequests {
 
         boolean completed;
@@ -129,6 +128,15 @@ public class ConcurrentFlatMapper<T, R> {
         long missing;
         boolean rerun;
         ActiveSubscriber nextActive;
+
+        public SubscriberRequests(boolean completed, long pendingRequests, long requestedLocal, long missing, boolean rerun, ActiveSubscriber nextActive) {
+            this.completed = completed;
+            this.pendingRequests = pendingRequests;
+            this.requestedLocal = requestedLocal;
+            this.missing = missing;
+            this.rerun = rerun;
+            this.nextActive = nextActive;
+        }
 
         boolean populateRequestsFromQueue(){
             while (pendingRequests != requestedLocal) {
@@ -275,7 +283,7 @@ public class ConcurrentFlatMapper<T, R> {
                 return true;
             state.handleComplete();
             state.processPendingRequests();
-            activeIndex = incrementActiveIndex(activeIndex+1,localActiveSubs);
+            activeIndex = incrementActiveIndex(++activeIndex,localActiveSubs);
 
         }
 
@@ -289,7 +297,6 @@ public class ConcurrentFlatMapper<T, R> {
         final AtomicReference<Subscription> sub = new AtomicReference();
         final Queue<R> queue = new OneToOneConcurrentArrayQueue<>(1024);
         private volatile boolean done;
-
 
         @Override
         public void onSubscribe(Subscription s) {

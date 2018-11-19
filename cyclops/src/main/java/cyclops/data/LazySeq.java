@@ -1064,7 +1064,19 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return append(()->this);
         }
 
+        @Override
+        public LazySeq<T> removeValue(T e) {
+            T head = this.head.get();
+            return Objects.equals(head,e) ? tail() : LazySeq.cons(this.head, () -> tail().removeValue(e));
 
+        }
+        @Override
+        public LazySeq<T> removeFirst(Predicate<? super T> e) {
+            T head = this.head.get();
+            return e.test(head) ? tail() : LazySeq.cons(this.head, () -> tail().removeFirst(e));
+
+        }
+        @Override
         public LazySeq<T> tail(){
             return tail.get();
         }
@@ -1200,10 +1212,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
 
         }
 
-        @Override
-        public LazySeq<T> removeValue(T e) {
-            return removeAll(e);
-        }
+
 
     }
 

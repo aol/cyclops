@@ -43,7 +43,7 @@ public interface ImmutableQueue<T> extends Sealed2<ImmutableQueue.Some<T>,Immuta
 
     @Override
     default ImmutableQueue<T> removeValue(T value) {
-        return unitStream(stream().removeAll(value));
+        return removeFirst(e->Objects.equals(e,value));
     }
 
     @Override

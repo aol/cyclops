@@ -792,7 +792,7 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
 
     @Override
     default SetX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
 

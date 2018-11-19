@@ -622,9 +622,13 @@ public class IntMap<T> implements ImmutableList<T>,Serializable,Higher<intMap,T>
 
     @Override
     public IntMap<T> removeValue(T value) {
-        return  fromStream(stream().filter(i-> !Objects.equals(i,value)));
+        return removeFirst(e->Objects.equals(e,value));
     }
 
+    @Override
+    public IntMap<T> removeFirst(Predicate<? super T> pred) {
+        return (IntMap<T>)ImmutableList.super.removeFirst(pred);
+    }
 
 
 

@@ -1,6 +1,8 @@
-package cyclops.reactive;
+package cyclops.futurestream;
 
 import cyclops.control.Try;
+import cyclops.reactive.IO;
+import cyclops.reactive.Managed;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -9,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static cyclops.data.tuple.Tuple.tuple;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.*;
@@ -37,7 +38,7 @@ public class HibernateManagedTest {
     @Test
     public void hibernate(){
 
-        Try<String, Throwable> res = Managed.of(factory::openSession)
+        Try<String, Throwable> res = FutureStreamIO.FutureStreamManaged.of(factory::openSession)
                                             .with(Session::beginTransaction)
                                             .map((session, tx) ->{
                                                 try {
@@ -58,7 +59,7 @@ public class HibernateManagedTest {
     @Test
     public void hibernateIO(){
 
-        Try<String, Throwable> res = IO.of(factory)
+        Try<String, Throwable> res = FutureStreamIO.of(factory)
                                         .checkedBracketWith(SessionFactory::openSession,Session::beginTransaction)
             .mapIO((session, tx) ->{
                 try {
@@ -75,26 +76,5 @@ public class HibernateManagedTest {
         assertThat(res,equalTo(Try.success("deleted")));
 
     }
-    @Test
-    public void hibernateSyncIO(){
-
-        Try<String, Throwable> res = IO.SyncIO.of(factory)
-            .checkedBracketWith(SessionFactory::openSession,Session::beginTransaction)
-            .mapIO((session, tx) ->{
-                try {
-                    verify(session,never()).close();
-                }catch(Exception e) {
-                }
-
-                return deleteFromMyTable(session)
-                    .bipeek(success -> tx.commit(),error -> tx.rollback());
-
-
-            } ).foldRun(Try::flatten);
-
-        assertThat(res,equalTo(Try.success("deleted")));
-
-    }
-
 
 }

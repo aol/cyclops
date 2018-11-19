@@ -1156,13 +1156,7 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * removeAll(java.lang.Object[])
-     */
+
     @Override
     default PersistentQueueX<T> removeAll(final T... values) {
 
@@ -1170,42 +1164,24 @@ public interface PersistentQueueX<T> extends To<PersistentQueueX<T>>,
     }
     @Override
     default PersistentQueueX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default PersistentQueueX<T> retainAll(final Iterable<? extends T> it) {
 
         return (PersistentQueueX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default PersistentQueueX<T> retainStream(final Stream<? extends T> seq) {
 
         return (PersistentQueueX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#
-     * retainAllI(java.lang.Object[])
-     */
+
     @Override
     default PersistentQueueX<T> retainAll(final T... values) {
 

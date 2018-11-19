@@ -75,6 +75,26 @@ public final class FlowableIO<T> implements IO<T> {
     }
 
     @Override
+    public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+        return of(flowable.flatMap(in->s.apply(in),maxConcurrency));
+    }
+    @Override
+    public <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
+        Managed<R> m = FlowableManaged.of(map(fn));
+        return m.io();
+    }
+
+    @Override
+    public <R> IO<R> bracket(Function<? super T, ? extends R> fn, Consumer<R> consumer) {
+        Managed<R> m = FlowableManaged.of(map(fn),consumer);
+        return m.io();
+    }
+    @Override
+    public <R extends AutoCloseable,R1> Managed.Tupled<R,R1> bracketWith(Function<? super T, ? extends R> fn, Function<? super R, ? extends R1> with) {
+        Managed.Tupled<? extends R, ? extends R1> x = FlowableManaged.of(map(fn)).with(with);
+        return (Managed.Tupled<R, R1> )x;
+    }
+    @Override
     public void forEach(Consumer<? super T> consumerElement, Consumer<? super Throwable> consumerError, Runnable onComplete) {
         flowable.subscribe(a->consumerElement.accept(a),b->consumerError.accept(b),()->onComplete.run());
     }
