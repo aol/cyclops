@@ -29,6 +29,7 @@ import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
 import cyclops.data.tuple.Tuple4;
 import com.oath.cyclops.types.persistent.PersistentBag;
+import cyclops.reactive.collections.mutable.SortedSetX;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.reactivestreams.Publisher;
@@ -943,6 +944,37 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
     default <R> BagX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (BagX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> BagX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (BagX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default BagX<T> removeFirst(Predicate<? super T> pred) {
+        return (BagX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default BagX<T> appendAll(Iterable<? extends T> value) {
+        return (BagX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default BagX<T> prependAll(Iterable<? extends T> value) {
+        return (BagX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default BagX<T> updateAt(int pos, T value) {
+        return (BagX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default BagX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (BagX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default BagX<T> prependStream(Stream<? extends T> stream) {

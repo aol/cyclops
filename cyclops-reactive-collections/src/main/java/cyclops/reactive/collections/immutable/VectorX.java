@@ -633,7 +633,7 @@ public interface VectorX<T> extends To<VectorX<T>>,
     public VectorX<T> removeAll(Iterable<? extends T> list);
 
     @Override
-    public VectorX<T> removeAt(int i);
+    public VectorX<T> removeAt(long i);
 
     @Override
     default boolean containsValue(T item) {
@@ -1060,6 +1060,33 @@ public interface VectorX<T> extends To<VectorX<T>>,
     default <R> VectorX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (VectorX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> VectorX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (VectorX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default VectorX<T> removeFirst(Predicate<? super T> pred) {
+        return (VectorX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default VectorX<T> appendAll(Iterable<? extends T> value) {
+        return (VectorX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default VectorX<T> prependAll(Iterable<? extends T> value) {
+        return (VectorX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+
+    @Override
+    default PersistentSetX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (PersistentSetX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default VectorX<T> prependStream(Stream<? extends T> stream) {

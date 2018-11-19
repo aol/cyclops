@@ -885,6 +885,37 @@ public interface SetX<T> extends To<SetX<T>>,Set<T>, LazyCollectionX<T>, Higher<
     default <R> SetX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (SetX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> SetX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (SetX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default SetX<T> removeFirst(Predicate<? super T> pred) {
+        return (SetX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default SetX<T> appendAll(Iterable<? extends T> value) {
+        return (SetX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default SetX<T> prependAll(Iterable<? extends T> value) {
+        return (SetX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default SetX<T> updateAt(int pos, T value) {
+        return (SetX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default SetX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (SetX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default SetX<T> prependStream(Stream<? extends T> stream) {

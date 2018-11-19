@@ -169,7 +169,7 @@ public interface ListX<T> extends To<ListX<T>>,
      *
      * <pre>
      * {@code
-     *  ListX.unfold(1,i->i<=6 ? Optional.of(Tuple.tuple(i,i+1)) : Optional.zero());
+     *  ListX.unfold(1,i->i<=6 ? Option.some(Tuple.tuple(i,i+1)) : Option.none());
      *
      * //(1,2,3,4,5)
      *
@@ -234,9 +234,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX<T>)LazyCollectionX.super.materialize();
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
+
     @Override
     default <R1, R2, R3, R> ListX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
@@ -246,9 +244,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach4(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.QuadFunction, com.oath.cyclops.util.function.QuadFunction)
-     */
+
     @Override
     default <R1, R2, R3, R> ListX<R> forEach4(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
@@ -259,9 +255,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach4(stream1, stream2, stream3, filterFunction, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction)
-     */
+
     @Override
     default <R1, R2, R> ListX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
@@ -270,9 +264,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach3(stream1, stream2, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach3(java.util.function.Function, java.util.function.BiFunction, com.oath.cyclops.util.function.TriFunction, com.oath.cyclops.util.function.TriFunction)
-     */
+
     @Override
     default <R1, R2, R> ListX<R> forEach3(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends Iterable<R2>> stream2,
@@ -282,9 +274,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach3(stream1, stream2, filterFunction, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction)
-     */
+
     @Override
     default <R1, R> ListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, ? extends R> yieldingFunction) {
@@ -292,9 +282,7 @@ public interface ListX<T> extends To<ListX<T>>,
         return (ListX)LazyCollectionX.super.forEach2(stream1, yieldingFunction);
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#forEach2(java.util.function.Function, java.util.function.BiFunction, java.util.function.BiFunction)
-     */
+
     @Override
     default <R1, R> ListX<R> forEach2(Function<? super T, ? extends Iterable<R1>> stream1,
             BiFunction<? super T, ? super R1, Boolean> filterFunction,
@@ -666,13 +654,10 @@ public interface ListX<T> extends To<ListX<T>>,
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see MutableSequenceX#removeAt(int)
-     */
+
     @Override
-    default ListX<T> removeAt(final int pos) {
-        remove(pos);
-        return this;
+    default ListX<T> removeAt(final long pos) {
+        return fromStream(stream().removeAt(pos));
     }
 
 
@@ -1111,6 +1096,37 @@ public interface ListX<T> extends To<ListX<T>>,
     @Override
     default ListX<T> appendAll(T... values) {
         return (ListX<T>)LazyCollectionX.super.appendAll(values);
+    }
+
+    @Override
+    default <R> ListX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (ListX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default ListX<T> removeFirst(Predicate<? super T> pred) {
+        return (ListX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default ListX<T> appendAll(Iterable<? extends T> value) {
+        return (ListX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default ListX<T> prependAll(Iterable<? extends T> value) {
+        return (ListX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default ListX<T> updateAt(int pos, T value) {
+        return (ListX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default ListX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (ListX<T>)LazyCollectionX.super.insertAt(pos,values);
     }
 
     @Override

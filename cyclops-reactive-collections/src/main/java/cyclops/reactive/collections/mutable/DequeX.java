@@ -1086,6 +1086,37 @@ public interface DequeX<T> extends To<DequeX<T>>,
     default <R> DequeX<R> mergeMap(Function<? super T, ? extends Publisher<? extends R>> fn) {
         return (DequeX<R>)LazyCollectionX.super.mergeMap(fn);
     }
+    @Override
+    default <R> DequeX<R> mergeMap(int maxConcurency, Function<? super T, ? extends Publisher<? extends R>> fn) {
+        return (DequeX<R>)LazyCollectionX.super.mergeMap(maxConcurency,fn);
+    }
+
+
+    @Override
+    default DequeX<T> removeFirst(Predicate<? super T> pred) {
+        return (DequeX<T>)LazyCollectionX.super.removeFirst(pred);
+    }
+
+    @Override
+    default DequeX<T> appendAll(Iterable<? extends T> value) {
+        return (DequeX<T>)LazyCollectionX.super.appendAll(value);
+    }
+
+    @Override
+    default DequeX<T> prependAll(Iterable<? extends T> value) {
+        return (DequeX<T>)LazyCollectionX.super.prependAll(value);
+    }
+
+    @Override
+    default DequeX<T> updateAt(int pos, T value) {
+        return (DequeX<T>)LazyCollectionX.super.updateAt(pos,value);
+    }
+
+    @Override
+    default DequeX<T> insertAt(int pos, ReactiveSeq<? extends T> values) {
+        return (DequeX<T>)LazyCollectionX.super.insertAt(pos,values);
+    }
+
 
     @Override
     default DequeX<T> prependStream(Stream<? extends T> stream) {

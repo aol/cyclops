@@ -12,7 +12,6 @@ import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.control.Either;
 import cyclops.control.Eval;
 import cyclops.control.Option;
-import cyclops.control.Trampoline;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -184,7 +183,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
     }
 
     LazySeq<T> updateAt(int i, T value);
-    LazySeq<T> removeAt(final int i);
+    LazySeq<T> removeAt(final long i);
 
     default LazySeq<T> insertAt(final int i, final T e){
         return (LazySeq<T>)ImmutableList.super.insertAt(i,e);
@@ -775,10 +774,6 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         return (LazySeq<T>) ImmutableList.super.dropUntil(p);
     }
 
-    @Override
-    default LazySeq<T> removeAt(long pos) {
-        return (LazySeq<T>)ImmutableList.super.removeAt(pos);
-    }
 
     @Override
     default LazySeq<T> insertAt(int pos, T... values) {
@@ -1166,7 +1161,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
             return "{"+head.get()+"...}";
         }
 
-        public LazySeq<T> removeAt(final int i) {
+        public LazySeq<T> removeAt(final long i) {
             if (i == 0)
                 return tail.get();
             return cons(head,()->tail.get().removeAt(i-1));
@@ -1240,7 +1235,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
 
         @Override
-        public LazySeq<T> removeAt(int i) {
+        public LazySeq<T> removeAt(long i) {
             return ref.get().removeAt(i);
         }
 
@@ -1462,7 +1457,7 @@ public interface LazySeq<T> extends  ImmutableList<T>,
         }
 
         @Override
-        public LazySeq<T> removeAt(int i) {
+        public LazySeq<T> removeAt(long i) {
             return this;
         }
 

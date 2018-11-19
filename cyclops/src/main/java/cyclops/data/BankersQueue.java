@@ -904,11 +904,6 @@ public interface BankersQueue<T> extends ImmutableQueue<T>, Higher<bankersQueue,
         return (BankersQueue<T>) ImmutableQueue.super.removeAt(pos);
     }
 
-    @Override
-    default BankersQueue<T> removeAt(int pos) {
-        return (BankersQueue<T>) ImmutableQueue.super.removeAt(pos);
-    }
-
 
     @Override
     default BankersQueue<T> updateAt(int pos, T value) {

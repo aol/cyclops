@@ -693,11 +693,6 @@ public final class TreeSet<T> implements ImmutableSortedSet<T>,
     }
 
     @Override
-    public TreeSet<T> removeAt(int pos) {
-        return (TreeSet<T>) ImmutableSortedSet.super.removeAt(pos);
-    }
-
-    @Override
     public TreeSet<T> prependAll(Iterable<? extends T> value) {
         return (TreeSet<T>) ImmutableSortedSet.super.prependAll(value);
     }

@@ -26,7 +26,6 @@ import cyclops.data.tuple.Tuple4;
 
 import cyclops.function.Monoid;
 import cyclops.reactive.ReactiveSeq;
-import cyclops.control.Trampoline;
 import org.reactivestreams.Publisher;
 
 public interface LazyCollectionX<T> extends FluentCollectionX<T> {
@@ -109,25 +108,19 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().reverse());
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#filter(java.util.function.Predicate)
-     */
+
     @Override
     default LazyCollectionX<T> filter(final Predicate<? super T> pred) {
         return fromStream(stream().filter(pred));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#transform(java.util.function.Function)
-     */
+
     @Override
     default <R> CollectionX<R> map(final Function<? super T, ? extends R> mapper) {
         return fromStream(stream().map(mapper));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#flatMap(java.util.function.Function)
-     */
+
     default <R> CollectionX<R> concatMap(final Function<? super T, ? extends Iterable<? extends R>> mapper) {
         return fromStream(stream().flatMap(mapper.andThen(Streams::stream)));
     }
@@ -204,110 +197,81 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return fromStream(stream().scanLeft(seed, function));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#scanRight(cyclops2.function.Monoid)
-     */
+
     @Override
     default LazyCollectionX<T> scanRight(final Monoid<T> monoid) {
         return fromStream(stream().scanRight(monoid));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#scanRight(java.lang.Object, java.util.function.BiFunction)
-     */
+
     @Override
     default <U> LazyCollectionX<U> scanRight(final U identity, final BiFunction<? super T, ? super U, ? extends U> combiner) {
         return fromStream(stream().scanRight(identity, combiner));
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.jooq.lambda.Seq#sorted(java.util.function.Function)
-     */
-    /* (non-Javadoc)
-     * @see CollectionX#sorted(java.util.function.Function)
-     */
+
     @Override
     default <U extends Comparable<? super U>> LazyCollectionX<T> sorted(final Function<? super T, ? extends U> function) {
         return fromStream(stream().sorted(function));
     }
 
-    /* (non-Javadoc)
-     * @see FluentCollectionX#plus(java.lang.Object)
-     */
+
     @Override
     default LazyCollectionX<T> plus(final T e) {
         add(e);
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see FluentCollectionX#insertAt(java.util.Collection)
-     */
+
     @Override
     default LazyCollectionX<T> plusAll(final Iterable<? extends T> list) {
         addAll(ListX.fromIterable(list));
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see FluentCollectionX#removeValue(java.lang.Object)
-     */
+
     @Override
     default LazyCollectionX<T> removeValue(final T e) {
         removeValue(e);
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see FluentCollectionX#removeAll(java.util.Collection)
-     */
+
     @Override
     default LazyCollectionX<T> removeAll(final Iterable<? extends T> list) {
         removeAll((Iterable)ListX.fromIterable(list));
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#cycle(int)
-     */
+
     @Override
     default LazyCollectionX<T> cycle(final long times) {
 
         return fromStream(stream().cycle(times));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#cycle(cyclops2.function.Monoid, int)
-     */
+
     @Override
     default LazyCollectionX<T> cycle(final Monoid<T> m, final long times) {
 
         return fromStream(stream().cycle(m, times));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#cycleWhile(java.util.function.Predicate)
-     */
+
     @Override
     default LazyCollectionX<T> cycleWhile(final Predicate<? super T> predicate) {
 
         return fromStream(stream().cycleWhile(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#cycleUntil(java.util.function.Predicate)
-     */
+
     @Override
     default LazyCollectionX<T> cycleUntil(final Predicate<? super T> predicate) {
 
         return fromStream(stream().cycleUntil(predicate));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#zip(java.util.stream.Stream)
-     */
+
     @Override
     default <U> LazyCollectionX<Tuple2<T, U>> zipWithStream(final Stream<? extends U> other) {
 
@@ -315,18 +279,14 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
     }
 
 
-    /* (non-Javadoc)
-     * @see CollectionX#zip3(java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     default <S, U> LazyCollectionX<Tuple3<T, S, U>> zip3(final Iterable<? extends S> second, final Iterable<? extends U> third) {
 
         return fromStream(stream().zip3(second, third));
     }
 
-    /* (non-Javadoc)
-     * @see CollectionX#zip4(java.util.stream.Stream, java.util.stream.Stream, java.util.stream.Stream)
-     */
+
     @Override
     default <T2, T3, T4> LazyCollectionX<Tuple4<T, T2, T3, T4>> zip4(final Iterable<? extends T2> second, final Iterable<? extends T3> third,
                                                                      final Iterable<? extends T4> fourth) {
@@ -646,13 +606,10 @@ public interface LazyCollectionX<T> extends FluentCollectionX<T> {
         return this;
     }
 
-    @Override
-    default LazyCollectionX<T> removeAt(long pos) {
-        return fromStream(stream().removeAt(pos));
-    }
+
 
     @Override
-    default LazyCollectionX<T> removeAt(int pos) {
+    default LazyCollectionX<T> removeAt(long pos) {
         return fromStream(stream().removeAt(pos));
     }
 

@@ -171,7 +171,7 @@ public class LazyLinkedListX<T> extends AbstractLazyPersistentCollection<T,Persi
     }
 
     @Override
-    public LinkedListX<T> removeAt(int i) {
+    public LinkedListX<T> removeAt(long i) {
         return from(get().removeAt(i));
     }
 
