@@ -80,6 +80,11 @@ public class IOMonad<W,T> implements IO<T> {
         return new IOMonad<W,R>(monad,monad.flatMap(s.andThen(io->fromPublsher.<R>fromPublisherFn().apply(io.publisher())),pub),toPublsher,fromPublsher);
     }
 
+    @Override
+    public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+       return flatMap(s.andThen(IO::fromPublisher));
+
+    }
 
 
     @Override

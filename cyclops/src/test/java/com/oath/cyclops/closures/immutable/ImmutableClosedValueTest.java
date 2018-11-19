@@ -69,61 +69,61 @@ public class ImmutableClosedValueTest {
 
 	@Test
 	public void testEqualsFalse(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value2 = new LazyImmutable<Integer>();
 		value2.setOnce(20);
 		assertThat(value,not(equalTo(value2)));
 	}
 	@Test
 	public void testEqualsTrue(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value2 = new LazyImmutable<Integer>();
 		value2.setOnce(10);
 		assertThat(value.get(),equalTo(value2.get()));
 	}
 	@Test
 	public void testHashcode(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value2 = new LazyImmutable<Integer>();
 		value2.setOnce(10);
 		assertThat(value.get().hashCode(),equalTo(value2.get().hashCode()));
 	}
 	@Test
 	public void testHashcodeFalse(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value2 = new LazyImmutable<Integer>();
 		value2.setOnce(20);
 		assertThat(value.hashCode(),not(equalTo(value2.hashCode())));
 	}
 
 	@Test
 	public void testMapUninitialised(){
-		val value = new LazyImmutable<Integer>();
-		val value2 = value.map(i->i+10);
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value2 = value.map(i->i+10);
 		assertThat(value,equalTo(value2));
 	}
 	@Test
 	public void testMap2(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = value.map(i->i+10);
+        LazyImmutable<Integer> value2 = value.map(i->i+10);
 		assertThat(value2.get(),equalTo(20));
 	}
 	@Test
 	public void testFlatMapUninitialised(){
-		val value = new LazyImmutable<Integer>();
-		val value2 = value.flatMap(i->LazyImmutable.of(i+10));
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
+        LazyImmutable<? extends Integer> value2 = value.flatMap(i -> LazyImmutable.of(i + 10));
 		assertThat(value,equalTo(value2));
 	}
 	@Test
 	public void testFlatMap2(){
-		val value = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> value = new LazyImmutable<Integer>();
 		value.setOnce(10);
-		val value2 = value.flatMap(i->LazyImmutable.of(i+10));
+        LazyImmutable<? extends Integer> value2 = value.flatMap(i -> LazyImmutable.of(i + 10));
 		assertThat(value2.get(),equalTo(20));
 	}
 	@Test
@@ -136,7 +136,7 @@ public class ImmutableClosedValueTest {
 	@Test
 	public void testRightIdentity(){
 		int a = 10;
-		val m = LazyImmutable.of(a);
+        LazyImmutable<Integer> m = LazyImmutable.of(a);
 
 		assertThat(m.flatMap(LazyImmutable::of).get(), equalTo( m.get()));
 
@@ -144,7 +144,7 @@ public class ImmutableClosedValueTest {
 	@Test
 	public void associativity(){
 		int a = 10;
-		val m = LazyImmutable.of(a);
+        LazyImmutable<Integer> m = LazyImmutable.of(a);
 		Function<Integer,LazyImmutable<Integer> >f = i->LazyImmutable.of(i+10);
 		Function<Integer,LazyImmutable<Integer> >g = i->LazyImmutable.of(i*10);
 		assertThat(m.flatMap(f).flatMap(g).get(), equalTo( m.flatMap(x -> f.apply(x).flatMap(g)).get()));
@@ -153,7 +153,7 @@ public class ImmutableClosedValueTest {
 	@Test
 	public void testRightIdentityUninitialised(){
 
-		val m = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> m = new LazyImmutable<Integer>();
 
 		assertThat(m.<Integer>flatMap(LazyImmutable::of), equalTo( m));
 
@@ -161,9 +161,9 @@ public class ImmutableClosedValueTest {
 	@Test
 	public void associativityUninitialised(){
 		int a = 10;
-		val m = new LazyImmutable<Integer>();
+        LazyImmutable<Integer> m = new LazyImmutable<Integer>();
 		Function<Integer,LazyImmutable<Integer> >f = i->LazyImmutable.of(i+10);
 		Function<Integer,LazyImmutable<Integer> >g = i->LazyImmutable.of(i*10);
-		assertThat(m.<Integer>flatMap(f).<Integer>flatMap(g), equalTo( m.flatMap(x -> f.apply(x).flatMap(g))));
+		assertThat(m.<Integer>flatMap(f).<Integer>flatMap(g), equalTo( m.<Integer>flatMap(x -> f.apply(x).flatMap(g))));
 	}
 }

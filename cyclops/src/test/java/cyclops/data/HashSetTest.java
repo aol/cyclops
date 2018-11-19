@@ -4,6 +4,7 @@ import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.basetests.BaseImmutableSetTest;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;
 import org.junit.Test;
 
@@ -51,6 +52,11 @@ public class HashSetTest extends BaseImmutableSetTest{
         return HashSet.iterate(seed,fn,times);
     }
 
+    @Test
+    public void minusOneLarge(){
+        assertThat(range(0,10_000).removeValue(1).size(), CoreMatchers.equalTo(9999));
+        assertThat(range(0,10_000).append(1).removeValue(1).size(), CoreMatchers.equalTo(9999));
+    }
     @Override
     public <T> ImmutableSet<T> generate(int times, Supplier<T> fn) {
         return HashSet.generate(fn,times);
