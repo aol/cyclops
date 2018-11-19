@@ -958,18 +958,14 @@ public interface VectorX<T> extends To<VectorX<T>>,
         return (VectorX<T>) LazyCollectionX.super.filterNot(fn);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#notNull()
-     */
+
     @Override
     default VectorX<T> notNull() {
 
         return (VectorX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default VectorX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -977,39 +973,31 @@ public interface VectorX<T> extends To<VectorX<T>>,
     }
     @Override
     default VectorX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default VectorX<T> removeAll(final T... values) {
 
         return (VectorX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default VectorX<T> retainAll(final Iterable<? extends T> it) {
 
         return (VectorX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default VectorX<T> retainStream(final Stream<? extends T> seq) {
 
         return (VectorX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default VectorX<T> retainAll(final T... values) {
 

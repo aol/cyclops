@@ -848,39 +848,31 @@ public interface SortedSetX<T> extends To<SortedSetX<T>>,SortedSet<T>, LazyColle
 
     @Override
     default SortedSetX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default SortedSetX<T> removeAll(final T... values) {
 
         return (SortedSetX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default SortedSetX<T> retainAll(final Iterable<? extends T> it) {
 
         return (SortedSetX<T>) LazyCollectionX.super.retainAll(it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.util.stream.Stream)
-     */
+
     @Override
     default SortedSetX<T> retainStream(final Stream<? extends T> seq) {
 
         return (SortedSetX<T>) LazyCollectionX.super.retainStream(seq);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.standard.LazyCollectionX#retainAllI(java.lang.Object[])
-     */
+
     @Override
     default SortedSetX<T> retainAll(final T... values) {
 

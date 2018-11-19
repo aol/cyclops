@@ -859,9 +859,7 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
         return (OrderedSetX<T>) LazyCollectionX.super.notNull();
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.util.stream.Stream)
-     */
+
     @Override
     default OrderedSetX<T> removeStream(final Stream<? extends T> stream) {
 
@@ -870,21 +868,17 @@ public interface OrderedSetX<T> extends To<OrderedSetX<T>>,PersistentSortedSet<T
 
     @Override
     default OrderedSetX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#removeAll(java.lang.Object[])
-     */
+
     @Override
     default OrderedSetX<T> removeAll(final T... values) {
 
         return (OrderedSetX<T>) LazyCollectionX.super.removeAll(values);
     }
 
-    /* (non-Javadoc)
-     * @see com.oath.cyclops.collections.extensions.persistent.LazyCollectionX#retainAllI(java.lang.Iterable)
-     */
+
     @Override
     default OrderedSetX<T> retainAll(final Iterable<? extends T> it) {
 

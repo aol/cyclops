@@ -3,6 +3,7 @@ package cyclops.reactive;
 
 import cyclops.control.Future;
 import cyclops.control.Try;
+import cyclops.function.checked.CheckedFunction;
 import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,13 +23,12 @@ import java.util.function.Function;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.hamcrest.Matchers.is;
 
 
-
-public class IOTest {
+public class IOCheckedTest {
   Executor ex = Executors.newFixedThreadPool(1);
   RuntimeException re = new RuntimeException();
 
@@ -46,10 +46,17 @@ public class IOTest {
   public void foldForEach(){
 
   }
+
+  public int addOne(int i) throws Exception{
+      return i+1;
+  }
+    public IO<Integer> addOneIO(int i) throws Exception{
+        return IO.of(i+1);
+    }
   @Test
   public void sync(){
     assertThat(IO.of(()->10)
-                 .map(i->i+1)
+                 .checkedMap(this::addOne)
                  .run().orElse(-1),equalTo(11));
   }
 
@@ -66,16 +73,21 @@ public class IOTest {
   public void bracket(){
       assertFalse(closed);
       IO.of(()->10)
-          .checkedBracket(i-> new MyCloseable())
+          .checkedBracket(this::createCloseable)
           .run();
 
       assertTrue(closed);
   }
+
+    private  MyCloseable createCloseable(int i) throws Exception {
+        return  new MyCloseable();
+    }
+
     @Test
     public void bracketCons(){
         assertFalse(closed);
         IO.of(()->10)
-            .checkedBracket(i-> new MyCloseable(),b->{
+            .checkedBracket(this::createCloseable,b->{
                 try {
                     b.close();
                 } catch (Exception e) {
@@ -90,7 +102,7 @@ public class IOTest {
     public void bracketThenMap(){
         assertFalse(closed);
         IO.of(()->10)
-            .bracket(i-> new MyCloseable())
+            .checkedBracket(this::createCloseable)
             .map(x->100)
             .run();
 
@@ -99,7 +111,7 @@ public class IOTest {
   @Test
   public void async(){
     assertThat(IO.fromPublisher(Future.of(()->10, ex))
-      .map(i->i+1)
+      .checkedMap(this::addOne)
       .run().orElse(-1),equalTo(11));
   }
 
@@ -114,7 +126,7 @@ public class IOTest {
   @Test
   public void flatMap(){
     assertThat(IO.fromPublisher(Future.of(()->10, ex))
-      .flatMap(i->IO.of(()->i+1))
+      .checkedFlatMap(this::addOneIO)
       .run().orElse(-1),equalTo(11));
   }
 
@@ -122,7 +134,7 @@ public class IOTest {
   public void asyncAttempt(){
     assertThat(IO.fromPublisher(Future.of(()->10, ex))
       .mapTry(i->{throw re;})
-      .map(t->t.fold(i->i, e->-1))
+      .checkedMap(t->t.fold(i->i, e->-1))
       .run(),equalTo(Try.success(-1)));
 
     assertThat(IO.fromPublisher(Future.of(()->10, ex))
@@ -149,7 +161,7 @@ public class IOTest {
   }
 
     @Mock
-    Function<Integer, String> serviceMock;
+    CheckedFunction<Integer, String> serviceMock;
 
 
     @Before
@@ -158,7 +170,7 @@ public class IOTest {
 
     }
     @Test
-    public void shouldSucceedAfterFewAsynchronousRetries() throws Exception {
+    public void shouldSucceedAfterFewAsynchronousRetries() throws Throwable {
 
 
         BDDMockito.given(serviceMock.apply(Matchers.anyInt())).willThrow(
@@ -167,7 +179,7 @@ public class IOTest {
             "42");
 
         String result = IO.fromPublisher( Spouts.of(1,  2, 3))
-            .retry(serviceMock)
+            .checkedRetry(serviceMock)
             .run().mkString();
 
         Assert.assertThat(result, is("Success[42]"));
@@ -184,7 +196,7 @@ public class IOTest {
 
     @Test
     public void shouldRethrowOriginalExceptionFromUserFutureCompletion()
-        throws Exception {
+        throws Throwable {
 
 
 
@@ -195,7 +207,7 @@ public class IOTest {
 
         String result = IO.fromPublisher( Spouts.of(1))
 
-            .retry(serviceMock,2, 100l,TimeUnit.MILLISECONDS).toString();
+            .checkedRetry(serviceMock,2, 100l,TimeUnit.MILLISECONDS).toString();
 
 
         System.out.println(result);

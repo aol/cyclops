@@ -62,6 +62,10 @@ public final class FutureStreamIO<T> implements IO<T> {
         return of(flowable.mergeMap(s));
     }
 
+    @Override
+    public <R> IO<R> mergeMap(int maxConcurrency, Function<? super T, Publisher<? extends R>> s) {
+        return of(flowable.mergeMap(maxConcurrency,s));
+    }
 
     @Override
     public <R extends AutoCloseable> IO<R> bracket(Function<? super T, ? extends R> fn) {
@@ -72,6 +76,11 @@ public final class FutureStreamIO<T> implements IO<T> {
     public <R> IO<R> bracket(Function<? super T, ? extends R> fn, Consumer<R> consumer) {
         Managed<R> m = FutureStreamManaged.of(map(fn),consumer);
         return m.io();
+    }
+    @Override
+    public <R extends AutoCloseable,R1> Managed.Tupled<R,R1> bracketWith(Function<? super T, ? extends R> fn, Function<? super R, ? extends R1> with) {
+        Managed.Tupled<? extends R, ? extends R1> x = FutureStreamManaged.of(map(fn)).with(with);
+        return (Managed.Tupled<R, R1> )x;
     }
 
 

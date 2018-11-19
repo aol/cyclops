@@ -370,7 +370,7 @@ public interface CollectionX<T> extends IterableX<T>,
   CollectionX<T> removeAll(Iterable<? extends T> it);
 
   default CollectionX<T> removeAll(CollectionX<? extends T> it){
-    return removeAll(narrowIterable());
+    return removeAll((Iterable<T>)it);
   }
   default Iterable<T> narrowIterable(){
     return (Iterable<T>)this;

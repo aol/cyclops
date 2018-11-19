@@ -8,6 +8,8 @@ import com.oath.cyclops.data.collections.extensions.FluentCollectionX;
 import com.oath.cyclops.types.traversable.IterableX;
 import cyclops.data.basetests.AbstractIterableXTest;
 import cyclops.reactive.Spouts;
+import cyclops.reactive.collections.immutable.LinkedListX;
+import cyclops.reactive.collections.mutable.DequeX;
 import cyclops.reactive.collections.mutable.ListX;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
@@ -233,6 +235,20 @@ public abstract class AbstractCollectionXTest extends AbstractIterableXTest {
     public void minusAllOneTwoValues(){
         assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),hasItem(2));
         assertThat(of(1,2).removeAll((Iterable<Integer>)of(1)),not(hasItem(1)));
+    }
+    @Test
+    public void minusAllOneX(){
+        assertThat(of().removeAll(ListX.of(1)).size(),equalTo(0));
+    }
+    @Test
+    public void minusAllOneNotEmptyX(){
+
+        assertThat(of(1).removeAll(LinkedListX.of(1)).size(),equalTo(0));
+    }
+    @Test
+    public void minusAllOneTwoValuesX(){
+        assertThat(of(1,2).removeAll(DequeX.of(1)),hasItem(2));
+        assertThat(of(1,2).removeAll(DequeX.of(1)),not(hasItem(1)));
     }
 
 	@Test
