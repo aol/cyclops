@@ -1176,7 +1176,7 @@ public interface LinkedListX<T> extends To<LinkedListX<T>>,
     }
     @Override
     default LinkedListX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
 

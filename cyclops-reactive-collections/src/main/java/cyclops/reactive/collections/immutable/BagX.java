@@ -1032,7 +1032,7 @@ public interface BagX<T> extends To<BagX<T>>,PersistentBag<T>, LazyCollectionX<T
 
   @Override
   default BagX<T> removeAll(CollectionX<? extends T> it) {
-    return removeAll(narrowIterable());
+    return removeAll((Iterable<T>)it);
   }
 
   public static  <T,R> BagX<R> tailRec(T initial, Function<? super T, ? extends BagX<? extends Either<T, R>>> fn) {

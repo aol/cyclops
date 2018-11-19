@@ -834,7 +834,7 @@ public interface QueueX<T> extends To<QueueX<T>>,Queue<T>,
 
     @Override
     default QueueX<T> removeAll(CollectionX<? extends T> it) {
-      return removeAll(narrowIterable());
+        return removeAll((Iterable<T>)it);
     }
 
 
