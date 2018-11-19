@@ -30,6 +30,8 @@ import cyclops.companion.Comparators;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,7 +91,12 @@ public class POrderedSetXTest extends AbstractSetTest {
         assertEquals(asList(), of(1, 2, 3, 4, 5, 6).partition(i -> false)._1().toList());
         assertEquals(asList(1, 2, 3, 4, 5, 6), of(1, 2, 3, 4, 5, 6).splitBy(i -> false)._1().toList());
     }
-
+    @Test
+    @Override
+    public void minusOneLarge(){
+        MatcherAssert.assertThat(range(0,10_000).removeValue(1).size(), CoreMatchers.equalTo(9999));
+        MatcherAssert.assertThat(range(0,10_000).append(1).removeValue(1).size(), CoreMatchers.equalTo(9999));
+    }
     @Test
     public void permuations3() {
         System.out.println(of(1, 2, 3).permutations().map(s->s.toList()).toList());

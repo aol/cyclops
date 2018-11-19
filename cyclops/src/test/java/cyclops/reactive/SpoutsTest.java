@@ -8,6 +8,7 @@ import com.oath.cyclops.async.QueueFactories;
 import com.oath.cyclops.async.adapters.Topic;
 
 
+import cyclops.data.Seq;
 import cyclops.function.Effect;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -21,8 +22,10 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,6 +35,7 @@ import static cyclops.reactive.ReactiveSeq.of;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.*;
@@ -53,16 +57,266 @@ public class SpoutsTest {
         err = null;
     }
     @Test
-    public void rangeMaxConcurrency1M32() {
+    public void rangeMaxConcurrencyM32() {
         List<Integer> list =Spouts.range(0, 1_000_000).mergeMap(32,Flux::just).toList();
 
-       assertThat(list.size(),equalTo(100_000));
+       assertThat(list.size(),equalTo(1_000_000));
     }
     @Test
-    public void rangeMaxConcurrency1M64() {
-        List<Integer> list =Spouts.range(0, 1_000_000).mergeMap(32,Flux::just).toList();
+    public void rangeMaxConcurrencyM64() {
+        List<Integer> list =Spouts.range(0, 1_000_000).mergeMap(64,Flux::just).toList();
 
         assertThat(list.size(),equalTo(1_000_000));
+    }
+    @Test
+    public void nullReactiveStreamsPublisher() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.range(0, 1000).mergeMap(v -> Flux.just((Integer)null))
+            .forEach(n->{
+                data.set(true);
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+          assertFalse(data.get());
+          assertFalse(complete.get());
+          assertThat(error.get(),instanceOf(NullPointerException.class));
+    }
+    @Test
+    public void nullReactiveSeq() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.range(0, 1000).mergeMap(v -> (v%2==0 ? Spouts.of((Integer)null): Spouts.of(v)))
+            .forEach(n->{
+                data.set(true);
+            },e->{
+                error.set(e);
+            },()->{
+                complete.set(true);
+            });
+
+        assertTrue(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void empty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.<Integer>empty().mergeMap(v -> Flux.just(v)).forEach(n->{
+            data.set(true);
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void innerEmpty() {
+        AtomicBoolean data = new AtomicBoolean(false);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.range(0,  1000).mergeMap(v -> Flux.<Integer>empty()).forEach(n->{
+            data.set(true);
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        assertFalse(data.get());
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void simpleMergeMap() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.range(0, 1000).mergeMap(Flux::just).forEach(n->{
+            data.incrementAndGet();
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+    }
+
+    @Test
+    public void mixedMergeMap() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Spouts.range(0, 1000).mergeMap(
+            v -> v % 2 == 0 ? Flux.just(v) : Flux.fromIterable(Arrays.asList(v))).forEach(n->{
+            data.incrementAndGet();
+        },e->{
+            error.set(e);
+        },()->{
+            complete.set(true);
+        });
+
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void mergeMapMixedIncremental() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c = Spouts.range(0, 1000).mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : ReactiveSeq.of(v)).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+        assertThat(data.get(),equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void mergeMapMixedOversubscribed() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c = Spouts.range(0, 1000).mergeMap(v -> v % 2 == 0 ? Spouts.of(v) : Seq.of(v)).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+        assertThat(data.get(),equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(1500);
+
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void mergeMapIncremental() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c =  Spouts.range(0, 1000).mergeMap(Flux::just).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+
+        assertThat(data.get(),equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
+    }
+
+    @Test
+    public void mergeMapIncrementalOversubscribed() {
+        AtomicInteger data = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        AtomicReference<Throwable> error = new AtomicReference<Throwable>(null);
+
+        Subscription c =  Spouts.range(0, 1000).mergeMap(Flux::just).forEach(0, n -> {
+            data.incrementAndGet();
+        }, e -> {
+            error.set(e);
+        }, () -> {
+            complete.set(true);
+        });
+
+        assertThat(data.get(),equalTo(0));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+        c.request(500);
+
+        assertThat(data.get(),equalTo(500));
+        assertFalse(complete.get());
+        assertThat(error.get(),equalTo(null));
+
+
+
+        c.request(1500);
+
+        assertThat(data.get(),equalTo(1000));
+        assertTrue(complete.get());
+        assertThat(error.get(),equalTo(null));
     }
 
     Throwable err;

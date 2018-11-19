@@ -3,6 +3,7 @@ package cyclops.streams.push.async;
 
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
@@ -31,6 +32,19 @@ public class AsyncJDKStreamTest {
 			t.start();
 		});
 	}
+    protected ReactiveSeq<Integer> range(int start, int end){
+
+        return Spouts.async(s->{
+            Thread t = new Thread(()-> {
+
+                for (int i =start;i<end;i++) {
+                    s.onNext(i);
+                }
+                s.onComplete();
+            });
+            t.start();
+        });
+    }
     protected <U> ReactiveSeq<U> rs(U... array){
         return Spouts.from(Flux.just(array).subscribeOn(Schedulers.fromExecutor(ForkJoinPool.commonPool())));
 
@@ -358,5 +372,16 @@ public class AsyncJDKStreamTest {
 	}
 
 
+    @Test
+    public void rangeMaxConcurrencyM32() {
+        List<Integer> list =range(0, 1_000_000).mergeMap(32,Flux::just).toList();
 
+        assertThat(list.size(), CoreMatchers.equalTo(1_000_000));
+    }
+    @Test
+    public void rangeMaxConcurrencyM64() {
+        List<Integer> list = range(0, 1_000_000).mergeMap(64,Flux::just).toList();
+
+        assertThat(list.size(), CoreMatchers.equalTo(1_000_000));
+    }
 }

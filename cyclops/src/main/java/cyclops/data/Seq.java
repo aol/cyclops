@@ -72,7 +72,6 @@ public interface Seq<T> extends ImmutableList<T>,
     Seq<T> updateAt(int i, T value);
     Seq<T> removeAt(final long i);
     default Seq<T> plus(T value){
-        System.out.println("Plus  "+ System.identityHashCode(value));
         return prepend(value);
     }
     default Seq<T> insertAt(final int i, final T e){

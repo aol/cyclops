@@ -899,7 +899,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer) {
         StreamSubscription sub = source.subscribe(consumer, this.defaultErrorHandler, () -> {
         });
-        sub.request(numberOfElements);
+        if(numberOfElements>0)
+         sub.request(numberOfElements);
         return sub;
     }
 
@@ -909,7 +910,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
 
         StreamSubscription sub = source.subscribe(consumer, consumerError, () -> {
         });
-        sub.request(numberOfElements);
+        if(numberOfElements>0)
+         sub.request(numberOfElements);
         return sub;
     }
 
@@ -917,7 +919,8 @@ public class ReactiveStreamX<T> extends BaseExtendedStream<T> {
     public <X extends Throwable> Subscription forEach(final long numberOfElements, final Consumer<? super T> consumer,
                                                       final Consumer<? super Throwable> consumerError, final Runnable onComplete) {
         StreamSubscription sub = source.subscribe(consumer, consumerError, onComplete);
-        sub.request(numberOfElements);
+        if(numberOfElements>0)
+            sub.request(numberOfElements);
         return sub;
     }
 

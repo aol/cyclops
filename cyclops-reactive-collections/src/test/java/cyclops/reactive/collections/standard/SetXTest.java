@@ -25,6 +25,8 @@ import cyclops.control.Option;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.reactive.Spouts;
 import cyclops.data.tuple.Tuple2;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.MatcherAssert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,6 +49,12 @@ public class SetXTest extends AbstractSetTest {
     @Override
     protected <T> CollectionX<T> fromStream(Stream<T> s) {
         return SetX.setX(ReactiveSeq.fromStream(s));
+    }
+    @Test
+    @Override
+    public void minusOneLarge(){
+        MatcherAssert.assertThat(range(0,10_000).removeValue(1).size(), CoreMatchers.equalTo(9999));
+        MatcherAssert.assertThat(range(0,10_000).append(1).removeValue(1).size(), CoreMatchers.equalTo(9999));
     }
     @Test
     public void asyncTest() throws InterruptedException {
