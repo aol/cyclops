@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @AllArgsConstructor(access= AccessLevel.PRIVATE)
+@Deprecated//use Do instead
 public class Comprehensions<W1> {
 
 
