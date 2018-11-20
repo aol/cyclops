@@ -4,11 +4,18 @@ package cyclops.function;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import cyclops.control.*;
 
 public interface Function4<T1, T2, T3, T4, R> extends Function1<T1,Function1<T2,Function1<T3,Function1<T4,R>>>> {
 
+    public static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> constant(R t) {
+        return (a,b,c,d)-> t;
+    }
+    public static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> lazyConstant(Supplier<R> t) {
+        return (a,b,c,d)-> t.get();
+    }
     public R apply(T1 a, T2 b, T3 c, T4 d);
 
     default Function4<T1, T2, T3, T4, Maybe<R>> lazyLift4(){

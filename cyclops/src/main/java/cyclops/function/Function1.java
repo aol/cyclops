@@ -35,6 +35,10 @@ public interface Function1<T,  R> extends Function<T,R>{
         return triFunc;
     }
 
+    static <T1,T2> Function1<T1,  T2> constant(T2 t) {
+        return __-> t;
+    }
+
     default <R2> R2 toType(Function<? super Function1<? super T, ? extends R>, ? extends R2> reduce){
       return reduce.apply(this);
     }

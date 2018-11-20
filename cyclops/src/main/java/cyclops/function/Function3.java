@@ -3,6 +3,7 @@ package cyclops.function;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import cyclops.control.*;
 
@@ -15,7 +16,12 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
     public static <T1, T2, T3,R> Function3<? super T1,? super T2,? super T3,? extends R> λv(final Function3<? super T1,? super T2,? super T3,? extends R> triFunc){
         return triFunc;
     }
-
+    public static <T1,T2,T3,R> Function3<T1,  T2,T3,R> constant(R t) {
+        return (a,b,c)-> t;
+    }
+    public static <T1,T2,T3,R> Function3<T1,  T2,T3,R> lazyConstant(Supplier<R> t) {
+        return (a,b,c)-> t.get();
+    }
     public R apply(S1 a, S2 b, S3 c);
 
 
