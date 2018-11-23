@@ -3,15 +3,12 @@ package cyclops.reactive;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.foldable.To;
-import com.oath.cyclops.types.reactive.ValueSubscriber;
+import com.oath.cyclops.types.functor.ReactiveTransformable;
 import com.oath.cyclops.util.ExceptionSoftener;
 import cyclops.control.Either;
-import cyclops.control.Eval;
 import cyclops.control.Future;
-import cyclops.control.LazyEither;
 import cyclops.control.Try;
 import cyclops.data.Seq;
-import cyclops.data.Vector;
 import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.data.tuple.Tuple3;
@@ -19,7 +16,6 @@ import cyclops.data.tuple.Tuple4;
 import cyclops.data.tuple.Tuple5;
 import cyclops.data.tuple.Tuple6;
 import cyclops.data.tuple.Tuple7;
-import com.oath.cyclops.types.functor.ReactiveTransformable;
 import cyclops.function.Function3;
 import cyclops.function.Memoize;
 import cyclops.function.checked.CheckedConsumer;
@@ -32,9 +28,7 @@ import org.reactivestreams.Subscriber;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -70,6 +64,12 @@ public interface IO<T> extends To<IO<T>>,Higher<io,T>,ReactiveTransformable<T>,P
     }
 
 
+    public static <T> IO<T> narrowK(final Higher<io, T> io) {
+        return (IO<T>)io;
+    }
+    public static <T> Higher<io, T> widen(IO<T> narrow) {
+        return narrow;
+    }
 
     public static <T, X extends Throwable> IO<T> withCatch(CheckedSupplier<? extends T> cf) {
         return fromPublisher(Try.withCatch(()->cf.get(),Throwable.class));

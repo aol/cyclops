@@ -1,23 +1,29 @@
 package cyclops.typeclasses;
 
 import com.oath.cyclops.hkt.DataWitness.option;
+import cyclops.companion.Monoids;
 import cyclops.control.Option;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.Vector;
+import cyclops.data.tuple.Tuple;
 import cyclops.data.tuple.Tuple2;
 import cyclops.function.Lambda;
 import cyclops.instances.control.OptionInstances;
 import cyclops.instances.data.LazySeqInstances;
 import cyclops.instances.data.SeqInstances;
 import cyclops.instances.data.VectorInstances;
+import cyclops.reactive.ReactiveSeq;
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static cyclops.control.Option.some;
 import static cyclops.data.tuple.Tuple.tuple;
+import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class Do1Test {
@@ -117,6 +123,17 @@ public class Do1Test {
 
     }
     @Test
+    public void doLazySeqReverse(){
+
+        LazySeq<Integer> res = Do.forEach(LazySeqInstances::monad)
+                                    .__(LazySeq.of(10,20))
+                                    .reverse(LazySeqInstances::traverse)
+                                    .fold(LazySeq::narrowK);
+
+        assertThat(res,equalTo(LazySeq.of(20,10)));
+
+    }
+    @Test
     public void doSeqPlus(){
 
         Seq<Integer> res = Do.forEach(SeqInstances::monad)
@@ -138,6 +155,7 @@ public class Do1Test {
         assertThat(seq,equalTo(Seq.of(11)));
 
     }
+
     @Test
     public void doSeqZipWithIndex(){
         Seq<Tuple2<Integer, Long>> seq = Do.forEach(SeqInstances::monad)
@@ -161,6 +179,17 @@ public class Do1Test {
 
     }
     @Test
+    public void doVectorZip(){
+        Vector<Tuple2<Integer, String>> seq = Do.forEach(VectorInstances::monad)
+                                                .__(Vector.of(10,20))
+                                                .zip(Vector.of("hello","world"), Tuple::tuple)
+                                                .fold(Vector::narrowK);
+
+
+        assertThat(seq,equalTo(Vector.of(tuple(10,"hello"), tuple(20,"world"))));
+
+    }
+    @Test
     public void doLazySeqZipWithIndex(){
         LazySeq<Tuple2<Integer, Long>> seq = Do.forEach(LazySeqInstances::monad)
                                                 .__(LazySeq.of(10,20))
@@ -179,5 +208,152 @@ public class Do1Test {
         return Option.some(amount);
     }
 
+
+    @Test
+    public void doVectorFoldMap(){
+       String res =     Do.folds(VectorInstances::foldable)
+                            .__(Vector.of(10,20))
+                            .foldMap(Monoids.stringConcat,i->"hello"+i);
+
+
+
+        assertThat(res,equalTo("hello10hello20"));
+
+    }
+    @Test
+    public void doVectorAllMatchFalse(){
+        boolean res =     Do.folds(VectorInstances::foldable)
+                            .__(Vector.of(10,20))
+                            .allMatch(i->i==10);
+
+
+
+        assertFalse(res);
+
+    }
+
+    @Test
+    public void doVectorAllMatchTrue(){
+        boolean res =     Do.folds(VectorInstances::foldable)
+                            .__(Vector.of(10,20))
+                            .allMatch(i->i%2==0);
+
+
+
+        assertTrue(res);
+
+    }
+    @Test
+    public void doVectorAnyMatchFalse(){
+        boolean res =     Do.folds(VectorInstances::foldable)
+            .__(Vector.of(10,20))
+            .anyMatch(i->i==5);
+
+
+
+        assertFalse(res);
+
+    }
+
+    @Test
+    public void doVectorAnyMatchTrue(){
+        boolean res =     Do .folds(VectorInstances::foldable)
+                            .__(Vector.of(10,20))
+                            .anyMatch(i->i%2==0);
+
+
+
+        assertTrue(res);
+
+    }
+    @Test
+    public void doVectorSize(){
+        long res =     Do .folds(VectorInstances::foldable)
+                        .__(Vector.of(10,20))
+                        .size();
+
+
+
+        assertThat(res,equalTo(2l));
+
+    }
+    @Test
+    public void doVectorGetAt(){
+        Option<Integer> res =     Do .folds(VectorInstances::foldable)
+                                    .__(Vector.of(10,20))
+                                    .getAt(0);
+
+
+
+        assertThat(res,equalTo(some(10)));
+
+    }
+    @Test
+    public void doVectorFoldr(){
+        int res =     Do .folds(VectorInstances::foldable)
+                                    .__(Vector.of(10,20))
+                                    .foldr(a->b->a+b,100);
+
+
+
+        assertThat(res,equalTo(130));
+
+    }
+    @Test
+    public void doVectorLazySeq(){
+        LazySeq<Integer> res =     Do .folds(VectorInstances::foldable)
+                                        .__(Vector.of(10,20))
+                                        .lazySeq();
+
+
+
+        assertThat(res,equalTo(LazySeq.of(10,20)));
+
+    }
+    @Test
+    public void doVectorSeq(){
+        Seq<Integer> res =     Do .folds(VectorInstances::foldable)
+                                    .__(Vector.of(10,20))
+                                    .seq();
+
+
+
+        assertThat(res,equalTo(Seq.of(10,20)));
+
+    }
+    @Test
+    public void doVector_Fold(){
+        Vector<Long> res =     Do.forEach(VectorInstances::monad)
+                                    .__(Vector.of(10,20))
+                                    .__fold(VectorInstances::foldable,f->f.size())
+                                    .yield((a,b)->a+b)
+                                    .convert(Vector::narrowK);
+
+
+
+
+        assertThat(res,equalTo(Vector.of(12l,22l)));
+
+    }
+
+
+    @Test
+    public void doVectorStreamRequest1(){
+        AtomicInteger recieved = new AtomicInteger(0);
+
+        AtomicInteger errors = new AtomicInteger(0);
+        AtomicBoolean complete = new AtomicBoolean(false);
+        ReactiveSeq<Integer> res =     Do.folds(VectorInstances::foldable)
+                                            .__(Vector.of(10,20))
+                                            .stream();
+
+        res.forEach(1,i->recieved.incrementAndGet(),e->errors.incrementAndGet(),()->complete.set(false));
+
+
+        assertThat(recieved.get(),equalTo(1));
+        assertThat(errors.get(),equalTo(0));
+        assertThat(complete.get(),equalTo(false));
+
+    }
 
 }

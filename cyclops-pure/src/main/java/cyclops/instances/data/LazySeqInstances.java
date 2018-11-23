@@ -1,50 +1,48 @@
 package cyclops.instances.data;
 
-import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
-import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.LazySeq;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.instances.control.IdentityInstances;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-import static cyclops.control.Identity.of;
 import static cyclops.data.LazySeq.narrowK;
 
 
-/**
- * Companion class for creating Type Class instances for working with LazySeq's
- * @author johnmcclean
- *
- */
 @UtilityClass
 public class LazySeqInstances {
+
   public static  <T> Kleisli<lazySeq,LazySeq<T>,T> kindKleisli(){
     return Kleisli.of(LazySeqInstances.monad(), LazySeq::widen);
   }
@@ -72,37 +70,37 @@ public class LazySeqInstances {
     return new InstanceDefinitions<lazySeq>() {
       @Override
       public <T, R> Functor<lazySeq> functor() {
-        return LazySeqInstances.functor();
+        return INSTANCE;
       }
 
       @Override
       public <T> Pure<lazySeq> unit() {
-        return LazySeqInstances.unit();
+        return INSTANCE;
       }
 
       @Override
       public <T, R> Applicative<lazySeq> applicative() {
-        return LazySeqInstances.zippingApplicative();
+        return INSTANCE;
       }
 
       @Override
       public <T, R> Monad<lazySeq> monad() {
-        return LazySeqInstances.monad();
+        return INSTANCE;
       }
 
       @Override
       public <T, R> Option<MonadZero<lazySeq>> monadZero() {
-        return Option.some(LazySeqInstances.monadZero());
+        return Option.some(INSTANCE);
       }
 
       @Override
       public <T> Option<MonadPlus<lazySeq>> monadPlus() {
-        return Option.some(LazySeqInstances.monadPlus());
+        return Option.some(INSTANCE);
       }
 
       @Override
       public <T> MonadRec<lazySeq> monadRec() {
-        return LazySeqInstances.monadRec();
+        return INSTANCE;
       }
 
       @Override
@@ -112,12 +110,12 @@ public class LazySeqInstances {
 
       @Override
       public <C2, T> Traverse<lazySeq> traverse() {
-        return LazySeqInstances.traverse();
+        return INSTANCE;
       }
 
       @Override
       public <T> Foldable<lazySeq> foldable() {
-        return LazySeqInstances.foldable();
+        return INSTANCE;
       }
 
       @Override
@@ -127,105 +125,153 @@ public class LazySeqInstances {
 
       @Override
       public <T> Option<Unfoldable<lazySeq>> unfoldable() {
-        return Option.some(LazySeqInstances.unfoldable());
+        return Option.some(INSTANCE);
       }
     };
   }
-  public static Unfoldable<lazySeq> unfoldable(){
-    return new Unfoldable<lazySeq>() {
+
+
+
+
+  private final static LazySeqTypeClasses INSTANCE = new LazySeqTypeClasses();
+  @AllArgsConstructor
+  @Wither
+  public static class LazySeqTypeClasses implements MonadPlus<lazySeq>,
+                                                    MonadRec<lazySeq>,
+                                                    TraverseByTraverse<lazySeq>,
+                                                    Foldable<lazySeq>,
+                                                    Unfoldable<lazySeq>{
+
+      private final MonoidK<lazySeq> monoidK;
+      public LazySeqTypeClasses(){
+          monoidK = MonoidKs.lazySeqConcat();
+      }
+      @Override
+      public <T> Higher<lazySeq, T> filter(Predicate<? super T> predicate, Higher<lazySeq, T> ds) {
+          return narrowK(ds).filter(predicate);
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, Tuple2<T, R>> zip(Higher<lazySeq, T> fa, Higher<lazySeq, R> fb) {
+          return narrowK(fa).zip(narrowK(fb));
+      }
+
+      @Override
+      public <T1, T2, R> Higher<lazySeq, R> zip(Higher<lazySeq, T1> fa, Higher<lazySeq, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+          return narrowK(fa).zip(narrowK(fb),f);
+      }
+
+      @Override
+      public <T> MonoidK<lazySeq> monoid() {
+          return monoidK;
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, R> flatMap(Function<? super T, ? extends Higher<lazySeq, R>> fn, Higher<lazySeq, T> ds) {
+          return narrowK(ds).flatMap(i->narrowK(fn.apply(i)));
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, R> ap(Higher<lazySeq, ? extends Function<T, R>> fn, Higher<lazySeq, T> apply) {
+          return narrowK(apply)
+                            .zip(narrowK(fn),(a,b)->b.apply(a));
+      }
+
+      @Override
+      public <T> Higher<lazySeq, T> unit(T value) {
+          return LazySeq.of(value);
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, R> map(Function<? super T, ? extends R> fn, Higher<lazySeq, T> ds) {
+          return narrowK(ds).map(fn);
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, R> tailRec(T initial, Function<? super T, ? extends Higher<lazySeq, ? extends Either<T, R>>> fn) {
+          return LazySeq.tailRec(initial,i->narrowK(fn.apply(i)));
+      }
+
+      @Override
+      public <C2, T, R> Higher<C2, Higher<lazySeq, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<lazySeq, T> ds) {
+          LazySeq<T> v = narrowK(ds);
+
+          return v.<Higher<C2, Higher<lazySeq,R>>>lazyFoldRight(ap.unit(LazySeq.<R>empty()),
+              (b, a) ->  ap.zip(fn.apply(b), a.get(), (sn, vec) -> narrowK(vec).plus(sn)));
+
+      }
+
+      @Override
+      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<lazySeq, T> ds) {
+          LazySeq<T> x = narrowK(ds);
+          return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+      }
+
+      @Override
+      public <T, R> Higher<lazySeq, Tuple2<T, Long>> zipWithIndex(Higher<lazySeq, T> ds) {
+          return narrowK(ds).zipWithIndex();
+      }
+
+      @Override
+      public <T> T foldRight(Monoid<T> monoid, Higher<lazySeq, T> ds) {
+          return narrowK(ds).foldRight(monoid);
+      }
+
+
+      @Override
+      public <T> T foldLeft(Monoid<T> monoid, Higher<lazySeq, T> ds) {
+          return narrowK(ds).foldLeft(monoid);
+      }
+
+
       @Override
       public <R, T> Higher<lazySeq, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return LazySeq.unfold(b,fn);
+          return LazySeq.unfold(b,fn);
       }
-    };
   }
 
-  public static <T,R>Functor<lazySeq> functor(){
-    BiFunction<LazySeq<T>,Function<? super T, ? extends R>,LazySeq<R>> map = LazySeqInstances::map;
-    return General.functor(map);
-  }
 
-  public static <T> Pure<lazySeq> unit(){
-    return General.<lazySeq,T>unit(LazySeqInstances::of);
-  }
-
-  public static <T,R> Applicative<lazySeq> zippingApplicative(){
-    BiFunction<LazySeq< Function<T, R>>,LazySeq<T>,LazySeq<R>> ap = LazySeqInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-
-  public static <T,R> Monad<lazySeq> monad(){
-
-    BiFunction<Higher<lazySeq,T>,Function<? super T, ? extends Higher<lazySeq,R>>,Higher<lazySeq,R>> flatMap = LazySeqInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-
-  public static <T,R> MonadZero<lazySeq> monadZero(){
-
-    return General.monadZero(monad(), LazySeq.empty());
-  }
-
-  public static <T> MonadPlus<lazySeq> monadPlus(){
-
-    return General.monadPlus(monadZero(), MonoidKs.lazySeqConcat());
-  }
-  public static <T,R> MonadRec<lazySeq> monadRec(){
-
-    return new MonadRec<lazySeq>(){
-      @Override
-      public <T, R> Higher<lazySeq, R> tailRec(T initial, Function<? super T, ? extends Higher<lazySeq,? extends Either<T, R>>> fn) {
-        return LazySeq.tailRec(initial,fn.andThen(LazySeq::narrowK));
-      }
-    };
-  }
 
   public static MonadPlus<lazySeq> monadPlus(MonoidK<lazySeq> m){
 
-    return General.monadPlus(monadZero(),m);
+      return INSTANCE.withMonoidK(m);
   }
+    public static <T,R> Applicative<lazySeq> zippingApplicative(){
+      return INSTANCE;
+    }
+    public static <T,R>Functor<lazySeq> functor(){
+        return INSTANCE;
+    }
 
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<lazySeq> traverse(){
-    BiFunction<Applicative<C2>,LazySeq<Higher<C2, T>>,Higher<C2, LazySeq<T>>> sequenceFn = (ap, list) -> {
+    public static <T,R> Monad<lazySeq> monad(){
+        return INSTANCE;
+    }
 
-      Higher<C2,LazySeq<T>> identity = ap.unit(LazySeq.empty());
-     BiFunction<Higher<C2,LazySeq<T>>,Higher<C2,T>,Higher<C2,LazySeq<T>>> combineToPStack =   (next,acc) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),next,acc);
+    public static <T,R> MonadZero<lazySeq> monadZero(){
 
-      return list.foldLeft(identity,combineToPStack);
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<lazySeq> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<lazySeq> monadRec(){
+
+        return INSTANCE;
+    }
 
 
+    public static <C2,T> Traverse<lazySeq> traverse(){
+        return INSTANCE;
+    }
 
-    };
-    BiFunction<Applicative<C2>,Higher<lazySeq,Higher<C2, T>>,Higher<C2, Higher<lazySeq,T>>> sequenceNarrow  =
-      (a,b) -> LazySeq.widen2(sequenceFn.apply(a, narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+    public static <T,R> Foldable<lazySeq> foldable(){
+      return INSTANCE;
+    }
+    public static Unfoldable<lazySeq> unfoldable(){
+        return INSTANCE;
+    }
 
 
-  public static <T,R> Foldable<lazySeq> foldable(){
-    BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
-    Function3<Monoid<R>, Function<T, R>, Higher<lazySeq, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
-
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
-
-  private static  <T> LazySeq<T> concat(PersistentList<T> l1, PersistentList<T> l2){
-
-    return LazySeq.fromIterable(l1.plusAll(l2));
-  }
-  private <T> LazySeq<T> of(T value){
-    return LazySeq.of(value);
-  }
-  private static <T,R> LazySeq<R> ap(LazySeq<Function< T, R>> lt, LazySeq<T> list){
-    return LazySeq.fromIterable(lt).zip(list,(a, b)->a.apply(b));
-  }
-  private static <T,R> Higher<lazySeq,R> flatMap(Higher<lazySeq,T> lt, Function<? super T, ? extends  Higher<lazySeq,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(LazySeq::narrowK));
-  }
-  private static <T,R> LazySeq<R> map(LazySeq<T> lt, Function<? super T, ? extends R> fn){
-    return LazySeq.fromIterable(lt).map(fn);
-  }
 }
