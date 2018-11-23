@@ -20,9 +20,9 @@ public class Do3Test {
                      .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionUnbound2(){
+    public void doOptionUnbound3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(5)
             .__(2)
             .__(1)
@@ -30,61 +30,61 @@ public class Do3Test {
     }
 
     @Test
-    public void doOptionLazy2(){
+    public void doOptionLazy3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             .__((a,b)->some(a-b-3))
             .__((a,b,c)->some(a-c-b-2))
             .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionLazyA2(){
+    public void doOptionLazyA3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._1(a->some(a/5))
             ._1(a->some(a/10))
             .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionLazyB2(){
+    public void doOptionLazyB3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
-            .__(i->some(i/2))
-            ._2(b->some(b-3))
-            ._2(b->some(b-4))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                    ._of(10)
+                    .__(i->some(i/2))
+                    ._2(b->some(b-3))
+                    ._2(b->some(b-4))
+                    .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionLazyC2(){
+    public void doOptionLazyC3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._2(b->some(b-3))
             ._3(c->some(c-1))
             .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionLazyAB2(){
+    public void doOptionLazyAB3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._2(b->some(b-3))
             ._12((a,b)->some(a-b-4))
             .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionLazyBC2(){
+    public void doOptionLazyBC3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._2(b->some(b-3))
             ._23((b,c)->some(b-c-2))
             .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
     }
     @Test
-    public void doOptionGuardSome2(){
+    public void doOptionGuardSome3(){
         assertThat(Do.forEach(OptionInstances::monad)
                     .__(some(10))
                     .__(some(5))
@@ -95,7 +95,7 @@ public class Do3Test {
             equalTo(some(18)));
     }
     @Test
-    public void doOptionGuardNone1(){
+    public void doOptionGuardNone3(){
         assertThat(Do.forEach(OptionInstances::monad)
             .__(some(10))
             .__(some(5))

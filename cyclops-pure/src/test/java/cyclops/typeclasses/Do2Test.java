@@ -21,7 +21,7 @@ public class Do2Test {
     @Test
     public void doOptionUnbound2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(5)
             .__(2)
             .yield((a,b,c)->a+b+c),equalTo(some(17)));
@@ -30,7 +30,7 @@ public class Do2Test {
     @Test
     public void doOptionLazy2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             .__((a,b)->some(2))
             .yield((a,b,c)->a+b+c),equalTo(some(17)));
@@ -38,7 +38,7 @@ public class Do2Test {
     @Test
     public void doOptionLazyA2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._1(a->some(a/5))
             .yield((a,b,c)->a+b+c),equalTo(some(17)));
@@ -46,7 +46,7 @@ public class Do2Test {
     @Test
     public void doOptionLazyB2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(10)
+            ._of(10)
             .__(i->some(i/2))
             ._2(b->some(b-3))
             .yield((a,b,c)->a+b+c),equalTo(some(17)));
@@ -62,7 +62,7 @@ public class Do2Test {
             equalTo(some(17)));
     }
     @Test
-    public void doOptionGuardNone1(){
+    public void doOptionGuardNone2(){
         assertThat(Do.forEach(OptionInstances::monad)
             .__(some(10))
             .__(some(5))

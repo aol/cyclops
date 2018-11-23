@@ -299,6 +299,9 @@ public interface Eval<T> extends To<Eval<T>>,Function0<T>,
      * @return Eval with specified value
      */
     public static <T> Eval<T> later(final Supplier<T> value) {
+        if(value instanceof Module.Later){
+            return (Eval<T>)value;
+        }
         return new Module.Later<T>(
             () -> value == null ? null : value.get());
     }
