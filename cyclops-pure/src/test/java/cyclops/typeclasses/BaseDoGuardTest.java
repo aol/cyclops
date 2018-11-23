@@ -55,7 +55,7 @@ public abstract  class BaseDoGuardTest<W> extends BaseDoTest<W>{
             equalTo(some(17)));
     }
     @Test
-    public void doOGuardNone1(){
+    public void doGuardNone2(){
         assertThat(this.forEach()
             .__(some(10))
             .__(some(5))
@@ -63,7 +63,27 @@ public abstract  class BaseDoGuardTest<W> extends BaseDoTest<W>{
             .guard(zero(),(a,b,c)->a+b+c<17)
             .yield((a,b,c)->a+b+c),equalTo(Option.none()));
     }
-
+    @Test
+    public void doGuardSome3(){
+        assertThat(forEach()
+                .__(some(10))
+                .__(some(5))
+                .__(some(2))
+                .__(some(1))
+                .guard(zero(),(a,b,c,d)->a+b+c+d>17)
+                .yield((a,b,c,d)->a+b+c+d),
+            equalTo(some(18)));
+    }
+    @Test
+    public void doGuardNone3(){
+        assertThat(forEach()
+            .__(some(10))
+            .__(some(5))
+            .__(some(2))
+            .__(some(1))
+            .guard(zero(),(a,b,c,d)->a+b+c+d<17)
+            .yield((a,b,c,d)->a+b+c+d),equalTo(Option.none()));
+    }
 
 
 }

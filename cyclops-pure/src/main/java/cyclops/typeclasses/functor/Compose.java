@@ -7,6 +7,7 @@ import java.util.function.Function;
 import com.oath.cyclops.hkt.Higher;
 
 import cyclops.control.State;
+import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import cyclops.data.tuple.Tuple;
@@ -39,37 +40,13 @@ public class Compose<CRE,C2>{
     private final Functor<C2> g;
 
 
-    public  <T,R> Higher<CRE,Higher<C2,R>> mapWithIndex(BiFunction<? super T,Long,? extends R> f, Higher<CRE,Higher<C2,T>> ds) {
-
-        return map(a -> {
-
-            R r = State.state((Long s) -> Tuple.tuple(s + 1, f.apply(a, s))).run(0l)._2();
-            return r;
-        } ,ds);
 
 
-    }
-    public <T,R> Higher<CRE,Higher<C2,Tuple2<T,Long>>> zipWithIndex(Higher<CRE,Higher<C2,T>> ds) {
-        return mapWithIndex(Tuple::tuple, ds);
-    }
-    /**
-     * Compose two functors
-     *
-     * @param f First functor to compose
-     * @param g Second functor to compose
-     * @return Composed functor
-     */
     public static <CRE,C2> Compose<CRE,C2> compose(Functor<CRE> f,Functor<C2> g){
         return new Compose<>(f,g);
     }
 
-    /**
-     * Transformation operation
-     *
-     * @param fn Transformation function
-     * @param ds Datastructure to transform
-     * @return Transformed data structure
-     */
+
     public <T,R> Higher<CRE,Higher<C2,R>> map(Function<? super T,? extends R> fn, Higher<CRE,Higher<C2,T>> ds){
        return f.map(h->g.map(fn,h) ,ds);
     }
@@ -84,4 +61,10 @@ public class Compose<CRE,C2>{
     }
 
 
+    public Functor<CRE> outer(){
+        return f;
+    }
+    public Functor<C2> inter(){
+        return g;
+    }
 }

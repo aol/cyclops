@@ -29,10 +29,11 @@ import lombok.experimental.UtilityClass;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import static cyclops.control.Maybe.narrowK;
+import static cyclops.control.Option.narrowK;
+
 
 /**
- * Companion class for creating Type Class instances for working with Maybes
+ * Companion class for creating Type Class instances for working with Options
  * @author johnmcclean
  *
  */

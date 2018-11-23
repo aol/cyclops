@@ -195,7 +195,6 @@ public class VectorInstances {
 
 
       return list.stream()
-        .reverse()
         .reduce(identity,
           combineToPStack,
           combinePStacks);

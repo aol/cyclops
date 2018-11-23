@@ -9,6 +9,8 @@ import cyclops.function.Function3;
 import cyclops.function.Function4;
 
 
+import cyclops.typeclasses.Do;
+import cyclops.typeclasses.Do.Do1;
 import cyclops.typeclasses.monad.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -46,6 +48,9 @@ public class Kleisli<W,T,R> implements Function1<T,Higher<W,R>>,
 
     public static <W,T,R> Kleisli<W,T,R> arrow(Monad<W> monad, Function<? super T, ? extends R> fn){
        return of(monad,a -> monad.unit(fn.apply(a)));
+    }
+    public Do<W>.Do1<R> doWith(T t){
+        return Do.forEach(monad).<R>__(()->narrow(fn).apply(t));
     }
     public Kleisli<W,T,R> local(Function<? super R, ? extends R> local){
         return kleisliK(monad, t->monad.map(r->local.apply(r),apply(t)));

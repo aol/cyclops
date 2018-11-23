@@ -1,11 +1,13 @@
 package cyclops.instances.data;
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.lazySeq;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
 import cyclops.control.Either;
+import cyclops.control.Identity;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.LazySeq;
@@ -16,6 +18,7 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
+import cyclops.instances.control.IdentityInstances;
 import cyclops.typeclasses.*;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
@@ -31,6 +34,7 @@ import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
+import static cyclops.control.Identity.of;
 import static cyclops.data.LazySeq.narrowK;
 
 
@@ -187,9 +191,9 @@ public class LazySeqInstances {
     BiFunction<Applicative<C2>,LazySeq<Higher<C2, T>>,Higher<C2, LazySeq<T>>> sequenceFn = (ap, list) -> {
 
       Higher<C2,LazySeq<T>> identity = ap.unit(LazySeq.empty());
-     BiFunction<Higher<C2,T>,Higher<C2,LazySeq<T>>,Higher<C2,LazySeq<T>>> combineToPStack =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),next,acc);
+     BiFunction<Higher<C2,LazySeq<T>>,Higher<C2,T>,Higher<C2,LazySeq<T>>> combineToPStack =   (next,acc) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),next,acc);
 
-      return list.foldRight(identity,combineToPStack);
+      return list.foldLeft(identity,combineToPStack);
 
 
 
@@ -198,6 +202,7 @@ public class LazySeqInstances {
       (a,b) -> LazySeq.widen2(sequenceFn.apply(a, narrowK(b)));
     return General.traverse(zippingApplicative(), sequenceNarrow);
   }
+
 
   public static <T,R> Foldable<lazySeq> foldable(){
     BiFunction<Monoid<T>,Higher<lazySeq,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
