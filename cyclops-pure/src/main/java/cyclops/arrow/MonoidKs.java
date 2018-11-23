@@ -2,6 +2,8 @@ package cyclops.arrow;
 
 import com.oath.cyclops.hkt.Higher;
 import cyclops.control.Future;
+import cyclops.reactive.IO;
+import cyclops.reactive.Spouts;
 import cyclops.reactive.collections.immutable.LinkedListX;
 import cyclops.reactive.collections.immutable.PersistentQueueX;
 import cyclops.reactive.collections.immutable.PersistentSetX;
@@ -216,10 +218,20 @@ public interface MonoidKs {
 
 
 
+    static MonoidK<io> combineIO() {
+        return new MonoidK<io>() {
+            @Override
+            public <T> Higher<io, T> zero() {
+                return IO.fromPublisher(Spouts.empty());
+            }
 
-    /**
-     * @return Combination of two ReactiveSeq Streams b is appended to a
-     */
+            @Override
+            public <T> Higher<io, T> apply(Higher<io, T> t1, Higher<io, T> t2) {
+                return SemigroupKs.combineIO().apply(t1,t2);
+            }
+        };
+    }
+
     static MonoidK<reactiveSeq> combineReactiveSeq() {
         return new MonoidK<reactiveSeq>() {
           @Override

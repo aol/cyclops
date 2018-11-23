@@ -157,30 +157,7 @@ public class Do<W> {
     public class Do1<T1> {
         private final Higher<W, T1> a;
 
-
-
-        public DoUnfolds1 expand(Unfoldable<W> unfolds){
-            return new DoUnfolds1(unfolds);
-        }
-        @AllArgsConstructor
-        public  class DoUnfolds1{
-            private final Unfoldable<W> unfolds;
-
-            public <R> Do2<R> unfold(Function<? super T1, Option<Tuple2<R, T1>>> fn){
-                return __(b->unfolds.unfold(b, fn));
-            }
-
-            public Do2<T1> replicate(long n) {
-                return __(value->unfolds.replicate(n,value));
-            }
-
-            public <R> Do2<R> none() {
-                return __(t->unfolds.none());
-            }
-            public Do2<T1> one() {
-                return __(a->unfolds.one(a));
-            }
-        }
+        
         public <T2> Do2<T2> __(Higher<W, T2> b) {
             return new Do2<>(Function1.constant(b));
         }
@@ -235,8 +212,6 @@ public class Do<W> {
         }
 
 
-
-
         public Higher<W,T1> unwrap(){
             return a;
         }
@@ -245,124 +220,26 @@ public class Do<W> {
         }
 
 
-        @AllArgsConstructor
-        public class DoFoldable{
-            private final  Foldable<W> folds;
 
-            public <R> R foldMap(final Monoid<R> mb, final Function<? super T1,? extends R> fn){
-                return folds.foldMap(mb,fn,a);
-            }
-
-            public <R> R foldr(final Function< T1, Function< R, R>> fn, R r){
-                return folds.foldr(fn,r,a);
-            }
-
-
-            public T1 foldRight(Monoid<T1> monoid){
-                return folds.foldRight(monoid,a);
-            }
-
-
-            public T1 foldRight(T1 identity, BinaryOperator<T1> semigroup){
-                return folds.foldRight(identity,semigroup,a);
-            }
-
-            public T1 foldLeft(Monoid<T1> monoid){
-                return folds.foldLeft(monoid,a);
-            }
-
-            public T1 foldLeft(T1 identity, BinaryOperator<T1> semigroup){
-                return folds.foldLeft(identity,semigroup,a);
-            }
-            public  long size() {
-                return folds.size(a);
-            }
-            public  Seq<T1> seq(){
-                return folds.seq(a);
-            }
-            public  LazySeq<T1> lazySeq(){
-                return folds.lazySeq(a);
-            }
-            public  ReactiveSeq<T1> stream(){
-                return folds.stream(a);
-            }
-
-            public   T1 intercalate(Monoid<T1> monoid, T1 value ){
-                return seq().intersperse(value).foldLeft(monoid);
-            }
-
-            public   Option<T1> getAt(int index){
-                return seq().get(index);
-            }
-
-            public   boolean anyMatch(Predicate<? super T1> pred){
-                return folds.anyMatch(pred,a);
-            }
-            public   boolean allMatch(Predicate<? super T1> pred){
-                return folds.allMatch(pred,a);
-            }
+        public <R> Do2<R> __fold(Foldable<W> folds,Function<? super Fold1.DoFoldable,  ? extends R> fn){
+            return __(in->monad.unit(fn.apply(Do.folds(folds).__(a))));
         }
-
-        public DoFoldable folds(Foldable<W> folds){
-            return new DoFoldable(folds);
-
-        }
-        public <R> Do2<R> __fold(Foldable<W> folds,Function<? super DoFoldable,  ? extends R> fn){
-            return __(in->monad.unit(fn.apply(folds(folds))));
-
+        public <R> Do2<R> __fold(Supplier<Foldable<W>> folds,Function<? super Fold1.DoFoldable,  ? extends R> fn){
+            return __fold(folds.get(),fn);
         }
 
         public <R> Do1<R> contramap(ContravariantFunctor<W> cf,Function<? super R, ? extends T1> fn){
             return new Do1<>(cf.contramap(fn,a));
         }
-        @AllArgsConstructor
-        public class DoTraverse{
 
-            private final Traverse<W> traverse;
-            private <W2,R> Higher<W2, Higher<W, R>> traverse(Applicative<W2> applicative, Function<? super T1, ? extends Higher<W2, R>> fn){
-                return traverse.traverseA(applicative,fn,a);
-            }
-            public <S,R,R2> State<S,R2> traverseS(Function<? super T1, ? extends State<S,R>> fn,Function<Higher<W,R>,R2> foldFn){
-                return  State.narrowK(traverse(StateInstances.applicative(), fn)).map(foldFn);
 
-            }
-            public <S,R> Tuple2<S, Do1<R>> runTraverseS(Function<? super T1, ? extends State<S,R>> fn, S val) {
-                return traverse.runTraverseS(fn,a,val).map2(i -> Do.forEach(monad).__(i));
-            }
-            public Do1<T1> reverse(){
-                return Do.forEach(monad).__(traverse.reverse(a));
-            }
-            public  <S,R>  Tuple2<S, Do1<R>> mapAccumL (BiFunction<? super S, ? super T1, ? extends Tuple2<S,R>> f,S z) {
-                return traverse.mapAccumL(f, a, z)
-                                 .map2(i -> Do.forEach(monad).__(i));
-            }
-            public <R> R foldMap(Monoid<R> mb, final Function<? super T1,? extends R> fn) {
-                return  traverse.foldMap(mb,fn,a);
-            }
-            public <R> Do1<R> mapWithIndex(BiFunction<? super T1,Long,? extends R> f) {
-                return Do.forEach(monad)
-                         .__(traverse.mapWithIndex(f,a));
-            }
-
-            public <W2,T2,R> Do1<R> zipWith(Foldable<W2> foldable, BiFunction<? super T1,? super Maybe<T2>,? extends R> f, Higher<W2, T2> ds2) {
-                return Do.forEach(monad)
-                         .__(traverse.zipWith(foldable,f,a,ds2));
-
-            }
-            public <R> Do1<Tuple2<T1,Long>> zipWithIndex() {
-                return Do.forEach(monad)
-                         .__(traverse.zipWithIndex(a));
-            }
-        }
-        public DoTraverse traverse(Traverse<W> traverse){
-            return new DoTraverse(traverse);
-        }
         public Do1<T1> reverse(Traverse<W> traverse){
             return Do.forEach(monad).__(traverse.reverse(a));
         }
         public Do1<T1> reverse(Supplier<Traverse<W>> traverse){
             return reverse(traverse.get());
         }
+
         public Do1<Tuple2<T1,Long>> zipWithIndex(Traverse<W> traverse){
             return Do.forEach(monad).__(traverse.zipWithIndex(a));
         }
@@ -610,33 +487,184 @@ public class Do<W> {
 
     }
 
-    public static <W,T1> Do<W> forEach(Monad<W> a){
+    public static <W> Do<W> forEach(Monad<W> a){
         return new Do(a);
     }
 
-    public static <W,T1> Do<W> forEach(Supplier<Monad<W>> a){
+    public static <W> Do<W> forEach(Supplier<Monad<W>> a){
         return forEach(a.get());
     }
 
-    public static Maybe<String> opt(Number i){
-        return null;
-    }
-    public static Maybe<String> op1(){
-        return null;
+    public static <W> Fold1<W> folds(Foldable<W> foldable){
+        return new Fold1<>(foldable);
     }
 
-    public static void test(){
-          Do.forEach(OptionInstances::monad)
-            .__(some(10))
-            .__(Do::opt);
+    public static <W> Fold1<W> folds(Supplier<Foldable<W>> foldable){
+        return new Fold1<>(foldable.get());
+    }
+    public static <W> Traverse1<W> traverse(Traverse<W> traverse){
+        return new Traverse1<>(traverse);
+    }
 
-        Do.forEach(OptionInstances::monad)
-            .__(Do::op1);
+    public static <W> Traverse1<W> traverse(Supplier<Traverse<W>> traverse){
+        return new Traverse1<>(traverse.get());
+    }
+    public static <W> Sequence1<W> sequence(Traverse<W> traverse){
+        return new Sequence1<>(traverse);
+    }
 
-        Do.forEach(OptionInstances::monad)
-            ._of("hello");
+    public static <W> Sequence1<W> sequence(Supplier<Traverse<W>> traverse){
+        return new Sequence1<>(traverse.get());
+    }
+    @AllArgsConstructor
+    public static class Sequence1<W>{
+        private final Traverse<W> traverse;
+
+        public <W2,T1> DoSequence<W2,T1> __(Higher<W, Higher<W2,T1>> a) {
+            return new DoSequence<>(a);
+        }
+        public <W2,T1> DoSequence<W2,T1> __(Supplier<Higher<W, Higher<W2,T1>>> a) {
+            return new DoSequence<>(a.get());
+        }
+        @AllArgsConstructor
+        public class DoSequence<W2,T1>{
+            private final Higher<W, Higher<W2,T1>> a;
+
+            private  Higher<W2, Higher<W, T1>> sequenceA(Applicative<W2> applicative){
+                return traverse.sequenceA(applicative,a);
+            }
+            public Do<W2>.DoNested<W,T1> traverse(Monad<W2> m1, Applicative<W2> applicative){
+
+                return  Do.forEach(m1).__(traverse, sequenceA(applicative));
+            }
+        }
+    }
+
+    @AllArgsConstructor
+    public static class Traverse1<W>{
+        private final Traverse<W> traverse;
+        public <T1> DoTraverse<T1> __(Higher<W, T1> a) {
+            return new DoTraverse<>(a);
+        }
+        public <T1> DoTraverse<T1> __(Supplier<Higher<W, T1>> a) {
+            return new DoTraverse<>(a.get());
+        }
 
 
+        @AllArgsConstructor
+        public class DoTraverse<T1>{
+            private final Higher<W, T1> a;
+
+            private <W2,R> Higher<W2, Higher<W, R>> traverse(Applicative<W2> applicative, Function<? super T1, ? extends Higher<W2, R>> fn){
+                return traverse.traverseA(applicative,fn,a);
+            }
+            public <W2,R> Do<W2>.DoNested<W,R> traverse(Monad<W2> m1, Function<? super T1, ? extends Higher<W2, R>> fn){
+                return  Do.forEach(m1).__(traverse, traverse.traverseA(m1, fn, a));
+            }
+            public <S,R,R2> State<S,R2> traverseS(Function<? super T1, ? extends State<S,R>> fn,Function<Higher<W,R>,R2> foldFn){
+                return  State.narrowK(traverse(StateInstances.applicative(), fn)).map(foldFn);
+
+            }
+            public <S,R> Tuple2<S, Do<W>.Do1<R>> runTraverseS(Monad<W> monad,Function<? super T1, ? extends State<S,R>> fn, S val) {
+                return traverse.runTraverseS(fn,a,val).map2(i -> Do.forEach(monad).__(i));
+            }
+            public Do<W>.Do1<T1> reverse(Monad<W> monad){
+                return Do.forEach(monad).__(traverse.reverse(a));
+            }
+            public  <S,R>  Tuple2<S, Do<W>.Do1<R>> mapAccumL (Monad<W> monad,BiFunction<? super S, ? super T1, ? extends Tuple2<S,R>> f,S z) {
+                return traverse.mapAccumL(f, a, z)
+                    .map2(i -> Do.forEach(monad).__(i));
+            }
+            public <R> R foldMap(Monoid<R> mb, final Function<? super T1,? extends R> fn) {
+                return  traverse.foldMap(mb,fn,a);
+            }
+            public <R> Do<W>.Do1<R> mapWithIndex(Monad<W> monad,BiFunction<? super T1,Long,? extends R> f) {
+                return Do.forEach(monad)
+                    .__(traverse.mapWithIndex(f,a));
+            }
+
+            public <W2,T2,R> Do<W>.Do1<R> zipWith(Monad<W> monad,Foldable<W2> foldable, BiFunction<? super T1,? super Maybe<T2>,? extends R> f, Higher<W2, T2> ds2) {
+                return Do.forEach(monad)
+                    .__(traverse.zipWith(foldable,f,a,ds2));
+
+            }
+            public <R> Do<W>.Do1<Tuple2<T1,Long>> zipWithIndex(Monad<W> monad) {
+                return Do.forEach(monad)
+                    .__(traverse.zipWithIndex(a));
+            }
+        }
+    }
+
+    @AllArgsConstructor
+    public static class Fold1<W> {
+        private final Foldable<W> folds;
+
+        public <T1> DoFoldable<T1> __(Higher<W, T1> a) {
+        return new DoFoldable<>(a);
+    }
+
+        public <T1> DoFoldable<T1> __(Supplier<Higher<W, T1>> a) {
+            return new DoFoldable<>(a.get());
+        }
+
+        @AllArgsConstructor
+        public class DoFoldable<T1>{
+            private final Higher<W, T1> a;
+
+            public <R> R foldMap(final Monoid<R> mb, final Function<? super T1,? extends R> fn){
+                return folds.foldMap(mb,fn,a);
+            }
+
+            public <R> R foldr(final Function< T1, Function< R, R>> fn, R r){
+                return folds.foldr(fn,r,a);
+            }
+
+
+            public T1 foldRight(Monoid<T1> monoid){
+                return folds.foldRight(monoid,a);
+            }
+
+
+            public T1 foldRight(T1 identity, BinaryOperator<T1> semigroup){
+                return folds.foldRight(identity,semigroup,a);
+            }
+
+            public T1 foldLeft(Monoid<T1> monoid){
+                return folds.foldLeft(monoid,a);
+            }
+
+            public T1 foldLeft(T1 identity, BinaryOperator<T1> semigroup){
+                return folds.foldLeft(identity,semigroup,a);
+            }
+            public  long size() {
+                return folds.size(a);
+            }
+            public  Seq<T1> seq(){
+                return folds.seq(a);
+            }
+            public  LazySeq<T1> lazySeq(){
+                return folds.lazySeq(a);
+            }
+            public  ReactiveSeq<T1> stream(){
+                return folds.stream(a);
+            }
+
+            public   T1 intercalate(Monoid<T1> monoid, T1 value ){
+                return seq().intersperse(value).foldLeft(monoid);
+            }
+
+            public   Option<T1> getAt(int index){
+                return seq().get(index);
+            }
+
+            public   boolean anyMatch(Predicate<? super T1> pred){
+                return folds.anyMatch(pred,a);
+            }
+            public   boolean allMatch(Predicate<? super T1> pred){
+                return folds.allMatch(pred,a);
+            }
+        }
 
     }
+
 }
