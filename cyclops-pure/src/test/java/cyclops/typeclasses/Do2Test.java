@@ -30,48 +30,54 @@ public class Do2Test {
                      .__(some(10))
                      .__(some(5))
                      .__(some(2))
-                     .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                     .yield((a,b,c)->a+b+c)
+                     .fold(Option::narrowK),equalTo(some(17)));
     }
     @Test
     public void doOptionUnbound2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            ._of(5)
-            ._of(2)
-            .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                        ._of(10)
+                        ._of(5)
+                        ._of(2)
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(some(17)));
     }
 
     @Test
     public void doOptionLazy2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__((a,b)->some(2))
-            .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__((a,b)->some(2))
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(some(17)));
     }
     @Test
     public void doOptionLazyA2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__(_1(a->some(a/5)))
-            .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__(_1(a->some(a/5)))
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(some(17)));
     }
     @Test
     public void doOptionLazyA2Fn(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__(_1(a->some(a/5)))
-            .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__(_1(a->some(a/5)))
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(some(17)));
     }
     @Test
     public void doOptionLazyB2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__(_2(b->some(b-3)))
-            .yield((a,b,c)->a+b+c),equalTo(some(17)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__(_2(b->some(b-3)))
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(some(17)));
     }
     @Test
     public void doOptionGuardSome2(){
@@ -80,17 +86,19 @@ public class Do2Test {
                     .__(some(5))
                     .__(some(2))
                     .guard(OptionInstances.monadZero(),(a,b,c)->a+b+c>16)
-                    .yield((a,b,c)->a+b+c),
+                    .yield((a,b,c)->a+b+c)
+                    .fold(Option::narrowK),
             equalTo(some(17)));
     }
     @Test
     public void doOptionGuardNone2(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(some(10))
-            .__(some(5))
-            .__(some(2))
-            .guard(OptionInstances.monadZero(),(a,b,c)->a+b+c<17)
-            .yield((a,b,c)->a+b+c),equalTo(Option.none()));
+                        .__(some(10))
+                        .__(some(5))
+                        .__(some(2))
+                        .guard(OptionInstances.monadZero(),(a,b,c)->a+b+c<17)
+                        .yield((a,b,c)->a+b+c)
+                        .fold(Option::narrowK),equalTo(Option.none()));
     }
     @Test
     public void doOptionShow(){

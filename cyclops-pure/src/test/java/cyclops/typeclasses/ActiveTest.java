@@ -90,11 +90,20 @@ public class ActiveTest {
     @Test
     public void zipWithIndexVector(){
         Vector<Tuple2<Integer, Long>> l = VectorInstances.allTypeclasses(Vector.of(1, 2, 3))
-            .zipWithIndex()
-            .getSingle()
-            .convert(Vector::narrowK);
+                                                            .zipWithIndex()
+                                                            .getSingle()
+                                                            .convert(Vector::narrowK);
         System.out.println(l);
         assertThat(l,equalTo(Vector.of(1,2,3).zipWithIndex()));
+    }
+    @Test
+    public void zipWithIndexSeq(){
+        Seq<Tuple2<Integer, Long>> l = SeqInstances.allTypeclasses(Seq.of(1, 2, 3))
+                                                    .zipWithIndex()
+                                                    .getSingle()
+                                                    .convert(Seq::narrowK);
+        System.out.println(l);
+        assertThat(l,equalTo(Seq.of(1,2,3).zipWithIndex()));
     }
     @Test
     public void zipWithIndexVectorX(){

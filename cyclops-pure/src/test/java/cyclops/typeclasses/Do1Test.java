@@ -33,21 +33,23 @@ public class Do1Test {
         assertThat(Do.forEach(OptionInstances::monad)
                      .__(some(10))
                      .__(some(5))
-                     .yield((a,b)->a+b),equalTo(some(15)));
+                     .yield((a,b)->a+b)
+                        .fold(Option::narrowK),equalTo(some(15)));
     }
     @Test
     public void doOptionUnbound1(){
         assertThat(Do.forEach(OptionInstances::monad)
             ._of(10)
             ._of(5)
-            .yield((a,b)->a+b),equalTo(some(15)));
+            .yield((a,b)->a+b)
+            .fold(Option::narrowK),equalTo(some(15)));
     }
     @Test
     public void doOptionLazy1(){
         assertThat(Do.forEach(OptionInstances::monad)
             ._of(10)
             .__(i->some(i/2))
-            .yield((a,b)->a+b),equalTo(some(15)));
+            .yield((a,b)->a+b).unwrap(),equalTo(some(15)));
     }
     @Test
     public void doOptionGuardSome1(){
@@ -55,7 +57,8 @@ public class Do1Test {
             .__(some(10))
             .__(some(5))
             .guard(OptionInstances.monadZero(),(a,b)->a+b>14)
-            .yield((a,b)->a+b),equalTo(some(15)));
+            .yield((a,b)->a+b)
+            .fold(Option::narrowK),equalTo(some(15)));
     }
     @Test
     public void doOptionGuardNone1(){
@@ -63,7 +66,8 @@ public class Do1Test {
             .__(some(10))
             .__(some(5))
             .guard(OptionInstances.monadZero(),(a,b)->a+b<15)
-            .yield((a,b)->a+b),equalTo(Option.none()));
+            .yield((a,b)->a+b)
+            .fold(Option::narrowK),equalTo(Option.none()));
     }
 
     @Test
@@ -73,9 +77,10 @@ public class Do1Test {
     }
     @Test
     public void doOptionShowDefault(){
-        String s = Do.forEach(OptionInstances.monad())._of(10)._show(new Show<option>() {})
+        String s = Do.forEach(OptionInstances.monad())
+                         ._of(10)._show(new Show<option>() {})
                         .yield((i,st)->st+i).fold(Option::narrowK).orElse(null);
-        assertThat(s,equalTo("Some[10]"));
+        assertThat(s,equalTo("Some[10]10"));
     }
 
     @Test
@@ -178,6 +183,17 @@ public class Do1Test {
 
 
         assertThat(seq,equalTo(Vector.of(tuple(10,0l), tuple(20,1l))));
+
+    }
+    @Test
+    public void doVectorZipWithIndex2030(){
+        Vector<Tuple2<Integer, Long>> seq = Do.forEach(VectorInstances::monad)
+            .__(Vector.of(10,20,30))
+            .zipWithIndex(VectorInstances::traverse)
+            .fold(Vector::narrowK);
+
+
+        assertThat(seq,equalTo(Vector.of(tuple(10,0l), tuple(20,1l),tuple(30,2l))));
 
     }
     @Test
