@@ -191,7 +191,7 @@ public class Active<W,T> implements Filters<T>,
         return def1.foldable().size(single);
     }
     public <R> Active<W,Tuple2<T,Long>> zipWithIndex() {
-        return mapWithIndex(Tuple::tuple);
+        return of(def1.traverse().zipWithIndex(single),def1);
     }
 
     public <W2,T2,R> Active<W,R> zipWith(Active<W2,T2> a,  BiFunction<? super T,? super Maybe<T2>,? extends R> f) {

@@ -26,51 +26,59 @@ public class DoTest {
     public void doOption(){
         assertThat(Do.forEach(OptionInstances::monad)
                      .__(some(10))
-                     .yield(i->i+1),equalTo(some(11)));
+                     .yield(i->i+1)
+                     .fold(Option::narrowK),equalTo(some(11)));
     }
     @Test
     public void doOptionUnbound(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .yield(i->i+1),equalTo(some(11)));
+                        ._of(10)
+                        .yield(i->i+1)
+                        .fold(Option::narrowK),equalTo(some(11)));
     }
     @Test
     public void doOptionLazy(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(()->some(10))
-            .yield(i->i+1),equalTo(some(11)));
+                        .__(()->some(10))
+                        .yield(i->i+1)
+                        .fold(Option::narrowK),equalTo(some(11)));
     }
     @Test
     public void doOptionGuardSome(){
         assertThat(Do.forEach(OptionInstances::monad)
             .__(some(10))
             .guard(OptionInstances.monadZero(),i->i>5)
-            .yield(i->i+1),equalTo(some(11)));
+            .yield(i->i+1)
+            .fold(Option::narrowK),equalTo(some(11)));
     }
     @Test
     public void doOptionGuardNone(){
         assertThat(Do.forEach(OptionInstances::monad)
-            .__(some(10))
-            .guard(OptionInstances.monadZero(),i->i<5)
-            .yield(i->i+1),equalTo(Option.none()));
+                        .__(some(10))
+                        .guard(OptionInstances.monadZero(),i->i<5)
+                        .yield(i->i+1)
+                        .fold(Option::narrowK),equalTo(Option.none()));
     }
     @Test
     public void doSeq(){
         assertThat(Do.forEach(SeqInstances::monad)
-            .__(Seq.of(10))
-            .yield(i->i+1),equalTo(Seq.of(11)));
+                        .__(Seq.of(10))
+                        .yield(i->i+1)
+                        .fold(Seq::narrowK),equalTo(Seq.of(11)));
     }
     @Test
     public void doSeqUnbound(){
         assertThat(Do.forEach(SeqInstances::monad)
-            ._of(10)
-            .yield(i->i+1),equalTo(Seq.of(11)));
+                        ._of(10)
+                        .yield(i->i+1)
+                        .fold(Seq::narrowK),equalTo(Seq.of(11)));
     }
     @Test
     public void doSeqLazy(){
         assertThat(Do.forEach(SeqInstances::monad)
-            ._of(10)
-            .yield(i->i+1),equalTo(Seq.of(11)));
+                        ._of(10)
+                        .yield(i->i+1)
+                        .fold(Seq::narrowK),equalTo(Seq.of(11)));
     }
 
     @Test
@@ -80,8 +88,9 @@ public class DoTest {
             .yield(i->i+1);
 
         assertThat(Do.forEach(EitherInstances::monad)
-            .__(right(10))
-            .yield(i->i+1),equalTo(right(11)));
+                        .__(right(10))
+                        .yield(i->i+1)
+                        .fold(Either::narrowK),equalTo(right(11)));
     }
 
     @Test

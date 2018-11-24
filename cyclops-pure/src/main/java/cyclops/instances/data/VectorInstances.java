@@ -202,11 +202,11 @@ public class VectorInstances {
       @Override
       public <C2, T, R> Higher<C2, Higher<vector, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<vector, T> ds) {
           Vector<T> v = narrowK(ds);
-
           return v.<Higher<C2, Higher<vector,R>>>foldLeft(ap.unit(Vector.<R>empty()),
               (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
-      }
+
+     }
 
       @Override
       public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<vector, T> ds) {

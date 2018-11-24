@@ -27,26 +27,29 @@ public class Do3Test {
                      .__(some(5))
                      .__(some(2))
                      .__(some(1))
-                     .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                     .yield((a,b,c,d)->a+b+c+d)
+                     .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionUnbound3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            ._of(5)
-            ._of(2)
-            ._of(1)
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                        ._of(10)
+                        ._of(5)
+                        ._of(2)
+                        ._of(1)
+                        .yield((a,b,c,d)->a+b+c+d)
+                        .fold(Option::narrowK),equalTo(some(18)));
     }
 
     @Test
     public void doOptionLazy3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__((a,b)->some(a-b-3))
-            .__((a,b,c)->some(a-c-b-2))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__((a,b)->some(a-b-3))
+                        .__((a,b,c)->some(a-c-b-2))
+                        .yield((a,b,c,d)->a+b+c+d)
+                        .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionLazyA3(){
@@ -55,7 +58,8 @@ public class Do3Test {
             .__(i->some(i/2))
             .__(_1(a->some(a/5)))
             .__(__1(a->some(a/10)))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+            .yield((a,b,c,d)->a+b+c+d)
+            .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionLazyB3(){
@@ -64,7 +68,8 @@ public class Do3Test {
                     .__(i->some(i/2))
                     .__(_2(b->some(b-3)))
                     .__(__2(b->some(b-4)))
-                    .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                    .yield((a,b,c,d)->a+b+c+d)
+                    .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionLazyC3(){
@@ -73,7 +78,8 @@ public class Do3Test {
             .__(i->some(i/2))
             .__(_2(b->some(b-3)))
             .__(__3(c->some(c-1)))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+            .yield((a,b,c,d)->a+b+c+d)
+            .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionLazyAB3(){
@@ -82,26 +88,29 @@ public class Do3Test {
             .__(i->some(i/2))
             .__(_2(b->some(b-3)))
             .__(__12((a,b)->some(a-b-4)))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+            .yield((a,b,c,d)->a+b+c+d)
+            .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionLazyBC3(){
         assertThat(Do.forEach(OptionInstances::monad)
-            ._of(10)
-            .__(i->some(i/2))
-            .__(_2(b->some(b-3)))
-            .__(__23((b,c)->some(b-c-2)))
-            .yield((a,b,c,d)->a+b+c+d),equalTo(some(18)));
+                        ._of(10)
+                        .__(i->some(i/2))
+                        .__(_2(b->some(b-3)))
+                        .__(__23((b,c)->some(b-c-2)))
+                        .yield((a,b,c,d)->a+b+c+d)
+                        .fold(Option::narrowK),equalTo(some(18)));
     }
     @Test
     public void doOptionGuardSome3(){
         assertThat(Do.forEach(OptionInstances::monad)
-                    .__(some(10))
-                    .__(some(5))
-                    .__(some(2))
-                    .__(some(1))
-                    .guard(OptionInstances.monadZero(),(a,b,c,d)->a+b+c+d>17)
-                    .yield((a,b,c,d)->a+b+c+d),
+                        .__(some(10))
+                        .__(some(5))
+                        .__(some(2))
+                        .__(some(1))
+                        .guard(OptionInstances.monadZero(),(a,b,c,d)->a+b+c+d>17)
+                        .yield((a,b,c,d)->a+b+c+d)
+                        .fold(Option::narrowK),
             equalTo(some(18)));
     }
     @Test
@@ -112,7 +121,8 @@ public class Do3Test {
             .__(some(2))
             .__(some(1))
             .guard(OptionInstances.monadZero(),(a,b,c,d)->a+b+c+d<17)
-            .yield((a,b,c,d)->a+b+c+d),equalTo(Option.none()));
+            .yield((a,b,c,d)->a+b+c+d)
+            .fold(Option::narrowK),equalTo(Option.none()));
     }
     @Test
     public void doOptionShow(){
@@ -123,7 +133,7 @@ public class Do3Test {
             .show(new Show<DataWitness.option>(){})
             .yield((a,b,c)->a+b+c)
             .fold(Option::narrowK).orElse(null);
-        assertThat(s,equalTo("10Some[20]"));
+        assertThat(s,equalTo("30Some[100]"));
     }
     @Test
     public void doOptionShowDefault(){
@@ -132,7 +142,7 @@ public class Do3Test {
             ._of(20)
             ._of(200)._show(new Show<DataWitness.option>() {})
             .yield((a,b,c,st)->st+a+b+c).fold(Option::narrowK).orElse(null);
-        assertThat(s,equalTo("Some[20]1020"));
+        assertThat(s,equalTo("Some[200]1020200"));
     }
 
     @Test

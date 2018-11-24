@@ -9,6 +9,7 @@ import cyclops.arrow.MonoidK;
 import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Option;
+import cyclops.data.tuple.Tuple2;
 import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
@@ -24,9 +25,12 @@ import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.instances.General;
 import cyclops.typeclasses.monad.*;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import static cyclops.control.Option.narrowK;
@@ -136,95 +140,127 @@ public class OptionInstances {
       }
     };
   }
+  private final OptionTypeclasses INSTANCE = new OptionTypeclasses();
+
+  @AllArgsConstructor
+  @Wither
+  public static class OptionTypeclasses  implements MonadPlus<option>,
+                                                    MonadRec<option>,
+                                                    TraverseByTraverse<option>,
+                                                    Foldable<option>,
+                                                    Unfoldable<option>{
+
+      private final MonoidK<option> monoidK;
+      public OptionTypeclasses(){
+          monoidK= MonoidKs.firstPresentOption();
+      }
+
+      @Override
+      public <T> T foldRight(Monoid<T> monoid, Higher<option, T> ds) {
+          return narrowK(ds).fold(monoid);
+      }
 
 
-  public static <T,R>Functor<option> functor(){
-    BiFunction<Option<T>,Function<? super T, ? extends R>,Option<R>> map = OptionInstances::map;
-    return General.functor(map);
-  }
 
-  public static <T> Pure<option> unit(){
-    return General.<option,T>unit(OptionInstances::of);
-  }
+      @Override
+      public <T> T foldLeft(Monoid<T> monoid, Higher<option, T> ds) {
+          return narrowK(ds).fold(monoid);
+      }
 
-  public static <T,R> Applicative<option> applicative(){
-    BiFunction<Option< Function<T, R>>,Option<T>,Option<R>> ap = OptionInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
+      @Override
+      public <R, T> Higher<option, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+          return fn.apply(b).map(t->t._1());
+      }
 
-  public static <T,R> Monad<option> monad(){
+      @Override
+      public <T> MonoidK<option> monoid() {
+          return monoidK;
+      }
 
-    BiFunction<Higher<option,T>,Function<? super T, ? extends Higher<option,R>>,Higher<option,R>> flatMap = OptionInstances::flatMap;
-    return General.monad(applicative(), flatMap);
-  }
-  public static <T,R> MonadRec<option> monadRec(){
+      @Override
+      public <T, R> Higher<option, R> flatMap(Function<? super T, ? extends Higher<option, R>> fn, Higher<option, T> ds) {
+          return narrowK(ds).flatMap(t->narrowK(fn.apply(t)));
+      }
 
-    return new MonadRec<option>(){
+      @Override
+      public <C2, T, R> Higher<C2, Higher<option, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<option, T> ds) {
+          Option<T> maybe = narrowK(ds);
+          return maybe.fold(some-> applicative.map(m->Option.of(m), fn.apply(some)),
+                                 ()->applicative.unit(Option.<R>none()));
+      }
+
+      @Override
+      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<option, T> ds) {
+          Option<R>  opt  = narrowK(ds).map(fn);
+          return opt.fold(mb);
+      }
+
+      @Override
+      public <T, R> Higher<option, R> ap(Higher<option, ? extends Function<T, R>> fn, Higher<option, T> apply) {
+          return narrowK(apply).zip(narrowK(fn), (a,b)->b.apply(a));
+      }
+
+      @Override
+      public <T> Higher<option, T> unit(T value) {
+          return Option.some(value);
+      }
+
+      @Override
+      public <T, R> Higher<option, R> map(Function<? super T, ? extends R> fn, Higher<option, T> ds) {
+          return narrowK(ds).map(fn);
+      }
 
       @Override
       public <T, R> Higher<option, R> tailRec(T initial, Function<? super T, ? extends Higher<option, ? extends Either<T, R>>> fn) {
-        return Option.tailRec(initial,fn.andThen(Option::narrowK));
+          return Option.tailRec(initial,t->narrowK(fn.apply(t)));
       }
-    };
+  }
+  public static <T,R>Functor<option> functor(){
+    return INSTANCE;
+  }
+
+  public static <T> Pure<option> unit(){
+      return INSTANCE;
+  }
+
+  public static <T,R> Applicative<option> applicative(){
+      return INSTANCE;
+  }
+
+  public static <T,R> Monad<option> monad(){
+      return INSTANCE;
+  }
+  public static <T,R> MonadRec<option> monadRec(){
+
+      return INSTANCE;
   }
 
   public static <T,R> MonadZero<option> monadZero(){
 
-    return General.monadZero(monad(), Option.none());
+      return INSTANCE;
   }
 
   public static <T> MonadPlus<option> monadPlus(){
-
-    return General.monadPlus(monadZero(), MonoidKs.firstPresentOption());
+      return INSTANCE;
   }
 
   public static <T> MonadPlus<option> monadPlus(MonoidK<option> m){
 
-    return General.monadPlus(monadZero(),m);
+      return INSTANCE.withMonoidK(m);
   }
 
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<option> traverse(){
 
-    return General.traverseByTraverse(applicative(), OptionInstances::traverseA);
+  public static <C2,T> Traverse<option> traverse(){
+      return INSTANCE;
   }
 
 
   public static <T,R> Foldable<option> foldable(){
-    BiFunction<Monoid<T>,Higher<option,T>,T> foldRightFn =  (m, l)-> narrowK(l).orElse(m.zero());
-    BiFunction<Monoid<T>,Higher<option,T>,T> foldLeftFn = (m, l)-> narrowK(l).orElse(m.zero());
-    Function3<Monoid<R>, Function<T, R>, Higher<option, T>, R> foldMapFn = (m, f, l)-> narrowK(l).map(f).fold(m);
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
+      return INSTANCE;
   }
 
 
 
-  private <T> Option<T> of(T value){
-    return Option.of(value);
-  }
-  private static <T,R> Option<R> ap(Option<Function< T, R>> lt,  Option<T> maybe){
-    return lt.zip(maybe, (a,b)->a.apply(b)).toOption();
 
-  }
-  private static <T,R> Higher<option,R> flatMap(Higher<option,T> lt, Function<? super T, ? extends  Higher<option,R>> fn){
-    return narrowK(lt).flatMap(fn.andThen(Option::narrowK));
-  }
-  private static <T,R> Option<R> map(Option<T> lt, Function<? super T, ? extends R> fn){
-    return lt.map(fn);
-
-  }
-
-
-  private static <C2,T,R> Higher<C2, Higher<option, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn,
-                                                                              Higher<option, T> ds){
-
-    Option<T> maybe = narrowK(ds);
-    Higher<C2, Option<R>> res = maybe.fold(some-> applicative.map(m->Option.of(m), fn.apply(some)),
-      ()->applicative.unit(Option.<R>none()));
-
-    return Option.widen2(res);
-  }
 
 }

@@ -211,7 +211,7 @@ public class Do4Test {
             ._of(200)
             ._of(1000)._show(new Show<option>() {})
             .yield((a,b,c,d,st)->st+a+b+c+d).fold(Option::narrowK).orElse(null);
-        assertThat(s,equalTo("Some[20]10201000"));
+        assertThat(s,equalTo("Some[1000]10202001000"));
     }
 
     @Test
