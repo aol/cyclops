@@ -16,6 +16,52 @@ public interface Function4<T1, T2, T3, T4, R> extends Function1<T1,Function1<T2,
     public static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> lazyConstant(Supplier<R> t) {
         return (a,b,c,d)-> t.get();
     }
+
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R>  ___1(Function<T1,R> fn ) {
+        return (a,b,c,d)->fn.apply(a);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R>  ___2(Function<T2,R> fn ) {
+        return (a,b,c,d)->fn.apply(b);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R>  ___3(Function<T3,R> fn ) {
+        return (a,b,c,d)->fn.apply(c);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R>  ___4(Function<T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(d);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___12(Function2<T1,T2,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,b);
+    }
+    static <T1,T2,T3,T4,R>Function4<T1,  T2,T3,T4,R>  ___13(Function2<T1,T3,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,c);
+    }
+    static <T1,T2,T3,T4,R>Function4<T1,  T2,T3,T4,R>  ___14(Function2<T1,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,d);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___23(Function2<T2,T3,R> fn ) {
+        return (a,b,c,d)->fn.apply(b,c);
+    }
+
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___24(Function2<T2,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(b,d);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___34(Function2<T3,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(c,d);
+    }
+
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___123(Function3<T1,T2,T3,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,b,c);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___124(Function3<T1,T2,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,b,d);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___134(Function3<T1,T3,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(a,c,d);
+    }
+    static <T1,T2,T3,T4,R> Function4<T1,  T2,T3,T4,R> ___234(Function3<T2,T3,T4,R> fn ) {
+        return (a,b,c,d)->fn.apply(b,c,d);
+    }
+
     public R apply(T1 a, T2 b, T3 c, T4 d);
 
     default Function4<T1, T2, T3, T4, Maybe<R>> lazyLift4(){

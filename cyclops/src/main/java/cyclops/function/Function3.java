@@ -25,6 +25,26 @@ public interface Function3<S1, S2, S3, R> extends Function1<S1,Function1<S2,Func
     public R apply(S1 a, S2 b, S3 c);
 
 
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __1(Function<T1,R> fn ) {
+        return (a,b,c)->fn.apply(a);
+    }
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __2(Function<T2,R> fn ) {
+        return (a,b,c)->fn.apply(b);
+    }
+
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __3(Function<T3,R> fn ) {
+        return (a,b,c)->fn.apply(c);
+    }
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __12(Function2<T1,T2,R> fn ) {
+        return (a,b,c)->fn.apply(a,b);
+    }
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __13(Function2<T1,T3,R> fn ) {
+        return (a,b,c)->fn.apply(a,c);
+    }
+    static <T1,T2,T3,R> Function3<T1,T2,T3,R> __23(Function2<T2,T3,R> fn ) {
+        return (a,b,c)->fn.apply(b,c);
+    }
+
   default <R2> R2 toType3(Function<? super Function3<? super S1, ? super S2, ? super S3,? extends R>, ? extends R2> reduce){
     return reduce.apply(this);
   }

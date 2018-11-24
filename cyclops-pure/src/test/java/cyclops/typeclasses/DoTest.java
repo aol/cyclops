@@ -185,12 +185,23 @@ public class DoTest {
     @Test
     public void doNestedSequence(){
         Option<Seq<Integer>> opt = Do.forEach(SeqInstances::monad)
-                                                .__(OptionInstances::functor, Seq.of(Option.some(20), Option.some(10), Option.none()))
+                                                .__(OptionInstances::functor, Seq.of(Option.some(20), Option.some(10)))
                                                 .sequence(SeqInstances.traverse(), OptionInstances.monad())
                                                 .map(Seq::narrowK)
                                                 .fold(Option::narrowK);
 
         assertThat(opt,equalTo(Option.of(Seq.of(20,10))));
+
+    }
+    @Test
+    public void doNestedSequenceNone(){
+        Option<Seq<Integer>> opt = Do.forEach(SeqInstances::monad)
+            .__(OptionInstances::functor, Seq.of(Option.some(20), Option.some(10),Option.none()))
+            .sequence(SeqInstances.traverse(), OptionInstances.monad())
+            .map(Seq::narrowK)
+            .fold(Option::narrowK);
+
+        assertThat(opt,equalTo(Option.none()));
 
     }
 
