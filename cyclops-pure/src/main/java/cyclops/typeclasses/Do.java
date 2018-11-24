@@ -10,6 +10,7 @@ import cyclops.control.State;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
 import cyclops.data.tuple.Tuple2;
+import cyclops.function.Curry;
 import cyclops.function.Function1;
 import cyclops.function.Function2;
 import cyclops.function.Function3;
@@ -137,6 +138,9 @@ public class Do<W> {
 
         public <R1,R2> R2 fold(Function<? super Higher<W, R1>, ? extends R2 > fn1, Function<? super Higher<W2,T1>, ? extends R1> fn2) {
             return fn1.apply(monad.map_(nested, fn2));
+        }
+        public <R> R fold(Function<? super Higher<W, Higher<W2, T1>>, ? extends  R> fn){
+            return fn.apply(nested);
         }
     }
 
@@ -301,7 +305,9 @@ public class Do<W> {
                     return monad.map_(b.apply(in), in2 -> fn.apply(in, in2));
                 }));
             }
-
+            public <R> R fold(Function<? super Higher<W,T2>,? extends R> fn){
+                return fn.apply(monad.flatMap_(a.get(),b));
+            }
 
 
 
@@ -327,10 +333,11 @@ public class Do<W> {
 
                 public Do3<String> show(Show<W> show){
 
-                    return new Do3<String>((a1,b1)->monad.unit(show.show(monad.flatMap_(a.get(), in -> b.apply(in)))));
+                    return new Do3<String>((a1,b1)->monad.unit(show.show(monad.flatMap_(a.get(), t1 -> monad.flatMap_(b.apply(t1),t2->c.apply(t1,t2))))));
+
                 }
                 public Do4<String> _show(Show<W> show){
-                    return new Do4<>((x1,x2,x3)->monad.unit(show.show(monad.flatMap_(a.get(), in -> b.apply(in)))));
+                    return new Do4<>((x1,x2,x3)->monad.unit(show.show(monad.flatMap_(a.get(), t1 -> monad.flatMap_(b.apply(t1),t2->c.apply(t1,t2))))));
 
                 }
                 public <T4> Do4<T4> __(Higher<W, T4> d) {
@@ -366,6 +373,13 @@ public class Do<W> {
                     }));
 
                 }
+                public <R> R fold(Function<? super Higher<W,T3>,? extends R> fn){
+                    return fn.apply(monad.flatMap_(a.get(),t1->{
+                       return monad.flatMap_(b.apply(t1),t2->{
+                           return c.apply(t1,t2);
+                       } );
+                    }));
+                }
 
                 @AllArgsConstructor
                 public class Do4<T4> {
@@ -389,10 +403,12 @@ public class Do<W> {
                     }
 
                     public Do4<String> show(Show<W> show){
-                        return new Do4<String>((a1,b1,c1)->monad.unit(show.show(monad.flatMap_(a.get(), in -> b.apply(in)))));
+                        return new Do4<String>((a1,b1,c1)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
+                                        monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
                     }
                     public Do5<String> _show(Show<W> show){
-                        return new Do5<>((x1,x2,x3,x4)->monad.unit(show.show(monad.flatMap_(a.get(), in -> b.apply(in)))));
+                        return new Do5<>((x1,x2,x3,x4)->monad.unit(show.show(monad.flatMap_(a.get(), t1 ->
+                            monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),t3->d.apply(t1,t2,t3)))))));
                     }
                     public <T5> Do5<T5> __(Higher<W, T5> e) {
                         return new Do5<>(Function4.constant(e));
@@ -431,6 +447,15 @@ public class Do<W> {
                             return hk2;
                         }));
                     }
+                    public <R> R fold(Function<? super Higher<W,T4>,? extends R> fn){
+                        return fn.apply(monad.flatMap_(a.get(),t1->{
+                            return monad.flatMap_(b.apply(t1),t2->{
+                                return monad.flatMap_(c.apply(t1,t2),t3->{
+                                  return d.apply(t1,t2,t3);
+                                });
+                            } );
+                        }));
+                    }
                     @AllArgsConstructor
                     public class Do5<T5> {
                         private final Function4<T1,T2,T3,T4,Higher<W, T5>> e;
@@ -453,7 +478,9 @@ public class Do<W> {
                         }
 
                         public Do5<String> show(Show<W> show){
-                            return new Do5<String>((a1,b1,c1,d1)->monad.unit(show.show(monad.flatMap_(a.get(), in -> b.apply(in)))));
+                            return new Do5<String>((a1,b1,c1,d1)->monad.unit(show.show(monad.flatMap_(a.get(),
+                                                        t1 -> monad.flatMap_(b.apply(t1),t2->monad.flatMap_(c.apply(t1,t2),
+                                                            t3->monad.flatMap_(d.apply(t1,t2,t3),t4->e.apply(t1,t2,t3,t4))))))));
                         }
 
                         public Do5<T5> guard(MonadZero<W> monadZero,
@@ -477,6 +504,17 @@ public class Do<W> {
                                 return hk2;
                             }));
 
+                        }
+                        public <R> R fold(Function<? super Higher<W,T5>,? extends R> fn){
+                            return fn.apply(monad.flatMap_(a.get(),t1->{
+                                return monad.flatMap_(b.apply(t1),t2->{
+                                    return monad.flatMap_(c.apply(t1,t2),t3->{
+                                        return monad.flatMap_(d.apply(t1,t2,t3),t4->{
+                                            return e.apply(t1,t2,t3,t4);
+                                        });
+                                    });
+                                } );
+                            }));
                         }
                     }
                 }

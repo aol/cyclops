@@ -21,6 +21,7 @@ public class ProgramStore<W> {
         return Do.forEach(monad)
                  .__(()->accountService.debit(from,amount))
                  .__(newFrom-> accountService.credit(to,amount))
-                 .yield(Tuple::tuple);
+                 .yield(Tuple::tuple)
+                 .unwrap();
     }
 }

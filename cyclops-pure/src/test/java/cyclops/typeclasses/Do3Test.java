@@ -1,8 +1,14 @@
 package cyclops.typeclasses;
 
+import com.oath.cyclops.hkt.DataWitness;
 import cyclops.control.Option;
+import cyclops.data.Seq;
+import cyclops.function.Lambda;
 import cyclops.instances.control.OptionInstances;
+import cyclops.instances.data.SeqInstances;
 import org.junit.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static cyclops.control.Option.some;
 import static cyclops.function.Function2._1;
@@ -107,6 +113,84 @@ public class Do3Test {
             .__(some(1))
             .guard(OptionInstances.monadZero(),(a,b,c,d)->a+b+c+d<17)
             .yield((a,b,c,d)->a+b+c+d),equalTo(Option.none()));
+    }
+    @Test
+    public void doOptionShow(){
+        String s = Do.forEach(OptionInstances.monad())
+            ._of(10)
+            ._of(20)
+            ._of(100)
+            .show(new Show<DataWitness.option>(){})
+            .yield((a,b,c)->a+b+c)
+            .fold(Option::narrowK).orElse(null);
+        assertThat(s,equalTo("10Some[20]"));
+    }
+    @Test
+    public void doOptionShowDefault(){
+        String s = Do.forEach(OptionInstances.monad())
+            ._of(10)
+            ._of(20)
+            ._of(200)._show(new Show<DataWitness.option>() {})
+            .yield((a,b,c,st)->st+a+b+c).fold(Option::narrowK).orElse(null);
+        assertThat(s,equalTo("Some[20]1020"));
+    }
+
+    @Test
+    public void doOptionMap1(){
+        Option<Integer> eleven =   Do.forEach(OptionInstances.monad())
+            ._of(10)
+            ._of(100)
+            ._of(1000)
+            .map(i->i+1)
+            .fold(Option::narrowK);
+
+        assertThat(eleven,equalTo(some(1001)));
+
+    }
+    @Test
+    public void doOptionPeek1(){
+        AtomicInteger ai = new AtomicInteger(-1);
+        Option<Integer> eleven =   Do.forEach(OptionInstances.monad())
+            ._of(10)
+            ._of(100)
+            ._of(1000)
+            .peek(i->{
+                ai.set(i);
+            })
+            .fold(Option::narrowK);
+
+        assertThat(ai.get(),equalTo(1000));
+
+    }
+    @Test
+    public void doOptionFlatten (){
+
+        Option<Integer> res =   Do.forEach(OptionInstances.monad())
+            ._of(10)
+            ._of(100)
+            ._of(1000)
+            ._flatten(some(some(10)))
+            .yield((a,b,c,d)->a+b+c+d)
+            .fold(Option::narrowK);
+
+        assertThat(res,equalTo(some(1120)));
+
+    }
+
+
+
+    @Test
+    public void doSeqAp(){
+        Seq<Integer> seq = Do.forEach(SeqInstances::monad)
+            ._of(10)
+            ._of(20)
+            ._of(1000)
+            .ap(Seq.of(Lambda.λ((Integer i) -> i + 1)))
+            .fold(Seq::narrowK);
+
+
+        assertThat(seq,equalTo(Seq.of(1001)));
+
     }
 
 

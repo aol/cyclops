@@ -27,7 +27,8 @@ public class Program2<W> {
                  .__(this::logBalance)
                  .__(_0(()-> accountService.credit(to,amount)))
                  .__(__3(this::logBalance))
-                 .yield(___13(Tuple::tuple));
+                 .yield(___13(Tuple::tuple))
+                 .unwrap();
     }
 
     private Higher<W, Void> logBalance(Account a) {

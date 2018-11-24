@@ -29,7 +29,8 @@ public class Program<W> {
                  ._of(amount)
                  .__(this::debit)
                  .__(_1(this::credit))
-                 .yield(__23(Tuple::tuple));
+                 .yield(__23(Tuple::tuple))
+                 .unwrap();
     }
 
 
@@ -40,7 +41,7 @@ public class Program<W> {
                 .__(this::debit)
                 .__(_1(this::credit))
                 .yield(__23(Tuple::tuple))
-                .convert(fn);
+                .fold(fn);
     }
 
     private Higher<W,Account> debit(double amount){
