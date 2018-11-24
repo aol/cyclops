@@ -39,7 +39,7 @@ public class Do1Test {
     public void doOptionUnbound1(){
         assertThat(Do.forEach(OptionInstances::monad)
             ._of(10)
-            .__(5)
+            ._of(5)
             .yield((a,b)->a+b),equalTo(some(15)));
     }
     @Test
@@ -105,7 +105,8 @@ public class Do1Test {
 
         Option<Integer> res =   Do.forEach(OptionInstances.monad())
                                      ._of(10)._flatten(some(some(10)))
-                                     .yield((a,b)->a+b,Option::narrowK);
+                                     .yield((a,b)->a+b)
+                                     .convert(Option::narrowK);
 
         assertThat(res,equalTo(some(20)));
 

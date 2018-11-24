@@ -19,7 +19,6 @@ import cyclops.function.Monoid;
 import cyclops.function.Predicate3;
 import cyclops.function.Predicate4;
 import cyclops.function.Predicate5;
-import cyclops.instances.control.OptionInstances;
 import cyclops.instances.control.StateInstances;
 import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
@@ -42,7 +41,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static cyclops.control.Option.some;
 import static cyclops.data.tuple.Tuple.tuple;
 
 
@@ -157,7 +155,7 @@ public class Do<W> {
     public class Do1<T1> {
         private final Higher<W, T1> a;
 
-        
+
         public <T2> Do2<T2> __(Higher<W, T2> b) {
             return new Do2<>(Function1.constant(b));
         }
@@ -167,7 +165,7 @@ public class Do<W> {
         }
 
 
-        public <T2> Do2<T2> __(T2 b) {
+        public <T2> Do2<T2> _of(T2 b) {
 
             return new Do2<T2>(Function1.constant(monad.unit(b)));
         }
@@ -193,28 +191,28 @@ public class Do<W> {
         public <T2,R> Do1<R> zip(Higher<W, T2> fb, BiFunction<? super T1,? super T2,? extends R> f){
             return new Do1<>(monad.zip(a,fb,f));
         }
-        public <T2,R,R2> Eval<R2> lazyZip(Supplier<Higher<W,T2>> lazy, BiFunction<? super T1,? super T2,? extends R> fn,Function<? super Higher<W,? extends R>,? extends R2> fold) {
-            return monad.lazyZip(a,Eval.later(lazy),fn).map(in->fold.apply(in));
+
+        public Do1<Tuple2<T1,Long>> zipWithIndex(Traverse<W> traverse){
+            return Do.forEach(monad).__(traverse.zipWithIndex(a));
         }
+        public Do1<Tuple2<T1,Long>> zipWithIndex(Supplier<Traverse<W>>traverse){
+            return zipWithIndex(traverse.get());
+        }
+
         public <R> Yield<Function<? super T1,? extends R>, ? extends Higher<W, R>> guard(MonadZero<W> monadZero,Predicate<? super T1> fn) {
             return in->  new Do1<>(monadZero.filter(fn, a)).yield(in);
         }
-        public <R> Yield<Function<? super T1,? extends R>, ? extends Do1<R>> doGuard(MonadZero<W> monadZero,Predicate<? super T1> fn) {
-            return in->  new Do1<>(monadZero.filter(fn, a)).doYield(in);
-        }
+
         public <R> Higher<W, R> yield(Function<? super T1,  ? extends R> fn) {
             return monad.map_(a, fn);
 
-        }
-        public <R> Do1<R> doYield(Function<? super T1,  ? extends R> fn) {
-            Higher<W, R> hk = monad.map_(a, fn);
-            return new Do1<R>(hk);
         }
 
 
         public Higher<W,T1> unwrap(){
             return a;
         }
+        
         public <R> R fold(Function<? super Higher<W,T1>,? extends R> fn){
             return fn.apply(a);
         }
@@ -228,10 +226,6 @@ public class Do<W> {
             return __fold(folds.get(),fn);
         }
 
-        public <R> Do1<R> contramap(ContravariantFunctor<W> cf,Function<? super R, ? extends T1> fn){
-            return new Do1<>(cf.contramap(fn,a));
-        }
-
 
         public Do1<T1> reverse(Traverse<W> traverse){
             return Do.forEach(monad).__(traverse.reverse(a));
@@ -240,19 +234,15 @@ public class Do<W> {
             return reverse(traverse.get());
         }
 
-        public Do1<Tuple2<T1,Long>> zipWithIndex(Traverse<W> traverse){
-            return Do.forEach(monad).__(traverse.zipWithIndex(a));
+
+
+        public Do1<String> show(Show<W> show){
+            return new Do1<>(monad.unit(show.show(a)));
         }
-        public Do1<Tuple2<T1,Long>> zipWithIndex(Supplier<Traverse<W>>traverse){
-            return zipWithIndex(traverse.get());
+        public Do2<String> _show(Show<W> show){
+            return _of(show.show(a));
         }
 
-        public String show(Show<W> show){
-            return show.show(a);
-        }
-        public String show(){
-            return new Show<W>(){}.show(a);
-        }
 
         @AllArgsConstructor
         public class Do2<T2> {
@@ -260,36 +250,35 @@ public class Do<W> {
             public <R> Do2<R> map(Function<? super T2, ? extends R> mapper){
                 return new Do2<>(in->monad.map_(b.apply(in),mapper));
             }
-            public String show(){
-                return new Do1<>(monad.flatMap_(a,in->b.apply(in))).show();
+
+            public Do2<String> show(Show<W> show){
+                String str = show.show(monad.flatMap_(a, in -> b.apply(in)));
+                return new Do2<String>(in->monad.unit(str));
             }
-            public String show(Show<W> show){
-                return new Do1<>(monad.flatMap_(a,in->b.apply(in))).show(show);
+            public Do3<String> _show(Show<W> show){
+                String str = show.show(monad.flatMap_(a, in -> b.apply(in)));
+                return _of(str);
             }
 
             public <T3> Do3<T3> __(Higher<W, T3> c) {
                 return new Do3<>(Function2.constant(c));
             }
             public <T3> Do3<T3> __(Supplier<Higher<W, T3>> c) {
-                return new Do3<>(Function2.lazyConstant(c));
+                return new Do3<>(Function2._0(c));
             }
             public <T3> Do3<T3> __(BiFunction<T1,T2,Higher<W, T3>> c) {
                 return new Do3<>(c);
             }
-            public <T3> Do3<T3> _1(Function<T1,Higher<W, T3>> c) {
-                return new Do3<>(Function2.left(c));
-            }
-            public <T3> Do3<T3> _2(Function<T2,Higher<W, T3>> c) {
-                return new Do3<>(Function2.right(c));
-            }
 
-            public <T3> Do3<T3> __(T3 c) {
+            public <T3> Do3<T3> _of(T3 c) {
                 return new Do3<>(Function2.constant(monad.unit(c)));
             }
 
-            public <R> Yield<BiFunction<? super T1, ? super T2,? extends R>, ? extends Higher<W,R>> guard(MonadZero<W> monadZero, BiPredicate<? super T1,? super T2> fn) {
-                return in->  new Do2<>(t1->monadZero.filter(p->fn.test(t1,p), b.apply(t1))).yield(in);
+            public   Do2<T2> guard(MonadZero<W> monadZero, BiPredicate<? super T1,? super T2> fn) {
+                return  new Do2<>(t1->monadZero.filter(p->fn.test(t1,p), b.apply(t1)));
             }
+
+
             public <R> Higher<W, R> yield(BiFunction<? super T1, ? super T2, ? extends R> fn) {
                 Higher<W, R> hk = monad.flatMap_(a, in -> {
 
@@ -299,14 +288,8 @@ public class Do<W> {
                 return hk;
             }
 
-            public <R,R1> R1 yield(BiFunction<? super T1, ? super T2, ? extends R> fn,Function<? super Higher<W,R>,? extends R1> fold) {
-                Higher<W, R> hk = monad.flatMap_(a, in -> {
 
 
-                    return monad.map_(b.apply(in), in2 -> fn.apply(in, in2));
-                });
-                return fold.apply(hk);
-            }
 
             @AllArgsConstructor
             public class Do3<T3> {
@@ -321,26 +304,10 @@ public class Do<W> {
                 public <T4> Do4<T4> __(Function3<T1,T2,T3,Higher<W, T4>> c) {
                     return new Do4<>(c);
                 }
-                public <T4> Do4<T4> _0(Supplier<Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.get());
-                }
-                public <T4> Do4<T4> _1(Function<T1,Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.apply(a));
-                }
-                public <T4> Do4<T4> _2(Function<T2,Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.apply(b));
-                }
-                public <T4> Do4<T4> _3(Function<T3,Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.apply(c));
-                }
-                public <T4> Do4<T4> _12(BiFunction<T1,T2,Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.apply(a,b));
-                }
-                public <T4> Do4<T4> _23(BiFunction<T2,T3,Higher<W, T4>> fn) {
-                    return new Do4<>((a,b,c)->fn.apply(b,c));
-                }
 
-                public <T4> Do4<T4> __(T4 d) {
+
+
+                public <T4> Do4<T4> _of(T4 d) {
                     return new Do4<>(Function3.constant(monad.unit(d)));
                 }
 
@@ -374,71 +341,15 @@ public class Do<W> {
                     public <T5> Do5<T5> __(Function4<T1,T2,T3,T4,Higher<W, T5>> e) {
                         return new Do5<>(e);
                     }
-                    public <T5> Do5<T5> _1(Function<T1,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a));
-                    }
-                    public <T5> Do5<T5> _2(Function<T2,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(b));
-                    }
-                    public <T5> Do5<T5> _3(Function<T3,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(c));
-                    }
-                    public <T5> Do5<T5> _4(Function<T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(d));
-                    }
-                    public <T5> Do5<T5> _123(Function3<T1,T2,T3,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,b,c));
-                    }
-                    public <T5> Do5<T5> _234(Function3<T2,T3,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(b,c,d));
-                    }
-                    public <T5> Do5<T5> _134(Function3<T1,T3,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,c,d));
-                    }
-                    public <T5> Do5<T5> _124(Function3<T1,T2,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,b,d));
-                    }
-                    public <T5> Do5<T5> _12(BiFunction<T1,T2,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,b));
-                    }
-                    public <T5> Do5<T5> _13(BiFunction<T1,T3,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,c));
-                    }
-                    public <T5> Do5<T5> _23(BiFunction<T2,T3,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(b,c));
-                    }
-                    public <T5> Do5<T5> _34(BiFunction<T3,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(c,d));
-                    }
-                    public <T5> Do5<T5> _14(BiFunction<T1,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(a,d));
-                    }
-                    public <T5> Do5<T5> _24(BiFunction<T2,T4,Higher<W, T5>> e) {
-                        return new Do5<>((a,b,c,d)->e.apply(b,d));
-                    }
 
-                    public <T5> Do5<T5> __(T5 e) {
+                    public <T5> Do5<T5> _of(T5 e) {
                         return new Do5<>(Function4.constant(monad.unit(e)));
                     }
 
                     public <R> Yield<Function4<? super T1, ? super T2,? super T3,? super T4,? extends R>, ? extends Higher<W,R>> guard(MonadZero<W> monadZero, Predicate4<? super T1,? super T2, ? super T3, ? super T4> fn) {
                         return in->  new Do4<>((t1,t2,t3)->monadZero.filter(p->fn.test(t1,t2,t3,p), d.apply(t1,t2,t3))).yield(in);
                     }
-                    public <R> Higher<W, R> yield_13(Function2<? super T1, ? super T3, ? extends R> fn) {
-                        Higher<W, R> hk = monad.flatMap_(a, in -> {
 
-
-                            Higher<W, R> hk2 = monad.flatMap_(b.apply(in), in2 -> {
-                                Higher<W, R> hk3 = monad.flatMap_(c.apply(in,in2), in3 -> {
-                                    Higher<W, R> hk4 = monad.map_(d.apply(in,in2,in3), in4 -> fn.apply(in, in3));
-                                    return hk4;
-                                });
-                                return hk3;
-                            });
-                            return hk2;
-                        });
-                        return hk;
-                    }
                     public <R> Higher<W, R> yield(Function4<? super T1, ? super T2, ? super T3, ? super T4, ? extends R> fn) {
                         Higher<W, R> hk = monad.flatMap_(a, in -> {
 

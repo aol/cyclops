@@ -8,7 +8,9 @@ import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.taglessfinal.Cases.Account;
 import lombok.AllArgsConstructor;
 
-import java.util.function.Function;
+import static cyclops.function.Function2._0;
+import static cyclops.function.Function3.__3;
+import static cyclops.function.Function4.___13;
 
 @AllArgsConstructor
 public class Program2<W> {
@@ -23,9 +25,9 @@ public class Program2<W> {
         return Do.forEach(monad)
                  .__(()->accountService.debit(from,amount))
                  .__(this::logBalance)
-                 ._1(newFrom-> accountService.credit(to,amount))
-                 ._3(this::logBalance)
-                 .yield_13(Tuple::tuple);
+                 .__(_0(()-> accountService.credit(to,amount)))
+                 .__(__3(this::logBalance))
+                 .yield(___13(Tuple::tuple));
     }
 
     private Higher<W, Void> logBalance(Account a) {
