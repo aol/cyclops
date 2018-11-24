@@ -88,7 +88,7 @@ public class DoTest {
     public void doOptionFlatten(){
 
         Option<Integer> res =   Do.forEach(OptionInstances.monad())
-            .flatten(some(some(10)))
+            ._flatten(some(some(10)))
             .fold(Option::narrowK);
 
         assertThat(res,equalTo(some(10)));

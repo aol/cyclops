@@ -68,12 +68,13 @@ public class Do1Test {
 
     @Test
     public void doOptionShow(){
-        String s = Do.forEach(OptionInstances.monad())._of(10).show(new Show<option>(){});
+        String s = Do.forEach(OptionInstances.monad())._of(10).show(new Show<option>(){}).fold(Option::narrowK).orElse(null);
         assertThat(s,equalTo("Some[10]"));
     }
     @Test
     public void doOptionShowDefault(){
-        String s = Do.forEach(OptionInstances.monad())._of(10).show();
+        String s = Do.forEach(OptionInstances.monad())._of(10)._show(new Show<option>() {})
+                        .yield((i,st)->st+i).fold(Option::narrowK).orElse(null);
         assertThat(s,equalTo("Some[10]"));
     }
 
@@ -106,7 +107,7 @@ public class Do1Test {
         Option<Integer> res =   Do.forEach(OptionInstances.monad())
                                      ._of(10)._flatten(some(some(10)))
                                      .yield((a,b)->a+b)
-                                     .convert(Option::narrowK);
+                                     .fold(Option::narrowK);
 
         assertThat(res,equalTo(some(20)));
 
@@ -328,7 +329,7 @@ public class Do1Test {
                                     .__(Vector.of(10,20))
                                     .__fold(VectorInstances::foldable,f->f.size())
                                     .yield((a,b)->a+b)
-                                    .convert(Vector::narrowK);
+                                    .fold(Vector::narrowK);
 
 
 
@@ -336,6 +337,7 @@ public class Do1Test {
         assertThat(res,equalTo(Vector.of(12l,22l)));
 
     }
+
 
 
     @Test
@@ -356,5 +358,6 @@ public class Do1Test {
         assertThat(complete.get(),equalTo(false));
 
     }
+
 
 }

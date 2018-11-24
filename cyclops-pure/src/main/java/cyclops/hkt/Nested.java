@@ -186,12 +186,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
     public  long totalSize() {
         return size().foldLeft(Monoids.longSum);
     }
-    public <R> Nested<W1,W2,R> mapWithIndex(BiFunction<? super T,Long,? extends R> f) {
-        return of(composedFunctor.mapWithIndex(f,nested),def1,def2);
-    }
-    public <R> Nested<W1,W2,Tuple2<T,Long>> zipWithIndex() {
-        return mapWithIndex(Tuple::tuple);
-    }
+
 
     public  Nested<W1,W2,T> peek(Consumer<? super T> fn){
         Higher<W1, Higher<W2, T>> res = composedFunctor.peek(fn, nested);

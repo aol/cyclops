@@ -3,7 +3,6 @@ package cyclops.typeclasses;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Kleisli;
 import cyclops.arrow.MonoidK;
-import cyclops.control.Eval;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.control.State;
@@ -24,7 +23,6 @@ import cyclops.reactive.ReactiveSeq;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
 import cyclops.typeclasses.functor.Compose;
-import cyclops.typeclasses.functor.ContravariantFunctor;
 import cyclops.typeclasses.functor.Functor;
 import cyclops.typeclasses.monad.Applicative;
 import cyclops.typeclasses.monad.Monad;
@@ -40,8 +38,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import static cyclops.data.tuple.Tuple.tuple;
 
 
 public class Do<W> {
@@ -65,7 +61,7 @@ public class Do<W> {
         return new Do1<>(a.get());
     }
 
-    public <T1> Do1<T1> flatten(Higher<W, Higher<W, T1>> nested){
+    public <T1> Do1<T1> _flatten(Higher<W, Higher<W, T1>> nested){
         return new Do1<>(monad.flatten(nested));
     }
     public <T1,R> Kleisli<W,T1,R> kliesli( Function<? super T1, ? extends R> fn){
@@ -138,8 +134,9 @@ public class Do<W> {
             return Do.forEach(monad).__(f.outer(),traverse.sequenceA(monad,nested));
         }
 
-
-
+        public <R1,R2> R2 fold(Function<? super Higher<W, R1>, ? extends R2 > fn1, Function<? super Higher<W2,T1>, ? extends R1> fn2) {
+            return fn1.apply(monad.map_(nested, fn2));
+        }
     }
 
 
@@ -172,12 +169,7 @@ public class Do<W> {
         public <T2> Do2<T2> _flatten(Higher<W, Higher<W, T2>> nested){
             return new Do2<>(in->monad.flatten(nested));
         }
-        public Do1<T1> plus(MonadPlus<W> mp,Higher<W,T1> b){
-            return new Do1<>(mp.plus(a,b));
-        }
-        public Do1<T1> plus(Supplier<MonadPlus<W>> mp,Higher<W,T1> b){
-            return plus(mp.get(),b);
-        }
+
 
         public <R> Do1<R> map(Function<? super T1, ? extends R> mapper){
             return new Do1<R>(monad.map_(a,mapper));
@@ -192,6 +184,12 @@ public class Do<W> {
             return new Do1<>(monad.zip(a,fb,f));
         }
 
+        public Do1<T1> plus(MonadPlus<W> mp,Higher<W,T1> b){
+            return new Do1<>(mp.plus(a,b));
+        }
+        public Do1<T1> plus(Supplier<MonadPlus<W>> mp,Higher<W,T1> b){
+            return plus(mp.get(),b);
+        }
         public Do1<Tuple2<T1,Long>> zipWithIndex(Traverse<W> traverse){
             return Do.forEach(monad).__(traverse.zipWithIndex(a));
         }
@@ -199,12 +197,13 @@ public class Do<W> {
             return zipWithIndex(traverse.get());
         }
 
-        public <R> Yield<Function<? super T1,? extends R>, ? extends Higher<W, R>> guard(MonadZero<W> monadZero,Predicate<? super T1> fn) {
-            return in->  new Do1<>(monadZero.filter(fn, a)).yield(in);
+
+        public Do1<T1> guard(MonadZero<W> monadZero,Predicate<? super T1> fn) {
+            return new Do1<>(monadZero.filter(fn, a));
         }
 
-        public <R> Higher<W, R> yield(Function<? super T1,  ? extends R> fn) {
-            return monad.map_(a, fn);
+        public <R> Do1<R> yield(Function<? super T1,  ? extends R> fn) {
+            return Do.forEach(monad).__(monad.map_(a, fn));
 
         }
 
@@ -212,7 +211,7 @@ public class Do<W> {
         public Higher<W,T1> unwrap(){
             return a;
         }
-        
+
         public <R> R fold(Function<? super Higher<W,T1>,? extends R> fn){
             return fn.apply(a);
         }
@@ -251,6 +250,19 @@ public class Do<W> {
                 return new Do2<>(in->monad.map_(b.apply(in),mapper));
             }
 
+            public  <R> Do2<R> ap(Higher<W,Function<T2,R>> applicative){
+                return new Do2<R>(in->monad.ap(applicative,b.apply(in)));
+            }
+            public Do2<T2> peek(Consumer<? super T2> mapper){
+                return map(t->{
+                    mapper.accept(t);
+                    return t;
+                });
+            }
+            public <T3,R> Do2<R> zip(Higher<W, T3> fb, BiFunction<? super T2,? super T3,? extends R> f){
+                return new Do2<R>(in->monad.zip(b.apply(in),fb,f));
+            }
+
             public Do2<String> show(Show<W> show){
                 String str = show.show(monad.flatMap_(a, in -> b.apply(in)));
                 return new Do2<String>(in->monad.unit(str));
@@ -270,6 +282,10 @@ public class Do<W> {
                 return new Do3<>(c);
             }
 
+            public <T3> Do3<T3> _flatten(Higher<W, Higher<W, T3>> nested){
+                return new Do3<T3>(Function2.constant(monad.flatten(nested)));
+            }
+
             public <T3> Do3<T3> _of(T3 c) {
                 return new Do3<>(Function2.constant(monad.unit(c)));
             }
@@ -279,13 +295,13 @@ public class Do<W> {
             }
 
 
-            public <R> Higher<W, R> yield(BiFunction<? super T1, ? super T2, ? extends R> fn) {
+            public <R> Do1<R> yield(BiFunction<? super T1, ? super T2, ? extends R> fn) {
                 Higher<W, R> hk = monad.flatMap_(a, in -> {
 
 
                     return monad.map_(b.apply(in), in2 -> fn.apply(in, in2));
                 });
-                return hk;
+                return Do.forEach(monad).__(hk);
             }
 
 
@@ -304,7 +320,9 @@ public class Do<W> {
                 public <T4> Do4<T4> __(Function3<T1,T2,T3,Higher<W, T4>> c) {
                     return new Do4<>(c);
                 }
-
+                public <T4> Do4<T4> _flatten(Higher<W, Higher<W, T4>> nested){
+                    return new Do4<T4>(Function3.constant(monad.flatten(nested)));
+                }
 
 
                 public <T4> Do4<T4> _of(T4 d) {
@@ -345,6 +363,10 @@ public class Do<W> {
                     public <T5> Do5<T5> _of(T5 e) {
                         return new Do5<>(Function4.constant(monad.unit(e)));
                     }
+                    public <T5> Do5<T5> _flatten(Higher<W, Higher<W, T5>> nested){
+                        return new Do5<T5>(Function4.constant(monad.flatten(nested)));
+                    }
+
 
                     public <R> Yield<Function4<? super T1, ? super T2,? super T3,? super T4,? extends R>, ? extends Higher<W,R>> guard(MonadZero<W> monadZero, Predicate4<? super T1,? super T2, ? super T3, ? super T4> fn) {
                         return in->  new Do4<>((t1,t2,t3)->monadZero.filter(p->fn.test(t1,t2,t3,p), d.apply(t1,t2,t3))).yield(in);

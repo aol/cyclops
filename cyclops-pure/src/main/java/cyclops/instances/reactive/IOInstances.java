@@ -1,5 +1,6 @@
 package cyclops.instances.reactive;
 
+import com.oath.cyclops.hkt.DataWitness;
 import com.oath.cyclops.hkt.DataWitness.io;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
@@ -229,6 +230,48 @@ public class IOInstances {
         public <R, T> Higher<io, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
             return IO.fromPublisher(Spouts.unfold(b,fn));
         }
+    }
+    public static Unfoldable<io> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<io> monadPlus(MonoidK<io> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<io> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<io> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<io> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<io> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<io> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<io> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<io> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<io> foldable(){
+        return INSTANCE;
     }
 
 }
