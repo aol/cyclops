@@ -1,10 +1,11 @@
 package cyclops.typeclasses.taglessfinal;
 
+import lombok.ToString;
 import lombok.Value;
 import lombok.experimental.Wither;
 
 public class Cases {
-    @Value @Wither
+    @Value @Wither @ToString
     public static class Account {
         double balance;
         long id;

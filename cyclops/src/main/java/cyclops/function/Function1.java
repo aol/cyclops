@@ -39,7 +39,7 @@ public interface Function1<T,  R> extends Function<T,R>{
     static <T1,T2> Function1<T1,  T2> constant(T2 t) {
         return __-> t;
     }
-    static <T1,T2> Function1<T1,  T2> constant(Supplier<T2> t) {
+    static <T1,T2> Function1<T1,  T2> lazy(Supplier<T2> t) {
         return __-> t.get();
     }
 
