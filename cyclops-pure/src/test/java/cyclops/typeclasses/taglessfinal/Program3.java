@@ -12,8 +12,13 @@ import lombok.AllArgsConstructor;
 import java.util.function.Function;
 
 import static cyclops.function.Function2._0;
+import static cyclops.function.Function2._1;
+import static cyclops.function.Function2._2;
+import static cyclops.function.Function3.__1;
 import static cyclops.function.Function3.__3;
 import static cyclops.function.Function4.___13;
+import static cyclops.function.Function4.___4;
+import static cyclops.function.Function5.____24;
 
 @AllArgsConstructor
 public class Program3<W,W2> {
@@ -23,19 +28,29 @@ public class Program3<W,W2> {
     private final LogAlgebra<W2> logService;
     private final NaturalTransformation<W2,W> nt;
 
-    public Higher<W, Tuple2<Account,Account>> transfer(Account to, Account from, double amount){
+    private final Account to;
+    private final Account from;
+
+    public <R> R transfer(double amount,Function<Higher<W, Tuple2<Account,Account>>,R> fn){
 
         return  Do.forEach(monad)
-                    .__(()->accountService.debit(from,amount))
-                    .__(this::logBalance)
-                    .__(_0(()-> accountService.credit(to,amount)))
-                    .__(__3(this::logBalance))
-                    .yield(___13(Tuple::tuple))
-                    .unwrap();
+                    ._of(amount)
+                    .__(this::debit)
+                    .__(_2(this::logBalance))
+                    .__(__1(this::credit))
+                    .__(___4(this::logBalance))
+                    .yield(____24(Tuple::tuple))
+                    .fold(fn);
 
     }
     private Higher<W, Void> logBalance(Account a) {
         return  logService.info("Account balance " + a.getBalance())
                           .convert(nt.asFunction());
+    }
+    private Higher<W,Account> debit(double amount){
+        return accountService.debit(from,amount);
+    }
+    private Higher<W,Account> credit(double amount){
+        return accountService.credit(to,amount);
     }
 }
