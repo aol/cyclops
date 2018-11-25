@@ -355,6 +355,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *  </pre>
     *
     */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> limitInts(long maxSize){
 
         return a->a.ints(i->i,s->s.limit(maxSize));
@@ -374,6 +375,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *  </pre>
    *
    */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> skipInts(long skip){
 
         return a->a.ints(i->i,s->s.skip(skip));
@@ -393,6 +395,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> mapInts(IntUnaryOperator b){
 
         return a->a.ints(i->i,s->s.map(b));
@@ -412,6 +415,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *  </pre>
     *
     */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> filterInts(IntPredicate b){
 
         return a->a.ints(i->i,s->s.filter(b));
@@ -431,6 +435,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatMapnts(IntFunction<? extends IntStream> b){
 
         return a->a.ints(i->i,s->s.flatMap(b));
@@ -450,6 +455,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Integer>, ? extends ReactiveSeq<Integer>> concatInts( ReactiveSeq<Integer> b){
         return a->fromSpliterator(IntStream.concat(a.mapToInt(i->i),b.mapToInt(i->i)).spliterator());
     }
@@ -479,6 +485,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> limitLongs(long maxSize){
 
         return a->a.longs(i->i,s->s.limit(maxSize));
@@ -498,6 +505,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *  </pre>
    *
    */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> skipLongs(long skip){
 
         return a->a.longs(i->i,s->s.skip(skip));
@@ -517,6 +525,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> mapLongs(LongUnaryOperator b){
 
         return a->a.longs(i->i,s->s.map(b));
@@ -536,6 +545,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *  </pre>
     *
     */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> filterLongs(LongPredicate b){
 
         return a->a.longs(i->i,s->s.filter(b));
@@ -555,6 +565,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> flatMapLongs(LongFunction<? extends LongStream> b){
 
         return a->a.longs(i->i,s->s.flatMap(b));
@@ -574,6 +585,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Long>, ? extends ReactiveSeq<Long>> concatLongs( ReactiveSeq<Long> b){
         return a->fromSpliterator(LongStream.concat(a.mapToLong(i->i),b.mapToLong(i->i)).spliterator());
     }
@@ -602,6 +614,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
  *  </pre>
  *
  */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> limitDouble(long maxSize){
 
         return a->a.doubles(i->i,s->s.limit(maxSize));
@@ -621,6 +634,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
    *  </pre>
    *
    */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> skipDoubles(long skip){
 
         return a->a.doubles(i->i,s->s.skip(skip));
@@ -640,6 +654,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> mapDoubles(DoubleUnaryOperator b){
 
         return a->a.doubles(i->i,s->s.map(b));
@@ -659,6 +674,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     *  </pre>
     *
     */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> filterLongs(DoublePredicate b){
 
         return a->a.doubles(i->i,s->s.filter(b));
@@ -678,6 +694,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> flatMapDoubles(DoubleFunction<? extends DoubleStream> b){
 
         return a->a.doubles(i->i,s->s.flatMap(b));
@@ -697,6 +714,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *  </pre>
      *
      */
+    @Deprecated //moved to cyclops.companion.Functions
     public static Function<? super ReactiveSeq<Double>, ? extends ReactiveSeq<Double>> concatDoubles( ReactiveSeq<Double> b){
 
         return a->fromSpliterator(DoubleStream.concat(a.mapToDouble(i->i),b.mapToDouble(i->i)).spliterator());
@@ -4402,7 +4420,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
     default ReactiveSeq<T> merge(final Publisher<T>... publishers) {
         return mergeP(QueueFactories.boundedQueue(5_000),publishers);
     }
-    
+
 
     default ReactiveSeq<T> backpressureAware(){
         return this;
