@@ -838,7 +838,12 @@ public class FluentFunctions {
          * @param errorConsumer Consumer to recieve error on failure
          * @return Function with event vistor attached.
          */
+        @Deprecated //use foldEvent instead
         public FluentFunction<T, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
+            return foldEvent(eventConsumer,errorConsumer);
+        }
+        public FluentFunction<T, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of(t1 -> {
 
@@ -1192,7 +1197,12 @@ public class FluentFunctions {
          * @param errorConsumer Consumer to recieve error on failure
          * @return BiFunction with event vistor attached.
          */
+        @Deprecated //use foldEvent
         public FluentBiFunction<T1, T2, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
+            return foldEvent(eventConsumer,errorConsumer);
+        }
+        public FluentBiFunction<T1, T2, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2) -> {
 
@@ -1593,7 +1603,12 @@ public class FluentFunctions {
          * @param errorConsumer Consumer to recieve error on failure
          * @return TriFunction with event vistor attached.
          */
+        @Deprecated //use foldEvent instead
         public FluentTriFunction<T1, T2, T3, R> visitEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
+
+            return foldEvent(eventConsumer,errorConsumer);
+        }
+        public FluentTriFunction<T1, T2, T3, R> foldEvent(final Consumer<R> eventConsumer, final Consumer<Throwable> errorConsumer) {
 
             return FluentFunctions.of((t1, t2, t3) -> {
 
