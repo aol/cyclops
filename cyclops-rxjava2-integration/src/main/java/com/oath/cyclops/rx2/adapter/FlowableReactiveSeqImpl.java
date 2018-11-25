@@ -289,7 +289,11 @@ public class FlowableReactiveSeqImpl<T> implements ReactiveSeq<T> {
 
     @Override
     public ReactiveSeq<T> takeWhile(Predicate<? super T> p) {
-        return flux(Spouts.from(flowable).takeWhile(p));
+        return flux(flowable.takeWhile(t->p.test(t)));
+    }
+    @Override
+    public ReactiveSeq<T> takeWhileInclusive(Predicate<? super T> p) {
+        return flux(Spouts.from(flowable).takeWhileInclusive(p));
     }
 
     @Override

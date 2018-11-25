@@ -29,12 +29,15 @@ public class LimitWhileClosedOperator<T,R> extends BaseOperator<T,T> {
                     try {
                         if(!closed[0])
                          onNext.accept(e);
+
                         if(closed[0]){
-                            sub[0].cancel();
-                            onComplete.run();
+
                         }
                         if(!predicate.test(e)){
                             closed[0]=true;
+                            sub[0].cancel();
+                            onComplete.run();
+
                         }
 
 
@@ -51,18 +54,16 @@ public class LimitWhileClosedOperator<T,R> extends BaseOperator<T,T> {
     public void subscribeAll(Consumer<? super T> onNext, Consumer<? super Throwable> onError, Runnable onCompleteDs) {
         boolean[] complete = {false};
         boolean closed[] = {false};
-        StreamSubscription sub[] = {null};
+
         source.subscribeAll(e-> {
                     try {
                         if(!closed[0] && !complete[0])
                             onNext.accept(e);
-                        if(closed[0] && !complete[0]){
 
-                            onCompleteDs.run();
-                            complete[0]=true;
-                        }
                         if(!predicate.test(e)){
                             closed[0]=true;
+                            onCompleteDs.run();
+                            complete[0]=true;
                         }
 
 

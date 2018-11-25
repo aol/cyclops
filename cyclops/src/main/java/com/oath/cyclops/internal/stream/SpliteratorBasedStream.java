@@ -256,6 +256,10 @@ public abstract class SpliteratorBasedStream<T> extends BaseExtendedStream<T>{
     public final ReactiveSeq<T> takeWhile(final Predicate<? super T> p) {
         return createSeq(new LimitWhileSpliterator<T>(get(), p), reversible);
     }
+    @Override
+    public final ReactiveSeq<T> takeWhileInclusive(final Predicate<? super T> p) {
+        return createSeq(new LimitWhileClosedSpliterator<T>(get(), p), reversible);
+    }
 
     @Override
     public final ReactiveSeq<T> takeUntil(final Predicate<? super T> p) {
