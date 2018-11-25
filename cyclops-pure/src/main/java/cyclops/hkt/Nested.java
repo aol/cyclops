@@ -1,15 +1,29 @@
 package cyclops.hkt;
 
 import com.oath.cyclops.hkt.DataWitness;
-import com.oath.cyclops.hkt.DataWitness.*;
+import com.oath.cyclops.hkt.DataWitness.completableFuture;
+import com.oath.cyclops.hkt.DataWitness.either;
+import com.oath.cyclops.hkt.DataWitness.future;
+import com.oath.cyclops.hkt.DataWitness.nested;
+import com.oath.cyclops.hkt.DataWitness.optional;
+import com.oath.cyclops.hkt.DataWitness.seq;
+import com.oath.cyclops.hkt.DataWitness.stream;
+import com.oath.cyclops.hkt.DataWitness.tryType;
+import com.oath.cyclops.hkt.DataWitness.vector;
 import com.oath.cyclops.hkt.Higher;
 import com.oath.cyclops.hkt.Higher3;
 import com.oath.cyclops.types.foldable.To;
 import com.oath.cyclops.types.functor.Transformable;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.SemigroupK;
 import cyclops.companion.Monoids;
-import cyclops.control.*;
+import cyclops.control.Either;
+import cyclops.control.Future;
+import cyclops.control.Maybe;
+import cyclops.control.Option;
+import cyclops.control.Try;
 import cyclops.data.ImmutableList;
 import cyclops.data.LazySeq;
 import cyclops.data.Seq;
@@ -32,20 +46,23 @@ import cyclops.kinds.CompletableFutureKind;
 import cyclops.kinds.OptionalKind;
 import cyclops.kinds.StreamKind;
 import cyclops.reactive.ReactiveSeq;
+import cyclops.transformers.Transformer;
+import cyclops.transformers.TransformerFactory;
 import cyclops.typeclasses.Comprehensions;
 import cyclops.typeclasses.InstanceDefinitions;
 import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.SemigroupK;
 import cyclops.typeclasses.functor.Compose;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
-import cyclops.transformers.Transformer;
-import cyclops.transformers.TransformerFactory;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.ComposedTraverse;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -743,6 +760,7 @@ public class Nested<W1,W2,T> implements Transformable<T>,
             };
 
         }
+        @Deprecated
         public static <W1,W2,C2, T, R> Higher<C2, Higher<Higher<Higher<nested, W1>, W2>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<nested, W1>, W2>, T> ds){
             Nested<W1, W2, T> n = narrowK(ds);
             ComposedTraverse<W1,W2> ct = ComposedTraverse.of(n.def1.traverse(),n.def2.traverse(),n.def2.applicative());
@@ -752,7 +770,36 @@ public class Nested<W1,W2,T> implements Transformable<T>,
 
         }
         public static <W1,W2,T> Traverse<Higher<Higher<nested, W1>, W2>> traverse(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2, TransformerFactory<W1,W2> factory){
-            return General.traverseByTraverse(applicative(def1,def2,factory), (a, b, c)-> traverseA(a,b,c));
+            return new Traverse<Higher<Higher<DataWitness.nested, W1>, W2>>() {
+                @Override
+                public <C2, T, R> Higher<C2, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, R>> traverseA(Applicative<C2> applicative, Function<? super T, ? extends Higher<C2, R>> fn, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, T> ds) {
+                    Nested<W1, W2, T> n = narrowK(ds);
+                    ComposedTraverse<W1,W2> ct = ComposedTraverse.of(n.def1.traverse(),n.def2.traverse(),n.def2.applicative());
+                    Higher<C2, Higher<W1, Higher<W2, R>>> r = ct.traverse(applicative,fn,n.nested);
+                    Higher<C2, Higher<Higher<Higher<nested, W1>, W2>, R>> x = applicative.map(nr -> Nested.of(nr, n.def1, n.def2), r);
+                    return x;
+                }
+
+                @Override
+                public <C2, T> Higher<C2, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, T>> sequenceA(Applicative<C2> applicative, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, Higher<C2, T>> ds) {
+                    return traverseA(applicative,Function.identity(),ds);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<DataWitness.nested, W1>, W2>, R> ap(Higher<Higher<Higher<DataWitness.nested, W1>, W2>, ? extends Function<T, R>> fn, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, T> apply) {
+                    return applicative(def1,def2,factory).ap(fn,apply);
+                }
+
+                @Override
+                public <T> Higher<Higher<Higher<DataWitness.nested, W1>, W2>, T> unit(T value) {
+                    return applicative(def1,def2,factory).unit(value);
+                }
+
+                @Override
+                public <T, R> Higher<Higher<Higher<DataWitness.nested, W1>, W2>, R> map(Function<? super T, ? extends R> fn, Higher<Higher<Higher<DataWitness.nested, W1>, W2>, T> ds) {
+                    return applicative(def1,def2,factory).map(fn,ds);
+                }
+            };
         }
 
         public static <W1,W2> Monad<Higher<Higher<nested, W1>, W2>> monad(InstanceDefinitions<W1> def1,InstanceDefinitions<W2> def2,TransformerFactory<W1,W2> factory) {

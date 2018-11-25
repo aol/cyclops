@@ -23,6 +23,7 @@ import java.util.function.Supplier;
  * @author johnmcclean
  *
  */
+@Deprecated
 public interface General {
     @AllArgsConstructor
     static class GeneralFunctor<CRE,A,B> implements Functor<CRE> {
