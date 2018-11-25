@@ -29,10 +29,7 @@ public class LimitWhileClosedOperator<T,R> extends BaseOperator<T,T> {
                     try {
                         if(!closed[0])
                          onNext.accept(e);
-
-                        if(closed[0]){
-
-                        }
+                        
                         if(!predicate.test(e)){
                             closed[0]=true;
                             sub[0].cancel();
