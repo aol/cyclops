@@ -362,9 +362,14 @@ public interface LazyEither3<LT1, LT2, RT> extends Value<RT>,
     static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(LazyEither3<LT, M, RT> either){
         return in->visitAny(either,in);
     }
+    @Deprecated //use foldAny
     static <X, LT extends X, M extends X, RT extends X,R> R visitAny(LazyEither3<LT, M, RT> either, Function<? super X, ? extends R> fn){
+        return foldAny(either,fn);
+    }
+    static <X, LT extends X, M extends X, RT extends X,R> R foldAny(LazyEither3<LT, M, RT> either, Function<? super X, ? extends R> fn){
         return either.fold(fn, fn,fn);
     }
+
     static <X, LT extends X, M extends X, RT extends X> X visitAny(Consumer<? super X> c, LazyEither3<LT, M, RT> either){
         Function<? super X, X> fn = x ->{
             c.accept(x);

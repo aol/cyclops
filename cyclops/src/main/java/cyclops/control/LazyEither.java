@@ -491,8 +491,11 @@ public interface LazyEither<LT, RT> extends Either<LT, RT> {
     static <X, LT extends X, M extends X, RT extends X,R>  Function<Function<? super X, R>,R> applyAny(LazyEither<LT, RT> either){
         return in->visitAny(either,in);
     }
-
+    @Deprecated //use foldAny
     static <X, PT extends X, ST extends X,R> R visitAny(LazyEither<ST, PT> either, Function<? super X, ? extends R> fn){
+        return foldAny(either,fn);
+    }
+    static <X, PT extends X, ST extends X,R> R foldAny(LazyEither<ST, PT> either, Function<? super X, ? extends R> fn){
         return either.fold(fn, fn);
     }
 
