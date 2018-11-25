@@ -85,26 +85,7 @@ public class EvalsTest {
 
         assertThat(opt,equalTo(Eval.now("hello".length())));
     }
-    @Test
-    public void monadZeroFilter(){
 
-        Eval<String> opt = EvalInstances.unit()
-                                     .unit("hello")
-                                     .applyHKT(h-> EvalInstances.monadZero().filter((String t)->t.startsWith("he"), h))
-                                     .convert(Eval::narrowK);
-
-        assertThat(opt,equalTo(Eval.now("hello")));
-    }
-    @Test
-    public void monadZeroFilterOut(){
-
-        Eval<String> opt = EvalInstances.unit()
-                                     .unit("hello")
-                                     .applyHKT(h-> EvalInstances.monadZero().filter((String t)->!t.startsWith("he"), h))
-                                     .convert(Eval::narrowK);
-
-        assertThat(opt,equalTo(Eval.now(null)));
-    }
 
 
     @Test
