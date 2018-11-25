@@ -82,12 +82,12 @@ public class IdentityInstances {
 
       @Override
       public <T, R> Option<MonadZero<identity>> monadZero() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
       public <T> Option<MonadPlus<identity>> monadPlus() {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -97,7 +97,7 @@ public class IdentityInstances {
 
       @Override
       public <T> Option<MonadPlus<identity>> monadPlus(MonoidK<identity> m) {
-        return Maybe.nothing();
+        return Option.none();
       }
 
       @Override
@@ -112,12 +112,12 @@ public class IdentityInstances {
 
       @Override
       public <T> Option<Comonad<identity>> comonad() {
-        return Maybe.just(IdentityInstances.comonad());
+        return Option.some(IdentityInstances.comonad());
       }
 
       @Override
       public <T> Option<Unfoldable<identity>> unfoldable() {
-        return Maybe.nothing();
+        return Option.none();
       }
     };
   }
