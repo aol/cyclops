@@ -1,36 +1,41 @@
 package cyclops.instances.reactive.collections.immutable;
 
-import static com.oath.cyclops.data.ReactiveWitness.*;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.persistent.PersistentQueue;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.immutable.PersistentQueueX;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
-import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.immutable.PersistentQueueX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import static com.oath.cyclops.data.ReactiveWitness.persistentQueueX;
 import static cyclops.reactive.collections.immutable.PersistentQueueX.narrowK;
 
 /**
@@ -119,7 +124,7 @@ public class PersistentQueueXInstances {
 
       @Override
       public <T> Option<Comonad<persistentQueueX>> comonad() {
-        return Maybe.nothing();
+        return Option.none();
       }
       @Override
       public <T> Option<Unfoldable<persistentQueueX>> unfoldable() {
@@ -128,249 +133,151 @@ public class PersistentQueueXInstances {
     };
   }
 
-  public static Unfoldable<persistentQueueX> unfoldable(){
-    return new Unfoldable<persistentQueueX>() {
-      @Override
-      public <R, T> Higher<persistentQueueX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return PersistentQueueX.unfold(b,fn);
-      }
-    };
-  }
+    public static Pure<persistentQueueX> unit() {
+      return INSTANCE;
+    }
 
-  /**
-   *
-   * Transform a list, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  PersistentQueueX<Integer> list = PQueues.functor().map(i->i*2, Arrays.asPQueue(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with PQueues
-   * <pre>
-   * {@code
-   *   PersistentQueueX<Integer> list = PQueues.unit()
-  .unit("hello")
-  .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
-  .convert(PersistentQueueX::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for PQueues
-   */
-  public static <T,R>Functor<persistentQueueX> functor(){
-    BiFunction<PersistentQueueX<T>,Function<? super T, ? extends R>,PersistentQueueX<R>> map = PersistentQueueXInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * PersistentQueueX<String> list = PQueues.unit()
-  .unit("hello")
-  .convert(PersistentQueueX::narrowK3);
+    private final static PersistentQueueXTypeClasses INSTANCE = new PersistentQueueXTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class PersistentQueueXTypeClasses implements MonadPlus<persistentQueueX>,
+                                                                MonadRec<persistentQueueX>,
+                                                                TraverseByTraverse<persistentQueueX>,
+                                                                Foldable<persistentQueueX>,
+                                                                Unfoldable<persistentQueueX>{
 
-  //Arrays.asPQueue("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for PQueues
-   */
-  public static <T> Pure<persistentQueueX> unit(){
-    return General.<persistentQueueX,T>unit(PersistentQueueXInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.PersistentQueueX.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   * import static java.util.Arrays.asPQueue;
-   *
-  PQueues.zippingApplicative()
-  .ap(widen(asPQueue(l1(this::multiplyByTwo))),widen(asPQueue(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * PersistentQueueX<Function<Integer,Integer>> listFn =PQueues.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(PersistentQueueX::narrowK3);
+        private final MonoidK<persistentQueueX> monoidK;
+        public PersistentQueueXTypeClasses(){
+            monoidK = MonoidKs.persistentQueueXConcat();
+        }
+        @Override
+        public <T> Higher<persistentQueueX, T> filter(Predicate<? super T> predicate, Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-  PersistentQueueX<Integer> list = PQueues.unit()
-  .unit("hello")
-  .applyHKT(h->PQueues.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->PQueues.zippingApplicative().ap(listFn, h))
-  .convert(PersistentQueueX::narrowK3);
+        @Override
+        public <T, R> Higher<persistentQueueX, Tuple2<T, R>> zip(Higher<persistentQueueX, T> fa, Higher<persistentQueueX, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-  //Arrays.asPQueue("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for PQueues
-   */
-  public static <T,R> Applicative<persistentQueueX> zippingApplicative(){
-    BiFunction<PersistentQueueX< Function<T, R>>,PersistentQueueX<T>,PersistentQueueX<R>> ap = PersistentQueueXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.PersistentQueueX.widen;
-   * PersistentQueueX<Integer> list  = PQueues.monad()
-  .flatMap(i->widen(PersistentQueueX.range(0,i)), widen(Arrays.asPQueue(1,2,3)))
-  .convert(PersistentQueueX::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    PersistentQueueX<Integer> list = PQueues.unit()
-  .unit("hello")
-  .applyHKT(h->PQueues.monad().flatMap((String v) ->PQueues.unit().unit(v.length()), h))
-  .convert(PersistentQueueX::narrowK3);
+        @Override
+        public <T1, T2, R> Higher<persistentQueueX, R> zip(Higher<persistentQueueX, T1> fa, Higher<persistentQueueX, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb),f);
+        }
 
-  //Arrays.asPQueue("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for PQueues
-   */
-  public static <T,R> Monad<persistentQueueX> monad(){
+        @Override
+        public <T> MonoidK<persistentQueueX> monoid() {
+            return monoidK;
+        }
 
-    BiFunction<Higher<persistentQueueX,T>,Function<? super T, ? extends Higher<persistentQueueX,R>>,Higher<persistentQueueX,R>> flatMap = PersistentQueueXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  PersistentQueueX<String> list = PQueues.unit()
-  .unit("hello")
-  .applyHKT(h->PQueues.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(PersistentQueueX::narrowK3);
+        @Override
+        public <T, R> Higher<persistentQueueX, R> flatMap(Function<? super T, ? extends Higher<persistentQueueX, R>> fn, Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).concatMap(i->narrowK(fn.apply(i)));
+        }
 
-  //Arrays.asPQueue("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<persistentQueueX> monadZero(){
+        @Override
+        public <T, R> Higher<persistentQueueX, R> ap(Higher<persistentQueueX, ? extends Function<T, R>> fn, Higher<persistentQueueX, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn),(a,b)->b.apply(a));
+        }
 
-    return General.monadZero(monad(), PersistentQueueX.empty());
-  }
-  /**
-   * <pre>
-   * {@code
-   *  PersistentQueueX<Integer> list = PQueues.<Integer>monadPlus()
-  .plus(Arrays.asPQueue()), Arrays.asPQueue(10)))
-  .convert(PersistentQueueX::narrowK3);
-  //Arrays.asPQueue(10))
-   *
-   * }
-   * </pre>
-   * @return Type class for combining PQueues by concatenation
-   */
-  public static <T> MonadPlus<persistentQueueX> monadPlus(){
+        @Override
+        public <T> Higher<persistentQueueX, T> unit(T value) {
+            return PersistentQueueX.of(value);
+        }
 
-    return General.monadPlus(monadZero(), MonoidKs.persistentQueueXConcat());
-  }
-  public static <T,R> MonadRec<persistentQueueX> monadRec(){
-
-    return new MonadRec<persistentQueueX>(){
-      @Override
-      public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX,? extends Either<T, R>>> fn) {
-        return PersistentQueueX.tailRec(initial,fn.andThen(PersistentQueueX::narrowK));
-      }
-    };
-  }
-
-  public static MonadPlus<persistentQueueX> monadPlus(MonoidK<persistentQueueX> m){
-
-    return General.monadPlus(monadZero(),m);
-  }
-
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<persistentQueueX> traverse(){
-    BiFunction<Applicative<C2>,PersistentQueueX<Higher<C2, T>>,Higher<C2, PersistentQueueX<T>>> sequenceFn = (ap, list) -> {
-
-      Higher<C2,PersistentQueueX<T>> identity = ap.unit(PersistentQueueX.empty());
-
-      BiFunction<Higher<C2,PersistentQueueX<T>>,Higher<C2,T>,Higher<C2,PersistentQueueX<T>>> combineToPQueue =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),acc,next);
-
-      BinaryOperator<Higher<C2,PersistentQueueX<T>>> combinePQueues = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
-
-      return list.stream()
-        .reduce(identity,
-          combineToPQueue,
-          combinePQueues);
+        @Override
+        public <T, R> Higher<persistentQueueX, R> map(Function<? super T, ? extends R> fn, Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<persistentQueueX,Higher<C2, T>>,Higher<C2, Higher<persistentQueueX,T>>> sequenceNarrow  =
-      (a,b) -> PersistentQueueX.widen2(sequenceFn.apply(a, narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<persistentQueueX, R> tailRec(T initial, Function<? super T, ? extends Higher<persistentQueueX, ? extends Either<T, R>>> fn) {
+            return PersistentQueueX.tailRec(initial,i->narrowK(fn.apply(i)));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = PQueues.foldable()
-  .foldLeft(0, (a,b)->a+b, Arrays.asPQueue(1,2,3,4)));
+        @Override
+        public <C2, T, R> Higher<C2, Higher<persistentQueueX, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<persistentQueueX, T> ds) {
+            PersistentQueueX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<persistentQueueX,R>>>foldLeft(ap.unit(PersistentQueueX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T,R> Foldable<persistentQueueX> foldable(){
-    BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldRightFn =  (m, l)-> narrowK(l).foldRight(m);
-    BiFunction<Monoid<T>,Higher<persistentQueueX,T>,T> foldLeftFn = (m, l)-> narrowK(l).foldLeft(m);
-    Function3<Monoid<R>, Function<T, R>, Higher<persistentQueueX, T>, R> foldMapFn = (m, f, l)->narrowK(l).map(f).foldLeft(m);
-    return General.foldable(foldRightFn, foldLeftFn,foldMapFn);
-  }
 
-  private static  <T> PersistentQueueX<T> concat(PersistentQueue<T> l1, PersistentQueue<T> l2){
+        }
 
-    return PersistentQueueX.fromIterable(l1.plusAll(l2));
-  }
-  private <T> PersistentQueueX<T> of(T value){
-    return PersistentQueueX.of(value);
-  }
-  private static <T,R> PersistentQueueX<R> ap(PersistentQueueX<Function< T, R>> lt, PersistentQueueX<T> list){
-    return PersistentQueueX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
-  }
-  private static <T,R> Higher<persistentQueueX,R> flatMap(Higher<persistentQueueX,T> lt, Function<? super T, ? extends  Higher<persistentQueueX,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(PersistentQueueX::narrowK));
-  }
-  private static <T,R> PersistentQueueX<R> map(PersistentQueueX<T> lt, Function<? super T, ? extends R> fn){
-    return lt.map(fn);
-  }
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<persistentQueueX, T> ds) {
+            PersistentQueueX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+        }
+
+        @Override
+        public <T, R> Higher<persistentQueueX, Tuple2<T, Long>> zipWithIndex(Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
+
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
+
+
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<persistentQueueX, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<persistentQueueX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return PersistentQueueX.unfold(b,fn);
+        }
+
+
+    }
+
+    public static Unfoldable<persistentQueueX> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<persistentQueueX> monadPlus(MonoidK<persistentQueueX> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<persistentQueueX> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<persistentQueueX> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<persistentQueueX> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<persistentQueueX> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<persistentQueueX> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<persistentQueueX> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<persistentQueueX> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<persistentQueueX> foldable(){
+        return INSTANCE;
+    }
+   
 }

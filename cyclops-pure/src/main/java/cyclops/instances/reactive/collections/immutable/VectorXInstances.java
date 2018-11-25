@@ -1,14 +1,11 @@
 package cyclops.instances.reactive.collections.immutable;
 
 
-import static com.oath.cyclops.data.ReactiveWitness.vectorX;
-
-import com.oath.cyclops.ReactiveConvertableSequence;
 import com.oath.cyclops.hkt.Higher;
-import com.oath.cyclops.types.persistent.PersistentList;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
-import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
@@ -18,22 +15,29 @@ import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
-import cyclops.typeclasses.*;
+import cyclops.reactive.collections.immutable.VectorX;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
+import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
+import lombok.experimental.Wither;
 
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
-import static com.oath.cyclops.types.foldable.Evaluation.LAZY;
+import static com.oath.cyclops.data.ReactiveWitness.vectorX;
 import static cyclops.reactive.collections.immutable.VectorX.narrowK;
 
 /**
@@ -128,263 +132,153 @@ public class VectorXInstances {
       }
     };
   }
-  public static Unfoldable<vectorX> unfoldable(){
-    return new Unfoldable<vectorX>() {
-      @Override
-      public <R, T> Higher<vectorX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
-        return VectorX.unfold(b,fn);
-      }
-    };
-  }
-  /**
-   *
-   * Transform a list, mulitplying every element by 2
-   *
-   * <pre>
-   * {@code
-   *  VectorX<Integer> list = PVectors.functor().map(i->i*2, Arrays.asPVector(1,2,3));
-   *
-   *  //[2,4,6]
-   *
-   *
-   * }
-   * </pre>
-   *
-   * An example fluent api working with PVectors
-   * <pre>
-   * {@code
-   *   VectorX<Integer> list = PVectors.unit()
-  .unit("hello")
-  .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
-  .convert(VectorX::narrowK3);
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A functor for PVectors
-   */
-  public static <T,R>Functor<vectorX> functor(){
-    BiFunction<VectorX<T>,Function<? super T, ? extends R>,VectorX<R>> map = VectorXInstances::map;
-    return General.functor(map);
-  }
-  /**
-   * <pre>
-   * {@code
-   * VectorX<String> list = PVectors.unit()
-  .unit("hello")
-  .convert(VectorX::narrowK3);
 
-  //Arrays.asPVector("hello"))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A factory for PVectors
-   */
-  public static  <T> Pure<vectorX> unit(){
-    return General.<vectorX,T>unit(VectorXInstances::of);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.VectorX.widen;
-   * import static com.aol.cyclops.util.function.Lambda.l1;
-   * import static java.util.Arrays.asPVector;
-   *
-  PVectors.zippingApplicative()
-  .ap(widen(asPVector(l1(this::multiplyByTwo))),widen(asPVector(1,2,3)));
-   *
-   * //[2,4,6]
-   * }
-   * </pre>
-   *
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   * VectorX<Function<Integer,Integer>> listFn =PVectors.unit()
-   *                                                  .unit(Lambda.l1((Integer i) ->i*2))
-   *                                                  .convert(VectorX::narrowK3);
+    public static Pure<vectorX> unit() {
+      return INSTANCE;
+    }
 
-  VectorX<Integer> list = PVectors.unit()
-  .unit("hello")
-  .applyHKT(h->PVectors.functor().map((String v) ->v.length(), h))
-  .applyHKT(h->PVectors.zippingApplicative().ap(listFn, h))
-  .convert(VectorX::narrowK3);
+    private final static VectorXTypeClasses INSTANCE = new VectorXTypeClasses();
+    @AllArgsConstructor
+    @Wither
+    public static class VectorXTypeClasses implements MonadPlus<vectorX>,
+        MonadRec<vectorX>,
+        TraverseByTraverse<vectorX>,
+        Foldable<vectorX>,
+        Unfoldable<vectorX>{
 
-  //Arrays.asPVector("hello".length()*2))
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A zipper for PVectors
-   */
-  public static <T,R> Applicative<vectorX> zippingApplicative(){
-    BiFunction<VectorX< Function<T, R>>,VectorX<T>,VectorX<R>> ap = VectorXInstances::ap;
-    return General.applicative(functor(), unit(), ap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   * import static com.aol.cyclops.hkt.jdk.VectorX.widen;
-   * VectorX<Integer> list  = PVectors.monad()
-  .flatMap(i->widen(VectorX.range(0,i)), widen(Arrays.asPVector(1,2,3)))
-  .convert(VectorX::narrowK3);
-   * }
-   * </pre>
-   *
-   * Example fluent API
-   * <pre>
-   * {@code
-   *    VectorX<Integer> list = PVectors.unit()
-  .unit("hello")
-  .applyHKT(h->PVectors.monad().flatMap((String v) ->PVectors.unit().unit(v.length()), h))
-  .convert(VectorX::narrowK3);
-
-  //Arrays.asPVector("hello".length())
-   *
-   * }
-   * </pre>
-   *
-   * @return Type class with monad arrow for PVectors
-   */
-  public static <T,R> Monad<vectorX> monad(){
-
-    BiFunction<Higher<vectorX,T>,Function<? super T, ? extends Higher<vectorX,R>>,Higher<vectorX,R>> flatMap = VectorXInstances::flatMap;
-    return General.monad(zippingApplicative(), flatMap);
-  }
-  /**
-   *
-   * <pre>
-   * {@code
-   *  VectorX<String> list = PVectors.unit()
-  .unit("hello")
-  .applyHKT(h->PVectors.monadZero().filter((String t)->t.startsWith("he"), h))
-  .convert(VectorX::narrowK3);
-
-  //Arrays.asPVector("hello"));
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return A filterable monad (with default value)
-   */
-  public static <T,R> MonadZero<vectorX> monadZero(){
-
-    return General.monadZero(monad(), VectorX.empty());
-  }
-  public static <T,R> MonadRec<vectorX> monadRec(){
-
-    return new MonadRec<vectorX>(){
-      @Override
-      public <T, R> Higher<vectorX, R> tailRec(T initial, Function<? super T, ? extends Higher<vectorX,? extends Either<T, R>>> fn) {
-        VectorX<Either<T, R>> next = VectorX.of(Either.left(initial));
-        boolean newValue[] = {false};
-        for(;;){
-          next = next.concatMap(e -> e.fold(s -> { newValue[0]=true; return narrowK(fn.apply(s)); }, p -> VectorX.of(e)));
-          if(!newValue[0])
-            break;
+        private final MonoidK<vectorX> monoidK;
+        public VectorXTypeClasses(){
+            monoidK = MonoidKs.vectorXConcat();
         }
-        return Either.sequenceRight(next).map(l -> l.to(ReactiveConvertableSequence::converter)
-                                                    .vectorX(LAZY))
-                                                    .orElse(VectorX.empty());
+        @Override
+        public <T> Higher<vectorX, T> filter(Predicate<? super T> predicate, Higher<vectorX, T> ds) {
+            return narrowK(ds).filter(predicate);
+        }
 
-      }
-    };
-  }
+        @Override
+        public <T, R> Higher<vectorX, Tuple2<T, R>> zip(Higher<vectorX, T> fa, Higher<vectorX, R> fb) {
+            return narrowK(fa).zip(narrowK(fb));
+        }
 
-  public static <T> MonadPlus<vectorX> monadPlus(){
+        @Override
+        public <T1, T2, R> Higher<vectorX, R> zip(Higher<vectorX, T1> fa, Higher<vectorX, T2> fb, BiFunction<? super T1, ? super T2, ? extends R> f) {
+            return narrowK(fa).zip(narrowK(fb),f);
+        }
 
-    return General.monadPlus(monadZero(), MonoidKs.vectorXConcat());
-  }
+        @Override
+        public <T> MonoidK<vectorX> monoid() {
+            return monoidK;
+        }
 
-  public static  MonadPlus<vectorX> monadPlus(MonoidK<vectorX> m){
+        @Override
+        public <T, R> Higher<vectorX, R> flatMap(Function<? super T, ? extends Higher<vectorX, R>> fn, Higher<vectorX, T> ds) {
+            return narrowK(ds).concatMap(i->narrowK(fn.apply(i)));
+        }
 
-    return General.monadPlus(monadZero(),m);
-  }
+        @Override
+        public <T, R> Higher<vectorX, R> ap(Higher<vectorX, ? extends Function<T, R>> fn, Higher<vectorX, T> apply) {
+            return narrowK(apply)
+                .zip(narrowK(fn),(a,b)->b.apply(a));
+        }
 
-  /**
-   * @return Type class for traversables with traverse / sequence operations
-   */
-  public static <C2,T> Traverse<vectorX> traverse(){
-    BiFunction<Applicative<C2>,VectorX<Higher<C2, T>>,Higher<C2, VectorX<T>>> sequenceFn = (ap, list) -> {
+        @Override
+        public <T> Higher<vectorX, T> unit(T value) {
+            return VectorX.of(value);
+        }
 
-      Higher<C2,VectorX<T>> identity = ap.unit(VectorX.empty());
-
-      BiFunction<Higher<C2,VectorX<T>>,Higher<C2,T>,Higher<C2,VectorX<T>>> combineToPVector =   (acc, next) -> ap.apBiFn(ap.unit((a, b) ->a.plus(b)),acc,next);
-
-      BinaryOperator<Higher<C2,VectorX<T>>> combinePVectors = (a, b)-> ap.apBiFn(ap.unit((l1, l2)-> l1.plusAll(l2)),a,b); ;
-
-      return list.stream()
-        .reduce(identity,
-          combineToPVector,
-          combinePVectors);
+        @Override
+        public <T, R> Higher<vectorX, R> map(Function<? super T, ? extends R> fn, Higher<vectorX, T> ds) {
+            return narrowK(ds).map(fn);
+        }
 
 
-    };
-    BiFunction<Applicative<C2>,Higher<vectorX,Higher<C2, T>>,Higher<C2, Higher<vectorX,T>>> sequenceNarrow  =
-      (a,b) -> VectorX.widen2(sequenceFn.apply(a, narrowK(b)));
-    return General.traverse(zippingApplicative(), sequenceNarrow);
-  }
+        @Override
+        public <T, R> Higher<vectorX, R> tailRec(T initial, Function<? super T, ? extends Higher<vectorX, ? extends Either<T, R>>> fn) {
+            return VectorX.tailRec(initial,i->narrowK(fn.apply(i)));
+        }
 
-  /**
-   *
-   * <pre>
-   * {@code
-   * int sum  = PVectors.foldable()
-  .foldLeft(0, (a,b)->a+b, Arrays.asPVector(1,2,3,4)));
+        @Override
+        public <C2, T, R> Higher<C2, Higher<vectorX, R>> traverseA(Applicative<C2> ap, Function<? super T, ? extends Higher<C2, R>> fn, Higher<vectorX, T> ds) {
+            VectorX<T> v = narrowK(ds);
+            return v.<Higher<C2, Higher<vectorX,R>>>foldLeft(ap.unit(VectorX.<R>empty()),
+                (a, b) -> ap.zip(fn.apply(b), a, (sn, vec) -> narrowK(vec).plus(sn)));
 
-  //10
-   *
-   * }
-   * </pre>
-   *
-   *
-   * @return Type class for folding / reduction operations
-   */
-  public static <T> Foldable<vectorX> foldable(){
-    return new Foldable<vectorX>() {
-      @Override
-      public <T> T foldRight(Monoid<T> monoid, Higher<vectorX, T> ds) {
-        return  VectorX.fromIterable(narrowK(ds)).foldRight(monoid);
-      }
 
-      @Override
-      public <T> T foldLeft(Monoid<T> monoid, Higher<vectorX, T> ds) {
-        return  VectorX.fromIterable(narrowK(ds)).foldLeft(monoid);
-      }
+        }
 
-      @Override
-      public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<vectorX, T> nestedA) {
-        Monoid<? extends R> m = mb;
-        Object x = narrowK(nestedA).map(fn).foldLeft((Monoid) m);
-        return (R)x;
+        @Override
+        public <T, R> R foldMap(Monoid<R> mb, Function<? super T, ? extends R> fn, Higher<vectorX, T> ds) {
+            VectorX<T> x = narrowK(ds);
+            return x.foldLeft(mb.zero(),(a,b)->mb.apply(a,fn.apply(b)));
+        }
 
-      }
-    };
+        @Override
+        public <T, R> Higher<vectorX, Tuple2<T, Long>> zipWithIndex(Higher<vectorX, T> ds) {
+            return narrowK(ds).zipWithIndex();
+        }
 
-  }
+        @Override
+        public <T> T foldRight(Monoid<T> monoid, Higher<vectorX, T> ds) {
+            return narrowK(ds).foldRight(monoid);
+        }
 
-  private static  <T> VectorX<T> concat(PersistentList<T> l1, PersistentList<T> l2){
 
-    return VectorX.fromIterable(l1.plusAll(l2));
-  }
-  private <T> VectorX<T> of(T value){
-    return VectorX.of(value);
-  }
-  private static <T,R> VectorX<R> ap(VectorX<Function< T, R>> lt, VectorX<T> list){
-    return VectorX.fromIterable(lt).zip(list,(a, b)->a.apply(b));
-  }
-  private static <T,R> Higher<vectorX,R> flatMap(Higher<vectorX,T> lt, Function<? super T, ? extends  Higher<vectorX,R>> fn){
-    return narrowK(lt).concatMap(fn.andThen(VectorX::narrowK));
-  }
-  private static <T,R> VectorX<R> map(VectorX<T> lt, Function<? super T, ? extends R> fn){
-    return lt.map(fn);
-  }
+        @Override
+        public <T> T foldLeft(Monoid<T> monoid, Higher<vectorX, T> ds) {
+            return narrowK(ds).foldLeft(monoid);
+        }
+
+
+        @Override
+        public <R, T> Higher<vectorX, R> unfold(T b, Function<? super T, Option<Tuple2<R, T>>> fn) {
+            return VectorX.unfold(b,fn);
+        }
+
+
+    }
+
+    public static Unfoldable<vectorX> unfoldable(){
+
+        return INSTANCE;
+    }
+
+    public static MonadPlus<vectorX> monadPlus(MonoidK<vectorX> m){
+
+        return INSTANCE.withMonoidK(m);
+    }
+    public static <T,R> Applicative<vectorX> zippingApplicative(){
+        return INSTANCE;
+    }
+    public static <T,R>Functor<vectorX> functor(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Monad<vectorX> monad(){
+        return INSTANCE;
+    }
+
+    public static <T,R> MonadZero<vectorX> monadZero(){
+
+        return INSTANCE;
+    }
+
+    public static <T> MonadPlus<vectorX> monadPlus(){
+
+        return INSTANCE;
+    }
+    public static <T,R> MonadRec<vectorX> monadRec(){
+
+        return INSTANCE;
+    }
+
+
+    public static <C2,T> Traverse<vectorX> traverse(){
+        return INSTANCE;
+    }
+
+    public static <T,R> Foldable<vectorX> foldable(){
+        return INSTANCE;
+    }
+
+
 }

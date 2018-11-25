@@ -5,33 +5,35 @@ import com.oath.cyclops.hkt.DataWitness.option;
 import com.oath.cyclops.hkt.Higher;
 import cyclops.arrow.Cokleisli;
 import cyclops.arrow.Kleisli;
+import cyclops.arrow.MonoidK;
+import cyclops.arrow.MonoidKs;
 import cyclops.control.Either;
 import cyclops.control.Maybe;
 import cyclops.control.Option;
 import cyclops.data.tuple.Tuple2;
-import cyclops.function.Function3;
 import cyclops.function.Monoid;
 import cyclops.hkt.Active;
 import cyclops.hkt.Coproduct;
 import cyclops.hkt.Nested;
 import cyclops.hkt.Product;
 import cyclops.kinds.OptionalKind;
-import cyclops.typeclasses.*;
+import cyclops.typeclasses.InstanceDefinitions;
+import cyclops.typeclasses.Pure;
 import cyclops.typeclasses.comonad.Comonad;
 import cyclops.typeclasses.foldable.Foldable;
 import cyclops.typeclasses.foldable.Unfoldable;
-import cyclops.arrow.MonoidK;
-import cyclops.arrow.MonoidKs;
 import cyclops.typeclasses.functor.Functor;
-import cyclops.typeclasses.instances.General;
-import cyclops.typeclasses.monad.*;
+import cyclops.typeclasses.monad.Applicative;
+import cyclops.typeclasses.monad.Monad;
+import cyclops.typeclasses.monad.MonadPlus;
+import cyclops.typeclasses.monad.MonadRec;
+import cyclops.typeclasses.monad.MonadZero;
+import cyclops.typeclasses.monad.Traverse;
+import cyclops.typeclasses.monad.TraverseByTraverse;
 import lombok.AllArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import static cyclops.control.Maybe.narrowK;
 
 /**
  * Companion class for creating Type Class instances for working with Maybes
