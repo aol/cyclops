@@ -4395,14 +4395,22 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
         return (ReactiveSeq<R>)IterableX.super.zip4(second,third,fourth,fn);
     }
 
+    @Deprecated //name will be refactored to merge in the future
     default ReactiveSeq<T> mergeP(final Publisher<T>... publishers) {
         return mergeP(QueueFactories.boundedQueue(5_000),publishers);
     }
+    default ReactiveSeq<T> merge(final Publisher<T>... publishers) {
+        return mergeP(QueueFactories.boundedQueue(5_000),publishers);
+    }
+    
 
     default ReactiveSeq<T> backpressureAware(){
         return this;
     }
 
+    default ReactiveSeq<T> merge(final QueueFactory<T> factory,final Publisher<T>... publishers){
+        return mergeP(factory,publishers);
+    }
     /**
      * A potentially asynchronous merge operation where data from each publisher may arrive out of order (if publishers
      * are configured to publish asynchronously.
@@ -4411,6 +4419,7 @@ public interface ReactiveSeq<T> extends To<ReactiveSeq<T>>,
      *
      *
      */
+    @Deprecated //name will be refactored to merge in the future
     default ReactiveSeq<T> mergeP(final QueueFactory<T> factory,final Publisher<T>... publishers) {
         final Counter c = new Counter();
         c.active.set(publishers.length + 1);
