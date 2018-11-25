@@ -8,9 +8,20 @@ import cyclops.typeclasses.monad.Monad;
 import cyclops.typeclasses.taglessfinal.Cases.Account;
 import lombok.AllArgsConstructor;
 
+import java.util.function.Function;
+
 import static cyclops.function.Function2._0;
+import static cyclops.function.Function2._1;
+import static cyclops.function.Function2._2;
+import static cyclops.function.Function3.__1;
 import static cyclops.function.Function3.__3;
 import static cyclops.function.Function4.___13;
+import static cyclops.function.Function4.___3;
+import static cyclops.function.Function4.___4;
+import static cyclops.function.Function5.____13;
+import static cyclops.function.Function5.____14;
+import static cyclops.function.Function5.____24;
+import static cyclops.function.Predicates.__;
 
 @AllArgsConstructor
 public class Program2<W> {
@@ -18,20 +29,29 @@ public class Program2<W> {
     private final Monad<W> monad;
     private final AccountAlgebra<W> accountService;
     private final LogAlgebra<W> logService;
+    private final Account to;
+    private final Account from;
 
-
-    public Higher<W, Tuple2<Account,Account>> transfer(Account to, Account from, double amount){
+    public <R> R transfer(double amount, Function<Higher<W, Tuple2<Account,Account>>,R> fn){
 
         return Do.forEach(monad)
-                 .__(()->accountService.debit(from,amount))
-                 .__(this::logBalance)
-                 .__(_0(()-> accountService.credit(to,amount)))
-                 .__(__3(this::logBalance))
-                 .yield(___13(Tuple::tuple))
-                 .unwrap();
+                    ._of(amount)
+                    .__(this::debit)
+                    .__(_2(this::logBalance))
+                    .__(__1(this::credit))
+                    .__(___4(this::logBalance))
+                    .yield(____24(Tuple::tuple))
+                    .fold(fn);
+
     }
 
     private Higher<W, Void> logBalance(Account a) {
         return  logService.info("Account balance " + a.getBalance());
+    }
+    private Higher<W,Account> debit(double amount){
+        return accountService.debit(from,amount);
+    }
+    private Higher<W,Account> credit(double amount){
+        return accountService.credit(to,amount);
     }
 }
